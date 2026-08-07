@@ -53,6 +53,16 @@ it now.
 
 ## Status
 
+- **Phase 2: done.** `index.Rmd` → `index.qmd`: YAML front matter removed
+  (now lives entirely in `_quarto.yml`'s `book:` block, which already had it
+  from Phase 1), body content copied verbatim. Confirmed all 18 real chapter
+  files already independently `source("R/helpers.R")` /
+  `source("R/required_packages.R")` in their own setup chunks (not just
+  `index.Rmd`) — important because Quarto books render each chapter in its
+  own R session by default (unlike bookdown's single shared session), so
+  this repo was already structured in a way that's Quarto-compatible with
+  zero changes needed to `R/helpers.R` or `R/required_packages.R`. Full
+  book render still clean (18/18 pages, zero errors) after the conversion.
 - **Phase 1: done.** New private repo live at
   `https://github.com/Prof-MV/Process-Engineering` (fresh git history, old
   bookdown repo untouched). `_quarto.yml` scaffold in place, referencing the
