@@ -1,0 +1,1332 @@
+# Working Effectively with AI
+```{r setup-16, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+-----------------------------------------------
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Understand AI's role in modern engineering work and its limitations
+2. Apply the four steps of effective AI use: Define, Prompt, Iterate, Validate
+3. Apply prompt engineering principles to get better AI responses
+4. Distinguish between poor, adequate, and excellent prompts
+5. Select appropriate AI tools for different tasks (chat interfaces, NotebookLM, Claude Code, browser extensions)
+6. Use iterative AI collaboration to solve complex engineering problems
+7. Critically evaluate AI-generated content for accuracy and safety
+8. Identify tasks suited for AI assistance versus human expertise
+9. Apply ethical considerations when using AI in engineering contexts
+
+---
+
+## Introduction: AI in the Modern Workplace
+
+Artificial Intelligence has fundamentally changed how engineering work is performed. According to research, AI is predominantly used for **coding and technical work** (34% of professional use), with complex tasks showing potential **12x speedups** compared to traditional methods.
+
+However, there's a critical paradox: **more complex tasks have lower success rates** (61-66% versus 70% for simpler tasks). This means engineers must develop skills to effectively collaborate with AI, not just delegate to it.
+
+### The Education Paradox
+
+```{r education-paradox, echo=FALSE, fig.width=11, fig.height=6}
+paradox_data <- data.frame(
+  Skill_Level = c("Low", "Medium", "High", "Expert"),
+  Prompt_Quality = c(2, 5, 8, 10),
+  AI_Response_Quality = c(2, 5, 8, 10),
+  Success_Rate = c(45, 60, 75, 90)
+)
+
+ggplot(paradox_data, aes(x = factor(Skill_Level, levels = c("Low", "Medium", "High", "Expert")))) +
+  geom_line(aes(y = AI_Response_Quality, group = 1, color = "AI Response Quality"), linewidth = 2) +
+  geom_point(aes(y = AI_Response_Quality, color = "AI Response Quality"), size = 4) +
+  geom_line(aes(y = Success_Rate/10, group = 1, color = "Task Success Rate (%)"), linewidth = 2, linetype = "dashed") +
+  geom_point(aes(y = Success_Rate/10, color = "Task Success Rate (%)"), size = 4) +
+  scale_y_continuous(
+    name = "Quality Score (1-10)",
+    sec.axis = sec_axis(~.*10, name = "Success Rate (%)")
+  ) +
+  scale_color_manual(values = c("AI Response Quality" = "#3498db", "Task Success Rate (%)" = "#e74c3c")) +
+  labs(
+    title = "The Education Paradox: Better Knowledge = Better AI Results",
+    subtitle = "Your expertise directly determines the quality of AI assistance you receive",
+    x = "User Expertise Level",
+    color = "Metric"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "bottom"
+  )
+```
+
+> **Key Insight**: There is a nearly perfect correlation between prompt sophistication and response quality. You need strong foundational knowledge to get quality AI assistance. "AI will do it for me" is a trap.
+
+<details>
+<summary>Discussion: Why does expertise improve AI results?</summary>
+
+The "education paradox" reveals a fundamental truth about AI collaboration:
+
+- **Better questions lead to better answers**: Experts know what to ask and how to frame problems
+- **Domain knowledge enables validation**: You can only verify AI output if you understand the domain
+- **Iterative refinement requires expertise**: Knowing when to push back or ask follow-up questions
+- **Critical evaluation is essential**: AI can sound confident while being wrong
+
+**Think about it**: If you don't understand the fundamentals of motor selection, how would you know if an AI recommendation is correct or dangerously undersized?
+
+</details>
+
+### AI Impact by Industry
+
+```{r ai-industries, echo=FALSE}
+ai_impact <- data.frame(
+  Industry = c("Automotive", "Food Processing", "Defense", "Mining", "General Manufacturing"),
+  AI_Applications = c(
+    "Simulation modeling, control systems, predictive maintenance",
+    "Process optimization, quality control, equipment diagnostics",
+    "System design, modeling, compliance documentation",
+    "Equipment diagnostics, predictive maintenance, safety analysis",
+    "Documentation, troubleshooting guides, process analysis"
+  ),
+  Speedup = c("10-12x", "8-10x", "10-12x", "8-10x", "6-8x"),
+  Success_Rate = c("62%", "68%", "61%", "65%", "70%"),
+  Human_Oversight = c("Critical", "High", "Critical", "High", "Moderate")
+)
+
+kable(ai_impact, col.names = c("Industry", "Common AI Applications", "Potential Speedup", "Success Rate", "Human Oversight Needed"),
+      caption = "AI Impact Across Engineering Industries") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%") %>%
+  column_spec(5, color = ifelse(ai_impact$Human_Oversight == "Critical", "red",
+                                 ifelse(ai_impact$Human_Oversight == "High", "orange", "green")))
+```
+
+---
+
+<details>
+<summary>Why do automotive and defense require "Critical" human oversight?</summary>
+
+**Safety-critical applications** require mandatory human validation because:
+
+1. **Regulatory requirements**: ISO 26262 (automotive) and MIL-STDs (defense) require documented human review
+2. **Liability**: Engineers are legally responsible for designs, not AI tools
+3. **Failure consequences**: Errors can cause injury, death, or mission failure
+4. **AI limitations**: Current AI cannot reliably reason about edge cases and failure modes
+5. **Standards compliance**: AI cannot certify compliance with safety standards
+
+**Best practice**: Use AI for initial research and drafting, but always validate with human experts and formal analysis methods (FMEA, FTA, HAZOP).
+
+</details>
+
+---
+
+## Prompt Engineering Fundamentals
+
+**Prompt engineering** is the skill of crafting inputs to AI systems that produce useful, accurate, and relevant outputs. In engineering contexts, this skill is becoming as important as technical writing.
+
+<details>
+<summary>Before you read: What makes a good question?</summary>
+
+Think about the difference between these two questions:
+
+1. "Can you help me with my motor problem?"
+2. "I have a 3-phase 460V 50HP motor that trips its overload after 15 minutes of running. Ambient temperature is 35°C. What diagnostic steps should I follow?"
+
+Which question would get better help from a human expert? The same principle applies to AI. Before reading about prompt engineering, consider what information you would need to give a colleague to get useful help.
+
+</details>
+
+### The Seven Rules of Effective Prompts
+
+```{r prompt-rules, echo=FALSE, fig.width=14, fig.height=10}
+rules <- data.frame(
+  Rule = c("1. Be Specific\n& Structured", "2. Use\nRole-Playing", "3. Break Down\nComplex Tasks",
+           "4. Include\nExamples", "5. Request\nReasoning", "6. Avoid\nAmbiguity", "7. Add Ethical\nGuardrails"),
+  Description = c(
+    "Provide clear context,\nconstraints, and\ndesired output format",
+    "Assign the AI a persona\n(e.g., 'Act as an\nexperienced engineer')",
+    "Decompose problems\ninto steps to leverage\nAI's strengths",
+    "Provide sample\ninputs/outputs to\nguide AI behavior",
+    "Ask for step-by-step\nreasoning or\nalternative solutions",
+    "Use precise language;\ndefine technical\nterms if needed",
+    "Include safety,\nregulation, and\nbias considerations"
+  ),
+  x = c(1, 2, 3, 4, 1, 2, 3),
+  y = c(2, 2, 2, 2, 1, 1, 1)
+)
+
+ggplot(rules, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Rule), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
+  geom_text(aes(label = Rule), fontface = "bold", vjust = -1.5, size = 7, color = "white") +
+  geom_text(aes(label = Description), vjust = 1, size = 5, color = "white", lineheight = 0.9) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12",
+                               "#9b59b6", "#1abc9c", "#34495e"), guide = "none") +
+  scale_x_continuous(limits = c(0.4, 4.6)) +
+  labs(
+    title = "The Seven Rules of Effective Engineering Prompts",
+    subtitle = "Master these principles to dramatically improve AI collaboration"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 14)
+  )
+```
+
+---
+
+## Prompt Quality Comparison: Bad, Medium, and Good
+
+The following examples demonstrate the dramatic difference that prompt quality makes. Each example shows the same task approached three ways.
+
+### Example 1: Motor Selection
+
+```{r motor-prompts, echo=FALSE}
+motor_prompts <- data.frame(
+  Quality = c("Bad", "Medium", "Good"),
+  Prompt = c(
+    "Help me pick a motor.",
+
+    "I need to select a motor for a conveyor system. The conveyor moves boxes that weigh up to 50kg. What motor should I use?",
+
+    "Act as a senior electromechanical engineer. I need to select an AC induction motor for a conveyor belt system with the following specifications:\\n- Load: cardboard boxes up to 50kg each\\n- Belt speed: 0.5 m/s\\n- Belt length: 10m, width: 0.6m\\n- Incline: 5 degrees\\n- Operating environment: food processing plant (IP65 required)\\n- Power supply: 480V 3-phase\\n\\nPlease provide:\\n1. Required torque calculation\\n2. Motor power recommendation with 25% safety factor\\n3. Recommended motor specifications (frame size, efficiency class)\\n4. Three specific motor models from major manufacturers\\n5. Mounting considerations\\n\\nFormat as a technical memo with calculations shown."
+  ),
+  Expected_Response = c(
+    "Generic motor types list with no specific guidance. AI cannot determine application, size, or requirements.",
+
+    "Basic motor power estimate, general motor types suggested, but missing: duty cycle, environment, power supply, efficiency requirements, safety factors.",
+
+    "Complete technical analysis with calculated torque (~85 Nm), motor sizing (1.5-2.2 kW), specific model recommendations (e.g., ABB M3BP, Siemens 1LE1), IP65-rated food-safe options, and mounting specifications."
+  )
+)
+
+kable(motor_prompts, col.names = c("Quality Level", "Prompt", "Expected AI Response"),
+      caption = "Motor Selection Prompt Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "10%",
+              color = c("red", "orange", "green")) %>%
+  column_spec(2, width = "45%") %>%
+  column_spec(3, width = "45%")
+```
+
+### Example 2: Troubleshooting a PLC System
+
+```{r plc-prompts, echo=FALSE}
+plc_prompts <- data.frame(
+  Quality = c("Bad", "Medium", "Good"),
+  Prompt = c(
+    "My PLC isn't working. Fix it.",
+
+    "I have an Allen-Bradley PLC that's showing a fault. The output for a motor starter isn't turning on even though the program shows it should be. What could be wrong?",
+
+    "Act as an experienced automation technician troubleshooting a control system issue.\\n\\nSystem: Allen-Bradley CompactLogix L33ER\\nProblem: Output O:2/5 (motor starter for pump P-101) fails to energize\\n\\nObservations:\\n- Rung logic in RSLogix shows OTE instruction is TRUE\\n- Output status LED on I/O module is OFF\\n- Motor starter coil tests good (24VDC, 85 ohms)\\n- Other outputs on same module work correctly\\n- Problem started after yesterday's power outage\\n\\nPlease provide:\\n1. Systematic troubleshooting steps in order of likelihood\\n2. How to test each potential failure point\\n3. Safety precautions for each test\\n4. Possible root causes ranked by probability\\n5. Preventive measures to avoid recurrence\\n\\nFormat as a troubleshooting checklist I can use in the field."
+  ),
+  Why_It_Works = c(
+    "No context: What PLC? What's the symptom? What have you tried? AI will give generic advice that wastes time.",
+
+    "Better: Identifies equipment and basic symptom. Missing: specific I/O addresses, what's been checked, system configuration, urgency.",
+
+    "Excellent: Provides complete context, specific observations, clear deliverables, and practical output format. Enables targeted, actionable response."
+  )
+)
+
+kable(plc_prompts, col.names = c("Quality Level", "Prompt", "Why This Works (or Doesn't)"),
+      caption = "PLC Troubleshooting Prompt Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "10%",
+              color = c("red", "orange", "green")) %>%
+  column_spec(2, width = "50%") %>%
+  column_spec(3, width = "40%")
+```
+
+### Example 3: Safety Analysis
+
+```{r safety-prompts, echo=FALSE}
+safety_prompts <- data.frame(
+  Quality = c("Bad", "Medium", "Good"),
+  Prompt = c(
+    "Is this machine safe?",
+
+    "I have a robotic welding cell. What safety features does it need?",
+
+    "Act as a certified machine safety engineer (TUV or equivalent).\\n\\nI need to perform a risk assessment for a new robotic welding cell with the following configuration:\\n- Robot: FANUC ArcMate 100iD, 12kg payload\\n- Process: MIG welding, automotive brackets\\n- Cell size: 4m x 4m\\n- Operator tasks: Load/unload parts every 45 seconds\\n- Adjacent to manual assembly line (2m clearance)\\n\\nPlease provide:\\n1. Hazard identification using ISO 12100 categories\\n2. Risk assessment matrix for top 5 hazards\\n3. Required safeguarding per OSHA and ISO 10218-2\\n4. Recommended safety system architecture\\n5. Validation testing requirements\\n\\nReference applicable standards (ISO, ANSI/RIA, CSA) for each recommendation."
+  ),
+  Risk_Level = c(
+    "DANGEROUS: Vague prompts about safety can lead to incomplete analysis and missed hazards. Never acceptable for safety-critical work.",
+
+    "INADEQUATE: Will get generic safety device list but miss application-specific hazards, risk levels, and compliance requirements.",
+
+    "APPROPRIATE: Enables comprehensive, standards-based response. Still requires human expert validation before implementation."
+  )
+)
+
+kable(safety_prompts, col.names = c("Quality Level", "Prompt", "Risk Assessment"),
+      caption = "Safety Analysis Prompt Comparison - Critical Application") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "10%",
+              color = c("red", "orange", "green")) %>%
+  column_spec(2, width = "50%") %>%
+  column_spec(3, width = "40%")
+```
+
+> **Warning**: For safety-critical applications, AI should NEVER be the final authority. Always validate AI-generated safety analyses with certified professionals and applicable standards.
+
+---
+
+## Anatomy of an Excellent Engineering Prompt
+
+Let's break down the components of a well-structured prompt:
+
+```{r prompt-anatomy, echo=FALSE, fig.width=13, fig.height=9}
+anatomy <- data.frame(
+  Component = c("Role Assignment", "Context", "Specifications", "Constraints",
+                "Deliverables", "Format", "Standards"),
+  Example = c(
+    '"Act as a senior electromechanical engineer specializing in automotive systems"',
+    '"I am designing a regenerative braking system for an electric vehicle"',
+    '"Vehicle mass: 2000kg, max speed: 150km/h, battery: 400V nominal"',
+    '"Must comply with ISO 26262 ASIL-B, budget under $500/unit"',
+    '"Provide: 1) Energy calculations, 2) Component selection, 3) Control strategy"',
+    '"Format as a technical design document with diagrams described"',
+    '"Reference ISO 26262 and SAE J2954 where applicable"'
+  ),
+  Purpose = c(
+    "Sets expertise level and perspective for response",
+    "Establishes the problem domain and application",
+    "Provides concrete parameters for calculations",
+    "Defines boundaries and requirements",
+    "Lists exactly what you need from the AI",
+    "Ensures output is immediately usable",
+    "Grounds response in industry requirements"
+  ),
+  y_pos = c(7, 6, 5, 4, 3, 2, 1)
+)
+
+ggplot(anatomy, aes(y = y_pos)) +
+  geom_tile(aes(x = 1, fill = Component), width = 0.7, height = 0.8) +
+  geom_text(aes(x = 1, label = Component), fontface = "bold", size = 7, color = "white") +
+  geom_label(aes(x = 2.2, label = stringr::str_wrap(Example, 50)),
+             hjust = 0, size = 5, fill = "#f8f9fa", linewidth = 0) +
+  geom_text(aes(x = 4.2, label = stringr::str_wrap(Purpose, 30)),
+            hjust = 0, size = 5, color = "#2c3e50") +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12",
+                               "#9b59b6", "#1abc9c", "#34495e"), guide = "none") +
+  scale_x_continuous(limits = c(0.5, 5.5)) +
+  labs(title = "Anatomy of an Excellent Engineering Prompt",
+       subtitle = "Each component serves a specific purpose in guiding AI response quality") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 14)
+  )
+```
+
+---
+
+## Interactive Exercise: Rate These Prompts
+
+For each prompt below, identify what's missing and how you would improve it.
+
+### Exercise 1: Pump Selection
+
+**Original Prompt**: "What pump should I use for water?"
+
+```{r pump-exercise, echo=FALSE}
+pump_missing <- data.frame(
+  Missing_Element = c("Flow rate requirement", "Head/pressure requirement", "Fluid properties",
+                      "Operating environment", "Power supply", "Budget/efficiency goals"),
+  Why_Important = c(
+    "Cannot size pump without knowing GPM or L/min needed",
+    "Total dynamic head determines pump curve selection",
+    "Temperature, viscosity, solids content affect pump type",
+    "Indoor/outdoor, hazardous area, food-grade requirements",
+    "Single/three phase, voltage determines motor options",
+    "Premium efficiency vs. standard, capital vs. operating cost"
+  )
+)
+
+kable(pump_missing, col.names = c("Missing Element", "Why It's Important"),
+      caption = "Analysis: What's Missing from This Prompt?") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "30%")
+```
+
+**Your Task**: Rewrite this prompt to include all necessary information for a food processing application pumping tomato paste at 80°C.
+
+### Exercise 2: Identify the Quality Level
+
+Rate each prompt as Bad, Medium, or Good and justify your rating:
+
+```{r rate-prompts, echo=FALSE}
+rate_these <- data.frame(
+  Number = 1:5,
+  Prompt = c(
+    "How do I wire a motor?",
+    "Explain the difference between VFD and soft starter for a 50HP motor application in a cement plant with high dust.",
+    "Write code for Arduino.",
+    "Design a sensor network for predictive maintenance on a CNC machine. Include vibration, temperature, and current sensors with sampling rates and communication protocol recommendations.",
+    "Help with my project."
+  ),
+  Your_Rating = c("________", "________", "________", "________", "________"),
+  Justification = c("________", "________", "________", "________", "________")
+)
+
+kable(rate_these, col.names = c("#", "Prompt", "Your Rating (B/M/G)", "Justification"),
+      caption = "Exercise: Rate These Prompts") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(2, width = "50%") %>%
+  column_spec(3, width = "15%") %>%
+  column_spec(4, width = "25%")
+```
+
+---
+
+## The Four Steps of Effective AI Use
+
+The research shows that effectively working with AI follows a consistent four-step process. Master these steps to maximize the value of AI collaboration.
+
+```{r four-steps, echo=FALSE, fig.width=14, fig.height=8}
+steps_data <- data.frame(
+  Step = c("1. DEFINE\nthe Task", "2. PROMPT\nwith Context", "3. ITERATE\nand Refine", "4. VALIDATE\nand Apply"),
+  Description = c(
+    "Break complex problems\ninto AI-manageable tasks.\nIdentify what you need\nand what AI can help with.",
+    "Write structured prompts\nusing the seven rules.\nInclude role, context,\nconstraints, and deliverables.",
+    "Review AI output critically.\nAsk follow-up questions.\nRefine through multiple\nconversation turns.",
+    "Verify accuracy against\nstandards and expertise.\nApply human judgment.\nIntegrate into final work."
+  ),
+  Key_Action = c(
+    "Task decomposition",
+    "Prompt engineering",
+    "Multi-turn dialogue",
+    "Critical evaluation"
+  ),
+  x = c(1, 2, 3, 4),
+  y = c(1, 1, 1, 1)
+)
+
+ggplot(steps_data, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Step), width = 0.95, height = 0.9, color = "white", linewidth = 3) +
+  geom_text(aes(label = Step), fontface = "bold", vjust = -1.8, size = 5, color = "white") +
+  geom_text(aes(label = Description), vjust = 0.8, size = 4, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = paste0("→ ", Key_Action)), vjust = 3.5, size = 3.5, color = "yellow", fontface = "italic") +
+  # Add arrows between steps
+  annotate("segment", x = 1.55, xend = 1.95, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#2c3e50", size = 1.5) +
+  annotate("segment", x = 2.55, xend = 2.95, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#2c3e50", size = 1.5) +
+  annotate("segment", x = 3.55, xend = 3.95, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#2c3e50", size = 1.5) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#9b59b6"), guide = "none") +
+  scale_x_continuous(limits = c(0.4, 4.6)) +
+  labs(
+    title = "The Four Steps of Effective AI Collaboration",
+    subtitle = "A systematic approach to getting maximum value from AI tools"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 14)
+  )
+```
+
+### Step 1: Define the Task
+
+Before engaging with AI, clearly define what you need:
+
+- **What is the end goal?** A calculation, a design, troubleshooting guidance?
+- **What constraints apply?** Budget, standards, materials, timeline?
+- **What do you already know?** Your expertise shapes the conversation
+- **Can AI actually help with this?** Some tasks require physical inspection or human judgment
+
+> **Key Insight**: The better you understand the problem, the better AI can help. Vague understanding leads to vague prompts and useless responses.
+
+### Step 2: Prompt with Context
+
+Apply the seven rules of effective prompting:
+
+1. Assign a role to establish expertise level
+2. Provide complete context and background
+3. Specify constraints and requirements
+4. List clear deliverables
+5. Request step-by-step reasoning
+6. Define the output format
+7. Include relevant standards
+
+### Step 3: Iterate and Refine
+
+Rarely is the first response perfect. Plan for 3-6 turns of conversation:
+
+- Review critically: What's useful? What's missing? What's wrong?
+- Ask targeted follow-up questions
+- Request expansions on specific areas
+- Challenge assumptions and ask for alternatives
+
+### Step 4: Validate and Apply
+
+AI output is a **starting point**, not a final answer:
+
+- Verify calculations and units
+- Cross-check against standards and codes
+- Apply your engineering judgment
+- Document what came from AI assistance
+- Take responsibility for the final work product
+
+<details>
+<summary>Case Study: When validation caught an AI error</summary>
+
+**Scenario**: An engineering student used AI to calculate the required conveyor belt width for a food processing line handling 500 kg/hr of bulk product.
+
+**AI Response**: Recommended a 300mm belt based on throughput calculations.
+
+**Validation Issue**: The AI correctly calculated volumetric flow but failed to consider:
+- Minimum belt width for the discharge chute (400mm required)
+- Product spread factor for irregular materials
+- Safety factor for surge capacity
+
+**Actual Requirement**: 500mm belt per facility standards.
+
+**Lesson**: AI calculations may be mathematically correct but miss practical engineering constraints. Always validate against physical requirements, codes, and site-specific standards.
+
+</details>
+
+<details>
+<summary>Discussion: When should you NOT use AI?</summary>
+
+AI is not appropriate when:
+
+1. **Physical inspection is required**: AI cannot see, touch, or measure actual equipment
+2. **Real-time safety decisions**: Lockout/tagout procedures, emergency response
+3. **Legal certification**: Stamping drawings, signing off on safety assessments
+4. **Novel situations**: First-of-a-kind designs with no training data
+5. **Classified/proprietary work**: Confidential designs should not be uploaded
+
+**Rule of thumb**: If a human expert would need to be physically present, AI cannot substitute.
+
+</details>
+
+---
+
+## AI Tools and Their Use Cases
+
+Different AI tools serve different purposes. Understanding when to use each tool maximizes productivity.
+
+```{r ai-tools-comparison, echo=FALSE, fig.width=14, fig.height=10}
+tools_data <- data.frame(
+  Tool = c("Chat Interfaces\n(Claude.ai, ChatGPT,\nGemini)",
+           "NotebookLM\n(Google)",
+           "Claude Code\n(CLI Tool)",
+           "Browser Extensions\n(Claude, etc.)"),
+  Best_For = c(
+    "General Q&A\nDrafting documents\nExplaining concepts\nBrainstorming",
+    "Research synthesis\nSource-grounded answers\nPodcast generation\nMulti-document analysis",
+    "Code development\nFile operations\nProject automation\nTechnical implementation",
+    "Web page analysis\nQuick questions\nContent summarization\nIn-context assistance"
+  ),
+  Strengths = c(
+    "Flexible, conversational\nGood for exploration\nEasy to iterate",
+    "Cites sources directly\nReduces hallucination\nGreat for learning",
+    "Edits real files\nRuns commands\nProject-aware context",
+    "Works in browser\nNo context switching\nImmediate access"
+  ),
+  x = c(1, 2, 3, 4),
+  y = c(1, 1, 1, 1)
+)
+
+ggplot(tools_data, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Tool), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
+  geom_text(aes(label = Tool), fontface = "bold", vjust = -2.2, size = 4, color = "white") +
+  geom_text(aes(label = Best_For), vjust = 0.3, size = 3.5, color = "white", lineheight = 0.85) +
+  geom_text(aes(label = Strengths), vjust = 3, size = 3, color = "lightyellow", lineheight = 0.85, fontface = "italic") +
+  scale_fill_manual(values = c("#2980b9", "#27ae60", "#8e44ad", "#c0392b"), guide = "none") +
+  scale_x_continuous(limits = c(0.4, 4.6)) +
+  labs(
+    title = "AI Tool Selection Guide for Engineering Work",
+    subtitle = "Choose the right tool for each task type"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12)
+  )
+```
+
+### Chat Interfaces (Claude.ai, ChatGPT, Gemini)
+
+Web-based conversational AI platforms are the most versatile starting point for AI collaboration.
+
+```{r chat-interfaces, echo=FALSE}
+chat_uses <- data.frame(
+  Use_Case = c(
+    "Technical Explanations",
+    "Document Drafting",
+    "Calculation Verification",
+    "Brainstorming Solutions",
+    "Code Generation",
+    "Standard Interpretation"
+  ),
+  Description = c(
+    "Explain complex concepts, standards, or technical principles in accessible terms",
+    "Draft reports, specifications, procedures, or technical memos",
+    "Double-check hand calculations; request step-by-step solutions",
+    "Generate alternative approaches to engineering problems",
+    "Write PLC ladder logic concepts, Python scripts, or MATLAB code",
+    "Interpret requirements from ISO, OSHA, NEC, or other standards"
+  ),
+  Example_Prompt = c(
+    "'Explain the difference between ASIL levels in ISO 26262 for automotive safety'",
+    "'Draft a preventive maintenance procedure for a hydraulic press'",
+    "'Verify my torque calculation: 50kg load, 0.3m arm, need Nm result'",
+    "'What are three approaches to detect bearing wear before failure?'",
+    "'Write Python code to calculate conveyor belt speed from encoder pulses'",
+    "'What does NFPA 70E require for arc flash labeling on electrical panels?'"
+  )
+)
+
+kable(chat_uses, col.names = c("Use Case", "Description", "Example Prompt"),
+      caption = "Common Engineering Use Cases for Chat Interfaces") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%") %>%
+  column_spec(2, width = "35%") %>%
+  column_spec(3, width = "47%", monospace = TRUE)
+```
+
+**Best Practices for Chat Interfaces:**
+
+- Start new conversations for new topics (avoid context pollution)
+- Use the "regenerate" feature to see alternative responses
+- Upload images of diagrams, schematics, or equipment for visual analysis
+- Copy important responses to notes (conversations can be lost)
+
+### NotebookLM (Google)
+
+NotebookLM is specifically designed for **source-grounded research**. Upload documents, and the AI answers questions based only on your sources.
+
+```{r notebooklm-features, echo=FALSE}
+notebooklm_data <- data.frame(
+  Feature = c(
+    "Source-Based Answers",
+    "Citation Links",
+    "Audio Overview",
+    "Multi-Document Synthesis",
+    "Note Generation"
+  ),
+  Description = c(
+    "Answers come directly from your uploaded documents, reducing hallucination",
+    "Every answer includes clickable citations to the exact source passage",
+    "Generates AI podcast-style audio summaries of your documents for learning",
+    "Combines information from multiple PDFs, websites, or text files",
+    "Creates structured notes and summaries from source materials"
+  ),
+  Engineering_Application = c(
+    "Upload equipment manuals and ask specific troubleshooting questions",
+    "Verify AI claims against original standards documents",
+    "Listen to safety standard summaries during commute or shop floor time",
+    "Compare multiple vendor datasheets or competing standards",
+    "Generate study guides from technical documentation"
+  )
+)
+
+kable(notebooklm_data, col.names = c("Feature", "Description", "Engineering Application"),
+      caption = "NotebookLM Features for Engineering Work") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+**Example NotebookLM Workflow:**
+
+1. Upload: ISO 12100, ISO 13849-1, equipment manual PDF
+2. Ask: "What risk assessment steps does ISO 12100 require?"
+3. Review: AI provides answer with direct citations to document sections
+4. Generate: Create an audio overview to reinforce learning
+
+> **When to Use NotebookLM**: When you need answers grounded in specific documents rather than general AI knowledge. Ideal for standards compliance, equipment documentation, and research synthesis.
+
+### Claude Code (Command Line Tool)
+
+Claude Code is a **terminal-based AI assistant** that can read, write, and execute code in your actual project environment.
+
+```{r claude-code-table, echo=FALSE}
+claude_code_data <- data.frame(
+  Capability = c(
+    "File Operations",
+    "Code Development",
+    "Command Execution",
+    "Project Context",
+    "Git Integration"
+  ),
+  Description = c(
+    "Read, write, and edit files directly in your project",
+    "Generate, refactor, and debug code with full context",
+    "Run build commands, tests, and system tools",
+    "Understands your entire codebase structure",
+    "Create commits, branches, and pull requests"
+  ),
+  Example = c(
+    "Edit src/motor_control.py to add speed ramping",
+    "Write a Python script to parse PLC data logs",
+    "Run pytest and fix any failing tests",
+    "Find all files that reference the 'Pump' class",
+    "Commit changes with descriptive message"
+  )
+)
+
+kable(claude_code_data, col.names = c("Capability", "Description", "Example"),
+      caption = "Claude Code Capabilities for Technical Work") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+**Engineering Applications:**
+
+- **PLC Code Analysis**: Review and understand legacy ladder logic or structured text
+- **Data Processing**: Create scripts to analyze production data, SPC charts, or sensor logs
+- **Documentation Generation**: Auto-generate code documentation or API references
+- **Test Automation**: Write unit tests for engineering calculations
+
+**Example Session:**
+```
+> claude "Analyze the motor_control.py file and suggest improvements for
+         handling encoder signal noise"
+
+Claude Code reads the file, understands the context, and provides specific
+recommendations with code changes that can be applied directly.
+```
+
+### Browser Extensions (Claude Extension, etc.)
+
+Browser extensions provide **instant AI assistance** without leaving your current workflow.
+
+```{r browser-extension, echo=FALSE}
+extension_uses <- data.frame(
+  Use_Case = c(
+    "Webpage Summarization",
+    "Technical Documentation",
+    "Email Composition",
+    "Research Assistance",
+    "Quick Calculations"
+  ),
+  How_It_Helps = c(
+    "Summarize long technical articles or datasheets instantly",
+    "Ask questions about the documentation page you're reading",
+    "Draft professional responses to technical inquiries",
+    "Explain unfamiliar terms or concepts on any webpage",
+    "Get quick engineering calculations without switching apps"
+  ),
+  Example = c(
+    "On a 20-page motor datasheet: 'What is the rated torque at 1750 RPM?'",
+    "On Allen-Bradley KB: 'How do I configure this fault code?'",
+    "'Help me respond professionally to this RFQ'",
+    "Highlight text: 'Explain MTBF in practical terms'",
+    "'Convert 150 lb-ft to Nm'"
+  )
+)
+
+kable(extension_uses, col.names = c("Use Case", "How It Helps", "Example"),
+      caption = "Browser Extension Use Cases") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+**Best Practices:**
+
+- Use for quick queries and summaries
+- For complex problems, move to a full chat interface
+- Be cautious with confidential information on web pages
+- Extensions work best for reading comprehension tasks
+
+### Choosing the Right Tool
+
+```{r tool-decision, echo=FALSE}
+decision_data <- data.frame(
+  Situation = c(
+    "Need to understand a technical concept",
+    "Writing code for a project",
+    "Researching from specific documents",
+    "Quick question about a webpage",
+    "Drafting technical documentation",
+    "Analyzing production data",
+    "Learning new standards"
+  ),
+  Best_Tool = c(
+    "Chat Interface",
+    "Claude Code",
+    "NotebookLM",
+    "Browser Extension",
+    "Chat Interface",
+    "Claude Code",
+    "NotebookLM (with audio)"
+  ),
+  Why = c(
+    "Flexible conversation, can explore related topics",
+    "Can directly modify files and run tests",
+    "Answers grounded in your source documents",
+    "No context switching, immediate assistance",
+    "Good at structured document generation",
+    "Can write and execute analysis scripts",
+    "Audio overviews for passive learning"
+  )
+)
+
+kable(decision_data, col.names = c("Situation", "Best Tool", "Why"),
+      caption = "Tool Selection Quick Reference") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, width = "35%") %>%
+  column_spec(2, bold = TRUE, width = "20%", color = "#2980b9")
+```
+
+---
+
+## The Iterative Approach: Multi-Turn AI Collaboration
+
+Complex engineering problems are rarely solved in a single prompt. The iterative approach mirrors how you would work with a human expert.
+
+### The Iteration Cycle
+
+```{r iteration-cycle, echo=FALSE, fig.width=12, fig.height=8}
+cycle_data <- data.frame(
+  Step = c("1. Initial\nPrompt", "2. Review\nResponse", "3. Identify\nGaps",
+           "4. Refine &\nExpand", "5. Validate\nResults", "6. Synthesize\nFinal Output"),
+  Description = c(
+    "Start with your\nbest attempt at\na complete prompt",
+    "Read critically:\nWhat's useful?\nWhat's wrong?",
+    "Note missing info,\nerrors, or areas\nneeding depth",
+    "Ask follow-up\nquestions to fill\ngaps and correct",
+    "Cross-check with\nstandards, calculations,\nand expertise",
+    "Combine iterations\ninto final\ndeliverable"
+  ),
+  x = c(1, 2, 3, 4, 5, 6),
+  y = c(1, 1, 1, 1, 1, 1)
+)
+
+ggplot(cycle_data, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Step), width = 0.9, height = 0.8, color = "white", linewidth = 2) +
+  geom_text(aes(label = Step), fontface = "bold", vjust = -1, size = 3.2, color = "white") +
+  geom_text(aes(label = Description), vjust = 1.5, size = 2.8, color = "white", lineheight = 0.9) +
+  # Add arrows between steps
+  annotate("segment", x = 1.5, xend = 1.9, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", size = 1) +
+  annotate("segment", x = 2.5, xend = 2.9, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", size = 1) +
+  annotate("segment", x = 3.5, xend = 3.9, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", size = 1) +
+  annotate("segment", x = 4.5, xend = 4.9, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", size = 1) +
+  annotate("segment", x = 5.5, xend = 5.9, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", size = 1) +
+  scale_fill_manual(values = c("#3498db", "#27ae60", "#f39c12", "#e74c3c", "#9b59b6", "#1abc9c"),
+                    guide = "none") +
+  labs(title = "The Iterative AI Collaboration Cycle",
+       subtitle = "Professional engineers rarely get perfect results from a single prompt") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 11)
+  )
+```
+
+### Worked Example: Designing a Conveyor Control System
+
+**Turn 1 - Initial Prompt:**
+```
+Act as an automation engineer. Design a basic control system for a
+conveyor belt in a packaging line. The conveyor is 15m long and
+transports boxes to a palletizing station.
+```
+
+**AI Response Summary**: Generic overview with basic motor control, start/stop logic, and simple sensors.
+
+**Turn 2 - Adding Specificity:**
+```
+Good start. Now expand with these details:
+- Add accumulation zones (3 zones, 5m each) with photo-eye sensors
+- Include a reject station at the 10m mark for overweight boxes
+- Integrate with an upstream case sealer (need handshake signals)
+- Use Allen-Bradley CompactLogix as the controller
+
+Show the I/O list and basic ladder logic structure.
+```
+
+**AI Response Summary**: Detailed I/O list, zone control logic, sensor placement, and communication requirements.
+
+**Turn 3 - Safety and Edge Cases:**
+```
+Now address:
+1. What happens if the downstream palletizer faults?
+2. Add E-stop integration per ISO 13849 PLd requirements
+3. How do we handle box jams in each zone?
+4. What's the startup sequence after E-stop reset?
+
+Include safety relay wiring diagram description.
+```
+
+**AI Response Summary**: Complete safety integration, fault handling, jam detection, and recovery procedures.
+
+**Turn 4 - Final Validation:**
+```
+Review your complete design and:
+1. List any assumptions you made that I should verify
+2. Identify potential failure modes you haven't addressed
+3. What information would you need to finalize this for implementation?
+4. Are there any code standards (ISA, IEC) I should reference?
+```
+
+**AI Response Summary**: Comprehensive assumption list, remaining questions, and standards references for documentation.
+
+> **Key Point**: This four-turn conversation produced a design that would have required a much longer single prompt to achieve, and the iterative approach allowed for course correction along the way.
+
+<details>
+<summary>Try it yourself: Practice iterative prompting</summary>
+
+**Your Challenge**: Use the four-turn approach to design a temperature monitoring system for a food processing facility.
+
+**Turn 1**: Define the basic requirements (number of zones, temperature ranges, alerting needs)
+
+**Turn 2**: Add specifics (sensor types, communication protocol, integration with existing systems)
+
+**Turn 3**: Address failure modes and safety (what happens if a sensor fails? How are critical temperature excursions handled?)
+
+**Turn 4**: Request validation questions and identify what you need to verify before implementation
+
+**Compare your results**: Did the iterative approach give you a more complete design than your initial prompt would have?
+
+</details>
+
+---
+
+## Practice Topics for Iterative AI Sessions
+
+Use these topics to practice the iterative approach. Each topic is designed to require multiple turns to fully develop.
+
+### Beginner Level
+
+```{r beginner-topics, echo=FALSE}
+beginner <- data.frame(
+  Topic = c(
+    "Motor Starter Selection",
+    "Sensor Selection for Proximity Detection",
+    "Basic PLC Program for Traffic Light",
+    "Belt Conveyor Speed Calculation"
+  ),
+  Starting_Prompt_Hint = c(
+    "Start with application, then add environment, protection requirements, control method",
+    "Begin with what you're detecting, then material, distance, environment, output type",
+    "Define sequence first, then timing, then inputs/outputs, then safety",
+    "Start with throughput requirement, then add physical constraints"
+  ),
+  Expected_Turns = c("2-3", "2-3", "3-4", "2-3")
+)
+
+kable(beginner, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
+      caption = "Beginner Practice Topics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "30%")
+```
+
+### Intermediate Level
+
+```{r intermediate-topics, echo=FALSE}
+intermediate <- data.frame(
+  Topic = c(
+    "VFD Parameter Setup for Pump Application",
+    "PFMEA for Automated Assembly Station",
+    "Pneumatic Circuit Design with Safety",
+    "HMI Screen Layout for Batch Process"
+  ),
+  Starting_Prompt_Hint = c(
+    "Define motor and load first, then control requirements, then protection settings",
+    "Describe process steps, then potential failures, then iterate on severity/occurrence ratings",
+    "Start with actuator requirements, then add safety, then valve selection, then circuit",
+    "Define operator tasks first, then alarms, then navigation, then data display"
+  ),
+  Expected_Turns = c("3-4", "4-5", "3-4", "3-4")
+)
+
+kable(intermediate, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
+      caption = "Intermediate Practice Topics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "30%")
+```
+
+### Advanced Level
+
+```{r advanced-topics, echo=FALSE}
+advanced <- data.frame(
+  Topic = c(
+    "Predictive Maintenance System Architecture",
+    "Robot Cell Integration with Vision System",
+    "Energy Management System for Manufacturing Plant",
+    "Complete Machine Safety Assessment"
+  ),
+  Starting_Prompt_Hint = c(
+    "Define assets and failure modes, then sensors, then data architecture, then analytics approach",
+    "Robot selection first, then vision requirements, then communication, then programming approach",
+    "Start with loads and usage patterns, then monitoring points, then control strategy, then ROI",
+    "Describe machine function, then hazards, then risk assessment, then safeguarding, then validation"
+  ),
+  Expected_Turns = c("5-6", "5-6", "4-5", "5-6")
+)
+
+kable(advanced, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
+      caption = "Advanced Practice Topics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "30%")
+```
+
+---
+
+## Critical Evaluation of AI Outputs
+
+AI can produce confident-sounding responses that are completely wrong. Engineers must develop critical evaluation skills.
+
+### Red Flags in AI Responses
+
+```{r red-flags, echo=FALSE, fig.width=12, fig.height=7}
+red_flags <- data.frame(
+  Flag = c("Calculations Without Units", "Missing Safety Considerations",
+           "Outdated Standards Referenced", "Overconfident Language",
+           "Generic Without Specifics", "Ignoring Stated Constraints"),
+  Example = c(
+    '"The motor needs 150" - 150 what? HP? kW? Nm?',
+    "Design has no E-stop, no guarding discussion, no lockout provisions",
+    "References NEC 2014 when 2023 is current; cites withdrawn ISO standards",
+    '"This will definitely work" or "This is the only solution"',
+    '"Use appropriate sensors" without specifying type, range, or model',
+    "You specified 24VDC and AI designs for 120VAC"
+  ),
+  Your_Action = c(
+    "Always request calculations with units shown; verify dimensional analysis",
+    "Explicitly ask for safety analysis; cross-reference with standards",
+    "Verify all standard references; check publication dates",
+    "Be skeptical; request alternatives and trade-offs",
+    "Push for specific part numbers, ranges, and specifications",
+    "Re-state constraints clearly; verify compliance in response"
+  )
+)
+
+kable(red_flags, col.names = c("Red Flag", "Example", "Your Response"),
+      caption = "Red Flags in AI-Generated Engineering Content") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%", color = "red")
+```
+
+### Verification Checklist
+
+Before using any AI-generated engineering content:
+
+```{r verification, echo=FALSE}
+verification <- data.frame(
+  Category = c("Calculations", "Calculations", "Calculations",
+               "Standards", "Standards",
+               "Safety", "Safety", "Safety",
+               "Practical", "Practical"),
+  Check_Item = c(
+    "All calculations include units",
+    "Results are dimensionally consistent",
+    "Order of magnitude is reasonable",
+    "Referenced standards are current versions",
+    "Applicable regional codes are addressed (NEC, CSA, IEC)",
+    "All identified hazards have mitigation",
+    "Failure modes are considered",
+    "Human factors are addressed",
+    "Specified components are available/not obsolete",
+    "Cost and lead time are realistic"
+  ),
+  Verified = c("[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]", "[ ]")
+)
+
+kable(verification, col.names = c("Category", "Verification Item", "Verified"),
+      caption = "AI Output Verification Checklist") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE) %>%
+  pack_rows("Calculations", 1, 3) %>%
+  pack_rows("Standards Compliance", 4, 5) %>%
+  pack_rows("Safety", 6, 8) %>%
+  pack_rows("Practical Implementation", 9, 10)
+```
+
+---
+
+## When NOT to Use AI
+
+AI is a tool, not a replacement for engineering judgment. Recognize its limitations.
+
+### AI Excels At:
+
+- Generating first drafts and starting points
+- Explaining concepts and standards
+- Creating documentation templates
+- Performing routine calculations (with verification)
+- Suggesting troubleshooting approaches
+- Comparing options and trade-offs
+
+### AI Struggles With:
+
+```{r ai-limitations, echo=FALSE}
+limitations <- data.frame(
+  Limitation = c(
+    "Site-Specific Context",
+    "Current Conditions",
+    "Ethical Judgment",
+    "Novel Situations",
+    "Physical Intuition",
+    "Accountability"
+  ),
+  Description = c(
+    "AI doesn't know your plant layout, existing equipment, or local practices",
+    "AI cannot inspect, measure, or observe actual equipment conditions",
+    "Decisions balancing safety, cost, and risk require human judgment",
+    "Unprecedented problems may not have training data to draw from",
+    "Experience-based intuition about what 'feels wrong' in a machine",
+    "AI cannot stamp drawings, sign off on safety, or take legal responsibility"
+  ),
+  Example = c(
+    "Recommending motor location without knowing available floor space or cable routes",
+    "Cannot diagnose bearing wear by sound or vibration feel",
+    "Choosing between immediate shutdown vs. controlled stop with production impact",
+    "First-of-kind machine with no similar designs to reference",
+    "Recognizing that a pump 'doesn't sound right' before instruments show a problem",
+    "A P.Eng. must review and approve critical designs; AI cannot be licensed"
+  )
+)
+
+kable(limitations, col.names = c("Limitation", "Description", "Example"),
+      caption = "Tasks Requiring Human Engineering Judgment") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%", color = "#e74c3c")
+```
+
+<details>
+<summary>Quick Check: AI or Human?</summary>
+
+For each task below, decide whether AI assistance is appropriate, limited, or inappropriate:
+
+1. **Drafting a maintenance procedure for a conveyor system** → *Appropriate with verification*
+2. **Deciding whether to shut down a production line during a safety incident** → *Human only*
+3. **Generating a bill of materials from a design specification** → *Appropriate with verification*
+4. **Certifying a machine guarding design for compliance** → *Human only (requires P.Eng.)*
+5. **Troubleshooting a motor that "sounds funny"** → *Limited - AI can suggest causes, human must inspect*
+6. **Explaining the difference between ISO 13849 and IEC 62443** → *Appropriate*
+
+**Key insight**: AI excels at information synthesis and drafting, but physical observation, legal certification, and real-time safety decisions require human expertise.
+
+</details>
+
+---
+
+## Ethical Considerations
+
+Using AI in engineering work carries professional and ethical responsibilities.
+
+### Key Principles
+
+1. **Transparency**: Disclose AI assistance where required by professional standards or employer policy
+
+2. **Verification**: Never submit AI-generated work as final without verification by qualified personnel
+
+3. **Accountability**: You remain responsible for work product regardless of AI assistance
+
+4. **Confidentiality**: Do not input proprietary designs, client data, or trade secrets into public AI systems
+
+5. **Competence**: AI assistance does not substitute for required qualifications or experience
+
+### Industry-Specific Considerations
+
+```{r ethics-industry, echo=FALSE}
+ethics <- data.frame(
+  Industry = c("Automotive", "Food Processing", "Defense", "Mining"),
+  Key_Concern = c(
+    "Functional safety (ISO 26262) requires traceable human decisions",
+    "Food safety regulations (FDA, CFIA) require validated processes",
+    "ITAR/export controls may prohibit certain AI tool usage",
+    "Worker safety regulations require qualified sign-off"
+  ),
+  Guidance = c(
+    "Document AI usage; ensure ASIL requirements met through verification",
+    "AI can draft HACCP plans but qualified personnel must validate",
+    "Consult legal/compliance before using AI on controlled projects",
+    "P.Eng. or equivalent must review all safety-critical designs"
+  )
+)
+
+kable(ethics, col.names = c("Industry", "Key Ethical/Legal Concern", "Guidance"),
+      caption = "Industry-Specific AI Ethics Considerations") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%")
+```
+
+<details>
+<summary>Reflection: Your responsibilities as an AI-assisted engineer</summary>
+
+Consider these questions for your own practice:
+
+1. **Disclosure**: Does your employer have a policy on AI tool usage? What about your professional engineering body?
+
+2. **Verification**: What specific steps will you take to verify AI-generated calculations before using them?
+
+3. **Confidentiality**: What types of information from your work should NEVER be input into public AI tools?
+
+4. **Professional development**: How will you continue building expertise rather than becoming dependent on AI for answers?
+
+5. **Liability**: If an AI-assisted design fails, who is responsible? (Hint: It's always the licensed engineer who approved it.)
+
+**Remember**: AI tools change rapidly, but professional engineering ethics remain constant. Your responsibility for the safety and quality of your work never transfers to a tool.
+
+</details>
+
+---
+
+## Hands-On Lab Exercise
+
+### Objective
+Practice the complete AI collaboration workflow on a realistic engineering problem.
+
+### Scenario
+You are tasked with designing an automated inspection station for a food packaging line. The station must:
+
+- Inspect sealed packages for proper seal integrity
+- Reject packages with defects
+- Track inspection statistics
+- Integrate with existing Allen-Bradley PLC system
+
+### Instructions
+
+1. **Write your initial prompt** (5 minutes)
+   - Apply the seven rules of effective prompts
+   - Include role, context, specifications, constraints, and deliverables
+
+2. **Conduct 3-4 iteration turns** (15 minutes)
+   - Review each AI response critically
+   - Identify gaps and request specific expansions
+   - Push for component specifications and safety considerations
+
+3. **Evaluate the final output** (5 minutes)
+   - Use the verification checklist
+   - Note any red flags
+   - Identify what still requires human expertise
+
+4. **Document your process** (5 minutes)
+   - What worked well in your prompting approach?
+   - What would you do differently next time?
+   - What human expertise was essential?
+
+### Deliverables
+- Initial prompt (graded on structure and completeness)
+- Iteration log showing refinement process
+- Critical evaluation notes
+- Reflection on lessons learned
+
+---
+
+## Summary
+
+```{r summary-visual, echo=FALSE, fig.width=12, fig.height=6}
+summary_data <- data.frame(
+  Principle = c("Foundation\nFirst", "Structure\nMatters", "Iterate\nRelentlessly",
+                "Verify\nEverything", "Know the\nLimits"),
+  Key_Point = c(
+    "Your expertise\ndetermines AI's\nusefulness",
+    "Good prompts =\nGood responses",
+    "Complex problems\nrequire multiple\nturns",
+    "Never trust\nAI output\nblindly",
+    "Human judgment\nis irreplaceable\nfor critical tasks"
+  ),
+  x = c(1, 2, 3, 4, 5),
+  y = c(1, 1, 1, 1, 1)
+)
+
+ggplot(summary_data, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Principle), width = 0.9, height = 0.85, color = "white", linewidth = 2) +
+  geom_text(aes(label = Principle), fontface = "bold", vjust = -1.2, size = 4, color = "white") +
+  geom_text(aes(label = Key_Point), vjust = 1.2, size = 3, color = "white", lineheight = 0.9) +
+  scale_fill_manual(values = c("#3498db", "#27ae60", "#f39c12", "#e74c3c", "#9b59b6"), guide = "none") +
+  labs(title = "Five Principles for Effective AI Collaboration in Engineering",
+       subtitle = "Master these concepts to leverage AI as a powerful professional tool") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Key Takeaways
+
+1. **The Education Paradox**: Strong foundational knowledge is required to get quality AI assistance. "AI will do it for me" is a dangerous mindset.
+
+2. **The Four Steps**: Effective AI use follows a consistent process: Define → Prompt → Iterate → Validate. Skipping steps leads to poor results.
+
+3. **Prompt Engineering is a Skill**: Like technical writing, crafting effective prompts requires practice and follows learnable principles.
+
+4. **Choose the Right Tool**: Different AI tools serve different purposes. Chat interfaces for exploration, NotebookLM for source-grounded research, Claude Code for development, and browser extensions for quick assistance.
+
+5. **Iteration is Normal**: Professional engineers should expect 3-6 turns of AI conversation for complex problems.
+
+6. **Critical Evaluation is Essential**: AI produces confident-sounding outputs that may be wrong. Verify everything.
+
+7. **Human Judgment Remains Central**: AI augments but does not replace engineering expertise, especially for safety-critical decisions.
+
+---
+
+## Review Questions
+
+1. Explain the "education paradox" in AI usage and why it matters for engineering students.
+
+2. List and describe the four steps of effective AI use. Why is each step important?
+
+3. List the seven rules of effective engineering prompts and give an example of each.
+
+4. What are three red flags that should make you question an AI-generated engineering recommendation?
+
+5. Describe the iterative approach to AI collaboration and why single-prompt interactions are often inadequate.
+
+6. Compare and contrast the four main types of AI tools (chat interfaces, NotebookLM, Claude Code, browser extensions). When would you use each?
+
+7. For which types of engineering tasks is AI assistance most appropriate? Least appropriate?
+
+8. What ethical considerations apply when using AI for engineering work in safety-critical industries?
+
+9. Transform this bad prompt into a good prompt: "Help me size a pump."
+
+10. You need to research a new ISO standard and create a summary for your team. Which AI tool(s) would you use and why?
+
+11. Why is it important to include standards references in engineering prompts?
+
+12. How does NotebookLM differ from general chat interfaces like ChatGPT or Claude.ai? When would this difference matter?
+
+---
+
+## References and Further Reading
+
+- [Anthropic Economic Index Report (2026)]([https://www.anthropic.com/research/anthropic-economic-index-january-2026-report) - AI usage patterns in professional work
+- ISO 12100 - Safety of machinery, General principles for design
+- IEC 62443 - Industrial communication networks, Network and system security
+- Professional Engineers Ontario - [Use of Artificial Intelligence guidelines](https://www.peo.on.ca/sites/default/files/2025-11/EGBC_Use_of_Artificial_Intelligence_in_Professional_Work.pdf)
+- [OpenAI Prompt Engineering Guide](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api) - General prompting techniques
+- IEEE Code of Ethics - Professional responsibilities in technology
+
+---
+
+## Glossary
+
+**Prompt Engineering**: The practice of designing inputs to AI systems to achieve desired outputs.
+
+**Iteration/Multi-turn Conversation**: Using multiple exchanges with AI to progressively refine and improve outputs.
+
+**Augmentation**: Using AI to enhance human capabilities rather than replace them entirely.
+
+**Automation**: Delegating complete tasks to AI with minimal human intervention.
+
+**Hallucination**: AI generating plausible-sounding but factually incorrect information.
+
+**Context Window**: The amount of text an AI can consider at once; important for complex problems requiring extensive background.
+
+**Chat Interface**: Web-based conversational AI platforms (e.g., Claude.ai, ChatGPT, Gemini) for flexible, general-purpose AI interaction.
+
+**NotebookLM**: Google's AI tool that provides source-grounded answers based on uploaded documents, with citation links and audio overview generation.
+
+**Claude Code**: A command-line AI tool that can read, write, and execute code directly in project environments with full file system access.
+
+**Browser Extension**: AI tools integrated into web browsers for instant assistance without switching applications; useful for webpage analysis and quick queries.
+
+**Source-Grounded AI**: AI systems that base responses on specific provided documents rather than general training data, reducing hallucination risk.

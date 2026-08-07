@@ -1,0 +1,1783 @@
+# Troubleshooting and Root Cause Analysis
+```{r setup-11, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Apply systematic troubleshooting methodologies to diagnose equipment and process failures
+2. Distinguish between symptoms, immediate causes, and root causes
+3. Use the 5 Whys technique to drill down to fundamental causes
+4. Construct and analyze Ishikawa (fishbone) diagrams
+5. Apply Fault Tree Analysis (FTA) to complex failure scenarios
+6. Use Pareto analysis to prioritize problem-solving efforts
+7. Implement the 8D problem-solving methodology
+8. Document findings and implement effective corrective actions
+9. Prevent problem recurrence through systemic improvements
+
+---
+
+## Introduction to Troubleshooting
+
+**Troubleshooting** is the systematic process of identifying, diagnosing, and resolving problems in equipment, processes, or systems. For electromechanical technicians, effective troubleshooting is perhaps the most valuable skill you can develop.
+
+### The Cost of Downtime
+
+Equipment failures and process problems have significant financial impacts:
+
+```{r downtime-costs, echo=FALSE, fig.width=10, fig.height=6}
+industry_data <- data.frame(
+  Industry = c("Automotive", "Food Processing", "Aerospace/Defense",
+               "Pharmaceutical", "Oil & Gas"),
+  Cost_Per_Hour = c(22000, 15000, 35000, 25000, 50000),
+  Avg_Downtime_Hours = c(4, 6, 8, 5, 12)
+)
+
+industry_data$Total_Cost <- industry_data$Cost_Per_Hour * industry_data$Avg_Downtime_Hours
+
+ggplot(industry_data, aes(x = reorder(Industry, Cost_Per_Hour), y = Cost_Per_Hour)) +
+  geom_bar(stat = "identity", fill = "steelblue", width = 0.7) +
+  geom_text(aes(label = paste0("$", format(Cost_Per_Hour, big.mark = ","))),
+            hjust = -0.1, size = 4) +
+  coord_flip() +
+  scale_y_continuous(labels = scales::dollar_format(), limits = c(0, 60000)) +
+  labs(title = "Average Cost of Unplanned Downtime by Industry",
+       subtitle = "Per hour of production stoppage",
+       x = "",
+       y = "Cost per Hour (USD)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 11)
+  )
+```
+
+### Reactive vs. Proactive Problem Solving
+
+```{r reactive-proactive, echo=FALSE}
+approach_comparison <- data.frame(
+  Aspect = c("Timing", "Focus", "Stress Level", "Cost", "Learning", "Documentation"),
+  Reactive = c("After failure occurs", "Quick fix to restore operation",
+               "High - production pressure", "High - emergency repairs",
+               "Limited - rush to fix", "Often skipped"),
+  Proactive = c("Before or early in failure", "Root cause elimination",
+                "Lower - planned approach", "Lower - scheduled work",
+                "High - thorough analysis", "Systematic and complete")
+)
+
+kable(approach_comparison, col.names = c("Aspect", "Reactive Approach", "Proactive Approach"),
+      caption = "Comparison of Problem-Solving Approaches") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%") %>%
+  column_spec(2, background = "#ffcccc", width = "42%") %>%
+  column_spec(3, background = "#ccffcc", width = "43%")
+```
+
+<details><summary>**Think About It**: Why do organizations often default to reactive troubleshooting?</summary>
+
+Common reasons include:
+- **Time pressure**: Production demands make it tempting to apply quick fixes
+- **Lack of training**: Technicians may not know RCA methodologies
+- **Reward systems**: Organizations may reward "firefighters" who quickly restore production
+- **Missing data**: Without good records, patterns are hard to identify
+- **Culture**: "We've always done it this way" mentality
+
+The irony is that reactive troubleshooting actually costs more time in the long run due to recurring problems.
+</details>
+
+---
+
+## Systematic Troubleshooting Methodology
+
+Effective troubleshooting follows a structured approach rather than random trial-and-error.
+
+### The DMAIC Troubleshooting Framework
+
+```{r troubleshooting-flow, echo=FALSE, fig.width=12, fig.height=8}
+# Create troubleshooting process flow
+steps <- data.frame(
+  step = 1:6,
+  name = c("DEFINE", "MEASURE", "ANALYZE", "IMPLEMENT", "CONTROL", "DOCUMENT"),
+  description = c(
+    "Clearly state the problem",
+    "Gather data and observations",
+    "Identify root cause",
+    "Apply corrective action",
+    "Verify solution works",
+    "Record findings"
+  ),
+  x = c(1, 2, 3, 4, 5, 6),
+  y = rep(1, 6)
+)
+
+ggplot(steps, aes(x = x, y = y)) +
+  geom_segment(aes(x = x, xend = x + 0.8, y = y, yend = y),
+               arrow = arrow(length = unit(0.3, "cm")),
+               color = "gray50", linewidth = 1.5,
+               data = steps[1:5,]) +
+  geom_point(size = 25, color = c("#e74c3c", "#3498db", "#2ecc71",
+                                   "#f39c12", "#9b59b6", "#1abc9c")) +
+  geom_text(aes(label = step), color = "white", size = 8, fontface = "bold") +
+  geom_text(aes(label = name, y = y + 0.25), size = 4, fontface = "bold") +
+  geom_text(aes(label = description, y = y - 0.25), size = 3) +
+  scale_x_continuous(limits = c(0.5, 6.8)) +
+  scale_y_continuous(limits = c(0.5, 1.5)) +
+  labs(title = "Systematic Troubleshooting Process") +
+  theme_void() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+```
+
+### Step 1: Define the Problem
+
+A well-defined problem is half-solved. Use the **5W2H** method:
+
+```{r 5w2h-table, echo=FALSE}
+w2h <- data.frame(
+  Question = c("WHAT", "WHERE", "WHEN", "WHO", "WHY", "HOW", "HOW MUCH"),
+  Description = c(
+    "What is the problem? What is happening vs. what should happen?",
+    "Where does the problem occur? Location, machine, station?",
+    "When did it start? When does it occur? Continuous or intermittent?",
+    "Who discovered it? Who is affected? Who was operating?",
+    "Why is this a problem? What is the impact?",
+    "How was the problem detected? How is it manifesting?",
+    "How often? How many units affected? What is the magnitude?"
+  ),
+  Example = c(
+    "Motor overheating on conveyor line 3",
+    "Discharge end of conveyor, motor housing",
+    "Started Monday, occurs after 2 hours of operation",
+    "Operator noticed, maintenance called, affects packaging dept",
+    "Risk of motor failure, line stoppage, safety hazard",
+    "Detected by high-temp alarm at 85°C",
+    "Occurs every day, 100% of shifts, 15°C above normal"
+  )
+)
+
+kable(w2h, col.names = c("Question", "What to Ask", "Example Response"),
+      caption = "5W2H Problem Definition Framework") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, color = "white", background = "#2c3e50", width = "12%") %>%
+  column_spec(2, width = "40%") %>%
+  column_spec(3, width = "48%", background = "#f8f9fa")
+```
+
+### Problem Statement Template
+
+> **Good Problem Statement Format:**
+> "[WHAT] is occurring at [WHERE] since [WHEN], affecting [WHO/WHAT], with a magnitude of [HOW MUCH]."
+
+**Example:**
+> "Motor overheating (85°C vs. normal 70°C) is occurring at Conveyor Line 3 discharge motor since Monday morning, affecting packaging department production, with the condition occurring every shift after approximately 2 hours of operation."
+
+<details><summary>**Practice**: Write a problem statement for this scenario</summary>
+
+**Scenario:** An injection molding machine is producing parts with short shots (incomplete fill). The problem was noticed by the quality inspector during the night shift. About 15% of parts are affected. The issue seems worse when running the larger 500g parts compared to the smaller 200g parts.
+
+**Sample Problem Statement:**
+"Short shots (incomplete cavity fill) are occurring on Injection Molding Machine #4 since night shift on Tuesday, affecting 15% of parts produced, with the defect rate increasing significantly when running 500g parts compared to 200g parts."
+</details>
+
+### Step 2: Gather Data and Observations
+
+Before making any changes, collect information systematically:
+
+```{r data-gathering, echo=FALSE}
+data_sources <- data.frame(
+  Source = c("Visual Inspection", "Operator Interview", "Machine Parameters",
+             "Historical Records", "Product/Output", "Environmental"),
+  What_to_Check = c(
+    "Physical condition, wear, contamination, alignment, damage",
+    "What changed? When did it start? Any unusual events?",
+    "Temperatures, pressures, speeds, currents, positions",
+    "Maintenance logs, previous repairs, similar issues",
+    "Defect patterns, measurements, reject rates",
+    "Temperature, humidity, vibration, power quality"
+  ),
+  Tools = c(
+    "Flashlight, mirror, magnifier, camera",
+    "Open-ended questions, active listening",
+    "HMI screens, gauges, multimeter, thermal camera",
+    "CMMS, logbooks, work orders",
+    "Calipers, gauges, CMM, visual inspection",
+    "Thermometer, hygrometer, vibration analyzer"
+  )
+)
+
+kable(data_sources, col.names = c("Data Source", "What to Check", "Tools/Methods"),
+      caption = "Systematic Data Gathering Checklist") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### The "Change Analysis" Approach
+
+Many problems are caused by changes. Ask:
+
+- What changed recently?
+- New materials, suppliers, or batches?
+- New operators or different shifts?
+- Maintenance performed?
+- Environmental changes (weather, season)?
+- Software updates or parameter changes?
+- New products or recipes running?
+
+```{r change-timeline, echo=FALSE, fig.width=11, fig.height=5}
+# Create a change timeline visualization
+timeline_data <- data.frame(
+  event = c("New lubricant\nsupplier", "Operator\ntraining", "PM\ncompleted",
+            "Software\nupdate", "Problem\nstarted", "New shift\nschedule"),
+  date = as.Date(c("2024-01-15", "2024-01-22", "2024-02-01",
+                   "2024-02-05", "2024-02-07", "2024-02-10")),
+  y = c(1, -1, 1, -1, 1, -1),
+  type = c("Change", "Change", "Change", "Change", "Problem", "Change")
+)
+
+ggplot(timeline_data, aes(x = date, y = 0)) +
+  geom_hline(yintercept = 0, color = "gray50", linewidth = 1) +
+  geom_segment(aes(xend = date, yend = y), color = "gray70") +
+  geom_point(aes(y = y, color = type), size = 8) +
+  geom_text(aes(y = y, label = event), vjust = ifelse(timeline_data$y > 0, -1, 2),
+            size = 3) +
+  geom_text(aes(label = format(date, "%b %d")), vjust = 2, size = 2.5) +
+  scale_color_manual(values = c("Change" = "steelblue", "Problem" = "red")) +
+  scale_y_continuous(limits = c(-2, 2)) +
+  labs(title = "Change Timeline Analysis",
+       subtitle = "Map changes against problem occurrence to identify correlations",
+       x = "", y = "") +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+---
+
+## Understanding Root Cause vs. Symptoms
+
+A critical concept in troubleshooting is distinguishing between different levels of causation.
+
+### The Causation Hierarchy
+
+```{r causation-levels, echo=FALSE, fig.width=10, fig.height=7}
+# Create causation hierarchy pyramid
+levels <- data.frame(
+  level = c("Symptom", "Immediate Cause", "Contributing Cause", "Root Cause"),
+  y = c(4, 3, 2, 1),
+  width = c(3, 4, 5, 6),
+  description = c(
+    "Observable effect of the problem",
+    "Direct cause of the symptom",
+    "Factors that enabled the cause",
+    "Fundamental reason - fix this to prevent recurrence"
+  ),
+  example = c(
+    "Motor is overheating",
+    "Bearing is worn",
+    "Lubrication was inadequate",
+    "No PM schedule for bearing lubrication"
+  ),
+  color = c("#e74c3c", "#f39c12", "#3498db", "#27ae60")
+)
+
+ggplot(levels, aes(x = 0, y = y)) +
+  geom_tile(aes(width = width, height = 0.8, fill = color), color = "white", linewidth = 2) +
+  geom_text(aes(label = level), fontface = "bold", size = 5, color = "white") +
+  geom_text(aes(label = description, y = y - 0.25), size = 3, color = "white") +
+  scale_fill_identity() +
+  annotate("text", x = 4, y = 4, label = "Example: Motor is overheating",
+           hjust = 0, size = 3.5, fontface = "italic") +
+  annotate("text", x = 4, y = 3, label = "Example: Bearing is worn",
+           hjust = 0, size = 3.5, fontface = "italic") +
+  annotate("text", x = 4, y = 2, label = "Example: Lubrication inadequate",
+           hjust = 0, size = 3.5, fontface = "italic") +
+  annotate("text", x = 4, y = 1, label = "Example: No PM schedule exists",
+           hjust = 0, size = 3.5, fontface = "italic") +
+  coord_cartesian(xlim = c(-4, 7)) +
+  labs(title = "Causation Hierarchy",
+       subtitle = "Dig deeper to find the root cause - don't stop at symptoms") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Why Finding Root Cause Matters
+
+```{r fix-comparison, echo=FALSE}
+fix_levels <- data.frame(
+  Level = c("Symptom", "Immediate Cause", "Root Cause"),
+  Fix = c("Add cooling fan to motor", "Replace worn bearing",
+          "Implement PM schedule with lubrication tasks"),
+  Result = c("Motor runs cooler temporarily", "Motor works for a while",
+             "Problem eliminated permanently"),
+  Recurrence = c("Problem returns in days", "Problem returns in months",
+                 "Problem does not recur"),
+  Cost_Short = c("$50", "$200", "$500"),
+  Cost_Long = c("$5000+ (repeated failures)", "$2400 (annual replacements)",
+                "$500 (one-time implementation)")
+)
+
+kable(fix_levels, col.names = c("Fix Level", "Action Taken", "Immediate Result",
+                                 "Recurrence", "Short-term Cost", "Long-term Cost"),
+      caption = "Comparison of Fixes at Different Causation Levels") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  row_spec(3, background = "#d4edda", bold = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12%")
+```
+
+---
+
+## The 5 Whys Technique
+
+The **5 Whys** is a simple but powerful technique developed by Sakichi Toyoda and used within Toyota's manufacturing methods.
+
+### How It Works
+
+1. State the problem
+2. Ask "Why?" to identify the cause
+3. Ask "Why?" again about that cause
+4. Continue asking "Why?" until you reach the root cause
+5. Typically requires 5 iterations (sometimes more, sometimes less)
+
+### 5 Whys Example: Production Line Stoppage
+
+```{r five-whys-visual, echo=FALSE, fig.width=11, fig.height=8}
+whys <- data.frame(
+  level = 1:6,
+  question = c("Problem:", "Why #1:", "Why #2:", "Why #3:", "Why #4:", "Why #5:"),
+  answer = c(
+    "Production line stopped",
+    "The robot arm stopped moving",
+    "The servo motor overloaded and faulted",
+    "The gearbox was binding due to wear",
+    "The gearbox lubrication had degraded",
+    "The lubrication was never changed\n(No PM schedule existed)"
+  ),
+  y = 6:1
+)
+
+ggplot(whys, aes(x = 1, y = y)) +
+  geom_tile(aes(fill = level), width = 5, height = 0.8, color = "white", linewidth = 1) +
+  geom_text(aes(x = -0.8, label = question), hjust = 1, fontface = "bold", size = 4) +
+  geom_text(aes(label = answer), hjust = 0.5, size = 3.5,
+            color = ifelse(whys$level == 6, "white", "black")) +
+  geom_segment(aes(x = 0.5, xend = 0.5, y = y - 0.4, yend = y - 0.6),
+               arrow = arrow(length = unit(0.2, "cm")),
+               data = whys[1:5,], color = "gray40") +
+  scale_fill_gradient(low = "#3498db", high = "#c0392b", guide = "none") +
+  coord_cartesian(xlim = c(-2.5, 3.5)) +
+  labs(title = "5 Whys Analysis: Production Line Stoppage",
+       subtitle = "Each 'Why?' digs deeper toward the root cause") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, size = 11))
+```
+
+### 5 Whys Template
+
+```{r five-whys-template, echo=FALSE}
+template <- data.frame(
+  Step = c("Problem Statement", "Why #1", "Why #2", "Why #3", "Why #4", "Why #5", "Root Cause"),
+  Description = c(
+    "Clear, specific description of what happened",
+    "First-level cause (usually technical/physical)",
+    "Why did that first cause occur?",
+    "Why did the second cause occur?",
+    "Why did the third cause occur?",
+    "Why did the fourth cause occur?",
+    "The fundamental cause that, if fixed, prevents recurrence"
+  ),
+  Type = c("Symptom", "Physical", "Physical/Human", "Human/Process",
+           "Process/System", "System/Culture", "Root")
+)
+
+kable(template, col.names = c("Step", "Description", "Typical Cause Type"),
+      caption = "5 Whys Analysis Template") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%") %>%
+  row_spec(7, background = "#d4edda", bold = TRUE)
+```
+
+### Multiple Branches in 5 Whys
+
+Sometimes a problem has multiple causes. When you encounter this, branch your analysis:
+
+```{r branching-whys, echo=FALSE, fig.width=12, fig.height=7}
+# Create branching 5 whys diagram
+nodes <- data.frame(
+  id = 1:9,
+  label = c(
+    "Defective welds\non assembly",
+    "Insufficient\nheat input",
+    "Wrong wire\nfeed speed",
+    "Operator set\nincorrect parameter",
+    "No parameter\nsheet at station",
+    "Contaminated\nbase metal",
+    "Parts not\ncleaned properly",
+    "Cleaning step\nskipped",
+    "Rush order\npressure"
+  ),
+  x = c(0, -2, -3, -3, -3, 2, 2, 2, 2),
+  y = c(5, 4, 3, 2, 1, 4, 3, 2, 1),
+  branch = c("Main", "A", "A", "A", "A", "B", "B", "B", "B")
+)
+
+edges <- data.frame(
+  from_x = c(0, -2, -3, -3, 0, 2, 2, 2),
+  from_y = c(5, 4, 3, 2, 5, 4, 3, 2),
+  to_x = c(-2, -3, -3, -3, 2, 2, 2, 2),
+  to_y = c(4, 3, 2, 1, 4, 3, 2, 1)
+)
+
+ggplot() +
+  geom_segment(data = edges, aes(x = from_x, y = from_y, xend = to_x, yend = to_y),
+               arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
+  geom_label(data = nodes, aes(x = x, y = y, label = label, fill = branch),
+             size = 3, label.padding = unit(0.3, "lines")) +
+  scale_fill_manual(values = c("Main" = "#e74c3c", "A" = "#3498db", "B" = "#27ae60"),
+                    guide = "none") +
+  annotate("text", x = -3, y = 0.3, label = "Root Cause A:\nMissing parameter documentation",
+           fontface = "bold", size = 3.5, color = "#3498db") +
+  annotate("text", x = 2, y = 0.3, label = "Root Cause B:\nSchedule pressure affecting quality",
+           fontface = "bold", size = 3.5, color = "#27ae60") +
+  labs(title = "Branching 5 Whys Analysis",
+       subtitle = "When multiple causes exist, analyze each branch separately") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+<details><summary>**Practice Exercise**: Perform a 5 Whys Analysis</summary>
+
+**Scenario:** A CNC machine produced 50 parts that were all 0.5mm undersize on a critical diameter.
+
+Try to complete the 5 Whys analysis before looking at the sample answer below.
+
+---
+
+**Sample Analysis:**
+
+1. **Problem:** CNC produced 50 undersize parts
+2. **Why #1:** The tool offset was set incorrectly
+3. **Why #2:** The operator entered the wrong offset value
+4. **Why #3:** The operator misread the setup sheet
+5. **Why #4:** The setup sheet had poor formatting and small print
+6. **Why #5:** No standard format exists for setup documentation
+
+**Root Cause:** Lack of standardized, clear setup documentation
+
+**Corrective Actions:**
+- Create standardized setup sheet template with large, clear fonts
+- Add visual verification step (photo of correct setup)
+- Implement first-piece inspection requirement before production run
+</details>
+
+---
+
+## Ishikawa (Fishbone) Diagram
+
+The **Ishikawa diagram**, also called a **fishbone diagram** or **cause-and-effect diagram**, was developed by Kaoru Ishikawa in the 1960s. It provides a structured way to brainstorm and categorize potential causes.
+
+### The 6M Categories
+
+Manufacturing problems are typically organized using the **6M** categories:
+
+```{r 6m-categories, echo=FALSE, fig.width=11, fig.height=7}
+categories <- data.frame(
+  category = c("Man\n(People)", "Machine\n(Equipment)", "Material",
+               "Method\n(Process)", "Measurement", "Mother Nature\n(Environment)"),
+  x = c(1, 2, 3, 4, 5, 6),
+  examples = c(
+    "Training, skill,\nfatigue, attention",
+    "Wear, calibration,\nmaintenance, age",
+    "Quality, variation,\nsupplier, contamination",
+    "Procedures, sequence,\nparameters, SOP",
+    "Accuracy, precision,\ncalibration, method",
+    "Temperature, humidity,\nvibration, cleanliness"
+  )
+)
+
+ggplot(categories, aes(x = x, y = 1)) +
+  geom_tile(aes(fill = category), width = 0.9, height = 1.5, color = "white", linewidth = 2) +
+  geom_text(aes(label = category), y = 1.3, fontface = "bold", size = 4, color = "white") +
+  geom_text(aes(label = examples), y = 0.7, size = 2.8, color = "white") +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
+                               "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
+  labs(title = "The 6M Categories for Cause Analysis",
+       subtitle = "Standard categories for organizing potential causes in manufacturing") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Constructing a Fishbone Diagram
+
+```{r fishbone-example, echo=FALSE, fig.width=14, fig.height=9}
+# Create a fishbone diagram for "Parts have surface scratches"
+# Main spine
+spine <- data.frame(
+  x = c(-1, 8),
+  y = c(0, 0)
+)
+
+# Problem box
+problem <- data.frame(
+  x = 8, y = 0,
+  label = "Parts have\nsurface scratches"
+)
+
+# Main bones (categories)
+bones <- data.frame(
+  category = c("Man", "Machine", "Material", "Method", "Measurement", "Environment"),
+  x_start = c(1, 3, 5, 1, 3, 5),
+  y_start = c(3, 3, 3, -3, -3, -3),
+  x_end = c(2, 4, 6, 2, 4, 6),
+  y_end = c(0, 0, 0, 0, 0, 0)
+)
+
+# Sub-causes for each category
+subcauses <- data.frame(
+  category = c("Man", "Man", "Machine", "Machine", "Machine",
+               "Material", "Material", "Method", "Method",
+               "Measurement", "Environment", "Environment"),
+  label = c("Improper handling", "Lack of training",
+            "Worn conveyor belts", "Chuck jaw damage", "Fixture wear",
+            "Material too soft", "Contaminated surface",
+            "Parts stacked", "No protective wrap",
+            "Scratch spec unclear",
+            "Debris in air", "Dirty work surface"),
+  x = c(1.2, 0.8, 3.2, 2.8, 3.5,
+        5.2, 4.8, 1.2, 0.8,
+        3.2, 5.2, 4.8),
+  y = c(2.2, 1.5, 2.2, 1.5, 0.8,
+        2.2, 1.5, -2.2, -1.5,
+        -2.2, -2.2, -1.5)
+)
+
+ggplot() +
+  # Main spine
+  geom_segment(data = spine, aes(x = x[1], y = y[1], xend = x[2], yend = y[2]),
+               linewidth = 2, color = "gray30") +
+  # Problem box
+  geom_label(data = problem, aes(x = x, y = y, label = label),
+             fill = "#e74c3c", color = "white", fontface = "bold",
+             size = 5, label.padding = unit(0.5, "lines")) +
+  # Category bones
+  geom_segment(data = bones, aes(x = x_start, y = y_start, xend = x_end, yend = y_end),
+               linewidth = 1.5, color = "steelblue") +
+  # Category labels
+  geom_label(data = bones, aes(x = x_start, y = y_start, label = category),
+             fill = "steelblue", color = "white", fontface = "bold", size = 4) +
+  # Sub-cause labels
+  geom_text(data = subcauses, aes(x = x, y = y, label = label),
+            size = 3, hjust = 0) +
+  # Sub-cause lines
+  geom_segment(data = subcauses,
+               aes(x = x - 0.05, y = y,
+                   xend = ifelse(y > 0, x + (3-y)/3 * 1, x + (3+y)/3 * 1),
+                   yend = ifelse(y > 0, y - (3-y)/3 * y/2, y - (3+y)/3 * y/2)),
+               color = "gray50", linewidth = 0.5) +
+  coord_cartesian(xlim = c(-0.5, 10), ylim = c(-4, 4)) +
+  labs(title = "Fishbone Diagram: Parts Have Surface Scratches",
+       subtitle = "Brainstorming potential causes organized by 6M categories") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, margin = margin(b = 20)))
+```
+
+### Fishbone Diagram Best Practices
+
+```{r fishbone-tips, echo=FALSE}
+tips <- data.frame(
+  Guideline = c(
+    "Team Approach",
+    "No Evaluation During Brainstorming",
+    "Use Specific Language",
+    "Aim for 3-5 Causes per Category",
+    "Circle the Most Likely",
+    "Verify with Data"
+  ),
+  Description = c(
+    "Include operators, engineers, maintenance, quality - diverse perspectives",
+    "Capture all ideas first; evaluate feasibility later",
+    "Not 'machine problem' but 'bearing wear on spindle motor'",
+    "Some categories may have more; don't force causes into categories",
+    "After brainstorming, identify 2-3 most probable causes to investigate",
+    "Don't assume - test hypotheses with data before implementing fixes"
+  )
+)
+
+kable(tips, caption = "Best Practices for Fishbone Diagram Development") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "28%")
+```
+
+### Video: How to Create a Fishbone Diagram
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mLvizyDFLQ4" title="Fishbone Diagram Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+## Fault Tree Analysis (FTA)
+
+**Fault Tree Analysis** is a top-down, deductive analysis method that uses Boolean logic to analyze undesired events. Originally developed for the aerospace industry, FTA is particularly useful for complex systems with multiple potential failure paths.
+
+### FTA Symbols
+
+```{r fta-symbols, echo=FALSE}
+symbols <- data.frame(
+  Symbol = c("Rectangle", "Circle", "Diamond", "House", "AND Gate", "OR Gate"),
+  Name = c("Intermediate Event", "Basic Event", "Undeveloped Event",
+           "Normal Event", "AND Gate", "OR Gate"),
+  Meaning = c(
+    "A fault event that results from combination of other events",
+    "A basic failure that cannot be broken down further",
+    "Event not analyzed further (outside scope or insufficient data)",
+    "An event expected to occur during normal operation",
+    "Output occurs only if ALL inputs occur",
+    "Output occurs if ANY input occurs"
+  ),
+  Example = c(
+    "Pump fails to deliver flow",
+    "Motor winding burnout",
+    "Power grid failure",
+    "Normal wear over time",
+    "Both sensor AND controller fail",
+    "Either fuse blows OR breaker trips"
+  )
+)
+
+kable(symbols, caption = "Fault Tree Analysis Symbols") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12%") %>%
+  column_spec(2, width = "18%")
+```
+
+### FTA Example: Pump Fails to Deliver Flow
+
+```{r fta-example, echo=FALSE, fig.width=14, fig.height=10}
+# Create FTA diagram nodes
+fta_nodes <- data.frame(
+  id = 1:13,
+  label = c(
+    "Pump fails to\ndeliver flow",
+    "No power\nto pump",
+    "Mechanical\nfailure",
+    "No fluid\navailable",
+    "Main breaker\ntripped",
+    "Motor\nfailure",
+    "Impeller\nfailure",
+    "Shaft\nseized",
+    "Tank\nempty",
+    "Inlet valve\nclosed",
+    "Suction line\nblocked",
+    "Impeller\nworn",
+    "Impeller\nbroken"
+  ),
+  x = c(7, 3, 7, 11, 3, 5.5, 7, 8.5, 10, 11, 12, 6.5, 7.5),
+  y = c(10, 7, 7, 7, 4, 4, 4, 4, 4, 4, 4, 1, 1),
+  type = c("intermediate", "intermediate", "intermediate", "intermediate",
+           "basic", "basic", "intermediate", "basic",
+           "basic", "basic", "basic", "basic", "basic"),
+  gate = c("OR", "OR", "OR", "OR", NA, NA, "OR", NA, NA, NA, NA, NA, NA)
+)
+
+# Create edges
+fta_edges <- data.frame(
+  from = c(1, 1, 1, 2, 3, 3, 3, 4, 4, 4, 7, 7),
+  to = c(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
+)
+
+ggplot() +
+  # Draw connecting lines
+  geom_segment(aes(x = 7, y = 9.3, xend = 3, yend = 7.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 9.3, xend = 7, yend = 7.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 9.3, xend = 11, yend = 7.7), color = "gray30") +
+  geom_segment(aes(x = 3, y = 6.3, xend = 3, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 6.3, xend = 5.5, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 6.3, xend = 7, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 6.3, xend = 8.5, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 11, y = 6.3, xend = 10, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 11, y = 6.3, xend = 11, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 11, y = 6.3, xend = 12, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 3.3, xend = 6.5, yend = 1.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 3.3, xend = 7.5, yend = 1.7), color = "gray30") +
+  # OR gates (simplified as triangles)
+  geom_point(aes(x = c(7, 3, 7, 11, 7), y = c(9, 6, 6, 6, 3)),
+             shape = 25, size = 8, fill = "yellow", color = "black") +
+  annotate("text", x = c(7, 3, 7, 11, 7), y = c(9, 6, 6, 6, 3),
+           label = "OR", size = 2, fontface = "bold") +
+  # Intermediate events (rectangles)
+  geom_tile(data = fta_nodes[fta_nodes$type == "intermediate",],
+            aes(x = x, y = y), width = 2.3, height = 1.2,
+            fill = "#3498db", color = "black") +
+  geom_text(data = fta_nodes[fta_nodes$type == "intermediate",],
+            aes(x = x, y = y, label = label),
+            color = "white", size = 2.8, fontface = "bold") +
+  # Basic events (circles)
+  geom_point(data = fta_nodes[fta_nodes$type == "basic",],
+             aes(x = x, y = y), size = 15, color = "black", fill = "#27ae60", shape = 21) +
+  geom_text(data = fta_nodes[fta_nodes$type == "basic",],
+            aes(x = x, y = y, label = label),
+            color = "white", size = 2.5) +
+  # Top event styling
+  geom_tile(aes(x = 7, y = 10), width = 2.5, height = 1.3,
+            fill = "#e74c3c", color = "black", linewidth = 1.5) +
+  geom_text(aes(x = 7, y = 10, label = "Pump fails to\ndeliver flow"),
+            color = "white", size = 3.5, fontface = "bold") +
+  scale_y_continuous(limits = c(0, 11)) +
+  scale_x_continuous(limits = c(0, 14)) +
+  labs(title = "Fault Tree Analysis: Pump Fails to Deliver Flow",
+       subtitle = "OR gates mean any single path can cause the top event") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Calculating Probability with FTA
+
+FTA allows quantitative risk analysis by calculating the probability of the top event:
+
+**OR Gate:** P(output) = 1 - [(1 - P~A~) × (1 - P~B~) × ...]
+*Simplified:* P(output) ≈ P~A~ + P~B~ (when probabilities are small)
+
+**AND Gate:** P(output) = P~A~ × P~B~ × ...
+
+```{r fta-calculation, echo=TRUE}
+# Example: Calculate top event probability
+# Basic event probabilities (annual failure rates)
+P_breaker_trip <- 0.02
+P_motor_fail <- 0.01
+P_impeller_worn <- 0.03
+P_impeller_break <- 0.005
+P_shaft_seize <- 0.008
+P_tank_empty <- 0.05
+P_valve_closed <- 0.01
+P_line_blocked <- 0.02
+
+# Impeller failure (OR gate)
+P_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)
+cat("P(Impeller failure):", round(P_impeller_fail, 4), "\n")
+
+# Mechanical failure (OR gate)
+P_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)
+cat("P(Mechanical failure):", round(P_mechanical, 4), "\n")
+
+# No fluid available (OR gate)
+P_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)
+cat("P(No fluid available):", round(P_no_fluid, 4), "\n")
+
+# Top event: Pump fails (OR gate)
+P_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)
+cat("P(Pump fails to deliver flow):", round(P_top, 4), "\n")
+cat("This represents a", round(P_top * 100, 1), "% annual probability of failure")
+```
+
+---
+
+## Pareto Analysis
+
+**Pareto Analysis** is based on the Pareto Principle (80/20 rule): roughly 80% of effects come from 20% of causes. This helps prioritize problem-solving efforts.
+
+### Creating a Pareto Chart
+
+```{r pareto-example, echo=FALSE, fig.width=12, fig.height=7}
+# Defect data for a manufacturing line
+defects <- data.frame(
+  Defect_Type = c("Surface Scratch", "Dimensional Error", "Burrs",
+                  "Missing Feature", "Wrong Material", "Contamination",
+                  "Color Mismatch", "Packaging Damage"),
+  Count = c(145, 98, 67, 34, 28, 21, 15, 12)
+)
+
+# Sort by count
+defects <- defects[order(-defects$Count),]
+defects$Defect_Type <- factor(defects$Defect_Type, levels = defects$Defect_Type)
+
+# Calculate cumulative percentage
+defects$Cumulative <- cumsum(defects$Count)
+defects$Cum_Percent <- defects$Cumulative / sum(defects$Count) * 100
+
+ggplot(defects, aes(x = Defect_Type)) +
+  geom_bar(aes(y = Count), stat = "identity", fill = "steelblue", width = 0.7) +
+  geom_line(aes(y = Cum_Percent * max(Count) / 100, group = 1),
+            color = "#e74c3c", linewidth = 1.2) +
+  geom_point(aes(y = Cum_Percent * max(Count) / 100),
+             color = "#e74c3c", size = 3) +
+  geom_text(aes(y = Count, label = Count), vjust = -0.5, size = 3.5) +
+  geom_text(aes(y = Cum_Percent * max(Count) / 100,
+                label = paste0(round(Cum_Percent, 0), "%")),
+            vjust = -1, hjust = -0.2, size = 3, color = "#e74c3c") +
+  geom_hline(yintercept = 80 * max(defects$Count) / 100,
+             linetype = "dashed", color = "gray50") +
+  annotate("text", x = 7.5, y = 80 * max(defects$Count) / 100 + 5,
+           label = "80% line", size = 3.5, color = "gray40") +
+  scale_y_continuous(
+    name = "Defect Count",
+    sec.axis = sec_axis(~. * 100 / max(defects$Count), name = "Cumulative %")
+  ) +
+  labs(title = "Pareto Chart: Manufacturing Defects by Type",
+       subtitle = "Focus on Surface Scratch and Dimensional Error to address 58% of all defects",
+       x = "Defect Type") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(face = "bold", size = 14),
+    axis.title.y.right = element_text(color = "#e74c3c")
+  )
+```
+
+### Interpreting Pareto Analysis
+
+```{r pareto-interpretation, echo=TRUE}
+# Pareto analysis interpretation
+defects <- data.frame(
+  Defect = c("Surface Scratch", "Dimensional Error", "Burrs",
+             "Missing Feature", "Wrong Material", "Contamination",
+             "Color Mismatch", "Packaging Damage"),
+  Count = c(145, 98, 67, 34, 28, 21, 15, 12)
+)
+
+defects <- defects[order(-defects$Count),]
+defects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100
+
+# Identify the "vital few" (those that contribute to 80%)
+vital_few <- defects[defects$Cumulative_Pct <= 80 |
+                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]
+
+cat("Total defects:", sum(defects$Count), "\n")
+cat("\nVital Few (contributing to ~80% of defects):\n")
+print(vital_few[, c("Defect", "Count", "Cumulative_Pct")])
+cat("\nFocusing on these", nrow(vital_few), "defect types addresses",
+    round(max(vital_few$Cumulative_Pct), 1), "% of all defects")
+```
+
+### Stratified Pareto Analysis
+
+Sometimes you need to break down categories further:
+
+```{r stratified-pareto, echo=FALSE, fig.width=12, fig.height=6}
+# Stratified analysis of "Surface Scratch" defect
+scratch_causes <- data.frame(
+  Cause = c("Handling damage", "Fixture marks", "Chip scratches",
+            "Conveyor marks", "Tool marks", "Unknown"),
+  Count = c(52, 38, 28, 15, 8, 4)
+)
+
+scratch_causes <- scratch_causes[order(-scratch_causes$Count),]
+scratch_causes$Cause <- factor(scratch_causes$Cause, levels = scratch_causes$Cause)
+scratch_causes$Cumulative <- cumsum(scratch_causes$Count)
+scratch_causes$Cum_Pct <- scratch_causes$Cumulative / sum(scratch_causes$Count) * 100
+
+ggplot(scratch_causes, aes(x = Cause)) +
+  geom_bar(aes(y = Count), stat = "identity", fill = "#27ae60", width = 0.7) +
+  geom_line(aes(y = Cum_Pct * max(Count) / 100, group = 1),
+            color = "#e74c3c", linewidth = 1.2) +
+  geom_point(aes(y = Cum_Pct * max(Count) / 100),
+             color = "#e74c3c", size = 3) +
+  geom_text(aes(y = Count, label = Count), vjust = -0.5, size = 4) +
+  geom_hline(yintercept = 80 * max(scratch_causes$Count) / 100,
+             linetype = "dashed", color = "gray50") +
+  scale_y_continuous(
+    name = "Count",
+    sec.axis = sec_axis(~. * 100 / max(scratch_causes$Count), name = "Cumulative %")
+  ) +
+  labs(title = "Stratified Pareto: Causes of Surface Scratch Defects",
+       subtitle = "Drilling down into the #1 defect type",
+       x = "Scratch Cause") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+---
+
+## Is/Is Not Analysis
+
+**Is/Is Not Analysis** is a structured comparison technique that helps narrow down the scope and identify distinguishing factors of a problem.
+
+### Is/Is Not Matrix
+
+```{r is-isnot-example, echo=FALSE}
+is_isnot <- data.frame(
+  Dimension = c("WHAT", "WHAT", "WHERE", "WHERE", "WHEN", "WHEN", "EXTENT", "EXTENT"),
+  Question = c(
+    "What object has the problem?",
+    "What is the defect/symptom?",
+    "Where is the problem observed?",
+    "Where on the object is the defect?",
+    "When was it first observed?",
+    "When in the process/cycle?",
+    "How many units affected?",
+    "Is it trending up/down/stable?"
+  ),
+  IS = c(
+    "Motor on Line 3",
+    "Overheating (85°C)",
+    "Packaging area, Station 4",
+    "Motor housing, bearing end",
+    "Monday morning shift",
+    "After 2 hours of operation",
+    "100% - every shift",
+    "Stable - same every day"
+  ),
+  IS_NOT = c(
+    "Motors on Lines 1, 2, 4",
+    "Noise, vibration, or failure",
+    "Any other station",
+    "Drive end, junction box",
+    "Before weekend (Friday OK)",
+    "Cold start or end of shift",
+    "Intermittent",
+    "Getting worse over time"
+  ),
+  Distinction = c(
+    "Line 3 motor is older, different model",
+    "Thermal issue, not mechanical yet",
+    "Station 4 has higher load demand",
+    "Bearing end runs hotter normally",
+    "Something changed over weekend",
+    "Heat buildup issue",
+    "Consistent problem",
+    "Stable - not progressive failure"
+  )
+)
+
+kable(is_isnot, col.names = c("Dimension", "Question", "IS", "IS NOT", "What's Different?"),
+      caption = "Is/Is Not Analysis: Motor Overheating Problem") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "8%") %>%
+  column_spec(2, width = "20%") %>%
+  column_spec(3, background = "#d4edda", width = "22%") %>%
+  column_spec(4, background = "#f8d7da", width = "22%") %>%
+  column_spec(5, background = "#fff3cd", width = "28%")
+```
+
+### Key Insights from Is/Is Not Analysis
+
+From the example above, we can identify:
+
+1. **Line 3 specific** - Not a general problem across all lines
+2. **Thermal, not mechanical** - Overheating but no noise/vibration yet
+3. **After warm-up** - Heat accumulation issue
+4. **Started after weekend** - Something changed
+
+**Investigation focus:** What changed over the weekend? Check maintenance logs, any work done on Line 3, any environmental changes.
+
+---
+
+## The 8D Problem-Solving Methodology
+
+The **8D (Eight Disciplines)** methodology is a comprehensive problem-solving approach developed by Ford Motor Company. It's widely used in automotive and other industries.
+
+```{r 8d-overview, echo=FALSE, fig.width=12, fig.height=8}
+d8_steps <- data.frame(
+  D = paste0("D", 0:8),
+  Name = c("Plan", "Team", "Problem", "Containment", "Root Cause",
+           "Corrective Actions", "Implementation", "Prevention", "Closure"),
+  Description = c(
+    "Plan the 8D approach; determine if 8D is appropriate",
+    "Establish a cross-functional team with required skills",
+    "Define and describe the problem in measurable terms",
+    "Implement temporary actions to protect customer",
+    "Identify and verify root cause(s) using RCA tools",
+    "Develop and verify permanent corrective actions",
+    "Implement and validate permanent corrective actions",
+    "Prevent recurrence; update systems and procedures",
+    "Recognize team; document learnings; close out"
+  ),
+  y = 9:1
+)
+
+ggplot(d8_steps, aes(x = 1, y = y)) +
+  geom_tile(aes(fill = y), width = 6, height = 0.85, color = "white", linewidth = 1) +
+  geom_text(aes(x = -1.5, label = D), fontface = "bold", size = 6, color = "steelblue") +
+  geom_text(aes(x = -0.5, label = Name), fontface = "bold", size = 4, hjust = 0) +
+  geom_text(aes(x = 1.3, label = Description), size = 3.2, hjust = 0) +
+  scale_fill_gradient(low = "#27ae60", high = "#3498db", guide = "none") +
+  coord_cartesian(xlim = c(-2, 5)) +
+  labs(title = "The 8D Problem-Solving Methodology",
+       subtitle = "A structured approach for complex problems requiring cross-functional teams") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Detailed 8D Steps
+
+```{r 8d-details, echo=FALSE}
+d8_detail <- data.frame(
+  Discipline = c("D0: Plan", "D1: Team", "D2: Problem", "D3: Containment",
+                 "D4: Root Cause", "D5: Corrective Actions",
+                 "D6: Implementation", "D7: Prevention", "D8: Closure"),
+  Key_Activities = c(
+    "Emergency response actions, initial assessment, determine if 8D needed",
+    "Select team leader, identify required expertise, define roles",
+    "5W2H, Is/Is Not, quantify impact, identify affected parts/lots",
+    "Sort suspect material, increase inspection, alert downstream",
+    "5 Whys, Fishbone, FTA, verify cause by testing",
+    "Brainstorm solutions, verify effectiveness before full rollout",
+    "Execute action plan, validate results, monitor KPIs",
+    "Update FMEAs, procedures, training, share across organization",
+    "Final documentation, lessons learned, team recognition"
+  ),
+  Deliverables = c(
+    "8D initiation decision, emergency actions",
+    "Team charter, member list with expertise",
+    "Problem statement, scope definition",
+    "Containment actions, protected customer",
+    "Verified root cause(s)",
+    "Verified corrective action plan",
+    "Implemented actions, validated results",
+    "Updated procedures, similar problem prevention",
+    "8D report, closed status"
+  )
+)
+
+kable(d8_detail, col.names = c("Discipline", "Key Activities", "Deliverables"),
+      caption = "8D Methodology Detailed Breakdown") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### D3: Containment Actions
+
+Containment is crucial to protect the customer while you investigate:
+
+```{r containment-types, echo=FALSE}
+containment <- data.frame(
+  Type = c("Sort & Inspect", "Rework/Repair", "Scrap", "Hold/Quarantine",
+           "Increase Monitoring", "Supplier Notification", "Customer Alert"),
+  Description = c(
+    "100% inspection of suspect inventory to separate good from bad",
+    "Repair nonconforming units if possible and economical",
+    "Dispose of units that cannot be repaired",
+    "Prevent movement of suspect material until disposition",
+    "Add inspections, increase sampling, tighten control limits",
+    "Notify suppliers if incoming material is suspected",
+    "Alert customers to check their inventory if product shipped"
+  ),
+  Example = c(
+    "Inspect all parts from Lot 2024-0215",
+    "Re-machine undersize diameters to specification",
+    "Dispose of parts with cracks",
+    "Tag and segregate all parts from affected shift",
+    "Add 100% visual inspection at Pack station",
+    "Request material certification from steel supplier",
+    "Contact distributor about potentially affected batch"
+  )
+)
+
+kable(containment, caption = "Types of Containment Actions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+---
+
+## Corrective Action Implementation
+
+Effective corrective actions address the root cause and prevent recurrence.
+
+### Types of Corrective Actions
+
+```{r corrective-action-hierarchy, echo=FALSE, fig.width=11, fig.height=7}
+ca_types <- data.frame(
+  level = 1:5,
+  type = c("Eliminate", "Substitute", "Engineering Controls",
+           "Administrative Controls", "Personal Actions"),
+  description = c(
+    "Remove the cause entirely",
+    "Replace with less risky alternative",
+    "Physical changes to equipment/process",
+    "Procedures, training, SOPs",
+    "Rely on human behavior"
+  ),
+  effectiveness = c("Highest", "High", "Medium-High", "Medium", "Low"),
+  example = c(
+    "Eliminate manual handling by automating",
+    "Replace toxic chemical with safer alternative",
+    "Add interlock to prevent wrong operation",
+    "Update procedure, add checklist",
+    "Train operator to be more careful"
+  ),
+  reliability = c(95, 85, 75, 50, 30),
+  color = c("#27ae60", "#2ecc71", "#f1c40f", "#e67e22", "#e74c3c")
+)
+
+ggplot(ca_types, aes(x = reorder(type, reliability), y = reliability)) +
+  geom_bar(stat = "identity", aes(fill = color), width = 0.7) +
+  geom_text(aes(label = paste0(reliability, "%")), hjust = -0.2, size = 4) +
+  geom_text(aes(y = 5, label = example), hjust = 0, size = 3, color = "white") +
+  scale_fill_identity() +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 110)) +
+  labs(title = "Corrective Action Hierarchy",
+       subtitle = "Higher-level controls are more reliable and effective",
+       x = "", y = "Reliability (% effective in preventing recurrence)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.y = element_text(size = 11)
+  )
+```
+
+### SMART Corrective Actions
+
+Corrective actions should be **SMART**:
+
+```{r smart-actions, echo=FALSE}
+smart <- data.frame(
+  Letter = c("S", "M", "A", "R", "T"),
+  Meaning = c("Specific", "Measurable", "Achievable", "Relevant", "Time-bound"),
+  Description = c(
+    "Clearly defined action, not vague",
+    "Can verify completion and effectiveness",
+    "Realistic with available resources",
+    "Directly addresses the root cause",
+    "Has a target completion date"
+  ),
+  Bad_Example = c(
+    "Improve quality",
+    "Train operators",
+    "Redesign entire product line",
+    "Repaint the floor",
+    "Do this sometime soon"
+  ),
+  Good_Example = c(
+    "Install poka-yoke sensor on Station 3 to detect missing holes",
+    "Train all operators on new SOP-234 with signed competency verification",
+    "Add inspection step (1 min/part) with existing CMM capacity",
+    "Add check fixture to verify hole position before assembly",
+    "Complete by March 15, 2024"
+  )
+)
+
+kable(smart, col.names = c("", "Meaning", "Description", "Poor Example", "Good Example"),
+      caption = "SMART Corrective Action Criteria") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, background = "steelblue", color = "white", width = "4%") %>%
+  column_spec(4, background = "#f8d7da") %>%
+  column_spec(5, background = "#d4edda")
+```
+
+---
+
+## Verification and Validation
+
+Before closing out a problem, verify that your actions worked.
+
+### Verification vs. Validation
+
+```{r vv-comparison, echo=FALSE}
+vv <- data.frame(
+  Aspect = c("Definition", "Focus", "Question", "Timing", "Methods"),
+  Verification = c(
+    "Did we implement the action correctly?",
+    "Process compliance",
+    "Did we build the fix right?",
+    "During/after implementation",
+    "Audits, inspections, checklists"
+  ),
+  Validation = c(
+    "Did the action solve the problem?",
+    "Results and effectiveness",
+    "Did we build the right fix?",
+    "After implementation, during monitoring",
+    "Data analysis, trend charts, capability studies"
+  )
+)
+
+kable(vv, col.names = c("Aspect", "Verification", "Validation"),
+      caption = "Verification vs. Validation of Corrective Actions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%") %>%
+  column_spec(2, background = "#e3f2fd") %>%
+  column_spec(3, background = "#e8f5e9")
+```
+
+### Effectiveness Monitoring
+
+```{r effectiveness-tracking, echo=FALSE, fig.width=12, fig.height=6}
+# Simulate defect rate before and after corrective action
+set.seed(42)
+n <- 30
+dates <- seq.Date(from = as.Date("2024-01-01"), by = "day", length.out = n)
+ca_date <- as.Date("2024-01-15")  # Corrective action implemented
+
+defect_rate <- c(
+  rnorm(14, mean = 4.5, sd = 1),  # Before CA
+  rnorm(16, mean = 1.5, sd = 0.5)  # After CA
+)
+defect_rate[defect_rate < 0] <- 0.2
+
+effectiveness_data <- data.frame(
+  Date = dates,
+  Defect_Rate = defect_rate,
+  Period = ifelse(dates < ca_date, "Before CA", "After CA")
+)
+
+ggplot(effectiveness_data, aes(x = Date, y = Defect_Rate)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(aes(color = Period), size = 3) +
+  geom_vline(xintercept = as.numeric(ca_date), linetype = "dashed",
+             color = "red", linewidth = 1) +
+  annotate("text", x = ca_date, y = max(defect_rate) * 0.95,
+           label = "Corrective Action\nImplemented", hjust = -0.1,
+           fontface = "bold", color = "red", size = 3.5) +
+  geom_hline(yintercept = mean(defect_rate[1:14]), linetype = "dashed",
+             color = "orange", alpha = 0.7) +
+  annotate("text", x = min(dates), y = mean(defect_rate[1:14]) + 0.3,
+           label = paste0("Before avg: ", round(mean(defect_rate[1:14]), 1), "%"),
+           hjust = 0, size = 3, color = "orange") +
+  geom_hline(yintercept = mean(defect_rate[15:30]), linetype = "dashed",
+             color = "darkgreen", alpha = 0.7) +
+  annotate("text", x = max(dates), y = mean(defect_rate[15:30]) + 0.3,
+           label = paste0("After avg: ", round(mean(defect_rate[15:30]), 1), "%"),
+           hjust = 1, size = 3, color = "darkgreen") +
+  scale_color_manual(values = c("Before CA" = "orange", "After CA" = "darkgreen")) +
+  labs(title = "Corrective Action Effectiveness Monitoring",
+       subtitle = "Defect rate tracked before and after implementation",
+       x = "", y = "Defect Rate (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "bottom"
+  )
+```
+
+```{r effectiveness-calculation, echo=TRUE}
+# Calculate improvement
+before_avg <- mean(defect_rate[1:14])
+after_avg <- mean(defect_rate[15:30])
+improvement <- (before_avg - after_avg) / before_avg * 100
+
+cat("Before corrective action: ", round(before_avg, 2), "% defect rate\n")
+cat("After corrective action:  ", round(after_avg, 2), "% defect rate\n")
+cat("Improvement:              ", round(improvement, 1), "% reduction\n")
+```
+
+---
+
+## Case Study: Automotive Welding Defects
+
+Let's work through a comprehensive troubleshooting case using multiple RCA tools.
+
+### The Problem
+
+A Tier-1 automotive supplier is experiencing weld porosity defects on a critical structural component. Customer complaints have increased, and the plant has received a quality alert.
+
+### Initial Problem Definition (5W2H)
+
+```{r case-5w2h, echo=FALSE}
+case_problem <- data.frame(
+  Question = c("WHAT", "WHERE", "WHEN", "WHO", "WHY", "HOW", "HOW MUCH"),
+  Answer = c(
+    "Porosity (gas pockets) in MIG welds on crossmember subassembly",
+    "Robot welding Cell 4, occurring at weld joint W-23 (corner weld)",
+    "Started approximately 2 weeks ago, occurs on all shifts",
+    "Detected by customer during their incoming inspection",
+    "Customer rejecting parts; risk of production line stop",
+    "Visible voids on X-ray inspection; some visible to naked eye",
+    "Estimated 8% of parts affected (up from baseline of 0.5%)"
+  )
+)
+
+kable(case_problem, col.names = c("Question", "Details"),
+      caption = "Case Study Problem Definition") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%")
+```
+
+### 5 Whys Analysis
+
+```{r case-5whys, echo=FALSE}
+case_whys <- data.frame(
+  Level = c("Problem", "Why #1", "Why #2", "Why #3", "Why #4", "Why #5"),
+  Finding = c(
+    "Porosity in welds at joint W-23",
+    "Gas entrapment during solidification",
+    "Inadequate shielding gas coverage",
+    "Gas flow rate dropped below specification",
+    "Flow meter was not calibrated; showing higher than actual",
+    "No calibration schedule existed for welding gas flow meters"
+  )
+)
+
+kable(case_whys, caption = "5 Whys Analysis: Weld Porosity") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%") %>%
+  row_spec(6, background = "#d4edda", bold = TRUE)
+```
+
+### Fishbone Diagram Findings
+
+After brainstorming with the cross-functional team:
+
+```{r case-fishbone-findings, echo=FALSE}
+fishbone_findings <- data.frame(
+  Category = c("Machine", "Machine", "Material", "Material",
+               "Method", "Method", "Man", "Environment"),
+  Potential_Cause = c(
+    "Gas flow meter out of calibration",
+    "Worn contact tip affecting arc stability",
+    "Different wire lot from new supplier",
+    "Base metal surface contamination",
+    "Robot path too fast for corner weld",
+    "Gas pre-flow time insufficient",
+    "Recent operator turnover, less experience",
+    "Seasonal humidity changes"
+  ),
+  Likelihood = c("HIGH", "Medium", "Medium", "Low",
+                 "Medium", "HIGH", "Low", "Low"),
+  Verified = c("YES - Root cause", "No - tips OK", "No - tested OK",
+               "No - clean parts", "Partial contributor",
+               "YES - Contributing", "No - all shifts affected", "No - controlled")
+)
+
+kable(fishbone_findings,
+      col.names = c("Category", "Potential Cause", "Likelihood", "Verification Result"),
+      caption = "Fishbone Analysis Results with Verification") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12%") %>%
+  row_spec(c(1, 6), background = "#d4edda")
+```
+
+### 8D Report Summary
+
+```{r case-8d, echo=FALSE}
+d8_report <- data.frame(
+  D = paste0("D", 1:8),
+  Discipline = c("Team", "Problem", "Containment", "Root Cause",
+                 "Corrective Actions", "Implementation", "Prevention", "Closure"),
+  Actions = c(
+    "Team: Weld Engineer (lead), Quality, Maintenance, Production Supervisor, Supplier Quality",
+    "8% porosity rate at W-23 joint since Jan 15; customer quality alert received Jan 28",
+    "100% X-ray inspection of all crossmembers; sort and quarantine 3 days production",
+    "Primary: Flow meter out of calibration (reading 25 CFH, actual 18 CFH). Contributing: Pre-flow time was 0.3s, spec requires 0.5s",
+    "1. Recalibrate flow meter immediately; 2. Increase pre-flow time to 0.5s; 3. Add flow meter to calibration schedule",
+    "Actions completed Feb 5; validation testing shows 0.1% porosity rate (below 0.5% target)",
+    "Updated PM schedule to include all gas flow meters quarterly; added to PFMEA with RPN recalculation",
+    "Customer satisfied with response; 8D closed Feb 15; cost avoidance: $45,000 (avoided line stop)"
+  )
+)
+
+kable(d8_report, col.names = c("D#", "Discipline", "Summary"),
+      caption = "8D Report: Weld Porosity Case Study") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "6%") %>%
+  column_spec(2, bold = TRUE, width = "15%")
+```
+
+---
+
+## Documentation and Knowledge Management
+
+Proper documentation ensures learnings are captured and problems don't recur.
+
+### Key Documentation Elements
+
+```{r documentation-checklist, echo=FALSE}
+doc_elements <- data.frame(
+  Element = c("Problem Description", "Timeline", "Data Collected",
+              "Root Cause Analysis", "Corrective Actions", "Verification Results",
+              "Lessons Learned", "System Updates"),
+  Contents = c(
+    "5W2H, problem statement, impact/cost",
+    "When discovered, key investigation dates, implementation dates",
+    "Measurements, photos, test results, operator interviews",
+    "5 Whys, fishbone diagrams, FTA as applicable",
+    "Actions taken, responsible parties, target/actual dates",
+    "Before/after data, statistical comparison, effectiveness %",
+    "What we'd do differently, recommendations for similar situations",
+    "PFMEA updates, procedure changes, training records"
+  ),
+  Benefit = c(
+    "Clear reference for similar future problems",
+    "Understanding of response time, identifying delays",
+    "Evidence-based analysis, reference for future",
+    "Documented logical process, training material",
+    "Accountability, closure verification",
+    "Proof of effectiveness, audit trail",
+    "Continuous improvement, organizational learning",
+    "Prevention of recurrence, compliance"
+  )
+)
+
+kable(doc_elements, caption = "RCA Documentation Checklist") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### Creating a Troubleshooting Knowledge Base
+
+Build organizational memory by:
+
+1. **Standardized templates** - Use consistent formats for all RCA documents
+2. **Searchable database** - Store in CMMS, SharePoint, or dedicated quality system
+3. **Categories and tags** - Equipment type, failure mode, root cause category
+4. **Cross-references** - Link related issues and solutions
+5. **Regular reviews** - Periodic analysis of trends and patterns
+
+---
+
+## Troubleshooting Tools Quick Reference
+
+```{r tool-selection, echo=FALSE}
+tool_guide <- data.frame(
+  Tool = c("5 Whys", "Fishbone Diagram", "Fault Tree Analysis",
+           "Pareto Chart", "Is/Is Not", "8D", "Change Analysis"),
+  Best_For = c(
+    "Simple problems with linear cause chains",
+    "Brainstorming multiple potential causes",
+    "Complex systems with multiple failure paths",
+    "Prioritizing which problems to tackle first",
+    "Narrowing down scope and identifying distinctions",
+    "Customer complaints requiring formal response",
+    "Problems that started suddenly"
+  ),
+  When_to_Use = c(
+    "Quick investigations, starting point for analysis",
+    "Team problem-solving sessions",
+    "Safety-critical systems, reliability analysis",
+    "When facing multiple problems or defect types",
+    "When problem is hard to define clearly",
+    "Formal quality requirements, major issues",
+    "When timing of problem onset is known"
+  ),
+  Team_Size = c("1-3", "4-8", "2-5", "1-3", "2-4", "5-10", "1-4")
+)
+
+kable(tool_guide,
+      col.names = c("Tool", "Best For", "When to Use", "Team Size"),
+      caption = "RCA Tool Selection Guide") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%")
+```
+
+---
+
+## Video Resources
+
+### Understanding 5 Whys
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SrlYkx41wEE" title="5 Whys Root Cause Analysis" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### 8D Problem Solving
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-9MUBLT0DjI" title="8D Problem Solving Methodology" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+## Summary
+
+Effective troubleshooting and root cause analysis require:
+
+1. **Systematic approach** - Don't guess; follow a structured methodology
+2. **Clear problem definition** - Use 5W2H to clearly define what you're solving
+3. **Data-driven analysis** - Collect facts before jumping to conclusions
+4. **Root cause focus** - Don't stop at symptoms; dig to fundamental causes
+5. **Multiple tools** - Use 5 Whys, Fishbone, FTA, Pareto as appropriate
+6. **Effective corrective actions** - Aim for elimination, not just mitigation
+7. **Verification** - Confirm your fix actually works with data
+8. **Documentation** - Capture learnings to prevent recurrence
+
+Remember: The goal isn't just to fix today's problem - it's to prevent tomorrow's.
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: What is the difference between a symptom, immediate cause, and root cause? Provide an example of each for a machine that is producing parts with excessive surface roughness.</summary>
+
+**Answer:**
+
+- **Symptom**: The observable effect of the problem
+  - *Example: Parts have Ra surface roughness of 3.2 μm when specification is 1.6 μm*
+
+- **Immediate cause**: The direct, technical cause of the symptom
+  - *Example: Cutting tool is worn beyond its effective life*
+
+- **Root cause**: The fundamental reason that, if eliminated, prevents recurrence
+  - *Example: No tool life monitoring system exists; operators judge tool changes by intuition rather than data*
+
+Fixing the root cause (implementing tool life tracking) prevents the problem from recurring, whereas just replacing the tool (addressing immediate cause) means it will happen again.
+</details>
+
+<details><summary>**Question 2**: A food processing plant is experiencing frequent jams on their packaging line. Perform a 5 Whys analysis given the following information: The jam occurs at the carton loading station, started last week, happens 4-5 times per shift, and the maintenance team found the timing of the pusher mechanism is off.</summary>
+
+**Answer:**
+
+1. **Problem**: Carton loading station jams 4-5 times per shift
+2. **Why #1**: Cartons are not in position when pusher activates → Timing mismatch
+3. **Why #2**: Pusher timing is off by approximately 0.3 seconds
+4. **Why #3**: Timing adjustment was changed during last week's maintenance
+5. **Why #4**: Technician didn't have correct specification for timing setting
+6. **Why #5**: Maintenance procedure doesn't include timing specifications
+
+**Root Cause**: Maintenance procedures lack critical parameter specifications
+
+**Corrective Actions**:
+- Update maintenance procedure with correct timing specification (180ms ± 10ms)
+- Restore timing to correct setting immediately
+- Review other procedures for missing specifications
+- Add parameter verification checklist to PM activities
+</details>
+
+<details><summary>**Question 3**: Create a fishbone diagram outline (list the potential causes under each 6M category) for the problem "CNC machine producing parts 0.05mm oversize."</summary>
+
+**Answer:**
+
+**MAN (People)**
+- Operator entered wrong offset
+- Incorrect setup procedure followed
+- Inadequate training on new program
+- Fatigue/distraction during setup
+
+**MACHINE (Equipment)**
+- Spindle thermal growth
+- Ballscrew wear/backlash
+- Tool holder runout
+- Axis positioning error
+
+**MATERIAL**
+- Material hardness variation
+- Different lot from supplier
+- Material springback
+- Incorrect material grade
+
+**METHOD (Process)**
+- Wrong tool offset entered
+- Program error in G-code
+- Incorrect cutting parameters
+- Missing roughing pass
+
+**MEASUREMENT**
+- Gauge out of calibration
+- Wrong measurement technique
+- Temperature affecting measurement
+- Incorrect datum reference
+
+**MOTHER NATURE (Environment)**
+- Shop temperature variation
+- Coolant temperature change
+- Vibration from nearby equipment
+- Humidity affecting gauges
+</details>
+
+<details><summary>**Question 4**: Given the following defect data from a sheet metal stamping operation, create a Pareto analysis and identify the vital few defects to focus on.</summary>
+
+| Defect Type | Count |
+|------------|-------|
+| Scratches | 89 |
+| Burrs | 156 |
+| Wrinkles | 45 |
+| Splits/Cracks | 28 |
+| Dimensional | 112 |
+| Surface Dents | 67 |
+| Missing Features | 18 |
+
+**Answer:**
+
+```{r pareto-practice, echo=TRUE}
+# Create and analyze the data
+defects <- data.frame(
+  Type = c("Burrs", "Dimensional", "Scratches", "Surface Dents",
+           "Wrinkles", "Splits/Cracks", "Missing Features"),
+  Count = c(156, 112, 89, 67, 45, 28, 18)
+)
+
+# Sort by count descending
+defects <- defects[order(-defects$Count),]
+
+# Calculate percentages
+defects$Percent <- defects$Count / sum(defects$Count) * 100
+defects$Cumulative <- cumsum(defects$Percent)
+
+# Display results
+print(defects)
+
+# Identify vital few
+vital_few <- defects$Type[defects$Cumulative <= 80 |
+                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]
+cat("\nVital Few (contributing to ~80%):", paste(vital_few, collapse = ", "))
+```
+
+The **vital few** are Burrs, Dimensional errors, and Scratches - addressing these three defect types would address approximately 69% of all defects. Adding Surface Dents would bring the total to 82%.
+</details>
+
+<details><summary>**Question 5**: What are the key differences between verification and validation in the context of corrective actions?</summary>
+
+**Answer:**
+
+| Aspect | Verification | Validation |
+|--------|--------------|------------|
+| Question asked | Did we implement the action correctly? | Did the action solve the problem? |
+| Focus | Process compliance | Results/outcomes |
+| Timing | During/immediately after implementation | Ongoing monitoring after implementation |
+| Methods | Audits, checklists, inspections | Data analysis, trend charts, SPC |
+| Example | Confirm new sensor was installed per specification | Measure defect rate over 30 days to confirm reduction |
+
+**Verification** confirms the action was done right.
+**Validation** confirms we did the right action.
+
+Both are required - an action can be implemented perfectly (verified) but still not solve the problem (not validated).
+</details>
+
+<details><summary>**Question 6**: An aerospace manufacturer has a requirement to use the 8D methodology for customer complaints. What happens in D3 (Containment) and why is it critical?</summary>
+
+**Answer:**
+
+**D3 Containment Actions** protect the customer while the root cause investigation continues. Key activities include:
+
+1. **Immediate actions**:
+   - Quarantine suspect inventory (tagged, segregated)
+   - 100% inspection of suspect lots
+   - Increase monitoring at subsequent operations
+   - Sort parts at customer location if already shipped
+
+2. **Documentation**:
+   - Identify affected lot numbers, date codes, serial numbers
+   - Quantify the scope of potential exposure
+   - Document all containment actions taken
+
+3. **Communication**:
+   - Notify customer of actions being taken
+   - Alert downstream operations
+   - Inform suppliers if incoming material involved
+
+**Why critical**:
+- Prevents additional defective product from reaching the customer
+- Limits the scope of the problem (cost, liability)
+- Demonstrates responsiveness to customer
+- Buys time for proper root cause investigation
+- In aerospace, safety-of-flight concerns make containment essential
+
+Without effective containment, the problem continues while you investigate, increasing customer impact and costs exponentially.
+</details>
+
+<details><summary>**Question 7**: Why might a team's 5 Whys analysis stop too early? What are signs that you haven't reached the true root cause?</summary>
+
+**Answer:**
+
+**Reasons teams stop too early**:
+1. **Blame arrives** - Analysis ends at "operator error" without asking why the error occurred
+2. **Comfort zone** - Team stops when they reach a cause they can easily fix
+3. **Time pressure** - Rush to implement a fix, skipping deeper analysis
+4. **Technical limit** - Team lacks expertise to go deeper into certain areas
+5. **Defensiveness** - Reaching causes that implicate management or systems creates resistance
+
+**Signs you haven't reached root cause**:
+1. **Recurrence** - If the fix is "more training" or "be more careful," problem will return
+2. **Human-based answer** - Root causes should typically be systems/processes, not individuals
+3. **No prevention mechanism** - If fixing this cause doesn't prevent future occurrences, keep asking why
+4. **Can still ask "why?"** - If there's a logical next level to investigate
+5. **Administrative fix only** - If the solution is just a procedure or checklist with no engineering controls
+
+**Example of stopping too early**:
+- Stopping at: "Operator set wrong parameter"
+- Should continue: Why? → No parameter sheet at workstation → Why? → No standard work documentation exists → Root cause: Missing standardized work process
+
+The true root cause typically relates to systems, processes, or management decisions rather than individual actions.
+</details>
+
+<details><summary>**Question 8**: Describe how you would use Pareto analysis in a stratified manner to drill down into a quality problem.</summary>
+
+**Answer:**
+
+**Stratified Pareto Analysis** involves creating multiple levels of Pareto charts, progressively drilling down into the vital few categories.
+
+**Example: High scrap rate at a machining shop**
+
+**Level 1: Scrap by defect type**
+1. Create Pareto of all defect types
+2. Result: "Dimensional errors" is 45% of all scrap - investigate this first
+
+**Level 2: Dimensional errors by machine**
+1. Create Pareto of dimensional errors broken down by machine
+2. Result: Machine #4 accounts for 60% of dimensional errors
+
+**Level 3: Machine #4 dimensional errors by feature**
+1. Create Pareto of which dimensions are failing on Machine #4
+2. Result: Bore diameter is 70% of Machine #4 dimensional issues
+
+**Level 4: Bore diameter issues by shift/operator**
+1. Create Pareto by shift
+2. Result: Evenly distributed - not operator-dependent (machine issue confirmed)
+
+**Final Analysis**: Investigate boring operation on Machine #4 specifically - likely tool wear, spindle issue, or program error.
+
+The stratified approach efficiently narrows focus from "we have a scrap problem" to "boring operation on Machine #4 has a systematic error."
+</details>
+
+<details><summary>**Question 9**: A defense contractor needs to analyze a safety-critical failure. Why might Fault Tree Analysis (FTA) be preferred over simpler methods like 5 Whys?</summary>
+
+**Answer:**
+
+**FTA advantages for safety-critical analysis**:
+
+1. **Handles complexity**:
+   - Safety-critical systems often have multiple redundancies and complex failure paths
+   - FTA can model combinations of events that must occur together (AND gates) or alternatively (OR gates)
+   - 5 Whys follows single linear path; FTA captures parallel paths
+
+2. **Quantitative capability**:
+   - FTA allows probability calculations for top event
+   - Can identify minimum cut sets (smallest combinations that cause failure)
+   - Supports reliability and safety integrity level (SIL) calculations
+   - Defense/aerospace require quantitative risk assessment
+
+3. **Documentation requirements**:
+   - Regulatory bodies (FAA, DoD) often require FTA for critical systems
+   - Provides auditable, traceable analysis
+   - Standard symbols and methodology
+
+4. **Identifies hidden failures**:
+   - Can reveal single points of failure
+   - Shows where redundancy is (or isn't) effective
+   - Identifies common cause failures that defeat redundancy
+
+5. **Design improvement**:
+   - Visual representation helps identify where to add safeguards
+   - Sensitivity analysis shows which basic events most affect risk
+   - Supports design reviews and safety cases
+
+**Example**: A missile guidance system failure
+- 5 Whys might identify one cause path
+- FTA would show all possible failure paths, calculate overall failure probability, and identify that two specific sensor failures AND a software error all occurring together could cause the top event, even though each alone is unlikely.
+</details>
+
+---
+
+## References
+
+1. Latino, R.J., Latino, K.C., & Latino, M.A. (2019). *Root Cause Analysis: Improving Performance for Bottom-Line Results* (5th ed.). CRC Press.
+
+2. Okes, D. (2019). *Root Cause Analysis: The Core of Problem Solving and Corrective Action* (2nd ed.). ASQ Quality Press.
+
+3. Andersen, B., & Fagerhaug, T. (2006). *Root Cause Analysis: Simplified Tools and Techniques* (2nd ed.). ASQ Quality Press.
+
+4. AIAG. (2018). *CQI-20: Effective Problem Solving Guide*. Automotive Industry Action Group.
+
+5. IEC 61025:2006. *Fault Tree Analysis (FTA)*. International Electrotechnical Commission.
+
+6. Ishikawa, K. (1990). *Introduction to Quality Control*. 3A Corporation.
+
+7. Juran, J.M. (1988). *Juran on Planning for Quality*. Free Press.
+
+8. Ford Motor Company. (2019). *Global 8D Problem Solving Manual*. Ford Motor Company.
+
+9. NASA. (2002). *Fault Tree Handbook with Aerospace Applications*. NASA Office of Safety and Mission Assurance.
+
+10. Wilson, P.F., Dell, L.D., & Anderson, G.F. (1993). *Root Cause Analysis: A Tool for Total Quality Management*. ASQ Quality Press.

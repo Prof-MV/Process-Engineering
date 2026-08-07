@@ -1,0 +1,1112 @@
+# Process and Design
+
+```{r setup-02, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+1. Describe the stages of process plant project development from concept to operation
+2. Differentiate between fixed, programmable, and flexible automation systems
+3. Interpret Process Flow Diagrams (PFDs) and Piping & Instrumentation Diagrams (P&IDs)
+4. Explain the purpose and content of Front-End Engineering Design (FEED)
+5. Apply Design for Manufacturing (DFM) and Design for Assembly (DFA) principles
+6. Understand the role of HAZOP studies in process safety
+7. Identify key engineering deliverables for each project phase
+
+------------------------------------------------------------------------
+
+## Introduction to Process Engineering
+
+**Process engineering** is a specialized branch of engineering that focuses on the design, optimization, and implementation of manufacturing processes and production systems. Process engineers work at the intersection of design and production, ensuring that products can be manufactured efficiently, safely, and economically.
+
+<details>
+<summary>What is the role of a process engineer?</summary>
+
+Process engineers are responsible for:
+
+- **Designing production processes** - Selecting equipment, defining sequences, optimizing flow
+- **Improving existing processes** - Reducing waste, increasing throughput, improving quality
+- **Scaling up from lab to production** - Taking R&D concepts to full-scale manufacturing
+- **Ensuring safety and compliance** - Meeting regulatory and environmental requirements
+- **Supporting production** - Troubleshooting issues, training operators
+- **Cost optimization** - Reducing manufacturing costs while maintaining quality
+
+</details>
+
+------------------------------------------------------------------------
+
+## Types of Manufacturing Automation
+
+Automation is essential for achieving high productivity, consistent quality, and competitive manufacturing costs. There are three fundamental types of automation, each suited to different production scenarios.
+
+```{r automation-comparison, echo=FALSE, fig.align="center", fig.cap="Comparison of Automation Types", fig.width=10, fig.height=6}
+# Create automation comparison visualization
+automation_data <- data.frame(
+  Type = c("Fixed", "Programmable", "Flexible"),
+  Initial_Cost = c(5, 3, 4),
+  Flexibility = c(1, 3, 5),
+  Volume_Capability = c(5, 3, 3),
+  Changeover_Time = c(1, 2, 5),  # 5 = fast changeover
+  Unit_Cost = c(5, 3, 3)  # 5 = lowest unit cost
+)
+
+automation_long <- automation_data %>%
+  pivot_longer(cols = -Type, names_to = "Metric", values_to = "Score") %>%
+  mutate(
+    Metric = gsub("_", " ", Metric),
+    Type = factor(Type, levels = c("Fixed", "Programmable", "Flexible"))
+  )
+
+ggplot(automation_long, aes(x = Metric, y = Score, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  scale_fill_manual(values = c("#E74C3C", "#F39C12", "#27AE60")) +
+  scale_y_continuous(breaks = 1:5, labels = c("Low", "Med-Low", "Medium", "Med-High", "High")) +
+  labs(title = "Automation Type Comparison",
+       subtitle = "Each type optimizes for different production requirements",
+       x = "", y = "Rating") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 20, hjust = 1),
+    legend.position = "bottom"
+  )
+```
+
+### Fixed Automation
+
+**Fixed automation** (also called "hard automation") uses specialized equipment designed for a specific product. The sequence of operations is determined by the equipment configuration and cannot be easily changed.
+
+**Characteristics:**
+- Very high production rates (thousands per hour)
+- Low per-unit cost at high volumes
+- High initial capital investment
+- Inflexible - dedicated to one product
+
+**Examples:**
+- Automotive transfer lines for engine blocks
+- Beverage bottling lines
+- Chemical processing plants
+- Paper manufacturing
+
+```{r fixed-automation-economics, echo=TRUE}
+# Fixed Automation Economic Analysis
+# When does fixed automation make sense?
+
+# Example: Automotive transfer line for cylinder heads
+fixed_automation_cost <- 5000000  # Initial equipment cost
+annual_production <- 500000       # Parts per year
+fixed_cost_per_part <- 2.50       # Operating cost per part
+equipment_life_years <- 10
+
+# Calculate total cost per part including amortization
+annual_equipment_cost <- fixed_automation_cost / equipment_life_years
+total_annual_cost <- annual_equipment_cost + (fixed_cost_per_part * annual_production)
+cost_per_part <- total_annual_cost / annual_production
+
+cat("Fixed Automation Analysis:\n")
+cat("==========================\n")
+cat(sprintf("Equipment cost: $%s\n", format(fixed_automation_cost, big.mark=",")))
+cat(sprintf("Annual production: %s parts\n", format(annual_production, big.mark=",")))
+cat(sprintf("Operating cost per part: $%.2f\n", fixed_cost_per_part))
+cat(sprintf("Amortized equipment cost per part: $%.2f\n", annual_equipment_cost/annual_production))
+cat(sprintf("Total cost per part: $%.2f\n", cost_per_part))
+```
+
+### Programmable Automation
+
+**Programmable automation** allows the production equipment to be reprogrammed for different products. It's suited for batch production where products change periodically.
+
+**Characteristics:**
+- Medium production rates
+- Significant changeover time between products
+- Lower initial cost than fixed automation
+- Suitable for batch sizes of 100-10,000
+
+**Examples:**
+- CNC machining centers
+- Industrial robots
+- PLC-controlled assembly machines
+- Batch chemical reactors
+
+<details>
+<summary>Discussion: When should you choose programmable over fixed automation?</summary>
+
+**Choose programmable automation when:**
+
+1. **Product variety** - You make multiple products on the same equipment
+2. **Volume uncertainty** - Demand may shift between products
+3. **Product evolution** - Frequent design changes expected
+4. **Lower volumes** - Not enough volume to justify dedicated equipment
+5. **Capital constraints** - Can't afford multiple dedicated lines
+
+**Example scenario:**
+A machine shop that makes 20 different part numbers for aerospace customers would use CNC machines (programmable) rather than dedicated transfer lines (fixed) because:
+- Volumes per part number are low (100-1,000/year)
+- New part designs are introduced regularly
+- Flexibility to respond to customer changes is critical
+
+</details>
+
+### Flexible Automation
+
+**Flexible automation** can produce a variety of parts with minimal changeover time. It combines the flexibility of programmable automation with the productivity approaching fixed automation.
+
+**Characteristics:**
+- Medium-high production rates
+- Very fast changeover (minutes, not hours)
+- High initial investment
+- Suitable for medium variety, medium volume
+
+**Examples:**
+- Flexible Manufacturing Systems (FMS)
+- Robotic assembly cells
+- Automated guided vehicle (AGV) systems
+- Modern automotive final assembly lines
+
+```{r automation-selection, echo=FALSE}
+automation_guide <- tibble(
+  `Production Characteristic` = c("Annual Volume", "Product Variety", "Changeover Frequency",
+                                  "Initial Investment", "Operating Cost", "Best Industries"),
+  `Fixed Automation` = c("> 1,000,000 units", "Single product", "Rarely (years)",
+                        "Very High ($5M+)", "Lowest per unit", "Automotive, Beverage, Chemical"),
+  `Programmable Automation` = c("1,000 - 100,000 units", "Several products in batches", "Weekly to monthly",
+                                "Medium ($500K-$2M)", "Medium per unit", "Job shops, Aerospace, Medical"),
+  `Flexible Automation` = c("10,000 - 500,000 units", "Many products, mixed", "Hours to minutes",
+                           "High ($2M-$10M)", "Low-medium per unit", "Electronics, Automotive suppliers")
+)
+
+automation_guide %>%
+  kable(format = "html", caption = "Automation Type Selection Guide") %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "bordered"),
+    full_width = TRUE
+  ) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#ECF0F1") %>%
+  column_spec(2, background = "#FADBD8") %>%
+  column_spec(3, background = "#FCF3CF") %>%
+  column_spec(4, background = "#D5F5E3")
+```
+
+<details>
+<summary>List industries where you can find various automated process systems</summary>
+
+**By automation type:**
+
+**Fixed Automation:**
+- Oil refineries
+- Chemical plants
+- Food processing (high-volume)
+- Beverage bottling
+- Automotive powertrain
+- Steel mills
+- Paper/pulp mills
+
+**Programmable Automation:**
+- Aerospace manufacturing
+- Medical device production
+- Pharmaceutical (batch)
+- Job shops
+- Tool & die making
+- Defense contractors
+
+**Flexible Automation:**
+- Electronics assembly
+- Automotive final assembly
+- Warehouse/distribution
+- Semiconductor fabrication
+- Consumer appliances
+- Furniture manufacturing
+
+</details>
+
+### Automation Advantages and Disadvantages
+
+```{r automation-pros-cons, echo=FALSE}
+pros_cons <- tibble(
+  Category = c(rep("Advantages", 7), rep("Disadvantages", 5)),
+  Point = c(
+    "Lowered Operating Costs - Reduced labor per unit",
+    "Improved Worker Safety - Removes humans from hazardous operations",
+    "Reduced Factory Lead Times - Faster, more predictable production",
+    "Increased Production Output - 24/7 operation possible",
+    "Smaller Environmental Footprint - Optimized resource usage",
+    "Increased Productivity and Efficiency - Consistent cycle times",
+    "Increased System Versatility - Modern systems adapt to changes",
+    "Higher Start-up Cost - Significant capital investment required",
+    "Higher Cost of Maintenance - Specialized technicians needed",
+    "Obsolescence/Depreciation - Technology changes rapidly",
+    "Workforce Displacement - Fewer direct labor jobs",
+    "Not Economical for Small Scale - Minimum volumes required"
+  )
+)
+
+pros_cons %>%
+  kable(format = "html", caption = "Advantages and Disadvantages of Manufacturing Automation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  row_spec(1:7, background = "#D5F5E3") %>%
+  row_spec(8:12, background = "#FADBD8")
+```
+
+------------------------------------------------------------------------
+
+## Project Development Phases
+
+Manufacturing projects follow a structured development process from initial concept to full operation. Understanding these phases is essential for process engineers.
+
+```{r project-phases, echo=FALSE, fig.align="center", fig.cap="Project Development Phases and Gate Reviews", fig.width=12, fig.height=6}
+# Create project phase visualization
+phases <- data.frame(
+  Phase = c("Concept", "FEED", "Detailed\nDesign", "Procurement\n& Fabrication",
+            "Construction", "Commissioning", "Start-up", "Operation"),
+  x = 1:8,
+  Duration = c(1, 2, 3, 4, 5, 2, 1, 10),
+  Cost_Percent = c(1, 3, 10, 40, 30, 8, 5, 3),
+  color = c("#3498DB", "#9B59B6", "#E74C3C", "#F39C12", "#1ABC9C", "#34495E", "#27AE60", "#2C3E50")
+)
+
+gates <- data.frame(
+  Gate = c("G1", "G2", "G3", "G4", "G5"),
+  x = c(1.5, 2.5, 4.5, 6.5, 7.5),
+  label = c("Concept\nApproval", "FEED\nApproval", "Construction\nApproval",
+            "Ready for\nCommissioning", "Ready for\nOperation")
+)
+
+ggplot() +
+  # Phase bars
+  geom_tile(data = phases, aes(x = x, y = 1, fill = color),
+            width = 0.9, height = 0.5, color = "white", size = 1) +
+  geom_text(data = phases, aes(x = x, y = 1, label = Phase),
+            color = "white", fontface = "bold", size = 3) +
+  # Gate markers
+  geom_point(data = gates, aes(x = x, y = 1), shape = 18, size = 6, color = "#C0392B") +
+  geom_text(data = gates, aes(x = x, y = 0.6, label = Gate),
+            fontface = "bold", size = 4, color = "#C0392B") +
+  geom_text(data = gates, aes(x = x, y = 0.3, label = label),
+            size = 2.5, color = "#7F8C8D") +
+  # Cost accumulation curve concept
+  annotate("text", x = 4.5, y = 1.6,
+           label = "Stage-Gate Process: Each gate requires approval before proceeding",
+           fontface = "italic", size = 4) +
+  scale_fill_identity() +
+  labs(title = "Project Development Phases with Stage-Gate Reviews") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14)
+  ) +
+  ylim(-0.1, 2)
+```
+
+### Phase 1: Concept Development
+
+The initial phase defines the project scope, evaluates feasibility, and develops preliminary cost estimates.
+
+**Key Deliverables:**
+- Project charter and business case
+- Preliminary process flow diagrams
+- Order-of-magnitude cost estimate (±30-50%)
+- Initial schedule
+- Risk assessment
+
+### Phase 2: Front-End Engineering Design (FEED)
+
+FEED (also called FEL - Front-End Loading) develops the project definition to a level sufficient for final investment decision.
+
+```{r feed-process, echo=FALSE, results='asis'}
+  embed_youtube("gSkoGFLDxF0", "FEED Process Overview")
+```
+
+**FEED Deliverables include:**
+
+- Project organization chart
+- Defined project scope
+- Process Flow Diagrams (PFDs)
+- Piping & Instrumentation Diagrams (P&IDs)
+- Equipment datasheets and specifications
+- Major equipment list
+- 2D and 3D preliminary models
+- Equipment layout and installation plan
+- HAZOP and safety studies
+- Automation strategy
+- Budget estimate (±10-15%)
+- Project timeline
+- Fixed-bid quote capability
+
+<details>
+<summary>What are the steps of Process System Design and Engineering?</summary>
+
+1. **Process Development**
+   - Develop PFDs & P&IDs
+   - Process simulation
+   - Heat and mass balance
+
+2. **Equipment Engineering**
+   - 2D & 3D models
+   - Equipment layout and installation plan
+   - Skid design
+   - Mechanical & structural design
+
+3. **Systems Engineering**
+   - Piping design
+   - Electrical design
+   - Instrumentation design
+   - Control system architecture
+
+4. **Installation Planning**
+   - Lifts & installation planning
+   - Construction sequencing
+   - Tie-in planning
+
+</details>
+
+### Phase 3: Detailed Engineering
+
+Detailed engineering produces all documents needed for procurement and construction.
+
+```{r engineering-disciplines, echo=FALSE}
+disciplines <- tibble(
+  Discipline = c("Process", "Mechanical", "Piping", "Electrical", "I&C", "Civil/Structural"),
+  `Key Deliverables` = c(
+    "P&IDs, datasheets, process packages, operating procedures",
+    "Vessel drawings, heat exchanger specs, rotating equipment specs",
+    "Isometrics, pipe specs, stress analysis, 3D models",
+    "Single-line diagrams, load lists, cable schedules, lighting",
+    "Logic diagrams, instrument index, control narratives, HMI specs",
+    "Foundation drawings, structural steel, buildings, roads"
+  ),
+  `Systems Provided` = c(
+    "Process units, utility systems",
+    "Pressure vessels, tanks, exchangers, pumps",
+    "Process piping, utility piping",
+    "Power distribution, motor control, lighting",
+    "DCS/PLC, safety systems, instruments",
+    "Foundations, structures, buildings"
+  )
+)
+
+disciplines %>%
+  kable(format = "html", caption = "Engineering Disciplines and Deliverables") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#1A5276", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D4E6F1", width = "10em")
+```
+
+<details>
+<summary>Automation and Controls Engineering needs to include which tasks?</summary>
+
+**Control System Design:**
+- Automation architecture design
+- Control panel fabrication drawings
+- PLC/DCS programming
+- HMI/SCADA design
+- Safety system design (SIS)
+
+**Documentation:**
+- Control narratives
+- Logic diagrams (cause & effect)
+- Instrument datasheets
+- Loop diagrams
+- Cable schedules
+
+**Integration:**
+- Controls integration services
+- Network architecture
+- Cybersecurity
+- Historian configuration
+- MES integration
+
+</details>
+
+### Phase 4-7: Construction, Commissioning, and Start-up
+
+```{r project-activities, echo=FALSE}
+activities <- tibble(
+  Phase = c("Procurement & Fabrication", "Construction", "Commissioning", "Start-up"),
+  `Key Activities` = c(
+    "Purchase equipment, fabricate skids, manufacture custom items",
+    "Civil work, install equipment, piping, electrical, instrumentation",
+    "System checkout, loop testing, safety system validation",
+    "Initial operation, performance testing, operator training"
+  ),
+  `Process Engineer Role` = c(
+    "Review vendor documents, approve equipment",
+    "Supervise installation, resolve field issues",
+    "Verify system operation, support testing",
+    "Optimize process, troubleshoot issues, train operators"
+  ),
+  `Typical Duration` = c("3-12 months", "6-24 months", "1-3 months", "1-3 months")
+)
+
+activities %>%
+  kable(format = "html", caption = "Later Project Phases") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#ECF0F1")
+```
+
+<details>
+<summary>What needs to be planned for Testing & Commissioning?</summary>
+
+**Pre-Commissioning:**
+- Mechanical completion checks
+- Piping pressure tests
+- Electrical continuity tests
+- Instrument calibration
+
+**Commissioning:**
+- Loop checking
+- Control system function tests
+- Safety system (SIS) validation
+- Utility systems start-up
+- Dry run testing
+
+**Performance Testing:**
+- Factory Acceptance Tests (FAT)
+- Site Acceptance Tests (SAT)
+- Performance guarantee tests
+- Reliability testing
+
+</details>
+
+------------------------------------------------------------------------
+
+## Process Documentation
+
+### Process Flow Diagrams (PFDs)
+
+PFDs show the overall process flow, major equipment, and key operating conditions. They are the "big picture" view of the process.
+
+```{r pfd-elements, echo=FALSE}
+pfd_elements <- tibble(
+  `Element` = c("Major Equipment", "Process Streams", "Operating Conditions",
+                "Control Loops", "Utility Streams", "Stream Data"),
+  `What's Shown` = c(
+    "Reactors, vessels, heat exchangers, pumps, compressors",
+    "Main process flow lines with arrows",
+    "Temperature, pressure, flow rates at key points",
+    "Major control loops only",
+    "Steam, cooling water, nitrogen (simplified)",
+    "Stream numbers with heat/mass balance table"
+  ),
+  `What's NOT Shown` = c(
+    "Pipe sizes, valve types, instrument details",
+    "Minor bypasses, drain lines, vent lines",
+    "All intermediate conditions",
+    "Local instruments, minor controls",
+    "Detailed utility connections",
+    "All intermediate streams"
+  )
+)
+
+pfd_elements %>%
+  kable(format = "html", caption = "Process Flow Diagram (PFD) Content") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D5F5E3")
+```
+
+### Piping & Instrumentation Diagrams (P&IDs)
+
+P&IDs are the detailed "roadmap" of the process, showing all equipment, piping, valves, and instrumentation.
+
+```{r read-pandid, echo=FALSE, results='asis'}
+  embed_youtube("j4EOTerfyTY", "How to Read P&IDs")
+```
+
+
+```{r pid-symbols, echo=FALSE, fig.align="center", fig.cap="Common P&ID Symbols (Simplified)", fig.width=12, fig.height=8}
+# Create a simplified P&ID symbol reference
+symbols <- data.frame(
+  Category = c(rep("Valves", 4), rep("Instruments", 4), rep("Equipment", 4)),
+  Name = c("Gate Valve", "Globe Valve", "Ball Valve", "Check Valve",
+           "Flow Transmitter", "Pressure Indicator", "Level Controller", "Temperature Element",
+           "Pump", "Heat Exchanger", "Vessel/Tank", "Compressor"),
+  Symbol_Code = c("--|X|--", "--|>|--", "--|(O)|--", "--|>--",
+                  "FT", "PI", "LC", "TE",
+                  "P-101", "E-101", "V-101", "C-101"),
+  x = rep(c(1, 2, 3, 4), 3),
+  y = c(rep(3, 4), rep(2, 4), rep(1, 4))
+)
+
+ggplot(symbols, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Category), width = 0.9, height = 0.6, color = "black", alpha = 0.3) +
+  geom_text(aes(label = Name), y = symbols$y + 0.15, fontface = "bold", size = 3) +
+  geom_text(aes(label = Symbol_Code), y = symbols$y - 0.1, size = 3.5,
+            family = "mono", color = "#2C3E50") +
+  scale_fill_manual(values = c("#3498DB", "#E74C3C", "#27AE60")) +
+  labs(title = "Common P&ID Symbol Categories",
+       subtitle = "Standard symbols per ISA-5.1") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+```
+
+```{r instrument-tags, echo=FALSE}
+instrument_tags <- tibble(
+  `First Letter` = c("F", "L", "P", "T", "A", "S"),
+  `Measured Variable` = c("Flow", "Level", "Pressure", "Temperature", "Analysis", "Speed"),
+  `Modifier Letters` = c("T = Transmitter", "C = Controller", "I = Indicator",
+                        "E = Element/Sensor", "V = Valve", "A = Alarm"),
+  `Example Tag` = c("FT-101 (Flow Transmitter)", "LC-201 (Level Controller)",
+                   "PI-301 (Pressure Indicator)", "TE-401 (Temperature Element)",
+                   "AT-501 (Analyzer Transmitter)", "SI-601 (Speed Indicator)")
+)
+
+instrument_tags %>%
+  kable(format = "html", caption = "ISA Instrument Tag Structure") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#E8DAEF", width = "8em")
+```
+
+<details>
+<summary>Quick Quiz: Decode these instrument tags</summary>
+
+**Decode the following P&ID tags:**
+
+1. **FIC-101** = ?
+2. **TT-205** = ?
+3. **PSV-301** = ?
+4. **LCV-402** = ?
+
+**Answers:**
+
+1. **FIC-101** = Flow Indicating Controller (loop 101)
+2. **TT-205** = Temperature Transmitter (loop 205)
+3. **PSV-301** = Pressure Safety Valve (loop 301)
+4. **LCV-402** = Level Control Valve (loop 402)
+
+</details>
+
+------------------------------------------------------------------------
+
+## Design for Manufacturing (DFM) and Assembly (DFA)
+
+**DFM** and **DFA** are methodologies that consider manufacturing and assembly constraints during product design, reducing cost and improving quality.
+
+### DFM Principles
+
+```{r dfm-principles, echo=FALSE, fig.align="center", fig.cap="DFM Guidelines", fig.width=10, fig.height=6}
+dfm_data <- data.frame(
+  Principle = c("Minimize Parts", "Use Standard Parts", "Design for Ease of Fabrication",
+                "Mistake-Proof Design", "Minimize Assembly Directions",
+                "Maximize Compliance", "Minimize Handling"),
+  Impact = c(5, 4, 4, 5, 3, 3, 4),
+  Cost_Reduction = c(5, 4, 3, 4, 3, 2, 3)
+)
+
+dfm_long <- dfm_data %>%
+  pivot_longer(cols = c(Impact, Cost_Reduction), names_to = "Metric", values_to = "Score") %>%
+  mutate(Metric = gsub("_", " ", Metric))
+
+ggplot(dfm_long, aes(x = reorder(Principle, Score), y = Score, fill = Metric)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  scale_fill_manual(values = c("#3498DB", "#27AE60")) +
+  scale_y_continuous(breaks = 1:5) +
+  labs(title = "DFM Principles: Impact and Cost Reduction Potential",
+       x = "", y = "Rating (1-5)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 30, hjust = 1),
+    legend.position = "bottom"
+  ) +
+  coord_flip()
+```
+
+```{r dfm-guidelines, echo=FALSE}
+dfm_guide <- tibble(
+  `DFM Guideline` = c(
+    "Minimize total number of parts",
+    "Use standard components",
+    "Design for ease of fabrication",
+    "Design for ease of assembly",
+    "Minimize assembly directions",
+    "Maximize compliance in assembly",
+    "Design for ease of service"
+  ),
+  `Why It Matters` = c(
+    "Fewer parts = fewer chances for failure, less inventory, lower cost",
+    "Standard parts are cheaper, faster to procure, easier to replace",
+    "Complex features increase manufacturing cost and defect rates",
+    "Reduces assembly time and errors",
+    "Multiple directions require repositioning, increasing time",
+    "Tight tolerances increase cost; allow self-alignment where possible",
+    "Products will need maintenance; design for technician access"
+  ),
+  `Example` = c(
+    "Combine bracket and housing into single molded part",
+    "Use M6 bolts instead of custom fasteners",
+    "Avoid undercuts, deep pockets, thin walls",
+    "Use snap-fits instead of screws where appropriate",
+    "All parts insert from top-down in assembly",
+    "Use tapered holes for self-centering pins",
+    "Locate service points on accessible panels"
+  )
+)
+
+dfm_guide %>%
+  kable(format = "html", caption = "Design for Manufacturing Guidelines") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#1A5276", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D4E6F1", width = "15em")
+```
+
+### DFA Analysis
+
+DFA systematically evaluates assembly operations to identify improvement opportunities.
+
+```{r dfa-example, echo=TRUE}
+# DFA Analysis Example: Simple Assembly
+# Calculate assembly efficiency using Boothroyd-Dewhurst method
+
+# Assembly data (simplified)
+parts <- data.frame(
+  Part = c("Base", "PCB", "Cover", "Screw 1", "Screw 2", "Screw 3", "Screw 4", "Label"),
+  Handling_Time = c(2.5, 3.0, 2.5, 3.5, 3.5, 3.5, 3.5, 4.0),  # seconds
+  Insertion_Time = c(3.0, 4.0, 3.5, 6.0, 6.0, 6.0, 6.0, 2.0),  # seconds
+  Theoretically_Necessary = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)
+)
+
+# Calculations
+total_parts <- nrow(parts)
+total_time <- sum(parts$Handling_Time + parts$Insertion_Time)
+min_parts <- sum(parts$Theoretically_Necessary)
+ideal_time <- min_parts * 3  # 3 seconds is theoretical minimum per part
+
+efficiency <- (ideal_time / total_time) * 100
+
+cat("DFA Analysis Results:\n")
+cat("=====================\n")
+cat(sprintf("Total parts: %d\n", total_parts))
+cat(sprintf("Theoretically minimum parts: %d\n", min_parts))
+cat(sprintf("Total assembly time: %.1f seconds\n", total_time))
+cat(sprintf("Ideal assembly time: %.1f seconds\n", ideal_time))
+cat(sprintf("Design Efficiency: %.1f%%\n", efficiency))
+cat("\nOpportunity: Combine 4 screws into snap-fit design\n")
+```
+
+<details>
+<summary>Case Study: Redesigning for DFM/DFA</summary>
+
+**Original Design:**
+- 15 parts
+- 4 different screw types
+- Assembly time: 180 seconds
+- Multiple assembly directions
+- Special tools required
+
+**Redesigned using DFM/DFA:**
+- 8 parts (47% reduction)
+- 1 standard screw type
+- Assembly time: 75 seconds (58% reduction)
+- Single assembly direction (top-down)
+- No special tools
+
+**Cost Impact:**
+- Part cost reduced 35%
+- Assembly labor reduced 58%
+- Quality defects reduced 60%
+- Total product cost reduced 40%
+
+</details>
+
+------------------------------------------------------------------------
+
+## HAZOP Studies
+
+**HAZOP** (Hazard and Operability Study) is a systematic method to identify hazards and operability problems in process plants.
+
+```{r hazop-study, echo=FALSE, results='asis'}
+  embed_youtube("6AqtX8oCpKI&t", "HAZOP Study Overview")
+```
+
+
+```{r hazop-study-overview, echo=FALSE, results='asis'}
+  embed_youtube("ukn0RRt0ReA&list=PLeTiXOrLeXhI5IZKv3GeOUMOYpz5mG36S", "HAZOP Study Overview")
+```
+
+### HAZOP Methodology
+
+```{r hazop-keywords, echo=FALSE}
+hazop_keywords <- tibble(
+  `Guide Word` = c("NO/NOT", "MORE", "LESS", "AS WELL AS", "PART OF", "REVERSE", "OTHER THAN"),
+  `Meaning` = c(
+    "Complete negation of design intent",
+    "Quantitative increase",
+    "Quantitative decrease",
+    "Qualitative modification/addition",
+    "Qualitative decrease",
+    "Logical opposite of intent",
+    "Complete substitution"
+  ),
+  `Example with FLOW` = c(
+    "No flow - pump failure, blocked line",
+    "More flow - control valve fails open",
+    "Less flow - partial blockage, pump wear",
+    "Flow + contamination - upstream leak",
+    "Only part of intended flow path active",
+    "Reverse flow - check valve failure",
+    "Wrong material flowing"
+  )
+)
+
+hazop_keywords %>%
+  kable(format = "html", caption = "HAZOP Guide Words and Examples") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#FADBD8", width = "10em")
+```
+
+### HAZOP Example
+
+```{r hazop-example, echo=FALSE}
+hazop_example <- tibble(
+  `Node` = rep("Feed Pump P-101 to Reactor R-101", 4),
+  `Parameter` = c("Flow", "Flow", "Pressure", "Temperature"),
+  `Guide Word` = c("No", "More", "More", "Less"),
+  `Deviation` = c("No Flow", "More Flow", "High Pressure", "Low Temperature"),
+  `Cause` = c(
+    "Pump failure, blocked suction",
+    "Control valve fails open",
+    "Downstream blockage",
+    "Cooling water leak into feed"
+  ),
+  `Consequence` = c(
+    "Reactor starved, runaway possible",
+    "Reactor overflow, environmental release",
+    "Pipe rupture, personnel injury",
+    "Reaction incomplete, off-spec product"
+  ),
+  `Safeguard` = c(
+    "Low flow alarm, interlock",
+    "High level alarm, overflow protection",
+    "Relief valve, high pressure trip",
+    "Low temp alarm, feed analysis"
+  ),
+  `Action` = c(
+    "Verify interlock function",
+    "Add independent high-high level trip",
+    "Verify relief valve sizing",
+    "Add temperature interlock"
+  )
+)
+
+hazop_example %>%
+  kable(format = "html", caption = "HAZOP Worksheet Example") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  column_spec(1, width = "10em")
+```
+
+<details>
+<summary>Discussion: Why is HAZOP done during FEED, not later?</summary>
+
+HAZOP should be completed during FEED because:
+
+1. **Cost of changes** - Changes during FEED cost 1x; during detailed design cost 10x; during construction cost 100x
+2. **Design influence** - P&IDs are still being developed and can be modified
+3. **Equipment selection** - Safety requirements may affect equipment sizing
+4. **Budget accuracy** - Safety systems must be included in project budget
+5. **Regulatory approval** - Many jurisdictions require HAZOP before construction permits
+
+**Best practice:** Conduct preliminary HAZOP early in FEED, then detailed HAZOP when P&IDs are 60-80% complete.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Cost Estimation
+
+Accurate cost estimation is critical for project approval and budget management.
+
+```{r cost-estimate-classes, echo=FALSE}
+cost_classes <- tibble(
+  `AACE Class` = c("Class 5", "Class 4", "Class 3", "Class 2", "Class 1"),
+  `Project Phase` = c("Concept Screening", "Concept Study", "FEED/Budget",
+                     "Detailed Design", "Construction"),
+  `Engineering Complete` = c("0-2%", "1-15%", "10-40%", "30-75%", "65-100%"),
+  `Accuracy Range` = c("-50% to +100%", "-30% to +50%", "-20% to +30%",
+                      "-15% to +20%", "-10% to +15%"),
+  `Purpose` = c("Screening alternatives", "Feasibility", "Authorization",
+               "Control", "Bid/Tender")
+)
+
+cost_classes %>%
+  kable(format = "html", caption = "Cost Estimate Classification (AACE International)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#ECF0F1")
+```
+
+```{r cost-breakdown, echo=FALSE, fig.align="center", fig.cap="Typical Process Plant Cost Breakdown", fig.width=9, fig.height=6}
+cost_data <- data.frame(
+  Category = c("Equipment", "Piping", "Electrical", "Instrumentation",
+               "Civil/Structural", "Buildings", "Engineering", "Construction Mgmt",
+               "Contingency"),
+  Percentage = c(25, 15, 10, 12, 8, 5, 10, 8, 7)
+)
+
+ggplot(cost_data, aes(x = reorder(Category, Percentage), y = Percentage, fill = Category)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = paste0(Percentage, "%")), hjust = -0.2, fontface = "bold") +
+  scale_fill_brewer(palette = "Set3") +
+  labs(title = "Typical Process Plant Cost Distribution",
+       x = "", y = "Percentage of Total Installed Cost") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "none"
+  ) +
+  coord_flip() +
+  ylim(0, 30)
+```
+
+------------------------------------------------------------------------
+
+## Case Study: Automotive Paint Line Project
+
+```{r case-study-timeline, echo=FALSE, fig.align="center", fig.cap="Automotive Paint Line Project Timeline", fig.width=12, fig.height=5}
+# Simplified project timeline
+timeline <- data.frame(
+  Phase = c("Concept", "FEED", "Detailed Design", "Procurement",
+            "Construction", "Commissioning", "Start-up"),
+  Start = c(0, 2, 6, 10, 14, 26, 28),
+  Duration = c(2, 4, 4, 12, 12, 2, 2),
+  y = 1:7
+)
+
+ggplot(timeline) +
+  geom_segment(aes(x = Start, xend = Start + Duration, y = y, yend = y),
+               size = 10, color = "#3498DB", lineend = "round") +
+  geom_text(aes(x = Start + Duration/2, y = y, label = Phase),
+            color = "white", fontface = "bold", size = 3) +
+  geom_text(aes(x = Start + Duration/2, y = y - 0.4,
+                label = paste0("M", Start, "-M", Start + Duration)),
+            size = 2.5, color = "#7F8C8D") +
+  scale_x_continuous(breaks = seq(0, 30, 6), labels = paste0("Month ", seq(0, 30, 6))) +
+  labs(title = "Automotive Paint Line Project: 30-Month Timeline",
+       x = "", y = "") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    axis.text.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+```
+
+<details>
+<summary>Case Study Details: Paint Line Engineering Challenges</summary>
+
+**Project Overview:**
+- New automotive paint line for SUV body shop
+- Capacity: 60 jobs per hour (JPH)
+- Process: E-coat, primer, basecoat, clearcoat
+
+**Key Engineering Challenges:**
+
+**1. Environmental Control**
+- Temperature: ±1°C throughout paint booth
+- Humidity: 65% ±5% RH
+- Air cleanliness: Class 10,000
+
+**2. Automation Requirements**
+- 48 paint robots (8 per zone)
+- Conveyor system with 2m pitch
+- Zone tracking and recipe management
+
+**3. Safety Systems**
+- Explosion-proof electrical classification
+- Fire suppression throughout
+- VOC monitoring and control
+
+**4. Quality Systems**
+- Inline thickness measurement
+- Automated visual inspection
+- Recipe management and traceability
+
+**Project Outcome:**
+- On-time completion
+- Under budget by 3%
+- Quality metrics exceeded targets
+- 99.2% first-pass yield achieved
+
+</details>
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+<details>
+<summary>Question 1: Automation Selection</summary>
+
+**A medical device company needs to produce 5,000 units per year of a surgical instrument. The design is mature and not expected to change. Volumes could grow to 50,000 units if successful. Which automation type should they initially choose?**
+
+**Answer:** **Programmable automation** (CNC machining, robotic cells)
+
+**Reasoning:**
+- Current volume (5,000/year) doesn't justify fixed automation
+- Flexibility allows for minor design refinements
+- Can scale up by adding shifts or machines
+- Lower initial investment preserves capital
+- If volume grows to 50,000, can justify dedicated equipment later
+
+</details>
+
+<details>
+<summary>Question 2: P&ID Interpretation</summary>
+
+**Decode the following instrument tags and explain their function:**
+
+a) FIC-201
+b) PSV-305
+c) TT-401
+d) LCV-150
+
+**Answers:**
+
+a) **FIC-201** - Flow Indicating Controller (loop 201)
+   - Measures flow, displays value, and controls a valve
+
+b) **PSV-305** - Pressure Safety Valve (loop 305)
+   - Relieves pressure if it exceeds setpoint (safety device)
+
+c) **TT-401** - Temperature Transmitter (loop 401)
+   - Converts temperature measurement to 4-20mA signal
+
+d) **LCV-150** - Level Control Valve (loop 150)
+   - Valve that is manipulated by a level controller
+
+</details>
+
+<details>
+<summary>Question 3: Project Phases</summary>
+
+**Why is FEED often considered the most critical project phase?**
+
+**Answer:** FEED is critical because:
+
+1. **Defines scope** - All subsequent work based on FEED deliverables
+2. **Locks in 80% of cost** - Design decisions determine equipment and construction costs
+3. **Lowest cost to change** - Changes cost 10-100x more in later phases
+4. **Authorization basis** - Management approves project based on FEED estimate
+5. **Risk identification** - HAZOP and risk studies identify safety requirements
+6. **Contractor selection** - FEED package used for competitive bidding
+
+**Poor FEED = project overruns, scope changes, and budget problems.**
+
+</details>
+
+<details>
+<summary>Question 4: DFM Application</summary>
+
+**A product currently uses 12 screws of 3 different sizes for assembly. Apply DFM principles to improve this design.**
+
+**Answer:** Apply these DFM principles:
+
+1. **Minimize parts**: Can some screws be eliminated by using integral snap-fits?
+
+2. **Standardize**: Use one screw size instead of three
+   - Reduces inventory complexity
+   - Single tool for assembly
+   - Lower procurement cost
+
+3. **Design for ease**: Consider alternatives:
+   - Snap-fit connections (no tools)
+   - Twist-lock features
+   - Press-fit pins
+
+**Possible redesign:**
+- Reduce from 12 screws to 4 screws (for serviceability)
+- All same size (M3 × 8)
+- Add 4 snap-fits for initial positioning
+- Result: 67% fewer fasteners, single tool, faster assembly
+
+</details>
+
+<details>
+<summary>Question 5: HAZOP Analysis</summary>
+
+**For a reactor feed pump, apply the HAZOP guide word "REVERSE" to the parameter "FLOW". What could cause this? What are the consequences? What safeguards would you recommend?**
+
+**Answer:**
+
+**Deviation:** Reverse flow through feed pump
+
+**Causes:**
+- Pump stops while discharge valve open
+- Check valve fails (stuck open or missing)
+- Parallel pump creates backflow
+- Reactor pressure exceeds pump shutoff head
+
+**Consequences:**
+- Reactor contents backflow into feed tank
+- Contamination of feed material
+- Possible chemical reaction in feed system
+- Pump damage (running backward)
+
+**Safeguards:**
+- Check valve on pump discharge
+- Automatic pump discharge block valve (closes on pump stop)
+- Low flow alarm and trip
+- Reactor pressure monitoring
+- Backflow-preventing orifice
+
+</details>
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-ch2, echo=FALSE}
+summary_ch2 <- tibble(
+  Topic = c("Automation Types", "Project Phases", "PFDs vs P&IDs", "DFM/DFA", "HAZOP", "Cost Estimation"),
+  `Key Takeaway` = c(
+    "Fixed for high volume single product; Programmable for batch; Flexible for variety with quick changeover",
+    "Concept → FEED → Detailed Design → Construction → Commissioning → Start-up",
+    "PFD = big picture (equipment, flows); P&ID = detailed (all instruments, valves, piping)",
+    "Design for easy manufacturing and assembly reduces cost 20-40%",
+    "Systematic hazard identification using guide words; do it during FEED",
+    "Estimate accuracy improves with engineering completion; AACE Class 1-5"
+  )
+)
+
+summary_ch2 %>%
+  kable(format = "html", caption = "Chapter 2 Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#1A5276", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Key Takeaways
+
+1. **Automation selection** depends on production volume, variety, and changeover requirements
+2. **FEED phase** defines 80% of project cost with only 10-15% of engineering effort
+3. **P&IDs** are the critical document connecting design to construction
+4. **DFM/DFA** should be applied early in design to maximize impact
+5. **HAZOP** identifies hazards systematically and must be done before construction
+6. **Cost estimates** improve in accuracy as engineering progresses
+
+------------------------------------------------------------------------
+
+## References
+
+1. Towler, G., & Sinnott, R. (2021). *Chemical Engineering Design* (7th ed.). Elsevier.
+2. AACE International. (2020). *Cost Estimate Classification System*.
+3. ISA-5.1. (2022). *Instrumentation Symbols and Identification*.
+4. Boothroyd, G., Dewhurst, P., & Knight, W.A. (2011). *Product Design for Manufacture and Assembly* (3rd ed.). CRC Press.
+5. CCPS. (2008). *Guidelines for Hazard Evaluation Procedures* (3rd ed.). Wiley.

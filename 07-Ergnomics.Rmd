@@ -1,0 +1,2289 @@
+# Ergonomics in Automated Manufacturing
+```{r setup-07, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+- Define ergonomics and explain its importance in manufacturing
+- Identify the seven major ergonomic risk factors
+- Recognize common musculoskeletal disorders (MSDs) and their causes
+- Apply ergonomic design principles to workstation design
+- Conduct a REBA (Rapid Entire Body Assessment) analysis
+- Understand the role of AI and automation in ergonomic assessment
+- Design workstations that optimize human performance and safety
+
+> "Ergonomics is the science of fitting the job to the worker, not forcing the worker to fit the job."
+> — International Ergonomics Association
+
+------------------------------------------------------------------------
+
+## What is Ergonomics?
+
+**Ergonomics** (from Greek *ergon* = work, *nomos* = laws) is the scientific discipline focused on understanding the interactions between humans and other elements of a system, with the goal of optimizing human well-being and overall system performance.
+
+```{r ergonomics-definition, echo=FALSE, fig.align="center", fig.cap="The Three Domains of Ergonomics", fig.width=10, fig.height=6}
+# Create Venn-like diagram for ergonomics domains
+ggplot() +
+  # Physical domain
+
+  annotate("point", x = 1, y = 2, size = 45, color = "#3498DB", alpha = 0.6) +
+  annotate("text", x = 1, y = 2.3, label = "PHYSICAL", fontface = "bold", size = 5, color = "#2C3E50") +
+  annotate("text", x = 1, y = 1.7, label = "Anatomy\nPhysiology\nBiomechanics", size = 3, lineheight = 0.9) +
+  # Cognitive domain
+  annotate("point", x = 3, y = 2, size = 45, color = "#E74C3C", alpha = 0.6) +
+  annotate("text", x = 3, y = 2.3, label = "COGNITIVE", fontface = "bold", size = 5, color = "#2C3E50") +
+  annotate("text", x = 3, y = 1.7, label = "Mental processes\nPerception\nDecision making", size = 3, lineheight = 0.9) +
+  # Organizational domain
+  annotate("point", x = 2, y = 0.5, size = 45, color = "#27AE60", alpha = 0.6) +
+  annotate("text", x = 2, y = 0.8, label = "ORGANIZATIONAL", fontface = "bold", size = 5, color = "#2C3E50") +
+  annotate("text", x = 2, y = 0.2, label = "Work systems\nTeamwork\nScheduling", size = 3, lineheight = 0.9) +
+  # Center - Human
+  annotate("point", x = 2, y = 1.5, size = 20, color = "#F39C12") +
+  annotate("text", x = 2, y = 1.5, label = "HUMAN", fontface = "bold", size = 4, color = "white") +
+  theme_void() +
+  labs(title = "The Three Domains of Ergonomics",
+       subtitle = "Ergonomics considers the whole human experience at work") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-0.5, 4.5) + ylim(-0.8, 3.5)
+```
+
+```{r ergonomics-domains-table, echo=FALSE}
+domains <- tibble(
+  `Domain` = c("**Physical Ergonomics**", "**Cognitive Ergonomics**", "**Organizational Ergonomics**"),
+  `Focus` = c("Human body's response to physical stress",
+              "Mental processes and human-system interaction",
+              "Optimization of sociotechnical systems"),
+  `Key Topics` = c("Posture, material handling, repetitive motion, workplace layout, safety",
+                   "Mental workload, decision-making, human-computer interaction, training",
+                   "Communication, teamwork, work schedules, quality management"),
+  `Manufacturing Example` = c("Designing assembly workstations to reduce reaching",
+                               "Designing HMI screens for quick comprehension",
+                               "Implementing job rotation to reduce fatigue")
+)
+
+domains %>%
+  kable(format = "html", caption = "The Three Domains of Ergonomics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Why Ergonomics Matters in Manufacturing
+
+```{r why-ergonomics, echo=FALSE, fig.align="center", fig.cap="The Business Case for Ergonomics", fig.width=10, fig.height=5}
+benefits <- data.frame(
+  category = c("Injury Reduction", "Productivity", "Quality", "Turnover", "Absenteeism"),
+  improvement = c(59, 25, 46, 48, 58),
+  color = c("#E74C3C", "#3498DB", "#27AE60", "#F39C12", "#9B59B6")
+)
+
+ggplot(benefits, aes(x = reorder(category, improvement), y = improvement, fill = category)) +
+  geom_bar(stat = "identity", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(improvement, "%")), hjust = -0.2, fontface = "bold", size = 4) +
+  coord_flip() +
+  scale_fill_manual(values = c("Injury Reduction" = "#E74C3C", "Productivity" = "#3498DB",
+                               "Quality" = "#27AE60", "Turnover" = "#F39C12",
+                               "Absenteeism" = "#9B59B6")) +
+  scale_y_continuous(limits = c(0, 75)) +
+  labs(title = "Average Improvements from Ergonomic Interventions",
+       subtitle = "Based on Washington State Department of Labor studies",
+       x = "", y = "Improvement (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    legend.position = "none",
+    panel.grid.minor = element_blank()
+  )
+```
+
+<details>
+<summary>The Cost of Ignoring Ergonomics</summary>
+
+**Direct Costs:**
+- Workers' compensation claims
+- Medical expenses
+- Legal fees
+- Increased insurance premiums
+
+**Indirect Costs (often 4-10x direct costs):**
+- Lost productivity
+- Training replacement workers
+- Reduced quality
+- Overtime to cover absent workers
+- Administrative time
+- Low morale
+
+**Statistics:**
+- MSDs account for **33%** of all workplace injuries
+- Average MSD claim costs **$15,000-$20,000**
+- Lost workdays due to MSDs average **12 days** per case
+- Carpal tunnel surgery costs approximately **$30,000** per case (including lost time)
+
+</details>
+
+```{=html}
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/dloyfUXjJzs"
+    title="Introduction to Workplace Ergonomics"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+------------------------------------------------------------------------
+
+## The Seven Ergonomic Risk Factors
+
+The **Initial Ergonomic Risk Assessment (INERA)** identifies seven primary risk factors that contribute to musculoskeletal disorders. Understanding these factors is the first step in prevention.
+
+```{r risk-factors-viz, echo=FALSE, fig.align="center", fig.cap="The Seven Ergonomic Risk Factors", fig.width=10, fig.height=8}
+risk_factors <- data.frame(
+  factor = c("Awkward\nPostures", "Repetition", "Force", "Static\nPositions",
+             "Contact\nStress", "Vibration", "Environmental\nFactors"),
+  risk_level = c(5, 5, 4, 4, 3, 3, 3),
+  x = c(1, 2, 3, 4, 5, 6, 7),
+  color = c("#E74C3C", "#E74C3C", "#F39C12", "#F39C12", "#3498DB", "#3498DB", "#3498DB")
+)
+
+ggplot(risk_factors, aes(x = x, y = risk_level, fill = factor)) +
+  geom_bar(stat = "identity", color = "black", width = 0.8) +
+  geom_text(aes(label = factor, y = risk_level/2), color = "white",
+            fontface = "bold", size = 3.5, lineheight = 0.8) +
+  scale_fill_manual(values = c("Awkward\nPostures" = "#E74C3C", "Repetition" = "#C0392B",
+                               "Force" = "#F39C12", "Static\nPositions" = "#E67E22",
+                               "Contact\nStress" = "#3498DB", "Vibration" = "#2980B9",
+                               "Environmental\nFactors" = "#1ABC9C")) +
+  scale_x_continuous(breaks = 1:7, labels = 1:7) +
+  scale_y_continuous(breaks = 1:5, labels = c("Low", "", "Medium", "", "High")) +
+  labs(title = "The Seven Ergonomic Risk Factors",
+       subtitle = "Height indicates relative frequency of causing MSDs",
+       x = "Risk Factor Number", y = "Risk Level") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    legend.position = "none",
+    panel.grid.minor = element_blank()
+  )
+```
+
+```{r risk-factors-table, echo=FALSE}
+risk_detail <- tibble(
+  `#` = 1:7,
+  `Risk Factor` = c("**Awkward Postures**", "**Repetition**", "**Force**",
+                    "**Static Positions**", "**Contact Stress**",
+                    "**Vibration**", "**Environmental Factors**"),
+  `Definition` = c("Positions that deviate from neutral body alignment",
+                   "Performing the same motion repeatedly",
+                   "Amount of physical effort required to do a task",
+                   "Maintaining the same position for extended periods",
+                   "Pressure from hard surfaces or edges on body tissues",
+                   "Oscillating movements transferred to the body",
+                   "Temperature, lighting, noise affecting work performance"),
+  `Examples` = c("Bent wrist, raised arms, twisted back, kneeling",
+                 "Assembly line tasks, typing, packaging",
+                 "Lifting heavy objects, pushing/pulling, gripping tools",
+                 "Standing in one spot, holding arms overhead",
+                 "Resting wrists on desk edge, kneeling on hard floor",
+                 "Power tools, driving forklifts, jackhammers",
+                 "Cold environments, poor lighting, excessive noise"),
+  `Body Areas Affected` = c("Back, neck, shoulders, wrists, knees",
+                            "Hands, wrists, shoulders, neck",
+                            "Back, shoulders, hands, arms",
+                            "Legs, back, shoulders, neck",
+                            "Hands, knees, forearms",
+                            "Hands, arms, spine",
+                            "Eyes, ears, overall fatigue")
+)
+
+risk_detail %>%
+  kable(format = "html", caption = "The Seven Ergonomic Risk Factors Explained") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  row_spec(1:2, background = "#FADBD8") %>%
+  row_spec(3:4, background = "#FEF9E7") %>%
+  row_spec(5:7, background = "#D6EAF8") %>%
+  column_spec(1, bold = TRUE, width = "3em")
+```
+
+### Risk Factor 1: Awkward Postures
+
+**Neutral posture** is the position where joints are naturally aligned, minimizing stress on muscles, tendons, and skeletal system. Any deviation from neutral increases injury risk.
+
+```{r posture-zones, echo=FALSE, fig.align="center", fig.cap="Posture Risk Zones", fig.width=10, fig.height=6}
+# Create posture zone visualization
+ggplot() +
+  # Green zone - Neutral
+  annotate("rect", xmin = 0, xmax = 3, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.7) +
+  annotate("text", x = 1.5, y = 2.5, label = "GREEN ZONE", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 1.5, y = 1.5, label = "Neutral Posture\n\nJoints at midpoint\nBalanced muscle load\nMinimal stress",
+           size = 3.5, color = "white", lineheight = 0.9) +
+  # Yellow zone - Moderate
+  annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.7) +
+  annotate("text", x = 5, y = 2.5, label = "YELLOW ZONE", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 5, y = 1.5, label = "Moderate Deviation\n\nJoints partially flexed\nSome muscle strain\nAcceptable briefly",
+           size = 3.5, color = "white", lineheight = 0.9) +
+  # Red zone - Extreme
+  annotate("rect", xmin = 7, xmax = 10, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.7) +
+  annotate("text", x = 8.5, y = 2.5, label = "RED ZONE", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 8.5, y = 1.5, label = "Extreme Posture\n\nJoints at end range\nHigh muscle strain\nAvoid if possible",
+           size = 3.5, color = "white", lineheight = 0.9) +
+  theme_void() +
+  labs(title = "Posture Risk Zones: Traffic Light System",
+       subtitle = "Design workstations to keep workers in the green zone") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+```{r neutral-postures, echo=FALSE}
+neutral <- tibble(
+  `Body Part` = c("**Head/Neck**", "**Shoulders**", "**Elbows**", "**Wrists**", "**Back**", "**Hips/Knees**"),
+  `Neutral Position` = c("Balanced on spine, looking straight ahead",
+                         "Relaxed, arms at sides",
+                         "Close to body, bent 90-120°",
+                         "Straight, in line with forearm",
+                         "Natural S-curve maintained",
+                         "Thighs parallel to floor, feet flat"),
+  `Awkward Position` = c("Bent forward >20°, tilted, twisted",
+                         "Raised, reaching overhead, behind body",
+                         "Fully extended or tightly bent",
+                         "Bent up/down, twisted side-to-side",
+                         "Bent forward, twisted, arched",
+                         "Squatting, kneeling, twisted"),
+  `Risk` = c("Neck pain, headaches", "Shoulder impingement, rotator cuff",
+             "Tennis elbow, golfer's elbow", "Carpal tunnel, tendinitis",
+             "Low back pain, disc herniation", "Knee injuries, hip pain")
+)
+
+neutral %>%
+  kable(format = "html", caption = "Neutral vs. Awkward Postures by Body Part") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em") %>%
+  column_spec(3, background = "#FADBD8")
+```
+
+### Risk Factor 2: Repetition
+
+**Repetitive motion** is one of the most significant risk factors in manufacturing. The risk increases with:
+
+- **Frequency:** How often the motion occurs
+- **Duration:** How long the task is performed
+- **Recovery time:** Rest between repetitions
+
+```{r repetition-thresholds, echo=FALSE}
+repetition <- tibble(
+  `Cycle Time` = c("> 30 seconds", "15-30 seconds", "< 15 seconds"),
+  `Repetitions/Hour` = c("< 120", "120-240", "> 240"),
+  `Risk Level` = c("Low", "Moderate", "High"),
+  `Action Required` = c("Monitor", "Investigate and consider changes", "Immediate intervention needed")
+)
+
+repetition %>%
+  kable(format = "html", caption = "Repetition Risk Thresholds") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3, background = "#FADBD8")
+```
+
+### Risk Factor 3: Force
+
+The amount of **physical effort** required significantly impacts injury risk. Force requirements depend on:
+
+```{r force-factors, echo=FALSE, fig.align="center", fig.cap="Factors Affecting Force Requirements", fig.width=9, fig.height=5}
+force_data <- data.frame(
+  factor = c("Object Weight", "Grip Type", "Posture", "Friction", "Acceleration"),
+  impact = c(5, 4, 4, 3, 3),
+  example = c("Heavier = more force", "Pinch vs. power grip", "Awkward = more force",
+              "Slippery = more grip", "Fast moves = more force")
+)
+
+ggplot(force_data, aes(x = reorder(factor, impact), y = impact)) +
+  geom_bar(stat = "identity", fill = "#F39C12", color = "black", width = 0.7) +
+  geom_text(aes(label = example), hjust = -0.1, size = 3) +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 7)) +
+  labs(title = "Factors That Increase Force Requirements",
+       x = "", y = "Relative Impact") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
+```
+
+<details>
+<summary>Interactive Exercise: Identify the Risk Factors</summary>
+
+**Scenario:** An assembly line worker performs the following task 400 times per shift:
+
+1. Reaches overhead to grab a part from a bin
+2. Holds the part while inserting 4 screws with a power screwdriver
+3. Places the completed assembly on a conveyor
+4. The workstation has poor lighting and the floor is concrete
+
+**Identify all risk factors present:**
+
+**Answer:**
+1. **Awkward Posture** - Reaching overhead
+2. **Repetition** - 400 cycles per shift
+3. **Force** - Gripping parts, controlling screwdriver
+4. **Static Position** - Holding part during assembly
+5. **Vibration** - Power screwdriver
+6. **Contact Stress** - Standing on concrete (feet)
+7. **Environmental** - Poor lighting
+
+*This task has ALL SEVEN risk factors present!*
+
+</details>
+
+------------------------------------------------------------------------
+
+## Musculoskeletal Disorders (MSDs)
+
+**Musculoskeletal Disorders (MSDs)** are injuries and disorders affecting muscles, nerves, tendons, ligaments, joints, cartilage, and spinal discs. They are the most common and costly occupational health problem.
+
+```{r msd-body-map, echo=FALSE, fig.align="center", fig.cap="Common MSDs by Body Region", fig.width=10, fig.height=8}
+# Create body map visualization
+ggplot() +
+  # Body outline (simplified)
+  # Head
+  annotate("point", x = 5, y = 9, size = 20, color = "#F5CBA7") +
+  # Neck
+  annotate("rect", xmin = 4.7, xmax = 5.3, ymin = 8, ymax = 8.5, fill = "#F5CBA7") +
+  # Torso
+  annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 4, ymax = 8, fill = "#F5CBA7") +
+  # Arms
+  annotate("rect", xmin = 2, xmax = 3.5, ymin = 5.5, ymax = 8, fill = "#F5CBA7") +
+  annotate("rect", xmin = 6.5, xmax = 8, ymin = 5.5, ymax = 8, fill = "#F5CBA7") +
+  # Forearms
+  annotate("rect", xmin = 1, xmax = 2, ymin = 4, ymax = 5.5, fill = "#F5CBA7") +
+  annotate("rect", xmin = 8, xmax = 9, ymin = 4, ymax = 5.5, fill = "#F5CBA7") +
+  # Hands
+  annotate("point", x = 1.5, y = 3.5, size = 8, color = "#F5CBA7") +
+  annotate("point", x = 8.5, y = 3.5, size = 8, color = "#F5CBA7") +
+  # Legs
+  annotate("rect", xmin = 3.8, xmax = 4.8, ymin = 0.5, ymax = 4, fill = "#F5CBA7") +
+  annotate("rect", xmin = 5.2, xmax = 6.2, ymin = 0.5, ymax = 4, fill = "#F5CBA7") +
+
+  # MSD labels with lines
+  # Neck
+  annotate("point", x = 5, y = 8.2, size = 4, color = "#E74C3C") +
+  annotate("segment", x = 5.3, xend = 7, y = 8.2, yend = 8.5) +
+  annotate("label", x = 7.5, y = 8.5, label = "Neck:\nTension neck syndrome\nCervical radiculopathy",
+           size = 2.5, hjust = 0, fill = "#FADBD8") +
+  # Shoulder
+  annotate("point", x = 3.5, y = 7.5, size = 4, color = "#E74C3C") +
+  annotate("segment", x = 3.2, xend = 1.5, y = 7.5, yend = 7.5) +
+  annotate("label", x = 0, y = 7.5, label = "Shoulder:\nRotator cuff tendinitis\nImpingement syndrome",
+           size = 2.5, hjust = 0, fill = "#FADBD8") +
+  # Elbow
+  annotate("point", x = 2, y = 5.5, size = 4, color = "#E74C3C") +
+  annotate("segment", x = 1.7, xend = 0.5, y = 5.5, yend = 5.5) +
+  annotate("label", x = 0, y = 5.5, label = "Elbow:\nTennis elbow\nGolfer's elbow",
+           size = 2.5, hjust = 0, fill = "#FADBD8") +
+  # Wrist/Hand
+  annotate("point", x = 1.5, y = 4, size = 4, color = "#E74C3C") +
+  annotate("segment", x = 1.2, xend = 0.5, y = 3.5, yend = 3) +
+  annotate("label", x = 0, y = 3, label = "Wrist/Hand:\nCarpal tunnel syndrome\nTendinitis\nTrigger finger",
+           size = 2.5, hjust = 0, fill = "#FADBD8") +
+  # Low back
+  annotate("point", x = 5, y = 5, size = 4, color = "#E74C3C") +
+  annotate("segment", x = 6.5, xend = 8, y = 5, yend = 5) +
+  annotate("label", x = 8, y = 5, label = "Low Back:\nLumbar strain\nHerniated disc\nSciatica",
+           size = 2.5, hjust = 0, fill = "#FADBD8") +
+  # Knee
+  annotate("point", x = 5.7, y = 2.5, size = 4, color = "#E74C3C") +
+  annotate("segment", x = 6, xend = 8, y = 2.5, yend = 2.5) +
+  annotate("label", x = 8, y = 2.5, label = "Knee:\nBursitis\nMeniscus injury",
+           size = 2.5, hjust = 0, fill = "#FADBD8") +
+
+  theme_void() +
+  labs(title = "Common MSDs in Manufacturing",
+       subtitle = "Red dots indicate high-risk body regions") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-1, 11) + ylim(0, 10)
+```
+
+```{r msd-table, echo=FALSE}
+msd_detail <- tibble(
+  `Disorder` = c("**Carpal Tunnel Syndrome**", "**Tendinitis**", "**Low Back Pain**",
+                 "**Rotator Cuff Injury**", "**Epicondylitis**", "**Trigger Finger**"),
+  `Description` = c("Compression of median nerve in the wrist",
+                    "Inflammation of tendons from overuse",
+                    "Strain or injury to muscles/discs of lower back",
+                    "Damage to shoulder tendons",
+                    "Inflammation of elbow tendons (tennis/golfer's elbow)",
+                    "Finger gets stuck in bent position"),
+  `Causes` = c("Repetitive wrist motions, forceful gripping, vibration",
+               "Repetitive motions, awkward postures, force",
+               "Heavy lifting, bending, twisting, vibration",
+               "Overhead work, repetitive shoulder motion",
+               "Repetitive arm/wrist motions, forceful gripping",
+               "Repetitive gripping, hand tools"),
+  `Symptoms` = c("Numbness, tingling, weakness in hand",
+                 "Pain, swelling, stiffness in affected area",
+                 "Pain, stiffness, limited mobility",
+                 "Pain, weakness, limited range of motion",
+                 "Pain on outside (tennis) or inside (golfer's) of elbow",
+                 "Clicking, locking of finger")
+)
+
+msd_detail %>%
+  kable(format = "html", caption = "Common Musculoskeletal Disorders in Manufacturing") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### The MSD Development Cycle
+
+MSDs typically develop gradually through a predictable cycle:
+
+```{r msd-cycle, echo=FALSE, fig.align="center", fig.cap="The MSD Development Cycle", fig.width=10, fig.height=6}
+cycle_data <- data.frame(
+  stage = c("Exposure", "Fatigue", "Discomfort", "Pain", "Injury", "Disability"),
+  x = c(1, 2, 3, 4, 5, 6),
+  severity = c(1, 2, 3, 4, 5, 5),
+  color = c("#27AE60", "#2ECC71", "#F39C12", "#E67E22", "#E74C3C", "#8E44AD"),
+  recovery = c("Easy", "Easy", "Moderate", "Difficult", "Very Difficult", "May be permanent")
+)
+
+ggplot(cycle_data, aes(x = x, y = severity)) +
+  geom_line(linewidth = 2, color = "#2C3E50") +
+  geom_point(aes(color = stage), size = 15) +
+  geom_text(aes(label = stage), color = "white", fontface = "bold", size = 3) +
+  geom_text(aes(y = severity - 0.8, label = recovery), size = 3, fontface = "italic") +
+  scale_color_manual(values = c("Exposure" = "#27AE60", "Fatigue" = "#2ECC71",
+                                "Discomfort" = "#F39C12", "Pain" = "#E67E22",
+                                "Injury" = "#E74C3C", "Disability" = "#8E44AD")) +
+  annotate("segment", x = 1, xend = 3, y = 5.5, yend = 5.5,
+           arrow = arrow(length = unit(0.3, "cm"), ends = "both"), color = "#27AE60", size = 1.5) +
+  annotate("text", x = 2, y = 5.8, label = "PREVENTION WINDOW", color = "#27AE60", fontface = "bold") +
+  labs(title = "MSD Development: From Exposure to Disability",
+       subtitle = "Early intervention is critical - recovery difficulty increases at each stage",
+       x = "Progression", y = "Severity") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    legend.position = "none",
+    axis.text.x = element_blank(),
+    panel.grid = element_blank()
+  )
+```
+
+<details>
+<summary>Warning Signs: When to Take Action</summary>
+
+**Early Warning Signs (Act Immediately):**
+- Persistent fatigue in specific body parts
+- Discomfort during or after work
+- Tightness or stiffness
+- Minor aching or soreness
+
+**Serious Warning Signs (Seek Medical Attention):**
+- Persistent pain that doesn't go away with rest
+- Numbness or tingling
+- Loss of strength or grip
+- Swelling or inflammation
+- Reduced range of motion
+- Pain that wakes you at night
+
+> **Key Message:** Report symptoms early! The earlier the intervention, the better the outcome.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Preventing MSDs: Best Practices
+
+Prevention is far more effective and less costly than treatment. Here are evidence-based strategies for MSD prevention:
+
+```{r prevention-hierarchy, echo=FALSE, fig.align="center", fig.cap="MSD Prevention Hierarchy", fig.width=10, fig.height=6}
+prevention <- data.frame(
+  level = factor(c("Engineering Controls", "Administrative Controls", "Work Practice Controls"),
+                 levels = c("Work Practice Controls", "Administrative Controls", "Engineering Controls")),
+  effectiveness = c(5, 3, 2),
+  y = c(3, 2, 1),
+  width = c(3, 4, 5),
+  description = c("Modify equipment,\ntools, workstations",
+                  "Job rotation,\nwork-rest schedules",
+                  "Training,\nproper techniques")
+)
+
+ggplot(prevention, aes(x = 0, y = y)) +
+  geom_tile(aes(width = width, height = 0.8, fill = level), color = "white", linewidth = 2) +
+  geom_text(aes(label = level), fontface = "bold", color = "white", size = 5) +
+  geom_text(aes(x = 3.5, label = description), hjust = 0, size = 3.5, lineheight = 0.9) +
+  scale_fill_manual(values = c("Engineering Controls" = "#27AE60",
+                               "Administrative Controls" = "#F39C12",
+                               "Work Practice Controls" = "#3498DB")) +
+  annotate("segment", x = -3, xend = -3, y = 0.5, yend = 3.5,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", size = 1.5) +
+  annotate("text", x = -3.5, y = 2, label = "More\nEffective",
+           angle = 90, fontface = "bold", size = 4) +
+  theme_void() +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  labs(title = "MSD Prevention: Hierarchy of Controls") +
+  xlim(-4.5, 7)
+```
+
+```{r prevention-strategies, echo=FALSE}
+strategies <- tibble(
+  `Strategy` = c("**Maintain Neutral Posture**", "**Reduce Repetition**",
+                 "**Minimize Force**", "**Avoid Static Positions**",
+                 "**Eliminate Contact Stress**", "**Control Vibration**",
+                 "**Optimize Environment**", "**Allow Recovery**"),
+  `Engineering Solutions` = c("Adjustable workstations, proper tool selection",
+                              "Automation, job rotation between stations",
+                              "Mechanical assists, better handles, lighter parts",
+                              "Sit-stand workstations, adjustable fixtures",
+                              "Padding, rounded edges, anti-fatigue mats",
+                              "Vibration-dampening tools, isolation mounts",
+                              "Proper lighting, climate control, noise reduction",
+                              "Rest break areas, micro-break reminders"),
+  `Worker Actions` = c("Awareness of body position, stretching",
+                       "Vary tasks when possible",
+                       "Use tools properly, ask for help with heavy items",
+                       "Shift weight, change positions frequently",
+                       "Use padding, wear appropriate PPE",
+                       "Limit exposure time, grip tools lightly",
+                       "Report issues, use available controls",
+                       "Take breaks, report fatigue")
+)
+
+strategies %>%
+  kable(format = "html", caption = "MSD Prevention Strategies") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "14em")
+```
+
+### Proper Lifting Technique
+
+Improper lifting is a leading cause of back injuries. The NIOSH lifting equation provides guidelines, but proper technique is fundamental.
+
+```{r lifting-technique, echo=FALSE, fig.align="center", fig.cap="Proper Lifting Technique", fig.width=10, fig.height=6}
+ggplot() +
+  # Step boxes
+  # Step 1
+  annotate("rect", xmin = 0, xmax = 2, ymin = 3, ymax = 5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 1, y = 4.5, label = "1. PLAN", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 1, y = 3.8, label = "Test weight\nClear path\nGet help if needed",
+           color = "white", size = 2.5, lineheight = 0.9) +
+  # Step 2
+  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 3, ymax = 5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 3.5, y = 4.5, label = "2. POSITION", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 3.5, y = 3.8, label = "Feet shoulder-width\nClose to load\nBend knees",
+           color = "white", size = 2.5, lineheight = 0.9) +
+  # Step 3
+  annotate("rect", xmin = 5, xmax = 7, ymin = 3, ymax = 5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 6, y = 4.5, label = "3. GRIP", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 6, y = 3.8, label = "Firm grip\nUse handles\nHold close",
+           color = "white", size = 2.5, lineheight = 0.9) +
+  # Step 4
+  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 3, ymax = 5, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 8.5, y = 4.5, label = "4. LIFT", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 8.5, y = 3.8, label = "Straighten legs\nKeep back straight\nDon't twist",
+           color = "white", size = 2.5, lineheight = 0.9) +
+  # DO section
+  annotate("rect", xmin = 0.5, xmax = 4.5, ymin = 0.5, ymax = 2.5, fill = "#D5F5E3", color = "#27AE60") +
+  annotate("text", x = 2.5, y = 2.2, label = "DO:", fontface = "bold", color = "#27AE60", size = 4) +
+  annotate("text", x = 2.5, y = 1.3, label = "• Lift with legs\n• Keep load close\n• Pivot feet to turn\n• Ask for help",
+           size = 3, lineheight = 0.9, hjust = 0.5) +
+  # DON'T section
+  annotate("rect", xmin = 5, xmax = 9, ymin = 0.5, ymax = 2.5, fill = "#FADBD8", color = "#E74C3C") +
+  annotate("text", x = 7, y = 2.2, label = "DON'T:", fontface = "bold", color = "#E74C3C", size = 4) +
+  annotate("text", x = 7, y = 1.3, label = "• Lift with back\n• Reach and lift\n• Twist while lifting\n• Jerk the load",
+           size = 3, lineheight = 0.9, hjust = 0.5) +
+  theme_void() +
+  labs(title = "The Four Steps of Safe Lifting") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+```
+
+```{=html}
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/6ah4yixGWc4"
+    title="Safe Manual Handling and Lifting Techniques"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+------------------------------------------------------------------------
+
+## Ergonomic Design Principles
+
+Effective ergonomic design follows established principles that account for human capabilities and limitations.
+
+```{r design-principles, echo=FALSE, fig.align="center", fig.cap="Ergonomic Design Principles", fig.width=10, fig.height=8}
+principles <- data.frame(
+  principle = c("Neutral Posture", "Anthropometry", "Reduce Force",
+                "Reduce Motion", "Work Height", "Minimize Static Load",
+                "Environment", "Cognitive Design"),
+  x = c(1, 2, 3, 4, 1, 2, 3, 4),
+  y = c(2, 2, 2, 2, 1, 1, 1, 1)
+)
+
+ggplot(principles, aes(x = x, y = y)) +
+  geom_tile(width = 0.9, height = 0.8, fill = "#3498DB", color = "white", linewidth = 2) +
+  geom_text(aes(label = principle), color = "white", fontface = "bold", size = 3.5,
+            lineheight = 0.9) +
+  theme_void() +
+  labs(title = "Eight Core Ergonomic Design Principles",
+       subtitle = "Apply these principles to every workstation design") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  ylim(0.3, 2.7)
+```
+
+```{r principles-detail, echo=FALSE}
+principles_detail <- tibble(
+  `Principle` = c("**1. Neutral Posture**", "**2. Accommodate Anthropometry**",
+                  "**3. Reduce Excessive Force**", "**4. Reduce Excessive Motion**",
+                  "**5. Optimize Work Height**", "**6. Minimize Static Load**",
+                  "**7. Environmental Conditions**", "**8. Cognitive Support**"),
+  `Description` = c("Design to promote natural, balanced body positions",
+                    "Accommodate different body sizes (5th-95th percentile)",
+                    "Minimize force requirements for all tasks",
+                    "Reduce extreme motions, frequencies, and durations",
+                    "Match work surface height to task requirements",
+                    "Avoid holding same position for extended periods",
+                    "Optimize lighting, temperature, noise, air quality",
+                    "Design interfaces for easy understanding and use"),
+  `Implementation` = c("Adjustable workstations, proper tool angles, monitor height",
+                       "Adjustable equipment, multiple sizes available, reach considerations",
+                       "Mechanical assists, better handles, reduce weight, improve grip",
+                       "Bring work closer, eliminate unnecessary steps, use fixtures",
+                       "Precision work higher, heavy work lower, adjustable surfaces",
+                       "Support arms, provide seating options, allow movement",
+                       "Task lighting, climate control, noise barriers, ventilation",
+                       "Clear displays, logical controls, consistent feedback")
+)
+
+principles_detail %>%
+  kable(format = "html", caption = "Ergonomic Design Principles in Detail") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2980B9", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "14em")
+```
+
+### Anthropometry: Designing for Human Dimensions
+
+**Anthropometry** is the scientific study of human body measurements. Workstations must accommodate the range of workers who will use them.
+
+```{r anthropometry-viz, echo=FALSE, fig.align="center", fig.cap="Anthropometric Design Considerations", fig.width=10, fig.height=6}
+# Create percentile visualization
+ggplot() +
+  # Distribution curve
+  stat_function(fun = dnorm, args = list(mean = 170, sd = 10),
+                xlim = c(140, 200), size = 2, color = "#3498DB") +
+  # Percentile lines
+  geom_vline(xintercept = 153.5, linetype = "dashed", color = "#E74C3C", linewidth = 1) +
+  geom_vline(xintercept = 170, linetype = "dashed", color = "#F39C12", linewidth = 1) +
+  geom_vline(xintercept = 186.5, linetype = "dashed", color = "#27AE60", linewidth = 1) +
+  # Labels
+  annotate("text", x = 153.5, y = 0.035, label = "5th\npercentile",
+           size = 3, color = "#E74C3C", vjust = 0) +
+  annotate("text", x = 170, y = 0.042, label = "50th\npercentile",
+           size = 3, color = "#F39C12", vjust = 0) +
+  annotate("text", x = 186.5, y = 0.035, label = "95th\npercentile",
+           size = 3, color = "#27AE60", vjust = 0) +
+  # Design range
+  annotate("segment", x = 153.5, xend = 186.5, y = -0.002, yend = -0.002,
+           arrow = arrow(length = unit(0.2, "cm"), ends = "both"),
+           color = "#9B59B6", size = 1.5) +
+  annotate("text", x = 170, y = -0.005, label = "Design Range (90% of population)",
+           color = "#9B59B6", fontface = "bold", size = 3.5) +
+  scale_x_continuous(breaks = seq(140, 200, 10)) +
+  labs(title = "Anthropometric Distribution: Stature Example",
+       subtitle = "Design should accommodate 5th to 95th percentile",
+       x = "Height (cm)", y = "Probability Density") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10)
+  )
+```
+
+```{r anthropometry-table, echo=FALSE}
+anthro_data <- tibble(
+  `Measurement` = c("Stature (Standing Height)", "Eye Height (Standing)",
+                    "Shoulder Height", "Elbow Height", "Knuckle Height",
+                    "Sitting Height", "Seated Eye Height", "Seated Elbow Height",
+                    "Thigh Clearance", "Forward Reach"),
+  `5th % Female (cm)` = c(150, 138, 121, 93, 64, 79, 68, 18, 12, 64),
+  `50th % Combined (cm)` = c(170, 158, 140, 104, 74, 87, 76, 24, 15, 73),
+  `95th % Male (cm)` = c(188, 176, 158, 117, 85, 97, 85, 31, 19, 84),
+  `Design Application` = c("Overhead clearance, door height",
+                           "Display/sign height",
+                           "Shelf maximum height",
+                           "Work surface height (standing)",
+                           "Handle height for pulling",
+                           "Overhead clearance (seated)",
+                           "Monitor height (seated)",
+                           "Armrest, work surface height",
+                           "Under-desk clearance",
+                           "Maximum reach distance")
+)
+
+anthro_data %>%
+  kable(format = "html", caption = "Key Anthropometric Measurements for Workstation Design") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "14em")
+```
+
+### Work Surface Height Guidelines
+
+```{r work-height, echo=FALSE, fig.align="center", fig.cap="Recommended Work Surface Heights", fig.width=10, fig.height=6}
+height_data <- data.frame(
+  task = c("Precision Work", "Light Assembly", "Heavy Work"),
+  standing_low = c(100, 85, 70),
+  standing_high = c(110, 95, 85),
+  seated_low = c(70, 60, NA),
+  seated_high = c(75, 65, NA)
+)
+
+ggplot() +
+  # Standing heights
+  annotate("rect", xmin = 0.7, xmax = 1.3, ymin = 100, ymax = 110,
+           fill = "#3498DB", alpha = 0.7) +
+  annotate("rect", xmin = 1.7, xmax = 2.3, ymin = 85, ymax = 95,
+           fill = "#27AE60", alpha = 0.7) +
+  annotate("rect", xmin = 2.7, xmax = 3.3, ymin = 70, ymax = 85,
+           fill = "#F39C12", alpha = 0.7) +
+  # Labels
+  annotate("text", x = 1, y = 115, label = "Precision\n100-110cm", size = 3, lineheight = 0.9) +
+  annotate("text", x = 2, y = 100, label = "Light Assembly\n85-95cm", size = 3, lineheight = 0.9) +
+  annotate("text", x = 3, y = 90, label = "Heavy Work\n70-85cm", size = 3, lineheight = 0.9) +
+  # Reference line - elbow height
+  annotate("segment", x = 0.5, xend = 3.5, y = 105, yend = 105,
+           linetype = "dashed", color = "#E74C3C", size = 1) +
+  annotate("text", x = 3.7, y = 105, label = "Elbow Height\n(standing)",
+           hjust = 0, size = 3, color = "#E74C3C") +
+  scale_y_continuous(breaks = seq(60, 120, 10), limits = c(60, 120)) +
+  scale_x_continuous(breaks = 1:3, labels = c("Precision", "Light Assembly", "Heavy Work")) +
+  labs(title = "Optimal Standing Work Surface Heights by Task Type",
+       subtitle = "Heights in cm from floor - adjust based on worker height",
+       x = "Task Type", y = "Height (cm)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    panel.grid.minor = element_blank()
+  )
+```
+
+<details>
+<summary>Discussion: Why Different Heights for Different Tasks?</summary>
+
+**Precision Work (100-110 cm):**
+- Requires close visual inspection
+- Hands need to be at or above eye level
+- Examples: Electronics assembly, inspection, watchmaking
+
+**Light Assembly (85-95 cm):**
+- General manipulation tasks
+- Hands at about elbow height
+- Examples: Packaging, general assembly, sorting
+
+**Heavy Work (70-85 cm):**
+- Requires pushing, pressing, or lifting
+- Lower height allows use of body weight
+- Examples: Packing boxes, pressing operations, heavy assembly
+
+**Key Principle:** The work surface height should allow the worker to maintain **neutral posture** while performing the specific task.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Ergonomic Assessment Tools
+
+Several standardized tools help assess ergonomic risk and guide interventions. Understanding these tools is essential for the process engineer.
+
+```{r assessment-tools, echo=FALSE}
+tools <- tibble(
+  `Tool` = c("**RULA**", "**REBA**", "**NIOSH Lifting Equation**",
+             "**OCRA**", "**EAWS**", "**Snook Tables**"),
+  `Full Name` = c("Rapid Upper Limb Assessment",
+                  "Rapid Entire Body Assessment",
+                  "NIOSH Lifting Equation",
+                  "Occupational Repetitive Action",
+                  "Ergonomic Assessment Worksheet",
+                  "Snook Psychophysical Tables"),
+  `Focus Area` = c("Upper body postures",
+                   "Whole body postures",
+                   "Manual lifting tasks",
+                   "Repetitive upper limb tasks",
+                   "Comprehensive workstation",
+                   "Manual material handling"),
+  `Best Used For` = c("Sedentary/computer work, assembly",
+                      "Manufacturing, healthcare, varied postures",
+                      "Lifting, lowering, carrying tasks",
+                      "Assembly lines, repetitive manufacturing",
+                      "Complete workstation analysis",
+                      "Push, pull, lift, lower, carry tasks")
+)
+
+tools %>%
+  kable(format = "html", caption = "Common Ergonomic Assessment Tools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+### REBA: Rapid Entire Body Assessment
+
+**REBA** is one of the most widely used ergonomic assessment tools in manufacturing. It evaluates the whole body posture and provides a risk score.
+
+```{r reba-overview, echo=FALSE, fig.align="center", fig.cap="REBA Assessment Framework", fig.width=10, fig.height=7}
+ggplot() +
+  # Group A box
+  annotate("rect", xmin = 0, xmax = 4, ymin = 4, ymax = 7, fill = "#3498DB", color = "black") +
+  annotate("text", x = 2, y = 6.5, label = "GROUP A", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 2, y = 5.5, label = "Trunk Score (1-5)\nNeck Score (1-3)\nLegs Score (1-4)",
+           size = 3.5, color = "white", lineheight = 0.9) +
+  # Group B box
+  annotate("rect", xmin = 5, xmax = 9, ymin = 4, ymax = 7, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 7, y = 6.5, label = "GROUP B", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 7, y = 5.5, label = "Upper Arm Score (1-6)\nLower Arm Score (1-2)\nWrist Score (1-3)",
+           size = 3.5, color = "white", lineheight = 0.9) +
+  # Score A
+  annotate("rect", xmin = 1, xmax = 3, ymin = 2.5, ymax = 3.5, fill = "#2980B9", color = "black") +
+  annotate("text", x = 2, y = 3, label = "Score A\n+ Load/Force", size = 3, color = "white", lineheight = 0.9) +
+  # Score B
+  annotate("rect", xmin = 6, xmax = 8, ymin = 2.5, ymax = 3.5, fill = "#C0392B", color = "black") +
+  annotate("text", x = 7, y = 3, label = "Score B\n+ Coupling", size = 3, color = "white", lineheight = 0.9) +
+  # Arrows down
+  annotate("segment", x = 2, xend = 2, y = 4, yend = 3.5, arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 7, xend = 7, y = 4, yend = 3.5, arrow = arrow(length = unit(0.2, "cm"))) +
+  # Score C
+  annotate("rect", xmin = 3, xmax = 6, ymin = 1, ymax = 2, fill = "#27AE60", color = "black") +
+  annotate("text", x = 4.5, y = 1.5, label = "Score C\n+ Activity", size = 3, color = "white", lineheight = 0.9) +
+  # Arrows to C
+  annotate("segment", x = 2, xend = 3.5, y = 2.5, yend = 2, arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 7, xend = 5.5, y = 2.5, yend = 2, arrow = arrow(length = unit(0.2, "cm"))) +
+  # Final Score
+  annotate("rect", xmin = 3, xmax = 6, ymin = -0.5, ymax = 0.5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 4.5, y = 0, label = "REBA SCORE\n(1-15)", fontface = "bold", size = 4, color = "white", lineheight = 0.9) +
+  annotate("segment", x = 4.5, xend = 4.5, y = 1, yend = 0.5, arrow = arrow(length = unit(0.2, "cm"))) +
+  theme_void() +
+  labs(title = "REBA Assessment Structure",
+       subtitle = "Combines posture scores with load, coupling, and activity factors") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+### REBA Scoring Tables
+
+**Trunk Posture Scoring:**
+
+```{r reba-trunk, echo=FALSE}
+trunk <- tibble(
+  `Position` = c("Upright (0°)", "0-20° flexion/extension", "20-60° flexion, >20° extension",
+                 ">60° flexion"),
+  `Score` = c(1, 2, 3, 4),
+  `Adjustment` = c("—", "+1 if twisted", "+1 if twisted", "+1 if twisted or side-bending")
+)
+
+trunk %>%
+  kable(format = "html", caption = "REBA Trunk Posture Scores") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#D5F5E3") %>%
+  row_spec(3, background = "#FEF9E7") %>%
+  row_spec(4, background = "#FADBD8")
+```
+
+**Neck Posture Scoring:**
+
+```{r reba-neck, echo=FALSE}
+neck <- tibble(
+  `Position` = c("0-20° flexion", ">20° flexion or extension"),
+  `Score` = c(1, 2),
+  `Adjustment` = c("+1 if twisted or side-bending", "+1 if twisted or side-bending")
+)
+
+neck %>%
+  kable(format = "html", caption = "REBA Neck Posture Scores") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white")
+```
+
+**REBA Action Levels:**
+
+```{r reba-action, echo=FALSE}
+action <- tibble(
+  `REBA Score` = c("1", "2-3", "4-7", "8-10", "11-15"),
+  `Risk Level` = c("Negligible", "Low", "Medium", "High", "Very High"),
+  `Action` = c("None necessary", "May be necessary", "Necessary",
+               "Necessary soon", "Necessary NOW")
+)
+
+action %>%
+  kable(format = "html", caption = "REBA Action Levels") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#F39C12", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#D5F5E3") %>%
+  row_spec(3, background = "#FEF9E7") %>%
+  row_spec(4, background = "#FADBD8") %>%
+  row_spec(5, background = "#E74C3C", color = "white")
+```
+
+```{=html}
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/BhlTumeGKpw"
+    title="REBA Assessment Tutorial"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+### REBA Employee Assessment Worksheet {#reba-worksheet}
+
+The REBA Employee Assessment Worksheet provides a systematic approach to evaluating whole-body posture risk. This worksheet is based on the original work by Hignett and McAtamney (2000) and is widely used in manufacturing ergonomic assessments.
+
+#### Group A: Neck, Trunk, and Leg Analysis
+
+**Step 1: Neck Posture Score**
+
+```{r reba-neck-full, echo=FALSE}
+neck_full <- tibble(
+  `Position` = c("0-20° flexion", ">20° flexion", "In extension"),
+  `Base Score` = c(1, 2, 2),
+  `Adjustment` = c("+1 if twisted or side-bending", "+1 if twisted or side-bending", "+1 if twisted or side-bending"),
+  `Max Score` = c(2, 3, 3)
+)
+
+neck_full %>%
+  kable(format = "html", caption = "REBA Neck Posture Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2:3, background = "#FEF9E7")
+```
+
+**Step 2: Trunk Posture Score**
+
+```{r reba-trunk-full, echo=FALSE}
+trunk_full <- tibble(
+  `Position` = c("Upright (0°)", "0-20° flexion or extension",
+                 "20-60° flexion or >20° extension", ">60° flexion"),
+  `Base Score` = c(1, 2, 3, 4),
+  `Adjustment` = c("—", "+1 if twisted or side-bending",
+                   "+1 if twisted or side-bending", "+1 if twisted or side-bending"),
+  `Max Score` = c(1, 3, 4, 5)
+)
+
+trunk_full %>%
+  kable(format = "html", caption = "REBA Trunk Posture Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#D5F5E3") %>%
+  row_spec(3, background = "#FEF9E7") %>%
+  row_spec(4, background = "#FADBD8")
+```
+
+**Step 3: Legs Posture Score**
+
+```{r reba-legs-full, echo=FALSE}
+legs_full <- tibble(
+  `Position` = c("Bilateral weight bearing, walking, or sitting",
+                 "Unilateral weight bearing, featherweight, or unstable posture"),
+  `Base Score` = c(1, 2),
+  `Knee Adjustment` = c("+1 if knees 30-60° flexion; +2 if knees >60°",
+                        "+1 if knees 30-60° flexion; +2 if knees >60°"),
+  `Max Score` = c(3, 4)
+)
+
+legs_full %>%
+  kable(format = "html", caption = "REBA Legs Posture Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white")
+```
+
+**Step 4: Look Up Table A Score**
+
+```{r reba-table-a, echo=FALSE}
+# Table A: Trunk × Neck × Legs lookup
+table_a <- tibble(
+  `Trunk` = rep(1:5, each = 3),
+  `Neck` = rep(1:3, 5),
+  `Legs 1` = c(1,2,2, 2,3,4, 3,4,5, 4,5,6, 6,7,8),
+  `Legs 2` = c(1,2,3, 3,4,5, 4,5,6, 5,6,7, 7,8,9),
+  `Legs 3` = c(3,3,4, 4,5,6, 5,6,7, 6,7,8, 8,9,9),
+  `Legs 4` = c(4,4,5, 5,6,7, 6,7,8, 7,8,9, 9,9,9)
+)
+
+table_a %>%
+  kable(format = "html", caption = "REBA Table A: Posture Score A (Trunk × Neck × Legs)",
+        col.names = c("Trunk Score", "Neck Score", "Legs = 1", "Legs = 2", "Legs = 3", "Legs = 4")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#2980B9", color = "white") %>%
+  column_spec(1:2, bold = TRUE, background = "#D6EAF8")
+```
+
+**Step 5: Add Load/Force Score**
+
+```{r reba-load, echo=FALSE}
+load_score <- tibble(
+  `Load/Force` = c("< 5 kg (< 11 lbs)", "5-10 kg (11-22 lbs)", "> 10 kg (> 22 lbs)"),
+  `Score` = c(0, 1, 2),
+  `Shock Adjustment` = c("—", "+1 if shock or rapid build-up of force", "+1 if shock or rapid build-up of force")
+)
+
+load_score %>%
+  kable(format = "html", caption = "REBA Load/Force Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2980B9", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3, background = "#FADBD8")
+```
+
+$$\text{Score A} = \text{Table A Score} + \text{Load/Force Score}$$
+
+#### Group B: Arm and Wrist Analysis
+
+**Step 6: Upper Arm Posture Score**
+
+```{r reba-upper-arm, echo=FALSE}
+upper_arm <- tibble(
+  `Position` = c("20° extension to 20° flexion", ">20° extension",
+                 "20-45° flexion", "45-90° flexion", ">90° flexion"),
+  `Base Score` = c(1, 2, 2, 3, 4),
+  `Adjustments` = c("+1 if shoulder raised; +1 if arm abducted; -1 if leaning/supporting arm weight",
+                    "+1 if shoulder raised; +1 if arm abducted; -1 if leaning/supporting arm weight",
+                    "+1 if shoulder raised; +1 if arm abducted; -1 if leaning/supporting arm weight",
+                    "+1 if shoulder raised; +1 if arm abducted; -1 if leaning/supporting arm weight",
+                    "+1 if shoulder raised; +1 if arm abducted; -1 if leaning/supporting arm weight"),
+  `Score Range` = c("1-3", "1-4", "1-4", "2-5", "3-6")
+)
+
+upper_arm %>%
+  kable(format = "html", caption = "REBA Upper Arm Posture Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2:3, background = "#FEF9E7") %>%
+  row_spec(4:5, background = "#FADBD8")
+```
+
+**Step 7: Lower Arm Posture Score**
+
+```{r reba-lower-arm, echo=FALSE}
+lower_arm <- tibble(
+  `Position` = c("60-100° flexion (optimal range)", "< 60° or > 100° flexion"),
+  `Score` = c(1, 2)
+)
+
+lower_arm %>%
+  kable(format = "html", caption = "REBA Lower Arm Posture Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7")
+```
+
+**Step 8: Wrist Posture Score**
+
+```{r reba-wrist, echo=FALSE}
+wrist <- tibble(
+  `Position` = c("0-15° flexion or extension (neutral)", ">15° flexion or extension"),
+  `Base Score` = c(1, 2),
+  `Adjustment` = c("+1 if wrist is twisted or deviated", "+1 if wrist is twisted or deviated"),
+  `Max Score` = c(2, 3)
+)
+
+wrist %>%
+  kable(format = "html", caption = "REBA Wrist Posture Scoring") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7")
+```
+
+**Step 9: Look Up Table B Score**
+
+```{r reba-table-b, echo=FALSE}
+# Table B: Upper Arm × Lower Arm × Wrist lookup
+table_b <- tibble(
+  `Upper Arm` = rep(1:6, each = 2),
+  `Lower Arm` = rep(1:2, 6),
+  `Wrist 1` = c(1,2, 1,2, 3,4, 4,5, 6,7, 7,8),
+  `Wrist 2` = c(1,2, 2,3, 4,5, 5,6, 7,8, 8,9),
+  `Wrist 3` = c(2,3, 3,4, 5,5, 6,7, 8,8, 9,9)
+)
+
+table_b %>%
+  kable(format = "html", caption = "REBA Table B: Posture Score B (Upper Arm × Lower Arm × Wrist)",
+        col.names = c("Upper Arm Score", "Lower Arm Score", "Wrist = 1", "Wrist = 2", "Wrist = 3")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  column_spec(1:2, bold = TRUE, background = "#FADBD8")
+```
+
+**Step 10: Add Coupling Score**
+
+```{r reba-coupling, echo=FALSE}
+coupling <- tibble(
+  `Coupling Quality` = c("Good", "Fair", "Poor", "Unacceptable"),
+  `Description` = c("Well-fitting handle and mid-range power grip",
+                    "Hand hold acceptable but not ideal; coupling acceptable via other body part",
+                    "Hand hold not acceptable although possible; no handles",
+                    "Awkward, unsafe grip; no handles; coupling unacceptable using other body parts"),
+  `Score` = c(0, 1, 2, 3)
+)
+
+coupling %>%
+  kable(format = "html", caption = "REBA Coupling Score") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3, background = "#FADBD8") %>%
+  row_spec(4, background = "#E74C3C", color = "white")
+```
+
+$$\text{Score B} = \text{Table B Score} + \text{Coupling Score}$$
+
+#### Calculating the Final REBA Score
+
+**Step 11: Look Up Table C Score**
+
+```{r reba-table-c, echo=FALSE}
+# Table C: Score A × Score B lookup
+table_c <- tibble(
+  `Score A` = 1:12,
+  `B=1` = c(1,1,1,2,3,3,4,5,6,7,7,7),
+  `B=2` = c(1,2,2,3,4,4,5,6,6,7,7,8),
+  `B=3` = c(1,2,3,3,4,5,6,7,7,8,8,8),
+  `B=4` = c(2,3,3,4,5,6,7,8,8,9,9,9),
+  `B=5` = c(3,4,4,5,6,7,8,8,9,9,9,9),
+  `B=6` = c(3,4,5,6,7,8,8,9,9,10,10,10),
+  `B=7` = c(4,5,6,7,8,8,9,9,10,10,11,11),
+  `B=8` = c(5,6,7,8,8,9,9,10,10,11,11,11),
+  `B=9` = c(6,6,7,8,9,9,10,10,10,11,11,12),
+  `B=10` = c(7,7,8,9,9,10,10,11,11,11,12,12),
+  `B=11` = c(7,7,8,9,9,10,11,11,11,12,12,12),
+  `B=12` = c(7,8,8,9,10,10,11,11,12,12,12,12)
+)
+
+table_c %>%
+  kable(format = "html", caption = "REBA Table C: Combined Score (Score A × Score B)",
+        col.names = c("Score A", paste0("B=", 1:12))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center", font_size = 10) %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D5F5E3")
+```
+
+**Step 12: Add Activity Score**
+
+```{r reba-activity, echo=FALSE}
+activity <- tibble(
+  `Activity Condition` = c("One or more body parts are static (held > 1 minute)",
+                           "Repeated small range actions (> 4× per minute, excluding walking)",
+                           "Action causes rapid large range changes in postures or unstable base"),
+  `Score` = c("+1", "+1", "+1")
+)
+
+activity %>%
+  kable(format = "html", caption = "REBA Activity Score (Add +1 for each condition present)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white")
+```
+
+$$\boxed{\text{REBA Score} = \text{Table C Score} + \text{Activity Score}}$$
+
+#### REBA Score Interpretation
+
+```{r reba-final-action, echo=FALSE}
+final_action <- tibble(
+  `REBA Score` = c("1", "2-3", "4-7", "8-10", "11-15"),
+  `Risk Level` = c("Negligible", "Low", "Medium", "High", "Very High"),
+  `Action Required` = c("None necessary",
+                        "May be necessary",
+                        "Necessary",
+                        "Necessary soon",
+                        "Necessary NOW"),
+  `Priority` = c("Continue monitoring",
+                 "Investigate further when convenient",
+                 "Implement changes to reduce risk",
+                 "Investigate and implement changes soon",
+                 "Stop task and make immediate changes")
+)
+
+final_action %>%
+  kable(format = "html", caption = "REBA Action Level Guidelines") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#F39C12", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#ABEBC6") %>%
+  row_spec(3, background = "#FEF9E7") %>%
+  row_spec(4, background = "#FADBD8") %>%
+  row_spec(5, background = "#E74C3C", color = "white", bold = TRUE)
+```
+
+### REBA Example Calculation: Step-by-Step Walkthrough {#reba-example-walkthrough}
+
+Let's work through a complete REBA assessment for a manufacturing worker performing a packaging task.
+
+**Scenario:** A worker stands at a packaging station, bending forward to pick up items from a low bin and placing them into boxes on a conveyor. The task is performed continuously for 4-hour shifts.
+
+```{r reba-detailed-example, echo=FALSE, fig.align="center", fig.cap="REBA Assessment Scenario: Packaging Worker", fig.width=10, fig.height=6}
+ggplot() +
+  # Worker body representation
+  annotate("rect", xmin = 4, xmax = 6, ymin = 2, ymax = 6, fill = "#F5CBA7", color = "black") +
+  annotate("point", x = 5, y = 7, size = 15, color = "#F5CBA7") +
+  annotate("point", x = 5, y = 7, size = 12, color = "#F5CBA7") +
+  # Arms reaching down
+  annotate("segment", x = 4.5, xend = 3, y = 5.5, yend = 3, color = "#D4AC0D", size = 3) +
+  annotate("segment", x = 5.5, xend = 7, y = 5.5, yend = 4, color = "#D4AC0D", size = 3) +
+  # Bin (low position)
+  annotate("rect", xmin = 1, xmax = 3.5, ymin = 0.5, ymax = 2.5, fill = "#85C1E9", color = "black") +
+  annotate("text", x = 2.25, y = 1.5, label = "BIN\n(Low)", fontface = "bold", size = 3) +
+  # Conveyor (higher position)
+  annotate("rect", xmin = 6.5, xmax = 9.5, ymin = 3, ymax = 4.5, fill = "#ABEBC6", color = "black") +
+  annotate("text", x = 8, y = 3.75, label = "CONVEYOR", fontface = "bold", size = 3) +
+  # Annotations
+  annotate("segment", x = 5, xend = 5, y = 6.5, yend = 7.5,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), color = "#E74C3C") +
+  annotate("text", x = 5.8, y = 7, label = "Neck: 25°\nflexion", size = 2.5, color = "#E74C3C", hjust = 0) +
+  annotate("curve", x = 5, y = 4, xend = 4.5, yend = 2.5, curvature = -0.3,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#E74C3C") +
+  annotate("text", x = 3.5, y = 3, label = "Trunk: 40°\nflexion", size = 2.5, color = "#E74C3C") +
+  annotate("text", x = 2, y = 4.5, label = "Upper arm:\n50° flexion", size = 2.5, color = "#3498DB") +
+  # Title and info boxes
+  annotate("rect", xmin = 0.5, xmax = 4, ymin = 5.5, ymax = 8, fill = "#FADBD8", alpha = 0.8) +
+  annotate("text", x = 2.25, y = 7.5, label = "GROUP A (Blue)", fontface = "bold", size = 3) +
+  annotate("text", x = 2.25, y = 6.5, label = "Trunk + Neck + Legs", size = 2.5) +
+  annotate("rect", xmin = 6, xmax = 9.5, ymin = 5.5, ymax = 8, fill = "#D6EAF8", alpha = 0.8) +
+  annotate("text", x = 7.75, y = 7.5, label = "GROUP B (Red)", fontface = "bold", size = 3) +
+  annotate("text", x = 7.75, y = 6.5, label = "Arms + Wrist", size = 2.5) +
+  theme_void() +
+  labs(title = "REBA Assessment: Packaging Station Worker",
+       subtitle = "Worker reaches into low bin and transfers items to conveyor") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(0, 10) + ylim(0, 8.5)
+```
+
+#### Step-by-Step Assessment
+
+```{r reba-step-by-step, echo=TRUE}
+# =============================================================
+# REBA Assessment: Packaging Station Worker
+# =============================================================
+# Worker bends forward to pick items from low bin and place on conveyor
+# Items weigh approximately 7 kg each
+# Task performed continuously with repetitive motions
+
+cat("========== GROUP A: TRUNK, NECK, LEGS ==========\n\n")
+
+# Step 1: Neck Score
+# Worker looks down into bin - approximately 25° flexion
+neck_base <- 2       # >20° flexion
+neck_twist <- 0      # No twist or side-bending
+neck_score <- neck_base + neck_twist
+cat("Step 1 - Neck Score:", neck_score, "\n")
+cat("  Position: >20° flexion (looking down into bin)\n")
+cat("  Base score: 2, Twist adjustment: 0\n\n")
+
+# Step 2: Trunk Score
+# Worker bends forward approximately 40° to reach bin
+trunk_base <- 3      # 20-60° flexion
+trunk_twist <- 1     # Slight twist when reaching
+trunk_score <- trunk_base + trunk_twist
+cat("Step 2 - Trunk Score:", trunk_score, "\n")
+cat("  Position: 40° forward flexion with slight twist\n")
+cat("  Base score: 3, Twist adjustment: +1\n\n")
+
+# Step 3: Legs Score
+# Worker stands with weight distributed evenly
+legs_base <- 1       # Bilateral weight bearing
+legs_knee <- 0       # Knees not flexed significantly
+legs_score <- legs_base + legs_knee
+cat("Step 3 - Legs Score:", legs_score, "\n")
+cat("  Position: Standing, bilateral weight bearing\n")
+cat("  Base score: 1, Knee adjustment: 0\n\n")
+
+# Step 4: Table A Lookup
+# Trunk = 4, Neck = 2, Legs = 1
+# From Table A: Score = 5
+table_a_score <- 5
+cat("Step 4 - Table A Score:", table_a_score, "\n")
+cat("  Lookup: Trunk=4, Neck=2, Legs=1 → Table A = 5\n\n")
+
+# Step 5: Load/Force Score
+# Items weigh approximately 7 kg
+load_force <- 1      # 5-10 kg
+shock_force <- 0     # No shock/rapid buildup
+load_score <- load_force + shock_force
+cat("Step 5 - Load/Force Score:", load_score, "\n")
+cat("  Load: 7 kg (in 5-10 kg range) = 1\n\n")
+
+# SCORE A CALCULATION
+score_a <- table_a_score + load_score
+cat(">>> SCORE A = Table A + Load/Force =", table_a_score, "+", load_score, "=", score_a, "\n\n")
+
+cat("========== GROUP B: UPPER ARM, LOWER ARM, WRIST ==========\n\n")
+
+# Step 6: Upper Arm Score
+# Arms reaching forward/down approximately 50° flexion
+upper_arm_base <- 3  # 45-90° flexion
+shoulder_raised <- 0 # Not raised
+arm_abducted <- 0    # Not abducted
+arm_support <- 0     # Not supported
+upper_arm_score <- upper_arm_base + shoulder_raised + arm_abducted + arm_support
+cat("Step 6 - Upper Arm Score:", upper_arm_score, "\n")
+cat("  Position: 50° flexion reaching into bin\n")
+cat("  Base score: 3, No adjustments needed\n\n")
+
+# Step 7: Lower Arm Score
+# Elbow bent approximately 70° (in optimal range)
+lower_arm_score <- 1  # 60-100° flexion
+cat("Step 7 - Lower Arm Score:", lower_arm_score, "\n")
+cat("  Position: 70° elbow flexion (optimal range)\n\n")
+
+# Step 8: Wrist Score
+# Wrist in moderate flexion to grasp items
+wrist_base <- 2      # >15° flexion
+wrist_twist <- 0     # No significant twist
+wrist_score <- wrist_base + wrist_twist
+cat("Step 8 - Wrist Score:", wrist_score, "\n")
+cat("  Position: ~20° wrist flexion when grasping\n")
+cat("  Base score: 2, Twist adjustment: 0\n\n")
+
+# Step 9: Table B Lookup
+# Upper Arm = 3, Lower Arm = 1, Wrist = 2
+# From Table B: Score = 4
+table_b_score <- 4
+cat("Step 9 - Table B Score:", table_b_score, "\n")
+cat("  Lookup: Upper Arm=3, Lower Arm=1, Wrist=2 → Table B = 4\n\n")
+
+# Step 10: Coupling Score
+# Worker grasps boxes - acceptable grip but not ideal handles
+coupling_score <- 1   # Fair coupling
+cat("Step 10 - Coupling Score:", coupling_score, "\n")
+cat("  Coupling: Fair - hand hold acceptable but not ideal\n\n")
+
+# SCORE B CALCULATION
+score_b <- table_b_score + coupling_score
+cat(">>> SCORE B = Table B + Coupling =", table_b_score, "+", coupling_score, "=", score_b, "\n\n")
+
+cat("========== FINAL REBA SCORE CALCULATION ==========\n\n")
+
+# Step 11: Table C Lookup
+# Score A = 6, Score B = 5
+# From Table C: Score = 7
+table_c_score <- 7
+cat("Step 11 - Table C Score:", table_c_score, "\n")
+cat("  Lookup: Score A=6, Score B=5 → Table C = 7\n\n")
+
+# Step 12: Activity Score
+# Check all three conditions:
+static_posture <- 0   # Body parts not held >1 minute
+repeated_actions <- 1 # Repeated small range actions (continuous picking)
+rapid_changes <- 0    # No rapid large range changes
+activity_score <- static_posture + repeated_actions + rapid_changes
+cat("Step 12 - Activity Score:", activity_score, "\n")
+cat("  Static posture >1 min: No (+0)\n")
+cat("  Repeated actions >4×/min: Yes (+1)\n")
+cat("  Rapid large changes: No (+0)\n\n")
+
+# FINAL REBA SCORE
+reba_final <- table_c_score + activity_score
+cat("╔═══════════════════════════════════════════════════╗\n")
+cat("║       FINAL REBA SCORE:", reba_final, "                       ║\n")
+cat("╚═══════════════════════════════════════════════════╝\n\n")
+
+# Interpretation
+cat("INTERPRETATION:\n")
+cat("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+if (reba_final == 1) {
+  cat("Risk Level: NEGLIGIBLE\n")
+  cat("Action: None necessary\n")
+} else if (reba_final <= 3) {
+  cat("Risk Level: LOW\n")
+  cat("Action: May be necessary\n")
+} else if (reba_final <= 7) {
+  cat("Risk Level: MEDIUM\n")
+  cat("Action: Necessary\n")
+} else if (reba_final <= 10) {
+  cat("Risk Level: HIGH\n")
+  cat("Action: Necessary soon\n")
+} else {
+  cat("Risk Level: VERY HIGH\n")
+  cat("Action: Necessary NOW - Stop task immediately\n")
+}
+cat("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+```
+
+#### Recommendations for This Assessment
+
+Based on the REBA score of **8 (HIGH risk)**, the following interventions should be implemented soon:
+
+```{r reba-recommendations, echo=FALSE}
+recommendations <- tibble(
+  `Priority` = c("1", "2", "3", "4"),
+  `Intervention` = c("Raise bin height", "Add tilt mechanism", "Reduce load weight", "Implement job rotation"),
+  `Target Risk Factor` = c("Trunk flexion", "Neck flexion", "Load/force", "Repetition"),
+  `Expected Impact` = c("Reduce trunk score from 4 to 2",
+                        "Reduce neck score from 2 to 1",
+                        "Reduce load score from 1 to 0",
+                        "Reduce activity score")
+)
+
+recommendations %>%
+  kable(format = "html", caption = "Recommended Interventions Based on REBA Assessment") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+### REBA Example Calculation
+
+```{r reba-example, echo=TRUE}
+# REBA Assessment Example: Assembly Worker
+
+# Group A Scores (Trunk, Neck, Legs)
+trunk_score <- 3      # 20-60° forward bend
+neck_score <- 2       # >20° flexion
+legs_score <- 1       # Bilateral weight bearing
+
+# Look up Table A score (trunk + neck + legs)
+# For this combination: Score A = 4
+table_a_score <- 4
+
+# Load/Force Score
+load_force <- 1       # 5-10 kg intermittent
+
+# Score A with load
+score_a <- table_a_score + load_force
+cat("Score A (posture + load):", score_a, "\n")
+
+# Group B Scores (Upper arm, Lower arm, Wrist)
+upper_arm_score <- 3  # 45-90° flexion
+lower_arm_score <- 2  # <60° or >100° flexion
+wrist_score <- 2      # >15° flexion/extension
+
+# Look up Table B score
+# For this combination: Score B = 5
+table_b_score <- 5
+
+# Coupling Score
+coupling <- 1         # Acceptable grip
+
+# Score B with coupling
+score_b <- table_b_score + coupling
+cat("Score B (posture + coupling):", score_b, "\n")
+
+# Look up Table C (Score A × Score B)
+# For Score A = 5 and Score B = 6: Score C = 8
+score_c <- 8
+
+# Activity Score
+activity <- 1         # One or more body parts static >1 min
+
+# Final REBA Score
+reba_final <- score_c + activity
+cat("\n=== FINAL REBA SCORE:", reba_final, "===\n")
+
+# Interpretation
+cat("\nInterpretation:\n")
+if (reba_final <= 1) {
+  cat("Risk Level: Negligible - No action necessary\n")
+} else if (reba_final <= 3) {
+  cat("Risk Level: Low - Action may be necessary\n")
+} else if (reba_final <= 7) {
+  cat("Risk Level: Medium - Action necessary\n")
+} else if (reba_final <= 10) {
+  cat("Risk Level: High - Action necessary soon\n")
+} else {
+  cat("Risk Level: Very High - Action necessary NOW\n")
+}
+```
+
+<details>
+<summary>Practice Problem: REBA Assessment</summary>
+
+**Scenario:** A worker is performing a task with the following postures:
+
+- **Trunk:** 30° forward flexion, twisted
+- **Neck:** 15° flexion
+- **Legs:** Weight on one leg
+- **Upper Arm:** 60° flexion, shoulder raised
+- **Lower Arm:** 80° flexion
+- **Wrist:** Neutral
+- **Load:** 8 kg carried
+- **Coupling:** Fair grip (handles exist but not ideal)
+- **Activity:** Repeated small range actions
+
+**Calculate the REBA score and determine the action level.**
+
+**Solution:**
+```
+Trunk: 3 + 1 (twisted) = 4
+Neck: 1 (0-20° flexion)
+Legs: 2 (weight on one leg)
+Table A = 5
+Load/Force = 1 (5-10kg)
+Score A = 6
+
+Upper Arm: 3 + 1 (raised) = 4
+Lower Arm: 1 (60-100°)
+Wrist: 1 (neutral)
+Table B = 4
+Coupling = 1 (fair)
+Score B = 5
+
+Table C (Score A=6, Score B=5) = 8
+Activity = +1 (repeated actions)
+REBA Score = 9
+
+Risk Level: HIGH - Action necessary soon
+```
+
+</details>
+
+### NIOSH Lifting Equation
+
+The **NIOSH Lifting Equation** calculates a **Recommended Weight Limit (RWL)** for lifting tasks.
+
+$$RWL = LC \times HM \times VM \times DM \times AM \times FM \times CM$$
+
+Where:
+
+```{r niosh-factors, echo=FALSE}
+niosh <- tibble(
+  `Factor` = c("LC", "HM", "VM", "DM", "AM", "FM", "CM"),
+  `Name` = c("Load Constant", "Horizontal Multiplier", "Vertical Multiplier",
+             "Distance Multiplier", "Asymmetric Multiplier", "Frequency Multiplier",
+             "Coupling Multiplier"),
+  `Value` = c("23 kg (51 lb)", "25/H", "1 - 0.003|V-75|", "0.82 + 4.5/D",
+              "1 - 0.0032A", "Table lookup", "Table lookup"),
+  `Description` = c("Maximum weight under ideal conditions",
+                    "H = horizontal distance from midpoint between ankles to hands (cm)",
+                    "V = vertical height of hands at start (cm)",
+                    "D = vertical travel distance (cm)",
+                    "A = angle of asymmetry (degrees)",
+                    "Based on lift frequency and duration",
+                    "Based on hand-load coupling quality")
+)
+
+niosh %>%
+  kable(format = "html", caption = "NIOSH Lifting Equation Factors") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+**Lifting Index (LI)** indicates risk level:
+
+$$LI = \frac{\text{Actual Weight}}{\text{RWL}}$$
+
+```{r li-interpretation, echo=FALSE}
+li_interp <- tibble(
+  `Lifting Index` = c("LI ≤ 1.0", "1.0 < LI ≤ 2.0", "2.0 < LI ≤ 3.0", "LI > 3.0"),
+  `Risk` = c("Low", "Moderate", "High", "Very High"),
+  `Action` = c("Task acceptable for most workers",
+               "Some workers may be at risk - consider changes",
+               "Many workers at risk - changes recommended",
+               "Unacceptable - immediate changes required")
+)
+
+li_interp %>%
+  kable(format = "html", caption = "Lifting Index Interpretation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3, background = "#FADBD8") %>%
+  row_spec(4, background = "#E74C3C", color = "white")
+```
+
+```{r niosh-example, echo=TRUE}
+# NIOSH Lifting Equation Example
+
+# Task parameters
+H <- 40    # Horizontal distance (cm)
+V <- 30    # Vertical height at start (cm)
+D <- 60    # Vertical travel distance (cm)
+A <- 30    # Asymmetry angle (degrees)
+F <- 2     # Lifts per minute
+duration <- 2  # Hours of lifting
+
+# Constants
+LC <- 23   # Load constant (kg)
+
+# Calculate multipliers
+HM <- 25 / H
+VM <- 1 - 0.003 * abs(V - 75)
+DM <- 0.82 + 4.5 / D
+AM <- 1 - 0.0032 * A
+
+# Frequency multiplier (from table, for 2 lifts/min, 2 hours, V<75cm)
+FM <- 0.84
+
+# Coupling multiplier (assume "fair" coupling)
+CM <- 0.95
+
+cat("Multipliers:\n")
+cat("HM =", round(HM, 3), "\n")
+cat("VM =", round(VM, 3), "\n")
+cat("DM =", round(DM, 3), "\n")
+cat("AM =", round(AM, 3), "\n")
+cat("FM =", FM, "\n")
+cat("CM =", CM, "\n\n")
+
+# Calculate RWL
+RWL <- LC * HM * VM * DM * AM * FM * CM
+cat("Recommended Weight Limit (RWL):", round(RWL, 1), "kg\n\n")
+
+# Calculate Lifting Index for actual load
+actual_weight <- 15  # kg
+LI <- actual_weight / RWL
+cat("Actual Weight:", actual_weight, "kg\n")
+cat("Lifting Index (LI):", round(LI, 2), "\n\n")
+
+# Interpretation
+if (LI <= 1.0) {
+  cat("Risk Level: LOW - Task acceptable\n")
+} else if (LI <= 2.0) {
+  cat("Risk Level: MODERATE - Consider changes\n")
+} else if (LI <= 3.0) {
+  cat("Risk Level: HIGH - Changes recommended\n")
+} else {
+  cat("Risk Level: VERY HIGH - Immediate changes required\n")
+}
+```
+
+------------------------------------------------------------------------
+
+## AI-Powered Ergonomic Assessment
+
+Artificial intelligence is revolutionizing ergonomic assessment by enabling **real-time, automated analysis** of worker postures without disrupting operations.
+
+```{r ai-tools-viz, echo=FALSE, fig.align="center", fig.cap="AI Ergonomics Assessment Pipeline", fig.width=10, fig.height=5}
+ggplot() +
+  # Input
+  annotate("rect", xmin = 0, xmax = 2, ymin = 1, ymax = 3, fill = "#3498DB", color = "black") +
+  annotate("text", x = 1, y = 2.5, label = "INPUT", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 1, y = 1.7, label = "Video/\nWearables", color = "white", size = 3) +
+  # Processing
+  annotate("rect", xmin = 3, xmax = 5, ymin = 1, ymax = 3, fill = "#9B59B6", color = "black") +
+  annotate("text", x = 4, y = 2.5, label = "AI PROCESSING", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 4, y = 1.7, label = "Pose\nEstimation", color = "white", size = 3) +
+  # Analysis
+  annotate("rect", xmin = 6, xmax = 8, ymin = 1, ymax = 3, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 7, y = 2.5, label = "ANALYSIS", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 7, y = 1.7, label = "REBA/RULA\nScoring", color = "white", size = 3) +
+  # Output
+  annotate("rect", xmin = 9, xmax = 11, ymin = 1, ymax = 3, fill = "#27AE60", color = "black") +
+  annotate("text", x = 10, y = 2.5, label = "OUTPUT", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 10, y = 1.7, label = "Risk Report\nAlerts", color = "white", size = 3) +
+  # Arrows
+  annotate("segment", x = 2, xend = 3, y = 2, yend = 2,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 5, xend = 6, y = 2, yend = 2,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 8, xend = 9, y = 2, yend = 2,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  theme_void() +
+  labs(title = "AI-Powered Ergonomic Assessment Pipeline",
+       subtitle = "From video input to automated risk assessment") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+```{r ai-tools-table, echo=FALSE}
+ai_tools <- tibble(
+  `Tool` = c("**TuMeke Ergonomics**", "**VelocityEHS**", "**Protex AI**",
+             "**SoterTask**", "**Viso.ai**", "**ErgoPlus Platform**"),
+  `Technology` = c("Computer vision + wearables",
+                   "AI video analysis",
+                   "Real-time video AI",
+                   "Wearable sensors + AI",
+                   "Custom AI models",
+                   "Mobile app + AI"),
+  `Key Features` = c("Real-time REBA scoring, multi-camera support",
+                     "Automated job analysis, risk prioritization",
+                     "Privacy-preserving analysis, floor-wide monitoring",
+                     "Wearable clips, real-time coaching, haptic feedback",
+                     "Custom pose detection, integration APIs",
+                     "Mobile assessment, improvement tracking"),
+  `Best For` = c("Manufacturing, warehousing",
+                 "Enterprise-wide programs",
+                 "Large facilities, privacy-conscious",
+                 "Individual worker coaching",
+                 "Custom integrations",
+                 "Field assessments")
+)
+
+ai_tools %>%
+  kable(format = "html", caption = "AI-Powered Ergonomic Assessment Tools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Benefits of AI Ergonomic Assessment
+
+```{r ai-benefits, echo=FALSE, fig.align="center", fig.cap="Traditional vs. AI Ergonomic Assessment", fig.width=10, fig.height=6}
+comparison <- data.frame(
+  metric = c("Time per Assessment", "Assessments per Day",
+             "Consistency", "Real-time Feedback", "Cost per Assessment"),
+  traditional = c(30, 5, 60, 0, 100),
+  ai = c(1, 500, 95, 100, 5),
+  metric_label = c("Minutes", "Count", "% Consistent", "% Available", "$ (relative)")
+)
+
+comparison_long <- comparison %>%
+  pivot_longer(cols = c(traditional, ai), names_to = "method", values_to = "value")
+
+ggplot(comparison_long, aes(x = metric, y = value, fill = method)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(value, ifelse(metric %in% c("Consistency", "Real-time Feedback"), "%", ""))),
+            position = position_dodge(width = 0.7), vjust = -0.5, size = 3) +
+  scale_fill_manual(values = c("traditional" = "#E74C3C", "ai" = "#27AE60"),
+                    labels = c("AI-Powered", "Traditional"),
+                    name = "Method") +
+  labs(title = "Traditional vs. AI Ergonomic Assessment Comparison",
+       x = "", y = "Value (scale varies by metric)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    axis.text.x = element_text(angle = 20, hjust = 1),
+    legend.position = "bottom"
+  )
+```
+
+```{=html}
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/yt9LY28qGwU"
+    title="AI Ergonomics Assessment - TuMeke Demo"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+------------------------------------------------------------------------
+
+## Ergonomics in Automated Manufacturing
+
+Industrial automation inherently involves the mechanization of processes traditionally carried out by human operators. In the automation design phase, engineers must strike a balance between mechanization and the necessary human interaction with these systems.
+
+### Human-Automation Interaction Points
+
+```{r automation-interaction, echo=FALSE, fig.align="center", fig.cap="Ergonomic Considerations in Automated Systems", fig.width=10, fig.height=7}
+ggplot() +
+  # Central automation system
+  annotate("rect", xmin = 3, xmax = 7, ymin = 2, ymax = 5, fill = "#95A5A6", color = "black") +
+  annotate("text", x = 5, y = 3.5, label = "AUTOMATED\nSYSTEM", fontface = "bold", size = 5) +
+  # Interaction points
+  # Loading/Unloading
+  annotate("rect", xmin = 0, xmax = 2.5, ymin = 4, ymax = 5.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 1.25, y = 4.75, label = "Loading/\nUnloading", size = 3, color = "white") +
+  annotate("segment", x = 2.5, xend = 3, y = 4.75, yend = 4,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  # HMI
+  annotate("rect", xmin = 0, xmax = 2.5, ymin = 2, ymax = 3.5, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 1.25, y = 2.75, label = "HMI\nOperation", size = 3, color = "white") +
+  annotate("segment", x = 2.5, xend = 3, y = 2.75, yend = 3.5,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  # Maintenance
+  annotate("rect", xmin = 7.5, xmax = 10, ymin = 4, ymax = 5.5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 8.75, y = 4.75, label = "Maintenance\nAccess", size = 3, color = "white") +
+  annotate("segment", x = 7.5, xend = 7, y = 4.75, yend = 4,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  # Quality Check
+  annotate("rect", xmin = 7.5, xmax = 10, ymin = 2, ymax = 3.5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 8.75, y = 2.75, label = "Quality\nInspection", size = 3, color = "white") +
+  annotate("segment", x = 7.5, xend = 7, y = 2.75, yend = 3.5,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  # Supervision
+  annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 5.5, ymax = 7, fill = "#9B59B6", color = "black") +
+  annotate("text", x = 5, y = 6.25, label = "Supervision/\nMonitoring", size = 3, color = "white") +
+  annotate("segment", x = 5, xend = 5, y = 5.5, yend = 5,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  theme_void() +
+  labs(title = "Human-Automation Interaction Points",
+       subtitle = "Each interaction point requires ergonomic design consideration") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+```{r automation-ergo, echo=FALSE}
+automation_ergo <- tibble(
+  `Interaction Point` = c("**Loading/Unloading**", "**HMI Operation**", "**Maintenance**",
+                          "**Quality Inspection**", "**Supervision**"),
+  `Ergonomic Challenges` = c("Repetitive motion, lifting, reaching, awkward postures",
+                              "Static posture, visual strain, cognitive load",
+                              "Awkward access, confined spaces, tool use",
+                              "Static positions, visual strain, fine motor tasks",
+                              "Sedentary position, cognitive fatigue, vigilance"),
+  `Design Solutions` = c("Height-adjustable conveyors, lift assists, indexing fixtures",
+                         "Adjustable screens, proper height, clear interface design",
+                         "Adequate access space, tool organization, proper lighting",
+                         "Adjustable fixtures, magnification, ergonomic seating",
+                         "Multiple monitors at eye level, alert systems, task variety")
+)
+
+automation_ergo %>%
+  kable(format = "html", caption = "Ergonomic Considerations for Automated Systems") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#34495E", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Collaborative Robot Ergonomics
+
+Cobots present unique ergonomic opportunities and challenges:
+
+```{r cobot-ergo, echo=FALSE}
+cobot_ergo <- tibble(
+  `Aspect` = c("**Task Allocation**", "**Workstation Layout**", "**Pacing**",
+               "**Force Assistance**", "**Cognitive Load**"),
+  `Opportunity` = c("Robot handles heavy, repetitive, or precision tasks",
+                    "Shared workspace allows flexible positioning",
+                    "Robot adapts to human pace, not vice versa",
+                    "Robot provides powered assist for lifting",
+                    "Robot handles routine tasks, human focuses on judgment"),
+  `Challenge` = c("Determining optimal task division",
+                  "Ensuring adequate space for human movement",
+                  "Avoiding pressure from robot efficiency",
+                  "Proper force limits to prevent injury on contact",
+                  "Maintaining situational awareness")
+)
+
+cobot_ergo %>%
+  kable(format = "html", caption = "Ergonomic Considerations for Collaborative Robots") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2ECC71", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+------------------------------------------------------------------------
+
+## Employer Responsibilities
+
+Employers have both legal and ethical obligations to protect workers from ergonomic hazards.
+
+```{r employer-responsibilities, echo=FALSE}
+employer_resp <- tibble(
+  `Responsibility` = c("**Management Commitment**", "**Worker Involvement**",
+                       "**Training**", "**Hazard Identification**",
+                       "**Early Reporting**", "**Hazard Control**", "**Program Evaluation**"),
+  `Actions` = c("Allocate resources, set goals, lead by example",
+                "Include workers in assessments, design teams, solution development",
+                "Ergonomics awareness, proper techniques, symptom recognition",
+                "Regular assessments, worker surveys, injury analysis",
+                "Non-punitive reporting system, prompt response to symptoms",
+                "Engineering controls, work organization, PPE as last resort",
+                "Track injuries, measure improvements, adjust programs")
+)
+
+employer_resp %>%
+  kable(format = "html", caption = "Employer Ergonomics Program Responsibilities") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#C0392B", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+<details>
+<summary>OSHA Ergonomics Guidelines</summary>
+
+While OSHA does not have a specific ergonomics standard, employers are still responsible under the **General Duty Clause** (Section 5(a)(1)) which requires employers to provide a workplace "free from recognized hazards."
+
+**OSHA's Recommended Program Elements:**
+1. Management leadership
+2. Worker participation
+3. Hazard identification and assessment
+4. Hazard prevention and control
+5. Education and training
+6. Program evaluation
+
+**Industry-Specific Guidelines:**
+- Poultry Processing
+- Nursing Homes
+- Retail Grocery Stores
+- Shipyards
+
+Visit: [OSHA Ergonomics eTool](https://www.osha.gov/ergonomics)
+
+</details>
+
+------------------------------------------------------------------------
+
+## Case Study: Ergonomics in Automated Assembly
+
+**Company:** Automotive parts manufacturer
+
+**Problem:** High rate of upper extremity MSDs in assembly department
+- 15 recordable injuries per year
+- Lost workdays averaging 20 days per case
+- Workers' comp costs exceeding $300,000 annually
+
+**Assessment Findings:**
+
+```{r case-study-findings, echo=FALSE}
+findings <- tibble(
+  `Workstation` = c("Sub-assembly", "Main line", "Inspection", "Packaging"),
+  `Primary Issues` = c("Overhead reaching, high repetition",
+                       "Forward bending, static standing",
+                       "Awkward wrist postures, visual strain",
+                       "Lifting, carrying, repetition"),
+  `REBA Score` = c(9, 8, 7, 10),
+  `Risk Level` = c("High", "High", "Medium", "Very High")
+)
+
+findings %>%
+  kable(format = "html", caption = "Ergonomic Assessment Findings") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  row_spec(4, background = "#FADBD8", bold = TRUE)
+```
+
+**Interventions Implemented:**
+
+1. **Sub-assembly:**
+   - Tilting fixtures to bring work closer
+   - Parts bins repositioned to eliminate overhead reaching
+   - Cobot added for repetitive insertion tasks
+
+2. **Main line:**
+   - Height-adjustable workstations installed
+   - Anti-fatigue mats added
+   - Job rotation implemented
+
+3. **Inspection:**
+   - Magnifying task lights installed
+   - Angled fixtures to reduce wrist bending
+   - Ergonomic seating provided
+
+4. **Packaging:**
+   - Vacuum lift assists installed
+   - Conveyor heights adjusted
+   - Case erectors automated
+
+**Results After 18 Months:**
+
+```{r case-study-results, echo=FALSE, fig.align="center", fig.cap="Ergonomic Intervention Results", fig.width=9, fig.height=5}
+results <- data.frame(
+  metric = c("Recordable Injuries", "Lost Workdays", "Workers' Comp Cost ($K)",
+             "Productivity", "Quality (defects)"),
+  before = c(15, 300, 300, 100, 100),
+  after = c(4, 48, 75, 118, 65)
+)
+
+results_long <- results %>%
+  mutate(
+    change = (after - before) / before * 100
+  )
+
+ggplot(results_long, aes(x = metric, y = change)) +
+  geom_bar(stat = "identity", fill = ifelse(results_long$change < 0, "#27AE60", "#3498DB"),
+           color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(ifelse(change > 0, "+", ""), round(change), "%")),
+            vjust = ifelse(results_long$change < 0, 1.5, -0.5), fontface = "bold", size = 4) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 1) +
+  scale_y_continuous(limits = c(-90, 30)) +
+  labs(title = "Impact of Ergonomic Interventions",
+       subtitle = "Percentage change from baseline after 18 months",
+       x = "", y = "Change (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    axis.text.x = element_text(angle = 20, hjust = 1)
+  )
+```
+
+**ROI Analysis:**
+
+```{r roi-analysis, echo=TRUE}
+# Investment
+equipment_cost <- 150000  # Lift assists, fixtures, cobots
+training_cost <- 15000
+total_investment <- equipment_cost + training_cost
+
+# Annual Savings
+injury_reduction <- (15 - 4) * 20000  # Avg cost per injury
+productivity_gain <- 0.18 * 500000    # 18% improvement on labor cost
+quality_improvement <- 0.35 * 50000   # 35% defect reduction
+
+annual_savings <- injury_reduction + productivity_gain + quality_improvement
+
+cat("Total Investment: $", format(total_investment, big.mark = ","), "\n")
+cat("Annual Savings: $", format(annual_savings, big.mark = ","), "\n")
+cat("Payback Period:", round(total_investment / annual_savings, 1), "years\n")
+cat("5-Year ROI:", round((annual_savings * 5 - total_investment) / total_investment * 100), "%\n")
+```
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-table-ch7, echo=FALSE}
+summary_data <- tibble(
+  `Topic` = c("**Ergonomics Definition**", "**Risk Factors**", "**MSDs**",
+              "**Prevention**", "**Design Principles**", "**Assessment Tools**",
+              "**AI in Ergonomics**", "**Employer Role**"),
+  `Key Points` = c("Fitting the job to the worker; physical, cognitive, organizational domains",
+                   "Posture, repetition, force, static positions, contact stress, vibration, environment",
+                   "Injuries to muscles, nerves, tendons; develop gradually from exposure to disability",
+                   "Engineering controls most effective; proper lifting, neutral postures, recovery time",
+                   "Neutral posture, anthropometry, work height optimization, environmental control",
+                   "REBA for whole body, RULA for upper limb, NIOSH for lifting tasks",
+                   "Real-time monitoring, automated REBA/RULA scoring, continuous assessment",
+                   "Management commitment, worker involvement, training, hazard control, evaluation")
+)
+
+summary_data %>%
+  kable(format = "html", caption = "Ergonomics in Manufacturing: Key Concepts Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, width = "12em")
+```
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+<details>
+<summary>Question 1: What are the seven ergonomic risk factors, and which two are most commonly associated with carpal tunnel syndrome?</summary>
+
+The seven ergonomic risk factors are:
+1. Awkward Postures
+2. Repetition
+3. Force
+4. Static Positions
+5. Contact Stress
+6. Vibration
+7. Environmental Factors
+
+**Carpal tunnel syndrome** is most commonly associated with:
+- **Repetition** - Repeated wrist movements compress the median nerve
+- **Force** - Forceful gripping increases pressure in the carpal tunnel
+- Also contributing: awkward wrist postures and vibration
+
+</details>
+
+<details>
+<summary>Question 2: A worker performs a task 8 times per minute for a 4-hour shift. The cycle time is 7.5 seconds. Is this considered high repetition? Why?</summary>
+
+**Analysis:**
+- Cycle time: 7.5 seconds (< 15 seconds threshold)
+- Repetitions per hour: 8 × 60 = 480 (> 240 threshold)
+
+**Yes, this is HIGH repetition** because:
+1. Cycle time is less than 15 seconds
+2. Repetitions exceed 240 per hour
+
+**Risk Level:** High - Immediate intervention needed
+
+**Recommended actions:**
+- Job rotation with different tasks
+- Automation of repetitive elements
+- Micro-breaks every 20-30 minutes
+- Workstation redesign to reduce cycle elements
+
+</details>
+
+<details>
+<summary>Question 3: Explain why ergonomic design should accommodate the 5th to 95th percentile of the population rather than designing for the "average" person.</summary>
+
+**Designing for the average excludes most people:**
+- The "average" person in ALL dimensions doesn't exist
+- A person may be average height but have long arms or short legs
+- Designing for only the 50th percentile fits only about 50% of users
+
+**The 5th-95th percentile range:**
+- Accommodates 90% of the population
+- Addresses both small and large users
+- Provides adjustability rather than fixed dimensions
+
+**Application rules:**
+- **Clearances** (overhead, legroom): Design for 95th percentile (largest)
+- **Reach distances**: Design for 5th percentile (smallest)
+- **Work surfaces**: Make adjustable to accommodate range
+
+**Example:** A fixed workstation at 95cm height:
+- Too high for 5th percentile female (elbow at ~93cm)
+- Too low for 95th percentile male (elbow at ~117cm)
+- Adjustable range of 85-115cm accommodates both
+
+</details>
+
+<details>
+<summary>Question 4: Calculate the NIOSH Lifting Index for the following task and determine if intervention is needed.</summary>
+
+**Task Parameters:**
+- Horizontal distance (H): 35 cm
+- Vertical height (V): 80 cm
+- Travel distance (D): 50 cm
+- Asymmetry (A): 0° (symmetric lift)
+- Frequency: 4 lifts/minute for 1 hour
+- Coupling: Good (handles)
+- Actual load: 18 kg
+
+**Solution:**
+```
+LC = 23 kg
+HM = 25/35 = 0.714
+VM = 1 - 0.003|80-75| = 0.985
+DM = 0.82 + 4.5/50 = 0.91
+AM = 1 - 0.0032(0) = 1.0
+FM = 0.75 (4/min, 1 hour, V>75cm, from table)
+CM = 1.0 (good coupling)
+
+RWL = 23 × 0.714 × 0.985 × 0.91 × 1.0 × 0.75 × 1.0
+RWL = 11.0 kg
+
+LI = 18 / 11.0 = 1.64
+
+Risk Level: MODERATE (1.0 < LI < 2.0)
+Action: Some workers may be at risk - consider changes
+```
+
+**Recommendations:**
+- Reduce horizontal distance (bring load closer)
+- Reduce lifting frequency
+- Use mechanical assist for loads >12 kg
+
+</details>
+
+<details>
+<summary>Question 5: What are three advantages of AI-powered ergonomic assessment over traditional methods?</summary>
+
+**1. Scale and Coverage:**
+- Traditional: 5-10 assessments per day by trained ergonomist
+- AI: Hundreds or thousands of assessments simultaneously
+- Can monitor entire facility continuously
+
+**2. Consistency and Objectivity:**
+- Traditional: Inter-rater reliability issues; different assessors may score differently
+- AI: Consistent scoring algorithm applied uniformly
+- Removes subjective interpretation
+
+**3. Real-time Feedback:**
+- Traditional: Assessment completed, report generated days/weeks later
+- AI: Immediate scoring and alerts
+- Can provide real-time coaching to workers
+
+**Additional advantages:**
+- Lower cost per assessment
+- Non-disruptive (workers not aware of assessment)
+- Longitudinal tracking of posture patterns
+- Data for predictive analytics
+
+</details>
+
+------------------------------------------------------------------------
+
+## Additional Resources
+
+### Videos
+
+**Ergonomics Fundamentals:**
+- [Introduction to Workplace Ergonomics](https://www.youtube.com/watch?v=pKJi-5wjEoI)
+- [Safe Manual Handling Techniques](https://www.youtube.com/watch?v=aNZqB30gPfE)
+
+**Assessment Tools:**
+- [REBA Assessment Tutorial](https://www.youtube.com/watch?v=wRxLNzgGSBg)
+- [RULA Assessment Guide](https://www.youtube.com/watch?v=5GjfCeBtWvE)
+- [NIOSH Lifting Equation Explained](https://www.youtube.com/watch?v=BbNfbGRIkLQ)
+
+**AI Ergonomics:**
+- [TuMeke AI Ergonomics Demo](https://www.youtube.com/watch?v=N4p4NsA96Zg)
+- [VelocityEHS Industrial Ergonomics](https://www.youtube.com/watch?v=QnR7fXD-jmc)
+
+### Online Tools
+
+- [ErgoPlus REBA Calculator](https://ergo-plus.com/reba-assessment-tool-guide/)
+- [NIOSH Lifting Equation Calculator](https://www.cdc.gov/niosh/topics/ergonomics/nlecalc.html)
+- [Cornell University Ergonomics Web](https://ergo.human.cornell.edu/)
+
+------------------------------------------------------------------------
+
+## References
+
+- Berlin, C., & Adams, C. (2017). *Production Ergonomics: Designing Work Systems to Support Optimal Human Performance*. Ubiquity Press.
+- Hignett, S., & McAtamney, L. (2000). Rapid Entire Body Assessment (REBA). *Applied Ergonomics*, 31(2), 201-205.
+- McAtamney, L., & Corlett, E.N. (1993). RULA: A Survey Method for Investigation of Work-Related Upper Limb Disorders. *Applied Ergonomics*, 24(2), 91-99.
+- NIOSH. (1994). *Applications Manual for the Revised NIOSH Lifting Equation*. DHHS (NIOSH) Publication No. 94-110.
+- OSHA. (2000). *Ergonomics: The Study of Work*. OSHA 3125.
+- Waters, T.R., Putz-Anderson, V., & Garg, A. (1993). Revised NIOSH Equation for the Design and Evaluation of Manual Lifting Tasks. *Ergonomics*, 36(7), 749-776.
+- ISO 11228-1:2021. Ergonomics — Manual handling — Part 1: Lifting, lowering and carrying.
+- ISO 11228-3:2007. Ergonomics — Manual handling — Part 3: Handling of low loads at high frequency.
+
+------------------------------------------------------------------------

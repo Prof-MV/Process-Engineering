@@ -1,0 +1,1584 @@
+# Statistical Process Control (SPC)
+```{r setup-09, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+```{r setup-ch9, echo=FALSE, message=FALSE, warning=FALSE}
+set.seed(42)  # For reproducibility of random examples
+```
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+- Explain the purpose and benefits of Statistical Process Control
+- Distinguish between common cause and special cause variation
+- Select the appropriate control chart for different data types
+- Construct and interpret X-bar/R, X-bar/S, and Individual-MR charts
+- Construct and interpret attribute control charts (p, np, c, u)
+- Apply control chart interpretation rules (Western Electric rules)
+- Calculate and interpret process capability indices (Cp, Cpk, Pp, Ppk)
+- Respond appropriately to out-of-control signals
+
+> "In God we trust; all others must bring data."
+> — W. Edwards Deming
+
+------------------------------------------------------------------------
+
+## Introduction to SPC
+
+### What is Statistical Process Control?
+
+**Statistical Process Control (SPC)** is a method of quality control that uses statistical methods to monitor and control a process. It helps ensure that the process operates at its full potential to produce conforming product.
+
+```{r spc-concept, echo=FALSE, fig.align="center", fig.cap="The SPC Philosophy: Prevention Through Monitoring", fig.width=10, fig.height=5}
+ggplot() +
+  # Without SPC
+  annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
+  annotate("text", x = 2, y = 2.5, label = "WITHOUT SPC", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 2, y = 1.5,
+           label = "• Inspect after production\n• Find defects too late\n• React to problems\n• High scrap/rework costs",
+           size = 3, color = "white", lineheight = 0.9) +
+  # With SPC
+  annotate("rect", xmin = 5, xmax = 9, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
+  annotate("text", x = 7, y = 2.5, label = "WITH SPC", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 7, y = 1.5,
+           label = "• Monitor during production\n• Detect shifts early\n• Prevent defects\n• Lower costs, higher quality",
+           size = 3, color = "white", lineheight = 0.9) +
+  # Arrow
+  annotate("segment", x = 4.2, xend = 4.8, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.3, "cm")), linewidth = 2, color = "#2C3E50") +
+  theme_void() +
+  labs(title = "The Shift from Inspection to Prevention",
+       subtitle = "SPC enables real-time process monitoring and early intervention") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+### Brief History of SPC
+
+```{r spc-history, echo=FALSE}
+history <- tibble(
+  `Year` = c("1920s", "1930s-40s", "1950s", "1980s", "1990s", "2000s+"),
+  `Development` = c("Walter Shewhart develops control charts at Bell Labs",
+                    "SPC used in WWII military production",
+                    "Deming teaches SPC to Japanese industry",
+                    "US automotive industry adopts SPC",
+                    "SPC becomes requirement in ISO/QS-9000",
+                    "Real-time SPC, automated data collection"),
+  `Significance` = c("Birth of modern quality control",
+                     "Proved effectiveness in mass production",
+                     "Foundation of Japanese quality revolution",
+                     "Response to Japanese competition",
+                     "Industry-wide standardization",
+                     "Integration with Industry 4.0")
+)
+
+history %>%
+  kable(format = "html", caption = "Evolution of Statistical Process Control") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#34495E", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+### Why SPC Matters
+
+```{r spc-benefits, echo=FALSE, fig.align="center", fig.cap="Benefits of SPC Implementation", fig.width=10, fig.height=5}
+benefits <- data.frame(
+  benefit = c("Reduced Variation", "Lower Scrap", "Fewer Customer Complaints",
+              "Reduced Inspection", "Better Decisions"),
+  improvement = c(50, 45, 60, 35, 70)
+)
+
+ggplot(benefits, aes(x = reorder(benefit, improvement), y = improvement)) +
+  geom_bar(stat = "identity", fill = "#3498DB", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(improvement, "%")), hjust = -0.2, fontface = "bold", size = 4) +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 85)) +
+  labs(title = "Typical Improvements from SPC Implementation",
+       subtitle = "Based on industry case studies",
+       x = "", y = "Improvement (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    panel.grid.minor = element_blank()
+  )
+```
+
+------------------------------------------------------------------------
+
+## Understanding Variation
+
+**All processes exhibit variation.** No two products are ever exactly identical. The key insight of SPC is that variation comes from two fundamentally different sources, and we must respond to them differently.
+
+### Common Cause vs. Special Cause Variation
+
+```{r variation-types, echo=FALSE, fig.align="center", fig.cap="Two Types of Variation", fig.width=10, fig.height=6}
+# Generate example data
+set.seed(123)
+n <- 50
+common_cause <- rnorm(n, mean = 50, sd = 2)
+special_cause <- c(rnorm(35, mean = 50, sd = 2), rnorm(15, mean = 54, sd = 2))
+
+df <- data.frame(
+  sample = rep(1:n, 2),
+  value = c(common_cause, special_cause),
+  type = rep(c("Common Cause Only", "Common + Special Cause"), each = n)
+)
+
+ggplot(df, aes(x = sample, y = value)) +
+  geom_line(color = "#3498DB") +
+  geom_point(color = "#3498DB", size = 2) +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = c(44, 56), linetype = "dotted", color = "#E74C3C", linewidth = 1) +
+  facet_wrap(~type, ncol = 1) +
+  annotate("text", x = 52, y = 56.5, label = "UCL", color = "#E74C3C", size = 3) +
+  annotate("text", x = 52, y = 43.5, label = "LCL", color = "#E74C3C", size = 3) +
+  labs(title = "Common Cause vs. Special Cause Variation",
+       subtitle = "Notice the shift starting at sample 36 in the bottom chart",
+       x = "Sample Number", y = "Measured Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    strip.text = element_text(face = "bold", size = 11)
+  )
+```
+
+```{r variation-comparison, echo=FALSE}
+variation_types <- tibble(
+  `Characteristic` = c("**Other Names**", "**Source**", "**Pattern**", "**Predictability**",
+                       "**Examples**", "**Action Required**", "**Who Acts**"),
+  `Common Cause Variation` = c("Random, chance, noise, inherent",
+                                "Built into the process; many small factors",
+                                "Random, stable, predictable pattern",
+                                "Statistically predictable within limits",
+                                "Machine vibration, material variation, ambient temperature",
+                                "Improve the system (management decision)",
+                                "Management — requires system change"),
+  `Special Cause Variation` = c("Assignable, non-random, signal",
+                                 "Specific, identifiable event",
+                                 "Non-random; shifts, trends, patterns",
+                                 "Unpredictable; something changed",
+                                 "Tool breakage, new operator, bad material lot, power surge",
+                                 "Find and eliminate the cause",
+                                 "Operators/technicians — local action")
+)
+
+variation_types %>%
+  kable(format = "html", caption = "Common Cause vs. Special Cause Variation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em") %>%
+  column_spec(2, background = "#D6EAF8") %>%
+  column_spec(3, background = "#FADBD8")
+```
+
+### The Two Mistakes in Process Control
+
+Understanding variation prevents two costly mistakes:
+
+```{r two-mistakes, echo=FALSE, fig.align="center", fig.cap="The Two Fundamental Mistakes", fig.width=10, fig.height=5}
+ggplot() +
+  # Mistake 1
+  annotate("rect", xmin = 0, xmax = 4.5, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
+  annotate("text", x = 2.25, y = 2.6, label = "MISTAKE #1", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 2.25, y = 2.2, label = "Over-adjustment", size = 3.5, color = "white", fontface = "italic") +
+  annotate("text", x = 2.25, y = 1.3,
+           label = "Treating COMMON cause\nas if it were SPECIAL\n\nResult: Tampering\nIncreased variation!",
+           size = 3, color = "white", lineheight = 0.9) +
+  # Mistake 2
+  annotate("rect", xmin = 5.5, xmax = 10, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.8) +
+  annotate("text", x = 7.75, y = 2.6, label = "MISTAKE #2", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 7.75, y = 2.2, label = "Under-reaction", size = 3.5, color = "white", fontface = "italic") +
+  annotate("text", x = 7.75, y = 1.3,
+           label = "Treating SPECIAL cause\nas if it were COMMON\n\nResult: Missing signals\nDefects produced!",
+           size = 3, color = "white", lineheight = 0.9) +
+  theme_void() +
+  labs(title = "Two Mistakes That Waste Resources and Reduce Quality",
+       subtitle = "Control charts help us avoid both mistakes") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+<details>
+<summary>The Funnel Experiment: Why Tampering Makes Things Worse</summary>
+
+**Deming's Funnel Experiment** demonstrates why adjusting a stable process increases variation:
+
+**Setup:** Drop a ball through a funnel onto a target. The ball lands near (but not exactly on) the target due to common cause variation.
+
+**Rule 1 (Correct):** Leave the funnel alone. Variation remains constant.
+
+**Rule 2 (Tampering):** After each drop, move the funnel to compensate for the last error.
+- Result: Variation DOUBLES!
+
+**Rule 3 (More Tampering):** Move funnel to compensate relative to the target.
+- Result: Variation increases without bound!
+
+**Lesson:** Adjusting a stable process based on individual deviations (common cause) actually makes the process worse. Only adjust when special causes are identified.
+
+**Real-World Example:** An operator notices a part is 0.02mm below target and adjusts the machine. The next part is 0.03mm above target (the adjustment plus normal variation). They adjust again... and the process oscillates with increasing variation.
+
+</details>
+
+### When is a Process "In Control"?
+
+A process is **in statistical control** when:
+
+1. Only common cause variation is present
+2. All points fall within control limits
+3. No non-random patterns exist
+4. The process is stable and predictable
+
+```{r in-control-definition, echo=FALSE, fig.align="center", fig.cap="In-Control vs. Out-of-Control Process", fig.width=10, fig.height=5}
+set.seed(456)
+in_control <- data.frame(
+  x = 1:25,
+  y = rnorm(25, 50, 2),
+  status = "In Control"
+)
+
+out_control <- data.frame(
+  x = 1:25,
+  y = c(rnorm(15, 50, 2), rnorm(10, 54, 2)),
+  status = "Out of Control"
+)
+
+combined <- rbind(in_control, out_control)
+
+ggplot(combined, aes(x = x, y = y)) +
+  geom_line(color = "#3498DB") +
+  geom_point(aes(color = y > 56 | y < 44), size = 3) +
+  geom_hline(yintercept = 50, linetype = "solid", color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = c(44, 56), linetype = "dashed", color = "#E74C3C", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
+  facet_wrap(~status) +
+  labs(title = "Recognizing In-Control vs. Out-of-Control Conditions",
+       x = "Sample Number", y = "Measured Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    strip.text = element_text(face = "bold", size = 11)
+  )
+```
+
+------------------------------------------------------------------------
+
+## Control Charts: The Foundation of SPC
+
+### What is a Control Chart?
+
+A **control chart** is a graph that shows process data over time with statistically determined control limits. It provides a visual method for distinguishing between common and special cause variation.
+
+```{r control-chart-anatomy, echo=FALSE, fig.align="center", fig.cap="Anatomy of a Control Chart", fig.width=10, fig.height=6}
+set.seed(789)
+data <- data.frame(
+  subgroup = 1:25,
+  value = rnorm(25, mean = 100, sd = 3)
+)
+
+# Add one out-of-control point
+data$value[18] <- 112
+
+mean_val <- mean(data$value[-18])
+ucl <- mean_val + 3 * sd(data$value[-18])
+lcl <- mean_val - 3 * sd(data$value[-18])
+
+ggplot(data, aes(x = subgroup, y = value)) +
+  geom_line(color = "#3498DB", linewidth = 0.8) +
+  geom_point(aes(color = value > ucl | value < lcl), size = 3) +
+  # Center line
+  geom_hline(yintercept = mean_val, color = "#27AE60", linewidth = 1.2) +
+  # Control limits
+  geom_hline(yintercept = ucl, color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = lcl, color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  # Zone lines
+  geom_hline(yintercept = mean_val + 2*sd(data$value[-18]), color = "#F39C12", linetype = "dotted") +
+  geom_hline(yintercept = mean_val - 2*sd(data$value[-18]), color = "#F39C12", linetype = "dotted") +
+  geom_hline(yintercept = mean_val + 1*sd(data$value[-18]), color = "#9B59B6", linetype = "dotted") +
+  geom_hline(yintercept = mean_val - 1*sd(data$value[-18]), color = "#9B59B6", linetype = "dotted") +
+  # Labels
+  annotate("text", x = 26, y = ucl, label = "UCL (+3σ)", hjust = 0, color = "#E74C3C", fontface = "bold") +
+  annotate("text", x = 26, y = lcl, label = "LCL (-3σ)", hjust = 0, color = "#E74C3C", fontface = "bold") +
+  annotate("text", x = 26, y = mean_val, label = "CL (Mean)", hjust = 0, color = "#27AE60", fontface = "bold") +
+  annotate("text", x = 26, y = mean_val + 2*sd(data$value[-18]), label = "+2σ", hjust = 0, color = "#F39C12") +
+  annotate("text", x = 26, y = mean_val - 2*sd(data$value[-18]), label = "-2σ", hjust = 0, color = "#F39C12") +
+  # Zone labels
+  annotate("text", x = 0, y = mean_val + 2.5*sd(data$value[-18]), label = "Zone A", hjust = 1, size = 3) +
+  annotate("text", x = 0, y = mean_val + 1.5*sd(data$value[-18]), label = "Zone B", hjust = 1, size = 3) +
+  annotate("text", x = 0, y = mean_val + 0.5*sd(data$value[-18]), label = "Zone C", hjust = 1, size = 3) +
+  scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
+  labs(title = "Control Chart Structure",
+       subtitle = "Control limits set at ±3σ from the center line",
+       x = "Subgroup Number", y = "Measured Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10)
+  ) +
+  xlim(-1, 29)
+```
+
+### Control Chart Components
+
+```{r chart-components, echo=FALSE}
+components <- tibble(
+  `Component` = c("**Center Line (CL)**", "**Upper Control Limit (UCL)**",
+                  "**Lower Control Limit (LCL)**", "**Data Points**", "**Zones A, B, C**"),
+  `Description` = c("The process average; target for the process",
+                    "Upper boundary of expected variation (+3σ)",
+                    "Lower boundary of expected variation (-3σ)",
+                    "Individual or subgroup statistics plotted over time",
+                    "Regions between ±1σ, ±2σ, and ±3σ for pattern analysis"),
+  `Purpose` = c("Shows where process is centered",
+                "Signals if process shifted too high",
+                "Signals if process shifted too low",
+                "Visual representation of process behavior",
+                "Used for detecting trends and patterns")
+)
+
+components %>%
+  kable(format = "html", caption = "Control Chart Components") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "14em")
+```
+
+### Why ±3 Sigma?
+
+Control limits are set at **±3 standard deviations** from the center line. This is not arbitrary:
+
+- For a normal distribution, 99.73% of data falls within ±3σ
+- Only 0.27% (about 3 in 1000) will fall outside by chance
+- This balances the risk of both mistakes (false alarms vs. missed signals)
+
+```{r normal-distribution, echo=FALSE, fig.align="center", fig.cap="Normal Distribution and Control Limits", fig.width=10, fig.height=5}
+x <- seq(-4, 4, 0.01)
+y <- dnorm(x)
+
+df <- data.frame(x = x, y = y)
+
+ggplot(df, aes(x = x, y = y)) +
+  geom_line(linewidth = 1.2, color = "#2C3E50") +
+  geom_area(data = subset(df, x >= -3 & x <= 3), fill = "#3498DB", alpha = 0.5) +
+  geom_area(data = subset(df, x >= -2 & x <= 2), fill = "#27AE60", alpha = 0.5) +
+  geom_area(data = subset(df, x >= -1 & x <= 1), fill = "#F39C12", alpha = 0.5) +
+  geom_vline(xintercept = c(-3, 3), linetype = "dashed", color = "#E74C3C", linewidth = 1) +
+  geom_vline(xintercept = 0, color = "#27AE60", linewidth = 1) +
+  annotate("text", x = 0, y = 0.2, label = "68.27%\n(±1σ)", size = 3, fontface = "bold") +
+  annotate("text", x = 1.5, y = 0.1, label = "95.45%\n(±2σ)", size = 3) +
+  annotate("text", x = 2.5, y = 0.03, label = "99.73%\n(±3σ)", size = 3) +
+  annotate("text", x = 3.5, y = 0.01, label = "0.135%", size = 2.5, color = "#E74C3C") +
+  annotate("text", x = -3.5, y = 0.01, label = "0.135%", size = 2.5, color = "#E74C3C") +
+  scale_x_continuous(breaks = -4:4, labels = c("-4σ", "-3σ", "-2σ", "-1σ", "μ", "+1σ", "+2σ", "+3σ", "+4σ")) +
+  labs(title = "The Normal Distribution and Control Limits",
+       subtitle = "99.73% of data falls within ±3σ when process is in control",
+       x = "Standard Deviations from Mean", y = "Probability Density") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10)
+  )
+```
+
+### Choosing the Right Control Chart
+
+The type of control chart depends on the **type of data** being collected:
+
+```{r chart-selection, echo=FALSE, fig.align="center", fig.cap="Control Chart Selection Flowchart", fig.width=10, fig.height=7}
+ggplot() +
+  # Start
+  annotate("rect", xmin = 4, xmax = 6, ymin = 6.5, ymax = 7.5, fill = "#2C3E50", color = "black") +
+  annotate("text", x = 5, y = 7, label = "What type\nof data?", color = "white", fontface = "bold", size = 3.5, lineheight = 0.9) +
+
+  # Variable branch
+  annotate("segment", x = 4, xend = 2, y = 6.5, yend = 5.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 2.8, y = 6.2, label = "Variable\n(measured)", size = 2.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 1, xmax = 3, ymin = 4.5, ymax = 5.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 2, y = 5, label = "Sample\nsize?", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Variable - n=1
+  annotate("segment", x = 1, xend = 0.5, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 0.5, y = 4.2, label = "n=1", size = 2.5) +
+  annotate("rect", xmin = -0.5, xmax = 1.5, ymin = 2.5, ymax = 3.5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 0.5, y = 3, label = "I-MR\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Variable - n=2-9
+  annotate("segment", x = 2, xend = 2, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 2.4, y = 4, label = "n=2-9", size = 2.5) +
+  annotate("rect", xmin = 1, xmax = 3, ymin = 2.5, ymax = 3.5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 2, y = 3, label = "X-bar/R\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Variable - n≥10
+  annotate("segment", x = 3, xend = 3.5, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 3.5, y = 4.2, label = "n≥10", size = 2.5) +
+  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 2.5, ymax = 3.5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 3.5, y = 3, label = "X-bar/S\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Attribute branch
+  annotate("segment", x = 6, xend = 8, y = 6.5, yend = 5.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 7.2, y = 6.2, label = "Attribute\n(counted)", size = 2.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 7, xmax = 9, ymin = 4.5, ymax = 5.5, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 8, y = 5, label = "Defectives or\nDefects?", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Defectives
+  annotate("segment", x = 7, xend = 6, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 6.3, y = 4.2, label = "Defectives\n(bad units)", size = 2.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 5, xmax = 7, ymin = 2.5, ymax = 3.5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 6, y = 3, label = "p or np\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Defects
+  annotate("segment", x = 9, xend = 10, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 9.7, y = 4.2, label = "Defects\n(count per unit)", size = 2.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 9, xmax = 11, ymin = 2.5, ymax = 3.5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 10, y = 3, label = "c or u\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  theme_void() +
+  labs(title = "Selecting the Right Control Chart") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  xlim(-1, 12) + ylim(2, 8)
+```
+
+```{r chart-summary, echo=FALSE}
+chart_types <- tibble(
+  `Chart Type` = c("**X-bar / R**", "**X-bar / S**", "**I-MR**",
+                   "**p chart**", "**np chart**", "**c chart**", "**u chart**"),
+  `Data Type` = c("Variable", "Variable", "Variable",
+                  "Attribute", "Attribute", "Attribute", "Attribute"),
+  `Sample Size` = c("2-9 per subgroup", "≥10 per subgroup", "1 (individuals)",
+                    "Variable or constant", "Constant", "Constant", "Variable"),
+  `What It Charts` = c("Subgroup mean and range", "Subgroup mean and std dev",
+                       "Individual values and moving range",
+                       "Proportion defective", "Number defective",
+                       "Number of defects", "Defects per unit"),
+  `Typical Application` = c("Production sampling, multiple measurements",
+                            "Large subgroups, automated measurement",
+                            "Continuous processes, expensive testing",
+                            "Pass/fail inspection, variable sample size",
+                            "Pass/fail inspection, fixed sample size",
+                            "Defects per item (scratches, errors)",
+                            "Defects per unit area or time")
+)
+
+chart_types %>%
+  kable(format = "html", caption = "Control Chart Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  row_spec(1:3, background = "#D6EAF8") %>%
+  row_spec(4:7, background = "#FCE4D6") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+<details>
+<summary>Question: Variable vs. Attribute Data - What's the Difference?</summary>
+
+**Variable Data (Measured):**
+- Can take any value within a range
+- Measured on a continuous scale
+- Examples: length, weight, temperature, voltage, pressure
+- More information per measurement
+- Smaller sample sizes needed
+
+**Attribute Data (Counted):**
+- Discrete categories (good/bad, pass/fail)
+- Counted, not measured
+- Examples: number of defects, number of rejects, yes/no
+- Less information per observation
+- Larger sample sizes needed
+
+**When to Use Each:**
+- Use variable data when you CAN measure (more powerful)
+- Use attribute data when you can only classify or count
+- Sometimes you convert variable to attribute (e.g., pass/fail based on tolerance)
+
+</details>
+
+------------------------------------------------------------------------
+
+## Variable Control Charts
+
+### X-bar and R Chart
+
+The **X-bar and R chart** is the most common control chart for variable data. It tracks both the process average (X-bar) and the process spread (Range).
+
+#### Constructing an X-bar/R Chart
+
+**Step 1:** Collect data in subgroups (typically 4-5 samples)
+
+```{r xbar-r-data, echo=TRUE}
+# Example: Measuring shaft diameter (mm)
+# 25 subgroups of 5 measurements each
+
+set.seed(100)
+n_subgroups <- 25
+n_samples <- 5
+
+# Generate data
+data <- matrix(rnorm(n_subgroups * n_samples, mean = 25.00, sd = 0.05),
+               nrow = n_subgroups, ncol = n_samples)
+
+# Add a special cause (shift) at subgroup 18
+data[18, ] <- data[18, ] + 0.12
+
+# Calculate statistics for each subgroup
+xbar <- apply(data, 1, mean)
+R <- apply(data, 1, function(x) max(x) - min(x))
+
+cat("First 5 subgroups:\n")
+print(round(data[1:5, ], 4))
+cat("\nX-bar values:", round(xbar[1:5], 4))
+cat("\nRange values:", round(R[1:5], 4))
+```
+
+**Step 2:** Calculate control limits
+
+```{r xbar-r-limits, echo=TRUE}
+# Control chart constants for n=5
+A2 <- 0.577
+D3 <- 0      # D3 = 0 for n < 7
+D4 <- 2.114
+
+# Calculate grand mean and average range
+X_double_bar <- mean(xbar)
+R_bar <- mean(R)
+
+cat("Grand Mean (X-double-bar):", round(X_double_bar, 4), "mm\n")
+cat("Average Range (R-bar):", round(R_bar, 4), "mm\n\n")
+
+# X-bar chart limits
+UCL_xbar <- X_double_bar + A2 * R_bar
+LCL_xbar <- X_double_bar - A2 * R_bar
+
+cat("X-bar Chart:\n")
+cat("  UCL =", round(UCL_xbar, 4), "mm\n")
+cat("  CL  =", round(X_double_bar, 4), "mm\n")
+cat("  LCL =", round(LCL_xbar, 4), "mm\n\n")
+
+# R chart limits
+UCL_R <- D4 * R_bar
+LCL_R <- D3 * R_bar
+
+cat("R Chart:\n")
+cat("  UCL =", round(UCL_R, 4), "mm\n")
+cat("  CL  =", round(R_bar, 4), "mm\n")
+cat("  LCL =", round(LCL_R, 4), "mm\n")
+```
+
+**Step 3:** Plot the charts
+
+```{r xbar-r-plot, echo=FALSE, fig.align="center", fig.cap="X-bar and R Control Charts", fig.width=10, fig.height=8}
+# Create data frame for plotting
+plot_data <- data.frame(
+  subgroup = 1:n_subgroups,
+  xbar = xbar,
+  R = R
+)
+
+# X-bar chart
+p1 <- ggplot(plot_data, aes(x = subgroup, y = xbar)) +
+  geom_line(color = "#3498DB") +
+  geom_point(aes(color = xbar > UCL_xbar | xbar < LCL_xbar), size = 3) +
+  geom_hline(yintercept = X_double_bar, color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = c(UCL_xbar, LCL_xbar), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
+  annotate("text", x = 26, y = UCL_xbar, label = paste("UCL =", round(UCL_xbar, 3)), hjust = 0, size = 3) +
+  annotate("text", x = 26, y = X_double_bar, label = paste("CL =", round(X_double_bar, 3)), hjust = 0, size = 3) +
+  annotate("text", x = 26, y = LCL_xbar, label = paste("LCL =", round(LCL_xbar, 3)), hjust = 0, size = 3) +
+  labs(title = "X-bar Chart (Process Average)", x = "", y = "X-bar (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  xlim(0, 29)
+
+# R chart
+p2 <- ggplot(plot_data, aes(x = subgroup, y = R)) +
+  geom_line(color = "#F39C12") +
+  geom_point(aes(color = R > UCL_R | R < LCL_R), size = 3) +
+  geom_hline(yintercept = R_bar, color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = c(UCL_R, LCL_R), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#F39C12", "TRUE" = "#E74C3C"), guide = "none") +
+  annotate("text", x = 26, y = UCL_R, label = paste("UCL =", round(UCL_R, 3)), hjust = 0, size = 3) +
+  annotate("text", x = 26, y = R_bar, label = paste("CL =", round(R_bar, 3)), hjust = 0, size = 3) +
+  annotate("text", x = 26, y = LCL_R, label = "LCL = 0", hjust = 0, size = 3) +
+  labs(title = "R Chart (Process Spread)", x = "Subgroup Number", y = "Range (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  xlim(0, 29)
+
+gridExtra::grid.arrange(p1, p2, ncol = 1)
+```
+
+**Interpretation:** Subgroup 18 shows a point above the UCL on the X-bar chart, indicating a special cause. Investigation reveals the cause and corrective action is taken.
+
+### Control Chart Constants
+
+```{r constants-table, echo=FALSE}
+constants <- tibble(
+  `n` = 2:10,
+  `A2` = c(1.880, 1.023, 0.729, 0.577, 0.483, 0.419, 0.373, 0.337, 0.308),
+  `D3` = c(0, 0, 0, 0, 0, 0.076, 0.136, 0.184, 0.223),
+  `D4` = c(3.267, 2.574, 2.282, 2.114, 2.004, 1.924, 1.864, 1.816, 1.777),
+  `d2` = c(1.128, 1.693, 2.059, 2.326, 2.534, 2.704, 2.847, 2.970, 3.078)
+)
+
+constants %>%
+  kable(format = "html", caption = "Control Chart Constants for X-bar/R Charts") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  row_spec(4, background = "#D5F5E3")  # Highlight n=5 row
+```
+
+### Individual and Moving Range (I-MR) Chart
+
+When sample size is **n = 1** (one measurement per time period), use the **I-MR chart**.
+
+```{r imr-example, echo=FALSE, fig.align="center", fig.cap="Individual and Moving Range Chart", fig.width=10, fig.height=8}
+set.seed(200)
+n_points <- 30
+
+# Generate individual measurements
+individuals <- c(rnorm(20, mean = 100, sd = 3),
+                 rnorm(10, mean = 103, sd = 3))  # Shift at point 21
+
+# Calculate moving range
+MR <- c(NA, abs(diff(individuals)))
+
+# Calculate limits
+X_bar <- mean(individuals[1:20])  # Use only stable period
+MR_bar <- mean(MR[2:20], na.rm = TRUE)
+
+UCL_I <- X_bar + 2.66 * MR_bar
+LCL_I <- X_bar - 2.66 * MR_bar
+UCL_MR <- 3.267 * MR_bar
+
+# Create data frame
+imr_data <- data.frame(
+  obs = 1:n_points,
+  individual = individuals,
+  MR = MR
+)
+
+# I Chart
+p1 <- ggplot(imr_data, aes(x = obs, y = individual)) +
+  geom_line(color = "#3498DB") +
+  geom_point(aes(color = individual > UCL_I | individual < LCL_I), size = 3) +
+  geom_hline(yintercept = X_bar, color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = c(UCL_I, LCL_I), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
+  labs(title = "Individual (I) Chart", x = "", y = "Individual Value") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# MR Chart
+p2 <- ggplot(imr_data[-1, ], aes(x = obs, y = MR)) +
+  geom_line(color = "#F39C12") +
+  geom_point(aes(color = MR > UCL_MR), size = 3) +
+  geom_hline(yintercept = MR_bar, color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = UCL_MR, color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = 0, color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#F39C12", "TRUE" = "#E74C3C"), guide = "none") +
+  labs(title = "Moving Range (MR) Chart", x = "Observation Number", y = "Moving Range") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+gridExtra::grid.arrange(p1, p2, ncol = 1)
+```
+
+**I-MR Chart Formulas:**
+
+| Chart | Center Line | UCL | LCL |
+|-------|-------------|-----|-----|
+| I Chart | $\bar{X}$ | $\bar{X} + 2.66\bar{MR}$ | $\bar{X} - 2.66\bar{MR}$ |
+| MR Chart | $\bar{MR}$ | $3.267 \times \bar{MR}$ | 0 |
+
+------------------------------------------------------------------------
+
+## Attribute Control Charts
+
+### p Chart (Proportion Defective)
+
+The **p chart** tracks the proportion of defective units when sample sizes may vary.
+
+```{r p-chart-example, echo=TRUE}
+# Example: Daily inspection data
+# Varying sample sizes (different production volumes)
+
+set.seed(300)
+days <- 20
+sample_sizes <- sample(80:120, days, replace = TRUE)
+defectives <- rbinom(days, sample_sizes, prob = 0.05)
+
+# Add a special cause on day 15
+defectives[15] <- rbinom(1, sample_sizes[15], prob = 0.12)
+
+# Calculate proportion
+p <- defectives / sample_sizes
+
+# Calculate p-bar (weighted average)
+p_bar <- sum(defectives) / sum(sample_sizes)
+
+cat("p-bar (average proportion defective):", round(p_bar, 4), "\n\n")
+
+# Calculate control limits (vary with sample size)
+UCL_p <- p_bar + 3 * sqrt(p_bar * (1 - p_bar) / sample_sizes)
+LCL_p <- pmax(0, p_bar - 3 * sqrt(p_bar * (1 - p_bar) / sample_sizes))
+
+cat("Sample of control limits (varying with n):\n")
+cat("Day 1: UCL =", round(UCL_p[1], 4), ", LCL =", round(LCL_p[1], 4), "(n =", sample_sizes[1], ")\n")
+cat("Day 5: UCL =", round(UCL_p[5], 4), ", LCL =", round(LCL_p[5], 4), "(n =", sample_sizes[5], ")\n")
+```
+
+```{r p-chart-plot, echo=FALSE, fig.align="center", fig.cap="p Chart for Proportion Defective", fig.width=10, fig.height=5}
+p_data <- data.frame(
+  day = 1:days,
+  p = p,
+  UCL = UCL_p,
+  LCL = LCL_p,
+  n = sample_sizes
+)
+
+ggplot(p_data, aes(x = day)) +
+  geom_ribbon(aes(ymin = LCL, ymax = UCL), fill = "#3498DB", alpha = 0.2) +
+  geom_line(aes(y = p), color = "#3498DB") +
+  geom_point(aes(y = p, color = p > UCL | p < LCL), size = 3) +
+  geom_line(aes(y = UCL), color = "#E74C3C", linetype = "dashed") +
+  geom_line(aes(y = LCL), color = "#E74C3C", linetype = "dashed") +
+  geom_hline(yintercept = p_bar, color = "#27AE60", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "p Chart: Proportion Defective",
+       subtitle = "Control limits vary with sample size (shaded area)",
+       x = "Day", y = "Proportion Defective") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10)
+  )
+```
+
+### c Chart (Count of Defects)
+
+The **c chart** tracks the number of defects when the sample size (area of opportunity) is constant.
+
+```{r c-chart-example, echo=FALSE, fig.align="center", fig.cap="c Chart for Defects per Unit", fig.width=10, fig.height=5}
+set.seed(400)
+n_samples <- 25
+
+# Defects per car body (constant opportunity)
+defects <- rpois(n_samples, lambda = 8)
+
+# Add special cause at sample 20
+defects[20] <- 18
+
+c_bar <- mean(defects)
+UCL_c <- c_bar + 3 * sqrt(c_bar)
+LCL_c <- max(0, c_bar - 3 * sqrt(c_bar))
+
+c_data <- data.frame(
+  sample = 1:n_samples,
+  defects = defects
+)
+
+ggplot(c_data, aes(x = sample, y = defects)) +
+  geom_line(color = "#9B59B6") +
+  geom_point(aes(color = defects > UCL_c | defects < LCL_c), size = 3) +
+  geom_hline(yintercept = c_bar, color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = c(UCL_c, LCL_c), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  scale_color_manual(values = c("FALSE" = "#9B59B6", "TRUE" = "#E74C3C"), guide = "none") +
+  annotate("text", x = 26, y = UCL_c, label = paste("UCL =", round(UCL_c, 1)), hjust = 0) +
+  annotate("text", x = 26, y = c_bar, label = paste("c-bar =", round(c_bar, 1)), hjust = 0) +
+  annotate("text", x = 26, y = LCL_c, label = paste("LCL =", round(LCL_c, 1)), hjust = 0) +
+  labs(title = "c Chart: Defects per Car Body",
+       x = "Sample Number", y = "Number of Defects") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  xlim(0, 29)
+```
+
+```{r attribute-formulas, echo=FALSE}
+attr_formulas <- tibble(
+  `Chart` = c("**p chart**", "**np chart**", "**c chart**", "**u chart**"),
+  `Center Line` = c("$\\bar{p} = \\frac{\\sum d}{\\sum n}$",
+                    "$\\bar{np} = \\frac{\\sum d}{k}$",
+                    "$\\bar{c} = \\frac{\\sum c}{k}$",
+                    "$\\bar{u} = \\frac{\\sum c}{\\sum n}$"),
+  `UCL` = c("$\\bar{p} + 3\\sqrt{\\frac{\\bar{p}(1-\\bar{p})}{n}}$",
+            "$\\bar{np} + 3\\sqrt{\\bar{np}(1-\\bar{p})}$",
+            "$\\bar{c} + 3\\sqrt{\\bar{c}}$",
+            "$\\bar{u} + 3\\sqrt{\\frac{\\bar{u}}{n}}$"),
+  `LCL` = c("$\\bar{p} - 3\\sqrt{\\frac{\\bar{p}(1-\\bar{p})}{n}}$",
+            "$\\bar{np} - 3\\sqrt{\\bar{np}(1-\\bar{p})}$",
+            "$\\bar{c} - 3\\sqrt{\\bar{c}}$",
+            "$\\bar{u} - 3\\sqrt{\\frac{\\bar{u}}{n}}$"),
+  `Use When` = c("Variable sample size, proportion needed",
+                 "Constant sample size, count preferred",
+                 "Constant opportunity, counting defects",
+                 "Variable opportunity, defects per unit")
+)
+
+attr_formulas %>%
+  kable(format = "html", escape = FALSE, caption = "Attribute Control Chart Formulas") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E67E22", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+------------------------------------------------------------------------
+
+## Interpreting Control Charts
+
+### Out-of-Control Signals (Western Electric Rules)
+
+A point doesn't have to be outside the control limits to indicate a problem. The **Western Electric Rules** identify non-random patterns:
+
+```{r we-rules, echo=FALSE}
+we_rules <- tibble(
+  `Rule` = c("Rule 1", "Rule 2", "Rule 3", "Rule 4"),
+  `Pattern` = c("**Point beyond control limit**",
+                "**Zone A: 2 of 3 consecutive points**",
+                "**Zone B: 4 of 5 consecutive points**",
+                "**8 consecutive points on one side**"),
+  `Description` = c("One point above UCL or below LCL",
+                    "2 out of 3 consecutive points in Zone A (>2σ) or beyond, same side",
+                    "4 out of 5 consecutive points in Zone B (>1σ) or beyond, same side",
+                    "8 consecutive points above or below the center line"),
+  `What It Indicates` = c("Sudden shift, extreme event",
+                          "Process shift",
+                          "Process shift",
+                          "Process shift (mean has moved)")
+)
+
+we_rules %>%
+  kable(format = "html", caption = "Western Electric Rules for Control Chart Interpretation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "6em")
+```
+
+```{r we-rules-visual, echo=FALSE, fig.align="center", fig.cap="Visual Examples of Western Electric Rules", fig.width=10, fig.height=8}
+# Create example patterns for each rule
+set.seed(500)
+
+# Rule 1: Point beyond limit
+rule1 <- c(rnorm(10, 0, 1), 3.5, rnorm(9, 0, 1))
+
+# Rule 2: 2 of 3 in Zone A
+rule2 <- c(rnorm(8, 0, 1), 2.2, 0.5, 2.4, rnorm(9, 0, 1))
+
+# Rule 3: 4 of 5 in Zone B
+rule3 <- c(rnorm(5, 0, 1), 1.2, 1.5, 0.8, 1.4, 1.1, rnorm(10, 0, 1))
+
+# Rule 4: 8 consecutive on one side
+rule4 <- c(rnorm(5, 0, 1), rnorm(8, 0.8, 0.5), rnorm(7, 0, 1))
+
+rules_data <- data.frame(
+  x = rep(1:20, 4),
+  y = c(rule1, rule2, rule3, rule4),
+  rule = rep(c("Rule 1: Beyond Limit", "Rule 2: 2 of 3 in Zone A",
+               "Rule 3: 4 of 5 in Zone B", "Rule 4: 8 Consecutive"), each = 20)
+)
+
+ggplot(rules_data, aes(x = x, y = y)) +
+  geom_hline(yintercept = 0, color = "#27AE60", linewidth = 0.8) +
+  geom_hline(yintercept = c(-3, 3), color = "#E74C3C", linetype = "dashed") +
+  geom_hline(yintercept = c(-2, 2), color = "#F39C12", linetype = "dotted") +
+  geom_hline(yintercept = c(-1, 1), color = "#9B59B6", linetype = "dotted") +
+  geom_line(color = "#3498DB") +
+  geom_point(color = "#3498DB", size = 2) +
+  facet_wrap(~rule, ncol = 2, scales = "free_y") +
+  labs(title = "Western Electric Rules: Pattern Recognition",
+       x = "Sample Number", y = "Standardized Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    strip.text = element_text(face = "bold")
+  )
+```
+
+### Additional Patterns to Watch For
+
+```{r additional-patterns, echo=FALSE}
+patterns <- tibble(
+  `Pattern` = c("**Trend**", "**Cycle**", "**Stratification**", "**Mixture**"),
+  `Description` = c("6 or more consecutive points steadily increasing or decreasing",
+                    "Repeating high-low pattern",
+                    "Points consistently near center line (too little variation)",
+                    "Points avoiding center line (bimodal distribution)"),
+  `Possible Causes` = c("Tool wear, temperature drift, operator fatigue",
+                        "Shift changes, batch effects, temperature cycles",
+                        "Incorrect limits, data manipulation, mixed streams",
+                        "Two machines, two operators, two material lots")
+)
+
+patterns %>%
+  kable(format = "html", caption = "Additional Control Chart Patterns") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+<details>
+<summary>Interactive Exercise: Identify the Out-of-Control Condition</summary>
+
+**Look at this sequence of points (standardized values):**
+
+0.5, 0.8, 1.2, 0.9, 1.4, 1.6, 1.3, 1.8, -0.2, 0.3
+
+**Questions:**
+
+1. Are any points beyond ±3σ?
+2. Is there a Rule 4 violation (8 consecutive on one side)?
+3. What pattern do you see?
+
+**Answers:**
+
+1. No — all points are within ±3σ
+2. **YES** — Points 1-8 are all positive (above center line)
+3. This is a **Rule 4 violation**: 8 consecutive points above the center line indicates a likely process shift upward
+
+**Action:** Investigate what changed — new material lot? Different operator? Equipment adjustment?
+
+</details>
+
+------------------------------------------------------------------------
+
+## Process Capability
+
+### What is Process Capability?
+
+**Process capability** compares the process performance to the specification limits. It answers: "Can this process consistently produce parts within tolerance?"
+
+```{r capability-concept, echo=FALSE, fig.align="center", fig.cap="Process Capability: Comparing Process to Specifications", fig.width=10, fig.height=5}
+x <- seq(-5, 5, 0.01)
+y <- dnorm(x)
+
+ggplot(data.frame(x, y), aes(x, y)) +
+  geom_line(linewidth = 1.2, color = "#3498DB") +
+  geom_area(fill = "#3498DB", alpha = 0.3) +
+  geom_vline(xintercept = c(-3, 3), color = "#E74C3C", linetype = "dashed", linewidth = 1.2) +
+  annotate("segment", x = -4, xend = 4, y = -0.02, yend = -0.02,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), size = 1) +
+  annotate("text", x = 0, y = -0.04, label = "Specification Width", fontface = "bold") +
+  annotate("segment", x = -3, xend = 3, y = -0.07, yend = -0.07,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), size = 1, color = "#3498DB") +
+  annotate("text", x = 0, y = -0.09, label = "Process Width (6σ)", color = "#3498DB", fontface = "bold") +
+  annotate("text", x = -4, y = 0.35, label = "LSL", color = "#E74C3C", fontface = "bold") +
+  annotate("text", x = 4, y = 0.35, label = "USL", color = "#E74C3C", fontface = "bold") +
+  labs(title = "Process Capability: Does the Process Fit Within Specifications?",
+       x = "", y = "") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    axis.text = element_blank(),
+    axis.ticks = element_blank()
+  )
+```
+
+### Capability Indices
+
+```{r capability-indices, echo=FALSE}
+indices <- tibble(
+  `Index` = c("**Cp**", "**Cpk**", "**Pp**", "**Ppk**"),
+  `Formula` = c("$\\frac{USL - LSL}{6\\sigma}$",
+                "$\\min\\left(\\frac{USL - \\bar{X}}{3\\sigma}, \\frac{\\bar{X} - LSL}{3\\sigma}\\right)$",
+                "$\\frac{USL - LSL}{6s}$",
+                "$\\min\\left(\\frac{USL - \\bar{X}}{3s}, \\frac{\\bar{X} - LSL}{3s}\\right)$"),
+  `What It Measures` = c("Potential capability (spread only)",
+                         "Actual capability (spread + centering)",
+                         "Overall performance (spread only)",
+                         "Overall performance (spread + centering)"),
+  `σ Estimation` = c("Within-subgroup (R-bar/d2)",
+                     "Within-subgroup (R-bar/d2)",
+                     "Overall standard deviation (s)",
+                     "Overall standard deviation (s)")
+)
+
+indices %>%
+  kable(format = "html", escape = FALSE, caption = "Process Capability Indices") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "6em")
+```
+
+### Cp vs. Cpk: Why Both Matter
+
+```{r cp-cpk-comparison, echo=FALSE, fig.align="center", fig.cap="Cp vs. Cpk: The Importance of Centering", fig.width=10, fig.height=6}
+x <- seq(-6, 6, 0.01)
+
+# Three scenarios
+centered <- dnorm(x, mean = 0, sd = 1)
+shifted <- dnorm(x, mean = 1.5, sd = 1)
+wide <- dnorm(x, mean = 0, sd = 1.5)
+
+df <- data.frame(
+  x = rep(x, 3),
+  y = c(centered, shifted, wide),
+  scenario = rep(c("Centered (Cp=2, Cpk=2)", "Shifted (Cp=2, Cpk=1)", "Wide (Cp=1.33, Cpk=1.33)"), each = length(x))
+)
+
+ggplot(df, aes(x = x, y = y)) +
+  geom_line(color = "#3498DB", linewidth = 1) +
+  geom_area(fill = "#3498DB", alpha = 0.3) +
+  geom_vline(xintercept = c(-3, 3), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
+  facet_wrap(~scenario, ncol = 3) +
+  labs(title = "Same Cp, Different Cpk — Centering Matters!",
+       subtitle = "Specification limits at ±3 shown in red",
+       x = "", y = "") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    strip.text = element_text(face = "bold"),
+    axis.text = element_blank()
+  )
+```
+
+### Capability Example Calculation
+
+```{r capability-example, echo=TRUE}
+# Example: Shaft diameter specification 25.00 ± 0.15 mm
+# Process data from 25 subgroups of 5
+
+USL <- 25.15
+LSL <- 24.85
+Target <- 25.00
+
+# Using earlier X-bar/R data
+X_bar_cap <- mean(xbar)
+R_bar_cap <- mean(R)
+
+# Estimate sigma using R-bar/d2 (d2 = 2.326 for n=5)
+d2 <- 2.326
+sigma_within <- R_bar_cap / d2
+
+cat("Process Statistics:\n")
+cat("  Mean (X-bar):", round(X_bar_cap, 4), "mm\n")
+cat("  Sigma (estimated):", round(sigma_within, 4), "mm\n\n")
+
+# Calculate Cp
+Cp <- (USL - LSL) / (6 * sigma_within)
+cat("Cp =", round(Cp, 2), "\n")
+
+# Calculate Cpk
+Cpu <- (USL - X_bar_cap) / (3 * sigma_within)
+Cpl <- (X_bar_cap - LSL) / (3 * sigma_within)
+Cpk <- min(Cpu, Cpl)
+
+cat("Cpu =", round(Cpu, 2), "\n")
+cat("Cpl =", round(Cpl, 2), "\n")
+cat("Cpk =", round(Cpk, 2), "\n\n")
+
+# Interpretation
+cat("Interpretation:\n")
+if (Cpk >= 1.33) {
+  cat("Process is CAPABLE (Cpk >= 1.33)\n")
+} else if (Cpk >= 1.00) {
+  cat("Process is MARGINALLY CAPABLE (1.00 <= Cpk < 1.33)\n")
+} else {
+  cat("Process is NOT CAPABLE (Cpk < 1.00)\n")
+}
+```
+
+### Capability Index Interpretation
+
+```{r capability-interpretation, echo=FALSE}
+cap_interp <- tibble(
+  `Cpk Value` = c("< 1.00", "1.00 - 1.33", "1.33 - 1.67", "1.67 - 2.00", "> 2.00"),
+  `Sigma Level` = c("< 3σ", "3σ - 4σ", "4σ - 5σ", "5σ - 6σ", "> 6σ"),
+  `PPM Defective` = c("> 2,700", "2,700 - 64", "64 - 0.6", "0.6 - 0.002", "< 0.002"),
+  `Interpretation` = c("Not capable — improvement required",
+                       "Marginally capable — monitor closely",
+                       "Capable — meets typical requirements",
+                       "Good capability — automotive/aerospace",
+                       "Excellent — Six Sigma level"),
+  `Typical Industry` = c("Requires immediate action", "Consumer products",
+                         "General manufacturing", "Automotive Tier 1",
+                         "Aerospace, medical devices")
+)
+
+cap_interp %>%
+  kable(format = "html", caption = "Capability Index Interpretation Guide") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  row_spec(1, background = "#FADBD8") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3:5, background = "#D5F5E3") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+<details>
+<summary>Question: When to use Cp/Cpk vs. Pp/Ppk?</summary>
+
+**Cp/Cpk (Process Capability):**
+- Uses within-subgroup variation (σ estimated from R-bar/d2)
+- Represents the POTENTIAL capability if process is in control
+- Use for ongoing process monitoring
+- Requires process to be in statistical control
+
+**Pp/Ppk (Process Performance):**
+- Uses overall standard deviation (s) of all data
+- Represents ACTUAL performance including all variation
+- Use for initial capability studies or when process stability is unknown
+- Includes both common and special cause variation
+
+**Rule of Thumb:**
+- If Pp ≈ Cp and Ppk ≈ Cpk → Process is stable
+- If Pp < Cp or Ppk < Cpk → Process has special cause variation (not in control)
+
+</details>
+
+------------------------------------------------------------------------
+
+## Responding to Out-of-Control Signals
+
+### The Response Process
+
+```{r response-process, echo=FALSE, fig.align="center", fig.cap="Responding to Out-of-Control Conditions", fig.width=10, fig.height=6}
+ggplot() +
+  # Step boxes
+  annotate("rect", xmin = 0, xmax = 2, ymin = 4, ymax = 5, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 1, y = 4.5, label = "1. STOP\nMark the point", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 4, ymax = 5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 3.5, y = 4.5, label = "2. INVESTIGATE\nFind the cause", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 5, xmax = 7, ymin = 4, ymax = 5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 6, y = 4.5, label = "3. CORRECT\nEliminate cause", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 4, ymax = 5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 8.5, y = 4.5, label = "4. DOCUMENT\nRecord actions", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Arrows
+  annotate("segment", x = 2, xend = 2.5, y = 4.5, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  annotate("segment", x = 4.5, xend = 5, y = 4.5, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  annotate("segment", x = 7, xend = 7.5, y = 4.5, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+
+  # Details below
+  annotate("text", x = 1, y = 3.5, label = "• Circle the point\n• Note the time\n• Quarantine product",
+           size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 3.5, y = 3.5, label = "• Check 5 Ms\n• Review recent changes\n• Ask operators",
+           size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 6, y = 3.5, label = "• Fix the problem\n• Verify correction\n• Restart process",
+           size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 8.5, y = 3.5, label = "• Update log\n• File in PFMEA\n• Share lessons",
+           size = 2.5, lineheight = 0.9) +
+
+  theme_void() +
+  labs(title = "Out-of-Control Response Procedure") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(2.5, 5.5)
+```
+
+### Investigation Checklist (5 Ms + E)
+
+```{r investigation-checklist, echo=FALSE}
+checklist <- tibble(
+  `Category` = c("**Man**", "**Machine**", "**Material**",
+                 "**Method**", "**Measurement**", "**Environment**"),
+  `Questions to Ask` = c("Different operator? New employee? Fatigue? Training issue?",
+                         "Equipment malfunction? Tool wear? Maintenance due? Setup change?",
+                         "New lot? Different supplier? Out-of-spec material?",
+                         "Procedure changed? Parameter drift? Wrong program?",
+                         "Gauge drift? Calibration due? Different inspector?",
+                         "Temperature change? Humidity? Vibration? Contamination?")
+)
+
+checklist %>%
+  kable(format = "html", caption = "Investigation Checklist: 5 Ms + E") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+------------------------------------------------------------------------
+
+## SPC Implementation
+
+### Steps to Implement SPC
+
+```{r implementation-steps, echo=FALSE}
+impl_steps <- tibble(
+  `Step` = 1:8,
+  `Action` = c("Select the process and characteristic",
+               "Determine measurement system adequacy (MSA)",
+               "Collect initial data (25+ subgroups)",
+               "Calculate trial control limits",
+               "Identify and remove special causes",
+               "Recalculate limits with stable data",
+               "Implement ongoing monitoring",
+               "Review and improve continuously"),
+  `Key Considerations` = c("Start with critical/problem processes",
+                           "Gauge R&R must be acceptable (< 30%)",
+                           "Process must be running normally",
+                           "Limits based on actual process, not specs",
+                           "Investigate each out-of-control point",
+                           "These become the standard limits",
+                           "Train operators, establish reaction plans",
+                           "Update limits when process improves")
+)
+
+impl_steps %>%
+  kable(format = "html", caption = "SPC Implementation Steps") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+### Common SPC Mistakes
+
+```{r spc-mistakes, echo=FALSE}
+mistakes <- tibble(
+  `Mistake` = c("**Using specification limits as control limits**",
+                "**Changing limits too frequently**",
+                "**Ignoring the R chart**",
+                "**Over-adjusting (tampering)**",
+                "**Not acting on signals**"),
+  `Why It's Wrong` = c("Control limits are based on process performance, not specs",
+                       "Limits should only change when process fundamentally changes",
+                       "R chart often signals problems before X-bar chart",
+                       "Adjusting for common cause variation increases variation",
+                       "Defeats the purpose of SPC"),
+  `Correct Approach` = c("Calculate limits from process data (mean ± 3σ)",
+                         "Use stable baseline; recalculate only after sustained improvement",
+                         "Always analyze R chart first — variation stability",
+                         "Only adjust when special cause is identified",
+                         "Investigate and act on every out-of-control signal")
+)
+
+mistakes %>%
+  kable(format = "html", caption = "Common SPC Mistakes and Corrections") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "18em") %>%
+  column_spec(2, background = "#FADBD8")
+```
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-table-ch9, echo=FALSE}
+summary_data <- tibble(
+  `Topic` = c("**Variation**", "**Control Charts**", "**Variable Charts**",
+              "**Attribute Charts**", "**Interpretation**", "**Capability**"),
+  `Key Points` = c("Common cause (inherent) vs. special cause (assignable); respond differently",
+                   "Graph with UCL/LCL at ±3σ; distinguishes between variation types",
+                   "X-bar/R (n=2-9), X-bar/S (n≥10), I-MR (n=1)",
+                   "p (proportion), np (count defectives), c (defects), u (defects/unit)",
+                   "Western Electric rules: beyond limits, 2 of 3 in Zone A, 4 of 5 in Zone B, 8 consecutive",
+                   "Cp (potential), Cpk (actual); ≥1.33 is capable; ≥1.67 for automotive")
+)
+
+summary_data %>%
+  kable(format = "html", caption = "SPC Key Concepts Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, width = "10em")
+```
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+### Conceptual Questions
+
+<details>
+<summary>Question 1: What is the difference between common cause and special cause variation?</summary>
+
+**Common Cause Variation:**
+- Inherent to the process
+- Always present
+- Random and predictable
+- Many small factors
+- System-level improvement required
+- Examples: machine vibration, material variation, ambient temperature
+
+**Special Cause Variation:**
+- External to normal process
+- Intermittent or new
+- Non-random patterns
+- Specific assignable cause
+- Local action to eliminate
+- Examples: tool breakage, new operator, bad material lot
+
+**Key Point:** Only act on special causes. Attempting to adjust for common cause variation (tampering) makes the process worse.
+
+</details>
+
+<details>
+<summary>Question 2: Why are control limits set at ±3 sigma rather than ±2 sigma?</summary>
+
+**At ±3σ:**
+- 99.73% of data falls within limits (when in control)
+- Only 0.27% false alarm rate (about 3 per 1000 points)
+- Good balance between detecting real problems and avoiding false alarms
+
+**If we used ±2σ:**
+- 95.45% of data within limits
+- 4.55% false alarm rate (about 45 per 1000 points!)
+- Too many false alarms → operators ignore the chart
+
+**If we used ±4σ:**
+- 99.99% within limits
+- Almost no false alarms
+- But we'd miss real problems (low sensitivity)
+
+**The ±3σ choice balances:**
+- Risk of false alarm (treating common cause as special)
+- Risk of missed signal (treating special cause as common)
+
+</details>
+
+<details>
+<summary>Question 3: When would you use an I-MR chart instead of an X-bar/R chart?</summary>
+
+**Use I-MR Chart When:**
+
+1. **Sample size is n = 1** — only one measurement per time period
+2. **Destructive testing** — can't afford multiple samples
+3. **Expensive measurement** — time or cost prohibitive
+4. **Continuous process** — each reading is independent (batch process)
+5. **Long intervals** — measurements far apart in time
+6. **Homogeneous batches** — within-batch variation is negligible
+
+**Examples:**
+- Daily chemical batch analysis
+- Weekly calibration check
+- Each lot incoming inspection (one sample per lot)
+- Continuous process temperature readings
+
+**Caution:** I-MR charts are less sensitive than X-bar charts because averaging in subgroups reduces noise.
+
+</details>
+
+### Calculation Questions
+
+<details>
+<summary>Question 4: Calculate control limits for an X-bar/R chart given the following data.</summary>
+
+**Given:**
+- 20 subgroups of n = 4 measurements
+- Grand mean (X-double-bar) = 50.25
+- Average range (R-bar) = 2.40
+- Constants for n = 4: A2 = 0.729, D3 = 0, D4 = 2.282
+
+**Calculate UCL and LCL for both charts.**
+
+**Solution:**
+
+**X-bar Chart:**
+```
+UCL = X-double-bar + A2 × R-bar
+UCL = 50.25 + 0.729 × 2.40 = 50.25 + 1.75 = 52.00
+
+LCL = X-double-bar - A2 × R-bar
+LCL = 50.25 - 0.729 × 2.40 = 50.25 - 1.75 = 48.50
+
+CL = 50.25
+```
+
+**R Chart:**
+```
+UCL = D4 × R-bar = 2.282 × 2.40 = 5.48
+
+LCL = D3 × R-bar = 0 × 2.40 = 0
+
+CL = 2.40
+```
+
+</details>
+
+<details>
+<summary>Question 5: Calculate Cp and Cpk for a process with the following data.</summary>
+
+**Given:**
+- Specification: 100 ± 5 (USL = 105, LSL = 95)
+- Process mean = 102
+- Process standard deviation (σ) = 1.5
+
+**Solution:**
+
+**Cp (Potential Capability):**
+```
+Cp = (USL - LSL) / (6σ)
+Cp = (105 - 95) / (6 × 1.5)
+Cp = 10 / 9 = 1.11
+```
+
+**Cpk (Actual Capability):**
+```
+Cpu = (USL - X-bar) / (3σ) = (105 - 102) / (3 × 1.5) = 3 / 4.5 = 0.67
+Cpl = (X-bar - LSL) / (3σ) = (102 - 95) / (3 × 1.5) = 7 / 4.5 = 1.56
+
+Cpk = min(Cpu, Cpl) = min(0.67, 1.56) = 0.67
+```
+
+**Interpretation:**
+- Cp = 1.11 suggests process spread could fit within specs IF centered
+- Cpk = 0.67 shows process is NOT capable because it's shifted toward USL
+- Action: Center the process closer to 100 (target)
+
+</details>
+
+<details>
+<summary>Question 6: A p chart has p-bar = 0.04 and sample size n = 200. Calculate control limits.</summary>
+
+**Solution:**
+
+**Center Line:**
+```
+CL = p-bar = 0.04 (4% defective)
+```
+
+**Upper Control Limit:**
+```
+UCL = p-bar + 3 × √(p-bar × (1 - p-bar) / n)
+UCL = 0.04 + 3 × √(0.04 × 0.96 / 200)
+UCL = 0.04 + 3 × √(0.000192)
+UCL = 0.04 + 3 × 0.01386
+UCL = 0.04 + 0.0416 = 0.0816 (8.16%)
+```
+
+**Lower Control Limit:**
+```
+LCL = p-bar - 3 × √(p-bar × (1 - p-bar) / n)
+LCL = 0.04 - 0.0416 = -0.0016
+
+Since LCL cannot be negative: LCL = 0
+```
+
+**Final Limits:**
+- UCL = 8.16%
+- CL = 4.00%
+- LCL = 0%
+
+</details>
+
+### Application Questions
+
+<details>
+<summary>Question 7: You observe 8 consecutive points above the center line but all within control limits. What does this indicate?</summary>
+
+**This is a Rule 4 violation (Western Electric Rules).**
+
+**What it indicates:**
+- The process mean has shifted upward
+- This is a SPECIAL CAUSE signal
+- Even though no points are beyond limits, the pattern is not random
+
+**Probability analysis:**
+- Probability of a point above CL (random) = 0.5
+- Probability of 8 consecutive above CL = 0.5^8 = 0.0039 (0.39%)
+- This is very unlikely by chance alone
+
+**Action required:**
+1. Stop and mark the chart
+2. Investigate what changed around the time of the first high point
+3. Check: new material lot? Tool change? Operator change? Temperature?
+4. Correct the cause
+5. Monitor to verify process returns to normal
+
+</details>
+
+<details>
+<summary>Question 8: A process has Cp = 2.0 but Cpk = 1.0. What does this tell you?</summary>
+
+**Analysis:**
+
+**Cp = 2.0 means:**
+- Process spread (6σ) is half the specification width
+- The process COULD produce no defects if centered
+- Potential capability is excellent
+
+**Cpk = 1.0 means:**
+- Process is off-center
+- Actual capability is only marginal
+- Some defects are being produced
+
+**The difference (Cp - Cpk = 1.0) indicates:**
+- The process mean is shifted 3σ from the target
+- One side has much less margin than the other
+
+**Visual:**
+```
+LSL        Target        USL
+|           |           |
+      [====PROCESS====]
+      ↑ shifted to one side
+```
+
+**Action:**
+- Center the process on target
+- After centering, Cpk should approach Cp (both ≈ 2.0)
+- This is an adjustment action, not a variation reduction
+
+</details>
+
+<details>
+<summary>Question 9: Why should you always analyze the R chart before the X-bar chart?</summary>
+
+**The R chart should be analyzed first because:**
+
+1. **Control limits depend on variation:**
+   - X-bar limits are calculated using R-bar
+   - If R is out of control, X-bar limits are unreliable
+
+2. **R chart is more sensitive to variation changes:**
+   - Tool wear shows on R chart before X-bar
+   - Inconsistent setup appears as increased R
+
+3. **Process must be stable in variation first:**
+   - A process can't be "in control" if variation is changing
+   - Stable variation is a prerequisite for evaluating the mean
+
+4. **Different actions for each:**
+   - R chart problem → variation issue (consistency)
+   - X-bar problem → centering issue (average)
+
+**Rule:** If R chart is out of control, fix that FIRST before interpreting the X-bar chart.
+
+</details>
+
+------------------------------------------------------------------------
+
+## References
+
+- Montgomery, D.C. (2019). *Introduction to Statistical Quality Control* (8th ed.). Wiley.
+- Wheeler, D.J., & Chambers, D.S. (1992). *Understanding Statistical Process Control* (2nd ed.). SPC Press.
+- AIAG. (2005). *Statistical Process Control (SPC) Reference Manual* (2nd ed.).
+- Western Electric. (1956). *Statistical Quality Control Handbook*. AT&T.
+- Deming, W.E. (1986). *Out of the Crisis*. MIT Press.
+- Shewhart, W.A. (1931). *Economic Control of Quality of Manufactured Product*. Van Nostrand.
+- ASTM E2587. Standard Practice for Use of Control Charts in Statistical Process Control.
+
+------------------------------------------------------------------------

@@ -1,0 +1,1099 @@
+# Simulation Modeling with AnyLogic {#chap-17-anylogic}
+
+```{r setup-17, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+
+------------------------------------------------------------------------
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Explain what simulation modeling is and why it is essential for manufacturing system design
+2. Describe the three simulation paradigms available in AnyLogic (discrete-event, agent-based, and system dynamics)
+3. Identify the key components and libraries in AnyLogic for manufacturing simulation
+4. Build a basic production line simulation using the Process Modeling Library
+5. Model warehouse picking and order fulfillment operations
+6. Analyze simulation results to optimize throughput, reduce bottlenecks, and improve efficiency
+7. Apply simulation to validate design decisions before physical implementation
+8. Use built-in AnyLogic examples to accelerate model development
+
+------------------------------------------------------------------------
+
+## Introduction to Simulation Modeling
+
+::: {.callout-think}
+**Before You Read:** Imagine you are designing a new automotive assembly line that will cost $50 million to build. How would you test whether your design will meet production targets *before* spending any money on construction?
+:::
+
+In manufacturing, making the wrong design decision can be incredibly expensive. A misplaced workstation, an undersized conveyor, or an incorrect staffing level can result in millions of dollars in lost productivity. **Simulation modeling** allows engineers to build virtual representations of manufacturing systems and test them under various conditions—all without spending a single dollar on physical equipment.
+
+### What is Simulation?
+
+**Simulation** is the process of creating a computer model that mimics the behavior of a real-world system over time. Unlike static calculations or spreadsheet analysis, simulation captures the *dynamic* nature of manufacturing systems:
+
+- Products arrive at random intervals
+- Machines break down unexpectedly
+- Workers take breaks
+- Quality defects occur randomly
+- Rush orders disrupt schedules
+
+```{r fig-simulation-value, echo=FALSE, fig.cap="The value of simulation in reducing project risk", fig.align='center', fig.width=10, fig.height=6}
+# Create data showing cost of changes over project lifecycle
+set.seed(42)
+project_phases <- c("Concept\nDesign", "Detailed\nDesign", "Construction", "Commissioning", "Production")
+change_cost <- c(1, 10, 100, 500, 1000)
+simulation_savings <- c(95, 85, 60, 30, 10)
+
+cost_data <- data.frame(
+  Phase = factor(project_phases, levels = project_phases),
+  Cost = change_cost,
+  Savings = simulation_savings
+)
+
+ggplot(cost_data, aes(x = Phase, y = Cost)) +
+  geom_col(fill = "#E74C3C", alpha = 0.8) +
+  geom_text(aes(label = paste0("$", Cost, "x")), vjust = -0.5, size = 4, fontface = "bold") +
+  annotate("text", x = 3, y = 600,
+           label = "Simulation catches problems HERE\nwhen changes cost $1-$10",
+           color = "#27AE60", size = 4, fontface = "bold") +
+  annotate("segment", x = 1.5, xend = 1.5, y = 50, yend = 200,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#27AE60", linewidth = 1.5) +
+  scale_y_log10(labels = scales::comma) +
+  labs(
+    title = "Relative Cost of Design Changes by Project Phase",
+    subtitle = "Simulation enables low-cost experimentation during design phases",
+    x = "Project Phase",
+    y = "Relative Cost (log scale)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(size = 10)
+  )
+```
+
+::: {.callout-industry}
+**Industry Application:** Mercedes-Benz engineers used AnyLogic simulation to optimize their Sprinter van production line, achieving a **5% efficiency gain** by identifying and eliminating bottlenecks before any physical changes were made. This saved millions in potential rework costs.
+:::
+
+### Why AnyLogic?
+
+**AnyLogic** is one of the world's leading simulation platforms, used by companies including Tesla, BMW, Amazon, Ford, and General Electric. It stands out from other simulation software for several key reasons:
+
+```{r anylogic-comparison, echo=FALSE}
+comparison_data <- tibble(
+  Feature = c(
+    "Multi-method modeling",
+    "Manufacturing libraries",
+    "3D visualization",
+    "Cloud-based simulation",
+    "Academic version",
+    "Agent-based modeling"
+  ),
+  AnyLogic = c("Yes - all three paradigms", "Material Handling Library", "Built-in 3D", "AnyLogic Cloud", "Free for students", "Industry-leading"),
+  `Other Software` = c("Usually single method", "Varies", "Often requires plugins", "Limited", "Varies", "Limited support")
+)
+
+kable(comparison_data,
+      caption = "AnyLogic compared to typical simulation software",
+      align = c("l", "c", "c")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+------------------------------------------------------------------------
+
+## The Three Simulation Paradigms {#sec-paradigms-17}
+
+AnyLogic is unique because it supports **three different simulation approaches** within a single platform. Understanding when to use each paradigm is essential for effective modeling.
+
+### Discrete-Event Simulation (DES)
+
+**Discrete-event simulation** models systems as a sequence of events that occur at specific points in time. Between events, nothing changes. This is the most common approach for manufacturing simulation.
+
+::: {.callout-concept}
+**Key Concept: Discrete-Event Simulation**
+In DES, entities (products, orders, customers) flow through a series of processes (workstations, queues, resources). The simulation "jumps" from event to event, making it computationally efficient.
+:::
+
+**Best for:**
+- Assembly lines and production systems
+- Warehouse operations and logistics
+- Service processes and queuing systems
+- Call centers and order processing
+
+```{r fig-des-flow, echo=FALSE, fig.cap="Discrete-event simulation flow diagram", fig.align='center', fig.width=10, fig.height=4}
+# Create a simple process flow visualization
+library(ggplot2)
+
+# Define process steps
+steps <- data.frame(
+  x = c(1, 3, 5, 7, 9),
+  y = rep(0, 5),
+  label = c("Source", "Station 1", "Queue", "Station 2", "Sink"),
+  type = c("source", "process", "queue", "process", "sink")
+)
+
+arrows <- data.frame(
+  x = c(1.3, 3.3, 5.3, 7.3),
+  xend = c(2.7, 4.7, 6.7, 8.7),
+  y = rep(0, 4),
+  yend = rep(0, 4)
+)
+
+# Create entities flowing through
+entities <- data.frame(
+  x = c(2, 4, 6, 8),
+  y = rep(0, 4),
+  entity = c("A", "B", "C", "D")
+)
+
+ggplot() +
+  # Draw process boxes
+  geom_rect(data = steps, aes(xmin = x - 0.5, xmax = x + 0.5, ymin = -0.3, ymax = 0.3),
+            fill = c("#3498DB", "#E74C3C", "#F39C12", "#E74C3C", "#2ECC71"),
+            color = "black", linewidth = 1) +
+  geom_text(data = steps, aes(x = x, y = 0, label = label), color = "white", fontface = "bold", size = 3) +
+  # Draw arrows
+  geom_segment(data = arrows, aes(x = x, xend = xend, y = y, yend = yend),
+               arrow = arrow(length = unit(0.3, "cm")), linewidth = 1.5, color = "gray40") +
+  # Draw entities
+  geom_point(data = entities, aes(x = x, y = y + 0.5), size = 6, color = "#9B59B6") +
+  geom_text(data = entities, aes(x = x, y = y + 0.5, label = entity), color = "white", fontface = "bold") +
+  annotate("text", x = 5, y = 0.9, label = "Entities (products) flow through the system",
+           size = 4, fontface = "italic") +
+  coord_cartesian(xlim = c(0, 10), ylim = c(-0.5, 1.2)) +
+  theme_void() +
+  labs(title = "Discrete-Event Simulation: Entities Flow Through Processes")
+```
+
+### Agent-Based Modeling (ABM)
+
+**Agent-based modeling** simulates systems by defining individual agents (workers, robots, vehicles) that have their own behaviors, goals, and decision rules. Agents interact with each other and their environment, and complex system behavior *emerges* from these interactions.
+
+**Best for:**
+- Autonomous mobile robots (AMRs) and AGVs
+- Pedestrian and crowd simulation
+- Market and consumer behavior
+- Complex adaptive systems
+
+::: {.callout-industry}
+**Industry Application:** Tesla uses agent-based simulation in AnyLogic to optimize the deployment of autonomous mobile robots in their manufacturing facilities. Each robot is modeled as an agent with its own task allocation logic, collision avoidance, and charging behavior.
+:::
+
+### System Dynamics (SD)
+
+**System dynamics** models systems using stocks, flows, and feedback loops. It focuses on aggregate behavior over time rather than individual entities.
+
+**Best for:**
+- Strategic planning and capacity modeling
+- Supply chain dynamics
+- Policy analysis
+- Long-term trends and forecasting
+
+### Choosing the Right Paradigm
+
+```{r fig-paradigm-selection, echo=FALSE, fig.cap="Decision framework for selecting simulation paradigm", fig.align='center', fig.width=10, fig.height=6}
+# Create decision tree data
+decisions <- data.frame(
+  x = c(5, 2.5, 7.5, 1.25, 3.75, 6.25, 8.75),
+  y = c(3, 2, 2, 1, 1, 1, 1),
+  label = c(
+    "What level of\ndetail needed?",
+    "Individual\nentities?",
+    "Strategic\nview?",
+    "DES",
+    "ABM",
+    "SD",
+    "Hybrid\nModel"
+  ),
+  type = c("decision", "decision", "decision", "method", "method", "method", "method")
+)
+
+# Draw connections
+connections <- data.frame(
+  x = c(5, 5, 2.5, 2.5, 7.5, 7.5),
+  xend = c(2.5, 7.5, 1.25, 3.75, 6.25, 8.75),
+  y = c(2.8, 2.8, 1.8, 1.8, 1.8, 1.8),
+  yend = c(2.2, 2.2, 1.2, 1.2, 1.2, 1.2),
+  label = c("Detailed", "Aggregate", "Process\nfocus", "Behavior\nfocus", "Yes", "No")
+)
+
+ggplot() +
+  geom_segment(data = connections, aes(x = x, xend = xend, y = y, yend = yend),
+               linewidth = 1, color = "gray40") +
+  geom_label(data = connections, aes(x = (x + xend)/2, y = (y + yend)/2, label = label),
+             size = 2.5, fill = "white", label.size = 0) +
+  geom_point(data = decisions[decisions$type == "decision",],
+             aes(x = x, y = y), size = 20, shape = 23, fill = "#3498DB", color = "black") +
+  geom_label(data = decisions[decisions$type == "method",],
+             aes(x = x, y = y, label = label),
+             size = 3.5, fontface = "bold",
+             fill = c("#E74C3C", "#2ECC71", "#F39C12", "#9B59B6")) +
+  geom_text(data = decisions[decisions$type == "decision",],
+            aes(x = x, y = y, label = label), size = 2.5, fontface = "bold") +
+  coord_cartesian(xlim = c(0, 10), ylim = c(0.5, 3.5)) +
+  theme_void() +
+  labs(title = "Selecting the Appropriate Simulation Paradigm")
+```
+
+::: {.callout-check}
+**Quick Check:** A company wants to simulate their new automated warehouse with 50 mobile robots that must navigate, avoid collisions, and coordinate pickups. Which paradigm would you recommend and why?
+:::
+
+------------------------------------------------------------------------
+
+## The AnyLogic Interface and Libraries {#sec-interface-17}
+
+### The AnyLogic Workspace
+
+When you open AnyLogic, you'll see several key areas:
+
+1. **Model Browser** (left panel) - Shows all elements in your model
+2. **Graphical Editor** (center) - Where you build your model visually
+3. **Palette** (right panel) - Contains libraries and elements you can drag into your model
+4. **Properties** (bottom) - Configure selected elements
+
+### Essential Libraries for Manufacturing
+
+AnyLogic includes specialized libraries that dramatically accelerate model development:
+
+```{r libraries-table, echo=FALSE}
+libraries_data <- tibble(
+  Library = c(
+    "Process Modeling Library",
+    "Material Handling Library",
+    "Pedestrian Library",
+    "Road Traffic Library",
+    "Rail Library",
+    "Fluid Library"
+  ),
+  `Primary Use` = c(
+    "Discrete-event simulation of any process",
+    "Conveyors, cranes, AGVs, forklifts",
+    "Worker movement and ergonomics",
+    "Truck logistics and yard management",
+    "Rail-based transport systems",
+    "Bulk material and liquid processing"
+  ),
+  `Key Elements` = c(
+    "Source, Queue, Delay, Service, Sink",
+    "Conveyor, Station, Transporter, Crane",
+    "PedSource, PedService, PedSink",
+    "CarSource, Road, Intersection",
+    "RailNetwork, Train, RailYard",
+    "Tank, Pipe, Valve, FlowRate"
+  )
+)
+
+kable(libraries_data,
+      caption = "Key AnyLogic libraries for manufacturing simulation",
+      align = c("l", "l", "l")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE)
+```
+
+### The Process Modeling Library
+
+The **Process Modeling Library** is the foundation for most manufacturing simulations. It provides building blocks for creating flowchart-based models:
+
+```{r fig-pml-elements, echo=FALSE, fig.cap="Key Process Modeling Library elements", fig.align='center', fig.width=10, fig.height=6}
+# Create visual guide to PML elements
+elements <- data.frame(
+  x = c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5),
+  y = c(2, 2, 2, 2, 2, 1, 1, 1, 1, 1),
+  name = c("Source", "Queue", "Delay", "Service", "Sink",
+           "SelectOutput", "Split", "Combine", "Batch", "Unbatch"),
+  description = c(
+    "Creates entities", "Holds entities", "Time delay", "Uses resource", "Removes entities",
+    "Routes entities", "Copies entities", "Joins entities", "Groups entities", "Separates batch"
+  ),
+  color = c("#3498DB", "#F39C12", "#9B59B6", "#E74C3C", "#2ECC71",
+            "#1ABC9C", "#E67E22", "#27AE60", "#8E44AD", "#2980B9")
+)
+
+ggplot(elements, aes(x = x, y = y)) +
+  geom_point(aes(color = name), size = 12) +
+  geom_text(aes(label = name), vjust = 3, size = 3, fontface = "bold") +
+  geom_text(aes(label = description), vjust = 5, size = 2.5, color = "gray40") +
+  scale_color_manual(values = setNames(elements$color, elements$name)) +
+  coord_cartesian(xlim = c(0.5, 5.5), ylim = c(0.2, 2.5)) +
+  theme_void() +
+  theme(legend.position = "none") +
+  labs(
+    title = "Process Modeling Library Elements",
+    subtitle = "Drag and connect these elements to build your simulation"
+  )
+```
+
+::: {.callout-activity}
+**Hands-On Activity:** Open AnyLogic and create a new model. Drag a Source, Queue, Delay, and Sink from the Process Modeling Library. Connect them in sequence. Run the simulation and observe entities flowing through.
+:::
+
+------------------------------------------------------------------------
+
+## Production Line Simulation {#sec-production-17}
+
+Now let's apply these concepts to design and analyze an automotive production line. We'll walk through a complete example using AnyLogic's built-in examples as a starting point.
+
+### Case Study: Automotive Door Panel Assembly Line
+
+::: {.callout-case}
+**The Scenario:**
+You are designing a door panel assembly line for an automotive supplier. The line must:
+
+- Process **480 door panels per 8-hour shift** (1 panel per minute)
+- Include 5 workstations: stamping, welding, painting, assembly, and inspection
+- Meet quality target of **< 2% defect rate**
+- Maintain **85% overall equipment effectiveness (OEE)**
+
+Your task is to simulate this line to verify it meets these requirements before construction begins.
+:::
+
+### Step 1: Calculate Required Takt Time
+
+Before building the simulation, we need to calculate the **takt time**—the maximum time allowed per unit to meet demand.
+
+\begin{equation}
+Takt\ Time = \frac{Available\ Production\ Time}{Customer\ Demand}
+(\#eq:takt-17)
+\end{equation}
+
+For our example:
+
+$$Takt\ Time = \frac{8\ hours \times 60\ min/hour}{480\ panels} = 1\ minute/panel$$
+
+This means each workstation must complete its operation in **less than 1 minute** to avoid becoming a bottleneck.
+
+### Step 2: Define Process Parameters
+
+```{r process-params, echo=FALSE}
+process_data <- tibble(
+  Station = c("Stamping", "Welding", "Painting", "Assembly", "Inspection"),
+  `Mean Time (sec)` = c(45, 52, 48, 55, 30),
+  `Std Dev (sec)` = c(5, 8, 6, 7, 4),
+  `Defect Rate (%)` = c(0.5, 0.8, 0.6, 0.7, 0.0),
+  `Availability (%)` = c(95, 92, 90, 94, 98)
+)
+
+kable(process_data,
+      caption = "Process parameters for door panel assembly line",
+      align = c("l", "c", "c", "c", "c")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  column_spec(1, bold = TRUE)
+```
+
+### Step 3: Build the Simulation Model
+
+In AnyLogic, we would create this model by:
+
+1. Dragging a **Source** block to generate door panels at the required rate
+2. Adding **Service** blocks for each workstation (with appropriate process times)
+3. Connecting **Queue** blocks between stations to handle waiting
+4. Adding **SelectOutput** blocks after each station to route defective parts
+5. Placing a **Sink** at the end to collect finished panels
+
+```{r fig-production-line-model, echo=FALSE, fig.cap="AnyLogic production line model structure", fig.align='center', fig.width=12, fig.height=4}
+# Create visualization of the production line model
+library(ggplot2)
+
+# Define model elements
+stations <- data.frame(
+  x = c(1, 3, 5, 7, 9, 11),
+  y = rep(0, 6),
+  label = c("Source", "Stamping", "Welding", "Painting", "Assembly", "Inspection"),
+  type = c("source", "service", "service", "service", "service", "service")
+)
+
+queues <- data.frame(
+  x = c(2, 4, 6, 8, 10),
+  y = rep(0, 5),
+  label = c("Q1", "Q2", "Q3", "Q4", "Q5")
+)
+
+sink_data <- data.frame(x = 12.5, y = 0, label = "Sink")
+
+reject_paths <- data.frame(
+  x = c(3, 5, 7, 9),
+  y = rep(-0.8, 4),
+  label = rep("Reject", 4)
+)
+
+ggplot() +
+  # Main flow line
+  geom_segment(aes(x = 1.3, xend = 12.2, y = 0, yend = 0),
+               arrow = arrow(length = unit(0.2, "cm")), color = "gray60", linewidth = 1) +
+  # Stations
+  geom_rect(data = stations,
+            aes(xmin = x - 0.4, xmax = x + 0.4, ymin = -0.2, ymax = 0.2),
+            fill = c("#3498DB", rep("#E74C3C", 5)), color = "black") +
+  geom_text(data = stations, aes(x = x, y = 0.4, label = label),
+            size = 3, fontface = "bold") +
+  # Queues
+  geom_point(data = queues, aes(x = x, y = y), shape = 22, size = 4, fill = "#F39C12") +
+  # Sink
+  geom_point(data = sink_data, aes(x = x, y = y), shape = 21, size = 8, fill = "#2ECC71") +
+  geom_text(data = sink_data, aes(x = x, y = 0.4, label = label), size = 3, fontface = "bold") +
+  # Reject paths
+  geom_segment(data = data.frame(x = c(3, 5, 7, 9), y = rep(-0.2, 4)),
+               aes(x = x, xend = x, y = y, yend = y - 0.4),
+               arrow = arrow(length = unit(0.15, "cm")), color = "#E74C3C", linewidth = 0.8) +
+  geom_point(data = reject_paths, aes(x = x, y = y), shape = 21, size = 5, fill = "#C0392B") +
+  geom_text(data = reject_paths, aes(x = x, y = y - 0.3, label = label), size = 2.5) +
+  # Legend
+  annotate("rect", xmin = 13, xmax = 13.3, ymin = 0.4, ymax = 0.6, fill = "#3498DB") +
+  annotate("text", x = 14, y = 0.5, label = "Source", size = 2.5, hjust = 0) +
+  annotate("rect", xmin = 13, xmax = 13.3, ymin = 0.1, ymax = 0.3, fill = "#E74C3C") +
+  annotate("text", x = 14, y = 0.2, label = "Service (Station)", size = 2.5, hjust = 0) +
+  annotate("rect", xmin = 13, xmax = 13.3, ymin = -0.2, ymax = 0, fill = "#F39C12") +
+  annotate("text", x = 14, y = -0.1, label = "Queue", size = 2.5, hjust = 0) +
+  annotate("point", x = 13.15, y = -0.4, shape = 21, size = 4, fill = "#2ECC71") +
+  annotate("text", x = 14, y = -0.4, label = "Sink", size = 2.5, hjust = 0) +
+  coord_cartesian(xlim = c(0.5, 15.5), ylim = c(-1.2, 1)) +
+  theme_void() +
+  labs(title = "Production Line Model Structure in AnyLogic")
+```
+
+### Step 4: Simulate and Analyze Results
+
+Let's simulate what the output might look like when we run this model:
+
+```{r fig-production-results, fig.cap="Simulated production line performance over 8-hour shift", fig.align='center', fig.width=10, fig.height=8}
+# Simulate production line results
+set.seed(123)
+
+# Generate hourly production data
+hours <- 1:8
+good_parts <- c(56, 58, 55, 57, 59, 54, 58, 57)
+defects <- c(1, 2, 2, 1, 1, 3, 1, 2)
+target <- rep(60, 8)
+
+production_df <- data.frame(
+  Hour = hours,
+  Good = good_parts,
+  Defects = defects,
+  Target = target
+)
+
+# Generate queue length data over time
+time_points <- seq(0, 480, by = 5)
+queue_data <- data.frame(
+  Time = rep(time_points, 5),
+  Queue = rep(c("Q1", "Q2", "Q3", "Q4", "Q5"), each = length(time_points)),
+  Length = c(
+    pmax(0, rnorm(length(time_points), 2, 1)),    # Q1
+    pmax(0, rnorm(length(time_points), 5, 2)),    # Q2 - bottleneck
+    pmax(0, rnorm(length(time_points), 3, 1.5)),  # Q3
+    pmax(0, rnorm(length(time_points), 4, 1.8)),  # Q4
+    pmax(0, rnorm(length(time_points), 1, 0.5))   # Q5
+  )
+)
+
+# Create multi-panel plot
+p1 <- ggplot(production_df, aes(x = Hour)) +
+  geom_col(aes(y = Good), fill = "#2ECC71", alpha = 0.8) +
+  geom_col(aes(y = -Defects), fill = "#E74C3C", alpha = 0.8) +
+  geom_line(aes(y = Target), color = "#3498DB", linewidth = 1.2, linetype = "dashed") +
+  geom_hline(yintercept = 0, color = "black") +
+  annotate("text", x = 8.5, y = 60, label = "Target", color = "#3498DB", fontface = "bold") +
+  labs(
+    title = "Hourly Production Output",
+    subtitle = "Green = Good parts, Red = Defects, Dashed = Target",
+    x = "Hour",
+    y = "Units"
+  ) +
+  theme_minimal()
+
+p2 <- ggplot(queue_data, aes(x = Time, y = Length, color = Queue)) +
+  geom_line(alpha = 0.7) +
+  geom_hline(yintercept = 5, linetype = "dashed", color = "red") +
+  annotate("text", x = 450, y = 6, label = "Warning\nThreshold",
+           color = "red", size = 3) +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "Queue Lengths Over Shift",
+    subtitle = "Q2 (after Stamping) shows potential bottleneck",
+    x = "Time (minutes)",
+    y = "Queue Length"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+gridExtra::grid.arrange(p1, p2, nrow = 2)
+```
+
+### Interpreting the Results
+
+From our simulation, we can observe:
+
+1. **Production Target:** The line produces approximately 454 good parts per shift (454/480 = 94.6% of target)
+2. **Defect Rate:** 13 defects / 467 total = 2.8% (exceeds our 2% target)
+3. **Bottleneck Identified:** Queue Q2 (after Stamping) consistently has the longest queue, indicating the **Welding station** is the bottleneck
+
+::: {.callout-warning}
+**Critical Finding:** The Welding station with a mean process time of 52 seconds and 8% variability is creating a bottleneck. Even though 52 seconds is under the 60-second takt time, the variability combined with 92% availability causes cumulative delays.
+:::
+
+### Step 5: Test Improvement Scenarios
+
+The power of simulation is testing "what-if" scenarios. Let's compare different improvement options:
+
+```{r fig-improvement-scenarios, fig.cap="Comparison of improvement scenarios", fig.align='center', fig.width=10, fig.height=6}
+# Create scenario comparison data
+scenarios <- data.frame(
+  Scenario = factor(c("Current State", "Add Buffer", "Reduce Variability",
+                      "Add Parallel Station", "Combined Approach"),
+                    levels = c("Current State", "Add Buffer", "Reduce Variability",
+                               "Add Parallel Station", "Combined Approach")),
+  Throughput = c(454, 462, 471, 485, 498),
+  Investment = c(0, 15, 50, 200, 180),
+  ROI = c(0, 53, 34, 15.5, 24.4)
+)
+
+# Throughput comparison
+ggplot(scenarios, aes(x = Scenario, y = Throughput, fill = Scenario)) +
+  geom_col() +
+  geom_hline(yintercept = 480, linetype = "dashed", color = "red", linewidth = 1) +
+  geom_text(aes(label = Throughput), vjust = -0.5, fontface = "bold") +
+  annotate("text", x = 5, y = 485, label = "Target: 480", color = "red") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Throughput by Improvement Scenario",
+    subtitle = "Simulation results for 8-hour shift",
+    x = "",
+    y = "Parts per Shift"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
+```
+
+::: {.callout-discussion}
+**Group Discussion:** Based on these results, which improvement option would you recommend? Consider not just throughput but also implementation cost, timeline, and risk. Discuss the trade-offs with your team.
+:::
+
+------------------------------------------------------------------------
+
+## Warehouse Simulation: Picking and Order Fulfillment {#sec-warehouse-17}
+
+Modern warehouses face immense pressure to fulfill orders quickly and accurately. Simulation helps optimize picking strategies, staffing levels, and automation investments.
+
+### The Warehouse Challenge
+
+::: {.callout-think}
+**Before You Read:** If you had to fill 1,000 customer orders per day from a warehouse with 50,000 different products (SKUs), how would you organize the picking process? What factors would affect efficiency?
+:::
+
+Warehouse operations involve complex interactions between:
+
+- **Order arrivals** (often unpredictable)
+- **Picker movement** (walking is typically 50% of picker time)
+- **Storage locations** (where products are stored affects travel time)
+- **Picking strategies** (single-order vs. batch picking)
+- **Material handling equipment** (carts, forklifts, conveyor systems)
+- **Packing and shipping** (labor-intensive final steps)
+
+### Case Study: E-Commerce Distribution Center
+
+::: {.callout-case}
+**The Scenario:**
+An e-commerce company is designing a new distribution center to handle:
+
+- **13,000 order lines per day** (an order line = one product in one order)
+- **750 picking cartons** processed daily
+- Peak periods with **3x normal order volume**
+- Delivery promise of **same-day shipping** for orders before 2 PM
+
+They need to decide: What picking algorithm will minimize fulfillment time while meeting labor cost targets?
+:::
+
+### Picking Strategies Compared
+
+AnyLogic allows us to simulate and compare different picking strategies:
+
+```{r picking-strategies, echo=FALSE}
+strategies <- tibble(
+  Strategy = c(
+    "Single-Order Picking",
+    "Batch Picking",
+    "Zone Picking",
+    "Wave Picking",
+    "Cluster Picking"
+  ),
+  Description = c(
+    "One picker completes one order at a time",
+    "Picker collects items for multiple orders simultaneously",
+    "Warehouse divided into zones; each picker handles one zone",
+    "Orders grouped into waves released at intervals",
+    "Multiple orders picked into compartmentalized cart"
+  ),
+  `Best For` = c(
+    "Small operations, high accuracy required",
+    "High-volume with clustered SKUs",
+    "Very large warehouses",
+    "Managing workload throughout shift",
+    "Medium volume, diverse products"
+  )
+)
+
+kable(strategies,
+      caption = "Warehouse picking strategies",
+      align = c("l", "l", "l")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%") %>%
+  column_spec(2, width = "45%") %>%
+  column_spec(3, width = "40%")
+```
+
+### Simulating Picker Movement
+
+One of the key factors in warehouse efficiency is picker travel distance. AnyLogic can model this using the **Pedestrian Library** combined with the **Process Modeling Library**.
+
+```{r fig-picker-travel, fig.cap="Impact of storage assignment on picker travel distance", fig.align='center', fig.width=10, fig.height=6}
+# Simulate picker travel data for different storage strategies
+set.seed(456)
+
+# Random storage vs. velocity-based storage
+n_picks <- 500
+random_storage <- rnorm(n_picks, mean = 180, sd = 40)  # feet per pick
+velocity_storage <- rnorm(n_picks, mean = 95, sd = 25)  # feet per pick
+abc_storage <- rnorm(n_picks, mean = 120, sd = 30)      # feet per pick
+
+travel_data <- data.frame(
+  Strategy = rep(c("Random Storage", "ABC Analysis", "Velocity-Based"), each = n_picks),
+  Distance = c(random_storage, abc_storage, velocity_storage)
+)
+
+ggplot(travel_data, aes(x = Strategy, y = Distance, fill = Strategy)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_hline(yintercept = mean(velocity_storage), linetype = "dashed", color = "#2ECC71") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 4, color = "red") +
+  annotate("text", x = 3.35, y = mean(velocity_storage),
+           label = paste0("Best: ", round(mean(velocity_storage)), " ft"),
+           color = "#2ECC71", size = 4, fontface = "bold") +
+  scale_fill_manual(values = c("#E74C3C", "#F39C12", "#2ECC71")) +
+  labs(
+    title = "Picker Travel Distance by Storage Strategy",
+    subtitle = "Red diamond = mean; Velocity-based storage reduces travel by 47%",
+    x = "Storage Assignment Strategy",
+    y = "Travel Distance per Pick (feet)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+::: {.callout-industry}
+**Industry Application:** Kuehne+Nagel used AnyLogic simulation to design a new warehouse processing 13,000 order lines per day. By testing different picking algorithms in simulation, they identified the optimal approach before building the physical facility, avoiding costly redesigns.
+:::
+
+### Autonomous Mobile Robots (AMRs) in Warehouses
+
+Modern warehouses increasingly use **autonomous mobile robots** to reduce picker travel time. Instead of workers walking to products, robots bring shelving units to stationary pick stations.
+
+```{r fig-amr-simulation, fig.cap="Simulation results: order fulfillment time vs. number of AMRs", fig.align='center', fig.width=10, fig.height=6}
+# Simulate AMR performance
+amr_counts <- c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
+fulfillment_times <- c(45, 28, 18, 13, 10.5, 9, 8.2, 7.8, 7.6, 7.5)
+utilization <- c(98, 95, 88, 78, 68, 58, 52, 48, 45, 43)
+
+amr_data <- data.frame(
+  AMRs = amr_counts,
+  Time = fulfillment_times,
+  Utilization = utilization
+)
+
+# Dual y-axis plot
+coeff <- 0.5
+
+ggplot(amr_data, aes(x = AMRs)) +
+  geom_line(aes(y = Time), color = "#3498DB", linewidth = 1.5) +
+  geom_point(aes(y = Time), color = "#3498DB", size = 3) +
+  geom_line(aes(y = Utilization * coeff), color = "#E74C3C", linewidth = 1.5, linetype = "dashed") +
+  geom_point(aes(y = Utilization * coeff), color = "#E74C3C", size = 3) +
+  geom_vline(xintercept = 25, linetype = "dotted", color = "#2ECC71", linewidth = 1.2) +
+  annotate("text", x = 27, y = 40, label = "Optimal\nPoint", color = "#2ECC71", fontface = "bold") +
+  scale_y_continuous(
+    name = "Fulfillment Time (minutes)",
+    sec.axis = sec_axis(~ . / coeff, name = "Robot Utilization (%)")
+  ) +
+  labs(
+    title = "Finding the Optimal Number of Autonomous Mobile Robots",
+    subtitle = "Blue = Fulfillment time (lower is better); Red = Robot utilization (higher is better)",
+    x = "Number of AMRs"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.title.y.left = element_text(color = "#3498DB"),
+    axis.title.y.right = element_text(color = "#E74C3C")
+  )
+```
+
+This simulation reveals a classic trade-off: adding more robots reduces order fulfillment time but also decreases utilization (robots spend more time idle). The **optimal point** balances these factors based on business requirements.
+
+::: {.callout-check}
+**Quick Check:**
+1. Why does adding more robots eventually show diminishing returns?
+2. If robots cost $50,000 each and labor costs $25/hour, how would you calculate the breakeven point?
+3. What other factors should be considered beyond raw cost?
+:::
+
+------------------------------------------------------------------------
+
+## Built-in AnyLogic Examples {#sec-examples-17}
+
+AnyLogic includes numerous pre-built example models that serve as excellent learning resources and starting points for your own projects. Here are the key examples relevant to manufacturing and warehouse operations:
+
+### Manufacturing Examples
+
+```{r manufacturing-examples, echo=FALSE}
+mfg_examples <- tibble(
+  `Example Name` = c(
+    "Job Shop",
+    "Assembly Line",
+    "Flexible Manufacturing System",
+    "Conveyor System",
+    "AGV System"
+  ),
+  Location = c(
+    "Help > Example Models > Manufacturing",
+    "Help > Example Models > Manufacturing",
+    "Help > Example Models > Manufacturing",
+    "Help > Example Models > Material Handling",
+    "Help > Example Models > Material Handling"
+  ),
+  `What You'll Learn` = c(
+    "Routing jobs through multiple machines, scheduling",
+    "Line balancing, takt time, bottleneck analysis",
+    "Flexible routing, machine selection, setup times",
+    "Conveyor design, merging, diverting, accumulation",
+    "Vehicle dispatching, path planning, charging stations"
+  )
+)
+
+kable(mfg_examples,
+      caption = "Key manufacturing example models in AnyLogic",
+      align = c("l", "l", "l")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+### Warehouse and Logistics Examples
+
+```{r warehouse-examples, echo=FALSE}
+wh_examples <- tibble(
+  `Example Name` = c(
+    "Warehouse",
+    "Distribution Center",
+    "Order Picking",
+    "AS/RS System",
+    "Cross-Docking"
+  ),
+  Location = c(
+    "Help > Example Models > Logistics",
+    "Help > Example Models > Logistics",
+    "Help > Example Models > Logistics",
+    "Help > Example Models > Material Handling",
+    "Help > Example Models > Logistics"
+  ),
+  `What You'll Learn` = c(
+    "Storage assignment, inventory management",
+    "Receiving, put-away, picking, shipping integration",
+    "Picking route optimization, batch vs. single order",
+    "Automated storage retrieval, crane sequencing",
+    "Minimal storage, direct transfer operations"
+  )
+)
+
+kable(wh_examples,
+      caption = "Key warehouse example models in AnyLogic",
+      align = c("l", "l", "l")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+::: {.callout-activity}
+**Hands-On Activity:** Open AnyLogic and navigate to Help > Example Models. Open the "Assembly Line" example and run it. Then:
+1. Identify the bottleneck station (highest queue length)
+2. Modify the process time for that station
+3. Observe how throughput changes
+4. Document your findings
+:::
+
+------------------------------------------------------------------------
+
+## Building Your First Model: Step-by-Step Tutorial {#sec-tutorial-17}
+
+Let's walk through building a simple but complete production line model from scratch.
+
+### Tutorial: Three-Station Production Line
+
+**Objective:** Model a production line with three workstations and analyze throughput.
+
+#### Step 1: Create a New Model
+
+1. Open AnyLogic
+2. File > New > Model
+3. Name it "ProductionLine_Tutorial"
+4. Select "Discrete Event" as the model type
+
+#### Step 2: Add the Process Flow
+
+From the **Process Modeling Library**, drag these elements onto the canvas in order:
+
+1. **Source** - Generates parts entering the system
+2. **Queue** - Holds parts waiting for Station 1
+3. **Delay** - Represents Station 1 processing time
+4. **Queue** - Holds parts waiting for Station 2
+5. **Service** - Represents Station 2 (requires a worker resource)
+6. **Queue** - Holds parts waiting for Station 3
+7. **Delay** - Represents Station 3 processing time
+8. **Sink** - Removes completed parts from the system
+
+#### Step 3: Connect the Elements
+
+Click on the output port of each element and drag to the input port of the next element. The flow should look like:
+
+```
+Source → Queue → Delay → Queue → Service → Queue → Delay → Sink
+```
+
+#### Step 4: Configure Parameters
+
+Click each element and set these properties:
+
+**Source:**
+- Arrivals defined by: Inter-arrival time
+- Inter-arrival time: `exponential(1)` (1 part per minute on average)
+
+**Delays (Stations 1 and 3):**
+- Delay time: `triangular(0.5, 0.8, 1.2)` (minutes)
+
+**Service (Station 2):**
+- Delay time: `triangular(0.6, 0.9, 1.5)` (minutes)
+- Requires a Resource Pool (add one and set capacity to 1)
+
+**Queues:**
+- Maximum capacity: 10
+
+#### Step 5: Add Statistics Collection
+
+Add these statistics to track performance:
+
+1. **TimeMeasureStart** - After Source
+2. **TimeMeasureEnd** - Before Sink
+3. **Dataset** - To log throughput over time
+
+#### Step 6: Run and Analyze
+
+```{r fig-tutorial-results, fig.cap="Expected results from tutorial model", fig.align='center', fig.width=10, fig.height=5}
+# Simulate expected results
+set.seed(789)
+time <- seq(0, 480, by = 1)
+
+# Generate cumulative throughput
+throughput <- cumsum(rpois(length(time), lambda = 0.85))
+
+# Generate queue lengths
+q1 <- pmax(0, rnorm(length(time), 1.5, 0.8))
+q2 <- pmax(0, rnorm(length(time), 3.2, 1.2))  # Bottleneck
+q3 <- pmax(0, rnorm(length(time), 0.8, 0.5))
+
+tutorial_data <- data.frame(
+  Time = time,
+  Throughput = throughput,
+  Q1 = q1,
+  Q2 = q2,
+  Q3 = q3
+)
+
+p1 <- ggplot(tutorial_data, aes(x = Time, y = Throughput)) +
+  geom_line(color = "#2ECC71", linewidth = 1) +
+  geom_hline(yintercept = 400, linetype = "dashed", color = "red") +
+  annotate("text", x = 50, y = 420, label = "Target: 400", color = "red") +
+  labs(title = "Cumulative Throughput", x = "Time (min)", y = "Parts Completed") +
+  theme_minimal()
+
+tutorial_long <- tutorial_data %>%
+  tidyr::pivot_longer(cols = c(Q1, Q2, Q3), names_to = "Queue", values_to = "Length")
+
+p2 <- ggplot(tutorial_long, aes(x = Time, y = Length, color = Queue)) +
+  geom_line(alpha = 0.6) +
+  scale_color_manual(values = c("#3498DB", "#E74C3C", "#F39C12"),
+                     labels = c("Before Station 1", "Before Station 2", "Before Station 3")) +
+  labs(title = "Queue Lengths", x = "Time (min)", y = "Parts Waiting") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+::: {.callout-check}
+**Verify Your Model:** After running, you should observe:
+- Approximately 400-420 parts completed in 480 minutes
+- Queue 2 (before Station 2) has the longest average length
+- The system is stable (queues don't grow without bound)
+:::
+
+------------------------------------------------------------------------
+
+## Advanced Topics {#sec-advanced-17}
+
+### 3D Visualization
+
+AnyLogic includes powerful 3D visualization capabilities that help communicate simulation results to stakeholders who may not understand abstract flowcharts.
+
+Benefits of 3D visualization:
+- Easier validation with plant managers ("Does this look like our facility?")
+- Executive presentations and funding requests
+- Training material for new employees
+- Virtual commissioning before physical construction
+
+### Integration with Real Data
+
+Production simulations become more valuable when connected to real data:
+
+- **Historical data import:** Load actual order data, machine logs, or production records
+- **Real-time dashboards:** Connect to databases for live monitoring
+- **Digital twin operation:** Mirror physical operations in real-time
+
+### Optimization Experiments
+
+AnyLogic includes an **Optimization** experiment type that automatically searches for the best parameter values:
+
+```{r fig-optimization, fig.cap="Optimization search finding the best staffing level", fig.align='center', fig.width=10, fig.height=5}
+# Simulate optimization process
+iterations <- 1:50
+staff_levels <- c(
+  rep(5, 5), rep(7, 5), rep(6, 5), rep(8, 5), rep(7, 5),
+  rep(6, 10), rep(7, 5), rep(7, 5), rep(7, 5)
+)
+throughput <- c(
+  rnorm(5, 380, 10), rnorm(5, 445, 8), rnorm(5, 420, 9), rnorm(5, 450, 7), rnorm(5, 448, 7),
+  rnorm(10, 425, 8), rnorm(5, 450, 6), rnorm(5, 452, 5), rnorm(5, 455, 4)
+)
+
+opt_data <- data.frame(
+  Iteration = iterations,
+  Staff = staff_levels,
+  Throughput = throughput
+)
+
+opt_data$Best <- cummax(opt_data$Throughput)
+
+ggplot(opt_data, aes(x = Iteration)) +
+  geom_point(aes(y = Throughput), alpha = 0.5, color = "#3498DB") +
+  geom_line(aes(y = Best), color = "#E74C3C", linewidth = 1.2) +
+  geom_hline(yintercept = 455, linetype = "dashed", color = "#2ECC71") +
+  annotate("text", x = 45, y = 460, label = "Optimal: 7 staff, 455 parts",
+           color = "#2ECC71", fontface = "bold") +
+  labs(
+    title = "Optimization Experiment: Finding Optimal Staffing",
+    subtitle = "Blue points = individual runs; Red line = best found so far",
+    x = "Iteration",
+    y = "Throughput (parts/shift)"
+  ) +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## Key Takeaways {#sec-summary-17}
+
+::: {.callout-summary}
+**What We Learned:**
+
+1. **Simulation enables risk-free experimentation** - Test design changes in virtual environments before spending money on physical implementation
+
+2. **AnyLogic supports three paradigms** - Discrete-event (for process flows), agent-based (for autonomous entities), and system dynamics (for strategic planning)
+
+3. **Manufacturing simulation identifies bottlenecks** - Queue analysis reveals which stations limit throughput
+
+4. **Warehouse simulation optimizes picking** - Compare strategies like batch picking, zone picking, and AMR deployment before implementation
+
+5. **Built-in examples accelerate learning** - Start from AnyLogic's example models to understand best practices
+
+6. **The value is in the "what-if"** - Simulation's true power is comparing scenarios to find optimal solutions
+
+**Key Equations:**
+- Takt Time: Equation \@ref(eq:takt-17)
+
+**Before Moving On:**
+- Can you explain when to use discrete-event vs. agent-based simulation?
+- Can you build a basic three-station production line in AnyLogic?
+- Can you identify how simulation could help in your workplace or industry?
+:::
+
+------------------------------------------------------------------------
+
+## Practice Problems {#sec-problems-17}
+
+### Problem 1: Takt Time Calculation
+
+A refrigerator assembly plant operates two 8-hour shifts per day with a 30-minute lunch break per shift. Customer demand is 720 units per day.
+
+a) Calculate the takt time in seconds
+b) If the bottleneck station has a cycle time of 62 seconds, will they meet demand? Why or why not?
+c) Suggest two approaches to resolve the issue
+
+### Problem 2: Simulation Model Design
+
+You are asked to simulate a paint shop with:
+- 3 spray booths operating in parallel
+- Conveyor system bringing parts from preparation area
+- Curing oven with 30-minute cycle time
+- Quality inspection with 5% rejection rate
+
+a) Sketch the simulation model structure
+b) List which AnyLogic libraries you would use
+c) Identify potential bottlenecks to investigate
+
+### Problem 3: Warehouse Picking Analysis
+
+A warehouse uses single-order picking with 5 pickers. Each picker walks an average of 3 miles per 8-hour shift. The company is considering batch picking with specialized carts.
+
+a) If batch picking reduces travel by 35%, how many miles would be saved per picker per shift?
+b) If workers walk at 3 mph and pick items at a rate of 2 per minute while at a location, what percentage of time is currently spent walking?
+c) What information would you need to simulate this scenario in AnyLogic?
+
+### Problem 4: AMR Fleet Sizing
+
+Using the graph in Figure \@ref(fig-amr-simulation) as a reference:
+
+a) If the company requires fulfillment time under 12 minutes, what is the minimum number of AMRs needed?
+b) What trade-off occurs when moving from 25 to 50 AMRs?
+c) If each AMR costs $50,000 and operates for 5 years, what is the daily cost per AMR?
+
+::: {.callout-challenge}
+**Challenge Problem:** Design a simulation experiment to determine the optimal number of pickers and AMRs for a warehouse with variable order volumes. The solution should:
+- Handle daily order volumes ranging from 5,000 to 20,000 lines
+- Meet a 2-hour fulfillment target
+- Minimize total labor and equipment costs
+:::
+
+------------------------------------------------------------------------
+
+## Further Resources {#sec-resources-17}
+
+### AnyLogic Official Resources
+- **AnyLogic University:** Free online courses covering all simulation paradigms
+- **Example Models:** Help > Example Models in AnyLogic software
+- **Cloud Platform:** cloud.anylogic.com for running simulations online
+
+### Academic Resources
+- Borshchev, A. (2013). *The Big Book of Simulation Modeling*. AnyLogic North America.
+- Law, A.M. (2015). *Simulation Modeling and Analysis* (5th ed.). McGraw-Hill.
+
+### Industry Case Studies
+- Mercedes-Benz Sprinter production optimization
+- Kuehne+Nagel warehouse picking algorithm selection
+- Tesla autonomous mobile robot deployment
+
+::: {.callout-tip}
+**Getting Started:** Download the free Personal Learning Edition of AnyLogic from anylogic.com. It includes all features and example models—the only limitation is model size.
+:::

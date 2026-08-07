@@ -1,0 +1,1188 @@
+# Integrated Manufacturing Systems
+
+```{r setup-03, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+1. Compare different types of production facility layouts and material handling methods
+2. Calculate Manufacturing Cycle Time (MCT) and Manufacturing Cycle Efficiency (MCE)
+3. Analyze production line performance including the impact of station failures
+4. Apply line balancing techniques to optimize workstation assignments
+5. Explain the concepts of takt time, cycle time, and their relationship
+6. Describe Flexible Manufacturing Systems (FMS) and their applications
+7. Understand modern concepts including digital twins and Industry 4.0
+
+------------------------------------------------------------------------
+
+## Material Handling Methods & Systems
+
+There are four common types of production facility layouts, each with distinct features and material handling requirements:
+
+```{r layout-comparison-table, echo=FALSE}
+layout_data <- tibble(
+  `Layout Type` = c("Fixed-Position", "Process (Job Shop)", "Cellular", "Product (Flow Line)"),
+  `Product Characteristics` = c(
+    "Large, heavy, or immobile products",
+    "High variety, low volume, custom work",
+    "Part families, medium variety/volume",
+    "Standardized products, high volume"
+  ),
+  `Material Handling` = c(
+    "Cranes, hoists, fork lifts bring materials to product",
+    "Fork lifts, AGVs, carts move WIP between departments",
+    "Conveyors within cells, carts between cells",
+    "Conveyors, automated transfer systems"
+  ),
+  `Examples` = c(
+    "Ships, aircraft, buildings, large machinery",
+    "Machine shops, hospitals, universities",
+    "Electronics assembly, engine components",
+    "Automotive assembly, bottling, food processing"
+  )
+)
+
+layout_data %>%
+  kable(format = "html", caption = "Material Handling Methods by Plant Layout") %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = TRUE,
+    position = "center"
+  ) %>%
+  column_spec(1, bold = TRUE, width = "10em", background = "#D4E6F1") %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white")
+```
+
+<details>
+<summary>Discussion: How do you choose between layout types?</summary>
+
+**Selection criteria:**
+
+| Factor | Favors Process Layout | Favors Product Layout |
+|--------|----------------------|----------------------|
+| Volume | Low (< 1,000/year) | High (> 10,000/year) |
+| Variety | High (many products) | Low (1-2 products) |
+| Routing | Variable by product | Fixed, same for all |
+| Equipment | General-purpose | Specialized |
+| Worker skills | High, varied | Specific, repetitive |
+| WIP inventory | High | Low |
+| Lead time | Long | Short |
+
+**When in doubt:** If volume and variety are moderate, consider cellular manufacturing as a compromise.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Fundamentals of Production Lines
+
+A **production line** consists of workstations arranged so that the product moves from one station to the next, with a portion of the total work performed at each location.
+
+```{r production-line-viz, echo=FALSE, fig.align="center", fig.cap="Production Line Concept", fig.width=11, fig.height=4}
+# Create production line visualization
+stations <- data.frame(
+  name = c("Station 1", "Station 2", "Station 3", "Station 4", "Station 5"),
+  x = 1:5,
+  y = 1,
+  time = c(45, 52, 48, 55, 50)
+)
+
+ggplot(stations, aes(x = x, y = y)) +
+  geom_tile(fill = "#3498DB", width = 0.8, height = 0.5, color = "white", linewidth = 2) +
+  geom_text(aes(label = name), color = "white", fontface = "bold", size = 4, y = 1.05) +
+  geom_text(aes(label = paste0(time, " sec")), color = "white", size = 3.5, y = 0.95) +
+  geom_segment(data = stations[1:4,], aes(x = x + 0.45, xend = x + 0.55, y = y, yend = y),
+               arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", size = 1.5) +
+  annotate("text", x = 0.3, y = 1, label = "Input", fontface = "italic") +
+  annotate("text", x = 5.7, y = 1, label = "Output", fontface = "italic") +
+  annotate("segment", x = 0.5, xend = 0.55, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#27AE60") +
+  annotate("segment", x = 5.45, xend = 5.5, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#27AE60") +
+  labs(title = "5-Station Production Line",
+       subtitle = "Cycle time determined by slowest station (bottleneck): 55 seconds") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 11)
+  ) +
+  xlim(-0.2, 6.2)
+```
+
+### Methods of Work Transport
+
+```{r transport-methods, echo=FALSE}
+transport_data <- tibble(
+  Method = c("Manual", "Continuous", "Synchronous (Intermittent)", "Asynchronous"),
+  `Description` = c(
+    "Workers pass parts by hand or using simple carts",
+    "Conveyor moves at constant speed; work done while moving",
+    "All units move simultaneously in discrete steps",
+    "Units move independently when released by worker"
+  ),
+  `Advantages` = c(
+    "Low cost, flexible, easy to implement",
+    "Smooth flow, no transfer time between stations",
+    "Fixed cycle time, easy to control",
+    "Absorbs variation, no blocking/starving"
+  ),
+  `Disadvantages` = c(
+    "Variable pace, potential blocking/starving",
+    "Work must be done on moving product",
+    "Rigid timing, all stations must finish together",
+    "Requires buffers, more complex control"
+  ),
+  `Applications` = c(
+    "Low-volume assembly, repair shops",
+    "Beverage bottling, canning lines",
+    "Automotive body welding, transfer lines",
+    "Electronics assembly, flexible lines"
+  )
+)
+
+transport_data %>%
+  kable(format = "html", caption = "Work Transport Methods in Production Lines") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#ECF0F1", width = "10em")
+```
+
+```{r transport-diagrams, echo=FALSE, fig.align="center", fig.cap="Work Transport System Types", fig.width=12, fig.height=6}
+# Create three panels showing different transport types
+par(mfrow = c(1, 3))
+
+# Data for visualization
+transport_viz <- data.frame(
+  Type = rep(c("Continuous", "Synchronous", "Asynchronous"), each = 5),
+  Station = rep(1:5, 3),
+  x = rep(1:5, 3),
+  y = c(rep(3, 5), rep(2, 5), rep(1, 5))
+)
+
+ggplot(transport_viz, aes(x = x, y = y)) +
+  # Continuous
+  annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 2.7, ymax = 3.3, fill = "#3498DB", alpha = 0.2) +
+  annotate("text", x = 0.3, y = 3, label = "Continuous", angle = 90, fontface = "bold") +
+  geom_segment(aes(x = 0.5, xend = 5.5, y = 3, yend = 3), color = "#3498DB", linewidth = 2) +
+  annotate("text", x = 3, y = 3.2, label = "v = constant", fontface = "italic", size = 3) +
+  # Synchronous
+  annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 1.7, ymax = 2.3, fill = "#E74C3C", alpha = 0.2) +
+  annotate("text", x = 0.3, y = 2, label = "Synchronous", angle = 90, fontface = "bold") +
+  geom_segment(aes(x = 0.7, xend = 1.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
+  geom_segment(aes(x = 1.7, xend = 2.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
+  geom_segment(aes(x = 2.7, xend = 3.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
+  geom_segment(aes(x = 3.7, xend = 4.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
+  geom_segment(aes(x = 4.7, xend = 5.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
+  annotate("text", x = 3, y = 2.2, label = "All move together", fontface = "italic", size = 3) +
+  # Asynchronous
+  annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 0.7, ymax = 1.3, fill = "#27AE60", alpha = 0.2) +
+  annotate("text", x = 0.3, y = 1, label = "Asynchronous", angle = 90, fontface = "bold") +
+  geom_segment(aes(x = 0.7, xend = 1.1, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
+  geom_segment(aes(x = 1.9, xend = 2.5, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
+  geom_segment(aes(x = 2.7, xend = 3.1, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
+  geom_segment(aes(x = 4.0, xend = 4.4, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
+  geom_segment(aes(x = 4.8, xend = 5.3, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
+  annotate("text", x = 3, y = 1.2, label = "Independent movement + buffers", fontface = "italic", size = 3) +
+  # Station markers
+  geom_point(data = data.frame(x = rep(1:5, 3), y = rep(c(3, 2, 1), each = 5)),
+             aes(x = x, y = y), shape = 21, fill = "white", size = 4, stroke = 1.5) +
+  labs(title = "Comparison of Work Transport Systems") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  xlim(-0.3, 6)
+```
+
+<details>
+<summary>What causes blocking and starving in production lines?</summary>
+
+**Starving:** A station is ready to work but has no parts to process.
+- **Causes:** Upstream station is slower, upstream breakdown, material shortage
+
+**Blocking:** A station finishes but cannot release the part.
+- **Causes:** Downstream station still working, downstream breakdown, no buffer space
+
+**Solutions:**
+1. **Buffers** - Storage between stations absorbs variation
+2. **Line balancing** - Equalize work content across stations
+3. **Parallel stations** - Add capacity at bottlenecks
+4. **Preventive maintenance** - Reduce breakdowns
+
+</details>
+
+### Work Cycle Types
+
+```{r work-cycle-viz, echo=FALSE, fig.align="center", fig.cap="Manual, Semi-Automated, and Fully Automated Machine Cycles", fig.width=12, fig.height=5}
+# Create work cycle comparison
+cycle_data <- data.frame(
+  Type = c("Manual", "Semi-Auto", "Fully Auto"),
+  Machine_Time = c(0, 60, 85),
+  Operator_Time = c(100, 40, 5),
+  y = c(3, 2, 1)
+)
+
+cycle_long <- cycle_data %>%
+  pivot_longer(cols = c(Machine_Time, Operator_Time), names_to = "Activity", values_to = "Percent")
+
+ggplot(cycle_data) +
+  # Manual
+  geom_tile(aes(x = 50, y = 3), width = 100, height = 0.5, fill = "#F39C12") +
+  annotate("text", x = 50, y = 3, label = "100% Operator Control", color = "white", fontface = "bold") +
+  annotate("text", x = -10, y = 3, label = "Manual", fontface = "bold", hjust = 1) +
+  # Semi-automated
+  geom_tile(aes(x = 20, y = 2), width = 40, height = 0.5, fill = "#F39C12") +
+  geom_tile(aes(x = 70, y = 2), width = 60, height = 0.5, fill = "#3498DB") +
+  annotate("text", x = 20, y = 2, label = "Load/Unload", color = "white", size = 3) +
+  annotate("text", x = 70, y = 2, label = "Auto Cycle", color = "white", size = 3) +
+  annotate("text", x = -10, y = 2, label = "Semi-Auto", fontface = "bold", hjust = 1) +
+  # Fully automated
+  geom_tile(aes(x = 2.5, y = 1), width = 5, height = 0.5, fill = "#F39C12") +
+  geom_tile(aes(x = 52.5, y = 1), width = 95, height = 0.5, fill = "#3498DB") +
+  annotate("text", x = 52.5, y = 1, label = "Automated Operation (Unattended)", color = "white", size = 3) +
+  annotate("text", x = -10, y = 1, label = "Fully Auto", fontface = "bold", hjust = 1) +
+  # Legend
+  annotate("rect", xmin = 70, xmax = 75, ymin = 3.7, ymax = 3.9, fill = "#F39C12") +
+  annotate("text", x = 77, y = 3.8, label = "Operator", hjust = 0, size = 3) +
+  annotate("rect", xmin = 90, xmax = 95, ymin = 3.7, ymax = 3.9, fill = "#3498DB") +
+  annotate("text", x = 97, y = 3.8, label = "Machine", hjust = 0, size = 3) +
+  labs(title = "Work Cycle Distribution by Automation Level",
+       x = "Percentage of Cycle Time", y = "") +
+  scale_x_continuous(limits = c(-20, 110), breaks = seq(0, 100, 25)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.y = element_blank(),
+    panel.grid.major.y = element_blank()
+  )
+```
+
+------------------------------------------------------------------------
+
+## Key Time Metrics
+
+Understanding time metrics is essential for analyzing and improving production systems.
+
+```{r time-metrics-table, echo=FALSE}
+time_metrics <- tibble(
+  `Metric` = c("Takt Time", "Cycle Time", "Lead Time", "Throughput Time"),
+  `Definition` = c(
+    "Available production time ÷ Customer demand",
+    "Time between units coming off the line",
+    "Total time from order to delivery",
+    "Time from raw material to finished goods"
+  ),
+  `Formula` = c(
+    "$T_{takt} = \\frac{\\text{Available Time}}{\\text{Demand}}$",
+    "$T_c = \\frac{60}{R_p}$ (min, if Rp in units/hr)",
+    "Order processing + Manufacturing + Delivery",
+    "Processing + Waiting + Moving + Inspection"
+  ),
+  `Purpose` = c(
+    "Sets the pace of production to match demand",
+    "Actual pace of the production line",
+    "Customer's wait time",
+    "Internal manufacturing efficiency"
+  )
+)
+
+time_metrics %>%
+  kable(format = "html", escape = FALSE, caption = "Key Manufacturing Time Metrics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D5F5E3", width = "10em")
+```
+
+### Takt Time vs. Cycle Time
+
+```{r takt-vs-cycle, echo=TRUE}
+# Takt Time Calculation Example
+# Automotive assembly plant
+
+# Given data
+shift_length_min <- 480      # 8 hours = 480 minutes
+breaks_min <- 30             # Two 15-minute breaks
+planned_downtime_min <- 20   # Changeover, meetings
+customer_demand <- 60        # Cars per shift
+
+# Calculate available time
+available_time <- shift_length_min - breaks_min - planned_downtime_min
+cat("Available Production Time:", available_time, "minutes per shift\n")
+
+# Calculate Takt Time
+takt_time <- available_time / customer_demand
+cat("Takt Time:", round(takt_time, 2), "minutes per car\n")
+cat("         =", round(takt_time * 60, 1), "seconds per car\n\n")
+
+# Compare to actual cycle time
+actual_cycle_time <- 7.5  # minutes (current performance)
+cat("Actual Cycle Time:", actual_cycle_time, "minutes per car\n")
+
+if (actual_cycle_time <= takt_time) {
+  cat("Status: MEETING DEMAND - Cycle time is within takt time\n")
+  cat("Capacity margin:", round((1 - actual_cycle_time/takt_time) * 100, 1), "%\n")
+} else {
+  cat("Status: CANNOT MEET DEMAND - Cycle time exceeds takt time\n")
+  cat("Shortfall:", round((actual_cycle_time/takt_time - 1) * 100, 1), "% over capacity\n")
+}
+```
+
+<details>
+<summary>Discussion: What happens when cycle time exceeds takt time?</summary>
+
+**When Cycle Time > Takt Time, you cannot meet customer demand.**
+
+**Options to fix this:**
+
+1. **Reduce cycle time:**
+   - Kaizen improvements at bottleneck
+   - Better tools/fixtures
+   - Automation of slow tasks
+
+2. **Increase available time:**
+   - Add overtime
+   - Add shifts
+   - Reduce breaks (carefully!)
+
+3. **Add capacity:**
+   - Parallel stations at bottleneck
+   - Additional production lines
+   - Outsourcing
+
+4. **Manage demand:**
+   - Negotiate delivery schedules
+   - Build inventory in advance
+   - Redirect to other facilities
+
+**Key insight:** Takt time is the "heartbeat" of lean manufacturing - everything should be synchronized to it.
+
+</details>
+
+### Manufacturing Cycle Time and Efficiency
+
+```{r mct-mce, echo=TRUE}
+# Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example
+
+# Given production data
+production_time_min <- 480   # Total time equipment ran
+units_produced <- 60         # Good units produced
+
+# MCT Calculation
+MCT <- production_time_min / units_produced
+cat("Manufacturing Cycle Time (MCT):", MCT, "minutes per unit\n\n")
+
+# MCE Calculation requires understanding of value-added time
+# Typical breakdown of production time:
+value_added_time <- 3.5      # Actual processing time (minutes)
+inspection_time <- 0.5       # Quality checks
+wait_time <- 2.5             # Queuing between operations
+move_time <- 1.5             # Transport between stations
+
+total_time_per_unit <- value_added_time + inspection_time + wait_time + move_time
+cat("Time breakdown per unit:\n")
+cat("  Value-added (processing):", value_added_time, "min\n")
+cat("  Inspection:", inspection_time, "min\n")
+cat("  Waiting:", wait_time, "min\n")
+cat("  Moving:", move_time, "min\n")
+cat("  Total:", total_time_per_unit, "min\n\n")
+
+# MCE Calculation
+MCE <- (value_added_time / total_time_per_unit) * 100
+cat("Manufacturing Cycle Efficiency (MCE):", round(MCE, 1), "%\n")
+cat("\nInterpretation: Only", round(MCE, 1), "% of time adds value.\n")
+cat("Opportunity:", round(100 - MCE, 1), "% of time is waste that could be reduced.\n")
+```
+
+```{r mce-visual, echo=FALSE, fig.align="center", fig.cap="Manufacturing Cycle Efficiency - Where Does Time Go?", fig.width=9, fig.height=5}
+time_breakdown <- data.frame(
+  Activity = c("Value-Added\n(Processing)", "Inspection", "Waiting", "Moving"),
+  Time = c(3.5, 0.5, 2.5, 1.5),
+  Category = c("Value-Added", "Necessary", "Waste", "Waste")
+)
+
+ggplot(time_breakdown, aes(x = reorder(Activity, -Time), y = Time, fill = Category)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = paste0(Time, " min")), vjust = -0.5, fontface = "bold") +
+  scale_fill_manual(values = c("Value-Added" = "#27AE60", "Necessary" = "#F39C12", "Waste" = "#E74C3C")) +
+  labs(title = "Time Breakdown per Unit - Identifying Improvement Opportunities",
+       subtitle = "MCE = Value-Added Time / Total Time = 43.75%",
+       x = "", y = "Time (minutes)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Manual Assembly Lines
+
+Manual assembly lines use human workers at each station. The efficiency depends on how well work is balanced across stations.
+
+### Line Balancing
+
+**Line balancing** assigns tasks to workstations to minimize idle time while meeting production rate requirements.
+
+**Key formulas:**
+
+$$T_c = \frac{\text{Available Time}}{\text{Required Output}} = \frac{60}{R_p}$$
+
+$$TM = \frac{\sum t_i}{T_c} = \frac{T_{wc}}{T_c}$$
+
+$$E_b = \frac{T_{wc}}{n \times T_c} \times 100\%$$
+
+Where:
+- $T_c$ = Cycle time (time available per unit)
+- $R_p$ = Production rate (units per hour)
+- $TM$ = Theoretical minimum stations
+- $T_{wc}$ = Total work content (sum of all task times)
+- $n$ = Actual number of stations
+- $E_b$ = Line efficiency (balance efficiency)
+
+### Line Balancing Example: Electronics Assembly
+
+```{r line-balance-example, echo=TRUE}
+# Line Balancing Example: Tablet Computer Assembly
+
+# Task data
+tasks <- data.frame(
+  Task = c("A", "B", "C", "D", "E", "F", "G", "H"),
+  Description = c("Install battery", "Mount display", "Connect cables",
+                  "Install motherboard", "Add memory", "Install camera",
+                  "Attach case back", "Final test"),
+  Time_sec = c(30, 45, 20, 55, 15, 25, 35, 40),
+  Predecessors = c("-", "A", "A", "B,C", "D", "D", "E,F", "G")
+)
+
+# Display task data
+cat("Assembly Tasks:\n")
+print(tasks[, c("Task", "Description", "Time_sec", "Predecessors")])
+
+# Calculate metrics
+total_work_content <- sum(tasks$Time_sec)
+cat("\nTotal Work Content:", total_work_content, "seconds\n")
+
+# Production requirements
+desired_output <- 45  # units per hour
+available_time <- 3600  # seconds per hour
+
+# Step 1: Calculate cycle time
+cycle_time <- available_time / desired_output
+cat("\nStep 1 - Cycle Time:")
+cat("\n  Required output:", desired_output, "units/hour")
+cat("\n  Cycle time = 3600 /", desired_output, "=", cycle_time, "seconds\n")
+
+# Step 2: Calculate theoretical minimum stations
+TM <- total_work_content / cycle_time
+cat("\nStep 2 - Theoretical Minimum Stations:")
+cat("\n  TM =", total_work_content, "/", cycle_time, "=", round(TM, 2))
+cat("\n  Minimum stations required:", ceiling(TM), "\n")
+
+# Step 3: Assign tasks to stations (using largest task time rule)
+cat("\nStep 3 - Station Assignments (respecting precedence):\n")
+cat("  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s... EXCEEDS\n")
+cat("  Let's try: A (30s) + C (20s) = 50s [30s idle]\n")
+cat("  Station 2: B (45s) + E (15s) = 60s... wait, E needs D\n")
+cat("  Station 2: B (45s) + D (55s) = 100s > 80s... EXCEEDS\n")
+cat("  Station 2: B (45s) = 45s [35s idle]\n")
+cat("  Station 3: D (55s) = 55s [25s idle]\n")
+cat("  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]\n")
+cat("  Station 5: H (40s) = 40s [40s idle]\n")
+
+n_stations <- 5
+efficiency <- (total_work_content / (n_stations * cycle_time)) * 100
+balance_delay <- 100 - efficiency
+
+cat("\nStep 4 - Results:")
+cat("\n  Number of stations:", n_stations)
+cat("\n  Line efficiency:", round(efficiency, 1), "%")
+cat("\n  Balance delay (idle time):", round(balance_delay, 1), "%")
+cat("\n\n  This is poor balance - consider redesigning tasks or adding parallel stations.")
+```
+
+```{r precedence-diagram, echo=FALSE, fig.align="center", fig.cap="Precedence Diagram for Tablet Assembly", fig.width=10, fig.height=5}
+# Create precedence diagram
+nodes <- data.frame(
+  task = c("A", "B", "C", "D", "E", "F", "G", "H"),
+  x = c(1, 2, 2, 3, 4, 4, 5, 6),
+  y = c(2, 2.5, 1.5, 2, 2.5, 1.5, 2, 2),
+  time = c(30, 45, 20, 55, 15, 25, 35, 40)
+)
+
+edges <- data.frame(
+  x = c(1, 1, 2, 2, 3, 3, 4, 4, 5),
+  y = c(2, 2, 2.5, 1.5, 2, 2, 2.5, 1.5, 2),
+  xend = c(2, 2, 3, 3, 4, 4, 5, 5, 6),
+  yend = c(2.5, 1.5, 2, 2, 2.5, 1.5, 2, 2, 2)
+)
+
+ggplot() +
+  geom_segment(data = edges, aes(x = x + 0.15, y = y, xend = xend - 0.15, yend = yend),
+               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+  geom_point(data = nodes, aes(x = x, y = y), size = 16, color = "#3498DB") +
+  geom_text(data = nodes, aes(x = x, y = y + 0.08, label = task),
+            color = "white", fontface = "bold", size = 5) +
+  geom_text(data = nodes, aes(x = x, y = y - 0.12, label = paste0(time, "s")),
+            color = "white", size = 3.5) +
+  labs(title = "Precedence Diagram: Tablet Assembly",
+       subtitle = "Arrows indicate task sequence requirements") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 11)
+  ) +
+  xlim(0.5, 6.5) + ylim(1, 3)
+```
+
+<details>
+<summary>Try It: Can you find a better balance?</summary>
+
+**Challenge:** Reassign tasks to improve efficiency above 80%.
+
+**Hints:**
+- Can task A be split into two smaller tasks?
+- Could parallel workstations handle the bottleneck task D?
+- What if we allow 85 seconds per station (slower line, fewer stations)?
+
+**One solution with parallel stations:**
+- Station 1: A + C = 50s
+- Station 2a: B = 45s (parallel)
+- Station 2b: B = 45s (parallel)
+- Station 3: D = 55s
+- Station 4: E + F = 40s
+- Station 5: G + H = 75s
+
+With parallelism at Station 2, effective cycle time stays at 55s (Station 3 bottleneck), but we can now achieve higher throughput.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Automated Production Lines
+
+Automated lines reduce human intervention using mechanized transfer systems and automated workstations. They're used for high-volume production with well-defined work content.
+
+### Impact of Station Failures
+
+The performance of automated lines is degraded by station failures. Even small failure probabilities can significantly reduce output.
+
+**Actual Cycle Time:**
+$$T_p = T_c + pT$$
+
+**Actual Production Rate:**
+$$R_p = \frac{60}{T_p} = \frac{60}{T_c + pT}$$
+
+Where:
+- $T_c$ = Ideal cycle time (minutes)
+- $p$ = Probability of station failure per cycle
+- $T$ = Average downtime per failure (minutes)
+
+```{r downtime-analysis, echo=TRUE}
+# Automated Line Performance Analysis
+
+# Line parameters
+ideal_cycle_time <- 1.0    # minutes per part (ideal)
+n_stations <- 10           # Number of stations
+
+# Scenario comparison
+scenarios <- data.frame(
+  Scenario = c("World Class", "Good", "Average", "Poor"),
+  Failure_Prob = c(0.005, 0.02, 0.05, 0.10),  # Per station per cycle
+  Repair_Time = c(2, 5, 10, 15)  # Minutes average
+)
+
+# Calculate line performance for each scenario
+cat("Automated Line Performance Analysis\n")
+cat("===================================\n")
+cat("Ideal cycle time:", ideal_cycle_time, "min/part\n")
+cat("Number of stations:", n_stations, "\n")
+cat("Ideal production rate:", 60/ideal_cycle_time, "parts/hour\n\n")
+
+for(i in 1:nrow(scenarios)) {
+  p <- scenarios$Failure_Prob[i]
+  T <- scenarios$Repair_Time[i]
+
+  # Line failure probability (any station)
+  p_line <- 1 - (1 - p)^n_stations
+
+  # Actual cycle time
+  Tp <- ideal_cycle_time + p_line * T
+
+  # Actual production rate
+  Rp <- 60 / Tp
+
+  # Efficiency
+  efficiency <- (ideal_cycle_time / Tp) * 100
+
+  cat(sprintf("%s Performance:\n", scenarios$Scenario[i]))
+  cat(sprintf("  Station failure prob: %.1f%%\n", p * 100))
+  cat(sprintf("  Line failure prob: %.1f%%\n", p_line * 100))
+  cat(sprintf("  Average repair time: %d min\n", T))
+  cat(sprintf("  Actual cycle time: %.2f min\n", Tp))
+  cat(sprintf("  Actual production: %.1f parts/hour\n", Rp))
+  cat(sprintf("  Line efficiency: %.1f%%\n\n", efficiency))
+}
+```
+
+```{r downtime-visual, echo=FALSE, fig.align="center", fig.cap="Impact of Station Failures on Production Rate", fig.width=10, fig.height=6}
+# Create visualization of failure impact
+p_range <- seq(0, 0.10, 0.005)
+repair_times <- c(5, 10, 20)
+
+sim_data <- expand.grid(p = p_range, T = repair_times) %>%
+  mutate(
+    p_line = 1 - (1 - p)^10,
+    Tp = 1.0 + p_line * T,
+    Rp = 60 / Tp,
+    Repair_Scenario = paste0("Repair Time = ", T, " min")
+  )
+
+ggplot(sim_data, aes(x = p * 100, y = Rp, color = Repair_Scenario)) +
+  geom_line(linewidth = 1.2) +
+  geom_hline(yintercept = 60, linetype = "dashed", color = "gray50") +
+  annotate("text", x = 1, y = 62, label = "Ideal Rate (60 parts/hr)", size = 3.5) +
+  scale_color_brewer(palette = "Set1") +
+  labs(title = "Production Rate vs. Station Failure Probability",
+       subtitle = "10-station line, 1-minute ideal cycle time",
+       x = "Station Failure Probability (%)",
+       y = "Actual Production Rate (parts/hour)",
+       color = "Downtime Scenario") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+```
+
+<details>
+<summary>Discussion: Why is preventive maintenance critical for automated lines?</summary>
+
+**The math shows why:**
+- At 5% failure probability with 10-minute repairs, you lose 25% of capacity
+- This costs more than the maintenance to prevent it
+
+**Cost comparison (example):**
+- Lost production: 15 parts/hour × $50/part × 8 hours = $6,000/day
+- Preventive maintenance: $500/day
+- **ROI of PM: 12:1**
+
+**Best practices:**
+1. Track failure data by station
+2. Prioritize PM on high-failure stations
+3. Stock critical spare parts
+4. Train operators on quick changeover/repair
+5. Consider redundant stations for bottlenecks
+
+</details>
+
+### Buffer Sizing
+
+Buffers between stations decouple operations and improve overall line availability.
+
+```{r buffer-analysis, echo=FALSE, fig.align="center", fig.cap="Effect of Buffers on Line Availability", fig.width=9, fig.height=5}
+# Simplified buffer effectiveness model
+buffer_sizes <- 0:10
+station_availability <- 0.95  # 95% availability per station
+
+# Without buffers, line availability = A^n
+no_buffer <- station_availability^5  # 5 stations
+
+# With buffers, availability improves (simplified model)
+buffer_effect <- data.frame(
+  Buffer_Size = buffer_sizes,
+  Line_Availability = no_buffer + (1 - no_buffer) * (1 - exp(-buffer_sizes/3))
+)
+
+ggplot(buffer_effect, aes(x = Buffer_Size, y = Line_Availability * 100)) +
+  geom_line(color = "#3498DB", linewidth = 1.5) +
+  geom_point(color = "#3498DB", size = 3) +
+  geom_hline(yintercept = no_buffer * 100, linetype = "dashed", color = "#E74C3C") +
+  annotate("text", x = 8, y = no_buffer * 100 + 1,
+           label = "No buffers (77.4%)", color = "#E74C3C") +
+  geom_hline(yintercept = 95, linetype = "dashed", color = "#27AE60") +
+  annotate("text", x = 8, y = 96, label = "Target (95%)", color = "#27AE60") +
+  labs(title = "Line Availability vs. Buffer Size",
+       subtitle = "5-station line, 95% station availability each",
+       x = "Buffer Size (units between stations)",
+       y = "Line Availability (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  ylim(75, 100)
+```
+
+------------------------------------------------------------------------
+
+## Cellular Manufacturing
+
+**Cellular manufacturing** applies Group Technology to organize production into cells that specialize in "families" of similar parts.
+
+### Part Families and Machine Cells
+
+```{r cellular-concept, echo=FALSE, fig.align="center", fig.cap="Cellular Manufacturing: From Process Layout to Cells", fig.width=12, fig.height=6}
+# Show transformation from process to cellular layout
+
+# Process layout (before)
+process_machines <- data.frame(
+  Machine = c("L1", "L2", "L3", "M1", "M2", "M3", "D1", "D2", "G1", "G2"),
+  Type = c(rep("Lathe", 3), rep("Mill", 3), rep("Drill", 2), rep("Grinder", 2)),
+  x = c(1, 1.5, 2, 3, 3.5, 4, 5, 5.5, 6, 6.5),
+  y_before = c(3, 2.5, 3.5, 3, 2.5, 3.5, 3, 2.5, 3, 2.5)
+)
+
+# Cellular layout (after)
+cellular_machines <- data.frame(
+  Machine = c("L1", "M1", "D1", "G1", "L2", "M2", "D2", "G2"),
+  Cell = c(rep("Cell A: Shaft Family", 4), rep("Cell B: Housing Family", 4)),
+  x = c(1, 2, 3, 4, 1, 2, 3, 4),
+  y = c(2, 2, 2, 2, 1, 1, 1, 1),
+  color = c(rep("#E74C3C", 4), rep("#3498DB", 4))
+)
+
+p_cellular <- ggplot(cellular_machines, aes(x = x, y = y)) +
+  # Cell backgrounds
+  annotate("rect", xmin = 0.5, xmax = 4.5, ymin = 1.7, ymax = 2.3,
+           fill = "#E74C3C", alpha = 0.15) +
+  annotate("rect", xmin = 0.5, xmax = 4.5, ymin = 0.7, ymax = 1.3,
+           fill = "#3498DB", alpha = 0.15) +
+  geom_tile(aes(fill = color), width = 0.5, height = 0.3, color = "black") +
+  geom_text(aes(label = Machine), size = 3, fontface = "bold") +
+  geom_segment(data = cellular_machines[c(1:3, 5:7),],
+               aes(x = x + 0.3, xend = x + 0.7, y = y, yend = y),
+               arrow = arrow(length = unit(0.15, "cm")), color = "black") +
+  annotate("text", x = 0.3, y = 2, label = "Cell A:\nShafts", hjust = 1, fontface = "bold", color = "#E74C3C") +
+  annotate("text", x = 0.3, y = 1, label = "Cell B:\nHousings", hjust = 1, fontface = "bold", color = "#3498DB") +
+  scale_fill_identity() +
+  labs(title = "Cellular Layout",
+       subtitle = "Parts grouped into families, each in dedicated cell") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  xlim(-0.3, 5)
+
+p_cellular
+```
+
+```{r cellular-benefits, echo=FALSE}
+cellular_comparison <- tibble(
+  Metric = c("Setup time", "Work-in-process", "Lead time", "Quality defects",
+             "Material handling", "Floor space", "Worker skills"),
+  `Traditional (Process)` = c("High - frequent changeovers", "High - batches waiting",
+                              "Long - complex routing", "Higher - multiple handoffs",
+                              "High - long distances", "More - large aisles",
+                              "Specialized by machine"),
+  `Cellular` = c("Low - dedicated to family", "Low - continuous flow",
+                "Short - U-cell flow", "Lower - cell ownership",
+                "Low - within cell", "Less - compact cells",
+                "Cross-trained on cell"),
+  `Typical Improvement` = c("50-90% reduction", "50-90% reduction",
+                           "50-80% reduction", "30-50% reduction",
+                           "40-70% reduction", "20-50% reduction",
+                           "Increased flexibility")
+)
+
+cellular_comparison %>%
+  kable(format = "html", caption = "Cellular Manufacturing Benefits vs. Traditional Process Layout") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D5F5E3") %>%
+  column_spec(4, background = "#FCF3CF")
+```
+
+------------------------------------------------------------------------
+
+## Flexible Manufacturing Systems (FMS)
+
+An **FMS** is a highly automated cell consisting of CNC machines interconnected by automated material handling, all controlled by a central computer.
+
+### FMS Components
+
+```{r fms-components, echo=FALSE, fig.align="center", fig.cap="Flexible Manufacturing System Components", fig.width=11, fig.height=6}
+# FMS schematic
+fms_data <- data.frame(
+  Component = c("CNC\nMachine 1", "CNC\nMachine 2", "CNC\nMachine 3",
+                "CNC\nMachine 4", "Load/Unload\nStation", "Central\nComputer"),
+  x = c(2, 4, 6, 4, 1, 4),
+  y = c(2, 3, 2, 1, 2, 2),
+  type = c(rep("Machine", 4), "Station", "Computer"),
+  color = c(rep("#3498DB", 4), "#F39C12", "#9B59B6")
+)
+
+ggplot(fms_data, aes(x = x, y = y)) +
+  # AGV track
+  annotate("path",
+           x = c(1.5, 2, 4, 6, 6, 4, 2, 1.5, 1.5),
+           y = c(2, 2.8, 3.5, 2.8, 1.2, 0.5, 1.2, 2, 2),
+           color = "#95A5A6", size = 3, linetype = "dashed") +
+  annotate("text", x = 3, y = 0.3, label = "AGV Track", color = "#95A5A6", fontface = "italic") +
+  # Components
+  geom_tile(aes(fill = color), width = 1.2, height = 0.8, color = "black") +
+  geom_text(aes(label = Component), size = 3, fontface = "bold") +
+  # Connections to central computer
+  geom_segment(aes(x = 4, xend = 2.5, y = 2.4, yend = 2.3), linetype = "dotted") +
+  geom_segment(aes(x = 4, xend = 4, y = 2.4, yend = 2.6), linetype = "dotted") +
+  geom_segment(aes(x = 4, xend = 5.5, y = 2.4, yend = 2.3), linetype = "dotted") +
+  geom_segment(aes(x = 4, xend = 4, y = 1.6, yend = 1.4), linetype = "dotted") +
+  annotate("text", x = 5, y = 2.5, label = "Network\nConnections", size = 2.5, fontface = "italic") +
+  scale_fill_identity() +
+  labs(title = "Flexible Manufacturing System (FMS) Layout",
+       subtitle = "CNC machines connected by AGV with central computer control") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 11)
+  ) +
+  xlim(0, 7) + ylim(0, 4)
+```
+
+```{r fms-applications, echo=FALSE}
+fms_apps <- tibble(
+  `Characteristic` = c("Production Volume", "Part Variety", "Batch Size", "Setup Time",
+                       "Typical Parts", "Investment", "Best Suited For"),
+  `FMS Capability` = c(
+    "Medium (2,000 - 100,000/year per part type)",
+    "Medium (4-100 different part types)",
+    "Small to medium (1-500 per batch)",
+    "Minimal (automatic pallet/fixture changes)",
+    "Prismatic parts (housings, brackets, covers)",
+    "$5M - $50M+ depending on size",
+    "Aerospace, automotive components, job shops with repeat parts"
+  )
+)
+
+fms_apps %>%
+  kable(format = "html", caption = "FMS Characteristics and Applications") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#E8DAEF", width = "12em")
+```
+
+------------------------------------------------------------------------
+
+## Modern Manufacturing Concepts
+
+### SMED (Single-Minute Exchange of Die)
+
+**SMED** is a lean manufacturing technique to reduce changeover time to under 10 minutes ("single digit minutes").
+
+```{r smed-process, echo=FALSE}
+smed_steps <- tibble(
+  Step = c("1. Separate", "2. Convert", "3. Streamline"),
+  Description = c(
+    "Distinguish internal setup (machine stopped) from external setup (machine running)",
+    "Convert as much internal setup to external setup as possible",
+    "Reduce time for remaining internal and external activities"
+  ),
+  Examples = c(
+    "Pre-stage tools while machine runs; Pre-heat molds; Prepare fixtures",
+    "Use quick-release clamps instead of bolts; Standardize tool heights",
+    "Eliminate adjustments; Use one-turn fasteners; Parallel operations with 2 people"
+  ),
+  `Typical Improvement` = c("30-50% reduction", "Additional 20-30%", "Additional 10-20%")
+)
+
+smed_steps %>%
+  kable(format = "html", caption = "SMED Methodology for Setup Reduction") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#FADBD8", width = "8em")
+```
+
+<details>
+<summary>Case Study: Injection Molding Changeover</summary>
+
+**Before SMED:**
+- Changeover time: 90 minutes
+- Machine stopped for entire process
+- One operator working alone
+
+**After SMED analysis:**
+
+| Activity | Before | Type | After | Change |
+|----------|--------|------|-------|--------|
+| Find tools | 10 min | Internal | 0 | External - tools pre-staged |
+| Remove old mold | 15 min | Internal | 5 min | Quick-release clamps |
+| Get new mold | 10 min | Internal | 0 | External - mold pre-staged at machine |
+| Install new mold | 20 min | Internal | 8 min | Standardized mold heights |
+| Connect utilities | 10 min | Internal | 4 min | Quick-connect fittings |
+| Adjust settings | 15 min | Internal | 3 min | Pre-programmed recipes |
+| First article | 10 min | Internal | 5 min | Improved documentation |
+
+**Results:**
+- Total changeover: 25 minutes (72% reduction)
+- Additional capacity: +15 changeovers/week possible
+- Smaller batch sizes now economical
+
+</details>
+
+### AGV and AMR Systems
+
+```{=html}
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/7Pq-S557XQU"
+    title="AGV vs AMR Comparison"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+```{r agv-amr-comparison, echo=FALSE}
+agv_amr <- tibble(
+  Feature = c("Navigation", "Flexibility", "Infrastructure", "Cost",
+              "Path Changes", "Obstacle Handling", "Best Application"),
+  `AGV (Automated Guided Vehicle)` = c(
+    "Fixed path (wires, magnets, tape)",
+    "Low - follows predetermined routes",
+    "Requires installation (floor modifications)",
+    "Lower vehicle cost, higher infrastructure",
+    "Requires physical modification",
+    "Stops and waits",
+    "High-volume, repetitive routes"
+  ),
+  `AMR (Autonomous Mobile Robot)` = c(
+    "Dynamic (SLAM, vision, sensors)",
+    "High - calculates optimal routes",
+    "Minimal (maps environment)",
+    "Higher vehicle cost, lower infrastructure",
+    "Software update only",
+    "Navigates around obstacles",
+    "Variable routes, dynamic environments"
+  )
+)
+
+agv_amr %>%
+  kable(format = "html", caption = "AGV vs. AMR Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#ECF0F1")
+```
+
+### Digital Twin
+
+A **digital twin** is a virtual representation of a physical manufacturing system that is updated in real-time with sensor data.
+
+```{r digital-twin-viz, echo=FALSE, fig.align="center", fig.cap="Digital Twin Concept", fig.width=10, fig.height=5}
+# Digital twin conceptual diagram
+dt_data <- data.frame(
+  Component = c("Physical\nSystem", "Sensors &\nIoT", "Digital\nTwin", "Analytics &\nAI", "Visualization"),
+  x = 1:5,
+  y = 1
+)
+
+ggplot(dt_data, aes(x = x, y = y)) +
+  geom_tile(fill = c("#3498DB", "#27AE60", "#9B59B6", "#E74C3C", "#F39C12"),
+            width = 0.8, height = 0.5, color = "white", linewidth = 2) +
+  geom_text(aes(label = Component), color = "white", fontface = "bold", size = 3.5) +
+  geom_segment(data = dt_data[1:4,], aes(x = x + 0.45, xend = x + 0.55, y = y, yend = y),
+               arrow = arrow(length = unit(0.25, "cm")), color = "#2C3E50", size = 1.2) +
+  # Feedback loop
+  annotate("curve", x = 5, xend = 1, y = 0.65, yend = 0.65,
+           curvature = -0.3, arrow = arrow(length = unit(0.2, "cm")),
+           color = "#7F8C8D", linetype = "dashed") +
+  annotate("text", x = 3, y = 0.4, label = "Feedback for optimization",
+           color = "#7F8C8D", fontface = "italic") +
+  labs(title = "Digital Twin Data Flow",
+       subtitle = "Real-time connection between physical and virtual systems") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  ylim(0.2, 1.5)
+```
+
+**Digital Twin Applications:**
+- Predictive maintenance (predict failures before they occur)
+- Process optimization (simulate changes before implementation)
+- Training (virtual commissioning and operator training)
+- Quality prediction (correlate parameters with outcomes)
+
+------------------------------------------------------------------------
+
+## Industry Applications
+
+```{r industry-applications-ch3, echo=FALSE}
+industry_apps <- tibble(
+  `System Type` = c("Transfer Line", "Manual Assembly", "FMS", "Cellular", "AGV/AMR"),
+  `Automotive` = c(
+    "Engine block machining, cylinder head lines",
+    "Final vehicle assembly, interior trim",
+    "Transmission components, brake parts",
+    "Subassemblies, wiring harnesses",
+    "Body shop material delivery, parts sequencing"
+  ),
+  `Food Processing` = c(
+    "Beverage bottling, canning lines",
+    "Packaging, quality inspection",
+    "Multi-product bakery equipment",
+    "Specialty product lines",
+    "Ingredient delivery, packaging transport"
+  ),
+  `Aerospace/Defense` = c(
+    "High-volume fastener production",
+    "Aircraft final assembly, inspection",
+    "Structural component machining",
+    "Avionics assembly, repair cells",
+    "Large assembly transport, tool delivery"
+  )
+)
+
+industry_apps %>%
+  kable(format = "html", caption = "Manufacturing System Applications by Industry") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#1A5276", color = "white") %>%
+  column_spec(1, bold = TRUE, background = "#D4E6F1") %>%
+  column_spec(2, background = "#FCF3CF") %>%
+  column_spec(3, background = "#D5F5E3") %>%
+  column_spec(4, background = "#FADBD8")
+```
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+<details>
+<summary>Question 1: Takt Time Calculation</summary>
+
+**A plant operates 8-hour shifts with 30 minutes of breaks. Daily demand is 400 units. Calculate the takt time.**
+
+**Solution:**
+
+Available time = 8 hours × 60 min - 30 min = 450 minutes
+
+Takt time = 450 min / 400 units = **1.125 minutes per unit** = 67.5 seconds
+
+If actual cycle time is 60 seconds, the plant has (67.5 - 60)/67.5 = **11% capacity margin**.
+
+</details>
+
+<details>
+<summary>Question 2: Line Efficiency</summary>
+
+**A 6-station assembly line has a cycle time of 2 minutes. The task times at each station are: 1.8, 1.9, 2.0, 1.7, 1.6, and 1.5 minutes. Calculate the line efficiency.**
+
+**Solution:**
+
+Total work content = 1.8 + 1.9 + 2.0 + 1.7 + 1.6 + 1.5 = 10.5 minutes
+
+Line efficiency = (10.5) / (6 × 2.0) × 100% = 10.5/12 × 100% = **87.5%**
+
+Balance delay (idle time) = 100% - 87.5% = **12.5%**
+
+</details>
+
+<details>
+<summary>Question 3: Downtime Impact</summary>
+
+**An automated line has 8 stations, each with 3% failure probability per cycle and 8-minute average repair time. The ideal cycle time is 0.5 minutes. What is the actual production rate?**
+
+**Solution:**
+
+Line failure probability = 1 - (1 - 0.03)^8 = 1 - 0.97^8 = 1 - 0.784 = **21.6%**
+
+Actual cycle time = 0.5 + (0.216 × 8) = 0.5 + 1.73 = **2.23 minutes**
+
+Actual production rate = 60 / 2.23 = **26.9 parts/hour**
+
+(vs. ideal of 120 parts/hour - only 22% of ideal capacity!)
+
+This shows why reliability is critical in automated systems.
+
+</details>
+
+<details>
+<summary>Question 4: FMS Selection</summary>
+
+**A company makes 15 different part numbers with annual volumes of 500-5,000 each. Parts are machined from aluminum and require milling, drilling, and tapping. Which system is most appropriate: dedicated transfer line, FMS, or CNC job shop?**
+
+**Answer:** **FMS is most appropriate** because:
+
+- **Volume range (500-5,000)** is ideal for FMS
+- **Part variety (15 types)** requires flexibility
+- **Similar operations** (milling, drilling, tapping) can share equipment
+- **Material (aluminum)** machines well on CNC
+
+Transfer line would require too much volume per part. Job shop would have high setup times and low efficiency for these volumes.
+
+</details>
+
+<details>
+<summary>Question 5: SMED Application</summary>
+
+**A stamping press has a 45-minute die change. Internal activities are 35 minutes, external are 10 minutes but currently done with machine stopped. How much can SMED reduce this?**
+
+**Answer:**
+
+**Step 1 - Separate:** Do the 10 minutes of external work while press runs.
+- New changeover: 35 minutes (30% reduction)
+
+**Step 2 - Convert:** Analyze the 35 minutes:
+- If 15 minutes can be converted to external (pre-staging, etc.): New changeover = 20 minutes
+
+**Step 3 - Streamline:** Quick-release clamps, standardization might save another 5 minutes.
+- Final changeover: **15 minutes (67% reduction)**
+
+This enables smaller batch sizes and more frequent changeovers.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-ch3, echo=FALSE}
+summary_ch3 <- tibble(
+  Topic = c("Production Lines", "Time Metrics", "Line Balancing", "Automated Lines",
+            "Cellular Manufacturing", "FMS", "Modern Concepts"),
+  `Key Points` = c(
+    "Manual, continuous, synchronous, or asynchronous transfer; each has trade-offs",
+    "Takt time = demand pace; Cycle time = actual pace; MCE measures value-added %",
+    "Assign tasks to minimize idle time; Efficiency = work content / (stations × cycle time)",
+    "Reliability is critical; Small failure probabilities cause large capacity losses",
+    "Group Technology groups part families; Reduces setup, WIP, lead time 50-90%",
+    "Automated cells for medium variety/volume; Computer-controlled flexibility",
+    "SMED for quick changeover; AGV/AMR for material handling; Digital twins for optimization"
+  )
+)
+
+summary_ch3 %>%
+  kable(format = "html", caption = "Chapter 3 Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"), full_width = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "#1A5276", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Key Takeaways
+
+1. **Match system to product** - Volume and variety determine optimal manufacturing system
+2. **Takt time sets the pace** - Everything should be designed to meet customer demand rate
+3. **Balance matters** - Unbalanced lines waste capacity through idle time
+4. **Reliability is critical** - Small failures compound to large losses in automated systems
+5. **Flexibility has value** - FMS and cellular systems enable quick response to change
+6. **Technology evolves** - Digital twins and AMRs are transforming manufacturing
+
+------------------------------------------------------------------------
+
+## References
+
+1. Groover, M.P. (2020). *Automation, Production Systems, and Computer-Integrated Manufacturing* (5th ed.). Pearson.
+2. Liker, J.K. (2004). *The Toyota Way*. McGraw-Hill.
+3. Shingo, S. (1985). *A Revolution in Manufacturing: The SMED System*. Productivity Press.
+4. Black, J.T. (1991). *The Design of the Factory with a Future*. McGraw-Hill.

@@ -1,0 +1,1794 @@
+# Industrial Automation Fundamentals
+```{r setup-13, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+-----------------------------------
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Define industrial automation and explain its role in modern manufacturing
+2. Distinguish between fixed, programmable, and flexible automation
+3. Describe the architecture and function of Programmable Logic Controllers (PLCs)
+4. Identify common industrial sensors and their applications
+5. Explain motor control fundamentals including VFDs and servo systems
+6. Understand industrial communication protocols and networking
+7. Describe the role of HMI and SCADA in process monitoring
+8. Apply safety principles to automated systems
+9. Explain Industry 4.0 concepts and the Industrial Internet of Things (IIoT)
+
+---
+
+## Introduction to Industrial Automation
+
+**Industrial automation** is the use of control systems, machinery, and information technologies to handle processes and machinery in an industry, replacing human intervention where possible to increase efficiency, quality, and safety.
+
+### Why Automate?
+
+```{r automation-benefits, echo=FALSE, fig.width=12, fig.height=7}
+benefits <- data.frame(
+  Category = c("Productivity", "Quality", "Safety", "Cost", "Flexibility", "Data"),
+  Benefit = c("Increased Output", "Consistent Quality", "Reduced Risk",
+              "Lower Operating Cost", "Quick Changeover", "Real-time Information"),
+  Description = c(
+    "24/7 operation, faster cycle times, higher throughput",
+    "Repeatable precision, reduced variation, fewer defects",
+    "Remove workers from hazardous tasks, safety interlocks",
+    "Reduced labor, less scrap, energy optimization",
+    "Programmable systems adapt to product changes",
+    "Process monitoring, data collection, analytics"
+  ),
+  Impact = c(85, 75, 90, 70, 65, 80)
+)
+
+ggplot(benefits, aes(x = reorder(Category, Impact), y = Impact, fill = Category)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = Benefit), hjust = -0.1, size = 3.5, fontface = "bold") +
+  coord_flip() +
+  scale_fill_manual(values = c("#3498db", "#27ae60", "#e74c3c",
+                               "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
+  scale_y_continuous(limits = c(0, 120)) +
+  labs(title = "Benefits of Industrial Automation",
+       subtitle = "Key drivers for automation investment",
+       x = "", y = "Relative Impact Score") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.y = element_text(size = 11, face = "bold")
+  )
+```
+
+### Automation in Key Industries
+
+```{r industry-applications, echo=FALSE}
+industry_apps <- data.frame(
+  Industry = c("Automotive", "Automotive", "Automotive",
+               "Food & Beverage", "Food & Beverage", "Food & Beverage",
+               "Aerospace/Defense", "Aerospace/Defense", "Aerospace/Defense"),
+  Application = c("Robotic welding and assembly", "Automated paint systems", "Vision inspection",
+                  "Filling and packaging lines", "Pasteurization control", "Sorting and grading",
+                  "CNC precision machining", "Automated testing systems", "Clean room automation"),
+  Technology = c("6-axis robots, PLCs", "Conveyors, spray robots", "Machine vision, AI",
+                 "Servo drives, sensors", "PLCs, temperature control", "Vision systems, conveyors",
+                 "CNC, CMM integration", "Automated test equipment", "Robotics, HEPA systems"),
+  Benefit = c("Consistent weld quality, high speed", "Uniform coating, reduced VOC",
+              "100% inspection, defect detection",
+              "High speed, accurate fill weights", "Food safety, traceability",
+              "Quality sorting, reduced labor",
+              "Tight tolerances, repeatability", "Comprehensive testing, documentation",
+              "Contamination control, precision")
+)
+
+kable(industry_apps, caption = "Automation Applications by Industry") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%") %>%
+  pack_rows("Automotive", 1, 3, background = "#ebf5fb") %>%
+  pack_rows("Food & Beverage", 4, 6, background = "#eafaf1") %>%
+  pack_rows("Aerospace/Defense", 7, 9, background = "#fef9e7")
+```
+
+---
+
+## Types of Automation
+
+Industrial automation systems can be classified based on their flexibility and programming capability.
+
+### Automation Classification
+
+```{r automation-types, echo=FALSE, fig.width=12, fig.height=8}
+auto_types <- data.frame(
+  Type = c("Fixed\nAutomation", "Programmable\nAutomation", "Flexible\nAutomation"),
+  x = c(1, 2, 3),
+  Volume = c(95, 60, 40),
+  Flexibility = c(10, 50, 90),
+  Investment = c(90, 60, 85)
+)
+
+auto_long <- auto_types %>%
+  pivot_longer(cols = c(Volume, Flexibility, Investment),
+               names_to = "Metric", values_to = "Value")
+
+ggplot(auto_long, aes(x = Type, y = Value, fill = Metric)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  geom_text(aes(label = Value), position = position_dodge(width = 0.7),
+            vjust = -0.5, size = 3) +
+  scale_fill_manual(values = c("#3498db", "#27ae60", "#e74c3c"),
+                    labels = c("Flexibility", "Initial Investment", "Production Volume")) +
+  labs(title = "Comparison of Automation Types",
+       subtitle = "Trade-offs between volume, flexibility, and investment",
+       x = "", y = "Relative Score (0-100)", fill = "") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "bottom",
+    axis.text.x = element_text(size = 11, face = "bold")
+  )
+```
+
+```{r automation-types-table, echo=FALSE}
+types_table <- data.frame(
+  Characteristic = c("Definition", "Product Variety", "Production Volume",
+                     "Changeover", "Initial Investment", "Unit Cost",
+                     "Typical Equipment", "Best For"),
+  Fixed = c(
+    "Hard-wired, dedicated equipment for single product",
+    "Single product or very similar variants",
+    "Very high (millions of units)",
+    "Difficult, expensive, time-consuming",
+    "Very high",
+    "Very low per unit",
+    "Transfer lines, dedicated assembly machines",
+    "Automotive components, fasteners, bottles"
+  ),
+  Programmable = c(
+    "Equipment can be reprogrammed for different products",
+    "Batches of different products",
+    "Medium to high",
+    "Requires reprogramming and setup; hours to days",
+    "High",
+    "Medium",
+    "CNC machines, PLCs, industrial robots",
+    "Batch manufacturing, job shops"
+  ),
+  Flexible = c(
+    "Rapid changeover with minimal downtime",
+    "High variety, even mixed on same line",
+    "Low to medium",
+    "Quick, often automatic; minutes",
+    "Very high",
+    "Higher per unit, but flexible",
+    "FMS, robotic cells, AGVs",
+    "Aerospace, custom manufacturing"
+  )
+)
+
+kable(types_table, col.names = c("", "Fixed Automation", "Programmable Automation", "Flexible Automation"),
+      caption = "Comparison of Automation Types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%") %>%
+  column_spec(2, background = "#fadbd8") %>%
+  column_spec(3, background = "#fcf3cf") %>%
+  column_spec(4, background = "#d5f5e3")
+```
+
+### The Automation Pyramid
+
+```{r automation-pyramid, echo=FALSE, fig.width=12, fig.height=8}
+pyramid_levels <- data.frame(
+  level = c("Level 4", "Level 3", "Level 2", "Level 1", "Level 0"),
+  name = c("Enterprise", "Manufacturing Operations", "Control", "Field Devices", "Process"),
+  description = c(
+    "ERP, Business Planning, Supply Chain",
+    "MES, SCADA, Production Scheduling",
+    "PLCs, DCS, Motion Controllers",
+    "Sensors, Actuators, Drives, I/O",
+    "Physical Process, Machines, Equipment"
+  ),
+  width = c(3, 4, 5, 6, 7),
+  y = c(5, 4, 3, 2, 1),
+  color = c("#2c3e50", "#8e44ad", "#2980b9", "#27ae60", "#e67e22")
+)
+
+ggplot(pyramid_levels, aes(x = 0, y = y)) +
+  geom_tile(aes(width = width, height = 0.8, fill = color), color = "white", linewidth = 2) +
+  geom_text(aes(x = -2.5, label = level), fontface = "bold", hjust = 1, size = 4) +
+  geom_text(aes(label = name), fontface = "bold", size = 4.5, color = "white") +
+  geom_text(aes(label = description, y = y - 0.25), size = 3, color = "white") +
+  scale_fill_identity() +
+  coord_cartesian(xlim = c(-4, 4)) +
+  labs(title = "The Automation Pyramid (ISA-95)",
+       subtitle = "Hierarchical levels of industrial automation and control") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 11)
+  )
+```
+
+<details><summary>**Understanding the Pyramid Levels**</summary>
+
+**Level 0 - Process:** The actual physical equipment, machines, and processes being controlled. This includes conveyors, motors, valves, tanks, and the product being manufactured.
+
+**Level 1 - Field Devices:** Sensors that measure process variables (temperature, pressure, flow, position) and actuators that affect the process (motors, valves, solenoids, drives).
+
+**Level 2 - Control:** The "brain" of automation - PLCs, DCS, and motion controllers that execute control logic, process sensor inputs, and command actuators. Also includes HMI for operator interaction.
+
+**Level 3 - Manufacturing Operations:** MES (Manufacturing Execution Systems), SCADA, production scheduling, quality management, and maintenance management. Bridges plant floor and business systems.
+
+**Level 4 - Enterprise:** ERP systems, business intelligence, supply chain management, financial systems. Makes business decisions based on plant floor data.
+
+**Key Principle:** Data flows up (process information), commands flow down (control directives).
+</details>
+
+---
+
+## Programmable Logic Controllers (PLCs)
+
+The **PLC (Programmable Logic Controller)** is the workhorse of industrial automation, providing reliable, real-time control of machines and processes.
+
+### What is a PLC?
+
+```{r plc-definition, echo=FALSE, fig.width=12, fig.height=6}
+ggplot() +
+  # PLC box
+  annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 4,
+           fill = "#34495e", color = "black", size = 1.5) +
+  annotate("text", x = 5, y = 3.5, label = "PLC",
+           color = "white", fontface = "bold", size = 8) +
+  annotate("text", x = 5, y = 2.8, label = "Programmable Logic Controller",
+           color = "white", size = 3.5) +
+  annotate("text", x = 5, y = 2.2, label = "• Scan Inputs\n• Execute Program\n• Update Outputs",
+           color = "#3498db", size = 3, lineheight = 0.9) +
+
+  # Inputs
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 1.5, ymax = 3.5,
+           fill = "#27ae60", color = "black") +
+  annotate("text", x = 1.5, y = 3.2, label = "INPUTS",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 1.5, y = 2.5, label = "• Switches\n• Sensors\n• Push buttons\n• Encoders",
+           color = "white", size = 2.8, lineheight = 0.9) +
+  annotate("segment", x = 2.5, xend = 3, y = 2.5, yend = 2.5,
+           arrow = arrow(length = unit(0.3, "cm")), size = 1.5, color = "#27ae60") +
+
+  # Outputs
+  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 1.5, ymax = 3.5,
+           fill = "#e74c3c", color = "black") +
+  annotate("text", x = 8.5, y = 3.2, label = "OUTPUTS",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 8.5, y = 2.5, label = "• Motors\n• Valves\n• Lights\n• Alarms",
+           color = "white", size = 2.8, lineheight = 0.9) +
+  annotate("segment", x = 7, xend = 7.5, y = 2.5, yend = 2.5,
+           arrow = arrow(length = unit(0.3, "cm")), size = 1.5, color = "#e74c3c") +
+
+  # Programming
+  annotate("rect", xmin = 4, xmax = 6, ymin = 4.5, ymax = 5.5,
+           fill = "#9b59b6", color = "black") +
+  annotate("text", x = 5, y = 5, label = "Programming\n(Ladder, FBD, ST)",
+           color = "white", size = 3, lineheight = 0.9) +
+  annotate("segment", x = 5, xend = 5, y = 4.5, yend = 4,
+           arrow = arrow(length = unit(0.3, "cm")), size = 1, color = "#9b59b6") +
+
+  coord_cartesian(xlim = c(0, 10), ylim = c(0.5, 6)) +
+  labs(title = "PLC: The Industrial Control Computer",
+       subtitle = "Reads inputs, executes logic, controls outputs") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### PLC Hardware Components
+
+```{r plc-components, echo=FALSE}
+plc_parts <- data.frame(
+  Component = c("CPU (Processor)", "Power Supply", "Input Modules",
+                "Output Modules", "Communication Modules", "Programming Device"),
+  Function = c(
+    "Executes the control program, manages memory, coordinates all modules",
+    "Converts AC power to DC voltages required by PLC components",
+    "Interface field devices (sensors, switches) to CPU; converts signals to digital",
+    "Interface CPU to field devices (motors, valves); converts digital to power signals",
+    "Enable networking: Ethernet/IP, Profinet, Modbus, DeviceNet",
+    "Laptop/PC with programming software for creating and downloading programs"
+  ),
+  Specifications = c(
+    "Scan time (ms), memory size (KB/MB), I/O capacity",
+    "Input voltage (120/240 VAC), output power (watts)",
+    "Digital (24VDC, 120VAC) or Analog (4-20mA, 0-10V)",
+    "Digital (relay, transistor) or Analog (4-20mA, 0-10V)",
+    "Protocol, speed (Mbps), ports",
+    "Software: RSLogix, TIA Portal, GX Works"
+  )
+)
+
+kable(plc_parts, caption = "PLC Hardware Components") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### The PLC Scan Cycle
+
+PLCs operate in a continuous scan cycle:
+
+```{r plc-scan-cycle, echo=FALSE, fig.width=10, fig.height=8}
+scan_steps <- data.frame(
+  step = 1:4,
+  name = c("1. Read Inputs", "2. Execute Program", "3. Update Outputs", "4. Housekeeping"),
+  description = c(
+    "Read all input module states into input image table",
+    "Execute ladder logic/program using input image data",
+    "Write output image table values to physical outputs",
+    "Communications, diagnostics, self-testing"
+  ),
+  time = c("~1ms", "~5-20ms", "~1ms", "~1ms"),
+  angle = c(90, 0, -90, 180),
+  x = c(2, 4, 2, 0),
+  y = c(4, 2, 0, 2)
+)
+
+ggplot() +
+  # Circle for scan cycle
+  annotate("path",
+           x = 2 + 1.5 * cos(seq(0, 2*pi, length.out = 100)),
+           y = 2 + 1.5 * sin(seq(0, 2*pi, length.out = 100)),
+           color = "gray70", size = 2) +
+
+  # Arrows indicating direction (reversed by swapping start/end coordinates)
+  annotate("segment", x = 3.3, xend = 3.5, y = 3.2, yend = 2.5,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#3498db", size = 1.5) +
+  annotate("segment", x = 1.5, xend = 2.5, y = 3.3, yend = 3.5,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#27ae60", size = 1.5) +
+  annotate("segment", x = 0.7, xend = 0.5, y = 1.5, yend = 2.5,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#e74c3c", size = 1.5) +
+  annotate("segment", x = 2.5, xend = 1.5, y = 0.7, yend = 0.5,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#f39c12", size = 1.5) +
+
+  # Step boxes
+  geom_label(data = scan_steps, aes(x = x, y = y, label = name),
+             fill = c("#3498db", "#27ae60", "#e74c3c", "#f39c12"),
+             color = "white", fontface = "bold", size = 5,
+             label.padding = unit(0.4, "lines")) +
+
+  # Center label
+  annotate("text", x = 2, y = 2, label = "SCAN\nCYCLE\n(~10-50ms)",
+           fontface = "bold", size = 5.5, lineheight = 0.9) +
+
+  # Time annotations — placed below each step box
+  annotate("text", x = c(2, 4, 2, 0), y = c(3.55, 1.55, -0.45, 1.55),
+           label = scan_steps$time, size = 4.5, color = "gray40") +
+
+  coord_cartesian(xlim = c(-1, 5), ylim = c(-1, 5)) +
+  labs(title = "PLC Scan Cycle",
+       subtitle = "Continuous loop executing at predictable intervals") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 13)
+  )
+```
+
+```{r scan-time-calc, echo=TRUE}
+# Scan Time Calculation Example
+input_scan_time <- 1.2    # ms
+program_execution <- 15.5  # ms (depends on program size)
+output_update <- 1.0       # ms
+housekeeping <- 2.3        # ms
+
+total_scan_time <- input_scan_time + program_execution + output_update + housekeeping
+
+cat("PLC Scan Time Calculation:\n")
+cat("─────────────────────────────\n")
+cat("Input Scan:       ", input_scan_time, "ms\n")
+cat("Program Execution:", program_execution, "ms\n")
+cat("Output Update:    ", output_update, "ms\n")
+cat("Housekeeping:     ", housekeeping, "ms\n")
+cat("─────────────────────────────\n")
+cat("Total Scan Time:  ", total_scan_time, "ms\n")
+cat("\nScans per second: ", round(1000/total_scan_time, 0), "\n")
+```
+
+### PLC Programming Languages (IEC 61131-3)
+
+```{r plc-languages, echo=FALSE}
+languages <- data.frame(
+  Language = c("Ladder Diagram (LD)", "Function Block Diagram (FBD)",
+               "Structured Text (ST)", "Instruction List (IL)", "Sequential Function Chart (SFC)"),
+  Type = c("Graphical", "Graphical", "Textual", "Textual", "Graphical"),
+  Description = c(
+    "Resembles electrical relay circuits; most common in discrete manufacturing",
+    "Uses function blocks connected by lines; good for analog/process control",
+    "High-level language similar to Pascal; powerful for complex calculations",
+    "Low-level assembly-like language; rarely used today",
+    "Sequence/state-based programming; excellent for batch processes"
+  ),
+  Best_For = c(
+    "Boolean logic, interlocks, machine control",
+    "PID loops, motion control, data manipulation",
+    "Math operations, data handling, complex algorithms",
+    "Legacy systems, compact code",
+    "Sequential operations, batch control, recipes"
+  )
+)
+
+kable(languages, col.names = c("Language", "Type", "Description", "Best For"),
+      caption = "IEC 61131-3 PLC Programming Languages") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%") %>%
+  row_spec(1, background = "#e8f6f3") %>%
+  row_spec(2, background = "#ebf5fb")
+```
+
+### Ladder Logic Example
+
+```{r ladder-example, echo=FALSE, fig.width=12, fig.height=6}
+ggplot() +
+  # Power rails
+  annotate("segment", x = 0.5, xend = 0.5, y = 0.5, yend = 4.5, size = 2, color = "brown") +
+  annotate("segment", x = 9.5, xend = 9.5, y = 0.5, yend = 4.5, size = 2, color = "brown") +
+  annotate("text", x = 0.5, y = 4.8, label = "L1\n(Hot)", size = 3, fontface = "bold") +
+  annotate("text", x = 9.5, y = 4.8, label = "L2\n(Neutral)", size = 3, fontface = "bold") +
+
+  # Rung 1: Start/Stop circuit with seal-in
+  annotate("segment", x = 0.5, xend = 1.5, y = 4, yend = 4, size = 1) +
+  # Stop button (NC)
+  annotate("segment", x = 1.5, xend = 1.8, y = 4, yend = 4, size = 1) +
+  annotate("segment", x = 1.8, xend = 2.2, y = 4.15, yend = 3.85, size = 1.5, color = "#e74c3c") +
+  annotate("segment", x = 2.2, xend = 2.5, y = 4, yend = 4, size = 1) +
+  annotate("text", x = 2, y = 4.4, label = "STOP", size = 2.5) +
+  # Start button (NO)
+  annotate("segment", x = 2.5, xend = 3.5, y = 4, yend = 4, size = 1) +
+  annotate("segment", x = 3.5, xend = 3.8, y = 4, yend = 4, size = 1) +
+  annotate("segment", x = 3.8, xend = 4.2, y = 4.15, yend = 4.15, size = 1.5, color = "#27ae60") +
+  annotate("segment", x = 4.2, xend = 4.5, y = 4, yend = 4, size = 1) +
+  annotate("text", x = 4, y = 4.4, label = "START", size = 2.5) +
+  # Branch for seal-in contact
+  annotate("segment", x = 2.5, xend = 2.5, y = 4, yend = 3.3, size = 1) +
+  annotate("segment", x = 2.5, xend = 3.5, y = 3.3, yend = 3.3, size = 1) +
+  annotate("segment", x = 3.5, xend = 3.8, y = 3.3, yend = 3.3, size = 1) +
+  annotate("segment", x = 3.8, xend = 4.2, y = 3.45, yend = 3.15, size = 1.5, color = "#3498db") +
+  annotate("segment", x = 4.2, xend = 4.5, y = 3.3, yend = 3.3, size = 1) +
+  annotate("text", x = 4, y = 3.7, label = "MOTOR", size = 2.5) +
+  annotate("segment", x = 4.5, xend = 4.5, y = 4, yend = 3.3, size = 1) +
+  # Continue to output
+  annotate("segment", x = 4.5, xend = 8, y = 4, yend = 4, size = 1) +
+  # Output coil (Motor)
+  annotate("point", x = 8.5, y = 4, size = 15, shape = 21, fill = "white", color = "#3498db", stroke = 2) +
+  annotate("text", x = 8.5, y = 4, label = "M", size = 4, fontface = "bold", color = "#3498db") +
+  annotate("text", x = 8.5, y = 4.4, label = "MOTOR", size = 2.5) +
+  annotate("segment", x = 9, xend = 9.5, y = 4, yend = 4, size = 1) +
+
+  # Rung 2: Motor running indicator
+  annotate("segment", x = 0.5, xend = 3.5, y = 2, yend = 2, size = 1) +
+  annotate("segment", x = 3.5, xend = 3.8, y = 2, yend = 2, size = 1) +
+  annotate("segment", x = 3.8, xend = 4.2, y = 2.15, yend = 1.85, size = 1.5, color = "#3498db") +
+  annotate("segment", x = 4.2, xend = 8, y = 2, yend = 2, size = 1) +
+  annotate("text", x = 4, y = 2.4, label = "MOTOR", size = 2.5) +
+  annotate("point", x = 8.5, y = 2, size = 15, shape = 21, fill = "white", color = "#27ae60", stroke = 2) +
+  annotate("text", x = 8.5, y = 2, label = "L", size = 4, fontface = "bold", color = "#27ae60") +
+  annotate("text", x = 8.5, y = 2.4, label = "RUN LIGHT", size = 2.5) +
+  annotate("segment", x = 9, xend = 9.5, y = 2, yend = 2, size = 1) +
+
+  # Rung labels
+  annotate("text", x = 0.2, y = 4, label = "1", fontface = "bold", size = 4) +
+  annotate("text", x = 0.2, y = 2, label = "2", fontface = "bold", size = 4) +
+
+  # Legend
+  annotate("rect", xmin = 0.5, xmax = 4, ymin = 0.3, ymax = 1.3, fill = "#f8f9fa", color = "gray") +
+  annotate("text", x = 0.7, y = 1.1, label = "Legend:", hjust = 0, fontface = "bold", size = 3) +
+  annotate("segment", x = 0.7, xend = 1.1, y = 0.8, yend = 0.5, size = 1, color = "#27ae60") +
+  annotate("text", x = 1.3, y = 0.65, label = "NO Contact", hjust = 0, size = 2.5) +
+  annotate("segment", x = 2.2, xend = 2.6, y = 0.8, yend = 0.5, size = 1, color = "#e74c3c") +
+  annotate("segment", x = 2.2, xend = 2.6, y = 0.65, yend = 0.65, size = 0.5, color = "#e74c3c") +
+  annotate("text", x = 2.8, y = 0.65, label = "NC Contact", hjust = 0, size = 2.5) +
+
+  coord_cartesian(xlim = c(0, 10), ylim = c(0, 5.2)) +
+  labs(title = "Ladder Logic Example: Motor Start/Stop Circuit with Seal-In",
+       subtitle = "Classic 3-wire control circuit implemented in PLC ladder logic") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 12, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 10)
+  )
+```
+
+<details><summary>**How the Start/Stop Circuit Works**</summary>
+
+**Rung 1 - Motor Control:**
+1. Power flows from L1 through the NC (Normally Closed) STOP button
+2. If STOP is pressed, the circuit breaks and motor stops
+3. START is NO (Normally Open) - pressing it allows power to flow to the MOTOR coil
+4. When MOTOR energizes, its NO contact in the parallel branch closes
+5. This "seals in" the circuit - motor stays running even after START is released
+6. To stop, press STOP which breaks the seal-in circuit
+
+**Rung 2 - Run Indicator:**
+1. When MOTOR coil is energized, the MOTOR contact closes
+2. This allows power to flow to the RUN LIGHT output
+3. Light is ON whenever motor is running
+
+**This is called a "3-wire control" circuit** - it provides:
+- Low voltage release protection (motor won't restart after power failure)
+- Maintained contact operation (don't need to hold START button)
+</details>
+
+---
+
+## Industrial Sensors
+
+Sensors are the "eyes and ears" of automation systems, providing feedback about the process to the control system.
+
+### Sensor Classification
+
+```{r sensor-classification, echo=FALSE, fig.width=12, fig.height=8}
+sensors <- data.frame(
+  Category = c(rep("Discrete (On/Off)", 4), rep("Analog (Variable)", 4), rep("Smart/Digital", 3)),
+  Type = c("Proximity (Inductive)", "Proximity (Capacitive)", "Photoelectric", "Limit Switch",
+           "Temperature (RTD/TC)", "Pressure Transducer", "Flow Meter", "Level Sensor",
+           "Encoder", "Vision System", "Vibration Sensor"),
+  Application = c(
+    "Metal detection, position sensing",
+    "Liquid level, non-metal detection",
+    "Part detection, counting, color",
+    "End-of-travel, door position",
+    "Process temperature monitoring",
+    "Hydraulic, pneumatic, process pressure",
+    "Liquid/gas flow measurement",
+    "Tank level, hopper level",
+    "Motor position, speed feedback",
+    "Inspection, guidance, reading codes",
+    "Machine health monitoring"
+  ),
+  Output = c("PNP/NPN (DC)", "PNP/NPN (DC)", "PNP/NPN or Analog", "Dry contact",
+             "4-20mA, RTD resistance", "4-20mA, 0-10V", "4-20mA, pulse", "4-20mA, ultrasonic",
+             "Pulse, quadrature, absolute", "Ethernet, digital I/O", "4-20mA, digital")
+)
+
+ggplot(sensors, aes(x = Category, y = 1, fill = Category)) + # Added y = 1 here
+  geom_col(width = 0.7, color = "white") + # Changed to geom_col
+  geom_text(aes(label = Type), 
+            position = position_stack(vjust = 0.5),
+            color = "white", 
+            size = 4.5, 
+            fontface = "bold") +
+  scale_fill_manual(values = c("Discrete (On/Off)" = "#3498db", 
+                               "Analog (Variable)" = "#27ae60", 
+                               "Smart/Digital" = "#9b59b6"), 
+                    guide = "none") +
+  coord_flip() +
+  labs(title = "Industrial Sensor Categories",
+       subtitle = "Individual sensor types mapped by category",
+       x = "", y = "Count") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.y = element_text(size = 11, face = "bold"),
+    panel.grid.major.y = element_blank() # Cleans up the look for flipped charts
+  )
+```
+
+```{r sensor-table, echo=FALSE}
+sensor_details <- data.frame(
+  Sensor = c("Inductive Proximity", "Capacitive Proximity", "Photoelectric",
+             "RTD (PT100)", "Thermocouple", "Pressure Transducer",
+             "Incremental Encoder", "Absolute Encoder"),
+  Principle = c(
+    "Eddy current change in oscillating field",
+    "Capacitance change with target approach",
+    "Light beam interrupted or reflected",
+    "Resistance changes with temperature",
+    "Voltage generated at junction of dissimilar metals",
+    "Diaphragm deflection converted to electrical signal",
+    "Optical/magnetic pulses per revolution",
+    "Unique code for each position"
+  ),
+  Range = c("2-40mm typical", "2-25mm typical", "0.1-30m",
+            "-200 to 850°C", "-200 to 2300°C", "0-10000 psi",
+            "100-10000 PPR", "12-25 bit"),
+  Advantages = c(
+    "Durable, no contact, metal detection",
+    "Detects any material, through walls",
+    "Long range, versatile",
+    "Accurate, stable, linear",
+    "Wide range, fast response",
+    "Accurate, wide range",
+    "Simple, low cost, high resolution",
+    "Position known at power-up"
+  )
+)
+
+kable(sensor_details, caption = "Common Industrial Sensor Specifications") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### Sensor Wiring: PNP vs NPN
+
+```{r pnp-npn, echo=FALSE, fig.width=12, fig.height=6}
+ggplot() +
+  # PNP (Sourcing)
+  annotate("rect", xmin = 0.5, xmax = 4.5, ymin = 0.5, ymax = 4.5,
+           fill = "#ebf5fb", color = "#3498db", size = 1) +
+  annotate("text", x = 2.5, y = 4.2, label = "PNP (Sourcing)",
+           fontface = "bold", size = 5, color = "#3498db") +
+
+  # PNP sensor symbol
+  annotate("rect", xmin = 1.5, xmax = 3.5, ymin = 2, ymax = 3.5,
+           fill = "#3498db", color = "black") +
+  annotate("text", x = 2.5, y = 2.75, label = "Sensor", color = "white", fontface = "bold") +
+  # +V connection
+  annotate("segment", x = 2, xend = 2, y = 3.5, yend = 4, color = "red", size = 1) +
+  annotate("text", x = 2, y = 4.1, label = "+24V", size = 3, color = "red") +
+  # 0V connection
+  annotate("segment", x = 3, xend = 3, y = 2, yend = 1.5, color = "blue", size = 1) +
+  annotate("text", x = 3, y = 1.3, label = "0V", size = 3, color = "blue") +
+  # Output to PLC (sources current)
+  annotate("segment", x = 3.5, xend = 4.2, y = 2.75, yend = 2.75, color = "brown", size = 1) +
+  annotate("text", x = 4.3, y = 2.75, label = "→ PLC Input", hjust = 0, size = 3) +
+  annotate("text", x = 2.5, y = 1, label = "Current flows FROM sensor\nPLC input sinks to 0V",
+           size = 2.8, lineheight = 0.9) +
+
+  # NPN (Sinking)
+  annotate("rect", xmin = 5.5, xmax = 9.5, ymin = 0.5, ymax = 4.5,
+           fill = "#eafaf1", color = "#27ae60", size = 1) +
+  annotate("text", x = 7.5, y = 4.2, label = "NPN (Sinking)",
+           fontface = "bold", size = 5, color = "#27ae60") +
+
+  # NPN sensor symbol
+  annotate("rect", xmin = 6.5, xmax = 8.5, ymin = 2, ymax = 3.5,
+           fill = "#27ae60", color = "black") +
+  annotate("text", x = 7.5, y = 2.75, label = "Sensor", color = "white", fontface = "bold") +
+  # +V connection
+  annotate("segment", x = 7, xend = 7, y = 3.5, yend = 4, color = "red", size = 1) +
+  annotate("text", x = 7, y = 4.1, label = "+24V", size = 3, color = "red") +
+  # 0V connection
+  annotate("segment", x = 8, xend = 8, y = 2, yend = 1.5, color = "blue", size = 1) +
+  annotate("text", x = 8, y = 1.3, label = "0V", size = 3, color = "blue") +
+  # Output to PLC (sinks current)
+  annotate("segment", x = 8.5, xend = 9.2, y = 2.75, yend = 2.75, color = "brown", size = 1) +
+  annotate("text", x = 9.3, y = 2.75, label = "→ PLC Input", hjust = 0, size = 3) +
+  annotate("text", x = 7.5, y = 1, label = "Current flows TO sensor\nPLC input sources from +V",
+           size = 2.8, lineheight = 0.9) +
+
+  coord_cartesian(xlim = c(0, 10.5), ylim = c(0.3, 4.8)) +
+  labs(title = "PNP vs NPN Sensor Output Configuration",
+       subtitle = "PNP common in North America/Europe; NPN common in Asia") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+---
+
+## Actuators and Motor Control
+
+Actuators convert control signals into physical motion or action.
+
+### Types of Industrial Actuators
+
+```{r actuator-types, echo=FALSE}
+actuators <- data.frame(
+  Category = c("Electric Motors", "Electric Motors", "Electric Motors", "Electric Motors",
+               "Pneumatic", "Pneumatic", "Hydraulic", "Hydraulic"),
+  Type = c("AC Induction Motor", "Servo Motor", "Stepper Motor", "DC Motor",
+           "Cylinder", "Rotary Actuator", "Cylinder", "Motor"),
+  Application = c(
+    "Conveyors, pumps, fans, compressors",
+    "Precise positioning, robotics, CNC",
+    "Indexing, low-speed positioning",
+    "Battery vehicles, legacy systems",
+    "Clamping, pushing, lifting",
+    "Rotating grippers, indexing",
+    "Heavy lifting, presses",
+    "Heavy machinery, mobile equipment"
+  ),
+  Control = c(
+    "VFD for variable speed",
+    "Servo drive with feedback",
+    "Stepper drive (open or closed loop)",
+    "PWM, SCR drive",
+    "Solenoid valves, proportional valves",
+    "Solenoid valves",
+    "Proportional/servo valves",
+    "Proportional/servo valves"
+  ),
+  Characteristics = c(
+    "Robust, low cost, high power",
+    "High precision, dynamic response",
+    "Simple control, holds position",
+    "Easy speed control",
+    "Fast, clean, moderate force",
+    "Compact, clean",
+    "Very high force, smooth",
+    "High power density"
+  )
+)
+
+kable(actuators, caption = "Industrial Actuator Types and Applications") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12%") %>%
+  pack_rows("Electric", 1, 4, background = "#fef9e7") %>%
+  pack_rows("Pneumatic", 5, 6, background = "#e8f6f3") %>%
+  pack_rows("Hydraulic", 7, 8, background = "#fdedec")
+```
+
+### Variable Frequency Drives (VFDs)
+
+A **Variable Frequency Drive (VFD)** controls AC motor speed by varying the frequency and voltage of the power supplied to the motor.
+
+```{r vfd-diagram, echo=FALSE, fig.width=12, fig.height=6}
+ggplot() +
+  # Input power
+  annotate("rect", xmin = 0.5, xmax = 2, ymin = 2, ymax = 3.5,
+           fill = "#e74c3c", color = "black") +
+  annotate("text", x = 1.25, y = 2.75, label = "AC Input\n(60Hz Fixed)",
+           color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # VFD sections
+  # Rectifier
+  annotate("rect", xmin = 2.5, xmax = 4, ymin = 2, ymax = 3.5,
+           fill = "#3498db", color = "black") +
+  annotate("text", x = 3.25, y = 3.2, label = "Rectifier",
+           fontface = "bold", size = 3.5, color = "white") +
+  annotate("text", x = 3.25, y = 2.5, label = "AC → DC",
+           size = 3, color = "white") +
+
+  # DC Bus
+  annotate("rect", xmin = 4.3, xmax = 5.8, ymin = 2, ymax = 3.5,
+           fill = "#f39c12", color = "black") +
+  annotate("text", x = 5.05, y = 3.2, label = "DC Bus",
+           fontface = "bold", size = 3.5, color = "white") +
+  annotate("text", x = 5.05, y = 2.5, label = "Filter &\nCapacitors",
+           size = 3, color = "white", lineheight = 0.9) +
+
+  # Inverter
+  annotate("rect", xmin = 6.1, xmax = 7.6, ymin = 2, ymax = 3.5,
+           fill = "#27ae60", color = "black") +
+  annotate("text", x = 6.85, y = 3.2, label = "Inverter",
+           fontface = "bold", size = 3.5, color = "white") +
+  annotate("text", x = 6.85, y = 2.5, label = "DC → AC\n(PWM)",
+           size = 3, color = "white", lineheight = 0.9) +
+
+  # Motor
+  annotate("point", x = 9, y = 2.75, size = 25, shape = 21,
+           fill = "#9b59b6", color = "black", stroke = 1.5) +
+  annotate("text", x = 9, y = 2.75, label = "M",
+           fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 9, y = 1.8, label = "AC Motor\n(Variable Speed)",
+           size = 3, lineheight = 0.9) +
+
+  # Arrows
+  annotate("segment", x = 2, xend = 2.5, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 4, xend = 4.3, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 5.8, xend = 6.1, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 7.6, xend = 8.3, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+
+  # Control input
+  annotate("rect", xmin = 4.5, xmax = 6.5, ymin = 4, ymax = 4.8,
+           fill = "#34495e", color = "black") +
+  annotate("text", x = 5.5, y = 4.4, label = "Control: Speed Reference, Start/Stop",
+           color = "white", size = 2.8) +
+  annotate("segment", x = 5.5, xend = 5.5, y = 4, yend = 3.5,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1, linetype = "dashed") +
+
+  # Output annotation
+  annotate("text", x = 5, y = 1.3, label = "VFD",
+           fontface = "bold", size = 6, color = "gray30") +
+
+  coord_cartesian(xlim = c(0, 10), ylim = c(1, 5)) +
+  labs(title = "Variable Frequency Drive (VFD) Block Diagram",
+       subtitle = "Converts fixed frequency AC to variable frequency AC for motor speed control") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+```{r vfd-calculations, echo=TRUE}
+# VFD Speed and Torque Calculations
+
+# Motor nameplate data
+motor_hp <- 10
+poles <- 4
+rated_voltage <- 460  # V
+rated_frequency <- 60  # Hz
+rated_rpm <- 1750
+slip_rpm <- (120 * rated_frequency / poles) - rated_rpm
+
+# Synchronous speed at rated frequency
+sync_speed_60 <- 120 * rated_frequency / poles
+cat("Motor Data:\n")
+cat("Synchronous speed at 60Hz:", sync_speed_60, "RPM\n")
+cat("Rated speed:", rated_rpm, "RPM\n")
+cat("Slip:", slip_rpm, "RPM (", round(slip_rpm/sync_speed_60*100, 1), "%)\n\n")
+
+# Calculate speed at different frequencies
+frequencies <- c(15, 30, 45, 60, 75)
+speeds <- sapply(frequencies, function(f) {
+  sync <- 120 * f / poles
+  sync - slip_rpm  # Assuming constant slip (approximation)
+})
+
+cat("Speed vs Frequency (V/Hz mode):\n")
+cat("─────────────────────────────\n")
+for(i in seq_along(frequencies)) {
+  cat(sprintf("%2d Hz: %4d RPM\n", frequencies[i], speeds[i]))
+}
+
+# V/Hz ratio
+vhz_ratio <- rated_voltage / rated_frequency
+cat("\nV/Hz Ratio:", round(vhz_ratio, 2), "V/Hz\n")
+cat("At 30Hz, voltage should be:", 30 * vhz_ratio, "V\n")
+```
+
+### VFD Benefits
+
+```{r vfd-benefits, echo=FALSE}
+vfd_benefits <- data.frame(
+  Benefit = c("Energy Savings", "Soft Start/Stop", "Speed Control",
+              "Process Control", "Reduced Mechanical Stress", "Power Factor"),
+  Description = c(
+    "Match motor speed to load requirements; huge savings on fans/pumps",
+    "Ramp up/down gradually; eliminates inrush current (6-8x normal)",
+    "Precise speed control from 0-100%+ of base speed",
+    "Maintain constant pressure, flow, or tension",
+    "Reduced wear on belts, gears, couplings from smooth acceleration",
+    "VFD presents near-unity power factor to supply"
+  ),
+  Typical_Savings = c("20-50% energy reduction", "Reduced electrical stress",
+                      "N/A", "Improved quality", "Extended equipment life",
+                      "Avoid PF penalties")
+)
+
+kable(vfd_benefits, col.names = c("Benefit", "Description", "Typical Impact"),
+      caption = "Variable Frequency Drive Benefits") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+### Servo Systems
+
+```{r servo-system, echo=FALSE, fig.width=12, fig.height=5}
+ggplot() +
+  # Controller/PLC
+  annotate("rect", xmin = 0.5, xmax = 2, ymin = 2, ymax = 3.5,
+           fill = "#34495e", color = "black") +
+  annotate("text", x = 1.25, y = 2.75, label = "Motion\nController",
+           color = "white", fontface = "bold", size = 3.5, lineheight = 0.9) +
+
+  # Servo Drive
+  annotate("rect", xmin = 3, xmax = 5, ymin = 2, ymax = 3.5,
+           fill = "#3498db", color = "black") +
+  annotate("text", x = 4, y = 2.75, label = "Servo\nDrive",
+           color = "white", fontface = "bold", size = 4, lineheight = 0.9) +
+
+  # Servo Motor
+  annotate("point", x = 7, y = 2.75, size = 22, shape = 21,
+           fill = "#27ae60", color = "black", stroke = 1.5) +
+  annotate("text", x = 7, y = 2.75, label = "SM",
+           fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 7, y = 2, label = "Servo Motor", size = 3) +
+
+  # Encoder (feedback)
+  annotate("rect", xmin = 8, xmax = 9, ymin = 2.3, ymax = 3.2,
+           fill = "#e74c3c", color = "black") +
+  annotate("text", x = 8.5, y = 2.75, label = "ENC",
+           color = "white", fontface = "bold", size = 3) +
+
+  # Load
+  annotate("rect", xmin = 9.5, xmax = 10.5, ymin = 2.3, ymax = 3.2,
+           fill = "#95a5a6", color = "black") +
+  annotate("text", x = 10, y = 2.75, label = "Load",
+           fontface = "bold", size = 3.5) +
+
+  # Forward connections
+  annotate("segment", x = 2, xend = 3, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("text", x = 2.5, y = 3, label = "Command", size = 2.5) +
+  annotate("segment", x = 5, xend = 6.3, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1.2, color = "#e67e22") +
+  annotate("text", x = 5.6, y = 3, label = "Power", size = 2.5, color = "#e67e22") +
+  annotate("segment", x = 7.7, xend = 8, y = 2.75, yend = 2.75, size = 1) +
+  annotate("segment", x = 9, xend = 9.5, y = 2.75, yend = 2.75,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+
+  # Feedback loop
+  annotate("segment", x = 8.5, xend = 8.5, y = 2.3, yend = 1.5, size = 1, color = "#e74c3c") +
+  annotate("segment", x = 8.5, xend = 4, y = 1.5, yend = 1.5, size = 1, color = "#e74c3c") +
+  annotate("segment", x = 4, xend = 4, y = 1.5, yend = 2,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1, color = "#e74c3c") +
+  annotate("text", x = 6, y = 1.3, label = "Position/Velocity Feedback",
+           size = 3, color = "#e74c3c") +
+
+  coord_cartesian(xlim = c(0, 11), ylim = c(1, 4)) +
+  labs(title = "Servo System: Closed-Loop Motion Control",
+       subtitle = "Precise positioning through continuous feedback") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+```{r servo-vs-vfd, echo=FALSE}
+servo_vfd <- data.frame(
+  Characteristic = c("Control Type", "Feedback", "Positioning Accuracy",
+                     "Dynamic Response", "Torque at Zero Speed", "Cost",
+                     "Typical Application"),
+  VFD = c("Open loop (usually)", "Optional encoder", "±1-5% of speed",
+          "Moderate (100-500ms)", "Limited (10-20%)", "Lower ($500-5000)",
+          "Fans, pumps, conveyors"),
+  Servo = c("Closed loop (always)", "High-resolution encoder required",
+            "±0.01° or better", "Fast (1-10ms)", "100% continuous",
+            "Higher ($2000-20000)", "Robotics, CNC, packaging")
+)
+
+kable(servo_vfd, col.names = c("Characteristic", "VFD + Induction Motor", "Servo System"),
+      caption = "VFD vs. Servo System Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "22%") %>%
+  column_spec(2, background = "#ebf5fb") %>%
+  column_spec(3, background = "#e8f8f5")
+```
+
+---
+
+## Industrial Communication Networks
+
+Modern automation systems rely on communication networks to connect devices, share data, and enable coordinated control.
+
+### Network Architecture
+
+```{r network-architecture, echo=FALSE, fig.width=12, fig.height=8}
+ggplot() +
+  # Enterprise level
+  annotate("rect", xmin = 1, xmax = 9, ymin = 7, ymax = 8, fill = "#2c3e50", color = "black") +
+  annotate("text", x = 5, y = 7.5, label = "Enterprise Network (IT): ERP, MES, Business Systems",
+           color = "white", fontface = "bold", size = 3.5) +
+
+  # Plant backbone
+  annotate("rect", xmin = 1, xmax = 9, ymin = 5.5, ymax = 6.5, fill = "#8e44ad", color = "black") +
+  annotate("text", x = 5, y = 6, label = "Plant Network: Ethernet/IP, PROFINET (100Mbps-1Gbps)",
+           color = "white", fontface = "bold", size = 3.5) +
+
+  # Control level devices
+  annotate("rect", xmin = 1.5, xmax = 3, ymin = 4, ymax = 5, fill = "#3498db", color = "black") +
+  annotate("text", x = 2.25, y = 4.5, label = "PLC", color = "white", fontface = "bold", size = 4) +
+
+  annotate("rect", xmin = 4, xmax = 6, ymin = 4, ymax = 5, fill = "#3498db", color = "black") +
+  annotate("text", x = 5, y = 4.5, label = "HMI/SCADA", color = "white", fontface = "bold", size = 4) +
+
+  annotate("rect", xmin = 7, xmax = 8.5, ymin = 4, ymax = 5, fill = "#3498db", color = "black") +
+  annotate("text", x = 7.75, y = 4.5, label = "Robot\nController", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Device level bus
+  annotate("rect", xmin = 1, xmax = 9, ymin = 2.5, ymax = 3.3, fill = "#27ae60", color = "black") +
+  annotate("text", x = 5, y = 2.9, label = "Device Network: DeviceNet, PROFIBUS, IO-Link, AS-i",
+           color = "white", fontface = "bold", size = 3.5) +
+
+  # Field devices
+  annotate("rect", xmin = 1.2, xmax = 2.2, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
+  annotate("text", x = 1.7, y = 1.5, label = "VFD", color = "white", fontface = "bold", size = 3.5) +
+
+  annotate("rect", xmin = 2.8, xmax = 3.8, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
+  annotate("text", x = 3.3, y = 1.5, label = "I/O", color = "white", fontface = "bold", size = 3.5) +
+
+  annotate("rect", xmin = 4.4, xmax = 5.4, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
+  annotate("text", x = 4.9, y = 1.5, label = "Sensors", color = "white", fontface = "bold", size = 3) +
+
+  annotate("rect", xmin = 6, xmax = 7, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
+  annotate("text", x = 6.5, y = 1.5, label = "Valve\nBank", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 7.6, xmax = 8.6, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
+  annotate("text", x = 8.1, y = 1.5, label = "Safety\nI/O", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Vertical connections
+  annotate("segment", x = 5, xend = 5, y = 7, yend = 6.5, size = 1) +
+  annotate("segment", x = 2.25, xend = 2.25, y = 5.5, yend = 5, size = 1) +
+  annotate("segment", x = 5, xend = 5, y = 5.5, yend = 5, size = 1) +
+  annotate("segment", x = 7.75, xend = 7.75, y = 5.5, yend = 5, size = 1) +
+  annotate("segment", x = 2.25, xend = 2.25, y = 4, yend = 3.3, size = 1) +
+
+  # Device connections
+  annotate("segment", x = 1.7, xend = 1.7, y = 2.5, yend = 2, size = 0.8) +
+  annotate("segment", x = 3.3, xend = 3.3, y = 2.5, yend = 2, size = 0.8) +
+  annotate("segment", x = 4.9, xend = 4.9, y = 2.5, yend = 2, size = 0.8) +
+  annotate("segment", x = 6.5, xend = 6.5, y = 2.5, yend = 2, size = 0.8) +
+  annotate("segment", x = 8.1, xend = 8.1, y = 2.5, yend = 2, size = 0.8) +
+
+  coord_cartesian(xlim = c(0.5, 9.5), ylim = c(0.5, 8.5)) +
+  labs(title = "Industrial Network Architecture",
+       subtitle = "Hierarchical network structure from enterprise to field level") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Common Industrial Protocols
+
+```{r protocols-table, echo=FALSE}
+protocols <- data.frame(
+  Protocol = c("Ethernet/IP", "PROFINET", "Modbus TCP", "EtherCAT",
+               "DeviceNet", "PROFIBUS", "IO-Link", "OPC UA"),
+  Developer = c("ODVA (Rockwell)", "PI (Siemens)", "Modicon/Schneider", "Beckhoff",
+                "ODVA", "PI (Siemens)", "IO-Link Consortium", "OPC Foundation"),
+  Medium = c("Ethernet", "Ethernet", "Ethernet", "Ethernet",
+             "CAN-based", "RS-485", "Point-to-point", "Ethernet/Any"),
+  Speed = c("100Mbps/1Gbps", "100Mbps/1Gbps", "100Mbps", "100Mbps",
+            "500kbps", "12Mbps", "230.4kbps", "Varies"),
+  Application = c("General automation, I/O, drives", "Siemens ecosystem, motion",
+                  "Simple, open, legacy systems", "High-speed motion, precision",
+                  "I/O, drives (legacy)", "I/O, drives (legacy)", "Smart sensors",
+                  "IT/OT integration, IIoT")
+)
+
+kable(protocols, caption = "Common Industrial Communication Protocols") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "14%") %>%
+  row_spec(c(1, 2, 4), background = "#e8f6f3")
+```
+
+<details><summary>**Protocol Selection Guide**</summary>
+
+**Choose Ethernet/IP if:**
+- Using Allen-Bradley/Rockwell equipment
+- Need general-purpose industrial Ethernet
+- Require seamless integration with IT networks
+
+**Choose PROFINET if:**
+- Using Siemens equipment
+- Need deterministic communication for motion control
+- Require IRT (Isochronous Real-Time) performance
+
+**Choose EtherCAT if:**
+- Need highest speed/lowest latency
+- High-precision motion control
+- Many axes of coordinated motion
+
+**Choose Modbus TCP if:**
+- Simple, low-cost solution needed
+- Connecting legacy equipment
+- Open protocol preference (no licensing)
+
+**Choose OPC UA if:**
+- Need IT/OT convergence
+- IIoT/Industry 4.0 implementation
+- Secure, platform-independent communication
+</details>
+
+---
+
+## Human-Machine Interface (HMI) and SCADA
+
+### HMI Overview
+
+An **HMI (Human-Machine Interface)** provides operators with a visual interface to monitor and control automated processes.
+
+```{r hmi-elements, echo=FALSE, fig.width=12, fig.height=7}
+ggplot() +
+  # HMI screen outline
+  annotate("rect", xmin = 1, xmax = 9, ymin = 1, ymax = 7,
+           fill = "#ecf0f1", color = "#2c3e50", size = 2) +
+
+  # Header bar
+  annotate("rect", xmin = 1, xmax = 9, ymin = 6.2, ymax = 7, fill = "#3498db") +
+  annotate("text", x = 5, y = 6.6, label = "PRODUCTION LINE 1 - OVERVIEW",
+           color = "white", fontface = "bold", size = 4) +
+
+  # Navigation buttons
+  annotate("rect", xmin = 1.2, xmax = 2.2, ymin = 5.5, ymax = 6, fill = "#27ae60") +
+  annotate("text", x = 1.7, y = 5.75, label = "Overview", color = "white", size = 2.5) +
+  annotate("rect", xmin = 2.4, xmax = 3.4, ymin = 5.5, ymax = 6, fill = "#95a5a6") +
+  annotate("text", x = 2.9, y = 5.75, label = "Alarms", color = "white", size = 2.5) +
+  annotate("rect", xmin = 3.6, xmax = 4.6, ymin = 5.5, ymax = 6, fill = "#95a5a6") +
+  annotate("text", x = 4.1, y = 5.75, label = "Trends", color = "white", size = 2.5) +
+  annotate("rect", xmin = 4.8, xmax = 5.8, ymin = 5.5, ymax = 6, fill = "#95a5a6") +
+  annotate("text", x = 5.3, y = 5.75, label = "Settings", color = "white", size = 2.5) +
+
+  # Process graphic - Tank
+  annotate("rect", xmin = 1.5, xmax = 3, ymin = 2.5, ymax = 5, fill = "#bdc3c7", color = "black") +
+  annotate("rect", xmin = 1.6, xmax = 2.9, ymin = 2.6, ymax = 4.2, fill = "#3498db", alpha = 0.7) +
+  annotate("text", x = 2.25, y = 4.7, label = "TANK 1", fontface = "bold", size = 3) +
+  annotate("text", x = 2.25, y = 3.4, label = "75%", color = "white", fontface = "bold", size = 4) +
+
+  # Pump symbol
+  annotate("point", x = 4, y = 3, size = 12, shape = 21, fill = "#27ae60", color = "black") +
+  annotate("text", x = 4, y = 3, label = "P1", fontface = "bold", size = 3) +
+  annotate("text", x = 4, y = 2.4, label = "RUNNING", color = "#27ae60", size = 2.5) +
+
+  # Flow indicator
+  annotate("rect", xmin = 5.2, xmax = 6.5, ymin = 2.7, ymax = 3.6, fill = "white", color = "black") +
+  annotate("text", x = 5.85, y = 3.35, label = "FLOW", size = 2.5) +
+  annotate("text", x = 5.85, y = 3, label = "125.5", fontface = "bold", size = 4, color = "#2c3e50") +
+  annotate("text", x = 5.85, y = 2.75, label = "GPM", size = 2.5) +
+
+  # Temperature indicator
+  annotate("rect", xmin = 7, xmax = 8.3, ymin = 2.7, ymax = 3.6, fill = "white", color = "black") +
+  annotate("text", x = 7.65, y = 3.35, label = "TEMP", size = 2.5) +
+  annotate("text", x = 7.65, y = 3, label = "185.2", fontface = "bold", size = 4, color = "#e74c3c") +
+  annotate("text", x = 7.65, y = 2.75, label = "°F", size = 2.5) +
+
+  # Pipes
+  annotate("segment", x = 3, xend = 3.5, y = 3, yend = 3, size = 3, color = "#3498db") +
+  annotate("segment", x = 4.5, xend = 5.2, y = 3, yend = 3, size = 3, color = "#3498db") +
+  annotate("segment", x = 6.5, xend = 7, y = 3.15, yend = 3.15, size = 3, color = "#3498db") +
+
+  # Status bar
+  annotate("rect", xmin = 1, xmax = 9, ymin = 1, ymax = 1.8, fill = "#2c3e50") +
+  annotate("text", x = 1.5, y = 1.4, label = "Status: AUTO", color = "#27ae60",
+           hjust = 0, size = 3, fontface = "bold") +
+  annotate("text", x = 4.5, y = 1.4, label = "Active Alarms: 0", color = "#27ae60",
+           hjust = 0, size = 3) +
+  annotate("text", x = 7.5, y = 1.4, label = "14:35:22", color = "white", size = 3) +
+
+  # Control buttons
+  annotate("rect", xmin = 7, xmax = 8.5, ymin = 4.5, ymax = 5.2, fill = "#27ae60", color = "black") +
+  annotate("text", x = 7.75, y = 4.85, label = "START", color = "white", fontface = "bold", size = 3) +
+  annotate("rect", xmin = 7, xmax = 8.5, ymin = 3.8, ymax = 4.4, fill = "#e74c3c", color = "black") +
+  annotate("text", x = 7.75, y = 4.1, label = "STOP", color = "white", fontface = "bold", size = 3) +
+
+  coord_cartesian(xlim = c(0.5, 9.5), ylim = c(0.5, 7.5)) +
+  labs(title = "HMI Screen Example",
+       subtitle = "Typical operator interface showing process status and controls") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### HMI Design Best Practices
+
+```{r hmi-practices, echo=FALSE}
+hmi_practices <- data.frame(
+  Principle = c("Situational Awareness", "Alarm Management", "Navigation",
+                "Color Usage", "Data Display", "Controls"),
+  Guideline = c(
+    "Show abnormal conditions prominently; operator should know status at a glance",
+    "Prioritize alarms (critical/warning/info); avoid alarm floods; require acknowledgment",
+    "Consistent layout; max 3 clicks to any screen; clear hierarchy",
+    "Use color sparingly for meaning; gray for normal; avoid red/green for critical info (colorblind)",
+    "Show trends, not just values; use appropriate precision; include units",
+    "Confirm destructive actions; use interlocks; provide feedback"
+  ),
+  Bad_Practice = c(
+    "Everything same color; too much detail",
+    "Hundreds of unacknowledged alarms",
+    "Inconsistent button placement",
+    "Rainbow colors everywhere",
+    "Too many decimal places; no context",
+    "No confirmation for critical commands"
+  )
+)
+
+kable(hmi_practices, col.names = c("Principle", "Best Practice", "Avoid"),
+      caption = "HMI Design Best Practices") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%") %>%
+  column_spec(3, background = "#fadbd8")
+```
+
+### SCADA Systems
+
+**SCADA (Supervisory Control and Data Acquisition)** systems provide centralized monitoring and control across multiple locations or processes.
+
+```{r scada-architecture, echo=FALSE}
+scada_components <- data.frame(
+  Component = c("MTU (Master Terminal Unit)", "RTU (Remote Terminal Unit)",
+                "Communication Network", "HMI/Workstations", "Historian Database",
+                "Alarm Server"),
+  Function = c(
+    "Central server running SCADA software; processes data, executes logic",
+    "Field device that collects data from sensors and sends to MTU",
+    "Links MTU to RTUs; can be radio, cellular, satellite, fiber",
+    "Operator interface for monitoring and control",
+    "Stores historical process data for trending and analysis",
+    "Manages alarm generation, notification, and logging"
+  ),
+  Example = c("Wonderware, Ignition, FactoryTalk", "PLC, dedicated RTU hardware",
+              "Modbus, DNP3, IEC 61850", "PC workstations, web clients",
+              "SQL database, OSIsoft PI", "Built into SCADA or separate")
+)
+
+kable(scada_components, caption = "SCADA System Components") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "22%")
+```
+
+---
+
+## Safety in Automation
+
+Safety is paramount in automated systems. Safety systems protect personnel and equipment from harm.
+
+### Safety System Architecture
+
+```{r safety-architecture, echo=FALSE, fig.width=12, fig.height=7}
+ggplot() +
+  # Safety PLC
+  annotate("rect", xmin = 4, xmax = 6, ymin = 3, ymax = 5, fill = "#f1c40f", color = "black", size = 1.5) +
+  annotate("text", x = 5, y = 4.5, label = "SAFETY", fontface = "bold", size = 4) +
+  annotate("text", x = 5, y = 4, label = "PLC", fontface = "bold", size = 4) +
+  annotate("text", x = 5, y = 3.4, label = "(SIL 3 / PLe)", size = 3) +
+
+  # Safety inputs
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 4.5, ymax = 5.5, fill = "#e74c3c", color = "black") +
+  annotate("text", x = 1.5, y = 5, label = "E-Stop", color = "white", fontface = "bold", size = 3.5) +
+
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 3.3, ymax = 4.3, fill = "#e74c3c", color = "black") +
+  annotate("text", x = 1.5, y = 3.8, label = "Light Curtain", color = "white", fontface = "bold", size = 3.5) +
+
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 2.1, ymax = 3.1, fill = "#e74c3c", color = "black") +
+  annotate("text", x = 1.5, y = 2.6, label = "Safety Gate", color = "white", fontface = "bold", size = 3.5) +
+
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 0.9, ymax = 1.9, fill = "#e74c3c", color = "black") +
+  annotate("text", x = 1.5, y = 1.4, label = "Two-Hand Ctrl", color = "white", fontface = "bold", size = 3.5) +
+
+  # Safety outputs
+  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 4.5, ymax = 5.5, fill = "#27ae60", color = "black") +
+  annotate("text", x = 8.5, y = 5, label = "Safety Relay\n(Motor)", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 3.3, ymax = 4.3, fill = "#27ae60", color = "black") +
+  annotate("text", x = 8.5, y = 3.8, label = "Safety Valve\n(Pneumatic)", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 2.1, ymax = 3.1, fill = "#27ae60", color = "black") +
+  annotate("text", x = 8.5, y = 2.6, label = "Safe Torque Off\n(Drive)", color = "white",
+           fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Connections
+  annotate("segment", x = 2.5, xend = 4, y = 5, yend = 4.5, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 2.5, xend = 4, y = 3.8, yend = 4.2, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 2.5, xend = 4, y = 2.6, yend = 3.5, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 2.5, xend = 4, y = 1.4, yend = 3.3, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+
+  annotate("segment", x = 6, xend = 7.5, y = 4.5, yend = 5, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 6, xend = 7.5, y = 4.2, yend = 3.8, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+  annotate("segment", x = 6, xend = 7.5, y = 3.5, yend = 2.6, size = 1,
+           arrow = arrow(length = unit(0.2, "cm"))) +
+
+  # Standard PLC communication
+  annotate("rect", xmin = 4, xmax = 6, ymin = 0.5, ymax = 2, fill = "#3498db", color = "black") +
+  annotate("text", x = 5, y = 1.5, label = "Standard", fontface = "bold", size = 3.5, color = "white") +
+  annotate("text", x = 5, y = 1, label = "PLC", fontface = "bold", size = 3.5, color = "white") +
+  annotate("segment", x = 5, xend = 5, y = 2, yend = 3, size = 1, linetype = "dashed",
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both")) +
+  annotate("text", x = 5.7, y = 2.5, label = "Status\nExchange", size = 2.5, lineheight = 0.9) +
+
+  coord_cartesian(xlim = c(0, 10), ylim = c(0, 6)) +
+  labs(title = "Safety System Architecture",
+       subtitle = "Dedicated safety controller with safety-rated inputs and outputs") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Safety Integrity Levels (SIL)
+
+```{r sil-levels-automation, echo=FALSE}
+sil_table <- data.frame(
+  SIL = c("SIL 1", "SIL 2", "SIL 3", "SIL 4"),
+  PFD = c("≥10⁻² to <10⁻¹", "≥10⁻³ to <10⁻²", "≥10⁻⁴ to <10⁻³", "≥10⁻⁵ to <10⁻⁴"),
+  RRF = c("10-100", "100-1,000", "1,000-10,000", "10,000-100,000"),
+  Application = c(
+    "Minor injury possible; first line of defense",
+    "Serious injury possible; general industrial",
+    "Death or severe injury; process industry standard",
+    "Catastrophic; nuclear, aviation"
+  ),
+  Example = c(
+    "Warning systems, non-critical interlocks",
+    "Machine guarding, general process safety",
+    "Emergency shutdown, burner management",
+    "Nuclear reactor protection (rarely used in manufacturing)"
+  )
+)
+
+kable(sil_table, col.names = c("SIL Level", "PFD (avg)", "Risk Reduction Factor",
+                               "Risk Level", "Example Application"),
+      caption = "Safety Integrity Levels (IEC 61508)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE) %>%
+  row_spec(3, background = "#fcf3cf")
+```
+
+---
+
+## Industry 4.0 and IIoT
+
+**Industry 4.0** represents the fourth industrial revolution, characterized by the integration of digital technologies into manufacturing.
+
+### Industry 4.0 Technologies
+
+```{r industry4-tech, echo=FALSE, fig.width=12, fig.height=8}
+i4_tech <- data.frame(
+  Technology = c("IIoT", "Cloud Computing", "Big Data Analytics",
+                 "Digital Twin", "AI/Machine Learning", "Cybersecurity",
+                 "Additive Manufacturing", "AR/VR"),
+  x = c(1, 2, 3, 4, 1, 2, 3, 4),
+  y = c(2, 2, 2, 2, 1, 1, 1, 1),
+  Description = c(
+    "Connected sensors\nand devices",
+    "Scalable computing\nand storage",
+    "Insight from\nprocess data",
+    "Virtual model\nof physical assets",
+    "Predictive and\nprescriptive analytics",
+    "Protecting OT\ninfrastructure",
+    "3D printing for\nspare parts",
+    "Training and\nmaintenance support"
+  )
+)
+
+ggplot(i4_tech, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Technology), width = 0.9, height = 0.8, color = "white", linewidth = 1.5) +
+  geom_text(aes(label = Technology), fontface = "bold", size = 3.5, color = "white", vjust = -0.5) +
+  geom_text(aes(label = Description), size = 2.8, color = "white", vjust = 1.5, lineheight = 0.9) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12",
+                               "#9b59b6", "#1abc9c", "#e67e22", "#34495e"), guide = "none") +
+  labs(title = "Industry 4.0 Key Technologies",
+       subtitle = "Technologies enabling the smart factory") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### IIoT Architecture
+
+```{r iiot-architecture, echo=FALSE}
+iiot_layers <- data.frame(
+  Layer = c("Edge/Device Layer", "Network Layer", "Platform Layer", "Application Layer"),
+  Components = c(
+    "Sensors, actuators, PLCs, gateways, edge devices",
+    "Industrial Ethernet, Wi-Fi, 5G, LoRaWAN, MQTT",
+    "Cloud/on-premise servers, databases, data lakes",
+    "Analytics dashboards, AI/ML models, business applications"
+  ),
+  Function = c(
+    "Collect data, local processing, protocol conversion",
+    "Secure data transport, connectivity",
+    "Store, process, and manage data at scale",
+    "Derive insights, optimize operations, enable decisions"
+  ),
+  Examples = c(
+    "Vibration sensor, smart valve, edge computer",
+    "Cisco switches, AWS IoT Core, Kepware",
+    "Azure IoT Hub, AWS, Ignition",
+    "Power BI, TensorFlow, custom apps"
+  )
+)
+
+kable(iiot_layers, caption = "IIoT Architecture Layers") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### Predictive Maintenance Example
+
+```{r predictive-maintenance, echo=TRUE}
+# Simulating predictive maintenance with vibration data
+set.seed(42)
+
+# Generate 30 days of vibration readings
+days <- 1:30
+baseline_vibration <- 2.5  # mm/s RMS (normal)
+
+# Simulate gradual bearing degradation
+vibration <- baseline_vibration +
+  0.05 * days +           # Gradual increase
+  0.5 * exp((days - 25)/5) * (days > 20) +  # Accelerating failure
+  rnorm(30, 0, 0.2)       # Normal variation
+
+# Alert thresholds
+warning_threshold <- 4.0
+alarm_threshold <- 6.0
+
+# Find when thresholds crossed
+warning_day <- min(which(vibration > warning_threshold))
+alarm_day <- min(which(vibration > alarm_threshold))
+
+cat("Predictive Maintenance Analysis:\n")
+cat("─────────────────────────────────\n")
+cat("Baseline vibration:", baseline_vibration, "mm/s RMS\n")
+cat("Warning threshold:", warning_threshold, "mm/s RMS\n")
+cat("Alarm threshold:", alarm_threshold, "mm/s RMS\n\n")
+cat("Warning triggered on day:", warning_day, "\n")
+cat("Alarm triggered on day:", alarm_day, "\n")
+cat("Days of warning before alarm:", alarm_day - warning_day, "\n")
+cat("\nRecommendation: Schedule bearing replacement before day", alarm_day, "\n")
+```
+
+```{r predictive-plot, echo=FALSE, fig.width=11, fig.height=6}
+vib_data <- data.frame(Day = days, Vibration = vibration)
+
+ggplot(vib_data, aes(x = Day, y = Vibration)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  geom_point(color = "steelblue", size = 2) +
+  geom_hline(yintercept = warning_threshold, linetype = "dashed", color = "orange", linewidth = 1) +
+  geom_hline(yintercept = alarm_threshold, linetype = "dashed", color = "red", linewidth = 1) +
+  geom_hline(yintercept = baseline_vibration, linetype = "dotted", color = "green", linewidth = 1) +
+  annotate("text", x = 30, y = baseline_vibration + 0.2, label = "Baseline",
+           hjust = 1, color = "green", fontface = "bold") +
+  annotate("text", x = 30, y = warning_threshold + 0.2, label = "Warning",
+           hjust = 1, color = "orange", fontface = "bold") +
+  annotate("text", x = 30, y = alarm_threshold + 0.2, label = "Alarm",
+           hjust = 1, color = "red", fontface = "bold") +
+  annotate("rect", xmin = warning_day, xmax = alarm_day, ymin = 0, ymax = 8,
+           fill = "orange", alpha = 0.1) +
+  annotate("text", x = (warning_day + alarm_day)/2, y = 7.5,
+           label = "Maintenance\nWindow", fontface = "bold", size = 3) +
+  labs(title = "Predictive Maintenance: Bearing Vibration Monitoring",
+       subtitle = "IIoT-enabled condition monitoring detects degradation before failure",
+       x = "Day", y = "Vibration (mm/s RMS)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+---
+
+## Video Resources
+
+### Introduction to PLCs
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/uOtdWHMKhnw&t" title="Introduction to PLCs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Industrial Networks Explained
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tAqtHsiJGg8&list=PLt50BEIirCOMY8qrcGBdoJIAUHWXfJM6H" title="Industrial Networks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+## Summary
+
+Industrial automation integrates multiple technologies to improve manufacturing efficiency, quality, and safety:
+
+1. **Automation types** range from fixed (high-volume, single product) to flexible (low-volume, high variety)
+2. **PLCs** are the workhorses of industrial control, using scan cycles to process inputs and control outputs
+3. **Sensors** provide feedback on process conditions (discrete, analog, and smart)
+4. **Motor control** through VFDs and servo systems enables precise speed and position control
+5. **Industrial networks** connect devices using protocols like Ethernet/IP, PROFINET, and Modbus
+6. **HMI and SCADA** provide operator interface for monitoring and control
+7. **Safety systems** use dedicated controllers and devices to protect personnel
+8. **Industry 4.0** brings IIoT, cloud computing, and AI to enable smart manufacturing
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: Compare and contrast fixed, programmable, and flexible automation. Give an example application for each.</summary>
+
+**Answer:**
+
+| Aspect | Fixed | Programmable | Flexible |
+|--------|-------|--------------|----------|
+| Product variety | Single product | Batches of different products | High variety, mixed production |
+| Volume | Very high | Medium-high | Low-medium |
+| Changeover | Difficult, expensive | Hours to days | Minutes |
+| Investment | Very high | High | Very high |
+| Flexibility | None | Limited | High |
+
+**Examples:**
+
+1. **Fixed Automation**: Automotive transfer line producing engine blocks
+   - Same machining operations repeated millions of times
+   - Dedicated stations optimized for specific operations
+   - Changing product would require complete retooling
+
+2. **Programmable Automation**: CNC machining job shop
+   - Different parts programmed and run in batches
+   - Significant setup time between batches
+   - Equipment reprogrammable but not instantaneous
+
+3. **Flexible Automation**: Robotic welding cell in aerospace
+   - Different assemblies run with quick changeover
+   - Robot program changes automatically based on part ID
+   - Same cell handles multiple product variants
+</details>
+
+<details><summary>**Question 2**: Explain the PLC scan cycle and why scan time is important.</summary>
+
+**Answer:**
+
+**The PLC Scan Cycle** consists of four main phases executed continuously:
+
+1. **Input Scan** (~1ms): Read all physical inputs and store values in the input image table
+2. **Program Execution** (~5-20ms): Execute the user program (ladder logic, etc.) using input image data
+3. **Output Update** (~1ms): Write output image table values to physical outputs
+4. **Housekeeping** (~1-3ms): Communications, diagnostics, self-testing
+
+**Total scan time** = Sum of all phases, typically 10-50ms
+
+**Why Scan Time Matters:**
+
+1. **Response Time**: An input change isn't acted upon until the next scan completes. If scan time is 50ms, worst-case response time is 50ms.
+
+2. **Safety**: Fast-moving machinery requires short scan times for safety functions. A 100ms scan time with a motor at 1800 RPM means 3 shaft revolutions between scans.
+
+3. **Application Limits**:
+   - Motion control may need <1ms scan times (special motion PLCs)
+   - High-speed counting needs special modules
+   - Safety PLCs have guaranteed maximum scan times
+
+4. **Program Size Impact**: Larger programs take longer to execute, increasing scan time. Optimization may be needed for time-critical applications.
+
+5. **Communication Delays**: Network updates typically happen once per scan, affecting data freshness.
+</details>
+
+<details><summary>**Question 3**: What are the key differences between PNP and NPN sensor outputs? When would you use each?</summary>
+
+**Answer:**
+
+**PNP (Sourcing):**
+- Sensor output sources current TO the load
+- When activated, output connects to +V
+- Load is connected between sensor output and 0V
+- Current flows: +V → Sensor → Output → Load → 0V
+- Common in North America and Europe
+
+**NPN (Sinking):**
+- Sensor output sinks current FROM the load
+- When activated, output connects to 0V (ground)
+- Load is connected between sensor output and +V
+- Current flows: +V → Load → Output → Sensor → 0V
+- Common in Asia (Japan)
+
+**Selection Criteria:**
+
+1. **PLC Input Type**:
+   - Sinking PLC inputs work with PNP (sourcing) sensors
+   - Sourcing PLC inputs work with NPN (sinking) sensors
+
+2. **Regional Standards**:
+   - North America: PNP is standard
+   - Europe: PNP is standard
+   - Japan/Asia: NPN is common
+
+3. **Safety Considerations**:
+   - PNP: A ground fault can cause false ON signal
+   - NPN: A ground fault typically causes safe-off condition
+   - For safety applications, consider sensor design carefully
+
+4. **Existing Infrastructure**:
+   - Match new sensors to existing system type
+   - Converting between types requires different PLC input cards
+</details>
+
+<details><summary>**Question 4**: A VFD is controlling a 10 HP, 4-pole motor rated at 1750 RPM and 460V at 60Hz. Calculate the motor speed at 30Hz and 45Hz. What voltage should the VFD supply at these frequencies?</summary>
+
+**Answer:**
+
+```{r q4-answer, echo=TRUE}
+# Motor parameters
+poles <- 4
+rated_voltage <- 460  # V
+rated_frequency <- 60  # Hz
+rated_rpm <- 1750
+
+# Calculate synchronous speed and slip at rated conditions
+sync_speed_60 <- 120 * rated_frequency / poles
+slip_rpm <- sync_speed_60 - rated_rpm
+slip_percent <- (slip_rpm / sync_speed_60) * 100
+
+cat("Motor Analysis:\n")
+cat("Synchronous speed at 60Hz:", sync_speed_60, "RPM\n")
+cat("Rated speed:", rated_rpm, "RPM\n")
+cat("Slip:", slip_rpm, "RPM (", round(slip_percent, 1), "%)\n\n")
+
+# V/Hz ratio
+vhz_ratio <- rated_voltage / rated_frequency
+cat("V/Hz Ratio:", round(vhz_ratio, 2), "V/Hz\n\n")
+
+# Calculate at 30Hz
+freq_30 <- 30
+sync_30 <- 120 * freq_30 / poles
+speed_30 <- sync_30 - slip_rpm  # Assuming constant slip in RPM
+voltage_30 <- freq_30 * vhz_ratio
+
+cat("At 30Hz:\n")
+cat("  Synchronous speed:", sync_30, "RPM\n")
+cat("  Motor speed (approx):", speed_30, "RPM\n")
+cat("  VFD output voltage:", voltage_30, "V\n\n")
+
+# Calculate at 45Hz
+freq_45 <- 45
+sync_45 <- 120 * freq_45 / poles
+speed_45 <- sync_45 - slip_rpm
+voltage_45 <- freq_45 * vhz_ratio
+
+cat("At 45Hz:\n")
+cat("  Synchronous speed:", sync_45, "RPM\n")
+cat("  Motor speed (approx):", speed_45, "RPM\n")
+cat("  VFD output voltage:", voltage_45, "V\n")
+```
+
+**Note:** The calculation assumes constant slip in RPM, which is an approximation. Actual slip varies somewhat with load and frequency. The V/Hz ratio is maintained constant to provide constant torque capability below base speed.
+</details>
+
+<details><summary>**Question 5**: Compare Ethernet/IP and PROFINET. When would you choose each?</summary>
+
+**Answer:**
+
+| Feature | Ethernet/IP | PROFINET |
+|---------|-------------|----------|
+| **Developer** | ODVA (Rockwell Automation) | PROFIBUS International (Siemens) |
+| **Base Protocol** | CIP over TCP/UDP | Based on standard Ethernet |
+| **Real-time** | CIP Motion for motion control | IRT (Isochronous Real-Time) |
+| **Determinism** | Standard: non-deterministic; CIP Sync: deterministic | RT: soft real-time; IRT: hard real-time |
+| **Typical Cycle** | 2-10ms (standard); <1ms (CIP Motion) | 1-10ms (RT); <1ms (IRT) |
+| **Ecosystem** | Allen-Bradley, DeviceNet-heritage | Siemens, PROFIBUS-heritage |
+
+**Choose Ethernet/IP when:**
+- Using Allen-Bradley/Rockwell PLCs
+- Integrating with DeviceNet legacy systems
+- Standard industrial Ethernet needs
+- North American installations (common)
+- Need CIP protocol compatibility
+
+**Choose PROFINET when:**
+- Using Siemens PLCs (S7-1200, S7-1500)
+- Migrating from PROFIBUS installations
+- Need IRT for high-performance motion
+- European installations (common)
+- Require I-Device functionality
+
+**General Guidance:**
+- Match the protocol to your PLC vendor's ecosystem
+- Both are capable industrial Ethernet solutions
+- Consider existing infrastructure and expertise
+- For motion, evaluate specific timing requirements
+</details>
+
+<details><summary>**Question 6**: What is the difference between HMI and SCADA? Where would each be used?</summary>
+
+**Answer:**
+
+**HMI (Human-Machine Interface):**
+- Local operator interface for a single machine or process
+- Typically a touchscreen panel mounted on or near equipment
+- Communicates directly with one or few PLCs
+- Provides real-time control and monitoring
+- Limited data storage (trends, alarms)
+- Examples: Allen-Bradley PanelView, Siemens Comfort Panel
+
+**SCADA (Supervisory Control and Data Acquisition):**
+- Centralized system monitoring multiple processes/locations
+- Server-based architecture with multiple client workstations
+- Communicates with many PLCs/RTUs across large distances
+- Supervisory control - high-level commands, not direct control
+- Extensive historical data collection and analysis
+- Examples: Wonderware, Ignition, FactoryTalk View SE
+
+**Where Each is Used:**
+
+| Application | HMI | SCADA |
+|-------------|-----|-------|
+| Single CNC machine | ✓ | |
+| Packaging line | ✓ | |
+| Entire factory floor | | ✓ |
+| Water treatment plant | ✓ (local) | ✓ (central) |
+| Oil pipeline network | | ✓ |
+| Building automation | ✓ (per zone) | ✓ (campus-wide) |
+| Power grid | | ✓ |
+
+**Key Distinction:** HMI is typically embedded/local for one process; SCADA is a system supervising many processes across the enterprise.
+</details>
+
+<details><summary>**Question 7**: Explain what SIL 3 means and give an example of a SIL 3 application.</summary>
+
+**Answer:**
+
+**SIL 3 (Safety Integrity Level 3)** is defined in IEC 61508 and represents:
+
+- **PFD (Probability of Failure on Demand):** 10⁻⁴ to 10⁻³ (0.01% to 0.1%)
+- **Risk Reduction Factor:** 1,000 to 10,000
+- **Availability:** 99.9% to 99.99%
+
+**What SIL 3 Means:**
+- The safety function will fail to operate when needed less than 1 in 1,000 demands
+- Requires redundant architecture (typically 2oo3 or 1oo2D)
+- Requires certified safety-rated components
+- Requires rigorous design, testing, and validation processes
+- Requires regular proof testing and maintenance
+
+**SIL 3 Requirements:**
+- Hardware fault tolerance ≥ 1 (single fault won't cause dangerous failure)
+- Safe Failure Fraction > 90% (for Type A components)
+- Systematic capability rating of SC3
+- Extensive documentation and lifecycle management
+
+**SIL 3 Application Examples:**
+
+1. **Emergency Shutdown System (ESD)** in oil refinery
+   - Detects dangerous conditions (high pressure, fire)
+   - Shuts down process and isolates fuel sources
+   - Failure could result in explosion and fatalities
+
+2. **Burner Management System (BMS)**
+   - Controls furnace/boiler ignition sequence
+   - Monitors flame presence and fuel/air ratio
+   - Prevents furnace explosions
+
+3. **High Integrity Pressure Protection System (HIPPS)**
+   - Prevents overpressure in pipelines
+   - Isolates high-pressure source before relief valve capacity exceeded
+   - Protects against catastrophic pipeline rupture
+</details>
+
+<details><summary>**Question 8**: Describe three benefits of implementing IIoT in a manufacturing facility and give a specific example of each.</summary>
+
+**Answer:**
+
+**1. Predictive Maintenance**
+
+*Benefit:* Detect equipment degradation before failure, enabling planned maintenance during scheduled downtime rather than emergency repairs.
+
+*Example:* Vibration sensors on a conveyor gearbox transmit data to cloud analytics. Machine learning algorithms detect bearing wear signature 3 weeks before expected failure. Maintenance schedules replacement during next planned shutdown, avoiding $50,000 in lost production from unplanned downtime.
+
+**2. Real-Time Production Visibility**
+
+*Benefit:* Instant access to production metrics, OEE, and quality data from anywhere, enabling faster decision-making.
+
+*Example:* Dashboard shows real-time OEE for all production lines on plant manager's tablet. Sudden drop in Line 3 performance triggers alert. Investigation reveals material feed issue; corrected within 30 minutes instead of waiting for end-of-shift report.
+
+**3. Energy Optimization**
+
+*Benefit:* Monitor energy consumption at machine level, identify waste, and optimize based on production schedule.
+
+*Example:* Power meters on each machine report to central system. Analysis reveals HVAC in unused areas runs at full capacity during weekends. Automated scheduling reduces weekend HVAC operation, saving 15% on energy bills ($30,000/year).
+
+**Additional Benefits:**
+
+4. **Quality Traceability** - Every part traced through production with complete process data
+5. **Remote Monitoring** - Engineers can diagnose issues without traveling to site
+6. **Supply Chain Integration** - Real-time inventory and production data shared with suppliers
+</details>
+
+---
+
+## References
+
+1. Bolton, W. (2015). *Programmable Logic Controllers* (6th ed.). Newnes.
+
+2. Petruzella, F.D. (2017). *Programmable Logic Controllers* (5th ed.). McGraw-Hill Education.
+
+3. Rehg, J.A., & Sartori, G.J. (2013). *Industrial Electronics*. Pearson.
+
+4. IEC 61131-3:2013. *Programmable Controllers - Part 3: Programming Languages*.
+
+5. IEC 61508:2010. *Functional Safety of Electrical/Electronic/Programmable Electronic Safety-related Systems*.
+
+6. ODVA. (2020). *The CIP Networks Library*. ODVA, Inc.
+
+7. Siemens AG. (2019). *PROFINET System Description*. Siemens.
+
+8. Gilchrist, A. (2016). *Industry 4.0: The Industrial Internet of Things*. Apress.
+
+9. ISA-95/IEC 62264. *Enterprise-Control System Integration*.
+
+10. Groover, M.P. (2016). *Automation, Production Systems, and Computer-Integrated Manufacturing* (4th ed.). Pearson.

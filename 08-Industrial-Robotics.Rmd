@@ -1,0 +1,1743 @@
+# Industrial Robotics
+```{r setup-15, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+---------------------------------------------------
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Define industrial robots and explain their role in modern manufacturing
+2. Identify the main types of robot configurations and their applications
+3. Describe robot specifications including payload, reach, repeatability, and speed
+4. Explain the components of a robotic system (manipulator, controller, teach pendant, end effector)
+5. Understand robot coordinate systems and motion types
+6. Identify common robot applications in automotive, food, and defense industries
+7. Apply robot safety standards and safeguarding methods
+8. Describe collaborative robot (cobot) technology and applications
+9. Understand basic robot programming concepts
+
+---
+
+## Introduction to Industrial Robotics
+
+An **industrial robot** is defined by ISO 8373 as "an automatically controlled, reprogrammable, multipurpose manipulator, programmable in three or more axes, which can be either fixed in place or mobile for use in industrial automation applications."
+
+### Why Use Robots?
+
+```{r robot-benefits, echo=FALSE, fig.width=12, fig.height=7}
+benefits <- data.frame(
+  Benefit = c("Consistency", "Productivity", "Quality", "Safety",
+              "Flexibility", "Cost Reduction"),
+  Description = c(
+    "Identical motion every cycle; no fatigue",
+    "24/7 operation; faster cycle times",
+    "Precision and repeatability reduce defects",
+    "Remove humans from hazardous tasks",
+    "Reprogrammable for different products",
+    "Lower labor costs; reduced scrap"
+  ),
+  Impact = c(95, 90, 88, 92, 75, 85)
+)
+
+ggplot(benefits, aes(x = reorder(Benefit, Impact), y = Impact, fill = Benefit)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = Description), hjust = -0.05, size = 3) +
+  coord_flip() +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
+                               "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
+  scale_y_continuous(limits = c(0, 160)) +
+  labs(title = "Benefits of Industrial Robots",
+       subtitle = "Key drivers for robot adoption in manufacturing",
+       x = "", y = "Impact Score") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.y = element_text(size = 11, face = "bold")
+  )
+```
+
+### Robot Market Growth
+
+```{r robot-market, echo=FALSE, fig.width=11, fig.height=6}
+# Global robot installations data (approximate)
+market_data <- data.frame(
+  Year = 2018:2024,
+  Installations = c(422, 381, 384, 517, 553, 590, 620),
+  Region = "Global"
+)
+
+ggplot(market_data, aes(x = Year, y = Installations)) +
+  geom_bar(stat = "identity", fill = "#3498db", width = 0.7) +
+  geom_text(aes(label = paste0(Installations, "K")), vjust = -0.5, size = 4) +
+  geom_smooth(method = "lm", se = FALSE, color = "#e74c3c", linetype = "dashed") +
+  scale_y_continuous(limits = c(0, 700)) +
+  labs(title = "Global Industrial Robot Installations",
+       subtitle = "Annual installations in thousands of units (IFR data)",
+       x = "Year", y = "Units Installed (thousands)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+### Industries Using Robots
+
+```{r robot-industries, echo=FALSE}
+industries <- data.frame(
+  Industry = c("Automotive", "Electrical/Electronics", "Metal & Machinery",
+               "Food & Beverage", "Plastics & Chemicals", "Aerospace/Defense"),
+  Share = c(30, 25, 12, 8, 5, 4),
+  Applications = c(
+    "Welding, painting, assembly, material handling",
+    "Assembly, testing, packaging, dispensing",
+    "Machine tending, welding, cutting",
+    "Palletizing, packaging, pick-and-place",
+    "Injection molding, packaging, assembly",
+    "Drilling, fastening, inspection, composite layup"
+  ),
+  Growth = c("Stable", "High", "Moderate", "High", "Moderate", "High")
+)
+
+kable(industries, col.names = c("Industry", "Market Share (%)", "Key Applications", "Growth Trend"),
+      caption = "Industrial Robot Usage by Industry Sector") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+---
+
+## Robot Configurations
+
+Industrial robots come in various mechanical configurations, each suited to different applications.
+
+### Common Robot Types
+
+```{r robot-types, echo=FALSE, fig.width=14, fig.height=10}
+robot_types <- data.frame(
+  Type = c("Articulated\n(6-axis)", "SCARA", "Delta\n(Parallel)", "Cartesian\n(Gantry)",
+           "Cylindrical", "Collaborative\n(Cobot)"),
+  Characteristics = c(
+    "Most versatile\nHuman-like motion\n6 degrees of freedom",
+    "Fast horizontal motion\nRigid vertical axis\n4 axes typical",
+    "Very high speed\nLimited payload\nParallel linkage",
+    "Linear motion\nLarge work envelope\n3-4 axes",
+    "Rotary base\nLinear reach\n4 axes typical",
+    "Force limited\nSafe around humans\nEasy programming"
+  ),
+  Applications = c(
+    "Welding, painting\nassembly, handling",
+    "Assembly, pick-place\npackaging",
+    "High-speed picking\npackaging, assembly",
+    "CNC loading, palletizing\nlarge part handling",
+    "Machine tending\nmaterial handling",
+    "Human collaboration\nassembly assist"
+  ),
+  x = c(1, 2, 3, 1, 2, 3),
+  y = c(2, 2, 2, 1, 1, 1)
+)
+
+ggplot(robot_types, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Type), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
+  geom_text(aes(label = Type), fontface = "bold", vjust = -2, size = 4, color = "white") +
+  geom_text(aes(label = Characteristics), vjust = 0, size = 2.8, color = "white", lineheight = 0.85) +
+  geom_text(aes(label = Applications), vjust = 3.5, size = 2.5, color = "white",
+            fontface = "italic", lineheight = 0.85) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
+                               "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
+  labs(title = "Industrial Robot Configurations",
+       subtitle = "Different types optimized for specific applications") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Detailed Configuration Comparison
+
+```{r config-comparison, echo=FALSE}
+config_table <- data.frame(
+  Configuration = c("6-Axis Articulated", "SCARA", "Delta/Parallel", "Cartesian/Gantry"),
+  Axes = c("6", "4", "3-4", "3-6"),
+  Payload = c("3-2300 kg", "1-20 kg", "0.5-12 kg", "5-1000+ kg"),
+  Reach = c("0.5-4 m", "0.2-1.2 m", "0.5-1.5 m", "Custom (meters)"),
+  Repeatability = c("±0.02-0.1 mm", "±0.01-0.05 mm", "±0.05-0.1 mm", "±0.05-0.5 mm"),
+  Speed = c("Moderate-Fast", "Very Fast", "Extremely Fast", "Moderate"),
+  Cost = c("$$-$$$$", "$$", "$$$", "$-$$$$"),
+  Best_For = c(
+    "Complex 3D tasks, maximum flexibility",
+    "Fast assembly, pick-place, screw driving",
+    "High-speed picking, packaging lines",
+    "Large work areas, heavy loads, simple paths"
+  )
+)
+
+kable(config_table, col.names = c("Configuration", "Axes", "Payload Range", "Reach",
+                                   "Repeatability", "Speed", "Cost", "Best Applications"),
+      caption = "Robot Configuration Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "14%")
+```
+
+### Degrees of Freedom
+
+```{r degrees-freedom, echo=FALSE, fig.width=12, fig.height=6}
+ggplot() +
+  # Robot arm representation
+  annotate("segment", x = 1, xend = 1, y = 0, yend = 1.5, size = 8, color = "#34495e") +
+  annotate("segment", x = 1, xend = 2.5, y = 1.5, yend = 2.5, size = 6, color = "#3498db") +
+  annotate("segment", x = 2.5, xend = 4, y = 2.5, yend = 2, size = 5, color = "#27ae60") +
+  annotate("segment", x = 4, xend = 5, y = 2, yend = 2.2, size = 4, color = "#e74c3c") +
+
+  # Joint circles
+  annotate("point", x = 1, y = 0, size = 12, color = "#f39c12") +
+  annotate("point", x = 1, y = 1.5, size = 10, color = "#f39c12") +
+  annotate("point", x = 2.5, y = 2.5, size = 8, color = "#f39c12") +
+  annotate("point", x = 4, y = 2, size = 6, color = "#f39c12") +
+  annotate("point", x = 5, y = 2.2, size = 5, color = "#9b59b6") +
+
+  # Axis labels
+  annotate("text", x = 0.5, y = 0, label = "J1\n(Base)", size = 3, fontface = "bold") +
+  annotate("text", x = 0.5, y = 1.5, label = "J2\n(Shoulder)", size = 3, fontface = "bold") +
+  annotate("text", x = 2.5, y = 3, label = "J3\n(Elbow)", size = 3, fontface = "bold") +
+  annotate("text", x = 4, y = 1.4, label = "J4\n(Wrist 1)", size = 3, fontface = "bold") +
+  annotate("text", x = 5.5, y = 2.2, label = "J5, J6\n(Wrist 2,3)", size = 3, fontface = "bold") +
+
+  # Motion arrows
+  annotate("curve", x = 0.7, xend = 1.3, y = 0.3, yend = 0.3,
+           curvature = -0.5, arrow = arrow(length = unit(0.2, "cm")), color = "#e74c3c") +
+  annotate("curve", x = 0.7, xend = 1.3, y = 1.8, yend = 1.8,
+           curvature = 0.5, arrow = arrow(length = unit(0.2, "cm")), color = "#e74c3c") +
+
+  # Legend
+  annotate("rect", xmin = 6, xmax = 9, ymin = 0, ymax = 3, fill = "#f8f9fa", color = "gray") +
+  annotate("text", x = 6.2, y = 2.7, label = "6-Axis Robot Joints:", hjust = 0,
+           fontface = "bold", size = 3.5) +
+  annotate("text", x = 6.2, y = 2.3, label = "J1: Base rotation", hjust = 0, size = 3) +
+  annotate("text", x = 6.2, y = 2.0, label = "J2: Shoulder pivot", hjust = 0, size = 3) +
+  annotate("text", x = 6.2, y = 1.7, label = "J3: Elbow pivot", hjust = 0, size = 3) +
+  annotate("text", x = 6.2, y = 1.4, label = "J4: Wrist rotation", hjust = 0, size = 3) +
+  annotate("text", x = 6.2, y = 1.1, label = "J5: Wrist bend", hjust = 0, size = 3) +
+  annotate("text", x = 6.2, y = 0.8, label = "J6: Tool rotation", hjust = 0, size = 3) +
+
+  coord_cartesian(xlim = c(0, 9.5), ylim = c(-0.5, 3.5)) +
+  labs(title = "6-Axis Articulated Robot - Joint Nomenclature",
+       subtitle = "Each joint provides one degree of freedom") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+---
+
+## Robot Specifications
+
+Understanding robot specifications is essential for proper selection and application.
+
+### Key Specifications
+
+```{r robot-specs, echo=FALSE}
+specs <- data.frame(
+  Specification = c("Payload", "Reach", "Repeatability", "Accuracy",
+                    "Maximum Speed", "Degrees of Freedom", "Mounting", "IP Rating"),
+  Definition = c(
+    "Maximum mass the robot can handle at full speed",
+    "Maximum distance from base to tool center point",
+    "Ability to return to same position repeatedly",
+    "Ability to reach a commanded position exactly",
+    "Maximum velocity at tool center point or joint speeds",
+    "Number of independent axes of motion",
+    "How robot is installed (floor, ceiling, wall, angle)",
+    "Ingress Protection rating for dust/water resistance"
+  ),
+  Typical_Values = c(
+    "3-2300 kg (varies widely by type)",
+    "500-4000 mm for articulated robots",
+    "±0.01 to ±0.1 mm",
+    "±0.1 to ±1.0 mm",
+    "1-12 m/s TCP; 100-500°/s joint",
+    "4-7 axes",
+    "Floor (most common), ceiling, wall, shelf",
+    "IP40 (standard) to IP67 (harsh environments)"
+  ),
+  Importance = c(
+    "Must exceed part + gripper + safety factor",
+    "Must cover all required work positions",
+    "Critical for precision assembly; welding",
+    "Important for offline programming",
+    "Affects cycle time; may be derated with payload",
+    "More axes = more flexibility",
+    "Affects work envelope and floor space",
+    "Required for foundry, food, wash-down applications"
+  )
+)
+
+kable(specs, caption = "Key Robot Specifications Explained") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "15%")
+```
+
+### Work Envelope
+
+The **work envelope** (or workspace) is the three-dimensional space the robot can reach.
+
+```{r work-envelope, echo=FALSE, fig.width=11, fig.height=7}
+# Simulate 6-axis robot work envelope (simplified 2D view)
+theta <- seq(0, 2*pi, length.out = 100)
+r_max <- 1800  # mm reach
+r_min <- 400   # mm minimum reach
+
+envelope <- data.frame(
+  x_outer = r_max * cos(theta),
+  y_outer = r_max * sin(theta),
+  x_inner = r_min * cos(theta),
+  y_inner = r_min * sin(theta)
+)
+
+ggplot() +
+  # Outer envelope
+  geom_polygon(data = data.frame(x = envelope$x_outer, y = envelope$y_outer),
+               aes(x = x, y = y), fill = "#3498db", alpha = 0.3, color = "#3498db") +
+  # Inner dead zone
+  geom_polygon(data = data.frame(x = envelope$x_inner, y = envelope$y_inner),
+               aes(x = x, y = y), fill = "white", color = "#e74c3c", linetype = "dashed") +
+  # Robot base
+  annotate("point", x = 0, y = 0, size = 8, color = "#34495e") +
+  annotate("text", x = 0, y = -200, label = "Robot Base", fontface = "bold") +
+  # Annotations
+  annotate("segment", x = 0, xend = 1800, y = 0, yend = 0,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")), color = "black") +
+  annotate("text", x = 900, y = 100, label = "Max Reach: 1800mm", size = 3.5) +
+  annotate("segment", x = 0, xend = 400, y = 300, yend = 300,
+           arrow = arrow(ends = "both", length = unit(0.15, "cm")), color = "#e74c3c") +
+  annotate("text", x = 200, y = 450, label = "Dead Zone\n(Min Reach: 400mm)",
+           size = 3, color = "#e74c3c", lineheight = 0.9) +
+  # Work area example
+  annotate("rect", xmin = 800, xmax = 1400, ymin = -300, ymax = 300,
+           fill = "#27ae60", alpha = 0.4, color = "#27ae60") +
+  annotate("text", x = 1100, y = 0, label = "Typical\nWork Area", size = 3,
+           color = "#27ae60", fontface = "bold", lineheight = 0.9) +
+  coord_fixed(xlim = c(-2200, 2200), ylim = c(-2200, 2200)) +
+  labs(title = "Robot Work Envelope (Top View)",
+       subtitle = "Horizontal reach shown; vertical reach forms spherical envelope",
+       x = "X Position (mm)", y = "Y Position (mm)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Payload Considerations
+
+```{r payload-calc, echo=TRUE}
+# Payload Calculation Example
+robot_max_payload <- 10  # kg
+gripper_weight <- 2.5    # kg
+part_weight <- 5.0       # kg
+safety_factor <- 1.2     # 20% safety margin
+
+total_load <- gripper_weight + part_weight
+required_capacity <- total_load * safety_factor
+available_capacity <- robot_max_payload - gripper_weight
+
+cat("Payload Analysis:\n")
+cat("─────────────────────────────\n")
+cat("Robot maximum payload:", robot_max_payload, "kg\n")
+cat("Gripper weight:", gripper_weight, "kg\n")
+cat("Part weight:", part_weight, "kg\n")
+cat("Total load:", total_load, "kg\n")
+cat("With safety factor (", safety_factor, "x):", required_capacity, "kg\n")
+cat("─────────────────────────────\n")
+cat("Available capacity for part:", available_capacity, "kg\n")
+
+if(required_capacity <= robot_max_payload) {
+  cat("Result: ACCEPTABLE - Robot can handle this load\n")
+} else {
+  cat("Result: EXCEEDED - Select larger robot or lighter gripper\n")
+}
+
+# Note about moment load
+cat("\nNote: Also verify moment load (payload × distance from flange)\n")
+cat("Moment at wrist:", part_weight, "kg ×", 0.3, "m =", part_weight * 0.3, "kg·m\n")
+```
+
+### Repeatability vs Accuracy
+
+```{r repeat-vs-accuracy, echo=FALSE, fig.width=12, fig.height=5}
+set.seed(42)
+n <- 30
+target <- c(0, 0)
+
+# High repeatability, high accuracy
+scenario1 <- data.frame(
+  x = rnorm(n, 0, 0.02),
+  y = rnorm(n, 0, 0.02),
+  Scenario = "High Repeatability\nHigh Accuracy"
+)
+
+# High repeatability, low accuracy (biased)
+scenario2 <- data.frame(
+  x = rnorm(n, 0.15, 0.02),
+  y = rnorm(n, 0.1, 0.02),
+  Scenario = "High Repeatability\nLow Accuracy (Biased)"
+)
+
+# Low repeatability, centered
+scenario3 <- data.frame(
+  x = rnorm(n, 0, 0.1),
+  y = rnorm(n, 0, 0.1),
+  Scenario = "Low Repeatability\nCentered Average"
+)
+
+scenarios <- rbind(scenario1, scenario2, scenario3)
+
+ggplot(scenarios, aes(x = x, y = y)) +
+  geom_point(color = "steelblue", size = 2, alpha = 0.7) +
+  geom_point(aes(x = 0, y = 0), color = "red", size = 4, shape = 3, stroke = 2) +
+  geom_circle(aes(x0 = 0, y0 = 0, r = 0.05), inherit.aes = FALSE,
+              color = "red", linetype = "dashed") +
+  facet_wrap(~Scenario, ncol = 3) +
+  coord_fixed(xlim = c(-0.25, 0.25), ylim = c(-0.25, 0.25)) +
+  labs(title = "Repeatability vs. Accuracy in Robot Positioning",
+       subtitle = "Red crosshair = target position; dashed circle = ±0.05mm tolerance",
+       x = "X Error (mm)", y = "Y Error (mm)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    strip.text = element_text(face = "bold")
+  )
+```
+
+<details><summary>**Understanding the Difference**</summary>
+
+**Repeatability:**
+- Ability to return to the SAME taught position
+- More important for most applications
+- Quoted spec (e.g., ±0.05mm) is typically 3σ
+- Achieved through consistent mechanical design and servo control
+
+**Accuracy:**
+- Ability to reach a COMMANDED position
+- Important for offline programming
+- Affected by mechanical tolerances, deflection, calibration
+- Can be improved through calibration
+
+**Why Repeatability Matters More:**
+In most applications, the robot is taught positions by jogging to them. As long as it returns to those positions consistently (repeatability), accuracy doesn't matter. Accuracy only matters when positions are calculated (offline programming) rather than taught.
+</details>
+
+---
+
+## Robot System Components
+
+A complete robotic system consists of several integrated components.
+
+### System Architecture
+
+```{r robot-system, echo=FALSE, fig.width=14, fig.height=9}
+ggplot() +
+  # Manipulator
+  annotate("rect", xmin = 0.5, xmax = 3, ymin = 4, ymax = 7,
+           fill = "#3498db", color = "black") +
+  annotate("text", x = 1.75, y = 6.5, label = "MANIPULATOR",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 1.75, y = 5.5, label = "• Mechanical arm\n• Motors & drives\n• Encoders\n• Brakes",
+           color = "white", size = 3, lineheight = 0.9) +
+
+  # End Effector
+  annotate("rect", xmin = 3.5, xmax = 6, ymin = 5.5, ymax = 7,
+           fill = "#27ae60", color = "black") +
+  annotate("text", x = 4.75, y = 6.7, label = "END EFFECTOR",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 4.75, y = 6, label = "Gripper, welding torch,\nspray gun, tool",
+           color = "white", size = 3, lineheight = 0.9) +
+
+  # Controller
+  annotate("rect", xmin = 0.5, xmax = 3, ymin = 1, ymax = 3.5,
+           fill = "#e74c3c", color = "black") +
+  annotate("text", x = 1.75, y = 3.2, label = "CONTROLLER",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 1.75, y = 2.2, label = "• CPU & memory\n• Motion control\n• I/O modules\n• Safety circuits",
+           color = "white", size = 3, lineheight = 0.9) +
+
+  # Teach Pendant
+  annotate("rect", xmin = 3.5, xmax = 6, ymin = 1, ymax = 3,
+           fill = "#f39c12", color = "black") +
+  annotate("text", x = 4.75, y = 2.7, label = "TEACH PENDANT",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 4.75, y = 1.8, label = "• Manual control\n• Programming\n• E-stop",
+           color = "white", size = 3, lineheight = 0.9) +
+
+  # External systems
+  annotate("rect", xmin = 7, xmax = 10, ymin = 4.5, ymax = 6.5,
+           fill = "#9b59b6", color = "black") +
+  annotate("text", x = 8.5, y = 6.2, label = "EXTERNAL SYSTEMS",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 8.5, y = 5.3, label = "• PLC integration\n• Vision system\n• Force sensor",
+           color = "white", size = 3, lineheight = 0.9) +
+
+  # Safety system
+  annotate("rect", xmin = 7, xmax = 10, ymin = 1.5, ymax = 4,
+           fill = "#1abc9c", color = "black") +
+  annotate("text", x = 8.5, y = 3.7, label = "SAFETY SYSTEM",
+           color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 8.5, y = 2.5, label = "• Light curtains\n• Safety mats\n• Interlocked gates\n• E-stops",
+           color = "white", size = 3, lineheight = 0.9) +
+
+  # Connections
+  annotate("segment", x = 3, xend = 3.5, y = 6.25, yend = 6.25,
+           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 1.75, xend = 1.75, y = 4, yend = 3.5,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 3, xend = 3.5, y = 2, yend = 2,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 6, xend = 7, y = 5.5, yend = 5.5,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")), size = 1) +
+  annotate("segment", x = 3, xend = 7, y = 2.75, yend = 2.75,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm")), size = 1, linetype = "dashed") +
+
+  coord_cartesian(xlim = c(0, 10.5), ylim = c(0.5, 7.5)) +
+  labs(title = "Industrial Robot System Components",
+       subtitle = "Integrated system of manipulator, controller, teach pendant, and peripherals") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### End Effectors (EOAT)
+
+**End of Arm Tooling (EOAT)** is the device attached to the robot's wrist to interact with parts.
+
+```{r end-effectors, echo=FALSE}
+eoat <- data.frame(
+  Type = c("Mechanical Gripper", "Vacuum Gripper", "Magnetic Gripper",
+           "Welding Torch", "Spray Gun", "Deburring Tool",
+           "Force/Torque Sensor", "Vision Camera"),
+  Principle = c(
+    "Fingers actuated by pneumatic, electric, or hydraulic",
+    "Suction cups powered by venturi or vacuum pump",
+    "Electromagnetic or permanent magnet",
+    "MIG, TIG, spot welding equipment",
+    "Paint, adhesive, sealant dispensing",
+    "Rotary tool for edge finishing",
+    "Measures forces and torques at tool",
+    "2D or 3D imaging for guidance"
+  ),
+  Applications = c(
+    "General part handling; assembly",
+    "Flat surfaces; sheet material; boxes",
+    "Ferrous metal parts; steel sheets",
+    "Automotive body, frames, components",
+    "Automotive painting; sealing",
+    "Casting, machining finishing",
+    "Assembly; polishing; insertion",
+    "Part location; inspection; guidance"
+  ),
+  Considerations = c(
+    "Part geometry; grip force; cycle time",
+    "Surface porosity; part weight; seal",
+    "Part material; residual magnetism",
+    "Process parameters; wire feed; shielding",
+    "Pattern; coverage; waste",
+    "Speed; pressure; consistency",
+    "Sensitivity; overload protection",
+    "Resolution; lighting; processing speed"
+  )
+)
+
+kable(eoat, col.names = c("EOAT Type", "Operating Principle", "Applications", "Key Considerations"),
+      caption = "Common End Effector Types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "16%")
+```
+
+### Gripper Selection Example
+
+```{r gripper-selection, echo=TRUE}
+# Gripper Force Calculation
+part_mass <- 3.0        # kg
+acceleration <- 15      # m/s² (robot acceleration)
+gravity <- 9.81         # m/s²
+safety_factor <- 2.0    # Minimum safety factor
+friction_coefficient <- 0.3  # Steel on rubber
+
+# Calculate forces
+weight_force <- part_mass * gravity
+inertia_force <- part_mass * acceleration
+total_force <- sqrt(weight_force^2 + inertia_force^2)
+
+# Required grip force (friction gripper)
+required_grip <- total_force / friction_coefficient * safety_factor
+
+cat("Gripper Force Calculation:\n")
+cat("─────────────────────────────\n")
+cat("Part mass:", part_mass, "kg\n")
+cat("Weight force:", round(weight_force, 1), "N\n")
+cat("Inertia force:", round(inertia_force, 1), "N\n")
+cat("Combined force:", round(total_force, 1), "N\n")
+cat("Friction coefficient:", friction_coefficient, "\n")
+cat("Safety factor:", safety_factor, "\n")
+cat("─────────────────────────────\n")
+cat("Required grip force:", round(required_grip, 1), "N\n")
+cat("\nSelect gripper with grip force ≥", ceiling(required_grip/10)*10, "N\n")
+```
+
+---
+
+## Coordinate Systems and Motion
+
+Understanding coordinate systems is essential for robot programming.
+
+### Coordinate Frames
+
+```{r coordinate-frames, echo=FALSE, fig.width=12, fig.height=8}
+ggplot() +
+  # World/Base coordinate system
+  annotate("segment", x = 1, xend = 2.5, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "red", size = 1.2) +
+  annotate("segment", x = 1, xend = 1, y = 1, yend = 2.5,
+           arrow = arrow(length = unit(0.2, "cm")), color = "green", size = 1.2) +
+  annotate("point", x = 1, y = 1, size = 6, color = "#34495e") +
+  annotate("text", x = 2.7, y = 1, label = "X", color = "red", fontface = "bold") +
+  annotate("text", x = 1, y = 2.7, label = "Y", color = "green", fontface = "bold") +
+  annotate("text", x = 1, y = 0.5, label = "World/Base Frame\n(Fixed)", size = 3,
+           lineheight = 0.9, fontface = "bold") +
+
+  # Tool coordinate system
+  annotate("segment", x = 6, xend = 7.2, y = 4.5, yend = 5,
+           arrow = arrow(length = unit(0.2, "cm")), color = "red", size = 1.2) +
+  annotate("segment", x = 6, xend = 5.5, y = 4.5, yend = 5.7,
+           arrow = arrow(length = unit(0.2, "cm")), color = "green", size = 1.2) +
+  annotate("point", x = 6, y = 4.5, size = 6, color = "#9b59b6") +
+  annotate("text", x = 7.4, y = 5, label = "X", color = "red", fontface = "bold") +
+  annotate("text", x = 5.3, y = 5.9, label = "Y", color = "green", fontface = "bold") +
+  annotate("text", x = 6, y = 3.8, label = "Tool Frame\n(Moves with robot)", size = 3,
+           lineheight = 0.9, fontface = "bold") +
+
+  # User/Work object frame
+  annotate("rect", xmin = 7.5, xmax = 10, ymin = 1, ymax = 2.5,
+           fill = "#f39c12", alpha = 0.3, color = "#f39c12") +
+  annotate("segment", x = 7.5, xend = 9, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "red", size = 1.2) +
+  annotate("segment", x = 7.5, xend = 7.5, y = 1, yend = 2.5,
+           arrow = arrow(length = unit(0.2, "cm")), color = "green", size = 1.2) +
+  annotate("text", x = 8.75, y = 0.5, label = "User/Work Object Frame\n(On fixture or part)",
+           size = 3, lineheight = 0.9, fontface = "bold") +
+
+  # Robot arm (simplified)
+  annotate("segment", x = 1, xend = 3, y = 1, yend = 3, size = 4, color = "#3498db") +
+  annotate("segment", x = 3, xend = 5, y = 3, yend = 4, size = 3, color = "#3498db") +
+  annotate("segment", x = 5, xend = 6, y = 4, yend = 4.5, size = 2, color = "#3498db") +
+
+  # Labels for coordinate types
+  annotate("rect", xmin = 0, xmax = 4.5, ymin = 5.5, ymax = 7.5,
+           fill = "#ecf0f1", color = "gray") +
+  annotate("text", x = 0.2, y = 7.2, label = "Coordinate Types:", hjust = 0,
+           fontface = "bold", size = 4) +
+  annotate("text", x = 0.2, y = 6.7, label = "• Joint: J1, J2, J3, J4, J5, J6 (degrees)", hjust = 0, size = 3) +
+  annotate("text", x = 0.2, y = 6.3, label = "• Cartesian: X, Y, Z, Rx, Ry, Rz (mm, degrees)", hjust = 0, size = 3) +
+  annotate("text", x = 0.2, y = 5.9, label = "• Tool: Relative to end effector", hjust = 0, size = 3) +
+
+  coord_cartesian(xlim = c(-0.5, 10.5), ylim = c(0, 8)) +
+  labs(title = "Robot Coordinate Systems",
+       subtitle = "Different reference frames for programming and motion") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Motion Types
+
+```{r motion-types, echo=FALSE}
+motion_table <- data.frame(
+  Motion_Type = c("Joint Move (MoveJ)", "Linear Move (MoveL)", "Circular Move (MoveC)"),
+  Path = c(
+    "Unpredictable path; each joint moves at constant speed",
+    "Straight line from start to end; TCP follows linear path",
+    "Arc or circle; defined by start, via, and end points"
+  ),
+  Speed_Control = c(
+    "Joint velocity (% or deg/s)",
+    "TCP velocity (mm/s)",
+    "TCP velocity (mm/s)"
+  ),
+  When_to_Use = c(
+    "Fast point-to-point; collision-free space; approach moves",
+    "Process paths (welding, sealing); precise positioning",
+    "Arc welding; edge following; contoured surfaces"
+  ),
+  Cycle_Time = c("Fastest", "Moderate", "Slowest")
+)
+
+kable(motion_table, col.names = c("Motion Type", "Path Characteristic",
+                                   "Speed Control", "When to Use", "Cycle Time"),
+      caption = "Robot Motion Types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "16%")
+```
+
+```{r motion-visualization, echo=FALSE, fig.width=11, fig.height=5}
+# Visualize motion types
+t <- seq(0, 1, length.out = 50)
+
+# Joint motion (curved path)
+joint_path <- data.frame(
+  x = sin(t * pi) * 100 + 50,
+  y = (1 - cos(t * pi)) * 50 + 20,
+  Type = "Joint Move"
+)
+
+# Linear motion (straight)
+linear_path <- data.frame(
+  x = t * 100 + 50,
+  y = t * 100 + 20,
+  Type = "Linear Move"
+)
+
+# Circular motion (arc)
+theta <- t * pi
+circular_path <- data.frame(
+  x = 100 + 50 * cos(theta + pi),
+  y = 70 + 50 * sin(theta + pi),
+  Type = "Circular Move"
+)
+
+paths <- rbind(joint_path, linear_path, circular_path)
+
+ggplot(paths, aes(x = x, y = y, color = Type)) +
+  geom_path(linewidth = 1.5) +
+  geom_point(data = paths[paths$Type == "Joint Move",][c(1, 50),],
+             size = 4, shape = 21, fill = "white") +
+  geom_point(data = paths[paths$Type == "Linear Move",][c(1, 50),],
+             size = 4, shape = 21, fill = "white") +
+  geom_point(data = paths[paths$Type == "Circular Move",][c(1, 25, 50),],
+             size = 4, shape = 21, fill = "white") +
+  scale_color_manual(values = c("#27ae60", "#3498db", "#e74c3c")) +
+  facet_wrap(~Type, ncol = 3) +
+  labs(title = "Robot Motion Types Visualized",
+       subtitle = "White dots indicate programmed points",
+       x = "X Position", y = "Y Position") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "none",
+    strip.text = element_text(face = "bold")
+  )
+```
+
+---
+
+## Robot Applications
+
+### Automotive Applications
+
+```{r auto-applications, echo=FALSE, fig.width=12, fig.height=7}
+auto_apps <- data.frame(
+  Application = c("Spot Welding", "Arc Welding", "Painting", "Assembly",
+                  "Material Handling", "Inspection"),
+  Robot_Type = c("6-axis, heavy payload", "6-axis", "6-axis, hollow wrist",
+                 "6-axis or SCARA", "6-axis or gantry", "6-axis with vision"),
+  Typical_Robot = c("FANUC R-2000, KUKA KR 240", "Yaskawa AR series",
+                    "ABB IRB 5500, FANUC P-series", "Universal Robots, FANUC LR Mate",
+                    "FANUC M-710, ABB IRB 6700", "FANUC with iRVision"),
+  Key_Metrics = c("Weld quality, cycle time", "Seam tracking, penetration",
+                  "Coverage, film thickness", "Precision, flexibility",
+                  "Throughput, reliability", "Detection rate, false positive"),
+  x = c(1, 2, 3, 1, 2, 3),
+  y = c(2, 2, 2, 1, 1, 1)
+)
+
+ggplot(auto_apps, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Application), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
+  geom_text(aes(label = Application), fontface = "bold", size = 4, color = "white", vjust = -1.5) +
+  geom_text(aes(label = paste0("Robot: ", Robot_Type)), size = 2.5, color = "white", vjust = 0) +
+  geom_text(aes(label = Key_Metrics), size = 2.5, color = "white",
+            fontface = "italic", vjust = 2) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
+                               "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
+  labs(title = "Automotive Robot Applications",
+       subtitle = "Common applications in automotive manufacturing") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Food & Beverage Applications
+
+```{r food-applications, echo=FALSE}
+food_apps <- data.frame(
+  Application = c("Palletizing", "Case Packing", "Pick and Place",
+                  "Cutting/Portioning", "Decorating", "Quality Inspection"),
+  Description = c(
+    "Stack cases/bags onto pallets in patterns",
+    "Load products into cases/cartons",
+    "Transfer products between conveyors/stations",
+    "Protein portioning, cake cutting",
+    "Applying icing, toppings, decorations",
+    "Vision-based defect detection, grading"
+  ),
+  Robot_Type = c("4-axis palletizer, 6-axis", "Delta, SCARA, 6-axis",
+                 "Delta (high speed), SCARA", "6-axis with vision",
+                 "6-axis, delta", "6-axis with vision"),
+  Special_Requirements = c(
+    "IP65+, washdown, food-safe lubricants",
+    "High speed, gentle handling",
+    "Extremely fast cycles, hygienic design",
+    "Precise cutting, washdown capable",
+    "Food-grade materials, precise dispensing",
+    "Hygienic design, reliable detection"
+  )
+)
+
+kable(food_apps, col.names = c("Application", "Description", "Robot Type", "Special Requirements"),
+      caption = "Food & Beverage Robot Applications") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "16%")
+```
+
+### Aerospace/Defense Applications
+
+```{r aerospace-applications, echo=FALSE}
+aero_apps <- data.frame(
+  Application = c("Drilling & Fastening", "Composite Layup",
+                  "NDT/Inspection", "Surface Treatment", "Assembly"),
+  Description = c(
+    "Precision hole drilling; rivet/bolt installation",
+    "Automated fiber placement (AFP); tape laying",
+    "Ultrasonic, X-ray, visual inspection of structures",
+    "Painting, coating, surface prep for bonding",
+    "Large structure assembly; wing-to-fuselage"
+  ),
+  Accuracy_Required = c("±0.05mm position", "±0.25mm fiber placement",
+                        "Full coverage", "Consistent thickness", "±0.5mm"),
+  Challenges = c(
+    "Drill normal to curved surfaces; chip management",
+    "Complex contours; material handling",
+    "Large part access; data management",
+    "Large envelopes; environmental control",
+    "Heavy payloads; coordination of multiple robots"
+  )
+)
+
+kable(aero_apps, col.names = c("Application", "Description", "Accuracy Required", "Challenges"),
+      caption = "Aerospace/Defense Robot Applications") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "16%")
+```
+
+---
+
+## Robot Safety
+
+Robot safety is critical to protect workers from potential hazards.
+
+### Hazard Categories
+
+```{r robot-hazards, echo=FALSE}
+hazards <- data.frame(
+  Hazard = c("Impact", "Crushing", "Trapping", "Ejection", "Other"),
+  Description = c(
+    "Robot strikes person with arm or tooling",
+    "Person caught between robot and fixed object",
+    "Body part caught in articulating joints or mechanisms",
+    "Part or tool flies off due to grip failure or breakage",
+    "Electrical, thermal, noise, radiation hazards"
+  ),
+  Risk_Factors = c(
+    "Speed, mass, sharp edges, unexpected motion",
+    "Limited escape space, high forces",
+    "Pinch points at joints, insufficient clearance",
+    "Grip force, centrifugal force, tool condition",
+    "Voltage, heat, welding arc, laser"
+  ),
+  Mitigation = c(
+    "Guarding, reduced speed zones, sensors",
+    "Minimum clearances, presence detection",
+    "Joint covers, clearance design",
+    "Grip verification, part detection, enclosure",
+    "Proper grounding, barriers, PPE"
+  )
+)
+
+kable(hazards, caption = "Robot Hazard Categories and Mitigations") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12%")
+```
+
+### Safety Standards
+
+```{r safety-standards, echo=FALSE}
+standards <- data.frame(
+  Standard = c("ISO 10218-1:2011", "ISO 10218-2:2011", "ISO/TS 15066:2016",
+               "ANSI/RIA R15.06", "ANSI/RIA R15.08"),
+  Scope = c(
+    "Robot manufacturer requirements",
+    "Robot system integrator requirements",
+    "Collaborative robot safety",
+    "US equivalent to ISO 10218",
+    "Industrial mobile robots"
+  ),
+  Key_Requirements = c(
+    "Stop functions, speed limiting, singularity protection",
+    "Risk assessment, safeguarding, layout, validation",
+    "Force/pressure limits, speed/separation monitoring",
+    "Safeguarding devices, risk assessment",
+    "Navigation safety, personnel detection"
+  )
+)
+
+kable(standards, col.names = c("Standard", "Scope", "Key Requirements"),
+      caption = "Key Robot Safety Standards") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### Safeguarding Methods
+
+```{r safeguarding, echo=FALSE, fig.width=13, fig.height=8}
+ggplot() +
+  # Robot cell outline
+  annotate("rect", xmin = 2, xmax = 8, ymin = 1, ymax = 6,
+           fill = "#f8f9fa", color = "black", linetype = "dashed", size = 1) +
+
+  # Robot
+  annotate("point", x = 5, y = 3.5, size = 15, color = "#3498db") +
+  annotate("text", x = 5, y = 3.5, label = "Robot", color = "white",
+           fontface = "bold", size = 3) +
+
+  # Physical barrier (fence)
+  annotate("segment", x = 2, xend = 2, y = 1, yend = 6, color = "#e74c3c", size = 3) +
+  annotate("segment", x = 8, xend = 8, y = 1, yend = 3, color = "#e74c3c", size = 3) +
+  annotate("segment", x = 8, xend = 8, y = 4.5, yend = 6, color = "#e74c3c", size = 3) +
+  annotate("text", x = 1.5, y = 3.5, label = "Safety\nFence",
+           color = "#e74c3c", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Light curtain
+  annotate("segment", x = 8, xend = 8, y = 3, yend = 4.5,
+           color = "#f39c12", size = 2, linetype = "dotted") +
+  annotate("rect", xmin = 7.8, xmax = 8.2, ymin = 3, ymax = 3.3,
+           fill = "#f39c12", color = "black") +
+  annotate("rect", xmin = 7.8, xmax = 8.2, ymin = 4.2, ymax = 4.5,
+           fill = "#f39c12", color = "black") +
+  annotate("text", x = 9, y = 3.75, label = "Light\nCurtain",
+           color = "#f39c12", fontface = "bold", size = 3, lineheight = 0.9) +
+
+  # Interlocked gate
+  annotate("rect", xmin = 4, xmax = 6, ymin = 0.8, ymax = 1.2,
+           fill = "#27ae60", color = "black") +
+  annotate("text", x = 5, y = 0.5, label = "Interlocked Gate",
+           color = "#27ae60", fontface = "bold", size = 3) +
+
+  # Safety mat
+  annotate("rect", xmin = 2.5, xmax = 4, ymin = 1.5, ymax = 2.5,
+           fill = "#9b59b6", alpha = 0.5, color = "#9b59b6") +
+  annotate("text", x = 3.25, y = 2, label = "Safety\nMat",
+           color = "#9b59b6", fontface = "bold", size = 2.5, lineheight = 0.9) +
+
+  # E-stop
+  annotate("point", x = 1.5, y = 5.5, size = 8, color = "red") +
+  annotate("text", x = 1.5, y = 5.5, label = "E", color = "white",
+           fontface = "bold", size = 3) +
+  annotate("text", x = 1.5, y = 5, label = "E-Stop", size = 2.5) +
+
+  # Scanner (area scanner)
+  annotate("point", x = 7, y = 2, size = 6, color = "#1abc9c") +
+  annotate("curve", x = 7, xend = 8.5, y = 2, yend = 1.5,
+           curvature = 0.3, color = "#1abc9c", linetype = "dashed") +
+  annotate("curve", x = 7, xend = 8.5, y = 2, yend = 2.5,
+           curvature = -0.3, color = "#1abc9c", linetype = "dashed") +
+  annotate("text", x = 7, y = 1.3, label = "Area\nScanner",
+           color = "#1abc9c", fontface = "bold", size = 2.5, lineheight = 0.9) +
+
+  # Legend
+  annotate("rect", xmin = 9.5, xmax = 13, ymin = 1, ymax = 6,
+           fill = "#f8f9fa", color = "gray") +
+  annotate("text", x = 9.7, y = 5.7, label = "Safeguarding Devices:",
+           hjust = 0, fontface = "bold", size = 3.5) +
+  annotate("segment", x = 9.7, xend = 10.2, y = 5.3, yend = 5.3, color = "#e74c3c", size = 2) +
+  annotate("text", x = 10.4, y = 5.3, label = "Physical Barrier", hjust = 0, size = 2.8) +
+  annotate("segment", x = 9.7, xend = 10.2, y = 4.9, yend = 4.9,
+           color = "#f39c12", size = 2, linetype = "dotted") +
+  annotate("text", x = 10.4, y = 4.9, label = "Light Curtain", hjust = 0, size = 2.8) +
+  annotate("rect", xmin = 9.7, xmax = 10.2, ymin = 4.4, ymax = 4.6, fill = "#27ae60") +
+  annotate("text", x = 10.4, y = 4.5, label = "Interlocked Gate", hjust = 0, size = 2.8) +
+  annotate("rect", xmin = 9.7, xmax = 10.2, ymin = 4, ymax = 4.2, fill = "#9b59b6", alpha = 0.5) +
+  annotate("text", x = 10.4, y = 4.1, label = "Safety Mat", hjust = 0, size = 2.8) +
+  annotate("point", x = 9.95, y = 3.7, size = 4, color = "#1abc9c") +
+  annotate("text", x = 10.4, y = 3.7, label = "Area Scanner", hjust = 0, size = 2.8) +
+  annotate("point", x = 9.95, y = 3.3, size = 4, color = "red") +
+  annotate("text", x = 10.4, y = 3.3, label = "E-Stop", hjust = 0, size = 2.8) +
+
+  coord_cartesian(xlim = c(0.5, 13.5), ylim = c(0, 6.5)) +
+  labs(title = "Robot Cell Safeguarding Methods",
+       subtitle = "Multiple layers of protection for personnel safety") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+---
+
+## Collaborative Robots (Cobots)
+
+**Collaborative robots** are designed to work safely alongside humans without traditional guarding.
+
+### Cobot Characteristics
+
+```{r cobot-comparison, echo=FALSE}
+cobot_compare <- data.frame(
+  Characteristic = c("Safety Approach", "Payload", "Speed", "Reach",
+                     "Programming", "Guarding", "Investment", "Applications"),
+  Traditional_Robot = c(
+    "Safeguarded cell; humans excluded",
+    "Up to 2300 kg",
+    "Very high (>2 m/s)",
+    "Up to 4 m",
+    "Specialized programmers",
+    "Required (fences, curtains)",
+    "High ($50K-500K+ with cell)",
+    "High-volume, dedicated tasks"
+  ),
+  Collaborative_Robot = c(
+    "Inherently safe; force/speed limited",
+    "Typically 3-35 kg",
+    "Limited (<1.5 m/s typically)",
+    "500-1300 mm typical",
+    "Intuitive; hand guiding",
+    "Often not required",
+    "Lower ($25K-75K typical)",
+    "Flexible, shared workspace"
+  )
+)
+
+kable(cobot_compare, col.names = c("", "Traditional Industrial Robot", "Collaborative Robot"),
+      caption = "Traditional Robot vs. Collaborative Robot Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%") %>%
+  column_spec(2, background = "#fadbd8") %>%
+  column_spec(3, background = "#d5f5e3")
+```
+
+### Collaborative Operation Modes (ISO/TS 15066)
+
+```{r cobot-modes, echo=FALSE}
+cobot_modes <- data.frame(
+  Mode = c("Safety-Rated Monitored Stop", "Hand Guiding",
+           "Speed and Separation Monitoring", "Power and Force Limiting"),
+  Description = c(
+    "Robot stops when human enters collaborative zone; resumes when clear",
+    "Operator physically guides robot; robot follows input forces",
+    "Robot adjusts speed based on distance to human; stops if too close",
+    "Robot limits force/pressure on contact to safe levels"
+  ),
+  Application = c(
+    "Loading/unloading where human enters occasionally",
+    "Teaching positions; flexible positioning tasks",
+    "Shared workspace with variable human presence",
+    "Direct human-robot collaboration; assembly assist"
+  ),
+  Requirements = c(
+    "Safety-rated sensors; safe zone definition",
+    "Emergency stop; safe torque control",
+    "Distance sensing; certified safety functions",
+    "Compliant design; verified force limits"
+  )
+)
+
+kable(cobot_modes, col.names = c("Collaboration Mode", "Description", "Application", "Requirements"),
+      caption = "ISO/TS 15066 Collaborative Operation Modes") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+### Force and Pressure Limits
+
+ISO/TS 15066 specifies maximum contact forces and pressures for different body areas:
+
+```{r force-limits, echo=FALSE}
+force_limits <- data.frame(
+  Body_Area = c("Skull/Forehead", "Face", "Neck (front/back)", "Chest",
+                "Abdomen", "Hand/Finger", "Arm", "Leg"),
+  Max_Pressure_Transient = c(130, 65, 145, 140, 110, 280, 190, 220),
+  Max_Pressure_QuasiStatic = c(130, 65, 145, 140, 110, 280, 190, 220),
+  Max_Force_Transient = c(130, 65, 150, 140, 110, 140, 150, 220),
+  Max_Force_QuasiStatic = c(130, 65, 150, 140, 110, 140, 150, 220)
+)
+
+kable(force_limits, col.names = c("Body Area", "Max Pressure (N/cm²)", "Quasi-Static Pressure",
+                                   "Max Force (N)", "Quasi-Static Force"),
+      caption = "ISO/TS 15066 Biomechanical Limits (Selected Values)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+---
+
+## Robot Programming Basics
+
+### Programming Methods
+
+```{r programming-methods, echo=FALSE}
+prog_methods <- data.frame(
+  Method = c("Online/Teach Pendant", "Lead-Through/Hand Guiding",
+             "Offline Programming", "Simulation-Based"),
+  Description = c(
+    "Use teach pendant to jog robot to positions and record",
+    "Physically move robot arm to desired positions",
+    "Create programs on PC without robot; download later",
+    "Program and test in virtual environment; transfer to real robot"
+  ),
+  Advantages = c(
+    "Direct; precise; see actual positions",
+    "Intuitive; fast for simple paths; no programming skill needed",
+    "No production downtime; complex paths; optimization",
+    "Risk-free testing; cycle time estimation; collision checking"
+  ),
+  Disadvantages = c(
+    "Production downtime; time-consuming for complex paths",
+    "Limited to cobot-style robots; not precise",
+    "Requires accurate cell model; calibration needed",
+    "Model accuracy critical; license costs"
+  )
+)
+
+kable(prog_methods, caption = "Robot Programming Methods Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### Basic Program Structure
+
+```{r program-structure, echo=FALSE}
+program_example <- '
+PROGRAM Main()
+
+  ! Initialize
+  HomePosition()
+  GripperOpen()
+
+  ! Main cycle
+  WHILE running DO
+
+    ! Move to pick position
+    MoveJ pApproach, v500, z50, tool1
+    MoveL pPick, v100, fine, tool1
+
+    ! Pick part
+    GripperClose()
+    WaitTime 0.2
+
+    ! Move to place position
+    MoveL pApproach, v200, z50, tool1
+    MoveJ pPlaceApproach, v500, z50, tool1
+    MoveL pPlace, v100, fine, tool1
+
+    ! Place part
+    GripperOpen()
+    WaitTime 0.2
+
+    ! Return
+    MoveL pPlaceApproach, v200, z50, tool1
+
+    ! Increment counter
+    PartCount := PartCount + 1
+
+  ENDWHILE
+
+ENDPROGRAM
+'
+
+cat("Example Robot Program (ABB RAPID-style pseudocode):\n")
+cat("────────────────────────────────────────────────────\n")
+cat(program_example)
+```
+
+### Key Programming Concepts
+
+```{r programming-concepts, echo=FALSE}
+concepts <- data.frame(
+  Concept = c("Position/Target", "Motion Instruction", "Speed Data",
+              "Zone Data", "Tool Data", "Work Object", "I/O Commands"),
+  Description = c(
+    "Stored robot position (joint angles or Cartesian coordinates)",
+    "Command to move robot (MoveJ, MoveL, MoveC)",
+    "Velocity parameter (mm/s for TCP, % for joints)",
+    "Corner path blending (fine = stop at point, z10 = 10mm blend)",
+    "Definition of tool center point relative to flange",
+    "Definition of work coordinate system for part positions",
+    "Control external devices (SetDO, WaitDI, etc.)"
+  ),
+  Example = c(
+    "pHome, pPick, pPlace",
+    "MoveL pTarget, v100, fine, tool1",
+    "v100 = 100 mm/s, v500 = 500 mm/s",
+    "fine = stop, z5 = 5mm radius blend",
+    "tool1 with TCP offset [0, 0, 150, 0, 0, 0]",
+    "wobj_fixture with base offset",
+    "SetDO doGripper, 1; WaitDI diPartPresent, 1"
+  )
+)
+
+kable(concepts, caption = "Key Robot Programming Concepts") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "16%")
+```
+
+---
+
+## Video Resources
+
+### Introduction to Industrial Robots
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2O7yj9g_oRQ" title="Industrial Robots Introduction" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Collaborative Robots Explained
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KIw3iQKC6BE" title="Collaborative Robots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+## Summary
+
+Industrial robotics is a fundamental technology in modern manufacturing:
+
+1. **Robot types** include articulated (most versatile), SCARA (fast assembly), delta (high-speed picking), and cartesian (large work areas)
+2. **Key specifications** include payload, reach, repeatability, speed, and degrees of freedom
+3. **System components** work together: manipulator, controller, teach pendant, end effector, and safety system
+4. **Coordinate systems** (world, tool, user) enable flexible programming and positioning
+5. **Applications** span automotive, food & beverage, and aerospace with industry-specific requirements
+6. **Safety** requires comprehensive risk assessment and appropriate safeguarding
+7. **Collaborative robots** enable human-robot cooperation with force/speed limiting
+8. **Programming** can be online (teach pendant), lead-through, or offline
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: Compare articulated (6-axis) robots, SCARA robots, and delta robots. For each, describe the typical applications and key advantages.</summary>
+
+**Answer:**
+
+| Robot Type | Configuration | Key Advantages | Typical Applications |
+|------------|---------------|----------------|---------------------|
+| **6-Axis Articulated** | 6 revolute joints; human-like arm | Maximum flexibility; can reach any orientation; large payload range | Welding, painting, assembly, material handling, machine tending |
+| **SCARA** | 4 axes; selective compliance | Very fast horizontal motion; rigid vertical; compact; precise | Pick-and-place, assembly, screw driving, packaging |
+| **Delta (Parallel)** | 3-4 axes; parallel linkage | Extremely fast (150+ picks/min); low moving mass | High-speed picking, packaging, sorting, light assembly |
+
+**Detailed Comparison:**
+
+**6-Axis Articulated:**
+- Most versatile - can position tool at any angle
+- Wide payload range (3 kg to 2300+ kg)
+- Can reach around obstacles
+- Complex programming possible
+- *Best for:* Tasks requiring complex orientations, welding seams, painting
+
+**SCARA:**
+- Inherently rigid in Z (vertical) - good for insertion
+- Very fast in X-Y plane
+- Lower cost than 6-axis
+- Compact footprint
+- *Best for:* Assembly operations, circuit board population, packaging
+
+**Delta:**
+- Highest speed of any configuration
+- Low inertia (motors at base, not moving)
+- Limited payload (typically <15 kg)
+- Requires overhead mounting
+- *Best for:* High-speed sorting, packaging lines, food handling
+</details>
+
+<details><summary>**Question 2**: A robot has a maximum payload of 15 kg. The gripper weighs 4 kg and the part weighs 8 kg. Is this robot suitable? What other factors should be considered?</summary>
+
+**Answer:**
+
+**Initial Assessment:**
+```
+Total load = Gripper weight + Part weight
+Total load = 4 kg + 8 kg = 12 kg
+
+Robot capacity: 15 kg
+Load: 12 kg
+Remaining margin: 3 kg (20%)
+```
+
+**Consideration with Safety Factor:**
+```
+Typical safety factor: 1.2 - 1.5
+Required capacity = 12 kg × 1.25 = 15 kg
+
+This equals the robot's maximum capacity - marginal!
+```
+
+**Additional Factors to Consider:**
+
+1. **Moment Load (Torque at Wrist)**
+   - Distance from flange to center of gravity matters
+   - If part is held 300mm from flange: Moment = 8 kg × 0.3 m = 2.4 kg·m
+   - Robot specs include moment limits - must verify
+
+2. **Inertia**
+   - Fast motion requires acceleration
+   - Higher mass + longer distance = higher inertia
+   - May need to derate payload for high-speed applications
+
+3. **Payload Derating with Reach**
+   - Many robots derate payload at extended reach
+   - 15 kg at 500mm may become 10 kg at 1500mm
+   - Check payload diagram in robot specifications
+
+4. **Orientation**
+   - Payload may vary with wrist orientation
+   - Horizontal reach vs. vertical lift differ
+
+5. **Acceleration Requirements**
+   - Higher acceleration = higher effective load
+   - May need to reduce speed/acceleration
+
+**Recommendation:**
+The 15 kg robot is marginal for this application. Consider:
+- Select next size up (20 kg) for adequate margin
+- Use lighter gripper (3 kg or less)
+- Reduce part handling distance from flange
+- Limit acceleration/speed if using this robot
+</details>
+
+<details><summary>**Question 3**: Explain the difference between repeatability and accuracy. Why is repeatability often more important than accuracy for robot applications?</summary>
+
+**Answer:**
+
+**Definitions:**
+
+**Repeatability:**
+- Ability to return to the **same taught position** multiple times
+- Measures consistency/precision of motion
+- Quoted as ± value (e.g., ±0.05 mm at 3σ)
+- Affected by: mechanical wear, servo control, thermal effects
+
+**Accuracy:**
+- Ability to reach a **commanded position** exactly
+- Measures how close actual position is to theoretical position
+- Typically worse than repeatability (e.g., ±0.5 mm)
+- Affected by: manufacturing tolerances, calibration, deflection, backlash
+
+**Why Repeatability is Usually More Important:**
+
+1. **Teaching Method**
+   - Most robots are programmed by teaching (jogging to positions)
+   - Robot doesn't need to know where it "should" be - just return to where it was taught
+   - As long as it returns consistently (repeatability), accuracy doesn't matter
+
+2. **Process Requirements**
+   - Welding: Need to follow same seam every time → repeatability
+   - Assembly: Need to insert part in same hole every time → repeatability
+   - Pick-place: Need to pick from same fixture position → repeatability
+
+3. **Compensation Possible**
+   - Poor accuracy can be compensated by adjusting taught points
+   - Poor repeatability cannot be compensated
+
+**When Accuracy Matters:**
+
+1. **Offline Programming**
+   - Positions calculated from CAD data, not taught
+   - Robot must go where commanded, first time
+   - Common in aerospace (large parts, tight access)
+
+2. **Multi-Robot Systems**
+   - Robots must agree on positions
+   - Calibration to common frame requires accuracy
+
+3. **Frequent Program Changes**
+   - If programs are frequently changed without re-teaching
+   - Offline modifications need accurate execution
+
+**Bottom Line:**
+For most industrial applications, ±0.05 mm repeatability is far more valuable than ±0.5 mm accuracy because taught positions are used.
+</details>
+
+<details><summary>**Question 4**: Describe the four collaborative operation modes defined in ISO/TS 15066. Give an example application for each.</summary>
+
+**Answer:**
+
+**1. Safety-Rated Monitored Stop**
+
+*Description:* Robot operates at normal speed when workspace is clear. When a person enters the collaborative zone, the robot stops and holds position. Robot resumes automatically when person exits.
+
+*Technical Requirements:*
+- Safety-rated sensors (light curtains, scanners)
+- Safety-rated monitored stop function
+- Clearly defined collaborative zone
+
+*Example Application:* Machine tending cell where operator occasionally loads raw material. Robot works at full speed during machining cycle but stops safely when operator enters to load/unload.
+
+---
+
+**2. Hand Guiding**
+
+*Description:* Operator physically contacts the robot through a hand guiding device and manually moves it. Robot follows operator's force input.
+
+*Technical Requirements:*
+- Hand guiding device (force/torque sensing)
+- Emergency stop accessible at guiding device
+- Speed reduction while guiding
+- Safe torque control
+
+*Example Application:* Teaching a paint path on an aerospace component. Operator guides robot along surface contour while robot records positions. Also used for "collaborative finishing" where operator guides robot holding a polishing tool.
+
+---
+
+**3. Speed and Separation Monitoring**
+
+*Description:* Robot continuously monitors distance to the nearest person. Speed adjusts based on separation: full speed when far, reduced speed when closer, stop if minimum distance breached.
+
+*Technical Requirements:*
+- Safety-rated distance monitoring (usually area scanners)
+- Safety-rated speed control
+- Multiple speed/distance zones defined
+- Real-time separation calculation
+
+*Example Application:* Shared packaging area where robot palletizes cases while operator moves around the cell. Robot slows when operator approaches, stops if too close, and resumes at appropriate speed as operator moves away.
+
+---
+
+**4. Power and Force Limiting**
+
+*Description:* Robot is designed so that forces and pressures from any contact are below injury thresholds. Contact is allowed because it cannot cause harm.
+
+*Technical Requirements:*
+- Inherently safe design (compliant joints, low mass, rounded surfaces)
+- Force/torque sensing or current monitoring
+- Verified force limits per ISO/TS 15066 body area tables
+- May include padding/soft covers
+
+*Example Application:* Assembly assist where robot holds a heavy part while human worker installs fasteners. Robot and human are in direct contact, with robot providing position support and human providing dexterity. Force is limited so accidental contact causes no injury.
+</details>
+
+<details><summary>**Question 5**: Calculate the required gripper force for a robot picking a 2 kg part with a friction coefficient of 0.4. The robot accelerates at 10 m/s². Use a safety factor of 2.0.</summary>
+
+**Answer:**
+
+```{r q5-answer, echo=TRUE}
+# Given values
+mass <- 2.0            # kg
+acceleration <- 10     # m/s²
+gravity <- 9.81        # m/s²
+friction_coef <- 0.4   # Coefficient of friction
+safety_factor <- 2.0   # Safety factor
+
+# Calculate forces
+# Weight force (vertical)
+F_gravity <- mass * gravity
+
+# Inertia force (from acceleration)
+F_inertia <- mass * acceleration
+
+# Combined force (vector sum for worst case)
+# Worst case: acceleration horizontal while holding against gravity
+F_combined <- sqrt(F_gravity^2 + F_inertia^2)
+
+# Required friction force to hold part
+# F_friction = μ × F_normal
+# F_normal = Grip force
+# F_friction must overcome F_combined
+
+# Without safety factor:
+F_grip_min <- F_combined / friction_coef
+
+# With safety factor:
+F_grip_required <- F_grip_min * safety_factor
+
+cat("Gripper Force Calculation:\n")
+cat("═══════════════════════════════════════\n\n")
+cat("Input Parameters:\n")
+cat("  Part mass:", mass, "kg\n")
+cat("  Robot acceleration:", acceleration, "m/s²\n")
+cat("  Friction coefficient:", friction_coef, "\n")
+cat("  Safety factor:", safety_factor, "\n\n")
+
+cat("Force Analysis:\n")
+cat("  Gravity force: F_g = m × g =", mass, "×", gravity, "=",
+    round(F_gravity, 1), "N\n")
+cat("  Inertia force: F_i = m × a =", mass, "×", acceleration, "=",
+    round(F_inertia, 1), "N\n")
+cat("  Combined force: F_c = √(F_g² + F_i²) =", round(F_combined, 1), "N\n\n")
+
+cat("Grip Force Calculation:\n")
+cat("  F_friction = μ × F_grip ≥ F_combined\n")
+cat("  F_grip ≥ F_combined / μ =", round(F_combined, 1), "/", friction_coef,
+    "=", round(F_grip_min, 1), "N\n")
+cat("  With safety factor:", round(F_grip_min, 1), "×", safety_factor,
+    "=", round(F_grip_required, 1), "N\n\n")
+
+cat("═══════════════════════════════════════\n")
+cat("REQUIRED GRIPPER FORCE:", ceiling(F_grip_required), "N minimum\n")
+cat("Select gripper rated for ≥", ceiling(F_grip_required/10)*10, "N\n")
+```
+</details>
+
+<details><summary>**Question 6**: List and describe five safety devices used to protect personnel around industrial robots.</summary>
+
+**Answer:**
+
+**1. Physical Barriers (Safety Fencing)**
+
+*Description:* Fixed guards or fencing that physically prevent access to the robot work envelope.
+
+*Characteristics:*
+- Rigid construction (steel, aluminum, polycarbonate)
+- Must withstand expected impact forces
+- Minimum height (typically ≥1.8 m)
+- Properly anchored to floor
+- May include interlocked gates for authorized entry
+
+*Application:* Primary safeguard for most traditional robot cells.
+
+---
+
+**2. Light Curtains (AOPD - Active Opto-electronic Protective Device)**
+
+*Description:* Transmitter and receiver create a sensing field of infrared beams. Breaking any beam triggers a stop.
+
+*Characteristics:*
+- Type 2 or Type 4 (safety-rated)
+- Resolution (14mm for finger, 40mm for hand/arm)
+- Muting capability for material transfer
+- Very fast response (<20ms)
+
+*Application:* Access points where frequent entry needed; allows material flow while protecting personnel.
+
+---
+
+**3. Safety Mats (Pressure-Sensitive Mats)**
+
+*Description:* Floor mats that detect weight/pressure and trigger stop when stepped on.
+
+*Characteristics:*
+- Placed in hazardous zones
+- Withstand industrial environment (oil, debris)
+- Fast response
+- Self-monitoring for failures
+
+*Application:* Areas where overhead detection isn't practical; around robot bases.
+
+---
+
+**4. Area Scanners (Safety Laser Scanners)**
+
+*Description:* Laser scanner detects objects/personnel entering defined zones. Multiple warning and stop zones configurable.
+
+*Characteristics:*
+- 270° field of view typical
+- Multiple programmable zones
+- Warning zone (slow robot) and stop zone (stop robot)
+- Type 3 safety rating
+- Detects at floor level
+
+*Application:* Open cells requiring flexibility; mobile robot protection; speed/separation monitoring.
+
+---
+
+**5. Interlocked Gates/Doors**
+
+*Description:* Access gates with safety switches that stop robot when opened.
+
+*Characteristics:*
+- Mechanical or magnetic interlock switches
+- Trapped key systems for lockout
+- May include guard locking (prevent opening while robot moving)
+- Escape release from inside
+- Meets ISO 14119
+
+*Application:* Authorized entry points for maintenance, setup, troubleshooting.
+
+---
+
+**Additional Devices:**
+
+- **E-Stop (Emergency Stop)**: Palm-operated buttons to immediately stop robot
+- **Two-Hand Controls**: Require both hands on buttons to initiate motion
+- **Enabling Devices**: 3-position switches held by personnel in restricted area
+- **Presence-Sensing Devices**: Capacitive, radar, or vision-based detection
+</details>
+
+<details><summary>**Question 7**: Explain the difference between MoveJ (Joint Move) and MoveL (Linear Move). When would you use each?</summary>
+
+**Answer:**
+
+**MoveJ (Joint Move)**
+
+*How It Works:*
+- Each joint moves from start to end angle independently
+- All joints start and stop together (coordinated)
+- Path of TCP (Tool Center Point) is unpredictable - curved
+- Robot calculates joint interpolation, not TCP path
+
+*Characteristics:*
+- Fastest point-to-point motion
+- No singularity issues during move
+- Path may vary depending on starting configuration
+- Speed specified in % of max or joint velocity (°/s)
+
+*When to Use:*
+- Moving between distant points through free space
+- Approach movements before precise positioning
+- Home position moves
+- Any time when path doesn't matter, only endpoints
+- Escaping from near-singularity positions
+
+---
+
+**MoveL (Linear Move)**
+
+*How It Works:*
+- TCP follows a straight line from start to end
+- Robot calculates joint positions to maintain linear TCP path
+- Orientation is interpolated linearly as well
+- All axes coordinated to produce straight line
+
+*Characteristics:*
+- Guaranteed straight path
+- Consistent, predictable motion
+- Slower than MoveJ for same endpoint distance
+- Can encounter singularities during move
+- Speed specified in mm/s at TCP
+
+*When to Use:*
+- Process paths (welding, sealing, cutting)
+- Insertion/extraction operations
+- Approach to pick/place positions
+- Any time path must be straight
+- When moving close to obstacles
+
+---
+
+**Practical Example:**
+
+Imagine picking a part from a fixture:
+
+```
+! Move from home to near pick position - path doesn't matter
+MoveJ pApproach, v1000, z50, tool1    ! Joint move - fast
+
+! Move down to pick - must be straight to avoid collision
+MoveL pPick, v100, fine, tool1        ! Linear move - controlled
+
+! Pick part, then retract straight up
+GripperClose()
+MoveL pApproach, v200, z10, tool1     ! Linear move - straight up
+
+! Move to place area - through open space
+MoveJ pPlaceApproach, v1000, z50, tool1  ! Joint move - fast
+```
+
+**Key Decision:**
+- If path matters → MoveL
+- If only destination matters → MoveJ
+</details>
+
+<details><summary>**Question 8**: A manufacturing engineer needs to select a robot for a palletizing application. The requirements are: 25 kg payload, 2.2 m horizontal reach, 10 cycles per minute, floor-mounted. Recommend a robot type and justify your selection.</summary>
+
+**Answer:**
+
+**Application Analysis:**
+
+| Requirement | Value | Implication |
+|-------------|-------|-------------|
+| Payload | 25 kg | Medium-heavy; rules out delta and most SCARA |
+| Reach | 2.2 m | Large work envelope needed |
+| Cycle rate | 10/min | 6 seconds/cycle; moderate speed |
+| Mounting | Floor | Typical industrial installation |
+| Motion type | Palletizing | Mainly vertical and horizontal; some rotation |
+
+**Robot Type Evaluation:**
+
+**1. 4-Axis Palletizing Robot (RECOMMENDED)**
+- Specifically designed for palletizing
+- 4 axes: base rotation, arm, elbow, wrist
+- High payload capability (25-700+ kg available)
+- Long reach available (up to 3.2m)
+- Fast for palletizing motions
+- Lower cost than 6-axis
+- Examples: FANUC M-410iC, KUKA KR QUANTEC PA, ABB IRB 460
+
+*Verdict: Excellent match for this application*
+
+**2. 6-Axis Articulated Robot**
+- Maximum flexibility
+- Can handle complex pallet patterns
+- Higher cost than 4-axis for same payload
+- May be over-specified for simple palletizing
+- Examples: FANUC M-710iC/50, ABB IRB 6700
+
+*Verdict: Capable but potentially over-specified and more expensive*
+
+**3. Cartesian/Gantry Robot**
+- Can cover very large areas
+- Simple motion control
+- Higher installation complexity
+- Less common for palletizing applications
+
+*Verdict: Possible but not ideal for this payload/cycle rate*
+
+**Recommended Selection:**
+
+**FANUC M-410iC/185** or similar 4-axis palletizer
+- Payload: 185 kg (well above 25 kg requirement with margin for gripper)
+- Reach: 3.143 m (exceeds 2.2 m requirement)
+- Repeatability: ±0.5 mm
+- Axes: 4
+
+**Justification:**
+1. **Purpose-built**: Designed specifically for palletizing
+2. **Adequate payload**: 185 kg allows for heavy gripper + multiple parts
+3. **Reach**: 3.1 m provides margin for future needs
+4. **Speed**: Optimized kinematics for palletizing motion profile
+5. **Reliability**: Proven in thousands of palletizing applications
+6. **Cost**: Lower than equivalent 6-axis robot
+7. **Simplicity**: 4 axes easier to program and maintain than 6
+
+**Additional Recommendations:**
+- Vacuum or mechanical gripper depending on product
+- Vision system for product detection if variety exists
+- Safety scanner for operator access during pallet changes
+- Interface to conveyor for product delivery
+</details>
+
+---
+
+## References
+
+1. Siciliano, B., & Khatib, O. (Eds.). (2016). *Springer Handbook of Robotics* (2nd ed.). Springer.
+
+2. ISO 10218-1:2011. *Robots and Robotic Devices - Safety Requirements for Industrial Robots - Part 1: Robots*.
+
+3. ISO 10218-2:2011. *Robots and Robotic Devices - Safety Requirements for Industrial Robots - Part 2: Robot Systems and Integration*.
+
+4. ISO/TS 15066:2016. *Robots and Robotic Devices - Collaborative Robots*.
+
+5. International Federation of Robotics. (2023). *World Robotics Report*. IFR.
+
+6. Niku, S.B. (2020). *Introduction to Robotics: Analysis, Control, Applications* (3rd ed.). Wiley.
+
+7. Craig, J.J. (2018). *Introduction to Robotics: Mechanics and Control* (4th ed.). Pearson.
+
+8. FANUC Corporation. (2023). *Robot Technical Manuals*. FANUC.
+
+9. ABB Robotics. (2023). *Technical Reference Manual - RAPID Instructions*. ABB.
+
+10. Robotic Industries Association. (2023). *ANSI/RIA R15.06-2012: Industrial Robots and Robot Systems - Safety Requirements*. RIA.

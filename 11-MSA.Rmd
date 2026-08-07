@@ -1,0 +1,1780 @@
+# Measurement Systems Analysis
+
+```{r setup-12, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+----------------------------------------------------------------
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Explain the importance of measurement system quality in process control
+2. Identify the components of measurement system variation
+3. Define and calculate accuracy, bias, linearity, stability, repeatability, and reproducibility
+4. Conduct and interpret a Gauge R&R study using both the Range and ANOVA methods
+5. Determine measurement system acceptability using %GRR and ndc criteria
+6. Apply attribute measurement system analysis for pass/fail decisions
+7. Recognize common sources of measurement error and implement improvements
+8. Understand the relationship between MSA and SPC effectiveness
+
+---
+
+## Introduction to Measurement Systems Analysis
+
+**Measurement Systems Analysis (MSA)** is the science of evaluating the quality of measurement processes. Before we can trust our data for process control, quality decisions, or capability studies, we must first verify that our measurement system is capable of providing reliable results.
+
+### Why MSA Matters
+
+> "You can't improve what you can't measure - but you also can't improve what you measure incorrectly."
+
+Consider this scenario:
+
+```{r msa-importance, echo=FALSE, fig.width=11, fig.height=6}
+set.seed(42)
+# Simulate the same part measured with good vs. poor measurement systems
+true_value <- 25.00
+n_measurements <- 50
+
+# Good measurement system
+good_system <- rnorm(n_measurements, mean = true_value, sd = 0.02)
+
+# Poor measurement system
+poor_system <- rnorm(n_measurements, mean = true_value + 0.05, sd = 0.15)
+
+measurement_data <- data.frame(
+  Measurement = c(good_system, poor_system),
+  System = rep(c("Good Measurement System\n(Low variation, no bias)",
+                  "Poor Measurement System\n(High variation, biased)"), each = n_measurements)
+)
+
+ggplot(measurement_data, aes(x = Measurement, fill = System)) +
+  geom_histogram(bins = 20, color = "white", alpha = 0.8) +
+  geom_vline(xintercept = true_value, linetype = "dashed", color = "red", linewidth = 1.2) +
+  geom_vline(xintercept = 25.00 - 0.10, linetype = "solid", color = "darkred", linewidth = 0.8) +
+  geom_vline(xintercept = 25.00 + 0.10, linetype = "solid", color = "darkred", linewidth = 0.8) +
+  annotate("text", x = true_value, y = 12, label = "True Value",
+           color = "red", fontface = "bold", hjust = -0.1) +
+  annotate("text", x = 24.90, y = 12, label = "LSL", color = "darkred", hjust = 1.1) +
+  annotate("text", x = 25.10, y = 12, label = "USL", color = "darkred", hjust = -0.1) +
+  facet_wrap(~System, ncol = 1) +
+  labs(title = "The Same Parts Measured by Two Different Systems",
+       subtitle = "Poor measurement systems lead to incorrect accept/reject decisions",
+       x = "Measured Value (mm)", y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 14),
+        strip.text = element_text(face = "bold", size = 11))
+```
+
+### The Cost of Poor Measurement
+
+```{r measurement-costs, echo=FALSE}
+cost_impacts <- data.frame(
+  Impact = c("False Accepts (Type II Error)",
+             "False Rejects (Type I Error)",
+             "Process Adjustment Errors",
+             "Capability Misassessment",
+             "Customer Complaints"),
+  Description = c(
+    "Bad parts passed as good; reach customer",
+    "Good parts rejected as bad; scrapped or reworked",
+    "Adjusting process based on measurement noise, not real changes",
+    "Cp/Cpk calculations are wrong; true capability unknown",
+    "Inconsistent quality due to measurement-based decisions"
+  ),
+  Consequence = c(
+    "Warranty claims, recalls, reputation damage",
+    "Increased scrap costs, reduced yield",
+    "Over-adjustment increases variation (tampering)",
+    "False confidence or unnecessary investment",
+    "Loss of customer trust and business"
+  )
+)
+
+kable(cost_impacts, caption = "Business Impact of Poor Measurement Systems") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "22%")
+```
+
+### MSA in Industry Standards
+
+MSA is required by multiple quality standards:
+
+- **IATF 16949** (Automotive): Requires MSA for all measurement systems referenced in control plans
+- **AS9100** (Aerospace): Requires demonstrated measurement capability
+- **ISO 9001**: Requires monitoring and measurement resources to be suitable
+- **FDA 21 CFR Part 820** (Medical Devices): Requires validated measurement equipment
+
+---
+
+## Components of Measurement Variation
+
+Total measurement variation comes from multiple sources. Understanding these components is essential for improvement.
+
+### The Measurement System Model
+
+```{r variation-components, echo=FALSE, fig.width=12, fig.height=8}
+# Create hierarchical breakdown of measurement variation
+components <- data.frame(
+  label = c("Total Observed\nVariation",
+            "Actual Part\nVariation", "Measurement\nSystem Variation",
+            "Accuracy\n(Location)", "Precision\n(Spread)",
+            "Bias", "Linearity", "Stability",
+            "Repeatability\n(Equipment)", "Reproducibility\n(Appraiser)"),
+  x = c(6, 3, 9, 7, 11, 6, 7, 8, 10, 12),
+  y = c(5, 3, 3, 1, 1, -1, -1, -1, -1, -1),
+  level = c(1, 2, 2, 3, 3, 4, 4, 4, 4, 4)
+)
+
+# Define connections
+connections <- data.frame(
+  x = c(6, 6, 9, 9, 7, 7, 7, 11, 11),
+  xend = c(3, 9, 7, 11, 6, 7, 8, 10, 12),
+  y = c(4.5, 4.5, 2.5, 2.5, 0.5, 0.5, 0.5, 0.5, 0.5),
+  yend = c(3.5, 3.5, 1.5, 1.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+)
+
+ggplot() +
+  geom_segment(data = connections,
+               aes(x = x, y = y, xend = xend, yend = yend),
+               color = "gray50", linewidth = 1) +
+  geom_label(data = components,
+             aes(x = x, y = y, label = label, fill = factor(level)),
+             size = 4.5, fontface = "bold", color = "white",
+             label.padding = unit(0.4, "lines")) +
+  scale_fill_manual(values = c("1" = "#2c3e50", "2" = "#3498db",
+                               "3" = "#27ae60", "4" = "#e74c3c"),
+                    guide = "none") +
+  coord_cartesian(xlim = c(0, 15), ylim = c(-2, 6)) +
+  labs(title = "Components of Measurement System Variation",
+       subtitle = "Total variation = Part variation + Measurement system variation") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, size = 11))
+```
+
+### Accuracy vs. Precision
+
+These are often confused but are fundamentally different concepts:
+
+```{r accuracy-precision, echo=FALSE, fig.width=12, fig.height=6}
+set.seed(123)
+n <- 30
+
+# Create four scenarios
+scenarios <- data.frame(
+  x = c(rnorm(n, 0, 0.3), rnorm(n, 0, 1.2),
+        rnorm(n, 1.5, 0.3), rnorm(n, 1.5, 1.2)),
+  y = c(rnorm(n, 0, 0.3), rnorm(n, 0, 1.2),
+        rnorm(n, 1.5, 0.3), rnorm(n, 1.5, 1.2)),
+  Scenario = rep(c("Accurate & Precise\n(IDEAL)",
+                   "Accurate but Imprecise",
+                   "Precise but Inaccurate\n(Biased)",
+                   "Inaccurate & Imprecise\n(WORST)"), each = n)
+)
+
+scenarios$Scenario <- factor(scenarios$Scenario,
+                              levels = c("Accurate & Precise\n(IDEAL)",
+                                        "Accurate but Imprecise",
+                                        "Precise but Inaccurate\n(Biased)",
+                                        "Inaccurate & Imprecise\n(WORST)"))
+
+# Circle data for target rings
+circle_data <- data.frame(x0 = 0, y0 = 0, r = c(0.5, 1, 1.5),
+                          color = c("red", "orange", "gold"))
+
+ggplot(scenarios, aes(x = x, y = y)) +
+  geom_circle(data = circle_data[1,], aes(x0 = x0, y0 = y0, r = r),
+              inherit.aes = FALSE, color = "red", linetype = "dashed") +
+  geom_circle(data = circle_data[2,], aes(x0 = x0, y0 = y0, r = r),
+              inherit.aes = FALSE, color = "orange", linetype = "dashed") +
+  geom_circle(data = circle_data[3,], aes(x0 = x0, y0 = y0, r = r),
+              inherit.aes = FALSE, color = "gold", linetype = "dashed") +
+  geom_point(color = "steelblue", size = 2, alpha = 0.7) +
+  annotate("point", x = 0, y = 0, color = "red", size = 4, shape = 3, stroke = 2) +
+  facet_wrap(~Scenario, nrow = 1) +
+  coord_fixed(xlim = c(-3, 3), ylim = c(-3, 3)) +
+  labs(title = "Accuracy vs. Precision: The Target Analogy",
+       subtitle = "Red crosshair = True value (bullseye)",
+       x = "", y = "") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    strip.text = element_text(face = "bold", size = 10),
+    axis.text = element_blank(),
+    panel.grid = element_blank()
+  )
+```
+
+```{r accuracy-precision-table, echo=FALSE}
+ap_table <- data.frame(
+  Characteristic = c("Accuracy", "Precision"),
+  Definition = c("How close measurements are to the true value (average)",
+                 "How close measurements are to each other (spread)"),
+  Affected_By = c("Calibration, bias, linearity",
+                  "Repeatability, reproducibility, resolution"),
+  Correctable = c("Yes - through calibration and adjustment",
+                  "Harder - often requires equipment upgrade"),
+  Metric = c("Bias (average error from reference)",
+             "Standard deviation of repeated measurements")
+)
+
+kable(ap_table, col.names = c("", "Definition", "Affected By", "Correctable?", "Primary Metric"),
+      caption = "Accuracy vs. Precision Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "12%")
+```
+
+---
+
+## Accuracy Studies
+
+Accuracy studies evaluate how well the measurement system indicates the true value.
+
+### Bias
+
+**Bias** is the systematic error - the difference between the average of measurements and the true (reference) value.
+
+$$\text{Bias} = \bar{x}_{observed} - x_{reference}$$
+
+```{r bias-example, echo=FALSE, fig.width=10, fig.height=5}
+set.seed(456)
+reference <- 50.00
+measurements <- rnorm(25, mean = 50.08, sd = 0.03)
+
+bias_data <- data.frame(
+  measurement = 1:25,
+  value = measurements
+)
+
+ggplot(bias_data, aes(x = measurement, y = value)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_hline(yintercept = reference, color = "red", linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = mean(measurements), color = "blue", linewidth = 1) +
+  annotate("text", x = 26, y = reference, label = "Reference = 50.00",
+           hjust = 0, color = "red", fontface = "bold") +
+  annotate("text", x = 26, y = mean(measurements),
+           label = paste0("Average = ", round(mean(measurements), 3)),
+           hjust = 0, color = "blue", fontface = "bold") +
+  annotate("segment", x = 24, xend = 24, y = reference, yend = mean(measurements),
+           arrow = arrow(ends = "both", length = unit(0.1, "inches")), color = "purple") +
+  annotate("text", x = 23.5, y = (reference + mean(measurements))/2,
+           label = paste0("Bias = ", round(mean(measurements) - reference, 3)),
+           hjust = 1, color = "purple", fontface = "bold") +
+  scale_x_continuous(limits = c(0, 30)) +
+  labs(title = "Bias Study: Measuring a Reference Standard",
+       subtitle = "25 repeated measurements of a certified reference block",
+       x = "Measurement Number", y = "Measured Value (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+```{r bias-calculation, echo=TRUE}
+# Bias study calculation
+reference_value <- 50.000  # Certified reference standard
+measurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,
+                  50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07)
+
+# Calculate bias
+average_measured <- mean(measurements)
+bias <- average_measured - reference_value
+
+cat("Reference Value:", reference_value, "mm\n")
+cat("Average Measured:", round(average_measured, 4), "mm\n")
+cat("Bias:", round(bias, 4), "mm\n")
+cat("Bias as % of Tolerance (±0.10):", round(abs(bias) / 0.10 * 100, 1), "%\n")
+
+# Statistical test for significance
+t_test <- t.test(measurements, mu = reference_value)
+cat("\nt-test p-value:", round(t_test$p.value, 4))
+if(t_test$p.value < 0.05) {
+  cat(" - Bias is statistically significant\n")
+} else {
+  cat(" - Bias is not statistically significant\n")
+}
+```
+
+### Linearity
+
+**Linearity** measures whether bias changes across the measurement range. A gauge might be accurate at one end of its range but biased at the other.
+
+```{r linearity-study, echo=FALSE, fig.width=11, fig.height=6}
+# Simulate linearity study data
+set.seed(789)
+reference_points <- c(10, 25, 40, 55, 70)
+n_per_point <- 12
+
+linearity_data <- data.frame(
+  Reference = rep(reference_points, each = n_per_point),
+  Bias = c(
+    rnorm(n_per_point, 0.02, 0.01),   # Small positive bias at low end
+    rnorm(n_per_point, 0.01, 0.01),   # Slight positive bias
+    rnorm(n_per_point, 0.00, 0.01),   # No bias at midpoint
+    rnorm(n_per_point, -0.02, 0.01),  # Slight negative bias
+    rnorm(n_per_point, -0.05, 0.01)   # Larger negative bias at high end
+  )
+)
+
+# Fit regression
+linearity_model <- lm(Bias ~ Reference, data = linearity_data)
+
+ggplot(linearity_data, aes(x = Reference, y = Bias)) +
+  geom_point(color = "steelblue", size = 2, alpha = 0.7) +
+  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  annotate("text", x = 60, y = 0.04,
+           label = paste0("Slope = ", round(coef(linearity_model)[2], 5),
+                         "\nLinearity = ", round(abs(coef(linearity_model)[2]) *
+                                                   diff(range(reference_points)), 4), " mm"),
+           hjust = 0, size = 4, fontface = "bold") +
+  labs(title = "Linearity Study Results",
+       subtitle = "Bias plotted against reference value across operating range",
+       x = "Reference Value (mm)", y = "Bias (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+```{r linearity-calc, echo=TRUE}
+# Linearity calculation
+reference <- c(10, 25, 40, 55, 70)
+avg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)
+
+# Fit linear regression
+model <- lm(avg_bias ~ reference)
+
+# Calculate linearity
+slope <- coef(model)[2]
+range_used <- max(reference) - min(reference)
+linearity <- abs(slope) * range_used
+
+cat("Regression equation: Bias =", round(coef(model)[1], 4), "+",
+    round(slope, 5), "× Reference\n")
+cat("Linearity (slope × range):", round(linearity, 4), "mm\n")
+cat("As % of tolerance (±0.10):", round(linearity / 0.10 * 100, 1), "%\n")
+
+# R-squared
+cat("R² =", round(summary(model)$r.squared, 3),
+    "- indicates", ifelse(summary(model)$r.squared > 0.7, "significant", "minor"),
+    "linearity issue\n")
+```
+
+### Stability
+
+**Stability** (also called drift) measures whether the measurement system's accuracy changes over time.
+
+```{r stability-study, echo=FALSE, fig.width=11, fig.height=6}
+set.seed(321)
+# Simulate stability study over 30 days
+days <- 1:30
+reference <- 25.00
+
+# Measurements showing some drift
+measurements <- 25.00 + 0.001 * days + rnorm(30, 0, 0.015)
+
+stability_data <- data.frame(
+  Day = days,
+  Measurement = measurements,
+  Bias = measurements - reference
+)
+
+ggplot(stability_data, aes(x = Day, y = Bias)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_line(color = "steelblue", alpha = 0.5) +
+  geom_smooth(method = "lm", color = "red", linetype = "dashed", se = FALSE) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_hline(yintercept = c(-0.05, 0.05), linetype = "dotted", color = "orange") +
+  annotate("text", x = 30, y = 0.05, label = "±5% tolerance",
+           hjust = 1, vjust = -0.5, color = "orange") +
+  labs(title = "Stability Study: Daily Measurements of Reference Standard",
+       subtitle = "Tracking bias over 30 days to detect drift",
+       x = "Day", y = "Bias from Reference (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+### Stability Control Chart
+
+For ongoing stability monitoring, use a control chart:
+
+```{r stability-control-chart, echo=TRUE}
+# Stability monitoring with control chart
+reference <- 25.000
+measurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,
+                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)
+days <- 1:15
+
+# Calculate control limits (based on historical sigma)
+historical_sigma <- 0.010
+x_bar <- mean(measurements[1:5])  # Baseline from first 5 days
+UCL <- x_bar + 3 * historical_sigma
+LCL <- x_bar - 3 * historical_sigma
+
+cat("Baseline Average:", round(x_bar, 4), "\n")
+cat("UCL:", round(UCL, 4), "\n")
+cat("LCL:", round(LCL, 4), "\n")
+
+# Check for out-of-control
+out_of_control <- which(measurements > UCL | measurements < LCL)
+if(length(out_of_control) > 0) {
+  cat("\nOut-of-control points on days:", out_of_control, "\n")
+  cat("Drift detected - recalibration recommended\n")
+} else {
+  cat("\nNo out-of-control points - measurement system stable\n")
+}
+```
+
+---
+
+## Precision Studies: Gauge R&R
+
+**Gauge R&R** (Repeatability and Reproducibility) is the most common MSA study. It quantifies precision variation.
+
+### Repeatability vs. Reproducibility
+
+```{r rr-visual, echo=FALSE, fig.width=12, fig.height=6}
+set.seed(555)
+n_parts <- 3
+n_trials <- 5
+
+# Operator A - consistent
+op_a <- data.frame(
+  Part = rep(c("Part 1", "Part 2", "Part 3"), each = n_trials),
+  Trial = rep(1:n_trials, n_parts),
+  Measurement = c(rnorm(n_trials, 10.02, 0.008),
+                  rnorm(n_trials, 10.05, 0.008),
+                  rnorm(n_trials, 10.01, 0.008)),
+  Operator = "Operator A"
+)
+
+# Operator B - same equipment variation, different average
+op_b <- data.frame(
+  Part = rep(c("Part 1", "Part 2", "Part 3"), each = n_trials),
+  Trial = rep(1:n_trials, n_parts),
+  Measurement = c(rnorm(n_trials, 10.04, 0.008),
+                  rnorm(n_trials, 10.07, 0.008),
+                  rnorm(n_trials, 10.03, 0.008)),
+  Operator = "Operator B"
+)
+
+rr_data <- rbind(op_a, op_b)
+
+ggplot(rr_data, aes(x = Trial, y = Measurement, color = Operator, shape = Operator)) +
+  geom_point(size = 3) +
+  geom_line(aes(group = Operator), alpha = 0.5) +
+  facet_wrap(~Part) +
+  labs(title = "Repeatability and Reproducibility Illustrated",
+       subtitle = "Repeatability = variation within each operator | Reproducibility = variation between operators",
+       x = "Trial Number", y = "Measurement (mm)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "bottom"
+  ) +
+  annotate("segment", x = 0.5, xend = 5.5, y = 10.02, yend = 10.02,
+           color = "gray50", linetype = "dashed")
+```
+
+```{r rr-definitions, echo=FALSE}
+rr_defs <- data.frame(
+  Component = c("Repeatability (EV)", "Reproducibility (AV)", "Gauge R&R (GRR)"),
+  Also_Known_As = c("Equipment Variation, Within-operator variation",
+                    "Appraiser Variation, Between-operator variation",
+                    "Total measurement system variation"),
+  Definition = c(
+    "Variation when same operator measures same part multiple times with same gauge",
+    "Variation when different operators measure the same parts",
+    "Combined repeatability and reproducibility"
+  ),
+  Caused_By = c(
+    "Gauge resolution, gauge condition, fixture, technique consistency",
+    "Training differences, technique differences, interpretation",
+    "All measurement system sources combined"
+  )
+)
+
+kable(rr_defs, col.names = c("Component", "Also Known As", "Definition", "Caused By"),
+      caption = "Gauge R&R Components") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%")
+```
+
+### Gauge R&R Study Design
+
+```{r grr-design, echo=FALSE}
+grr_design <- data.frame(
+  Parameter = c("Number of Parts", "Number of Operators", "Number of Trials",
+                "Total Measurements", "Part Selection", "Randomization"),
+  Typical_Value = c("10", "3", "3", "10 × 3 × 3 = 90",
+                    "Cover the full process range",
+                    "Randomize measurement order"),
+  Notes = c(
+    "Minimum 5, 10 recommended for statistical power",
+    "Minimum 2, 3 is standard for detecting operator effects",
+    "Minimum 2, 3 is standard for repeatability estimation",
+    "More measurements = better precision in estimates",
+    "Parts should represent typical production variation",
+    "Blind measurements when possible; prevents bias"
+  )
+)
+
+kable(grr_design, caption = "Standard Gauge R&R Study Design Parameters") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+### Range Method (Short Form)
+
+The Range Method is a quick approximation useful for initial screening.
+
+```{r range-method, echo=TRUE}
+# Range Method Gauge R&R Calculation
+# Two operators, five parts, two trials each
+
+# Data: Measurements by each operator (2 trials per part)
+operator_a <- matrix(c(
+  0.85, 0.87,  # Part 1
+  0.92, 0.91,  # Part 2
+  0.78, 0.80,  # Part 3
+  0.95, 0.96,  # Part 4
+  0.88, 0.85   # Part 5
+), ncol = 2, byrow = TRUE)
+
+operator_b <- matrix(c(
+  0.86, 0.88,  # Part 1
+  0.93, 0.92,  # Part 2
+  0.80, 0.79,  # Part 3
+  0.94, 0.97,  # Part 4
+  0.87, 0.88   # Part 5
+), ncol = 2, byrow = TRUE)
+
+# Step 1: Calculate ranges for each part-operator combination
+range_a <- apply(operator_a, 1, function(x) max(x) - min(x))
+range_b <- apply(operator_b, 1, function(x) max(x) - min(x))
+
+# Step 2: Average range
+R_bar <- mean(c(range_a, range_b))
+
+# Step 3: Calculate Repeatability (EV)
+# d2 for 2 trials = 1.128
+d2_trials <- 1.128
+EV <- R_bar / d2_trials
+
+# Step 4: Calculate part averages by operator
+avg_a <- rowMeans(operator_a)
+avg_b <- rowMeans(operator_b)
+
+# Step 5: Range of operator averages
+X_diff <- abs(mean(avg_a) - mean(avg_b))
+
+# d2 for 2 operators = 1.128
+d2_operators <- 1.128
+n_parts <- 5
+n_trials <- 2
+
+# Step 6: Reproducibility (AV)
+AV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))
+AV <- sqrt(max(0, AV_squared))
+
+# Step 7: Gauge R&R
+GRR <- sqrt(EV^2 + AV^2)
+
+# Step 8: Express as % of tolerance
+tolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total
+
+cat("=== Range Method Gauge R&R Results ===\n\n")
+cat("Average Range (R-bar):", round(R_bar, 4), "\n")
+cat("Repeatability (EV):", round(EV, 4), "\n")
+cat("Reproducibility (AV):", round(AV, 4), "\n")
+cat("Gauge R&R (GRR):", round(GRR, 4), "\n\n")
+cat("%EV (of tolerance):", round(EV / tolerance * 100 * 5.15, 1), "%\n")
+cat("%AV (of tolerance):", round(AV / tolerance * 100 * 5.15, 1), "%\n")
+cat("%GRR (of tolerance):", round(GRR / tolerance * 100 * 5.15, 1), "%\n")
+```
+
+### ANOVA Method (Full Study)
+
+**ANOVA** (Analysis of Variance) is a statistical technique that partitions the total observed variation in a dataset into distinct components, each attributable to a specific source. In the context of Gauge R&R, ANOVA separates the total measurement variation into contributions from:
+
+- **Parts** (the actual differences between items being measured)
+- **Operators** (systematic differences between people taking measurements)
+- **Part × Operator interaction** (whether certain operators measure certain parts differently)
+- **Repeatability** (random error when the same operator measures the same part multiple times)
+
+#### Why Use ANOVA for Gauge R&R?
+
+The fundamental question in any measurement system analysis is: *"How much of the variation I observe comes from my measurement system versus the actual differences between parts?"* ANOVA answers this question by statistically decomposing variance—it calculates how much each source contributes to what we observe.
+
+Consider the alternative: if we simply looked at the spread of all measurements, we wouldn't know whether a wide spread indicates highly variable parts (good—our gauge can detect differences) or a poor measurement system (bad—we're adding noise). ANOVA untangles these effects mathematically.
+
+#### Why ANOVA is the Preferred Method
+
+While the Range Method provides a quick estimate, ANOVA offers several critical advantages for Gauge R&R studies:
+
+| Aspect | Range Method | ANOVA Method |
+|--------|--------------|--------------|
+| **Interaction effects** | Cannot detect | Identifies Part × Operator interactions |
+| **Statistical rigor** | Approximation using range-based estimates | Exact variance component estimation |
+| **Hypothesis testing** | Not available | Provides F-tests and p-values for each source |
+| **Accuracy** | Tends to overestimate GRR | More precise variance estimates |
+| **Information richness** | Basic EV/AV breakdown | Full decomposition with confidence intervals |
+| **Industry acceptance** | Screening only | Required for formal MSA studies (AIAG) |
+
+The ability to detect **interaction effects** is particularly important. If Operator A consistently measures Part 3 higher than Operator B does (but they agree on other parts), this indicates a training issue or technique difference that the Range Method would miss entirely. ANOVA flags this interaction, enabling targeted corrective action.
+
+#### How ANOVA Works in Gauge R&R
+
+ANOVA uses the **F-statistic** to test whether variation between groups (e.g., between operators) is significantly larger than variation within groups (repeatability). The mathematical basis is:
+
+$$F = \frac{\text{Mean Square Between Groups}}{\text{Mean Square Within Groups}} = \frac{MS_{factor}}{MS_{error}}$$
+
+A large F-value indicates that the factor (Part, Operator, or their interaction) contributes meaningfully to the observed variation. The p-value tells us the probability of seeing such an F-value if the factor had no real effect.
+
+From the ANOVA table's Mean Squares, we extract **variance components** ($\sigma^2$) for each source, then combine them to calculate the standard metrics: %EV (repeatability), %AV (reproducibility), %GRR, and the number of distinct categories (ndc).
+
+```{r anova-method, echo=TRUE}
+# Full Gauge R&R using ANOVA method
+# 10 parts, 3 operators, 3 trials
+
+set.seed(42)
+
+# Generate realistic GRR data
+n_parts <- 10
+n_operators <- 3
+n_trials <- 3
+
+# Part true values (most of the variation)
+part_effects <- rnorm(n_parts, 0, 0.05)
+
+# Operator effects (some variation)
+operator_effects <- c(-0.008, 0.003, 0.005)
+
+# Create dataset
+grr_data <- expand.grid(
+  Part = 1:n_parts,
+  Operator = paste0("Op", 1:n_operators),
+  Trial = 1:n_trials
+)
+
+# Add measurements
+grr_data$Measurement <- 10 +
+  part_effects[grr_data$Part] +
+  operator_effects[as.numeric(factor(grr_data$Operator))] +
+  rnorm(nrow(grr_data), 0, 0.006)  # Repeatability error
+
+# Convert to factors
+grr_data$Part <- factor(grr_data$Part)
+grr_data$Operator <- factor(grr_data$Operator)
+
+# Fit ANOVA model
+anova_model <- aov(Measurement ~ Part + Operator + Part:Operator, data = grr_data)
+
+# Extract variance components
+anova_table <- anova(anova_model)
+print(anova_table)
+```
+
+```{r anova-variance-components, echo=TRUE}
+# Extract Mean Squares from ANOVA
+MS_part <- anova_table["Part", "Mean Sq"]
+MS_operator <- anova_table["Operator", "Mean Sq"]
+MS_interaction <- anova_table["Part:Operator", "Mean Sq"]
+MS_error <- anova_table["Residuals", "Mean Sq"]
+
+# Calculate variance components
+n_p <- 10  # number of parts
+n_o <- 3   # number of operators
+n_r <- 3   # number of trials
+
+# Repeatability variance
+var_repeatability <- MS_error
+
+# Interaction variance
+var_interaction <- max(0, (MS_interaction - MS_error) / n_r)
+
+# Operator variance
+var_operator <- max(0, (MS_operator - MS_interaction) / (n_p * n_r))
+
+# Part variance
+var_part <- max(0, (MS_part - MS_interaction) / (n_o * n_r))
+
+# Reproducibility = Operator + Interaction
+var_reproducibility <- var_operator + var_interaction
+
+# Total Gauge R&R
+var_GRR <- var_repeatability + var_reproducibility
+
+# Total variation
+var_total <- var_part + var_GRR
+
+# Convert to standard deviations
+sigma_repeatability <- sqrt(var_repeatability)
+sigma_reproducibility <- sqrt(var_reproducibility)
+sigma_GRR <- sqrt(var_GRR)
+sigma_part <- sqrt(var_part)
+sigma_total <- sqrt(var_total)
+
+# Calculate study variation (5.15 sigma for 99% of distribution)
+SV_repeatability <- 5.15 * sigma_repeatability
+SV_reproducibility <- 5.15 * sigma_reproducibility
+SV_GRR <- 5.15 * sigma_GRR
+SV_part <- 5.15 * sigma_part
+SV_total <- 5.15 * sigma_total
+
+cat("\n=== ANOVA Gauge R&R Results ===\n\n")
+cat("Variance Components:\n")
+cat("  Repeatability:", round(var_repeatability, 8), "\n")
+cat("  Reproducibility:", round(var_reproducibility, 8), "\n")
+cat("  Part-to-Part:", round(var_part, 8), "\n")
+cat("  Total:", round(var_total, 8), "\n")
+
+cat("\nStudy Variation (5.15σ):\n")
+cat("  Repeatability:", round(SV_repeatability, 5), "\n")
+cat("  Reproducibility:", round(SV_reproducibility, 5), "\n")
+cat("  Gauge R&R:", round(SV_GRR, 5), "\n")
+cat("  Part-to-Part:", round(SV_part, 5), "\n")
+cat("  Total:", round(SV_total, 5), "\n")
+```
+
+### Calculating %GRR and Acceptance Criteria
+
+```{r grr-acceptance, echo=TRUE}
+# Calculate %GRR using both methods
+tolerance <- 0.30  # Total tolerance
+
+# Method 1: % of Tolerance (%GRR_Tolerance)
+pct_GRR_tol <- (SV_GRR / tolerance) * 100
+
+# Method 2: % of Total Variation (%GRR_TV)
+pct_GRR_tv <- (sigma_GRR / sigma_total) * 100
+
+# Number of Distinct Categories (ndc)
+ndc <- 1.41 * (sigma_part / sigma_GRR)
+
+cat("=== Gauge R&R Acceptance Criteria ===\n\n")
+cat("%GRR (of Tolerance):", round(pct_GRR_tol, 1), "%\n")
+cat("%GRR (of Total Variation):", round(pct_GRR_tv, 1), "%\n")
+cat("Number of Distinct Categories (ndc):", round(ndc, 1), "\n\n")
+
+# Acceptance criteria
+cat("AIAG Acceptance Guidelines:\n")
+cat("─────────────────────────────────────\n")
+if(pct_GRR_tol < 10) {
+  cat("%GRR < 10%: ACCEPTABLE - Measurement system is acceptable\n")
+} else if(pct_GRR_tol < 30) {
+  cat("%GRR 10-30%: MARGINAL - May be acceptable based on application\n")
+} else {
+  cat("%GRR > 30%: UNACCEPTABLE - Measurement system needs improvement\n")
+}
+
+if(ndc >= 5) {
+  cat("ndc ≥ 5: ACCEPTABLE - Adequate discrimination\n")
+} else if(ndc >= 2) {
+  cat("ndc 2-4: MARGINAL - Limited discrimination ability\n")
+} else {
+  cat("ndc < 2: UNACCEPTABLE - Cannot distinguish between parts\n")
+}
+```
+
+### Gauge R&R Acceptance Criteria Summary
+
+```{r acceptance-table, echo=FALSE}
+acceptance <- data.frame(
+  Criterion = c("%GRR < 10%", "%GRR 10-30%", "%GRR > 30%",
+                "ndc ≥ 5", "ndc = 2-4", "ndc < 2"),
+  Status = c("Acceptable", "Marginal", "Unacceptable",
+             "Acceptable", "Marginal", "Unacceptable"),
+  Interpretation = c(
+    "Measurement system is acceptable for process control and capability",
+    "May be acceptable depending on importance, cost of gauge, repair costs",
+    "Measurement system is not acceptable; action required",
+    "Gauge can adequately distinguish between parts",
+    "Limited ability to distinguish; may be OK for simple pass/fail",
+    "Gauge cannot distinguish between parts; almost useless for control"
+  )
+)
+
+kable(acceptance, caption = "AIAG Gauge R&R Acceptance Guidelines") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  row_spec(c(1, 4), background = "#d4edda") %>%
+  row_spec(c(2, 5), background = "#fff3cd") %>%
+  row_spec(c(3, 6), background = "#f8d7da") %>%
+  column_spec(1, bold = TRUE, width = "15%")
+```
+
+### Visual Analysis of Gauge R&R
+
+```{r grr-visuals, echo=FALSE, fig.width=12, fig.height=10}
+# Create comprehensive GRR visualization
+par(mfrow = c(2, 2))
+
+# Plot 1: Components of Variation
+components <- c(pct_GRR_tv,
+                (sigma_repeatability/sigma_total)*100,
+                (sigma_reproducibility/sigma_total)*100,
+                (sigma_part/sigma_total)*100)
+names(components) <- c("Gauge R&R", "Repeat", "Reprod", "Part-to-Part")
+
+grr_components <- data.frame(
+  Component = factor(c("Gauge R&R", "Repeatability", "Reproducibility", "Part-to-Part"),
+                     levels = c("Gauge R&R", "Repeatability", "Reproducibility", "Part-to-Part")),
+  Percent = c(pct_GRR_tv,
+              (sigma_repeatability/sigma_total)*100,
+              (sigma_reproducibility/sigma_total)*100,
+              (sigma_part/sigma_total)*100)
+)
+
+p1 <- ggplot(grr_components, aes(x = Component, y = Percent, fill = Component)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_hline(yintercept = 30, linetype = "dashed", color = "red") +
+  geom_text(aes(label = paste0(round(Percent, 1), "%")), vjust = -0.5) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12"), guide = "none") +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(title = "Components of Variation", y = "% of Total Variation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(face = "bold"))
+
+# Plot 2: Measurement by Part
+p2 <- ggplot(grr_data, aes(x = Part, y = Measurement, color = Operator)) +
+  geom_point(position = position_dodge(width = 0.5), size = 2) +
+  stat_summary(fun = mean, geom = "line", aes(group = Operator),
+               position = position_dodge(width = 0.5)) +
+  labs(title = "Measurement by Part", y = "Measurement") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Plot 3: Measurement by Operator
+p3 <- ggplot(grr_data, aes(x = Operator, y = Measurement)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  labs(title = "Measurement by Operator", y = "Measurement") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+
+# Plot 4: Part × Operator Interaction
+interaction_data <- grr_data %>%
+  group_by(Part, Operator) %>%
+  summarize(Mean = mean(Measurement), .groups = "drop")
+
+p4 <- ggplot(interaction_data, aes(x = Part, y = Mean, color = Operator, group = Operator)) +
+  geom_point(size = 3) +
+  geom_line() +
+  labs(title = "Part × Operator Interaction", y = "Mean Measurement") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Combine plots
+gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+---
+
+## Attribute Measurement Systems
+
+For pass/fail or categorical measurements (visual inspection, go/no-go gauges), we use **Attribute MSA** or **Attribute Agreement Analysis**.
+
+### Kappa Statistic
+
+When evaluating attribute measurement systems (pass/fail, accept/reject, visual inspection), you might think that **percent agreement** would be sufficient—if two inspectors agree 90% of the time, isn't that good enough? The problem is that some agreement happens purely by chance, and percent agreement doesn't account for this.
+
+#### Why Percent Agreement Can Be Misleading
+
+Consider a visual inspection where 95% of parts are good. If an inspector simply guesses "Accept" for every part (without even looking), they would be "correct" 95% of the time. Two such inspectors would agree 90.5% of the time by pure chance:
+
+$$P_e = P(\text{both say Accept}) + P(\text{both say Reject}) = 0.95^2 + 0.05^2 = 0.905$$
+
+This is why we need **Cohen's Kappa** ($\kappa$)—it measures agreement *beyond what we'd expect from chance alone*.
+
+#### The Kappa Formula
+
+$$\kappa = \frac{P_o - P_e}{1 - P_e}$$
+
+Where:
+
+- $P_o$ = Observed proportion of agreement (how often they actually agree)
+- $P_e$ = Expected proportion of agreement by chance (how often they'd agree if guessing randomly based on their individual tendencies)
+- $1 - P_e$ = Maximum possible agreement beyond chance
+
+**Interpreting the formula:** The numerator ($P_o - P_e$) represents *actual agreement minus chance agreement*—the "real" agreement attributable to consistent measurement. The denominator ($1 - P_e$) normalizes this to a 0–1 scale by dividing by the maximum possible improvement over chance.
+
+| Kappa Value | Meaning |
+|-------------|---------|
+| $\kappa = 1$ | Perfect agreement (everyone agrees, and not by chance) |
+| $\kappa = 0$ | Agreement equals chance—no better than random guessing |
+| $\kappa < 0$ | Agreement is *worse* than chance (systematic disagreement) |
+
+#### When to Use Kappa
+
+Use Kappa when evaluating:
+
+- **Inspector vs. Reference**: Does the operator match the known correct answer? (Most important for MSA)
+- **Inspector vs. Inspector**: Do two operators classify the same parts the same way?
+- **Inspector vs. Self (Repeatability)**: Does the same operator give the same answer when re-inspecting the same part?
+
+For a robust attribute MSA, you should calculate Kappa for all three comparisons. High agreement with other operators but low agreement with the reference standard indicates *consistent but incorrect* inspection—a training problem.
+
+```{r kappa-interpretation, echo=FALSE}
+kappa_table <- data.frame(
+  Kappa = c("< 0", "0.00 - 0.20", "0.21 - 0.40", "0.41 - 0.60",
+            "0.61 - 0.80", "0.81 - 1.00"),
+  Interpretation = c("Less than chance agreement", "Slight agreement",
+                     "Fair agreement", "Moderate agreement",
+                     "Substantial agreement", "Almost perfect agreement"),
+  Action = c("Major issues - do not use", "Major improvement needed",
+             "Significant improvement needed", "Some improvement needed",
+             "Acceptable for most applications", "Excellent - acceptable")
+)
+
+kable(kappa_table, caption = "Kappa Statistic Interpretation Guide") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "18%") %>%
+  row_spec(5:6, background = "#d4edda") %>%
+  row_spec(3:4, background = "#fff3cd") %>%
+  row_spec(1:2, background = "#f8d7da")
+```
+
+### Attribute Agreement Study Example
+
+```{r attribute-msa, echo=TRUE}
+# Attribute Agreement Analysis
+# 3 operators inspect 30 samples, 2 trials each
+# Reference standard (known good/bad) available
+
+set.seed(123)
+n_samples <- 30
+n_operators <- 3
+n_trials <- 2
+
+# Reference classification (10 bad, 20 good)
+reference <- c(rep("Reject", 10), rep("Accept", 20))
+
+# Simulate operator decisions (some disagreement)
+simulate_decision <- function(ref, accuracy) {
+  sapply(ref, function(r) {
+    if(runif(1) < accuracy) r else ifelse(r == "Accept", "Reject", "Accept")
+  })
+}
+
+# Operators with different accuracy levels
+op1_t1 <- simulate_decision(reference, 0.92)
+op1_t2 <- simulate_decision(reference, 0.92)
+op2_t1 <- simulate_decision(reference, 0.88)
+op2_t2 <- simulate_decision(reference, 0.88)
+op3_t1 <- simulate_decision(reference, 0.95)
+op3_t2 <- simulate_decision(reference, 0.95)
+
+# Calculate agreement metrics
+
+# 1. Within-operator agreement (repeatability)
+within_op1 <- mean(op1_t1 == op1_t2)
+within_op2 <- mean(op2_t1 == op2_t2)
+within_op3 <- mean(op3_t1 == op3_t2)
+
+# 2. Each operator vs. reference
+op1_vs_ref <- mean(op1_t1 == reference & op1_t2 == reference)
+op2_vs_ref <- mean(op2_t1 == reference & op2_t2 == reference)
+op3_vs_ref <- mean(op3_t1 == reference & op3_t2 == reference)
+
+# 3. All operators agree (both trials)
+all_agree_t1 <- mean(op1_t1 == op2_t1 & op2_t1 == op3_t1)
+all_agree_both <- mean(op1_t1 == op1_t2 & op1_t1 == op2_t1 & op2_t1 == op2_t2 &
+                        op2_t1 == op3_t1 & op3_t1 == op3_t2)
+
+cat("=== Attribute Agreement Analysis ===\n\n")
+cat("Within-Operator Agreement (Repeatability):\n")
+cat("  Operator 1:", round(within_op1 * 100, 1), "%\n")
+cat("  Operator 2:", round(within_op2 * 100, 1), "%\n")
+cat("  Operator 3:", round(within_op3 * 100, 1), "%\n\n")
+
+cat("Each Operator vs. Reference (both trials correct):\n")
+cat("  Operator 1:", round(op1_vs_ref * 100, 1), "%\n")
+cat("  Operator 2:", round(op2_vs_ref * 100, 1), "%\n")
+cat("  Operator 3:", round(op3_vs_ref * 100, 1), "%\n\n")
+
+cat("All Operators Agreement:\n")
+cat("  All agree (one trial):", round(all_agree_t1 * 100, 1), "%\n")
+cat("  All agree (both trials):", round(all_agree_both * 100, 1), "%\n")
+```
+
+### Calculating Kappa
+
+```{r kappa-calculation, echo=TRUE}
+# Calculate Kappa for Operator 1 vs Reference
+# Create confusion matrix for trial 1
+actual <- factor(reference, levels = c("Accept", "Reject"))
+predicted <- factor(op1_t1, levels = c("Accept", "Reject"))
+
+confusion <- table(Predicted = predicted, Actual = actual)
+print(confusion)
+
+# Calculate proportions
+n <- sum(confusion)
+p_o <- sum(diag(confusion)) / n  # Observed agreement
+
+# Expected agreement by chance
+p_accept <- sum(confusion[1,]) / n * sum(confusion[,1]) / n
+p_reject <- sum(confusion[2,]) / n * sum(confusion[,2]) / n
+p_e <- p_accept + p_reject
+
+# Kappa
+kappa <- (p_o - p_e) / (1 - p_e)
+
+cat("\nKappa Calculation (Operator 1 vs Reference):\n")
+cat("Observed agreement (Po):", round(p_o, 3), "\n")
+cat("Expected agreement (Pe):", round(p_e, 3), "\n")
+cat("Kappa:", round(kappa, 3), "\n")
+
+# Interpretation
+if(kappa >= 0.81) {
+  cat("Interpretation: Almost perfect agreement\n")
+} else if(kappa >= 0.61) {
+  cat("Interpretation: Substantial agreement\n")
+} else if(kappa >= 0.41) {
+  cat("Interpretation: Moderate agreement\n")
+} else {
+  cat("Interpretation: Fair or less agreement - needs improvement\n")
+}
+```
+
+### Attribute MSA Best Practices
+
+```{r attribute-best-practices, echo=FALSE}
+attr_practices <- data.frame(
+  Practice = c("Use boundary samples", "Include clear accept/reject",
+               "Blind testing", "Multiple trials", "Reference standard",
+               "Adequate sample size"),
+  Description = c(
+    "Include samples at the accept/reject boundary where decisions are hardest",
+    "Include obvious accept and obvious reject samples as controls",
+    "Operators should not know which samples are repeated or reference",
+    "Minimum 2-3 trials per operator to assess within-operator repeatability",
+    "Must have known correct answers to assess accuracy, not just agreement",
+    "Minimum 30-50 samples recommended for statistical validity"
+  )
+)
+
+kable(attr_practices, caption = "Best Practices for Attribute MSA Studies") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "25%")
+```
+
+---
+
+## Measurement System Resolution
+
+**Resolution** (also called discrimination) is the smallest increment a measurement system can detect.
+
+### Rule of Ten
+
+The **Rule of Ten** states that measurement resolution should be at least 1/10 of:
+- The tolerance, OR
+- The process variation (6σ)
+
+Whichever is smaller.
+
+```{r resolution-check, echo=TRUE}
+# Resolution adequacy check
+tolerance <- 0.100  # mm total tolerance
+process_6sigma <- 0.080  # 6 sigma of process
+gauge_resolution <- 0.010  # mm (smallest increment)
+
+# Check against tolerance
+ratio_tolerance <- tolerance / gauge_resolution
+# Check against process
+ratio_process <- process_6sigma / gauge_resolution
+
+cat("=== Resolution Adequacy Check ===\n\n")
+cat("Tolerance:", tolerance, "mm\n")
+cat("Process 6σ:", process_6sigma, "mm\n")
+cat("Gauge Resolution:", gauge_resolution, "mm\n\n")
+
+cat("Tolerance / Resolution:", ratio_tolerance, ":1")
+if(ratio_tolerance >= 10) cat(" - ADEQUATE\n") else cat(" - INADEQUATE\n")
+
+cat("Process 6σ / Resolution:", ratio_process, ":1")
+if(ratio_process >= 10) cat(" - ADEQUATE\n") else cat(" - INADEQUATE\n")
+```
+
+### Resolution Impact on Gauge R&R
+
+```{r resolution-grr-impact, echo=FALSE, fig.width=11, fig.height=6}
+# Simulate effect of resolution on apparent GRR
+set.seed(42)
+true_values <- rnorm(100, 50, 0.03)
+
+# Fine resolution (0.001)
+fine_resolution <- round(true_values + rnorm(100, 0, 0.005), 3)
+
+# Coarse resolution (0.01)
+coarse_resolution <- round(true_values + rnorm(100, 0, 0.005), 2)
+
+# Very coarse resolution (0.1)
+very_coarse <- round(true_values + rnorm(100, 0, 0.005), 1)
+
+resolution_data <- data.frame(
+  Value = c(fine_resolution, coarse_resolution, very_coarse),
+  Resolution = rep(c("0.001 mm (Fine)", "0.01 mm (Coarse)", "0.1 mm (Very Coarse)"),
+                   each = 100)
+)
+
+resolution_data$Resolution <- factor(resolution_data$Resolution,
+                                      levels = c("0.001 mm (Fine)",
+                                                "0.01 mm (Coarse)",
+                                                "0.1 mm (Very Coarse)"))
+
+ggplot(resolution_data, aes(x = Value)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  facet_wrap(~Resolution, ncol = 1, scales = "free_y") +
+  labs(title = "Effect of Gauge Resolution on Measurement Distribution",
+       subtitle = "Same parts measured with different resolution gauges",
+       x = "Measured Value (mm)", y = "Count") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    strip.text = element_text(face = "bold")
+  )
+```
+
+---
+
+## Common Sources of Measurement Error
+
+```{r error-sources, echo=FALSE, fig.width=12, fig.height=8}
+error_sources <- data.frame(
+  Category = c("Equipment", "Equipment", "Equipment", "Equipment",
+               "Appraiser", "Appraiser", "Appraiser",
+               "Method", "Method", "Method",
+               "Environment", "Environment",
+               "Part", "Part"),
+  Source = c("Calibration drift", "Worn components", "Poor resolution", "Fixture issues",
+             "Training gaps", "Technique variation", "Fatigue/attention",
+             "Unclear procedures", "Inconsistent setup", "Wrong reference point",
+             "Temperature effects", "Contamination/cleanliness",
+             "Surface finish", "Part flexibility"),
+  Impact = c("Bias", "Repeatability", "Resolution/ndc", "Repeatability",
+             "Reproducibility", "Repeatability & Reproducibility", "Repeatability",
+             "Reproducibility", "Repeatability", "Bias",
+             "Bias & Repeatability", "Repeatability",
+             "Repeatability", "Repeatability")
+)
+
+ggplot(error_sources, aes(x = Category, y = 1, fill = Impact)) + # Added y = 1
+  geom_col() + # Changed from geom_bar to geom_col
+  geom_text(aes(label = Source), 
+            position = position_stack(vjust = 0.5), 
+            size = 3, color = "white") +
+  scale_fill_manual(values = c("Bias" = "#e74c3c",
+                               "Repeatability" = "#3498db",
+                               "Reproducibility" = "#27ae60",
+                               "Resolution/ndc" = "#f39c12",
+                               "Repeatability & Reproducibility" = "#9b59b6",
+                               "Bias & Repeatability" = "#1abc9c")) +
+  coord_flip() +
+  labs(title = "Common Sources of Measurement Error by Category",
+       subtitle = "Classified by primary impact on measurement system",
+       x = "", y = "Number of Error Sources") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "bottom"
+  )
+```
+
+```{r error-table, echo=FALSE}
+improvement_actions <- data.frame(
+  Issue = c("High Repeatability (EV)", "High Reproducibility (AV)",
+            "Significant Bias", "Poor Linearity", "Drift/Stability Issues",
+            "Low ndc"),
+  Likely_Causes = c(
+    "Gauge condition, fixture, resolution, part variation during measurement",
+    "Training, technique, procedure clarity",
+    "Calibration, master accuracy, technique",
+    "Gauge mechanism, calibration across range",
+    "Environmental effects, gauge wear, master deterioration",
+    "Resolution, excessive gauge variation relative to part variation"
+  ),
+  Improvement_Actions = c(
+    "Maintain gauge, improve fixture, upgrade resolution, reduce part handling",
+    "Standardize technique, retrain, improve written procedures",
+    "Recalibrate, verify master, standardize technique",
+    "Repair/replace gauge, multi-point calibration",
+    "Environmental control, maintenance, replace masters",
+    "Higher resolution gauge, reduce gauge variation"
+  )
+)
+
+kable(improvement_actions,
+      col.names = c("Issue Identified", "Likely Causes", "Improvement Actions"),
+      caption = "MSA Issues and Improvement Actions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "20%")
+```
+
+---
+
+## MSA and SPC Relationship
+
+Poor measurement systems directly impact SPC effectiveness.
+
+### Effect on Control Charts
+
+```{r msa-spc-effect, echo=FALSE, fig.width=12, fig.height=8}
+set.seed(42)
+n <- 50
+
+# True process (stable, in control)
+true_process <- rnorm(n, 100, 2)
+
+# Good measurement system (low measurement error)
+good_measurement <- true_process + rnorm(n, 0, 0.5)
+
+# Poor measurement system (high measurement error)
+poor_measurement <- true_process + rnorm(n, 0, 3)
+
+# Control limits based on good data
+mean_good <- mean(good_measurement[1:25])
+sigma_good <- sd(good_measurement[1:25])
+UCL_good <- mean_good + 3 * sigma_good
+LCL_good <- mean_good - 3 * sigma_good
+
+mean_poor <- mean(poor_measurement[1:25])
+sigma_poor <- sd(poor_measurement[1:25])
+UCL_poor <- mean_poor + 3 * sigma_poor
+LCL_poor <- mean_poor - 3 * sigma_poor
+
+chart_data <- data.frame(
+  Sample = rep(1:n, 2),
+  Value = c(good_measurement, poor_measurement),
+  System = rep(c("Good MSA (%GRR = 10%)", "Poor MSA (%GRR = 60%)"), each = n)
+)
+
+limits_data <- data.frame(
+  System = c("Good MSA (%GRR = 10%)", "Poor MSA (%GRR = 60%)"),
+  Mean = c(mean_good, mean_poor),
+  UCL = c(UCL_good, UCL_poor),
+  LCL = c(LCL_good, LCL_poor)
+)
+
+ggplot(chart_data, aes(x = Sample, y = Value)) +
+  geom_line(color = "steelblue") +
+  geom_point(color = "steelblue", size = 2) +
+  geom_hline(data = limits_data, aes(yintercept = Mean), color = "darkgreen") +
+  geom_hline(data = limits_data, aes(yintercept = UCL), color = "red", linetype = "dashed") +
+  geom_hline(data = limits_data, aes(yintercept = LCL), color = "red", linetype = "dashed") +
+  facet_wrap(~System, ncol = 1, scales = "free_y") +
+  labs(title = "Impact of Measurement System Quality on Control Charts",
+       subtitle = "Same stable process measured with different gauge quality",
+       x = "Sample Number", y = "Measured Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    strip.text = element_text(face = "bold", size = 11)
+  )
+```
+
+### Effect on Capability Studies
+
+```{r msa-capability-effect, echo=TRUE}
+# True process parameters
+true_mean <- 100
+true_sigma <- 2.0
+USL <- 106
+LSL <- 94
+tolerance <- USL - LSL
+
+# True capability
+true_Cp <- tolerance / (6 * true_sigma)
+true_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)
+
+cat("=== True Process Capability ===\n")
+cat("True σ:", true_sigma, "\n")
+cat("True Cp:", round(true_Cp, 2), "\n")
+cat("True Cpk:", round(true_Cpk, 2), "\n\n")
+
+# With good measurement system (10% GRR)
+grr_good <- 0.10 * tolerance / 5.15
+observed_sigma_good <- sqrt(true_sigma^2 + grr_good^2)
+observed_Cp_good <- tolerance / (6 * observed_sigma_good)
+observed_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)
+
+cat("=== With Good MSA (10% GRR) ===\n")
+cat("Observed σ:", round(observed_sigma_good, 3), "\n")
+cat("Observed Cp:", round(observed_Cp_good, 2), "\n")
+cat("Observed Cpk:", round(observed_Cpk_good, 2), "\n\n")
+
+# With poor measurement system (50% GRR)
+grr_poor <- 0.50 * tolerance / 5.15
+observed_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)
+observed_Cp_poor <- tolerance / (6 * observed_sigma_poor)
+observed_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)
+
+cat("=== With Poor MSA (50% GRR) ===\n")
+cat("Observed σ:", round(observed_sigma_poor, 3), "\n")
+cat("Observed Cp:", round(observed_Cp_poor, 2), "\n")
+cat("Observed Cpk:", round(observed_Cpk_poor, 2), "\n\n")
+
+cat("Poor MSA makes a capable process (Cpk=1.0) appear incapable (Cpk=",
+    round(observed_Cpk_poor, 2), ")\n")
+```
+
+---
+
+## Conducting an MSA Study: Step-by-Step
+
+```{r msa-flowchart, echo=FALSE, fig.width=12, fig.height=10}
+steps <- data.frame(
+  step = 1:10,
+  name = c("1. Plan Study", "2. Select Parts", "3. Identify Appraisers",
+           "4. Calibrate Gauge", "5. Randomize Order", "6. Conduct Measurements",
+           "7. Analyze Data", "8. Interpret Results", "9. Take Action", "10. Document"),
+  description = c(
+    "Define measurement, tolerance, study type (variable/attribute)",
+    "Select 10 parts spanning process range",
+    "Select 2-3 operators who normally use gauge",
+    "Verify gauge is calibrated and in good condition",
+    "Randomize measurement order to prevent bias",
+    "Each operator measures each part 2-3 times (blind)",
+    "Calculate EV, AV, GRR, %GRR, ndc",
+    "Compare to acceptance criteria",
+    "If unacceptable, identify root cause and improve",
+    "Record results in quality system"
+  ),
+  x = c(1, 1, 1, 1, 1, 2, 2, 2, 2, 2),
+  y = c(5, 4, 3, 2, 1, 5, 4, 3, 2, 1)
+)
+
+ggplot(steps, aes(x = x, y = y)) +
+  geom_tile(aes(fill = step), width = 0.9, height = 0.8, color = "white", linewidth = 1) +
+  geom_text(aes(label = name), fontface = "bold", size = 3.5, color = "white",
+            vjust = -0.3) +
+  geom_text(aes(label = description), size = 2.8, color = "white",
+            vjust = 1.2) +
+  scale_fill_gradient(low = "#3498db", high = "#2c3e50", guide = "none") +
+  # Add arrows between columns
+  annotate("segment", x = 1.5, xend = 1.6, y = 3, yend = 3,
+           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1.5) +
+  coord_cartesian(xlim = c(0.4, 2.6)) +
+  labs(title = "Gauge R&R Study Process Flow",
+       subtitle = "Steps for conducting a complete MSA study") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Data Collection Sheet Template
+
+```{r data-collection-template, echo=FALSE}
+template <- data.frame(
+  Part = rep(1:5, each = 6),
+  Operator = rep(c("A", "A", "B", "B", "C", "C"), 5),
+  Trial = rep(c(1, 2), 15),
+  Measurement = rep("___", 30)
+)
+
+# Show first 12 rows as example
+kable(head(template, 12),
+      caption = "Gauge R&R Data Collection Sheet (Partial Example)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  column_spec(1:4, width = "20%")
+```
+
+---
+
+## Video Resources
+
+### Understanding Gauge R&R
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CkLEmiKFnTw" title="Gauge R&R Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### MSA in Practice
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/N1mK_6Hxk48" title="Measurement System Analysis" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+## Summary
+
+Measurement Systems Analysis ensures that your data can be trusted for process control and decision-making:
+
+1. **Before SPC, do MSA** - Garbage in, garbage out; verify measurement quality first
+2. **Accuracy components** - Bias, linearity, and stability affect location (average)
+3. **Precision components** - Repeatability (within operator) and reproducibility (between operators)
+4. **Key metrics** - %GRR < 30% and ndc ≥ 5 for acceptable systems
+5. **Resolution matters** - 10:1 ratio vs. tolerance or process variation
+6. **Attribute MSA** - Use Kappa for pass/fail decisions
+7. **Continuous improvement** - Regular verification and recertification
+
+> "The measurement system is part of the process. Fix the measurement system before trying to fix the process."
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: A gauge R&R study yields %GRR = 45% and ndc = 2. What does this mean and what should be done?</summary>
+
+**Answer:**
+
+This measurement system is **unacceptable**:
+
+- **%GRR = 45%** exceeds the 30% maximum threshold, meaning 45% of the observed variation is due to the measurement system, not the parts
+- **ndc = 2** indicates the gauge can only distinguish between 2 categories of parts, which is insufficient for process control (minimum 5 required)
+
+**Actions required:**
+1. Investigate root causes of high variation:
+   - Check gauge calibration and condition
+   - Evaluate operator technique and training
+   - Review measurement procedure for ambiguity
+   - Assess fixture and part positioning
+   - Check gauge resolution adequacy
+
+2. Prioritize improvement efforts:
+   - If repeatability (EV) is high: Focus on gauge condition, fixture, technique consistency
+   - If reproducibility (AV) is high: Focus on training, procedure clarity, technique standardization
+
+3. Re-run study after improvements
+
+4. If improvements insufficient, consider upgrading to a higher-capability gauge
+
+5. Until resolved, this gauge should not be used for process control or capability studies
+</details>
+
+<details><summary>**Question 2**: What is the difference between repeatability and reproducibility? Give an example of each source of error.</summary>
+
+**Answer:**
+
+**Repeatability (Equipment Variation - EV)**:
+- Variation when the **same operator** measures the **same part** multiple times with the **same gauge**
+- Also called "within-operator" variation
+- Represents the inherent precision of the gauge and measurement technique
+
+*Examples of repeatability errors:*
+- Gauge resolution limitations
+- Gauge mechanism play/backlash
+- Inconsistent part positioning in fixture
+- Variations in technique even by same operator
+- Environmental micro-changes during measurement
+
+**Reproducibility (Appraiser Variation - AV)**:
+- Variation when **different operators** measure the **same parts**
+- Also called "between-operator" variation
+- Represents differences in how operators apply the measurement method
+
+*Examples of reproducibility errors:*
+- Different technique between operators (pressure applied, angle, etc.)
+- Different interpretation of measurement procedure
+- Different reading of analog scales
+- Training differences
+- Physical differences (eyesight, hand steadiness)
+</details>
+
+<details><summary>**Question 3**: Calculate the bias and determine if it is acceptable. Reference value = 25.000 mm, Tolerance = ±0.050 mm, Measured values: 25.012, 25.015, 25.008, 25.011, 25.014, 25.009, 25.013, 25.010, 25.012, 25.011</summary>
+
+**Answer:**
+
+```{r q3-answer, echo=TRUE}
+reference <- 25.000
+tolerance_total <- 0.100  # ±0.050 = 0.100 total
+measurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,
+                  25.009, 25.013, 25.010, 25.012, 25.011)
+
+# Calculate bias
+mean_measured <- mean(measurements)
+bias <- mean_measured - reference
+
+cat("Reference value:", reference, "mm\n")
+cat("Mean measured:", round(mean_measured, 4), "mm\n")
+cat("Bias:", round(bias, 4), "mm\n\n")
+
+# Express as % of tolerance
+bias_pct <- abs(bias) / tolerance_total * 100
+cat("Bias as % of tolerance:", round(bias_pct, 1), "%\n")
+
+# T-test for significance
+t_result <- t.test(measurements, mu = reference)
+cat("T-test p-value:", round(t_result$p.value, 6), "\n\n")
+
+# Acceptability
+cat("Acceptability Assessment:\n")
+if(bias_pct < 10) {
+  cat("- Bias < 10% of tolerance: ACCEPTABLE\n")
+} else if(bias_pct < 25) {
+  cat("- Bias 10-25% of tolerance: MARGINAL\n")
+} else {
+  cat("- Bias > 25% of tolerance: UNACCEPTABLE\n")
+}
+
+if(t_result$p.value < 0.05) {
+  cat("- Bias is statistically significant (p < 0.05)\n")
+  cat("- Consider recalibration or technique adjustment\n")
+}
+```
+
+The bias of 0.0115 mm (11.5% of tolerance) is **marginally acceptable** and statistically significant. Recalibration should be considered.
+</details>
+
+<details><summary>**Question 4**: Why is it important to conduct MSA before capability studies (Cp, Cpk)?</summary>
+
+**Answer:**
+
+MSA must precede capability studies because measurement error directly inflates observed variation:
+
+**Mathematical Relationship:**
+$$\sigma^2_{observed} = \sigma^2_{process} + \sigma^2_{measurement}$$
+
+**Impacts on Capability:**
+
+1. **Understated Cp/Cpk**: Observed sigma is always larger than true process sigma, so calculated capability will be lower than actual capability
+
+2. **False Alarms**: A capable process may appear incapable due to measurement noise, leading to unnecessary process adjustments or investment
+
+3. **Missed Issues**: High measurement variation masks actual process variation; you can't see problems through the "fog" of gauge error
+
+4. **Bad Decisions**: Incorrect capability data leads to:
+   - Wrong process acceptance decisions
+   - Inappropriate control limits
+   - Misguided improvement investments
+   - Customer quality issues
+
+**Example:**
+- True process: Cpk = 1.5 (very capable)
+- With 50% GRR: Observed Cpk ≈ 0.9 (appears incapable)
+- Result: Unnecessary process "improvement" efforts
+
+**Rule of Thumb**: If %GRR > 30%, any capability study is essentially meaningless because too much of the observed variation is measurement noise, not real process variation.
+</details>
+
+<details><summary>**Question 5**: A visual inspection has the following results: Kappa vs. reference = 0.72, within-operator agreement = 88%, between-operator agreement = 75%. Evaluate this attribute measurement system.</summary>
+
+**Answer:**
+
+**Results Interpretation:**
+
+1. **Kappa vs. Reference = 0.72**
+   - Falls in "Substantial agreement" range (0.61-0.80)
+   - Operators are correctly classifying parts most of the time
+   - Acceptable for many applications, but improvement possible
+
+2. **Within-Operator Agreement = 88%**
+   - Operators are fairly consistent with themselves
+   - 12% of the time, same operator gives different result on same part
+   - Should target >90% for critical inspections
+
+3. **Between-Operator Agreement = 75%**
+   - Operators disagree on 25% of parts
+   - This is a significant reproducibility issue
+   - Major source of inconsistency in product quality
+
+**Assessment: MARGINAL - Improvement Needed**
+
+**Recommended Actions:**
+
+1. **Standardize criteria**: Create clear visual standards with boundary samples
+   - Photos of accept/reject borderline cases
+   - Written descriptions of defect criteria
+
+2. **Training**:
+   - Calibration session with all operators and reference samples
+   - Identify operators with lower agreement for targeted training
+
+3. **Improve conditions**:
+   - Check lighting adequacy and consistency
+   - Ensure proper viewing distance and angle
+   - Reduce fatigue with appropriate break schedules
+
+4. **Consider automation**: For critical inspections, automated vision systems may provide better consistency
+
+5. **Re-study after improvements** to verify effectiveness
+</details>
+
+<details><summary>**Question 6**: What is the "Rule of Ten" for gauge resolution, and how would you apply it?</summary>
+
+**Answer:**
+
+**The Rule of Ten:**
+The gauge resolution should be at least **1/10 of the tolerance** or **1/10 of the process variation (6σ)**, whichever is smaller.
+
+$$\text{Resolution} \leq \frac{\min(\text{Tolerance}, 6\sigma)}{10}$$
+
+**Application Example:**
+
+Given:
+- Part tolerance: ±0.05 mm (total = 0.10 mm)
+- Process 6σ: 0.08 mm
+- Available gauges: 0.01 mm resolution, 0.001 mm resolution
+
+**Calculation:**
+```
+Required resolution ≤ min(0.10, 0.08) / 10
+Required resolution ≤ 0.08 / 10
+Required resolution ≤ 0.008 mm
+```
+
+**Assessment:**
+- 0.01 mm gauge: 0.01 > 0.008 → **INADEQUATE**
+- 0.001 mm gauge: 0.001 < 0.008 → **ADEQUATE**
+
+**Why It Matters:**
+1. If resolution is too coarse, gauge cannot detect small part differences
+2. Results in low ndc (number of distinct categories)
+3. Control charts will show "stair-step" patterns
+4. Capability studies will be inaccurate
+
+**Practical Tips:**
+- For SPC applications, 10:1 is minimum; 20:1 is preferred
+- For capability studies, 10:1 is acceptable
+- For simple pass/fail gauging, 5:1 may be acceptable
+</details>
+
+<details><summary>**Question 7**: Given the following ANOVA table from a Gauge R&R study, calculate the variance components and %GRR.</summary>
+
+| Source | DF | SS | MS |
+|--------|-----|------|-------|
+| Part | 9 | 0.2850 | 0.03167 |
+| Operator | 2 | 0.0025 | 0.00125 |
+| Part×Operator | 18 | 0.0090 | 0.00050 |
+| Repeatability | 60 | 0.0180 | 0.00030 |
+| Total | 89 | 0.3145 | |
+
+Study design: 10 parts, 3 operators, 3 trials
+
+**Answer:**
+
+```{r q7-answer, echo=TRUE}
+# Given values from ANOVA table
+MS_part <- 0.03167
+MS_operator <- 0.00125
+MS_interaction <- 0.00050
+MS_error <- 0.00030
+
+n_parts <- 10
+n_operators <- 3
+n_trials <- 3
+
+# Variance components
+var_repeatability <- MS_error
+cat("Var(Repeatability) =", var_repeatability, "\n")
+
+var_interaction <- max(0, (MS_interaction - MS_error) / n_trials)
+cat("Var(Interaction) =", round(var_interaction, 6), "\n")
+
+var_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))
+cat("Var(Operator) =", round(var_operator, 6), "\n")
+
+var_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))
+cat("Var(Part) =", round(var_part, 6), "\n\n")
+
+# Reproducibility = Operator + Interaction
+var_reproducibility <- var_operator + var_interaction
+cat("Var(Reproducibility) =", round(var_reproducibility, 6), "\n")
+
+# Total Gauge R&R
+var_GRR <- var_repeatability + var_reproducibility
+cat("Var(GRR) =", round(var_GRR, 6), "\n")
+
+# Total variation
+var_total <- var_part + var_GRR
+cat("Var(Total) =", round(var_total, 6), "\n\n")
+
+# Calculate %GRR (of total variation)
+sigma_GRR <- sqrt(var_GRR)
+sigma_total <- sqrt(var_total)
+pct_GRR <- (sigma_GRR / sigma_total) * 100
+
+cat("%GRR (of Total Variation) =", round(pct_GRR, 1), "%\n\n")
+
+# ndc
+sigma_part <- sqrt(var_part)
+ndc <- 1.41 * (sigma_part / sigma_GRR)
+cat("ndc =", round(ndc, 1), "\n\n")
+
+if(pct_GRR < 10) {
+  cat("Assessment: ACCEPTABLE (< 10%)\n")
+} else if(pct_GRR < 30) {
+  cat("Assessment: MARGINAL (10-30%)\n")
+} else {
+  cat("Assessment: UNACCEPTABLE (> 30%)\n")
+}
+```
+</details>
+
+<details><summary>**Question 8**: What actions would you take if a Gauge R&R study showed high repeatability (EV) but low reproducibility (AV)?</summary>
+
+**Answer:**
+
+When **repeatability is high** (main contributor to GRR) but **reproducibility is low**, the measurement variation is coming from the gauge/equipment/technique rather than differences between operators.
+
+**Root Cause Investigation - Focus Areas:**
+
+1. **Gauge Condition**
+   - Worn measuring surfaces or contacts
+   - Loose components or mechanism play
+   - Damaged or dirty probe/sensor
+
+2. **Gauge Resolution**
+   - Resolution may be inadequate for the tolerance
+   - Check 10:1 rule compliance
+
+3. **Fixture/Fixturing**
+   - Part not held consistently
+   - Fixture wear or damage
+   - Part not seating properly
+
+4. **Measurement Technique**
+   - Inconsistent contact force
+   - Varying measurement location on part
+   - Speed of measurement varies
+
+5. **Part Characteristics**
+   - Part surface finish affecting readings
+   - Part flexibility/deflection during measurement
+   - Part temperature variation
+
+6. **Environment**
+   - Vibration affecting readings
+   - Temperature instability
+   - Contamination
+
+**Improvement Actions:**
+
+| Priority | Action |
+|----------|--------|
+| 1 | Verify gauge calibration and condition; repair/replace if needed |
+| 2 | Check and improve fixture; ensure consistent part positioning |
+| 3 | Evaluate and potentially upgrade gauge resolution |
+| 4 | Standardize technique (force, speed, location) |
+| 5 | Control environmental factors |
+| 6 | Re-run study to verify improvement |
+
+**Note:** Low AV in this case is actually good - it means operators are consistent with each other. The problem is the measurement equipment itself.
+</details>
+
+---
+
+## References
+
+1. AIAG. (2010). *Measurement Systems Analysis Reference Manual* (4th ed.). Automotive Industry Action Group.
+
+2. Wheeler, D.J. (2006). *EMP III: Evaluating the Measurement Process* (3rd ed.). SPC Press.
+
+3. Montgomery, D.C. (2019). *Introduction to Statistical Quality Control* (8th ed.). Wiley.
+
+4. Burdick, R.K., Borror, C.M., & Montgomery, D.C. (2005). *Design and Analysis of Gauge R&R Studies*. SIAM.
+
+5. ASTM E2782-17. *Standard Guide for Measurement Systems Analysis*.
+
+6. ISO 22514-7:2021. *Statistical Methods in Process Management - Capability and Performance - Part 7: Capability of Measurement Processes*.
+
+7. Wheeler, D.J., & Lyday, R.W. (1989). *Evaluating the Measurement Process* (2nd ed.). SPC Press.
+
+8. Minitab. (2021). *Gage R&R Study (Crossed)*. Minitab Support Documentation.
+
+9. JCGM 100:2008. *Evaluation of Measurement Data - Guide to the Expression of Uncertainty in Measurement* (GUM).
+
+10. Dietrich, E., & Schulze, A. (2011). *Statistical Procedures for Machine and Process Qualification* (6th ed.). Hanser.

@@ -1,0 +1,1433 @@
+# Machine Guarding and Functional Safety
+```{r setup-06, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+- Apply the Hierarchy of Controls to manufacturing safety design
+- Identify and specify appropriate physical guarding and interlock systems
+- Select and position presence-sensing devices (light curtains, area scanners)
+- Calculate safety distances for protective device placement
+- Understand collaborative robot safety requirements
+- Design emergency stop systems according to standards
+- Differentiate between safety integrity levels (SIL) and performance levels (PL)
+
+> "Safety isn't expensive, it's priceless."
+> — Anonymous
+
+------------------------------------------------------------------------
+
+## Introduction: The Safety Hierarchy
+
+In process engineering, safety is not merely a feature added at the end of a project; it is a **fundamental design constraint**. Before deploying safety devices, the engineer must apply the **Hierarchy of Controls** — a systematic approach to eliminating or reducing workplace hazards.
+
+```{r hierarchy-controls-viz, echo=FALSE, fig.align="center", fig.cap="The Hierarchy of Controls (Most to Least Effective)", fig.width=9, fig.height=7}
+# Create pyramid visualization
+hierarchy_data <- data.frame(
+  level = factor(c("Elimination", "Substitution", "Engineering Controls",
+                   "Administrative Controls", "PPE"),
+                 levels = c("PPE", "Administrative Controls", "Engineering Controls",
+                           "Substitution", "Elimination")),
+  effectiveness = c(5, 4, 3, 2, 1),
+  width = c(2, 3, 4, 5, 6),
+  y = c(5, 4, 3, 2, 1),
+  description = c("Physically remove the hazard",
+                  "Replace with less hazardous option",
+                  "Isolate people from hazard",
+                  "Change work procedures",
+                  "Protect the worker"),
+  color = c("#27AE60", "#2ECC71", "#3498DB", "#F39C12", "#E74C3C")
+)
+
+ggplot(hierarchy_data, aes(x = 0, y = y)) +
+  # Pyramid levels
+  geom_tile(aes(width = width, height = 0.9, fill = level), color = "white", linewidth = 2) +
+  # Level names
+  geom_text(aes(label = level), fontface = "bold", color = "white", size = 5) +
+  # Descriptions on the right
+  geom_text(aes(x = 3.5, label = description), hjust = 0, size = 3.5, color = "#2C3E50") +
+  # Effectiveness arrow
+  annotate("segment", x = -4, xend = -4, y = 0.5, yend = 5.5,
+           arrow = arrow(length = unit(0.4, "cm"), ends = "last"),
+           color = "#2C3E50", size = 1.5) +
+  annotate("text", x = -4.5, y = 3, label = "More\nEffective",
+           angle = 90, vjust = 0, fontface = "bold", size = 4) +
+  scale_fill_manual(values = c("Elimination" = "#27AE60", "Substitution" = "#2ECC71",
+                               "Engineering Controls" = "#3498DB",
+                               "Administrative Controls" = "#F39C12",
+                               "PPE" = "#E74C3C")) +
+  theme_void() +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  labs(title = "The Hierarchy of Controls",
+       subtitle = "Always start at the top and work down") +
+  xlim(-5.5, 7)
+```
+
+```{r hierarchy-table, echo=FALSE}
+hierarchy_detail <- tibble(
+  `Priority` = 1:5,
+  `Control Level` = c("**Elimination**", "**Substitution**", "**Engineering Controls**",
+                      "**Administrative Controls**", "**PPE**"),
+  `Description` = c("Physically remove the hazard entirely",
+                    "Replace with something less hazardous",
+                    "Isolate people from the hazard through design",
+                    "Change the way people work",
+                    "Protect the worker with equipment"),
+  `Example` = c("Eliminate pinch point by redesigning mechanism",
+                "Use lower voltage (24V DC instead of 120V AC)",
+                "Install machine guarding, light curtains, interlocks",
+                "Safety procedures, training, warning signs, lock-out/tag-out",
+                "Safety glasses, gloves, steel-toe boots, hearing protection"),
+  `Effectiveness` = c("Most Effective", "Very Effective", "Effective",
+                      "Less Effective", "Least Effective")
+)
+
+hierarchy_detail %>%
+  kable(format = "html", caption = "Hierarchy of Controls: Detailed Breakdown") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#D5F5E3") %>%
+  row_spec(3, background = "#D6EAF8") %>%
+  row_spec(4, background = "#FEF9E7") %>%
+  row_spec(5, background = "#FADBD8") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+<details>
+<summary>Discussion: Why not just rely on PPE?</summary>
+
+**PPE (Personal Protective Equipment)** is the least effective control because:
+
+1. **It doesn't eliminate the hazard** — the danger still exists
+2. **It depends on human compliance** — workers may forget or choose not to wear it
+3. **It can fail** — equipment degrades, doesn't fit properly, or is damaged
+4. **It's the last line of defense** — if PPE fails, the worker is exposed
+
+**Key Principle:** The more we can design out hazards through engineering controls, the less we depend on human behavior to keep people safe.
+
+> "If you have to post a warning sign, you've already failed at design."
+
+</details>
+
+------------------------------------------------------------------------
+
+## Physical Guarding and Interlocks
+
+Physical barriers are the most intuitive form of protection. They create a "hard" separation between the operator and moving parts, ensuring that humans cannot enter the danger zone during machine operation.
+
+```{r guarding-types-viz, echo=FALSE, fig.align="center", fig.cap="Types of Physical Guarding", fig.width=10, fig.height=6}
+# Create visualization of different guard types
+guard_data <- data.frame(
+  type = c("Fixed Guard", "Interlocked Gate", "Adjustable Guard", "Self-Adjusting Guard"),
+  x = c(1, 2, 3, 4),
+  protection = c(5, 5, 3, 3),
+  flexibility = c(1, 3, 4, 5),
+  cost = c(1, 3, 2, 4),
+  color = c("#3498DB", "#E74C3C", "#F39C12", "#9B59B6")
+)
+
+guard_long <- guard_data %>%
+  select(type, x, protection, flexibility) %>%
+  pivot_longer(cols = c(protection, flexibility),
+               names_to = "metric", values_to = "value")
+
+ggplot(guard_long, aes(x = type, y = value, fill = metric)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
+  scale_fill_manual(values = c("protection" = "#27AE60", "flexibility" = "#3498DB"),
+                    labels = c("Flexibility", "Protection Level"),
+                    name = "Metric") +
+  scale_y_continuous(breaks = 1:5, labels = c("Low", "", "Medium", "", "High")) +
+  labs(title = "Comparison of Physical Guard Types",
+       subtitle = "Protection vs. Flexibility trade-off",
+       x = "Guard Type", y = "Rating") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    axis.text.x = element_text(angle = 20, hjust = 1, size = 10),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Fixed Guards
+
+**Fixed guards** are permanent barriers that require tools to remove. They are the simplest and most reliable form of protection.
+
+```{r fixed-guard-table, echo=FALSE}
+fixed_guards <- tibble(
+  `Characteristic` = c("Construction", "Removal", "Best Application",
+                       "Advantages", "Disadvantages"),
+  `Description` = c("Wire mesh, polycarbonate sheets, or solid metal panels",
+                    "Requires tools (screws, bolts) to remove",
+                    "Areas that need infrequent access for maintenance only",
+                    "Simple, reliable, low cost, no moving parts to fail",
+                    "Impedes visibility, slows maintenance, can be removed and not replaced")
+)
+
+fixed_guards %>%
+  kable(format = "html", caption = "Fixed Guards: Key Characteristics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Interlocked Guards
+
+**Interlocked guards** are access points equipped with sensors. When the guard is opened, the safety controller initiates a stop.
+
+```{r interlock-diagram, echo=FALSE, fig.align="center", fig.cap="Interlocked Guard Operation Principle", fig.width=10, fig.height=5}
+ggplot() +
+  # Machine representation
+  annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 4,
+           fill = "#95A5A6", color = "black", size = 1) +
+  annotate("text", x = 5, y = 2.5, label = "MACHINE\n(Hazard Zone)",
+           fontface = "bold", size = 4) +
+  # Guard door - closed position
+  annotate("rect", xmin = 2.8, xmax = 3, ymin = 1.5, ymax = 3.5,
+           fill = "#F39C12", color = "black", size = 1) +
+  annotate("text", x = 1.8, y = 2.5, label = "Guard\nDoor", size = 3) +
+  # Interlock switch
+  annotate("point", x = 2.9, y = 3.3, size = 4, color = "#E74C3C") +
+  annotate("text", x = 2.2, y = 3.5, label = "Interlock\nSwitch", size = 2.5) +
+  # Safety controller
+  annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 0.5, ymax = 1.5,
+           fill = "#2ECC71", color = "black") +
+  annotate("text", x = 1, y = 1, label = "Safety\nPLC", size = 3, fontface = "bold") +
+  # Connection lines
+  annotate("segment", x = 2.9, xend = 1.5, y = 3.3, yend = 1.5,
+           linetype = "dashed", color = "#E74C3C", size = 1) +
+  annotate("segment", x = 1.5, xend = 3, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2ECC71", size = 1) +
+  # Labels
+  annotate("text", x = 2.25, y = 0.7, label = "Stop Signal", size = 3, color = "#2ECC71") +
+  # Status indicators
+  annotate("rect", xmin = 8, xmax = 10, ymin = 3, ymax = 4, fill = "#D5F5E3", color = "black") +
+  annotate("text", x = 9, y = 3.5, label = "Door Closed\n= Machine Runs", size = 3) +
+  annotate("rect", xmin = 8, xmax = 10, ymin = 1.5, ymax = 2.5, fill = "#FADBD8", color = "black") +
+  annotate("text", x = 9, y = 2, label = "Door Open\n= Machine Stops", size = 3) +
+  theme_void() +
+  labs(title = "Interlocked Guard System",
+       subtitle = "Opening the guard door breaks the safety circuit") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+### Stop Categories
+
+When an interlock is triggered, the machine must stop. The **stop category** determines how this happens:
+
+```{r stop-categories, echo=FALSE}
+stop_cat <- tibble(
+  `Category` = c("**Category 0**", "**Category 1**", "**Category 2**"),
+  `Type` = c("Uncontrolled Stop", "Controlled Stop", "Controlled Stop"),
+  `Method` = c("Immediate removal of power to actuators",
+               "Controlled deceleration, then power removed",
+               "Controlled stop with power maintained"),
+  `Application` = c("Emergency stops, dangerous machines",
+                    "High-inertia machines, robots",
+                    "Process that cannot be interrupted abruptly"),
+  `Example` = c("Press brake E-stop", "Industrial robot guard open", "CNC spindle during tool change")
+)
+
+stop_cat %>%
+  kable(format = "html", caption = "Machine Stop Categories (IEC 60204-1)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+### Trapped Key Systems (Lock-Out/Tag-Out)
+
+**Trapped key systems** use a mechanical sequence to ensure that a machine cannot be energized unless all access keys are returned to the control panel.
+
+```{r loto-sequence, echo=FALSE, fig.align="center", fig.cap="Trapped Key System Sequence", fig.width=10, fig.height=4}
+loto_steps <- data.frame(
+  step = 1:5,
+  action = c("Turn off\nmachine", "Lock out\npower", "Remove key\nfrom panel",
+             "Key opens\naccess gate", "Gate key\ntrapped inside"),
+  x = 1:5
+)
+
+ggplot(loto_steps, aes(x = x, y = 1)) +
+  # Step circles
+  geom_point(size = 18, color = "#3498DB") +
+  geom_text(aes(label = step), color = "white", fontface = "bold", size = 6) +
+  # Action labels
+  geom_text(aes(y = 0.5, label = action), size = 3, lineheight = 0.8) +
+  # Arrows
+  geom_segment(data = loto_steps[1:4,],
+               aes(x = x + 0.4, xend = x + 0.6, y = 1, yend = 1),
+               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+  # Return arrow
+  annotate("curve", x = 5, xend = 1, y = 1.6, yend = 1.6,
+           curvature = -0.3, arrow = arrow(length = unit(0.2, "cm")),
+           color = "#27AE60", size = 1, linetype = "dashed") +
+  annotate("text", x = 3, y = 1.85, label = "To restart: Reverse sequence",
+           color = "#27AE60", fontface = "italic", size = 3) +
+  theme_void() +
+  labs(title = "Trapped Key System: Ensuring Safe Access",
+       subtitle = "Machine cannot restart until key is returned") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  ylim(0, 2.2)
+```
+
+<details>
+<summary>Case Study: The Fatal Bypass</summary>
+
+**Incident:** A maintenance worker was killed when a robot arm unexpectedly activated while he was inside a robotic cell.
+
+**What Happened:**
+- The guard interlock had been bypassed with a "defeat device" (a magnet taped to fool the sensor)
+- Workers had bypassed the interlock because it slowed down troubleshooting
+- The bypass had been in place for months without management knowledge
+
+**Root Causes:**
+1. Interlock caused inconvenience during frequent troubleshooting
+2. No monitoring system to detect bypasses
+3. Culture that tolerated "workarounds"
+
+**Lessons Learned:**
+- Design interlocks that don't impede normal operations
+- Use tamper-evident or tamper-resistant devices
+- Regular safety audits to detect bypasses
+- Zero-tolerance policy for defeating safety devices
+
+> **Never bypass a safety device, even temporarily.**
+
+</details>
+
+------------------------------------------------------------------------
+
+## Presence-Sensing Devices
+
+Presence-sensing devices allow for a **"fence-less" environment**, improving visibility and ergonomics while maintaining high safety levels. They detect when a person enters a hazardous zone and trigger a machine stop.
+
+```{r presence-sensing-overview, echo=FALSE, fig.align="center", fig.cap="Types of Presence-Sensing Devices", fig.width=10, fig.height=6}
+sensing_data <- data.frame(
+  device = c("Light Curtain", "Area Scanner", "Pressure Mat", "Safety Radar"),
+  detection = c("Line/Plane", "2D Area", "Floor Area", "3D Volume"),
+  range = c("Short", "Medium-Long", "Short", "Long"),
+  flexibility = c(2, 5, 2, 5),
+  cost = c(3, 4, 2, 5),
+  x = 1:4
+)
+
+sensing_long <- sensing_data %>%
+  pivot_longer(cols = c(flexibility, cost), names_to = "metric", values_to = "value")
+
+ggplot(sensing_long, aes(x = device, y = value, fill = metric)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
+  scale_fill_manual(values = c("flexibility" = "#3498DB", "cost" = "#E74C3C"),
+                    labels = c("Relative Cost", "Flexibility"),
+                    name = "Metric") +
+  scale_y_continuous(breaks = 1:5, labels = c("Low", "", "Medium", "", "High")) +
+  labs(title = "Presence-Sensing Device Comparison",
+       x = "Device Type", y = "Rating") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    axis.text.x = element_text(size = 10),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+### Light Curtains
+
+**Light curtains** use a transmitter and receiver to create an array of infrared beams. If any beam is broken, the safety circuit is interrupted.
+
+```{r light-curtain-diagram, echo=FALSE, fig.align="center", fig.cap="Light Curtain Operating Principle", fig.width=10, fig.height=6}
+ggplot() +
+  # Transmitter
+  annotate("rect", xmin = 0, xmax = 0.5, ymin = 0, ymax = 5,
+           fill = "#3498DB", color = "black") +
+  annotate("text", x = 0.25, y = 5.3, label = "Transmitter\n(TX)", size = 3, fontface = "bold") +
+  # Receiver
+  annotate("rect", xmin = 4.5, xmax = 5, ymin = 0, ymax = 5,
+           fill = "#E74C3C", color = "black") +
+  annotate("text", x = 4.75, y = 5.3, label = "Receiver\n(RX)", size = 3, fontface = "bold") +
+  # Beam lines
+  annotate("segment", x = rep(0.5, 10), xend = rep(4.5, 10),
+           y = seq(0.25, 4.75, 0.5), yend = seq(0.25, 4.75, 0.5),
+           color = "#F39C12", size = 0.8, linetype = "dotted") +
+  # Machine/hazard behind
+  annotate("rect", xmin = 5.5, xmax = 8, ymin = 0.5, ymax = 4.5,
+           fill = "#95A5A6", color = "black") +
+  annotate("text", x = 6.75, y = 2.5, label = "HAZARD\nZONE", fontface = "bold", size = 4) +
+  # Hand breaking beam
+  annotate("point", x = 2.5, y = 2.5, size = 15, color = "#E67E22") +
+  annotate("text", x = 2.5, y = 2.5, label = "Hand", size = 3, color = "white") +
+  # Broken beam indication
+  annotate("segment", x = 0.5, xend = 2.2, y = 2.5, yend = 2.5,
+           color = "#E74C3C", size = 1.5) +
+  annotate("text", x = 1.35, y = 2.8, label = "Beam\nBroken!", color = "#E74C3C",
+           size = 3, fontface = "bold") +
+  # Safety controller
+  annotate("rect", xmin = 6, xmax = 7.5, ymin = -1.2, ymax = -0.3,
+           fill = "#2ECC71", color = "black") +
+  annotate("text", x = 6.75, y = -0.75, label = "Safety\nController", size = 3) +
+  # Connections
+  annotate("segment", x = 4.75, xend = 6.75, y = 0, yend = -0.3,
+           linetype = "dashed", color = "#2C3E50") +
+  # Resolution indicator
+  annotate("segment", x = -0.5, xend = -0.5, y = 0.25, yend = 0.75,
+           arrow = arrow(length = unit(0.1, "cm"), ends = "both"), color = "#2C3E50") +
+  annotate("text", x = -1, y = 0.5, label = "Resolution\n(14mm typical)", size = 2.5) +
+  theme_void() +
+  labs(title = "Light Curtain: Detection Through Beam Interruption",
+       subtitle = "Any object larger than the resolution will trigger a stop") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-1.5, 8.5) + ylim(-1.5, 6)
+```
+
+```{r light-curtain-specs, echo=FALSE}
+lc_specs <- tibble(
+  `Parameter` = c("Resolution", "Height", "Range", "Response Time", "Application"),
+  `Finger Detection (14mm)` = c("14mm beam spacing", "150-1800mm", "0.5-20m",
+                                 "5-15ms", "Point of operation guarding"),
+  `Hand Detection (30mm)` = c("30mm beam spacing", "300-1800mm", "0.5-20m",
+                               "10-20ms", "Perimeter guarding"),
+  `Body Detection (40mm+)` = c("40mm+ beam spacing", "900-2000mm", "0.5-30m",
+                                "15-30ms", "Area access detection")
+)
+
+lc_specs %>%
+  kable(format = "html", caption = "Light Curtain Specifications by Application") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#F39C12", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+### Laser Area Scanners
+
+**Laser area scanners** use LiDAR technology to monitor a 2D plane. They are highly flexible and allow for programmable zones.
+
+```{r area-scanner-diagram, echo=FALSE, fig.align="center", fig.cap="Laser Area Scanner Zones", fig.width=10, fig.height=8}
+# Create polar plot for scanner zones
+angles <- seq(0, 270, length.out = 100)
+warning_r <- 3
+safety_r <- 2
+
+# Convert to cartesian
+warning_x <- warning_r * cos(angles * pi / 180)
+warning_y <- warning_r * sin(angles * pi / 180)
+safety_x <- safety_r * cos(angles * pi / 180)
+safety_y <- safety_r * sin(angles * pi / 180)
+
+ggplot() +
+  # Warning zone (outer)
+  annotate("polygon",
+           x = c(0, warning_x, 0),
+           y = c(0, warning_y, 0),
+           fill = "#F39C12", alpha = 0.4) +
+  # Safety zone (inner)
+  annotate("polygon",
+           x = c(0, safety_x, 0),
+           y = c(0, safety_y, 0),
+           fill = "#E74C3C", alpha = 0.4) +
+  # Scanner unit
+  annotate("point", x = 0, y = 0, size = 8, color = "#2C3E50") +
+  annotate("text", x = 0, y = -0.5, label = "Scanner", fontface = "bold", size = 3) +
+  # Zone labels
+  annotate("text", x = 2.5, y = 2.5, label = "WARNING ZONE\n(Machine slows/alarms)",
+           color = "#F39C12", fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.2, y = 1.2, label = "SAFETY ZONE\n(Machine stops)",
+           color = "#E74C3C", fontface = "bold", size = 3.5) +
+  # Machine
+  annotate("rect", xmin = -2, xmax = 0, ymin = -2, ymax = 0,
+           fill = "#95A5A6", color = "black") +
+  annotate("text", x = -1, y = -1, label = "Machine", fontface = "bold", size = 4, color = "white") +
+  # Person approaching
+  annotate("point", x = 2.5, y = 0.5, size = 10, color = "#3498DB") +
+  annotate("text", x = 2.5, y = 0.5, label = "O", size = 5, color = "white") +
+  annotate("text", x = 2.5, y = -0.2, label = "Worker", size = 3) +
+  # Scan lines
+  annotate("segment", x = 0, xend = 2.5, y = 0, yend = 2.5,
+           linetype = "dotted", color = "#2C3E50", alpha = 0.5) +
+  annotate("segment", x = 0, xend = 3, y = 0, yend = 0,
+           linetype = "dotted", color = "#2C3E50", alpha = 0.5) +
+  annotate("segment", x = 0, xend = 0, y = 0, yend = 3,
+           linetype = "dotted", color = "#2C3E50", alpha = 0.5) +
+  theme_void() +
+  coord_fixed() +
+  labs(title = "Laser Area Scanner: Programmable Safety Zones",
+       subtitle = "270° scanning field with configurable warning and safety zones") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-3, 4) + ylim(-2.5, 4)
+```
+
+```{r scanner-comparison, echo=FALSE}
+scanner_compare <- tibble(
+  `Feature` = c("Detection Type", "Flexibility", "Zone Configuration",
+                "Cost", "Best Use Case", "Environmental Limits"),
+  `Light Curtains` = c("Vertical/Linear Barrier", "Fixed installation",
+                       "Single detection plane", "Generally lower ($1,000-5,000)",
+                       "Clear entry/exit points, press brakes",
+                       "Dust/debris can cause false trips"),
+  `Area Scanners` = c("Horizontal/Area Coverage", "Programmable zones",
+                      "Multiple warning + safety zones", "Higher ($3,000-10,000)",
+                      "Large open floors, AGV paths, flexible cells",
+                      "More tolerant of dust, outdoor rated available")
+)
+
+scanner_compare %>%
+  kable(format = "html", caption = "Light Curtains vs. Area Scanners") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Pressure-Sensitive Safety Mats
+
+**Pressure-sensitive mats** detect the presence of a person standing on them. They are used primarily in legacy systems or specific zones where optical sensors may be obscured.
+
+```{r pressure-mat-diagram, echo=FALSE, fig.align="center", fig.cap="Pressure-Sensitive Safety Mat Construction", fig.width=9, fig.height=5}
+ggplot() +
+  # Mat cross-section
+  annotate("rect", xmin = 0, xmax = 8, ymin = 0, ymax = 0.3,
+           fill = "#7F8C8D", color = "black") +
+  annotate("text", x = 4, y = 0.15, label = "Bottom plate (conductive)",
+           size = 3, color = "white") +
+  annotate("rect", xmin = 0, xmax = 8, ymin = 0.3, ymax = 0.5,
+           fill = "#2ECC71", color = "black") +
+  annotate("text", x = 4, y = 0.4, label = "Spacer layer (normally open)",
+           size = 3, color = "white") +
+  annotate("rect", xmin = 0, xmax = 8, ymin = 0.5, ymax = 0.8,
+           fill = "#7F8C8D", color = "black") +
+  annotate("text", x = 4, y = 0.65, label = "Top plate (conductive)",
+           size = 3, color = "white") +
+  annotate("rect", xmin = 0, xmax = 8, ymin = 0.8, ymax = 1,
+           fill = "#34495E", color = "black") +
+  annotate("text", x = 4, y = 0.9, label = "Protective cover (rubber)",
+           size = 3, color = "white") +
+  # Person standing
+  annotate("point", x = 6, y = 1.5, size = 12, color = "#3498DB") +
+  annotate("segment", x = 6, xend = 6, y = 1.3, yend = 1.0,
+           size = 2, color = "#3498DB") +
+  # Compression
+  annotate("segment", x = 5.5, xend = 6.5, y = 1.1, yend = 1.1,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), color = "#E74C3C") +
+  annotate("text", x = 6, y = 1.2, label = "Pressure", size = 3, color = "#E74C3C") +
+  # Connection to controller
+  annotate("rect", xmin = -1.5, xmax = -0.5, ymin = 0.2, ymax = 0.6,
+           fill = "#2ECC71", color = "black") +
+  annotate("text", x = -1, y = 0.4, label = "Safety\nRelay", size = 2.5) +
+  annotate("segment", x = 0, xend = -0.5, y = 0.4, yend = 0.4,
+           linetype = "dashed", color = "#2C3E50") +
+  theme_void() +
+  labs(title = "Pressure-Sensitive Safety Mat",
+       subtitle = "When stepped on, conductive plates make contact and complete the circuit") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  ylim(-0.3, 2)
+```
+
+<details>
+<summary>When to Use Pressure Mats vs. Optical Sensors</summary>
+
+**Use Pressure Mats When:**
+- Environment has heavy dust, smoke, or steam (blinds optical sensors)
+- Detection area is well-defined and doesn't change
+- Workers need to stand in a specific location
+- Budget is limited
+
+**Use Optical Sensors When:**
+- Flexibility in zone configuration is needed
+- Environment is relatively clean
+- Detection area is large or needs to change
+- Higher integrity level is required
+
+**Hybrid Approach:** Many modern systems use both — area scanners for perimeter protection and pressure mats for specific danger zones near the machine.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Control-Actuated Safety Devices
+
+These devices ensure that the operator's body—specifically their hands—is in a predetermined **safe location** before the machine can cycle.
+
+### Two-Hand Controls
+
+**Two-hand controls** are common in pressing or stamping operations. To initiate a cycle, the operator must press two buttons simultaneously.
+
+```{r two-hand-diagram, echo=FALSE, fig.align="center", fig.cap="Two-Hand Control System", fig.width=10, fig.height=6}
+ggplot() +
+  # Control panel
+  annotate("rect", xmin = 2, xmax = 6, ymin = 0, ymax = 2,
+           fill = "#F1C40F", color = "black", size = 1.5) +
+  # Buttons
+  annotate("point", x = 3, y = 1, size = 15, color = "#E74C3C") +
+  annotate("point", x = 5, y = 1, size = 15, color = "#E74C3C") +
+  annotate("text", x = 3, y = 1, label = "L", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 5, y = 1, label = "R", color = "white", fontface = "bold", size = 5) +
+  # Hands
+  annotate("point", x = 3, y = 2.5, size = 12, color = "#E67E22") +
+  annotate("point", x = 5, y = 2.5, size = 12, color = "#E67E22") +
+  annotate("text", x = 3, y = 2.5, label = "L", size = 4, color = "white") +
+  annotate("text", x = 5, y = 2.5, label = "R", size = 4, color = "white") +
+  # Arrows showing press
+  annotate("segment", x = 3, xend = 3, y = 2.2, yend = 1.5,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+  annotate("segment", x = 5, xend = 5, y = 2.2, yend = 1.5,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+  # Machine
+  annotate("rect", xmin = 1, xmax = 7, ymin = -2.5, ymax = -0.5,
+           fill = "#95A5A6", color = "black") +
+  annotate("text", x = 4, y = -1.5, label = "PRESS", fontface = "bold", size = 5) +
+  # Time requirement
+  annotate("rect", xmin = 0, xmax = 2.5, ymin = 2.5, ymax = 4,
+           fill = "#D5F5E3", color = "#27AE60") +
+  annotate("text", x = 1.25, y = 3.25,
+           label = "Both buttons\npressed within\n0.5 seconds",
+           size = 3, lineheight = 0.9) +
+  # Safety note
+  annotate("rect", xmin = 5.5, xmax = 8, ymin = 2.5, ymax = 4,
+           fill = "#FADBD8", color = "#E74C3C") +
+  annotate("text", x = 6.75, y = 3.25,
+           label = "Anti-tie-down\nprevents\nbypassing",
+           size = 3, lineheight = 0.9) +
+  theme_void() +
+  labs(title = "Two-Hand Control: Both Hands Must Be on Buttons",
+       subtitle = "Ensures operator's hands are away from the danger zone during machine cycle") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  ylim(-3, 4.5)
+```
+
+> **Anti-Tie-Down Requirement:** Modern systems require both buttons to be pressed within **0.5 seconds** of each other. This prevents operators from taping one button down to work with one hand.
+
+```{r two-hand-requirements, echo=FALSE}
+two_hand_req <- tibble(
+  `Requirement` = c("Synchronous activation", "Continuous pressure",
+                    "Release before restart", "Button spacing",
+                    "Guards around buttons"),
+  `Standard Value` = c("Within 0.5 seconds", "Must be held throughout cycle",
+                       "Both must be released before next cycle",
+                       "Minimum 260mm (10 inches) apart",
+                       "Prevent accidental activation"),
+  `Purpose` = c("Prevents one-hand operation", "Ensures hands stay on controls",
+                "Prevents automatic cycling", "Cannot press both with one hand/arm",
+                "Prevents hip, elbow, or object activation")
+)
+
+two_hand_req %>%
+  kable(format = "html", caption = "Two-Hand Control Requirements") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Enable/Deadman Switches
+
+**Enable switches** (also called deadman switches) are used during **Teach Mode** for robotics. The operator must hold a three-position trigger in the **middle** position.
+
+```{r enable-switch-diagram, echo=FALSE, fig.align="center", fig.cap="Three-Position Enable Switch Operation", fig.width=10, fig.height=5}
+ggplot() +
+  # Position 1 - Released
+  annotate("rect", xmin = 0, xmax = 2.5, ymin = 0, ymax = 3,
+           fill = "#FADBD8", color = "#E74C3C", size = 1) +
+  annotate("text", x = 1.25, y = 2.5, label = "Position 1\nRELEASED",
+           fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.25, y = 1.5, label = "Robot\nSTOPS",
+           size = 4, color = "#E74C3C", fontface = "bold") +
+  annotate("text", x = 1.25, y = 0.5, label = "Panic response:\nlet go = stop",
+           size = 2.5, fontface = "italic") +
+  # Position 2 - Middle
+  annotate("rect", xmin = 3, xmax = 5.5, ymin = 0, ymax = 3,
+           fill = "#D5F5E3", color = "#27AE60", size = 1) +
+  annotate("text", x = 4.25, y = 2.5, label = "Position 2\nMIDDLE",
+           fontface = "bold", size = 3.5) +
+  annotate("text", x = 4.25, y = 1.5, label = "Robot\nENABLED",
+           size = 4, color = "#27AE60", fontface = "bold") +
+  annotate("text", x = 4.25, y = 0.5, label = "Active hold:\ncontrolled operation",
+           size = 2.5, fontface = "italic") +
+  # Position 3 - Fully pressed
+  annotate("rect", xmin = 6, xmax = 8.5, ymin = 0, ymax = 3,
+           fill = "#FADBD8", color = "#E74C3C", size = 1) +
+  annotate("text", x = 7.25, y = 2.5, label = "Position 3\nFULLY PRESSED",
+           fontface = "bold", size = 3.5) +
+  annotate("text", x = 7.25, y = 1.5, label = "Robot\nSTOPS",
+           size = 4, color = "#E74C3C", fontface = "bold") +
+  annotate("text", x = 7.25, y = 0.5, label = "Startle response:\nsqueeze = stop",
+           size = 2.5, fontface = "italic") +
+  # Arrows
+  annotate("segment", x = 2.5, xend = 3, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), size = 1) +
+  annotate("segment", x = 5.5, xend = 6, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), size = 1) +
+  theme_void() +
+  labs(title = "Three-Position Enable Switch",
+       subtitle = "Only the middle position allows robot motion") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  ylim(-0.5, 3.5)
+```
+
+<details>
+<summary>Why Three Positions?</summary>
+
+The three-position design accounts for **two natural human reactions** to danger:
+
+1. **Panic (Release):** When frightened, people often release what they're holding — robot stops.
+2. **Startle (Squeeze):** When startled, people often grip tighter — robot stops.
+
+Only a deliberate, controlled **middle hold** allows the robot to move. This is fundamental to safe teach pendant operation.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Collaborative Robotics (Cobots)
+
+**Collaborative robots (cobots)** represent a shift from "separation" to "collaboration." They rely on sophisticated internal sensors rather than external cages, allowing humans and robots to work in the same space.
+
+```{r cobot-comparison-guarding, echo=FALSE, fig.align="center", fig.cap="Traditional Robot vs. Collaborative Robot", fig.width=10, fig.height=6}
+ggplot() +
+  # Traditional Robot
+  annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 5,
+           fill = "#ECF0F1", color = "black") +
+  annotate("text", x = 2, y = 5.3, label = "TRADITIONAL ROBOT",
+           fontface = "bold", size = 4) +
+  # Cage
+  annotate("rect", xmin = 0.3, xmax = 3.7, ymin = 0.3, ymax = 4.7,
+           fill = NA, color = "#E74C3C", size = 1.5, linetype = "dashed") +
+  annotate("text", x = 2, y = 4.3, label = "Safety Cage", color = "#E74C3C", size = 3) +
+  # Robot
+  annotate("point", x = 2, y = 2, size = 20, color = "#3498DB") +
+  annotate("text", x = 2, y = 2, label = "Robot", color = "white", size = 3) +
+  # Worker outside
+  annotate("point", x = 0, y = 2.5, size = 10, color = "#27AE60") +
+  annotate("text", x = -0.5, y = 2.5, label = "Worker\n(Outside)", size = 2.5) +
+
+  # Collaborative Robot
+  annotate("rect", xmin = 5.5, xmax = 9.5, ymin = 0, ymax = 5,
+           fill = "#D5F5E3", color = "black") +
+  annotate("text", x = 7.5, y = 5.3, label = "COLLABORATIVE ROBOT",
+           fontface = "bold", size = 4) +
+  # No cage - open workspace
+  # Robot
+  annotate("point", x = 7.5, y = 2.5, size = 20, color = "#2ECC71") +
+  annotate("text", x = 7.5, y = 2.5, label = "Cobot", color = "white", size = 3) +
+  # Worker beside robot
+  annotate("point", x = 6.3, y = 2.5, size = 10, color = "#3498DB") +
+  annotate("text", x = 5.8, y = 2.5, label = "Worker\n(Beside)", size = 2.5) +
+  # Force sensors indication
+  annotate("segment", x = 7.5, xend = 6.5, y = 2.5, yend = 2.5,
+           arrow = arrow(length = unit(0.1, "cm"), ends = "both"),
+           color = "#F39C12", size = 1.5) +
+  annotate("text", x = 7, y = 3, label = "Force\nLimited", size = 2.5, color = "#F39C12") +
+  theme_void() +
+  labs(title = "Traditional vs. Collaborative Robots",
+       subtitle = "Cobots enable human-robot collaboration without physical barriers") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-1, 10)
+```
+
+### Collaborative Operation Methods
+
+ISO 10218 and ISO/TS 15066 define **four methods** for safe collaborative operation:
+
+```{r cobot-methods, echo=FALSE}
+cobot_methods <- tibble(
+  `Method` = c("**Safety-Rated Monitored Stop**",
+               "**Hand Guiding**",
+               "**Speed and Separation Monitoring**",
+               "**Power and Force Limiting**"),
+  `How It Works` = c("Robot stops when human enters workspace, resumes when clear",
+                     "Operator physically guides robot through motions",
+                     "Robot slows or stops based on human proximity",
+                     "Robot limits force/power to safe levels on contact"),
+  `Sensors Used` = c("Area scanners, light curtains",
+                     "Force/torque sensors in joints",
+                     "Area scanners, radar, cameras",
+                     "Joint torque sensors"),
+  `Application` = c("Large robot needing occasional access",
+                    "Teaching, positioning",
+                    "Shared workspace with varying proximity",
+                    "Direct contact applications")
+)
+
+cobot_methods %>%
+  kable(format = "html", caption = "Four Methods of Collaborative Robot Operation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2ECC71", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "15em")
+```
+
+### Power and Force Limiting (PFL)
+
+The most common cobot safety method is **Power and Force Limiting**. The robot detects a change in torque in its joints. If it bumps into a human, it stops before a regulated amount of force is exceeded.
+
+```{r pfl-limits, echo=FALSE}
+pfl_limits <- tibble(
+  `Body Region` = c("Skull/Forehead", "Face", "Neck", "Back/Shoulders",
+                    "Chest", "Abdomen", "Hand/Fingers"),
+  `Maximum Pressure (N/cm²)` = c(130, 65, 145, 210, 140, 110, 300),
+  `Maximum Force (N)` = c(130, 65, 150, 210, 140, 110, 140),
+  `Risk Level` = c("Critical", "Critical", "Critical", "Moderate",
+                   "Moderate", "Moderate", "Lower")
+)
+
+pfl_limits %>%
+  kable(format = "html", caption = "ISO/TS 15066 Biomechanical Limits (Quasi-static contact)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  row_spec(1:3, background = "#FADBD8") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+<details>
+<summary>Discussion: Are Cobots Always Safe?</summary>
+
+**Common Misconception:** "Cobots are safe, so we don't need to do a risk assessment."
+
+**Reality:** Cobots are *potentially* safe, but a **risk assessment is always required**.
+
+**Factors that can make a cobot unsafe:**
+
+1. **End-of-arm tooling** — A soft gripper is different from a sharp blade
+2. **Workpiece** — Carrying a heavy or sharp object increases risk
+3. **Speed** — Even force-limited robots can cause injury at high speed
+4. **Application** — Some tasks bring humans closer to hazards
+5. **Environment** — Slippery floors, confined spaces, etc.
+
+> **Every collaborative application requires a documented risk assessment per ISO 12100.**
+
+</details>
+
+```{=html}
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+    src="https://www.youtube.com/embed/u48fm391FGk"
+    title="Collaborative Robot Safety Explained"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+------------------------------------------------------------------------
+
+## Safety Distance Calculation
+
+A safety device cannot be placed arbitrarily. It must be far enough away that the machine comes to a **complete halt** before the human can reach the hazard.
+
+### The Safety Distance Formula
+
+The minimum safety distance $S$ is calculated as:
+
+$$S = (K \times T) + C$$
+
+Where:
+
+- **$K$**: The hand/body approach speed (standardized values)
+- **$T$**: The total stopping time of the system (device response + machine stop time)
+- **$C$**: The "penetration depth" (how far a hand can reach through before being detected)
+
+```{r safety-distance-viz, echo=FALSE, fig.align="center", fig.cap="Safety Distance Components", fig.width=10, fig.height=5}
+ggplot() +
+  # Light curtain
+  annotate("rect", xmin = 0, xmax = 0.3, ymin = 0, ymax = 4,
+           fill = "#F39C12", color = "black") +
+  annotate("text", x = 0.15, y = 4.3, label = "Light\nCurtain", size = 3) +
+  # Machine/hazard
+  annotate("rect", xmin = 5.5, xmax = 8, ymin = 0.5, ymax = 3.5,
+           fill = "#E74C3C", color = "black") +
+  annotate("text", x = 6.75, y = 2, label = "HAZARD\nZONE",
+           fontface = "bold", size = 4, color = "white") +
+  # Safety distance arrow
+  annotate("segment", x = 0.3, xend = 5.5, y = -0.5, yend = -0.5,
+           arrow = arrow(length = unit(0.2, "cm"), ends = "both"),
+           color = "#3498DB", size = 1.5) +
+  annotate("text", x = 2.9, y = -1, label = "S = Safety Distance",
+           fontface = "bold", size = 4, color = "#3498DB") +
+  # C - penetration depth
+  annotate("segment", x = -0.5, xend = 0.3, y = 2, yend = 2,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"),
+           color = "#9B59B6", size = 1) +
+  annotate("text", x = -0.1, y = 2.5, label = "C",
+           fontface = "bold", size = 4, color = "#9B59B6") +
+  # Human approach
+  annotate("point", x = -1.5, y = 2, size = 15, color = "#27AE60") +
+  annotate("text", x = -1.5, y = 2, label = "O", size = 5, color = "white") +
+  annotate("segment", x = -1, xend = 0, y = 2, yend = 2,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#27AE60", size = 1) +
+  annotate("text", x = -0.5, y = 1.5, label = "K (approach\nspeed)",
+           size = 3, color = "#27AE60") +
+  # Formula box
+  annotate("rect", xmin = 2, xmax = 5, ymin = 4.2, ymax = 5.2,
+           fill = "#D6EAF8", color = "#3498DB") +
+  annotate("text", x = 3.5, y = 4.7, label = "S = (K × T) + C",
+           fontface = "bold", size = 5) +
+  theme_void() +
+  labs(title = "Safety Distance: Ensuring Time to Stop",
+       subtitle = "The device must be far enough that the machine stops before the person reaches the hazard") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-2.5, 8.5) + ylim(-1.5, 5.5)
+```
+
+### Standard Values for K
+
+```{r k-values, echo=FALSE}
+k_values <- tibble(
+  `Approach Type` = c("Hand/Arm Approach (fast)", "Hand/Arm Approach (normal)",
+                      "Walking Approach", "Standing Reach"),
+  `K Value (mm/s)` = c("2000", "1600", "1600", "0 (static)"),
+  `When to Use` = c("Close approach to point of operation",
+                    "General approach to machines",
+                    "Area access detection",
+                    "Worker already in position")
+)
+
+k_values %>%
+  kable(format = "html", caption = "Standard Approach Speed Values (ISO 13855)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "15em")
+```
+
+### Penetration Depth (C)
+
+The penetration depth depends on the **resolution** of the sensing device:
+
+```{r c-values, echo=FALSE}
+c_values <- tibble(
+  `Resolution (mm)` = c("≤14", ">14 to ≤20", ">20 to ≤30", ">30 to ≤40", ">40"),
+  `C Value (mm)` = c("0", "80", "130", "240", "850"),
+  `Detection Type` = c("Finger detection", "Finger/Hand", "Hand detection",
+                       "Hand/Arm", "Body detection")
+)
+
+c_values %>%
+  kable(format = "html", caption = "Penetration Depth Values Based on Resolution") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white")
+```
+
+### Example Calculation
+
+```{r safety-calc-example, echo=TRUE}
+# Given parameters
+K <- 2000        # Approach speed (mm/s) - fast hand approach
+T_device <- 0.020  # Light curtain response time (20 ms = 0.020 s)
+T_machine <- 0.150 # Machine stopping time (150 ms = 0.150 s)
+C <- 0           # Penetration depth for 14mm resolution
+
+# Calculate total stopping time
+T_total <- T_device + T_machine
+cat("Total stopping time (T):", T_total * 1000, "ms\n")
+
+# Calculate minimum safety distance
+S <- (K * T_total) + C
+cat("Minimum safety distance (S):", S, "mm\n")
+cat("Minimum safety distance (S):", S / 25.4, "inches\n")
+
+# Interpretation
+cat("\n--- Interpretation ---\n")
+cat("The light curtain must be at least", S, "mm from the hazard.\n")
+cat("This ensures the machine stops before a person can reach the danger zone.\n")
+```
+
+<details>
+<summary>Practice Problem: Calculate Safety Distance</summary>
+
+**Given:**
+- Light curtain resolution: 30mm (hand detection)
+- Light curtain response time: 15ms
+- Machine stopping time: 200ms
+- Application: Operator hand approach
+
+**Calculate the minimum safety distance.**
+
+**Solution:**
+```
+K = 1600 mm/s (normal hand approach)
+T = 0.015 + 0.200 = 0.215 seconds
+C = 130 mm (for 30mm resolution)
+
+S = (K × T) + C
+S = (1600 × 0.215) + 130
+S = 344 + 130
+S = 474 mm (approximately 18.7 inches)
+```
+
+The light curtain must be installed at least **474mm** from the nearest hazard point.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Emergency Stop (E-Stop) Systems
+
+The **Emergency Stop** is the "last resort" — it is not a safety device but a **complementary protective measure**. It must be available to stop the machine when all other measures have failed.
+
+```{r estop-design, echo=FALSE, fig.align="center", fig.cap="E-Stop Design Requirements", fig.width=10, fig.height=6}
+ggplot() +
+  # E-Stop button
+  annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 5,
+           fill = "#F1C40F", color = "black", size = 2) +
+  annotate("point", x = 5, y = 3, size = 40, color = "#E74C3C") +
+  annotate("text", x = 5, y = 3, label = "STOP",
+           fontface = "bold", size = 6, color = "white") +
+  # Requirements callouts
+  # Red mushroom head
+  annotate("segment", x = 5.8, xend = 8, y = 3.5, yend = 4.5, color = "#2C3E50") +
+  annotate("label", x = 8.5, y = 4.5, label = "Red mushroom head\n(palm-operated)",
+           size = 3, fill = "#D5F5E3") +
+  # Yellow background
+  annotate("segment", x = 6.5, xend = 8, y = 1.5, yend = 0.5, color = "#2C3E50") +
+  annotate("label", x = 8.5, y = 0.5, label = "Yellow background\n(high contrast)",
+           size = 3, fill = "#FEF9E7") +
+  # Self-latching
+  annotate("segment", x = 3.5, xend = 1.5, y = 3.5, yend = 4.5, color = "#2C3E50") +
+  annotate("label", x = 1, y = 4.5, label = "Self-latching\n(stays pressed)",
+           size = 3, fill = "#D6EAF8") +
+  # Manual reset
+  annotate("segment", x = 3.5, xend = 1.5, y = 2.5, yend = 1.5, color = "#2C3E50") +
+  annotate("label", x = 1, y = 1.5, label = "Manual reset\n(twist or key)",
+           size = 3, fill = "#FADBD8") +
+  theme_void() +
+  labs(title = "Emergency Stop Button Design Requirements",
+       subtitle = "IEC 60204-1 / NFPA 79 Standards") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+```{r estop-requirements, echo=FALSE}
+estop_req <- tibble(
+  `Requirement` = c("Color", "Shape", "Background", "Operation", "Reset",
+                    "Accessibility", "Wiring", "Function"),
+  `Standard` = c("Red (RAL 3000 or equivalent)",
+                 "Mushroom head (palm or fist operated)",
+                 "Yellow (high contrast)",
+                 "Self-latching (stays activated when pressed)",
+                 "Manual reset required (twist, pull, or key)",
+                 "Within easy reach of all operators",
+                 "Normally closed contacts (fail-safe)",
+                 "Category 0 or Category 1 stop")
+)
+
+estop_req %>%
+  kable(format = "html", caption = "E-Stop Requirements per IEC 60204-1") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+### E-Stop Pull Cords
+
+For long conveyors or machines where an operator cannot quickly reach a fixed button, **pull cords** provide continuous E-Stop coverage.
+
+```{r pull-cord-diagram, echo=FALSE, fig.align="center", fig.cap="E-Stop Pull Cord System", fig.width=10, fig.height=4}
+ggplot() +
+  # Conveyor representation
+  annotate("rect", xmin = 0, xmax = 10, ymin = 0.8, ymax = 1.2,
+           fill = "#95A5A6", color = "black") +
+  annotate("text", x = 5, y = 1, label = "CONVEYOR", size = 3, color = "white") +
+  # Pull cord
+  annotate("segment", x = 0.5, xend = 9.5, y = 2, yend = 2,
+           color = "#E74C3C", size = 2) +
+  # Switches at ends
+  annotate("rect", xmin = 0.2, xmax = 0.8, ymin = 1.7, ymax = 2.3,
+           fill = "#F1C40F", color = "black") +
+  annotate("rect", xmin = 9.2, xmax = 9.8, ymin = 1.7, ymax = 2.3,
+           fill = "#F1C40F", color = "black") +
+  # Pull indication
+  annotate("segment", x = 5, xend = 5, y = 2, yend = 2.8,
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+  annotate("text", x = 5, y = 3.1, label = "Pull from\nanywhere", size = 3) +
+  # Worker positions
+  annotate("point", x = c(2, 5, 8), y = rep(0.3, 3), size = 8, color = "#3498DB") +
+  annotate("text", x = c(2, 5, 8), y = rep(-0.2, 3), label = "Worker", size = 2.5) +
+  theme_void() +
+  labs(title = "E-Stop Pull Cord: Full-Length Coverage",
+       subtitle = "Worker can trigger emergency stop from any position along the conveyor") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  ylim(-0.5, 3.5)
+```
+
+<details>
+<summary>Common E-Stop Mistakes</summary>
+
+**Mistake 1: Using E-Stop for normal stopping**
+- E-Stops are for emergencies only
+- Normal stops should use a separate control
+- Frequent E-Stop use causes wear and desensitizes operators
+
+**Mistake 2: E-Stop that doesn't stop everything**
+- All hazardous motion must stop
+- Auxiliary equipment (conveyors, feeders) often forgotten
+- Review entire system, not just the primary machine
+
+**Mistake 3: Automatic restart after E-Stop reset**
+- Machine must NOT automatically restart when E-Stop is released
+- Separate "Start" action required
+- This prevents unexpected motion after reset
+
+**Mistake 4: Hidden or blocked E-Stops**
+- E-Stops must be visible and accessible
+- Guard placement sometimes blocks access
+- Regular audits needed to ensure accessibility
+
+</details>
+
+------------------------------------------------------------------------
+
+## Functional Safety Standards
+
+Modern safety systems must meet specific **performance levels** to ensure reliability. Two main frameworks exist:
+
+### Safety Integrity Levels (SIL) - IEC 62061
+
+```{r sil-levels, echo=FALSE}
+sil_data <- tibble(
+  `SIL Level` = c("SIL 1", "SIL 2", "SIL 3"),
+  `PFH Range` = c("≥10⁻⁶ to <10⁻⁵", "≥10⁻⁷ to <10⁻⁶", "≥10⁻⁸ to <10⁻⁷"),
+  `Approximate Meaning` = c("Dangerous failure less than once per 11 years",
+                             "Dangerous failure less than once per 114 years",
+                             "Dangerous failure less than once per 1,140 years"),
+  `Typical Application` = c("Low-risk tasks", "Most industrial machinery", "High-risk processes")
+)
+
+sil_data %>%
+  kable(format = "html", caption = "Safety Integrity Levels (PFH = Probability of Dangerous Failure per Hour)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3, background = "#FADBD8") %>%
+  column_spec(1, bold = TRUE)
+```
+
+### Performance Levels (PL) - ISO 13849-1
+
+```{r pl-levels, echo=FALSE}
+pl_data <- tibble(
+  `Performance Level` = c("PL a", "PL b", "PL c", "PL d", "PL e"),
+  `PFH Range` = c("≥10⁻⁵ to <10⁻⁴", "≥3×10⁻⁶ to <10⁻⁵",
+                  "≥10⁻⁶ to <3×10⁻⁶", "≥10⁻⁷ to <10⁻⁶", "≥10⁻⁸ to <10⁻⁷"),
+  `Risk Reduction` = c("Lowest", "Low", "Medium", "High", "Highest"),
+  `Equivalent SIL` = c("< SIL 1", "SIL 1", "SIL 1", "SIL 2", "SIL 3")
+)
+
+pl_data %>%
+  kable(format = "html", caption = "Performance Levels per ISO 13849-1") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  column_spec(1, bold = TRUE)
+```
+
+```{r sil-pl-relationship, echo=FALSE, fig.align="center", fig.cap="Relationship Between SIL and PL", fig.width=8, fig.height=5}
+rel_data <- data.frame(
+  x = c(1, 2, 3, 4, 5),
+  pl = c("PL a", "PL b", "PL c", "PL d", "PL e"),
+  sil = c(0.5, 1, 1, 2, 3),
+  color = c("#D5F5E3", "#D5F5E3", "#FEF9E7", "#FEF9E7", "#FADBD8")
+)
+
+ggplot(rel_data, aes(x = x, y = sil)) +
+  geom_bar(stat = "identity", fill = rel_data$color, color = "black", width = 0.8) +
+  geom_text(aes(label = pl), vjust = -0.5, fontface = "bold", size = 4) +
+  geom_hline(yintercept = c(1, 2, 3), linetype = "dashed", color = "#7F8C8D") +
+  annotate("text", x = 5.5, y = 1, label = "SIL 1", hjust = 0, size = 3) +
+  annotate("text", x = 5.5, y = 2, label = "SIL 2", hjust = 0, size = 3) +
+  annotate("text", x = 5.5, y = 3, label = "SIL 3", hjust = 0, size = 3) +
+  scale_y_continuous(breaks = 0:3, limits = c(0, 3.5)) +
+  scale_x_continuous(breaks = 1:5, labels = rel_data$pl) +
+  labs(title = "Performance Level to SIL Equivalence",
+       x = "Performance Level (ISO 13849-1)",
+       y = "Approximate SIL Equivalent") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
+```
+
+<details>
+<summary>Which Standard to Use: SIL or PL?</summary>
+
+**Use ISO 13849-1 (Performance Levels) when:**
+- Designing safety functions for standard machinery
+- Using off-the-shelf safety components
+- Simpler systems with well-defined safety functions
+
+**Use IEC 62061 (SIL) when:**
+- Complex programmable systems (safety PLCs)
+- Process industries
+- When customer or regulation specifies SIL
+
+**Note:** Many modern systems use both standards, as they are harmonized and can be used together. The choice often depends on industry practice and customer requirements.
+
+</details>
+
+------------------------------------------------------------------------
+
+## Risk Assessment Process
+
+Before selecting any safety device, a **risk assessment** must be performed. This is required by ISO 12100.
+
+```{r risk-assessment-process, echo=FALSE, fig.align="center", fig.cap="Risk Assessment Process (ISO 12100)", fig.width=10, fig.height=7}
+steps <- data.frame(
+  step = 1:5,
+  label = c("Determine\nLimits", "Identify\nHazards", "Estimate\nRisk",
+            "Evaluate\nRisk", "Reduce\nRisk"),
+  y = 5:1
+)
+
+ggplot(steps, aes(x = 3, y = y)) +
+  # Step boxes
+  geom_tile(width = 4, height = 0.8, fill = "#3498DB", color = "black") +
+  geom_text(aes(label = paste0("Step ", step, ": ", label)),
+            color = "white", fontface = "bold", size = 4, lineheight = 0.8) +
+  # Arrows
+  geom_segment(data = steps[1:4,], aes(x = 3, xend = 3, y = y - 0.5, yend = y - 0.9),
+               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+  # Iteration arrow
+  annotate("curve", x = 5.5, xend = 5.5, y = 1, yend = 5,
+           curvature = 0.3, arrow = arrow(length = unit(0.2, "cm")),
+           color = "#E74C3C", size = 1) +
+  annotate("text", x = 6.2, y = 3, label = "Iterate until\nrisk is\nacceptable",
+           size = 3, color = "#E74C3C", hjust = 0, lineheight = 0.9) +
+  # Side descriptions
+  annotate("text", x = 0.3, y = 5, label = "Machine function,\noperator tasks,\nenvironment",
+           size = 2.5, hjust = 1, lineheight = 0.9) +
+  annotate("text", x = 0.3, y = 4, label = "All hazards\nthroughout\nlifecycle",
+           size = 2.5, hjust = 1, lineheight = 0.9) +
+  annotate("text", x = 0.3, y = 3, label = "Severity ×\nProbability ×\nExposure",
+           size = 2.5, hjust = 1, lineheight = 0.9) +
+  annotate("text", x = 0.3, y = 2, label = "Is risk\nacceptable?",
+           size = 2.5, hjust = 1, lineheight = 0.9) +
+  annotate("text", x = 0.3, y = 1, label = "Apply hierarchy\nof controls",
+           size = 2.5, hjust = 1, lineheight = 0.9) +
+  theme_void() +
+  labs(title = "Risk Assessment Process",
+       subtitle = "Systematic approach to identifying and reducing machine hazards") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(-0.5, 7)
+```
+
+### Risk Estimation
+
+Risk is typically estimated using three factors:
+
+```{r risk-matrix, echo=FALSE, fig.align="center", fig.cap="Risk Estimation Matrix", fig.width=9, fig.height=6}
+# Create risk matrix
+risk_matrix <- expand.grid(
+  Severity = c("Minor", "Moderate", "Serious", "Fatal"),
+  Probability = c("Remote", "Unlikely", "Possible", "Probable")
+)
+risk_matrix$Risk <- c(
+  "Low", "Low", "Medium", "Medium",
+  "Low", "Medium", "Medium", "High",
+  "Medium", "Medium", "High", "High",
+  "Medium", "High", "High", "Critical"
+)
+risk_matrix$RiskNum <- c(1,1,2,2, 1,2,2,3, 2,2,3,3, 2,3,3,4)
+
+ggplot(risk_matrix, aes(x = Probability, y = Severity, fill = Risk)) +
+  geom_tile(color = "white", linewidth = 1.5) +
+  geom_text(aes(label = Risk), fontface = "bold", size = 4) +
+  scale_fill_manual(values = c("Low" = "#27AE60", "Medium" = "#F39C12",
+                               "High" = "#E74C3C", "Critical" = "#8E44AD")) +
+  scale_x_discrete(limits = c("Remote", "Unlikely", "Possible", "Probable"),
+                   position = "top") +
+  scale_y_discrete(limits = c("Minor", "Moderate", "Serious", "Fatal")) +
+  labs(title = "Risk Assessment Matrix",
+       x = "Probability of Occurrence",
+       y = "Severity of Harm") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    legend.position = "bottom",
+    axis.text = element_text(size = 10, face = "bold"),
+    panel.grid = element_blank()
+  )
+```
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-table-ch6, echo=FALSE}
+summary_data <- tibble(
+  `Topic` = c("**Hierarchy of Controls**", "**Physical Guarding**", "**Presence Sensing**",
+              "**Control-Actuated Devices**", "**Collaborative Robots**",
+              "**Safety Distance**", "**E-Stop Systems**", "**Functional Safety**"),
+  `Key Points` = c("Elimination > Substitution > Engineering > Administrative > PPE",
+                   "Fixed guards, interlocked gates, trapped key systems",
+                   "Light curtains, area scanners, pressure mats",
+                   "Two-hand controls, enable/deadman switches",
+                   "PFL, speed/separation monitoring, hand guiding",
+                   "S = (K × T) + C formula for device placement",
+                   "Red mushroom on yellow, self-latching, manual reset",
+                   "SIL (IEC 62061) and PL (ISO 13849-1) standards"),
+  `Critical Remember` = c("Always start at the top of the hierarchy",
+                          "Stop category (0, 1, 2) determines how machine stops",
+                          "Resolution determines detection capability",
+                          "Anti-tie-down prevents one-hand bypass",
+                          "Risk assessment required for every cobot application",
+                          "Include device response AND machine stop time",
+                          "E-Stop is last resort, not normal operation",
+                          "Required performance level from risk assessment")
+)
+
+summary_data %>%
+  kable(format = "html", caption = "Machine Guarding and Safety: Key Concepts Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, width = "15em")
+```
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+<details>
+<summary>Question 1: What are the five levels of the Hierarchy of Controls, and why is PPE the least effective?</summary>
+
+The five levels are (from most to least effective):
+
+1. **Elimination** — Physically remove the hazard
+2. **Substitution** — Replace with something less hazardous
+3. **Engineering Controls** — Isolate people from the hazard
+4. **Administrative Controls** — Change how people work
+5. **PPE** — Protect the worker with equipment
+
+**PPE is least effective because:**
+- The hazard still exists
+- It depends on human compliance
+- Equipment can fail or be worn incorrectly
+- It's the last line of defense
+
+</details>
+
+<details>
+<summary>Question 2: A light curtain has a response time of 12ms and resolution of 14mm. The machine takes 180ms to stop. Calculate the minimum safety distance for hand approach.</summary>
+
+**Given:**
+- K = 2000 mm/s (hand approach, use higher value for safety)
+- T = 0.012 + 0.180 = 0.192 seconds
+- C = 0 mm (14mm resolution)
+
+**Calculation:**
+$$S = (K \times T) + C$$
+$$S = (2000 \times 0.192) + 0$$
+$$S = 384 \text{ mm}$$
+
+The light curtain must be installed at least **384mm** (approximately 15 inches) from the hazard.
+
+</details>
+
+<details>
+<summary>Question 3: Explain why a three-position enable switch stops the robot in both position 1 (released) and position 3 (fully pressed).</summary>
+
+The three-position design accounts for two natural human reactions to danger:
+
+**Position 1 (Released):**
+- When frightened, people often release what they're holding (panic response)
+- Robot stops immediately
+
+**Position 3 (Fully Pressed):**
+- When startled, people often grip tighter (startle response)
+- Robot stops immediately
+
+**Position 2 (Middle):**
+- Only a deliberate, controlled hold allows operation
+- Requires conscious effort to maintain
+- This ensures the operator is alert and in control
+
+</details>
+
+<details>
+<summary>Question 4: What are the four methods of collaborative robot operation according to ISO 10218?</summary>
+
+1. **Safety-Rated Monitored Stop**
+   - Robot stops when human enters workspace
+   - Resumes when human leaves
+   - Uses area scanners or light curtains
+
+2. **Hand Guiding**
+   - Operator physically guides robot
+   - Force/torque sensors enable safe teaching
+
+3. **Speed and Separation Monitoring**
+   - Robot speed varies based on human proximity
+   - Uses external sensors to track human position
+
+4. **Power and Force Limiting (PFL)**
+   - Robot limits contact force to safe levels
+   - Built-in joint torque sensors
+   - Most common cobot method
+
+</details>
+
+<details>
+<summary>Question 5: What are the requirements for an E-Stop button according to IEC 60204-1?</summary>
+
+**Physical Requirements:**
+- **Color:** Red
+- **Shape:** Mushroom head (palm or fist operated)
+- **Background:** Yellow (high contrast)
+
+**Functional Requirements:**
+- **Self-latching:** Stays activated when pressed
+- **Manual reset:** Requires deliberate action to release
+- **Accessibility:** Within easy reach of all operators
+- **Wiring:** Normally closed contacts (fail-safe)
+- **Function:** Category 0 or Category 1 stop
+- **No automatic restart:** Separate start action required after reset
+
+</details>
+
+------------------------------------------------------------------------
+
+## References
+
+- ISO 12100:2010 — Safety of machinery — General principles for design — Risk assessment and risk reduction
+- ISO 13849-1:2015 — Safety of machinery — Safety-related parts of control systems
+- ISO 13855:2010 — Safety of machinery — Positioning of safeguards with respect to approach speeds
+- ISO 10218-1/2:2011 — Robots and robotic devices — Safety requirements for industrial robots
+- ISO/TS 15066:2016 — Robots and robotic devices — Collaborative robots
+- IEC 60204-1:2016 — Safety of machinery — Electrical equipment of machines
+- IEC 62061:2021 — Safety of machinery — Functional safety of safety-related control systems
+- OSHA 29 CFR 1910.212 — General requirements for all machines
+- ANSI/RIA TR R15.306 — Task-based risk assessment methodology
+
+------------------------------------------------------------------------

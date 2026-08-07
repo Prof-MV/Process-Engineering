@@ -1,0 +1,1645 @@
+# Process Failure Mode and Effects Analysis (PFMEA)
+```{r setup-08, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+- Explain the purpose and benefits of PFMEA in manufacturing
+- Distinguish between DFMEA (Design) and PFMEA (Process)
+- Apply the 10-step PFMEA methodology to a manufacturing process
+- Correctly rate Severity, Occurrence, and Detection using standardized scales
+- Calculate Risk Priority Numbers (RPN) and prioritize actions
+- Develop recommended actions to reduce process risks
+- Create and maintain PFMEA documentation as a living document
+
+> "An ounce of prevention is worth a pound of cure."
+> — Benjamin Franklin
+
+------------------------------------------------------------------------
+
+## Introduction to PFMEA
+
+### What is PFMEA?
+
+**Process Failure Mode and Effects Analysis (PFMEA)** is a systematic, proactive method for evaluating a manufacturing or business process to identify where and how it might fail, and to assess the relative impact of different failures. The goal is to identify and prioritize actions that will prevent defects before they occur.
+
+```{r pfmea-definition, echo=FALSE, fig.align="center", fig.cap="PFMEA: A Proactive Quality Tool", fig.width=10, fig.height=5}
+ggplot() +
+  # Traditional approach
+  annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
+  annotate("text", x = 2, y = 2.5, label = "REACTIVE APPROACH", fontface = "bold",
+           size = 4, color = "white") +
+  annotate("text", x = 2, y = 1.5, label = "Detect → Fix → Repeat\n\nFind defects after\nthey occur",
+           size = 3, color = "white", lineheight = 0.9) +
+  # PFMEA approach
+  annotate("rect", xmin = 5, xmax = 9, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
+  annotate("text", x = 7, y = 2.5, label = "PFMEA APPROACH", fontface = "bold",
+           size = 4, color = "white") +
+  annotate("text", x = 7, y = 1.5, label = "Predict → Prevent → Verify\n\nAnticipate failures\nbefore they occur",
+           size = 3, color = "white", lineheight = 0.9) +
+  # Arrow
+  annotate("segment", x = 4.2, xend = 4.8, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.3, "cm")), size = 2, color = "#2C3E50") +
+  annotate("text", x = 4.5, y = 2.2, label = "Shift from", size = 3) +
+  theme_void() +
+  labs(title = "The PFMEA Mindset: Prevention Over Detection",
+       subtitle = "Moving from finding defects to preventing them") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+### Brief History of FMEA
+
+```{r fmea-history, echo=FALSE}
+history <- tibble(
+  `Year` = c("1949", "1960s", "1970s", "1980s", "1990s", "2000s", "2019"),
+  `Development` = c("US Military develops FMEA (MIL-P-1629)",
+                    "NASA adopts FMEA for Apollo program",
+                    "Automotive industry begins using FMEA",
+                    "AIAG publishes first FMEA manual",
+                    "QS-9000 requires FMEA for automotive suppliers",
+                    "FMEA expands to healthcare, service industries",
+                    "AIAG-VDA FMEA Handbook published (current standard)"),
+  `Significance` = c("First formal FMEA methodology",
+                     "Proven reliability in life-critical systems",
+                     "Ford, GM, Chrysler adoption drives standardization",
+                     "Industry-wide consistency established",
+                     "FMEA becomes mandatory in supply chain",
+                     "Methodology proves universal applicability",
+                     "Harmonized global standard, introduces AP method")
+)
+
+history %>%
+  kable(format = "html", caption = "Evolution of FMEA") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#34495E", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "6em")
+```
+
+### DFMEA vs. PFMEA
+
+Two main types of FMEA are used in product development:
+
+```{r dfmea-pfmea-comparison, echo=FALSE, fig.align="center", fig.cap="DFMEA vs PFMEA: Different Focus, Same Methodology", fig.width=10, fig.height=6}
+ggplot() +
+  # DFMEA box
+  annotate("rect", xmin = 0, xmax = 4.5, ymin = 0, ymax = 5, fill = "#3498DB", alpha = 0.8) +
+  annotate("text", x = 2.25, y = 4.5, label = "DFMEA", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 2.25, y = 4, label = "(Design FMEA)", size = 4, color = "white") +
+  annotate("text", x = 2.25, y = 2.5,
+           label = "Focus: Product Design\n\nAsks: 'What can go wrong\nwith the design?'\n\nOwner: Design Engineer\n\nTiming: During design phase",
+           size = 3, color = "white", lineheight = 0.9) +
+  # PFMEA box
+  annotate("rect", xmin = 5.5, xmax = 10, ymin = 0, ymax = 5, fill = "#E74C3C", alpha = 0.8) +
+  annotate("text", x = 7.75, y = 4.5, label = "PFMEA", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 7.75, y = 4, label = "(Process FMEA)", size = 4, color = "white") +
+  annotate("text", x = 7.75, y = 2.5,
+           label = "Focus: Manufacturing Process\n\nAsks: 'What can go wrong\nduring production?'\n\nOwner: Process Engineer\n\nTiming: Before production starts",
+           size = 3, color = "white", lineheight = 0.9) +
+  # Connecting element
+  annotate("segment", x = 4.5, xend = 5.5, y = 2.5, yend = 2.5,
+           arrow = arrow(length = unit(0.2, "cm"), ends = "both"), size = 1.5, color = "#2C3E50") +
+  annotate("text", x = 5, y = 3, label = "Linked", size = 3, fontface = "italic") +
+  theme_void() +
+  labs(title = "Two Types of FMEA in Product Development") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+```
+
+```{r dfmea-pfmea-table, echo=FALSE}
+comparison <- tibble(
+  `Aspect` = c("**Primary Question**", "**Failure Mode Example**", "**Effect Example**",
+               "**Cause Example**", "**Control Example**", "**Responsible Team**"),
+  `DFMEA (Design)` = c("Will the design meet requirements?",
+                       "Shaft diameter too small",
+                       "Premature bearing failure",
+                       "Inadequate stress analysis",
+                       "FEA simulation, prototype testing",
+                       "Design engineering, R&D"),
+  `PFMEA (Process)` = c("Will the process produce conforming parts?",
+                        "Shaft turned undersize",
+                        "Part fails incoming inspection",
+                        "Tool wear not monitored",
+                        "In-process gauging, SPC",
+                        "Manufacturing, quality, production")
+)
+
+comparison %>%
+  kable(format = "html", caption = "DFMEA vs PFMEA Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em") %>%
+  column_spec(2, background = "#D6EAF8") %>%
+  column_spec(3, background = "#FADBD8")
+```
+
+<details>
+<summary>Question: When should PFMEA be conducted?</summary>
+
+**Ideal Timing for PFMEA:**
+
+1. **New Process Development:** Before production begins, during process design
+2. **New Product Introduction:** When a new product will use existing processes
+3. **Process Changes:** Whenever significant changes are made to equipment, methods, or materials
+4. **Quality Issues:** When field failures or customer complaints indicate process problems
+5. **Regular Review:** Periodically (annually) to ensure continued relevance
+
+**Key Principle:** The earlier PFMEA is conducted, the lower the cost of implementing improvements. Changes during design cost 10x less than changes during production, and 100x less than changes after customer delivery.
+
+</details>
+
+### Why PFMEA Matters
+
+```{r pfmea-benefits, echo=FALSE, fig.align="center", fig.cap="Benefits of PFMEA Implementation", fig.width=10, fig.height=5}
+benefits <- data.frame(
+  benefit = c("Reduced Defects", "Lower Costs", "Customer Satisfaction",
+              "Knowledge Capture", "Regulatory Compliance"),
+  impact = c(60, 45, 55, 40, 35),
+  category = c("Quality", "Financial", "Customer", "Organizational", "Compliance")
+)
+
+ggplot(benefits, aes(x = reorder(benefit, impact), y = impact, fill = category)) +
+  geom_bar(stat = "identity", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(impact, "%")), hjust = -0.2, fontface = "bold") +
+  coord_flip() +
+  scale_fill_manual(values = c("Quality" = "#27AE60", "Financial" = "#3498DB",
+                               "Customer" = "#F39C12", "Organizational" = "#9B59B6",
+                               "Compliance" = "#E74C3C")) +
+  scale_y_continuous(limits = c(0, 75)) +
+  labs(title = "Reported Benefits from PFMEA Programs",
+       subtitle = "Average improvement percentages from industry surveys",
+       x = "", y = "Improvement (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+------------------------------------------------------------------------
+
+## PFMEA Fundamentals
+
+### Core Objectives
+
+The fundamental objective of PFMEA is **prevention over detection** — identifying and eliminating potential failures before they occur, rather than finding defects after production.
+
+```{r pfmea-objectives, echo=FALSE}
+objectives <- tibble(
+  `Objective` = c("**Identify Failure Modes**", "**Assess Risk**", "**Prioritize Actions**",
+                  "**Document Knowledge**", "**Drive Improvement**"),
+  `Description` = c("Systematically identify all ways the process can fail",
+                    "Evaluate severity, likelihood, and detectability of each failure",
+                    "Focus resources on highest-risk failure modes",
+                    "Capture institutional knowledge in a structured format",
+                    "Implement and verify effectiveness of countermeasures"),
+  `Outcome` = c("Comprehensive list of potential problems",
+                "Quantified risk scores (RPN or AP)",
+                "Action plan focused on critical issues",
+                "Living document for continuous improvement",
+                "Measurable reduction in process risk")
+)
+
+objectives %>%
+  kable(format = "html", caption = "Core Objectives of PFMEA") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### The PFMEA Team
+
+PFMEA is most effective when conducted by a **cross-functional team**. No single person has all the knowledge needed to identify every potential failure.
+
+```{r pfmea-team, echo=FALSE, fig.align="center", fig.cap="PFMEA Cross-Functional Team", fig.width=10, fig.height=6}
+team <- data.frame(
+  role = c("Process\nEngineer", "Quality\nEngineer", "Production\nSupervisor",
+           "Maintenance\nTech", "Design\nEngineer", "Supplier\nRep"),
+  contribution = c("Process knowledge\nEquipment specs", "Historical data\nControl methods",
+                   "Day-to-day issues\nOperator insights", "Equipment failures\nMaintenance history",
+                   "Design intent\nTolerances", "Material properties\nSupply issues"),
+  x = c(1, 2, 3, 1, 2, 3),
+  y = c(2, 2, 2, 1, 1, 1)
+)
+
+ggplot(team, aes(x = x, y = y)) +
+  geom_tile(width = 0.9, height = 0.8, fill = "#3498DB", color = "white", linewidth = 2) +
+  geom_text(aes(label = role), color = "white", fontface = "bold", size = 3.5,
+            vjust = -0.3, lineheight = 0.8) +
+  geom_text(aes(label = contribution), color = "white", size = 2.5,
+            vjust = 1.5, lineheight = 0.8) +
+  # Facilitator in center
+  annotate("point", x = 2, y = 1.5, size = 25, color = "#E74C3C") +
+  annotate("text", x = 2, y = 1.5, label = "PFMEA\nFacilitator",
+           color = "white", fontface = "bold", size = 3.5, lineheight = 0.9) +
+  theme_void() +
+  labs(title = "PFMEA Team Composition",
+       subtitle = "Each member brings unique knowledge and perspective") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  xlim(0.3, 3.7) + ylim(0.3, 2.7)
+```
+
+<details>
+<summary>Question: Why is a cross-functional team essential?</summary>
+
+**A cross-functional team is essential because:**
+
+1. **Diverse Knowledge:** No single person understands all aspects of the process
+2. **Different Perspectives:** Quality sees defects, production sees constraints, maintenance sees failures
+3. **Buy-in:** People support what they help create
+4. **Historical Knowledge:** Operators often know about problems never formally documented
+5. **System Thinking:** Process interactions are visible when multiple functions participate
+
+**Common Mistake:** Having one engineer complete PFMEA alone as a "paperwork exercise." This misses critical failure modes and produces an ineffective document.
+
+**Best Practice:** Minimum 4-6 team members, including at least one person with hands-on process experience.
+
+</details>
+
+### Key Terminology
+
+Understanding PFMEA terminology is essential for effective analysis:
+
+```{r pfmea-terminology, echo=FALSE}
+terminology <- tibble(
+  `Term` = c("**Process Function**", "**Failure Mode**", "**Failure Effect**",
+             "**Severity (S)**", "**Failure Cause**", "**Occurrence (O)**",
+             "**Current Controls**", "**Detection (D)**", "**RPN**", "**Action Priority (AP)**"),
+  `Definition` = c("What the process step is supposed to do",
+                   "How the process can fail to perform its function",
+                   "The consequence of the failure on the customer or next operation",
+                   "Rating (1-10) of how serious the failure effect is",
+                   "Why the failure mode might occur",
+                   "Rating (1-10) of how likely the cause is to happen",
+                   "What currently prevents the cause or detects the failure",
+                   "Rating (1-10) of how likely current controls will detect the failure",
+                   "Risk Priority Number = S × O × D",
+                   "Alternative prioritization method (AIAG-VDA)"),
+  `Example` = c("'Drill hole to 10mm ± 0.1mm'",
+                "Hole diameter undersize, oversize, off-location",
+                "Part rejected at assembly, field failure",
+                "10 = safety hazard, 1 = no effect",
+                "Drill bit wear, incorrect feed rate",
+                "10 = very high, 1 = remote",
+                "In-process gauge, SPC chart",
+                "10 = no detection, 1 = certain detection",
+                "Range: 1 to 1000",
+                "High, Medium, Low")
+)
+
+terminology %>%
+  kable(format = "html", caption = "PFMEA Key Terminology") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### The PFMEA Form
+
+The PFMEA is documented in a structured form. Here is a simplified template:
+
+```{r pfmea-form, echo=FALSE}
+form_template <- tibble(
+  `Process Step` = c("Example:", ""),
+  `Function` = c("Drill hole", ""),
+  `Failure Mode` = c("Hole undersize", ""),
+  `Effect` = c("Assembly interference", ""),
+  `S` = c("7", ""),
+  `Cause` = c("Drill wear", ""),
+  `O` = c("5", ""),
+  `Current Controls` = c("Visual inspection", ""),
+  `D` = c("6", ""),
+  `RPN` = c("210", ""),
+  `Action` = c("Add in-process gauge", "")
+)
+
+form_template %>%
+  kable(format = "html", caption = "PFMEA Form Template (Simplified)") %>%
+  kable_styling(bootstrap_options = c("bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 10) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  row_spec(1, background = "#D5F5E3")
+```
+
+------------------------------------------------------------------------
+
+## The PFMEA Methodology: 10 Steps
+
+PFMEA follows a systematic 10-step methodology. Each step builds on the previous one.
+
+```{r pfmea-steps-overview, echo=FALSE, fig.align="center", fig.cap="The 10-Step PFMEA Methodology", fig.width=10, fig.height=7}
+steps <- data.frame(
+  step = 1:10,
+  name = c("Define Scope", "Map Process", "Identify Failures",
+           "Analyze Effects", "Rate Severity", "Identify Causes",
+           "Rate Occurrence", "Assess Controls", "Calculate RPN",
+           "Take Action"),
+  phase = c("Plan", "Plan", "Analyze", "Analyze", "Analyze",
+            "Analyze", "Analyze", "Analyze", "Prioritize", "Improve"),
+  y = c(5, 5, 4, 4, 4, 3, 3, 3, 2, 2),
+  x = c(1, 2, 1, 2, 3, 1, 2, 3, 1.5, 2.5)
+)
+
+ggplot(steps, aes(x = x, y = y)) +
+  geom_tile(aes(fill = phase), width = 0.9, height = 0.8, color = "white", linewidth = 2) +
+  geom_text(aes(label = paste0(step, ". ", name)), color = "white",
+            fontface = "bold", size = 3, lineheight = 0.9) +
+  scale_fill_manual(values = c("Plan" = "#3498DB", "Analyze" = "#F39C12",
+                               "Prioritize" = "#E74C3C", "Improve" = "#27AE60")) +
+  # Arrows showing flow
+  annotate("segment", x = 1, xend = 2, y = 4.5, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  annotate("segment", x = 2, xend = 1, y = 4.1, yend = 3.5,
+           arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
+  theme_void() +
+  labs(title = "The 10-Step PFMEA Process",
+       subtitle = "A systematic approach to process risk analysis") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10),
+        legend.position = "bottom") +
+  xlim(0.3, 3.7) + ylim(1.3, 5.7)
+```
+
+### Step 1: Define Scope and Process Boundaries
+
+Before starting the analysis, clearly define what is included and excluded.
+
+```{r step1-scope, echo=FALSE}
+scope_elements <- tibble(
+  `Element` = c("**Process Name**", "**Start Boundary**", "**End Boundary**",
+                "**Included Operations**", "**Excluded Operations**", "**Key Assumptions**"),
+  `Description` = c("Clear name identifying the process",
+                    "Where does our analysis begin?",
+                    "Where does our analysis end?",
+                    "All operations within scope",
+                    "Operations analyzed separately or by others",
+                    "Conditions assumed to be true"),
+  `Example: Injection Molding` = c("Plastic Part Injection Molding",
+                                    "Raw material loading into hopper",
+                                    "Part removed from mold, ready for packaging",
+                                    "Material prep, injection, cooling, ejection, inspection",
+                                    "Mold design (covered by DFMEA), packaging",
+                                    "Material meets incoming spec, mold is validated")
+)
+
+scope_elements %>%
+  kable(format = "html", caption = "Step 1: Defining PFMEA Scope") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### Step 2: Process Mapping and Identifying Functions
+
+Create a detailed process flow diagram and identify the function of each step.
+
+```{r step2-process-map, echo=FALSE, fig.align="center", fig.cap="Example: Injection Molding Process Flow", fig.width=10, fig.height=4}
+ggplot() +
+  # Process steps
+  annotate("rect", xmin = 0, xmax = 1.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 0.75, y = 1, label = "1. Load\nMaterial", size = 3, color = "white", lineheight = 0.9) +
+
+  annotate("rect", xmin = 2, xmax = 3.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 2.75, y = 1, label = "2. Heat &\nPlasticize", size = 3, color = "white", lineheight = 0.9) +
+
+  annotate("rect", xmin = 4, xmax = 5.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 4.75, y = 1, label = "3. Inject\ninto Mold", size = 3, color = "white", lineheight = 0.9) +
+
+  annotate("rect", xmin = 6, xmax = 7.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 6.75, y = 1, label = "4. Cool &\nSolidify", size = 3, color = "white", lineheight = 0.9) +
+
+  annotate("rect", xmin = 8, xmax = 9.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 8.75, y = 1, label = "5. Eject\nPart", size = 3, color = "white", lineheight = 0.9) +
+
+  # Arrows
+  annotate("segment", x = 1.5, xend = 2, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  annotate("segment", x = 3.5, xend = 4, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  annotate("segment", x = 5.5, xend = 6, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+  annotate("segment", x = 7.5, xend = 8, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.15, "cm")), size = 1) +
+
+  # Functions below
+  annotate("text", x = 0.75, y = 0.2, label = "Function: Supply\ncorrect material",
+           size = 2.5, fontface = "italic", lineheight = 0.9) +
+  annotate("text", x = 2.75, y = 0.2, label = "Function: Melt\nto spec temp",
+           size = 2.5, fontface = "italic", lineheight = 0.9) +
+  annotate("text", x = 4.75, y = 0.2, label = "Function: Fill\nmold completely",
+           size = 2.5, fontface = "italic", lineheight = 0.9) +
+  annotate("text", x = 6.75, y = 0.2, label = "Function: Solidify\nwithout defects",
+           size = 2.5, fontface = "italic", lineheight = 0.9) +
+  annotate("text", x = 8.75, y = 0.2, label = "Function: Remove\nwithout damage",
+           size = 2.5, fontface = "italic", lineheight = 0.9) +
+
+  theme_void() +
+  labs(title = "Process Flow Diagram with Functions") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(-0.3, 2)
+```
+
+### Step 3: Identifying Potential Failure Modes
+
+For each process function, ask: **"How can this step fail to perform its intended function?"**
+
+```{r step3-failure-modes, echo=FALSE}
+failure_modes <- tibble(
+  `Process Function` = c("Load correct material", "Load correct material", "Load correct material",
+                         "Melt to specification temperature", "Melt to specification temperature",
+                         "Fill mold completely", "Fill mold completely", "Fill mold completely"),
+  `Potential Failure Mode` = c("Wrong material loaded", "Material contaminated", "Insufficient material",
+                                "Temperature too low", "Temperature too high",
+                                "Short shot (incomplete fill)", "Flash (overfill)", "Air entrapment"),
+  `Category` = c("Wrong item", "Degraded item", "Missing item",
+                 "Below specification", "Above specification",
+                 "Incomplete operation", "Excessive operation", "Unintended result")
+)
+
+failure_modes %>%
+  kable(format = "html", caption = "Step 3: Identifying Failure Modes") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#F39C12", color = "white") %>%
+  column_spec(1, width = "15em") %>%
+  column_spec(3, width = "10em", background = "#FEF9E7")
+```
+
+**Common failure mode categories:**
+- **No operation** (step doesn't happen)
+- **Partial operation** (incomplete)
+- **Degraded operation** (below standard)
+- **Excessive operation** (too much)
+- **Wrong operation** (incorrect action)
+- **Intermittent operation** (inconsistent)
+
+<details>
+<summary>Interactive Exercise: Identify Failure Modes</summary>
+
+**Process Step:** Heat treat steel parts at 850°C for 2 hours
+
+**Function:** Achieve required hardness (58-62 HRC)
+
+**Identify at least 5 potential failure modes:**
+
+**Answers:**
+1. Temperature too low → Parts soft (below hardness spec)
+2. Temperature too high → Parts brittle/cracked
+3. Time too short → Incomplete hardening
+4. Time too long → Over-hardening, distortion
+5. Uneven heating → Inconsistent hardness across part
+6. Wrong atmosphere → Surface decarburization
+7. Quench delay too long → Soft spots
+
+</details>
+
+### Step 4: Analyzing Failure Effects
+
+For each failure mode, determine: **"What is the consequence if this failure occurs?"**
+
+Consider effects at multiple levels:
+1. **Local effect:** Impact on immediate operation
+2. **Next operation effect:** Impact on downstream process
+3. **End customer effect:** Impact on final user
+
+```{r step4-effects, echo=FALSE}
+effects <- tibble(
+  `Failure Mode` = c("Short shot", "Short shot", "Short shot",
+                     "Flash", "Flash", "Flash"),
+  `Effect Level` = c("Local", "Next Operation", "End Customer",
+                     "Local", "Next Operation", "End Customer"),
+  `Effect Description` = c("Part is incomplete/missing features",
+                           "Part rejected at inspection, line stoppage",
+                           "If shipped: product malfunction, safety hazard",
+                           "Excess material on part edges",
+                           "Secondary trimming required, increased cycle time",
+                           "If shipped: poor fit, appearance defect")
+)
+
+effects %>%
+  kable(format = "html", caption = "Step 4: Analyzing Effects at Multiple Levels") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  row_spec(c(3, 6), background = "#FADBD8")
+```
+
+### Step 5: Determining Severity Ratings
+
+**Severity (S)** rates the seriousness of the effect on a scale of 1-10.
+
+```{r severity-scale, echo=FALSE}
+severity <- tibble(
+  `Rating` = 10:1,
+  `Effect` = c("Hazardous - without warning",
+               "Hazardous - with warning",
+               "Very High",
+               "High",
+               "Moderate",
+               "Low",
+               "Very Low",
+               "Minor",
+               "Very Minor",
+               "None"),
+  `Criteria` = c("Safety hazard; noncompliance with regulations; no warning",
+                 "Safety hazard; noncompliance with regulations; with warning",
+                 "Product inoperable; loss of primary function",
+                 "Product operable but at reduced performance",
+                 "Product operable; comfort/convenience affected; noticeable",
+                 "Product operable; reduced comfort; noticed by average customer",
+                 "Product operable; slightly reduced comfort; noticed by discriminating customer",
+                 "Fit/finish nonconforming; noticed by discriminating customer",
+                 "Fit/finish nonconforming; noticed only by trained observer",
+                 "No discernible effect"),
+  `Example` = c("Brake failure without warning",
+                "Airbag warning light before failure",
+                "Engine won't start",
+                "Engine runs rough, reduced power",
+                "Wind noise, A/C takes longer to cool",
+                "Door handle feels loose",
+                "Slight paint imperfection",
+                "Panel gap slightly uneven",
+                "Under-hood label crooked",
+                "No effect observable")
+)
+
+severity %>%
+  kable(format = "html", caption = "Severity Rating Scale (S)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  row_spec(1:2, background = "#FADBD8", bold = TRUE) %>%
+  row_spec(3:4, background = "#FEF9E7") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+> **Important:** Severity is determined by the **effect**, not the failure mode. Severity can only be reduced by changing the design — process changes typically cannot reduce severity.
+
+### Step 6: Identifying Potential Causes
+
+For each failure mode, identify all possible causes: **"Why might this failure occur?"**
+
+```{r step6-causes, echo=FALSE, fig.align="center", fig.cap="Fishbone Diagram: Causes of Short Shot", fig.width=10, fig.height=6}
+ggplot() +
+  # Main arrow (spine)
+  annotate("segment", x = 0, xend = 9, y = 3, yend = 3, linewidth = 2, color = "#2C3E50") +
+  # Effect
+  annotate("rect", xmin = 9, xmax = 10.5, ymin = 2.5, ymax = 3.5, fill = "#E74C3C") +
+  annotate("text", x = 9.75, y = 3, label = "SHORT\nSHOT", fontface = "bold",
+           color = "white", size = 4, lineheight = 0.9) +
+
+  # Machine branch
+  annotate("segment", x = 2, xend = 2, y = 3, yend = 5, color = "#3498DB", linewidth = 1.5) +
+  annotate("text", x = 2, y = 5.2, label = "MACHINE", fontface = "bold", color = "#3498DB") +
+  annotate("text", x = 1.2, y = 4.5, label = "• Worn screw\n• Clogged nozzle\n• Low pressure",
+           size = 2.5, hjust = 0, lineheight = 0.9) +
+
+  # Material branch
+  annotate("segment", x = 4, xend = 4, y = 3, yend = 5, color = "#27AE60", linewidth = 1.5) +
+  annotate("text", x = 4, y = 5.2, label = "MATERIAL", fontface = "bold", color = "#27AE60") +
+  annotate("text", x = 3.2, y = 4.5, label = "• High viscosity\n• Contamination\n• Moisture",
+           size = 2.5, hjust = 0, lineheight = 0.9) +
+
+  # Method branch
+  annotate("segment", x = 6, xend = 6, y = 3, yend = 5, color = "#F39C12", linewidth = 1.5) +
+  annotate("text", x = 6, y = 5.2, label = "METHOD", fontface = "bold", color = "#F39C12") +
+  annotate("text", x = 5.2, y = 4.5, label = "• Wrong parameters\n• Short shot size\n• Low speed",
+           size = 2.5, hjust = 0, lineheight = 0.9) +
+
+  # Mold branch
+  annotate("segment", x = 3, xend = 3, y = 3, yend = 1, color = "#9B59B6", linewidth = 1.5) +
+  annotate("text", x = 3, y = 0.8, label = "MOLD", fontface = "bold", color = "#9B59B6") +
+  annotate("text", x = 2.2, y = 1.5, label = "• Blocked vents\n• Cold spots\n• Gate too small",
+           size = 2.5, hjust = 0, lineheight = 0.9) +
+
+  # Man branch
+  annotate("segment", x = 6, xend = 6, y = 3, yend = 1, color = "#E74C3C", linewidth = 1.5) +
+  annotate("text", x = 6, y = 0.8, label = "MAN", fontface = "bold", color = "#E74C3C") +
+  annotate("text", x = 5.2, y = 1.5, label = "• Setup error\n• Wrong program\n• Inadequate training",
+           size = 2.5, hjust = 0, lineheight = 0.9) +
+
+  theme_void() +
+  labs(title = "Fishbone (Ishikawa) Diagram: Identifying Causes") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(0.3, 5.7)
+```
+
+### Step 7: Rating Occurrence
+
+**Occurrence (O)** rates the likelihood that the cause will occur on a scale of 1-10.
+
+```{r occurrence-scale, echo=FALSE}
+occurrence <- tibble(
+  `Rating` = 10:1,
+  `Likelihood` = c("Very High", "Very High", "High", "High",
+                   "Moderate", "Moderate", "Low", "Low", "Remote", "Remote"),
+  `Criteria` = c("Failure is almost inevitable",
+                 "Failures occur very frequently",
+                 "Failures occur frequently",
+                 "Failures occur on regular basis",
+                 "Occasional failures",
+                 "Occasional failures expected",
+                 "Relatively few failures",
+                 "Few failures",
+                 "Failure unlikely",
+                 "Failure nearly impossible"),
+  `Approximate Rate` = c("≥100 per 1000 (≥10%)",
+                         "50 per 1000 (5%)",
+                         "20 per 1000 (2%)",
+                         "10 per 1000 (1%)",
+                         "5 per 1000 (0.5%)",
+                         "2 per 1000 (0.2%)",
+                         "1 per 1000 (0.1%)",
+                         "0.5 per 1000 (500 ppm)",
+                         "0.1 per 1000 (100 ppm)",
+                         "≤0.01 per 1000 (≤10 ppm)"),
+  `Cpk Equivalent` = c("< 0.33", "≥ 0.33", "≥ 0.51", "≥ 0.67",
+                       "≥ 0.83", "≥ 1.00", "≥ 1.17", "≥ 1.33", "≥ 1.50", "≥ 1.67")
+)
+
+occurrence %>%
+  kable(format = "html", caption = "Occurrence Rating Scale (O)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#F39C12", color = "white") %>%
+  row_spec(1:2, background = "#FADBD8") %>%
+  row_spec(3:4, background = "#FEF9E7") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+### Step 8: Current Controls and Detection Ratings
+
+Identify current controls and rate their ability to detect the failure or cause.
+
+**Types of Process Controls:**
+
+```{r control-types, echo=FALSE}
+controls <- tibble(
+  `Control Type` = c("**Prevention Controls**", "**Detection Controls**"),
+  `Purpose` = c("Prevent the cause from occurring",
+                "Detect the failure mode or cause after it occurs"),
+  `Examples` = c("Error-proofing (poka-yoke), interlocks, maintenance programs",
+                 "Inspection, testing, gauging, SPC monitoring"),
+  `Impact on PFMEA` = c("Reduces Occurrence rating",
+                        "Reduces Detection rating")
+)
+
+controls %>%
+  kable(format = "html", caption = "Types of Process Controls") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+**Detection Rating Scale:**
+
+```{r detection-scale, echo=FALSE}
+detection <- tibble(
+  `Rating` = 10:1,
+  `Detection` = c("Absolute Uncertainty", "Very Remote", "Remote", "Very Low",
+                  "Low", "Moderate", "Moderately High", "High", "Very High", "Almost Certain"),
+  `Criteria` = c("No current control; cannot detect or is not analyzed",
+                 "Control will probably not detect",
+                 "Control has poor chance of detection",
+                 "Control has low chance of detection",
+                 "Control may detect",
+                 "Control has moderate chance of detection",
+                 "Control has moderately high chance of detection",
+                 "Control has high chance of detection",
+                 "Control almost certain to detect",
+                 "Control will detect; error-proofed"),
+  `Example Control` = c("No inspection planned",
+                        "Indirect measurement only",
+                        "Visual inspection of hidden feature",
+                        "Manual 100% visual inspection",
+                        "Variable gauging after operation",
+                        "SPC charting",
+                        "In-station gauging with feedback",
+                        "Automated 100% gauging",
+                        "Multiple independent automated checks",
+                        "Error-proofing prevents defect creation")
+)
+
+detection %>%
+  kable(format = "html", caption = "Detection Rating Scale (D)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  row_spec(1:3, background = "#FADBD8") %>%
+  row_spec(9:10, background = "#D5F5E3") %>%
+  column_spec(1, bold = TRUE, width = "5em")
+```
+
+> **Important:** Detection ratings are often **harder to reduce** than occurrence ratings. Adding inspection doesn't prevent defects — it only catches them. Prevention is always better than detection.
+
+<details>
+<summary>Question: Why are detection ratings often harder to improve?</summary>
+
+**Detection ratings are harder to reduce because:**
+
+1. **Detection doesn't prevent:** The defect has already been made; you're just trying to find it
+2. **Human inspection is unreliable:** Typical effectiveness is only 80-85% for visual inspection
+3. **100% inspection is expensive:** Automated inspection requires significant investment
+4. **Some defects are hard to detect:** Internal defects, intermittent problems, latent failures
+5. **Sampling has limitations:** Even good sampling plans miss some defects
+
+**Better approach:** Focus on reducing occurrence through:
+- Error-proofing (poka-yoke)
+- Process capability improvement
+- Preventive maintenance
+- Better training
+
+</details>
+
+### Step 9: Calculating RPN and Prioritization
+
+The **Risk Priority Number (RPN)** combines all three ratings:
+
+$$\text{RPN} = \text{Severity (S)} \times \text{Occurrence (O)} \times \text{Detection (D)}$$
+
+```{r rpn-calculation, echo=TRUE}
+# Example RPN Calculations
+
+# Failure Mode 1: Short shot
+S1 <- 7    # Severity: Product inoperable (assembly)
+O1 <- 5    # Occurrence: Occasional
+D1 <- 6    # Detection: Moderate (visual inspection)
+
+RPN1 <- S1 * O1 * D1
+cat("Short shot RPN:", RPN1, "\n")
+
+# Failure Mode 2: Flash
+S2 <- 4    # Severity: Appearance issue
+O2 <- 6    # Occurrence: Regular
+D2 <- 3    # Detection: High (easy to see)
+
+RPN2 <- S2 * O2 * D2
+cat("Flash RPN:", RPN2, "\n")
+
+# Failure Mode 3: Contamination
+S3 <- 9    # Severity: Safety concern (medical device)
+O3 <- 3    # Occurrence: Low
+D3 <- 7    # Detection: Low (internal contamination)
+
+RPN3 <- S3 * O3 * D3
+cat("Contamination RPN:", RPN3, "\n")
+
+# Comparison
+cat("\n--- Priority Order by RPN ---\n")
+cat("1. Short shot (RPN =", RPN1, ")\n")
+cat("2. Contamination (RPN =", RPN3, ")\n")
+cat("3. Flash (RPN =", RPN2, ")\n")
+```
+
+**RPN Action Thresholds (Traditional):**
+
+```{r rpn-thresholds, echo=FALSE}
+thresholds <- tibble(
+  `RPN Range` = c("1-50", "51-100", "101-200", "201-500", "501-1000"),
+  `Risk Level` = c("Low", "Moderate", "Significant", "High", "Critical"),
+  `Action Required` = c("Monitor; no immediate action",
+                        "Consider action if resources available",
+                        "Action required within planning cycle",
+                        "Immediate action required",
+                        "Stop production; immediate corrective action")
+)
+
+thresholds %>%
+  kable(format = "html", caption = "RPN Action Thresholds") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  row_spec(1, background = "#D5F5E3") %>%
+  row_spec(2, background = "#D5F5E3") %>%
+  row_spec(3, background = "#FEF9E7") %>%
+  row_spec(4, background = "#FADBD8") %>%
+  row_spec(5, background = "#E74C3C", color = "white")
+```
+
+<details>
+<summary>Interactive Exercise: Calculate RPN</summary>
+
+**Calculate the RPN for each failure mode and rank them:**
+
+| Failure Mode | Severity | Occurrence | Detection | RPN |
+|--------------|----------|------------|-----------|-----|
+| A: Dimension out of spec | 6 | 4 | 5 | ? |
+| B: Surface scratch | 3 | 7 | 2 | ? |
+| C: Missing component | 8 | 2 | 8 | ? |
+| D: Wrong material | 9 | 3 | 6 | ? |
+
+**Answers:**
+- A: 6 × 4 × 5 = **120**
+- B: 3 × 7 × 2 = **42**
+- C: 8 × 2 × 8 = **128**
+- D: 9 × 3 × 6 = **162**
+
+**Priority Order:** D (162) > C (128) > A (120) > B (42)
+
+**Question:** Should we always address the highest RPN first? See limitations discussion below.
+
+</details>
+
+### Limitations of RPN
+
+RPN has known limitations that must be understood:
+
+```{r rpn-limitations, echo=FALSE, fig.align="center", fig.cap="RPN Limitation Example", fig.width=9, fig.height=5}
+# Show how different S-O-D combinations give same RPN
+examples <- data.frame(
+  case = c("Case A", "Case B", "Case C"),
+  S = c(10, 5, 2),
+  O = c(1, 4, 10),
+  D = c(4, 2, 2),
+  RPN = c(40, 40, 40),
+  issue = c("Safety hazard\n(S=10)", "Moderate\n(S=5)", "Minor\n(S=2)")
+)
+
+ggplot(examples, aes(x = case)) +
+  geom_bar(aes(y = S, fill = "Severity"), stat = "identity", position = position_dodge(width = 0.8), width = 0.25) +
+  geom_bar(aes(y = O, fill = "Occurrence"), stat = "identity", position = position_dodge(width = 0.8), width = 0.25) +
+  geom_bar(aes(y = D, fill = "Detection"), stat = "identity", position = position_dodge(width = 0.8), width = 0.25) +
+  geom_text(aes(y = 11, label = paste0("RPN = ", RPN)), fontface = "bold", size = 4) +
+  geom_text(aes(y = -1, label = issue), size = 3, lineheight = 0.9) +
+  scale_fill_manual(values = c("Severity" = "#E74C3C", "Occurrence" = "#F39C12", "Detection" = "#3498DB")) +
+  labs(title = "Same RPN (40) — Very Different Risk Profiles!",
+       subtitle = "Case A is a safety hazard but has the same RPN as minor Case C",
+       x = "", y = "Rating Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10, color = "#E74C3C"),
+    legend.position = "bottom"
+  ) +
+  ylim(-2, 12)
+```
+
+**Key RPN Limitations:**
+
+1. **Same RPN, different risk:** 10×1×4 = 40, but 2×10×2 = 40
+2. **Severity often overlooked:** High severity should always trigger action
+3. **Arbitrary thresholds:** Why is 100 the magic number?
+4. **Non-linear scale:** Difference between 2 and 3 is not same as 8 and 9
+
+### Action Priority (AP) Method — AIAG-VDA Alternative
+
+The 2019 AIAG-VDA FMEA Handbook introduced the **Action Priority (AP)** method as an alternative to RPN.
+
+```{r ap-method, echo=FALSE}
+ap_table <- tibble(
+  `Priority` = c("**HIGH**", "**HIGH**", "**MEDIUM**", "**MEDIUM**", "**LOW**"),
+  `Criteria` = c("Severity = 9 or 10 (any O, any D)",
+                 "Severity = 8 AND Occurrence ≥ 4",
+                 "Severity = 7 AND Occurrence ≥ 5",
+                 "Severity = 5-6 AND Occurrence ≥ 6 AND Detection ≥ 5",
+                 "All other combinations"),
+  `Action Required` = c("Must take action to improve prevention/detection",
+                        "Must take action",
+                        "Should take action",
+                        "Should take action",
+                        "May take action; document rationale if no action")
+)
+
+ap_table %>%
+  kable(format = "html", caption = "Action Priority (AP) Method") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  row_spec(1:2, background = "#FADBD8") %>%
+  row_spec(3:4, background = "#FEF9E7") %>%
+  row_spec(5, background = "#D5F5E3") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+### Step 10: Recommended Actions and Follow-Up
+
+For high-priority items, develop specific recommended actions.
+
+```{r recommended-actions, echo=FALSE}
+actions_table <- tibble(
+  `Failure Mode` = c("Short shot", "Short shot", "Short shot"),
+  `Current RPN` = c(210, 210, 210),
+  `Recommended Action` = c("Install shot size monitoring with automatic reject",
+                            "Implement preventive maintenance for nozzle cleaning",
+                            "Add mold temperature monitoring with alarm"),
+  `Responsible` = c("Process Engineer", "Maintenance", "Quality Engineer"),
+  `Target Date` = c("2024-03-15", "2024-02-28", "2024-03-01"),
+  `Target S` = c(7, 7, 7),
+  `Target O` = c(3, 2, 5),
+  `Target D` = c(2, 6, 4),
+  `Target RPN` = c(42, 84, 140)
+)
+
+actions_table %>%
+  kable(format = "html", caption = "Step 10: Recommended Actions with Targets") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 10) %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(c(2, 9), bold = TRUE)
+```
+
+------------------------------------------------------------------------
+
+## Complete PFMEA Example: Injection Molding
+
+Let's work through a complete PFMEA for an injection molding process step by step.
+
+```{r complete-example, echo=FALSE}
+pfmea_example <- tibble(
+  `Step` = c("3. Inject", "3. Inject", "3. Inject", "4. Cool", "4. Cool", "5. Eject"),
+  `Function` = c("Fill mold completely", "Fill mold completely", "Fill mold completely",
+                 "Solidify uniformly", "Solidify uniformly", "Remove without damage"),
+  `Failure Mode` = c("Short shot", "Flash", "Air entrapment",
+                     "Warpage", "Sink marks", "Stuck in mold"),
+  `Effect` = c("Part scrapped, line stoppage", "Secondary trim required", "Weak area, visual defect",
+               "Dimensional rejection", "Visual defect", "Part damage, mold damage"),
+  `S` = c(7, 4, 6, 7, 5, 8),
+  `Cause` = c("Insufficient shot size", "Excessive pressure", "Blocked vent",
+              "Uneven cooling", "Thick section, short pack", "Insufficient draft angle"),
+  `O` = c(5, 6, 4, 4, 5, 3),
+  `Control` = c("Visual inspection", "Visual inspection", "First article inspection",
+                "CMM sample check", "Visual inspection", "Ejector pressure monitor"),
+  `D` = c(6, 3, 5, 4, 4, 5),
+  `RPN` = c(210, 72, 120, 112, 100, 120)
+)
+
+pfmea_example %>%
+  kable(format = "html", caption = "Complete PFMEA Example: Injection Molding Process") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 10) %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  row_spec(1, background = "#FADBD8") %>%
+  column_spec(10, bold = TRUE)
+```
+
+```{r rpn-improvement, echo=TRUE}
+# Improvement Analysis for Short Shot (Highest RPN = 210)
+
+cat("=== CURRENT STATE ===\n")
+S_current <- 7  # Severity (cannot change - inherent to failure)
+O_current <- 5  # Occurrence
+D_current <- 6  # Detection
+RPN_current <- S_current * O_current * D_current
+cat("Current RPN:", RPN_current, "(S=7, O=5, D=6)\n\n")
+
+cat("=== IMPROVEMENT OPTIONS ===\n\n")
+
+# Option 1: Improve Detection
+cat("Option 1: Add automatic shot weight monitoring\n")
+D_option1 <- 2  # Automated detection
+RPN_option1 <- S_current * O_current * D_option1
+cat("New RPN:", RPN_option1, "(S=7, O=5, D=2)\n")
+cat("Reduction:", round((1 - RPN_option1/RPN_current)*100), "%\n\n")
+
+# Option 2: Improve Occurrence (Prevention)
+cat("Option 2: Add screw position monitoring with feedback control\n")
+O_option2 <- 2  # Much lower occurrence
+RPN_option2 <- S_current * O_option2 * D_current
+cat("New RPN:", RPN_option2, "(S=7, O=2, D=6)\n")
+cat("Reduction:", round((1 - RPN_option2/RPN_current)*100), "%\n\n")
+
+# Option 3: Both improvements
+cat("Option 3: Both improvements combined\n")
+RPN_option3 <- S_current * O_option2 * D_option1
+cat("New RPN:", RPN_option3, "(S=7, O=2, D=2)\n")
+cat("Reduction:", round((1 - RPN_option3/RPN_current)*100), "%\n")
+```
+
+```{r rpn-comparison-viz, echo=FALSE, fig.align="center", fig.cap="RPN Improvement Comparison", fig.width=9, fig.height=5}
+improvement_data <- data.frame(
+  option = c("Current", "Option 1:\nDetection", "Option 2:\nOccurrence", "Option 3:\nBoth"),
+  RPN = c(210, 70, 84, 28),
+  fill = c("#E74C3C", "#F39C12", "#3498DB", "#27AE60")
+)
+
+ggplot(improvement_data, aes(x = option, y = RPN, fill = option)) +
+  geom_bar(stat = "identity", color = "black", width = 0.6) +
+  geom_text(aes(label = RPN), vjust = -0.5, fontface = "bold", size = 5) +
+  geom_hline(yintercept = 100, linetype = "dashed", color = "#E74C3C", linewidth = 1) +
+  annotate("text", x = 4.5, y = 110, label = "Action threshold", hjust = 0, color = "#E74C3C") +
+  scale_fill_manual(values = c("Current" = "#E74C3C", "Option 1:\nDetection" = "#F39C12",
+                               "Option 2:\nOccurrence" = "#3498DB", "Option 3:\nBoth" = "#27AE60")) +
+  labs(title = "RPN Reduction Through Improvement Actions",
+       x = "", y = "Risk Priority Number (RPN)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    legend.position = "none",
+    axis.text.x = element_text(size = 10)
+  ) +
+  ylim(0, 250)
+```
+
+------------------------------------------------------------------------
+
+## Industry-Specific PFMEA Examples
+
+### Example: Welding Process
+
+```{r welding-pfmea, echo=FALSE}
+welding_pfmea <- tibble(
+  `Failure Mode` = c("Incomplete fusion", "Porosity", "Undercut", "Spatter", "Distortion"),
+  `Effect` = c("Weak joint, potential crack", "Leak path, strength reduction",
+               "Stress concentration, fatigue failure", "Appearance, cleanup required",
+               "Dimensional non-conformance"),
+  `S` = c(9, 8, 7, 3, 6),
+  `Cause` = c("Low heat input, contamination", "Shielding gas issue, moisture",
+              "Excessive current, wrong angle", "Wrong parameters, contaminated wire",
+              "Excessive heat, improper sequence"),
+  `O` = c(4, 5, 4, 6, 4),
+  `Current Control` = c("Visual + X-ray sample", "Visual inspection", "Visual inspection",
+                        "Visual inspection", "CMM check"),
+  `D` = c(4, 5, 4, 2, 5),
+  `RPN` = c(144, 200, 112, 36, 120)
+)
+
+welding_pfmea %>%
+  kable(format = "html", caption = "PFMEA Example: Welding Process") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#E67E22", color = "white") %>%
+  row_spec(2, background = "#FADBD8")
+```
+
+### Example: Heat Treatment Process
+
+```{r heat-treat-pfmea, echo=FALSE}
+heat_treat <- tibble(
+  `Failure Mode` = c("Under-hardened", "Over-hardened/Brittle", "Surface decarburization",
+                     "Distortion/Warpage", "Quench cracking"),
+  `Effect` = c("Premature wear, field failure", "Part cracks under load",
+               "Soft surface, wear", "Dimensional rejection", "Scrap, safety hazard"),
+  `S` = c(8, 9, 7, 6, 10),
+  `Cause` = c("Low temp, short time", "High temp, long time",
+              "Wrong atmosphere", "Uneven heating, rapid quench", "Thermal shock, design"),
+  `O` = c(4, 3, 4, 5, 2),
+  `Current Control` = c("Hardness test sample", "Hardness test sample",
+                        "Surface hardness check", "CMM sample", "Visual inspection"),
+  `D` = c(4, 4, 5, 4, 6),
+  `RPN` = c(128, 108, 140, 120, 120)
+)
+
+heat_treat %>%
+  kable(format = "html", caption = "PFMEA Example: Heat Treatment Process") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  row_spec(3, background = "#FADBD8")
+```
+
+### Example: Food Processing (Pasteurization)
+
+```{r food-pfmea, echo=FALSE}
+food_pfmea <- tibble(
+  `Failure Mode` = c("Under-processing", "Over-processing", "Temperature deviation",
+                     "Time deviation", "Cross-contamination"),
+  `Effect` = c("Pathogen survival, food safety", "Nutrient loss, off-flavor",
+               "Inconsistent kill, shelf life", "Process variation", "Product recall, illness"),
+  `S` = c(10, 5, 8, 6, 10),
+  `Cause` = c("Equipment malfunction, calibration", "Control system error",
+              "Sensor drift, flow variation", "Timer malfunction", "Gasket leak, CIP failure"),
+  `O` = c(2, 3, 3, 3, 2),
+  `Current Control` = c("Continuous temp monitoring + chart recorder",
+                        "Temperature alarm", "Calibration schedule",
+                        "Time verification", "CIP verification + testing"),
+  `D` = c(2, 3, 3, 3, 4),
+  `RPN` = c(40, 45, 72, 54, 80)
+)
+
+food_pfmea %>%
+  kable(format = "html", caption = "PFMEA Example: Pasteurization Process") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 11) %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  row_spec(c(1, 5), background = "#FEF9E7")
+```
+
+<details>
+<summary>Interactive Exercise: Create a PFMEA</summary>
+
+**Create a simple PFMEA for a coffee brewing process in a commercial setting.**
+
+**Process Steps:**
+1. Fill water reservoir
+2. Load coffee grounds
+3. Brew coffee
+4. Dispense into cup
+
+**Identify at least 4 failure modes with S, O, D ratings and RPN.**
+
+**Example Answer:**
+
+| Step | Failure Mode | Effect | S | Cause | O | Control | D | RPN |
+|------|--------------|--------|---|-------|---|---------|---|-----|
+| 1. Fill water | Wrong water level | Weak/strong coffee | 4 | No level indicator | 5 | Visual check | 5 | 100 |
+| 2. Load grounds | Wrong amount | Weak/strong coffee | 4 | No measuring | 6 | Visual check | 6 | 144 |
+| 3. Brew | Temperature too low | Under-extracted | 6 | Heating element worn | 3 | Temp display | 4 | 72 |
+| 4. Dispense | Overflow | Burn hazard, mess | 8 | Cup sensor failure | 2 | Cup sensor | 4 | 64 |
+
+**Priority:** Wrong amount (144) > Water level (100) > Temperature (72) > Overflow (64)
+
+</details>
+
+------------------------------------------------------------------------
+
+## Integration with Other Quality Tools
+
+PFMEA doesn't exist in isolation — it connects to other quality tools and systems.
+
+```{r integration-diagram, echo=FALSE, fig.align="center", fig.cap="PFMEA Integration with Quality Tools", fig.width=10, fig.height=6}
+ggplot() +
+  # Central PFMEA
+  annotate("point", x = 5, y = 3, size = 30, color = "#E74C3C") +
+  annotate("text", x = 5, y = 3, label = "PFMEA", fontface = "bold", size = 5, color = "white") +
+
+  # Connected tools
+  # Process Flow
+  annotate("point", x = 2, y = 5, size = 18, color = "#3498DB") +
+  annotate("text", x = 2, y = 5, label = "Process\nFlow", size = 3, color = "white", lineheight = 0.9) +
+  annotate("segment", x = 2.8, xend = 4.2, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 3.2, y = 4.3, label = "Input", size = 2.5, color = "#3498DB") +
+
+  # Control Plan
+  annotate("point", x = 8, y = 5, size = 18, color = "#27AE60") +
+  annotate("text", x = 8, y = 5, label = "Control\nPlan", size = 3, color = "white", lineheight = 0.9) +
+  annotate("segment", x = 5.8, xend = 7.2, y = 3.5, yend = 4.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 6.8, y = 4.3, label = "Output", size = 2.5, color = "#27AE60") +
+
+  # SPC
+  annotate("point", x = 8, y = 1, size = 18, color = "#F39C12") +
+  annotate("text", x = 8, y = 1, label = "SPC", size = 3, color = "white") +
+  annotate("segment", x = 5.8, xend = 7.2, y = 2.5, yend = 1.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 6.8, y = 1.7, label = "Monitoring", size = 2.5, color = "#F39C12") +
+
+  # DFMEA
+  annotate("point", x = 2, y = 1, size = 18, color = "#9B59B6") +
+  annotate("text", x = 2, y = 1, label = "DFMEA", size = 3, color = "white") +
+  annotate("segment", x = 2.8, xend = 4.2, y = 1.5, yend = 2.5, arrow = arrow(length = unit(0.15, "cm"))) +
+  annotate("text", x = 3.2, y = 1.7, label = "Link", size = 2.5, color = "#9B59B6") +
+
+  theme_void() +
+  labs(title = "PFMEA Integration with Quality System") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  xlim(0.5, 9.5) + ylim(0, 6)
+```
+
+### From PFMEA to Control Plan
+
+The PFMEA directly feeds the **Control Plan** — a document that specifies what controls are needed at each process step.
+
+```{r control-plan-link, echo=FALSE}
+control_plan <- tibble(
+  `From PFMEA` = c("Process Step", "Failure Mode", "Severity", "Cause", "Current Control", "Detection"),
+  `To Control Plan` = c("Operation/Step", "Characteristic to Control", "Classification (Critical/Significant)",
+                        "Process Parameter", "Control Method", "Reaction Plan")
+)
+
+control_plan %>%
+  kable(format = "html", caption = "PFMEA to Control Plan Linkage") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white")
+```
+
+------------------------------------------------------------------------
+
+## Common Pitfalls and Best Practices
+
+### Common Pitfalls to Avoid
+
+```{r pitfalls, echo=FALSE}
+pitfalls <- tibble(
+  `Pitfall` = c("**Paperwork Exercise**", "**One-Person Show**", "**Optimistic Detection**",
+                "**Static Document**", "**RPN Obsession**", "**Vague Failure Modes**"),
+  `Problem` = c("PFMEA done only to satisfy customer requirement",
+                "Engineer completes alone without team input",
+                "Overestimating effectiveness of current controls",
+                "Never updated after process changes",
+                "Focusing only on RPN numbers, missing high-severity items",
+                "Failure modes too general to be actionable"),
+  `Solution` = c("Conduct meaningful analysis with intent to improve",
+                 "Require cross-functional team participation",
+                 "Validate detection effectiveness with data",
+                 "Review and update after any process change",
+                 "Also consider severity alone; use AP method",
+                 "Be specific: 'hole undersize' not 'bad hole'")
+)
+
+pitfalls %>%
+  kable(format = "html", caption = "Common PFMEA Pitfalls and Solutions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em") %>%
+  column_spec(2, background = "#FADBD8")
+```
+
+### Best Practices
+
+```{r best-practices, echo=FALSE}
+practices <- tibble(
+  `Practice` = c("**Start Early**", "**Include Operators**", "**Use Historical Data**",
+                 "**Be Specific**", "**Follow Up**", "**Living Document**"),
+  `Description` = c("Begin PFMEA during process design, not after problems occur",
+                    "Operators know failures that never get documented",
+                    "Use warranty data, scrap reports, customer complaints",
+                    "Specific failure modes lead to specific actions",
+                    "Verify that actions were implemented and effective",
+                    "Review and update regularly (minimum annually)")
+)
+
+practices %>%
+  kable(format = "html", caption = "PFMEA Best Practices") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+------------------------------------------------------------------------
+
+## Case Study: Preventing a Major Quality Issue
+
+### Background
+
+**Company:** Automotive brake component manufacturer
+
+**Product:** Brake caliper mounting bracket
+
+**Situation:** New manufacturing process being implemented for a high-volume contract
+
+### PFMEA Analysis
+
+During the PFMEA session, the team identified a critical failure mode:
+
+```{r case-study-finding, echo=FALSE}
+case_finding <- tibble(
+  `Element` = c("Process Step", "Function", "Failure Mode", "Effect", "Severity",
+                "Cause", "Occurrence", "Current Control", "Detection", "RPN"),
+  `Analysis` = c("Drill mounting holes", "Create holes at 45.0 ±0.1mm spacing",
+                 "Hole spacing out of tolerance", "Caliper misalignment, brake performance affected",
+                 "9 (safety-related)", "Fixture wear, thermal expansion", "4 (occasional)",
+                 "CMM check 5 per shift", "5 (moderate sampling)", "180")
+)
+
+case_finding %>%
+  kable(format = "html", caption = "Case Study: Critical Failure Mode Identified") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  row_spec(5, background = "#FADBD8", bold = TRUE) %>%
+  row_spec(10, background = "#FADBD8", bold = TRUE)
+```
+
+### Actions Taken
+
+Based on the PFMEA, the team implemented:
+
+1. **In-process gauging:** Automated measurement after every part (D: 5 → 2)
+2. **Fixture monitoring:** Temperature compensation and wear tracking (O: 4 → 2)
+3. **Enhanced fixture design:** Carbide wear surfaces (O: 4 → 2)
+
+```{r case-study-improvement, echo=TRUE}
+# Before improvements
+S_before <- 9
+O_before <- 4
+D_before <- 5
+RPN_before <- S_before * O_before * D_before
+cat("Before RPN:", RPN_before, "\n")
+
+# After improvements
+S_after <- 9    # Severity unchanged (inherent)
+O_after <- 2    # Reduced through fixture improvements
+D_after <- 2    # Reduced through 100% gauging
+RPN_after <- S_after * O_after * D_after
+cat("After RPN:", RPN_after, "\n")
+cat("Reduction:", round((1 - RPN_after/RPN_before)*100), "%\n")
+```
+
+### Results
+
+- **Zero field failures** related to hole spacing after 18 months of production
+- **Estimated avoided cost:** $2.4 million in potential recall and warranty
+- **Investment:** $85,000 for gauging and fixture upgrades
+- **ROI:** 28:1
+
+> **Key Lesson:** The PFMEA investment of $85,000 prevented a potential $2.4 million problem. This is the power of proactive risk management.
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-table-ch8, echo=FALSE}
+summary_data <- tibble(
+  `Topic` = c("**PFMEA Purpose**", "**Key Ratings**", "**RPN Calculation**",
+              "**Prioritization**", "**Action Priority**", "**Best Practice**"),
+  `Key Points` = c("Prevent defects before they occur; proactive vs. reactive quality",
+                   "Severity (effect), Occurrence (likelihood), Detection (control effectiveness)",
+                   "RPN = S × O × D; Range 1-1000; Higher = More risk",
+                   "Address high RPN first, but always act on high severity (9-10)",
+                   "AIAG-VDA method: High/Medium/Low based on S-O-D combination",
+                   "Cross-functional team, living document, follow-up on actions")
+)
+
+summary_data %>%
+  kable(format = "html", caption = "PFMEA Key Concepts Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, width = "12em")
+```
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+### Conceptual Questions
+
+<details>
+<summary>Question 1: What is the difference between a failure mode and a failure effect?</summary>
+
+**Failure Mode:** How the process fails to perform its intended function
+- Example: "Hole drilled undersize"
+- Example: "Temperature too low"
+- Example: "Missing component"
+
+**Failure Effect:** The consequence of the failure mode
+- Example: "Part rejected at assembly" (effect of undersize hole)
+- Example: "Product not properly cured" (effect of low temperature)
+- Example: "Product doesn't function" (effect of missing component)
+
+**Key Relationship:** One failure mode can have multiple effects at different levels (local, downstream, customer).
+
+</details>
+
+<details>
+<summary>Question 2: Why should PFMEA be conducted by a cross-functional team?</summary>
+
+**Reasons for Cross-Functional Team:**
+
+1. **Diverse expertise:** No single person understands all aspects
+2. **Multiple perspectives:** Quality sees defects differently than production
+3. **Historical knowledge:** Operators know undocumented problems
+4. **Buy-in:** People support what they help create
+5. **System thinking:** Process interactions become visible
+6. **Better solutions:** Different functions propose different improvements
+
+**Typical team composition:**
+- Process Engineer (owner)
+- Quality Engineer
+- Production Supervisor/Operator
+- Maintenance Technician
+- Design Engineer
+- Supplier Representative (when applicable)
+
+</details>
+
+<details>
+<summary>Question 3: Explain why detection ratings are often harder to reduce than occurrence ratings.</summary>
+
+**Detection is harder to reduce because:**
+
+1. **Detection doesn't prevent:** Defect already exists; just trying to find it
+2. **Human inspection is unreliable:** 80-85% effectiveness typical
+3. **100% inspection is expensive:** Requires automation investment
+4. **Some defects are hidden:** Internal defects, intermittent failures
+5. **Sampling limitations:** Cannot catch all defects with sampling
+
+**Better approach:** Focus on occurrence reduction:
+- Error-proofing (poka-yoke)
+- Process capability improvement
+- Preventive maintenance
+- Better training
+
+**Example:** Reducing drill wear (occurrence) is more effective than adding more inspection (detection).
+
+</details>
+
+<details>
+<summary>Question 4: At what point in process development should PFMEA ideally be conducted?</summary>
+
+**Ideal Timing:** During process design, before production begins
+
+**Why early is better:**
+- Changes cost 1x during design
+- Changes cost 10x during production
+- Changes cost 100x after customer delivery
+
+**PFMEA Timing Points:**
+1. **New process development:** Before equipment is ordered
+2. **New product introduction:** During process planning
+3. **Process changes:** Before implementing changes
+4. **Quality issues:** When problems indicate process risk
+5. **Regular review:** Annually at minimum
+
+**Key Principle:** The earlier PFMEA is conducted, the more opportunity exists to design out failures rather than inspect them out.
+
+</details>
+
+### Calculation Questions
+
+<details>
+<summary>Question 5: Given S=8, O=6, D=4, calculate RPN. If improved controls reduce detection to 2, what is the new RPN?</summary>
+
+**Initial Calculation:**
+```
+RPN = S × O × D
+RPN = 8 × 6 × 4 = 192
+```
+
+**After Detection Improvement:**
+```
+New RPN = 8 × 6 × 2 = 96
+```
+
+**Analysis:**
+- Original RPN: 192 (Significant risk, action required)
+- New RPN: 96 (Moderate risk)
+- Reduction: 50%
+
+**Note:** Severity (8) remains unchanged because it's determined by the effect, not by process controls. Only occurrence and detection can be reduced through process improvements.
+
+</details>
+
+<details>
+<summary>Question 6: Two failure modes have RPNs of 120 and 150. Should the higher RPN always be addressed first?</summary>
+
+**Answer:** Not necessarily!
+
+**Consider the following scenarios:**
+
+**Scenario A:**
+- Failure Mode 1: RPN = 150 (S=3, O=10, D=5) — Minor cosmetic issue
+- Failure Mode 2: RPN = 120 (S=10, O=3, D=4) — Safety hazard
+
+**Priority:** Address Failure Mode 2 first despite lower RPN because:
+- Severity 10 indicates safety hazard
+- High-severity items should always be addressed regardless of RPN
+- The AP (Action Priority) method would classify this as HIGH priority
+
+**When to prioritize lower RPN:**
+- Higher severity (especially 9-10)
+- Regulatory or safety implications
+- Customer-critical characteristic
+- Easier/faster to implement
+
+**Key Lesson:** RPN is a prioritization tool, not the only decision criterion. Use engineering judgment.
+
+</details>
+
+### Application Questions
+
+<details>
+<summary>Question 7: For a metal stamping operation, identify at least five potential failure modes and their likely effects.</summary>
+
+**Metal Stamping PFMEA:**
+
+| # | Failure Mode | Effect |
+|---|--------------|--------|
+| 1 | Part not fully formed | Dimensional rejection, functional failure |
+| 2 | Burrs on edges | Injury hazard, assembly interference |
+| 3 | Cracks/splits | Structural failure, scrap |
+| 4 | Wrong material thickness | Dimensional/strength issues |
+| 5 | Mislocated features | Assembly issues, rejection |
+| 6 | Surface scratches | Appearance rejection, corrosion initiation |
+| 7 | Springback out of tolerance | Dimensional rejection |
+| 8 | Die mark/impression | Appearance defect |
+
+**Potential Causes for "Part not fully formed":**
+- Insufficient press tonnage
+- Die wear
+- Material too hard
+- Lubrication insufficient
+- Press speed too fast
+
+</details>
+
+<details>
+<summary>Question 8: A process has RPN of 240 (S=8, O=6, D=5). Propose three improvement strategies and calculate resulting RPN.</summary>
+
+**Current State:** S=8, O=6, D=5, RPN=240
+
+**Strategy 1: Improve Detection**
+- Add automated inspection (100% gauging)
+- New D = 2
+- New RPN = 8 × 6 × 2 = **96** (60% reduction)
+
+**Strategy 2: Improve Occurrence**
+- Add error-proofing (poka-yoke) to prevent cause
+- New O = 2
+- New RPN = 8 × 2 × 5 = **80** (67% reduction)
+
+**Strategy 3: Combined Approach**
+- Error-proofing (O → 3) + Better detection (D → 3)
+- New RPN = 8 × 3 × 3 = **72** (70% reduction)
+
+**Recommendation:** Strategy 2 (error-proofing) is typically preferred because:
+- Prevents defects from occurring
+- More sustainable long-term
+- Reduces inspection costs
+- Better for customer confidence
+
+</details>
+
+### Critical Thinking Questions
+
+<details>
+<summary>Question 9: Discuss the limitations of using RPN as the sole prioritization method.</summary>
+
+**RPN Limitations:**
+
+1. **Equal weighting problem:**
+   - 10×1×4 = 40 (safety hazard, rare)
+   - 2×10×2 = 40 (minor, frequent)
+   - Same RPN, very different risk!
+
+2. **Severity often overlooked:**
+   - High-severity items (9-10) should always be addressed
+   - RPN can hide safety-critical issues
+
+3. **Non-linear scales:**
+   - Difference between S=2 and S=3 is not same as S=8 and S=9
+   - Multiplication assumes linear relationship
+
+4. **Arbitrary thresholds:**
+   - Why is RPN=100 the "action" threshold?
+   - No scientific basis for specific cutoffs
+
+5. **Gaming the system:**
+   - Teams may manipulate ratings to avoid action
+   - Subjectivity in ratings
+
+**Better Approaches:**
+- Action Priority (AP) method
+- Always act on S ≥ 9 regardless of RPN
+- Consider multiple criteria (cost, feasibility, timing)
+- Use risk matrix visualization
+
+</details>
+
+<details>
+<summary>Question 10: How would you handle a situation where team members disagree on severity ratings?</summary>
+
+**Approach to Rating Disagreements:**
+
+**1. Clarify the failure effect:**
+- Ensure everyone understands the same effect
+- Be specific about which customer sees which impact
+
+**2. Reference the rating criteria:**
+- Use the standardized scale consistently
+- Point to specific criteria, not opinions
+
+**3. Consider worst-case scenario:**
+- PFMEA should consider worst reasonable case
+- "Could this effect happen?" vs "Will it happen?"
+
+**4. Gather data:**
+- Review historical data if available
+- What have similar failures caused in the past?
+
+**5. When in doubt, go higher:**
+- Conservative approach is appropriate for safety
+- Can always reduce later with evidence
+
+**6. Document the discussion:**
+- Record the rationale for the rating
+- Note if there was disagreement and why decision was made
+
+**7. Get external input:**
+- Bring in customer perspective if needed
+- Consult subject matter experts
+
+**Final Rule:** If a safety or regulatory issue is possible, severity should be 9 or 10 regardless of probability.
+
+</details>
+
+------------------------------------------------------------------------
+
+## References
+
+- AIAG & VDA. (2019). *FMEA Handbook*. Automotive Industry Action Group.
+- Stamatis, D.H. (2003). *Failure Mode and Effect Analysis: FMEA from Theory to Execution*. ASQ Quality Press.
+- McDermott, R.E., Mikulak, R.J., & Beauregard, M.R. (2009). *The Basics of FMEA*. Productivity Press.
+- Carlson, C.S. (2012). *Effective FMEAs: Achieving Safe, Reliable, and Economical Products and Processes*. Wiley.
+- SAE J1739. (2009). *Potential Failure Mode and Effects Analysis in Design and Manufacturing*.
+- ISO 31000:2018. *Risk management — Guidelines*.
+- IATF 16949:2016. *Quality management system requirements for automotive production*.
+
+------------------------------------------------------------------------

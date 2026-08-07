@@ -1,0 +1,1640 @@
+# Total Productive Maintenance (TPM)
+
+```{r setup-10, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+```
+------------------------------------------------------------------------
+
+
+## Learning Objectives
+
+By the end of this chapter, you will be able to:
+
+- Define Total Productive Maintenance and explain its objectives
+- Describe the 8 pillars of TPM and their interconnections
+- Calculate Overall Equipment Effectiveness (OEE) and its components
+- Identify and categorize the Six Big Losses
+- Implement autonomous maintenance activities
+- Develop preventive and predictive maintenance strategies
+- Apply TPM principles to improve equipment reliability and productivity
+
+> "Take care of your equipment, and it will take care of your production."
+> — Seiichi Nakajima, Father of TPM
+
+------------------------------------------------------------------------
+
+## Introduction to TPM
+
+### What is Total Productive Maintenance?
+
+**Total Productive Maintenance (TPM)** is a holistic approach to equipment maintenance that strives to achieve perfect production with no breakdowns, no defects, and no accidents. It involves everyone in the organization, from operators to top management.
+
+```{r tpm-definition, echo=FALSE, fig.align="center", fig.cap="The TPM Philosophy", fig.width=10, fig.height=5}
+ggplot() +
+  # Total
+  annotate("rect", xmin = 0, xmax = 3, ymin = 0, ymax = 3, fill = "#3498DB", alpha = 0.8) +
+  annotate("text", x = 1.5, y = 2.5, label = "TOTAL", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 1.5, y = 1.5, label = "Everyone\nparticipates\n\nAll departments\nAll levels",
+           size = 4, color = "white", lineheight = 0.9) +
+  # Productive
+  annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
+  annotate("text", x = 5, y = 2.5, label = "PRODUCTIVE", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 5, y = 1.5, label = "Maximize\neffectiveness\n\nZero losses\nZero defects",
+           size = 4, color = "white", lineheight = 0.9) +
+  # Maintenance
+  annotate("rect", xmin = 7, xmax = 10, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
+  annotate("text", x = 8.5, y = 2.5, label = "MAINTENANCE", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 8.5, y = 1.5, label = "Equipment\ncare\n\nPrevent failures\nExtend life",
+           size = 4, color = "white", lineheight = 0.9) +
+  theme_void() +
+  labs(title = "Total Productive Maintenance: Breaking Down the Name",
+       subtitle = "A company-wide approach to equipment effectiveness") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
+
+### History of TPM
+
+```{r tpm-history, echo=FALSE}
+history <- tibble(
+  `Era` = c("Pre-1950s", "1950s", "1960s", "1970s", "1980s", "1990s-Present"),
+  `Maintenance Approach` = c("Breakdown Maintenance",
+                              "Preventive Maintenance",
+                              "Productive Maintenance",
+                              "TPM Developed",
+                              "TPM Spreads Globally",
+                              "TPM + Industry 4.0"),
+  `Description` = c("Fix it when it breaks; reactive only",
+                    "Scheduled maintenance to prevent failures",
+                    "Maintenance focused on reliability and maintainability",
+                    "Nakajima develops TPM at Nippondenso (Toyota supplier)",
+                    "Adopted by automotive, electronics, process industries worldwide",
+                    "Integration with predictive analytics, IoT sensors, AI"),
+  `Key Change` = c("No prevention", "Time-based prevention",
+                   "Design for maintenance", "Operator involvement",
+                   "World-class standard", "Data-driven maintenance")
+)
+
+history %>%
+  kable(format = "html", caption = "Evolution of Maintenance Philosophy") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#34495E", color = "white") %>%
+  row_spec(4, background = "#D5F5E3") %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+### The Goals of TPM
+
+TPM aims to achieve **zero** targets:
+
+```{r tpm-goals, echo=FALSE, fig.align="center", fig.cap="TPM Zero Targets", fig.width=9, fig.height=5}
+goals <- data.frame(
+  goal = c("Zero\nBreakdowns", "Zero\nDefects", "Zero\nAccidents"),
+  impact = c("Maximum\nAvailability", "Maximum\nQuality", "Maximum\nSafety"),
+  x = c(1, 2, 3)
+)
+
+ggplot(goals, aes(x = x, y = 1)) +
+  geom_point(size = 30, color = "#E74C3C") +
+  geom_text(aes(label = goal), y = 1, color = "white", fontface = "bold", size = 4, lineheight = 0.9) +
+  geom_text(aes(label = impact), y = 0.3, color = "#2C3E50", size = 4.5, lineheight = 0.9) +
+  annotate("segment", x = 0.3, xend = 3.7, y = 0.6, yend = 0.6,
+           arrow = arrow(length = unit(0.2, "cm"), ends = "both"), color = "#27AE60", linewidth = 1.5) +
+  annotate("text", x = 2, y = 0.5, label = "= Maximum OEE", color = "#27AE60", fontface = "bold", size = 4) +
+  theme_void() +
+  labs(title = "TPM Zero Targets") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(0, 1.5)
+```
+
+### Traditional vs. TPM Approach
+
+```{r traditional-vs-tpm, echo=FALSE}
+comparison <- tibble(
+  `Aspect` = c("**Equipment ownership**", "**Maintenance responsibility**",
+               "**Operator role**", "**Maintenance focus**",
+               "**Problem solving**", "**Goal**"),
+  `Traditional Maintenance` = c("'Maintenance owns the machines'",
+                                 "Maintenance department only",
+                                 "Operate; call maintenance when broken",
+                                 "Fix breakdowns quickly",
+                                 "Reactive; fire-fighting",
+                                 "Minimize maintenance cost"),
+  `TPM Approach` = c("'We all own the machines'",
+                     "Everyone (operators + maintenance)",
+                     "Operate, clean, inspect, maintain",
+                     "Prevent breakdowns; extend life",
+                     "Proactive; root cause elimination",
+                     "Maximize equipment effectiveness")
+)
+
+comparison %>%
+  kable(format = "html", caption = "Traditional Maintenance vs. TPM") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "14em") %>%
+  column_spec(2, background = "#FADBD8") %>%
+  column_spec(3, background = "#D5F5E3")
+```
+
+<details>
+<summary>Question: Why involve operators in maintenance?</summary>
+
+**Operators are the first line of defense because:**
+
+1. **They know the equipment:** Operators work with machines every day and notice subtle changes
+2. **Early detection:** Small problems are detected before becoming major failures
+3. **Ownership mindset:** People take better care of things they "own"
+4. **Reduced response time:** Operators can address minor issues immediately
+5. **Freed maintenance resources:** Technicians can focus on complex tasks
+
+**Example:** An operator notices a slight vibration change in a motor. Under traditional maintenance, they might ignore it. Under TPM, they report it, potentially preventing a $50,000 breakdown.
+
+> "No one knows a machine better than the person who operates it every day."
+
+</details>
+
+------------------------------------------------------------------------
+
+## The Eight Pillars of TPM
+
+TPM is built on **eight pillars**, each addressing a specific aspect of equipment management and organizational culture.
+
+```{r eight-pillars, echo=FALSE, fig.align="center", fig.cap="The Eight Pillars of TPM", fig.width=10, fig.height=7}
+ggplot() +
+  # Foundation
+  annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 1, fill = "#2C3E50", color = "black") +
+  annotate("text", x = 5, y = 0.5, label = "FOUNDATION: 5S (Sort, Set in Order, Shine, Standardize, Sustain)",
+           color = "white", fontface = "bold", size = 4.5) +
+  # Roof
+  annotate("polygon", x = c(-0.5, 5, 10.5), y = c(5.2, 6.5, 5.2), fill = "#C0392B", color = "black") +
+  annotate("text", x = 5, y = 5.7, label = "ZERO LOSSES: Zero Breakdowns • Zero Defects • Zero Accidents",
+           color = "white", fontface = "bold", size = 4.5) +
+
+  # Pillar 1
+  annotate("rect", xmin = 0.2, xmax = 1.1, ymin = 1.2, ymax = 5, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 0.65, y = 3.1, label = "Autonomous\nMaintenance", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 2
+  annotate("rect", xmin = 1.4, xmax = 2.3, ymin = 1.2, ymax = 5, fill = "#E67E22", color = "black") +
+  annotate("text", x = 1.85, y = 3.1, label = "Planned\nMaintenance", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 3
+  annotate("rect", xmin = 2.6, xmax = 3.5, ymin = 1.2, ymax = 5, fill = "#F1C40F", color = "black") +
+  annotate("text", x = 3.05, y = 3.1, label = "Quality\nMaintenance", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 4
+  annotate("rect", xmin = 3.8, xmax = 4.7, ymin = 1.2, ymax = 5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 4.25, y = 3.1, label = "Focused\nImprovement", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 5
+  annotate("rect", xmin = 5, xmax = 5.9, ymin = 1.2, ymax = 5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 5.45, y = 3.1, label = "Early Equip.\nManagement", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 6
+  annotate("rect", xmin = 6.2, xmax = 7.1, ymin = 1.2, ymax = 5, fill = "#9B59B6", color = "black") +
+  annotate("text", x = 6.65, y = 3.1, label = "Training &\nEducation", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 7
+  annotate("rect", xmin = 7.4, xmax = 8.3, ymin = 1.2, ymax = 5, fill = "#1ABC9C", color = "black") +
+  annotate("text", x = 7.85, y = 3.1, label = "Safety, Health\nEnvironment", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+  # Pillar 8
+  annotate("rect", xmin = 8.6, xmax = 9.5, ymin = 1.2, ymax = 5, fill = "#34495E", color = "black") +
+  annotate("text", x = 9.05, y = 3.1, label = "TPM in\nOffice", color = "white",
+           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+
+  theme_void() +
+  labs(title = "The House of TPM: Eight Pillars Built on 5S Foundation") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(-0.5, 7)
+```
+
+```{r pillars-table, echo=FALSE}
+pillars <- tibble(
+  `#` = 1:8,
+  `Pillar` = c("**Autonomous Maintenance**", "**Planned Maintenance**", "**Quality Maintenance**",
+               "**Focused Improvement**", "**Early Equipment Management**", "**Training & Education**",
+               "**Safety, Health, Environment**", "**TPM in Office**"),
+  `Purpose` = c("Operators maintain their own equipment",
+                "Scheduled maintenance by specialists",
+                "Zero defects through equipment conditions",
+                "Eliminate losses through kaizen activities",
+                "Design equipment for maintainability",
+                "Develop skilled operators and technicians",
+                "Zero accidents, safe workplace",
+                "Apply TPM principles to administrative processes"),
+  `Key Activities` = c("Cleaning, inspection, lubrication, minor repairs",
+                       "PM schedules, predictive maintenance, spare parts",
+                       "Identify equipment conditions causing defects",
+                       "Loss analysis, root cause, countermeasures",
+                       "Design reviews, vertical startup, LCC analysis",
+                       "Skills matrix, training programs, OJT",
+                       "Hazard identification, safety audits, ergonomics",
+                       "Streamline workflows, reduce waste in offices")
+)
+
+pillars %>%
+  kable(format = "html", caption = "The Eight Pillars of TPM") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 13) %>%
+  row_spec(0, bold = TRUE, background = "#8E44AD", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "3em")
+```
+
+------------------------------------------------------------------------
+
+## Overall Equipment Effectiveness (OEE)
+
+### What is OEE?
+
+**Overall Equipment Effectiveness (OEE)** is the primary metric of TPM. It measures how effectively equipment is being used by combining three factors: Availability, Performance, and Quality.
+
+```{r oee-formula, echo=FALSE, fig.align="center", fig.cap="OEE Formula and Components", fig.width=10, fig.height=6}
+ggplot() +
+  # Main formula box
+  annotate("rect", xmin = 2, xmax = 8, ymin = 4.5, ymax = 5.5, fill = "#2C3E50", color = "black") +
+  annotate("text", x = 5, y = 5, label = "OEE = Availability × Performance × Quality",
+           color = "white", fontface = "bold", size = 6) +
+
+  # Three components
+  # Availability
+  annotate("rect", xmin = 0.5, xmax = 3, ymin = 2, ymax = 4, fill = "#3498DB", color = "black") +
+  annotate("text", x = 1.75, y = 3.6, label = "AVAILABILITY", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 1.75, y = 3, label = "Run Time\n÷\nPlanned Production Time",
+           color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 1.75, y = 1.5, label = "Downtime\nLosses", color = "#3498DB",
+           fontface = "bold", size = 4, lineheight = 0.9) +
+
+  # Performance
+  annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 2, ymax = 4, fill = "#27AE60", color = "black") +
+  annotate("text", x = 5, y = 3.6, label = "PERFORMANCE", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 5, y = 3, label = "Ideal Cycle Time × Total Count\n÷\nRun Time",
+           color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 5, y = 1.5, label = "Speed\nLosses", color = "#27AE60",
+           fontface = "bold", size = 4, lineheight = 0.9) +
+
+  # Quality
+  annotate("rect", xmin = 7, xmax = 9.5, ymin = 2, ymax = 4, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 8.25, y = 3.6, label = "QUALITY", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 8.25, y = 3, label = "Good Count\n÷\nTotal Count",
+           color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 8.25, y = 1.5, label = "Quality\nLosses", color = "#E74C3C",
+           fontface = "bold", size = 4, lineheight = 0.9) +
+
+  # Arrows
+  annotate("segment", x = 1.75, xend = 1.75, y = 4, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+  annotate("segment", x = 5, xend = 5, y = 4, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+  annotate("segment", x = 8.25, xend = 8.25, y = 4, yend = 4.5,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+
+  theme_void() +
+  labs(title = "OEE: The TPM Scorecard") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16)) +
+  ylim(1, 6)
+```
+
+### OEE Component Formulas
+
+```{r oee-formulas, echo=FALSE}
+oee_formulas <- tibble(
+  `Component` = c("**Availability**", "**Performance**", "**Quality**", "**OEE**"),
+  `Formula` = c("$\\frac{\\text{Run Time}}{\\text{Planned Production Time}} \\times 100\\%$",
+                "$\\frac{\\text{Ideal Cycle Time} \\times \\text{Total Count}}{\\text{Run Time}} \\times 100\\%$",
+                "$\\frac{\\text{Good Count}}{\\text{Total Count}} \\times 100\\%$",
+                "$\\text{Availability} \\times \\text{Performance} \\times \\text{Quality}$"),
+  `What It Measures` = c("Time the equipment is running vs. planned time",
+                         "How fast equipment runs vs. design speed",
+                         "Good parts vs. total parts produced",
+                         "Overall effectiveness combining all three"),
+  `Losses Captured` = c("Breakdowns, changeovers, adjustments",
+                        "Minor stops, reduced speed, idling",
+                        "Defects, rework, startup rejects",
+                        "All six big losses combined")
+)
+
+oee_formulas %>%
+  kable(format = "html", escape = FALSE, caption = "OEE Component Formulas") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  row_spec(4, background = "#D5F5E3") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+### OEE Calculation Example
+
+```{r oee-calculation, echo=TRUE}
+# OEE Calculation Example: Injection Molding Machine
+
+cat("=== SHIFT DATA ===\n")
+# Time data
+shift_length <- 480  # minutes (8 hours)
+planned_downtime <- 30  # breaks, planned maintenance
+planned_production_time <- shift_length - planned_downtime
+cat("Planned Production Time:", planned_production_time, "minutes\n")
+
+# Downtime losses
+breakdown_time <- 25  # equipment failure
+changeover_time <- 35  # mold changes
+adjustment_time <- 10  # setup adjustments
+total_downtime <- breakdown_time + changeover_time + adjustment_time
+cat("Unplanned Downtime:", total_downtime, "minutes\n")
+
+run_time <- planned_production_time - total_downtime
+cat("Run Time:", run_time, "minutes\n\n")
+
+# Production data
+ideal_cycle_time <- 0.5  # minutes per part (design spec)
+total_parts <- 700  # parts produced
+good_parts <- 665   # parts passing inspection
+defects <- total_parts - good_parts
+
+cat("=== PRODUCTION DATA ===\n")
+cat("Total Parts Produced:", total_parts, "\n")
+cat("Good Parts:", good_parts, "\n")
+cat("Defects:", defects, "\n\n")
+
+# Calculate OEE Components
+cat("=== OEE CALCULATION ===\n\n")
+
+# Availability
+availability <- (run_time / planned_production_time) * 100
+cat("AVAILABILITY:\n")
+cat("  = Run Time / Planned Production Time\n")
+cat("  =", run_time, "/", planned_production_time, "\n")
+cat("  =", round(availability, 1), "%\n\n")
+
+# Performance
+# Actual output vs. theoretical output during run time
+theoretical_output <- run_time / ideal_cycle_time
+performance <- (total_parts / theoretical_output) * 100
+cat("PERFORMANCE:\n")
+cat("  Theoretical Output =", theoretical_output, "parts\n")
+cat("  Actual Output =", total_parts, "parts\n")
+cat("  = Actual / Theoretical\n")
+cat("  =", round(performance, 1), "%\n\n")
+
+# Quality
+quality <- (good_parts / total_parts) * 100
+cat("QUALITY:\n")
+cat("  = Good Parts / Total Parts\n")
+cat("  =", good_parts, "/", total_parts, "\n")
+cat("  =", round(quality, 1), "%\n\n")
+
+# Overall OEE
+oee <- (availability/100) * (performance/100) * (quality/100) * 100
+cat("=== OVERALL OEE ===\n")
+cat("OEE =", round(availability, 1), "% ×", round(performance, 1), "% ×", round(quality, 1), "%\n")
+cat("OEE =", round(oee, 1), "%\n")
+```
+
+```{r oee-waterfall, echo=FALSE, fig.align="center", fig.cap="OEE Waterfall Chart: Where Time Goes", fig.width=10, fig.height=6}
+# Create waterfall data with proper cascading structure
+waterfall <- data.frame(
+  category = factor(c("Shift Time", "Planned DT", "Breakdowns", "Changeover",
+                      "Speed Loss", "Defects", "Value-Added"),
+                    levels = c("Shift Time", "Planned DT", "Breakdowns", "Changeover",
+                               "Speed Loss", "Defects", "Value-Added")),
+  value = c(480, -30, -25, -45, -30, -17.5, 332.5),
+  type = c("start", "loss", "loss", "loss", "loss", "loss", "end")
+)
+
+# Calculate cascading positions
+waterfall$end <- cumsum(c(480, -30, -25, -45, -30, -17.5, 0))
+waterfall$start <- c(0, waterfall$end[1:6])
+waterfall$start[7] <- 0  # Final bar starts from 0
+
+ggplot(waterfall, aes(x = category)) +
+  geom_rect(aes(xmin = as.numeric(category) - 0.4,
+                xmax = as.numeric(category) + 0.4,
+                ymin = pmin(start, end), ymax = pmax(start, end),
+                fill = type), color = "black") +
+  geom_text(aes(y = (start + end)/2, label = abs(value)), fontface = "bold") +
+  scale_fill_manual(values = c("start" = "#3498DB", "loss" = "#E74C3C", "end" = "#27AE60")) +
+  labs(title = "OEE Waterfall: From Total Time to Value-Added Time",
+       subtitle = "Every loss category reduces available productive time",
+       x = "", y = "Minutes") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    legend.position = "none",
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
+```
+
+### OEE Benchmarks
+
+```{r oee-benchmarks, echo=FALSE}
+benchmarks <- tibble(
+  `OEE Level` = c("< 65%", "65% - 75%", "75% - 85%", "> 85%"),
+  `Classification` = c("Unacceptable", "Typical", "Good", "World Class"),
+  `Interpretation` = c("Significant improvement opportunities exist",
+                       "Average for discrete manufacturing",
+                       "Well-managed operations",
+                       "Best-in-class performance"),
+  `Component Targets` = c("—", "A: 90%, P: 85%, Q: 95%",
+                          "A: 92%, P: 90%, Q: 97%", "A: 95%, P: 95%, Q: 99%")
+)
+
+benchmarks %>%
+  kable(format = "html", caption = "OEE Benchmarks") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  row_spec(1, background = "#FADBD8") %>%
+  row_spec(2, background = "#FEF9E7") %>%
+  row_spec(3, background = "#D5F5E3") %>%
+  row_spec(4, background = "#D5F5E3", bold = TRUE) %>%
+  column_spec(1, bold = TRUE, width = "8em")
+```
+
+<details>
+<summary>Interactive Exercise: Calculate OEE</summary>
+
+**Given the following shift data, calculate OEE:**
+
+- Shift length: 480 minutes
+- Planned breaks: 40 minutes
+- Equipment breakdown: 30 minutes
+- Setup/changeover: 20 minutes
+- Ideal cycle time: 1 minute/part
+- Total parts produced: 350
+- Rejected parts: 14
+
+**Work through the calculation:**
+
+**Solution:**
+
+```
+Planned Production Time = 480 - 40 = 440 minutes
+Run Time = 440 - 30 - 20 = 390 minutes
+
+Availability = 390 / 440 = 88.6%
+
+Theoretical Output = 390 / 1 = 390 parts
+Performance = 350 / 390 = 89.7%
+
+Quality = (350 - 14) / 350 = 336 / 350 = 96.0%
+
+OEE = 88.6% × 89.7% × 96.0% = 76.3%
+```
+
+**Interpretation:** This is "Good" performance, above the typical range. The biggest opportunity is in Performance (speed losses).
+
+</details>
+
+------------------------------------------------------------------------
+
+## The Six Big Losses
+
+TPM categorizes all equipment losses into **six categories**, which map directly to the OEE components.
+
+```{r six-big-losses, echo=FALSE, fig.align="center", fig.cap="The Six Big Losses", fig.width=10, fig.height=7}
+ggplot() +
+  # Availability losses (red)
+  annotate("rect", xmin = 0, xmax = 3.2, ymin = 4, ymax = 6.5, fill = "#3498DB", alpha = 0.2) +
+  annotate("text", x = 1.6, y = 6.2, label = "AVAILABILITY LOSSES", fontface = "bold",
+           color = "#3498DB", size = 4) +
+  annotate("rect", xmin = 0.2, xmax = 1.4, ymin = 4.2, ymax = 5.8, fill = "#3498DB", color = "black") +
+  annotate("text", x = 0.8, y = 5.4, label = "1", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 0.8, y = 5, label = "Equipment\nFailure", color = "white", size = 4, lineheight = 0.9) +
+  annotate("rect", xmin = 1.6, xmax = 3, ymin = 4.2, ymax = 5.8, fill = "#3498DB", color = "black") +
+  annotate("text", x = 2.3, y = 5.4, label = "2", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 2.3, y = 5, label = "Setup &\nAdjustment", color = "white", size = 4, lineheight = 0.9) +
+
+  # Performance losses (green)
+  annotate("rect", xmin = 3.4, xmax = 6.6, ymin = 4, ymax = 6.5, fill = "#27AE60", alpha = 0.2) +
+  annotate("text", x = 5, y = 6.2, label = "PERFORMANCE LOSSES", fontface = "bold",
+           color = "#27AE60", size = 4) +
+  annotate("rect", xmin = 3.6, xmax = 4.8, ymin = 4.2, ymax = 5.8, fill = "#27AE60", color = "black") +
+  annotate("text", x = 4.2, y = 5.4, label = "3", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 4.2, y = 5, label = "Idling &\nMinor Stops", color = "white", size = 4, lineheight = 0.9) +
+  annotate("rect", xmin = 5, xmax = 6.4, ymin = 4.2, ymax = 5.8, fill = "#27AE60", color = "black") +
+  annotate("text", x = 5.7, y = 5.4, label = "4", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 5.7, y = 5, label = "Reduced\nSpeed", color = "white", size = 4, lineheight = 0.9) +
+
+  # Quality losses (orange)
+  annotate("rect", xmin = 6.8, xmax = 10, ymin = 4, ymax = 6.5, fill = "#E74C3C", alpha = 0.2) +
+  annotate("text", x = 8.4, y = 6.2, label = "QUALITY LOSSES", fontface = "bold",
+           color = "#E74C3C", size = 4) +
+  annotate("rect", xmin = 7, xmax = 8.2, ymin = 4.2, ymax = 5.8, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 7.6, y = 5.4, label = "5", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 7.6, y = 5, label = "Process\nDefects", color = "white", size = 4, lineheight = 0.9) +
+  annotate("rect", xmin = 8.4, xmax = 9.8, ymin = 4.2, ymax = 5.8, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 9.1, y = 5.4, label = "6", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 9.1, y = 5, label = "Startup\nRejects", color = "white", size = 4, lineheight = 0.9) +
+
+  theme_void() +
+  labs(title = "The Six Big Losses: Targets for TPM Improvement") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16)) +
+  ylim(3.5, 7)
+```
+
+```{r six-losses-detail, echo=FALSE}
+losses_detail <- tibble(
+  `#` = 1:6,
+  `Loss Category` = c("**Equipment Failure**", "**Setup & Adjustment**", "**Idling & Minor Stops**",
+                      "**Reduced Speed**", "**Process Defects**", "**Startup Rejects**"),
+  `OEE Component` = c("Availability", "Availability", "Performance",
+                      "Performance", "Quality", "Quality"),
+  `Description` = c("Unplanned equipment breakdown",
+                    "Time for changeover, tool changes, adjustments",
+                    "Brief stoppages (jams, blockages, cleaning)",
+                    "Running slower than design speed",
+                    "Defects produced during normal operation",
+                    "Defects during warmup, startup, changeover"),
+  `Examples` = c("Motor failure, sensor malfunction, mechanical breakdown",
+                 "Die change, product changeover, calibration",
+                 "Sensor trips, material jams, overloads (<5 min)",
+                 "Worn tooling, operator caution, material variability",
+                 "Scrap, rework, out-of-spec product",
+                 "First-off rejects, warming up, stabilization")
+)
+
+losses_detail %>%
+  kable(format = "html", caption = "The Six Big Losses Explained") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered", "responsive"),
+                full_width = TRUE, position = "center", font_size = 13) %>%
+  row_spec(0, bold = TRUE, background = "#E67E22", color = "white") %>%
+  row_spec(1:2, background = "#D6EAF8") %>%
+  row_spec(3:4, background = "#D5F5E3") %>%
+  row_spec(5:6, background = "#FADBD8") %>%
+  column_spec(1, bold = TRUE, width = "3em")
+```
+
+### Typical Loss Distribution
+
+```{r loss-distribution, echo=FALSE, fig.align="center", fig.cap="Typical Distribution of the Six Big Losses", fig.width=10, fig.height=5}
+losses_data <- data.frame(
+  loss = c("Equipment Failure", "Setup/Adjustment", "Minor Stops",
+           "Reduced Speed", "Process Defects", "Startup Rejects"),
+  percentage = c(10, 12, 8, 5, 3, 2),
+  category = c("Availability", "Availability", "Performance",
+               "Performance", "Quality", "Quality")
+)
+
+ggplot(losses_data, aes(x = reorder(loss, -percentage), y = percentage, fill = category)) +
+  geom_bar(stat = "identity", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(percentage, "%")), vjust = -0.5, fontface = "bold") +
+  scale_fill_manual(values = c("Availability" = "#3498DB", "Performance" = "#27AE60", "Quality" = "#E74C3C")) +
+  labs(title = "Typical Loss Distribution (40% Total Losses)",
+       subtitle = "Manufacturing example - varies by industry and equipment",
+       x = "", y = "Time Loss (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
+```
+
+------------------------------------------------------------------------
+
+## Autonomous Maintenance
+
+**Autonomous Maintenance (AM)** is the first and most visible pillar of TPM. It transfers basic maintenance tasks from maintenance specialists to operators.
+
+### The Seven Steps of Autonomous Maintenance
+
+```{r am-seven-steps, echo=FALSE, fig.align="center", fig.cap="Seven Steps of Autonomous Maintenance", fig.width=10, fig.height=7}
+steps <- data.frame(
+  step = 1:7,
+  name = c("Initial Cleaning", "Eliminate Sources", "Standards", "General Inspection",
+           "Autonomous Inspection", "Organization", "Full AM"),
+  description = c("Clean to inspect", "Prevent contamination", "Maintain conditions",
+                  "Train & inspect", "Self-directed", "Standardize workplace", "Continuous improvement"),
+  y = c(7, 6, 5, 4, 3, 2, 1)
+)
+
+ggplot(steps, aes(x = 1, y = y)) +
+  geom_tile(width = 2, height = 0.8, fill = "#E74C3C", color = "white", linewidth = 2) +
+  geom_text(aes(x = 0.2, label = step), fontface = "bold", color = "white", size = 5.5) +
+  geom_text(aes(x = 1.2, label = name), fontface = "bold", color = "white", size = 4.5) +
+  geom_text(aes(x = 2.8, label = description), hjust = 0, color = "#2C3E50", size = 4.5) +
+  # Arrow between boxes and descriptions
+  annotate("segment", x = 2.55, xend = 2.4, y = 0.5, yend = 7.5,
+           arrow = arrow(length = unit(0.3, "cm"), ends = "first"), color = "#27AE60", linewidth = 2) +
+  annotate("text", x = 2.4, y = 4, label = "Progress", angle = 270, fontface = "bold",
+           color = "#27AE60", size = 4) +
+  theme_void() +
+  labs(title = "Seven Steps of Autonomous Maintenance") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  xlim(-0.5, 5.5)
+```
+
+```{r am-steps-detail, echo=FALSE}
+am_steps <- tibble(
+  `Step` = 1:7,
+  `Name` = c("**Initial Cleaning**", "**Eliminate Contamination Sources**",
+             "**Cleaning & Lubrication Standards**", "**General Inspection**",
+             "**Autonomous Inspection**", "**Organization & Tidiness**",
+             "**Full Autonomous Maintenance**"),
+  `Activities` = c("Deep clean equipment; identify abnormalities",
+                   "Find and fix sources of dirt, leaks, contamination",
+                   "Create standards for cleaning, lubricating, inspection",
+                   "Train operators on equipment function; expand skills",
+                   "Operators perform scheduled inspections independently",
+                   "Standardize workplace; visual management",
+                   "Continuous improvement; operators propose improvements"),
+  `Outcome` = c("Equipment baseline; 100+ abnormalities found typical",
+                "Reduced cleaning time; contamination controlled",
+                "Consistent equipment condition; clear expectations",
+                "Skilled operators; detect abnormalities early",
+                "Reliable self-directed maintenance program",
+                "Efficient, safe, visual workplace",
+                "Empowered operators; sustained improvement")
+)
+
+am_steps %>%
+  kable(format = "html", caption = "Autonomous Maintenance Steps in Detail") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "4em")
+```
+
+### The AM Tag System
+
+During autonomous maintenance activities, operators identify abnormalities using **tags**:
+
+```{r tag-system, echo=FALSE, fig.align="center", fig.cap="AM Tag System", fig.width=9, fig.height=4}
+ggplot() +
+  # Yellow tag
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 0, ymax = 3, fill = "#F1C40F", color = "black") +
+  annotate("text", x = 1.5, y = 2.5, label = "YELLOW TAG", fontface = "bold", color = "black", size = 5) +
+  annotate("text", x = 1.5, y = 1.5, label = "Safety\nHazard\n\nImmediate attention",
+           color = "black", size = 4, lineheight = 0.9) +
+  # Red tag
+  annotate("rect", xmin = 3.5, xmax = 5.5, ymin = 0, ymax = 3, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 4.5, y = 2.5, label = "RED TAG", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 4.5, y = 1.5, label = "Maintenance\nRequired\n\nOperator cannot fix",
+           color = "white", size = 4, lineheight = 0.9) +
+  # Blue tag
+  annotate("rect", xmin = 6.5, xmax = 8.5, ymin = 0, ymax = 3, fill = "#3498DB", color = "black") +
+  annotate("text", x = 7.5, y = 2.5, label = "BLUE TAG", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 7.5, y = 1.5, label = "Operator\nAction\n\nOperator can fix",
+           color = "white", size = 4, lineheight = 0.9) +
+  theme_void() +
+  labs(title = "AM Tag System: Identifying and Tracking Abnormalities") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+```
+
+### Example: AM Cleaning and Inspection Checklist
+
+```{r am-checklist, echo=FALSE}
+checklist <- tibble(
+  `#` = 1:8,
+  `Check Item` = c("General cleanliness", "Oil/lubricant levels", "Loose bolts/fasteners",
+                   "Unusual sounds", "Vibration", "Temperature", "Leaks (oil, air, coolant)",
+                   "Safety guards in place"),
+  `Method` = c("Visual", "Visual/gauge", "Touch/wrench", "Listen", "Touch", "Touch/thermometer",
+               "Visual", "Visual"),
+  `Standard` = c("No dust, debris, contamination", "Between min-max marks", "Hand tight + 1/4 turn",
+                 "Normal operating sound", "Minimal, no unusual patterns", "< 60°C (or per spec)",
+                 "No visible leaks", "All guards secure"),
+  `Frequency` = c("Daily", "Daily", "Weekly", "Each startup", "Each startup",
+                  "Hourly", "Daily", "Each shift")
+)
+
+checklist %>%
+  kable(format = "html", caption = "Sample AM Inspection Checklist") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "3em")
+```
+
+------------------------------------------------------------------------
+
+## Planned Maintenance
+
+**Planned Maintenance** is the second pillar, focusing on scheduled maintenance activities performed by maintenance specialists.
+
+### Types of Maintenance
+
+```{r maintenance-types, echo=FALSE, fig.align="center", fig.cap="Types of Maintenance Activities", fig.width=10, fig.height=6}
+ggplot() +
+  # Reactive
+  annotate("rect", xmin = 0, xmax = 2.3, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
+  annotate("text", x = 1.15, y = 2.5, label = "REACTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 1.15, y = 1.5, label = "Breakdown\nMaintenance\n\nFix when broken",
+           color = "white", size = 4, lineheight = 0.9) +
+  # Preventive
+  annotate("rect", xmin = 2.6, xmax = 4.9, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.8) +
+  annotate("text", x = 3.75, y = 2.5, label = "PREVENTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 3.75, y = 1.5, label = "Time-Based\nMaintenance\n\nScheduled intervals",
+           color = "white", size = 4, lineheight = 0.9) +
+  # Predictive
+  annotate("rect", xmin = 5.2, xmax = 7.5, ymin = 0, ymax = 3, fill = "#3498DB", alpha = 0.8) +
+  annotate("text", x = 6.35, y = 2.5, label = "PREDICTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 6.35, y = 1.5, label = "Condition-Based\nMaintenance\n\nMonitor & predict",
+           color = "white", size = 4, lineheight = 0.9) +
+  # Proactive
+  annotate("rect", xmin = 7.8, xmax = 10.1, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
+  annotate("text", x = 8.95, y = 2.5, label = "PROACTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 8.95, y = 1.5, label = "Root Cause\nElimination\n\nPrevent recurrence",
+           color = "white", size = 4, lineheight = 0.9) +
+  # Arrow
+  annotate("segment", x = 0.5, xend = 9.5, y = -0.5, yend = -0.5,
+           arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", linewidth = 1.5) +
+  annotate("text", x = 5, y = -0.8, label = "Increasing Maturity →", fontface = "bold") +
+  theme_void() +
+  labs(title = "Evolution of Maintenance Strategy") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16)) +
+  ylim(-1.2, 3.5)
+```
+
+```{r maintenance-comparison, echo=FALSE}
+maint_compare <- tibble(
+  `Type` = c("**Breakdown**", "**Preventive**", "**Predictive**", "**Proactive**"),
+  `Approach` = c("Run to failure", "Time/cycle-based replacement",
+                 "Condition monitoring", "Root cause elimination"),
+  `Advantages` = c("No upfront cost", "Planned downtime, parts availability",
+                   "Optimal component life, targeted actions", "Prevents future failures"),
+  `Disadvantages` = c("Unplanned downtime, secondary damage", "May replace good parts",
+                      "Monitoring investment required", "Requires analysis capability"),
+  `Best For` = c("Non-critical, cheap to replace", "Wear items with known life",
+                 "Critical equipment, expensive failures", "Recurring problems")
+)
+
+maint_compare %>%
+  kable(format = "html", caption = "Maintenance Strategy Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#9B59B6", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+### Predictive Maintenance Technologies
+
+```{r pdm-technologies, echo=FALSE}
+pdm_tech <- tibble(
+  `Technology` = c("**Vibration Analysis**", "**Thermography**", "**Oil Analysis**",
+                   "**Ultrasound**", "**Motor Current Analysis**"),
+  `What It Detects` = c("Imbalance, misalignment, bearing wear, looseness",
+                        "Hot spots, electrical issues, friction, insulation problems",
+                        "Contamination, wear particles, lubricant degradation",
+                        "Leaks, bearing defects, electrical discharge",
+                        "Motor winding issues, rotor bar problems, power quality"),
+  `Equipment Applications` = c("Rotating equipment (motors, pumps, fans, gearboxes)",
+                               "Electrical panels, motors, bearings, refractory",
+                               "Gearboxes, hydraulics, engines, compressors",
+                               "Steam traps, valves, bearings, electrical equipment",
+                               "Electric motors, drives, generators"),
+  `Typical Warning Time` = c("Weeks to months", "Hours to days", "Weeks to months",
+                             "Days to weeks", "Days to weeks")
+)
+
+pdm_tech %>%
+  kable(format = "html", caption = "Predictive Maintenance Technologies") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+### The P-F Curve
+
+The **P-F Curve** illustrates the concept of detecting potential failure (P) before functional failure (F).
+
+```{r pf-curve, echo=FALSE, fig.align="center", fig.cap="The P-F Curve: Detecting Failure Early", fig.width=12, fig.height=7}
+# Create P-F curve with gradual decline then steeper drop
+x <- seq(0, 10, 0.01)
+# Curve: starts flat, gradual decline, then steeper toward failure
+y <- 95 - 5*(x/10)^0.5 - 40*(x/10)^2.5
+y <- pmax(y, 5)
+
+pf_data <- data.frame(x = x, y = y)
+
+# Define zone boundaries based on curve
+p_x <- 3.5  # Point of potential failure detection
+f_x <- 8.5  # Functional failure point
+
+ggplot(pf_data, aes(x = x, y = y)) +
+  # Colored zones under the curve
+  geom_ribbon(data = subset(pf_data, x <= 2), aes(ymin = 0, ymax = y), fill = "#27AE60", alpha = 0.4) +
+  geom_ribbon(data = subset(pf_data, x >= 2 & x <= 5), aes(ymin = 0, ymax = y), fill = "#F1C40F", alpha = 0.4) +
+  geom_ribbon(data = subset(pf_data, x >= 5 & x <= 7.5), aes(ymin = 0, ymax = y), fill = "#E67E22", alpha = 0.4) +
+  geom_ribbon(data = subset(pf_data, x >= 7.5), aes(ymin = 0, ymax = y), fill = "#E74C3C", alpha = 0.4) +
+  # Main curve
+  geom_line(linewidth = 2.5, color = "#2C3E50") +
+  # Zone labels
+  annotate("text", x = 1, y = 45, label = "Design for\nReliability", fontface = "bold",
+           color = "#1E8449", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 3.5, y = 35, label = "Condition Based\nMaintenance", fontface = "bold",
+           color = "#B7950B", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 6.2, y = 25, label = "Planned\nPreventative\nMaintenance", fontface = "bold",
+           color = "#CA6F1E", size = 3.5, lineheight = 0.85) +
+  annotate("text", x = 8.8, y = 18, label = "Reactive /\nRun-To-Failure", fontface = "bold",
+           color = "#922B21", size = 3.5, lineheight = 0.9) +
+  # P point
+  annotate("point", x = p_x, y = pf_data$y[which.min(abs(pf_data$x - p_x))], size = 4, color = "#2C3E50") +
+  annotate("text", x = p_x, y = 100, label = "P", fontface = "bold", color = "#2C3E50", size = 6) +
+  annotate("text", x = p_x, y = 96, label = "oint of failure\ndetection", hjust = 0,
+           color = "#2C3E50", size = 3, lineheight = 0.9) +
+  # F point
+  annotate("point", x = f_x, y = pf_data$y[which.min(abs(pf_data$x - f_x))], size = 4, color = "#C0392B") +
+  annotate("text", x = f_x, y = 100, label = "F", fontface = "bold", color = "#C0392B", size = 6) +
+  annotate("text", x = f_x, y = 96, label = "unctional failure", hjust = 0,
+           color = "#C0392B", size = 3, lineheight = 0.9) +
+  # Detection methods along curve (angled text)
+  annotate("text", x = 0.3, y = 100, label = "Installation", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  annotate("text", x = 4.2, y = 100, label = "Ultrasound", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  annotate("text", x = 4.8, y = 100, label = "Vibration Analysis", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  annotate("text", x = 5.5, y = 100, label = "Oil Analysis", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  annotate("text", x = 6.2, y = 100, label = "Thermography", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  annotate("text", x = 7.8, y = 100, label = "Audible Noise", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  annotate("text", x = 8.8, y = 100, label = "Hot to touch", angle = 55, hjust = 0,
+           color = "#2C3E50", size = 3, fontface = "italic") +
+  # Failed! label
+  annotate("text", x = 9.7, y = 35, label = "Failed!", fontface = "bold",
+           color = "#C0392B", size = 6) +
+  # P-F interval bracket at bottom
+  annotate("segment", x = p_x, xend = f_x, y = -5, yend = -5,
+           arrow = arrow(length = unit(0.15, "cm"), ends = "both"), color = "#2C3E50", linewidth = 1) +
+  annotate("text", x = (p_x + f_x)/2, y = -10, label = "P to F Interval", fontface = "bold",
+           color = "#2C3E50", size = 4) +
+  # Axis settings
+  scale_y_continuous(limits = c(-15, 115), expand = c(0, 0)) +
+  scale_x_continuous(limits = c(-0.5, 10.5), expand = c(0, 0)) +
+  labs(x = "TIME", y = "Resistance to Failure / Asset Condition") +
+  theme_minimal() +
+  theme(
+    plot.title = element_blank(),
+    axis.title = element_text(face = "bold", size = 11),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
+```
+
+<details>
+<summary>Question: Why is predictive maintenance better than preventive maintenance?</summary>
+
+**Preventive Maintenance (Time-Based):**
+- Replaces parts at fixed intervals regardless of condition
+- May replace parts still in good condition (waste)
+- May miss failures that occur before scheduled replacement
+- Based on average life, not individual component condition
+
+**Predictive Maintenance (Condition-Based):**
+- Monitors actual equipment condition
+- Replaces parts when condition indicates need
+- Maximizes component life
+- Provides warning time to plan repairs
+
+**Example:**
+- Preventive: Replace bearing every 6 months (may last 9 months or fail at 4 months)
+- Predictive: Monitor vibration; replace when trending indicates 2-3 weeks to failure
+- Result: Optimal component life, planned downtime, no unexpected failures
+
+**Cost Comparison:**
+- Reactive repair: $10,000 (including secondary damage, lost production)
+- Preventive replacement: $3,000 (may waste $1,000 in parts life)
+- Predictive replacement: $2,500 (optimal timing, minimal waste)
+
+</details>
+
+------------------------------------------------------------------------
+
+## Focused Improvement (Kobetsu Kaizen)
+
+**Focused Improvement** uses cross-functional teams to eliminate specific losses identified through OEE analysis.
+
+### The Kaizen Process
+
+```{r kaizen-process, echo=FALSE, fig.align="center", fig.cap="Focused Improvement Process", fig.width=10, fig.height=5}
+ggplot() +
+  # Steps
+  annotate("rect", xmin = 0, xmax = 1.8, ymin = 1, ymax = 2.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 0.9, y = 2.1, label = "1. SELECT", fontface = "bold", color = "white", size = 3.5) +
+  annotate("text", x = 0.9, y = 1.5, label = "Identify\nbiggest loss", color = "white", size = 3.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 2, xmax = 3.8, ymin = 1, ymax = 2.5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 2.9, y = 2.1, label = "2. ANALYZE", fontface = "bold", color = "white", size = 3.5) +
+  annotate("text", x = 2.9, y = 1.5, label = "Root cause\nanalysis", color = "white", size = 3.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 4, xmax = 5.8, ymin = 1, ymax = 2.5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 4.9, y = 2.1, label = "3. DEVELOP", fontface = "bold", color = "white", size = 3.5) +
+  annotate("text", x = 4.9, y = 1.5, label = "Counter-\nmeasures", color = "white", size = 3.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 6, xmax = 7.8, ymin = 1, ymax = 2.5, fill = "#E74C3C", color = "black") +
+  annotate("text", x = 6.9, y = 2.1, label = "4. IMPLEMENT", fontface = "bold", color = "white", size = 3.5) +
+  annotate("text", x = 6.9, y = 1.5, label = "Execute\nplan", color = "white", size = 3.5, lineheight = 0.9) +
+
+  annotate("rect", xmin = 8, xmax = 9.8, ymin = 1, ymax = 2.5, fill = "#9B59B6", color = "black") +
+  annotate("text", x = 8.9, y = 2.1, label = "5. SUSTAIN", fontface = "bold", color = "white", size = 3.5) +
+  annotate("text", x = 8.9, y = 1.5, label = "Standardize\n& share", color = "white", size = 3.5, lineheight = 0.9) +
+
+  # Arrows
+  annotate("segment", x = 1.8, xend = 2, y = 1.75, yend = 1.75,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+  annotate("segment", x = 3.8, xend = 4, y = 1.75, yend = 1.75,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+  annotate("segment", x = 5.8, xend = 6, y = 1.75, yend = 1.75,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+  annotate("segment", x = 7.8, xend = 8, y = 1.75, yend = 1.75,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+
+  theme_void() +
+  labs(title = "Focused Improvement (Kobetsu Kaizen) Process") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(0.5, 3)
+```
+
+#### Understanding Kaizen
+
+**Kaizen** (改善) is a Japanese term meaning "change for better" or **continuous improvement**. Unlike large-scale transformation projects, Kaizen focuses on small, incremental improvements made consistently over time. The philosophy is built on the belief that every process can be improved, and everyone—from operators to managers—should participate in identifying and implementing improvements.
+
+**Core Principles of Kaizen:**
+
+- **Good processes bring good results** — Focus on improving the process, not blaming people
+- **Go see for yourself (Gemba)** — Understand the actual situation at the workplace
+- **Speak with data** — Base decisions on facts and measurements
+- **Take action to contain and correct root causes** — Don't just treat symptoms
+- **Work as a team** — Cross-functional collaboration produces better solutions
+- **Kaizen is everybody's business** — Every employee can contribute improvements
+
+#### The Five Steps in Detail
+
+**Step 1: SELECT — Identify the Biggest Loss**
+
+The first step uses data to identify which loss has the greatest impact on OEE. This typically involves:
+
+- Reviewing OEE data and breakdown logs
+- Creating Pareto charts to visualize loss magnitude
+- Selecting a loss that is significant, measurable, and within the team's ability to address
+- Forming a cross-functional team with members who understand the equipment and process
+
+*Key question: "Which single problem, if solved, would give us the biggest improvement?"*
+
+**Step 2: ANALYZE — Root Cause Analysis**
+
+Once a loss is selected, the team investigates its root cause using structured problem-solving tools:
+
+- **Why-Why Analysis (5 Whys)**: Repeatedly asking "why" to drill down from symptoms to root causes
+- **Fishbone Diagram (Ishikawa)**: Categorizing potential causes by Machine, Method, Material, Man, Measurement, Environment
+- **PM Analysis**: A systematic method for chronic losses that examines physical mechanisms
+- **Data collection**: Gathering facts at the Gemba (actual workplace)
+
+*Key principle: Never assume you know the cause—verify with evidence.*
+
+**Step 3: DEVELOP — Create Countermeasures**
+
+Based on root cause analysis, the team develops countermeasures—actions designed to eliminate or reduce the root cause:
+
+- Brainstorm multiple potential solutions
+- Evaluate options based on effectiveness, cost, and implementation time
+- Create an action plan with clear responsibilities and deadlines
+- Consider both immediate fixes and permanent solutions
+- Apply error-proofing (Poka-Yoke) where possible
+
+*Important: Countermeasures address root causes, not just symptoms.*
+
+**Step 4: IMPLEMENT — Execute the Plan**
+
+The team puts countermeasures into action:
+
+- Follow the action plan systematically
+- Make changes during planned downtime when possible
+- Document all modifications made
+- Train affected personnel on new procedures
+- Monitor results immediately after implementation
+- Be prepared to adjust if initial results are not as expected
+
+*Tip: Start with small-scale trials before full implementation when possible.*
+
+**Step 5: SUSTAIN — Standardize and Share**
+
+The final step ensures improvements are maintained and shared across the organization:
+
+- **Standardize**: Update procedures, checklists, and work instructions to reflect the new method
+- **Visualize**: Create visual controls that make the standard easy to follow
+- **Train**: Ensure all shifts and new employees learn the improved method
+- **Verify**: Include checks in AM routines or audits to confirm the standard is being followed
+- **Share**: Communicate successful improvements to other areas that might benefit (Yokoten—horizontal deployment)
+
+*Kaizen is never finished—today's standard is tomorrow's baseline for further improvement.*
+
+#### Kaizen Event vs. Daily Kaizen
+
+| Aspect | Kaizen Event (Blitz) | Daily Kaizen |
+|--------|---------------------|--------------|
+| **Duration** | 3-5 days intensive | Ongoing, small improvements |
+| **Scope** | Focused on one specific problem | Any improvement opportunity |
+| **Team** | Dedicated cross-functional team | Individual or small group |
+| **Impact** | Significant, measurable improvement | Cumulative effect over time |
+| **Example** | Reduce changeover time by 50% | Reorganize tool storage for easier access |
+
+Both approaches are valuable—Kaizen events tackle significant losses while daily Kaizen builds a culture of continuous improvement.
+
+### Loss Elimination Tools
+
+Effective loss elimination requires systematic tools that help teams identify problems, find root causes, and implement lasting solutions. The following tools are essential for Focused Improvement activities.
+
+#### Pareto Analysis
+
+**Pareto Analysis** applies the 80/20 rule: roughly 80% of losses come from 20% of causes. By creating a Pareto chart, teams can visualize which losses have the greatest impact and prioritize their improvement efforts accordingly.
+
+**How to use:**
+
+1. Collect data on all losses (downtime events, defects, speed reductions)
+2. Categorize losses by type or cause
+3. Calculate the frequency or duration of each category
+4. Rank categories from highest to lowest
+5. Create a bar chart with a cumulative percentage line
+6. Focus improvement efforts on the "vital few" categories that account for most losses
+
+#### Why-Why Analysis (5 Whys)
+
+**Why-Why Analysis** is a simple but powerful technique for drilling down from a symptom to its root cause by repeatedly asking "Why?" The goal is to go beyond surface-level explanations to find the fundamental cause that, if addressed, will prevent recurrence.
+
+**Example:**
+
+| Level | Question | Answer |
+|-------|----------|--------|
+| Problem | Machine stopped | Overload tripped |
+| Why 1? | Why did the overload trip? | Motor drew excessive current |
+| Why 2? | Why excessive current? | Bearing was seized |
+| Why 3? | Why was bearing seized? | Insufficient lubrication |
+| Why 4? | Why insufficient lubrication? | Lubrication schedule not followed |
+| Why 5? | Why not followed? | No visual indicator when lubrication is due |
+| **Root Cause** | | Missing visual management for lubrication schedule |
+
+**Tips for effective Why-Why Analysis:**
+
+- Stay focused on one causal chain at a time
+- Base answers on facts, not assumptions—verify at the Gemba
+- Don't stop at "human error"—ask why the error was possible
+- The number 5 is a guideline, not a rule—continue until you reach a controllable root cause
+
+#### PM Analysis
+
+**PM Analysis** (Physical Mechanism Analysis or Phenomenon-Mechanism Analysis) is a systematic method for analyzing **chronic losses**—problems that occur repeatedly despite multiple repair attempts. It examines the physical principles behind equipment failures.
+
+**The PM Analysis Process:**
+
+1. **Clarify the phenomenon**: Describe exactly what happens, when, and under what conditions
+2. **Conduct physical analysis**: Understand the physical principles involved (friction, heat, vibration, etc.)
+3. **Identify conditions that produce the phenomenon**: List all conditions required for the problem to occur
+4. **Investigate equipment, materials, and methods**: Examine each condition against the 4Ms (Machine, Material, Method, Man)
+5. **Plan and implement countermeasures**: Address the conditions that allow the problem to occur
+6. **Verify results**: Confirm the chronic loss has been eliminated
+
+*PM Analysis is particularly valuable when Why-Why Analysis doesn't resolve a recurring problem.*
+
+#### SMED (Single-Minute Exchange of Die)
+
+**SMED** is a systematic approach to reducing changeover or setup time—the time between the last good part of one product and the first good part of the next. The goal is to complete changeovers in under 10 minutes (single-digit minutes).
+
+**The SMED Process:**
+
+```{r smed-steps2, echo=FALSE, fig.align="center", fig.cap="SMED Methodology", fig.width=10, fig.height=4}
+ggplot() +
+  # Step boxes
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 1, ymax = 2.5, fill = "#3498DB", color = "black") +
+  annotate("text", x = 1.5, y = 2.1, label = "Step 1", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 1.5, y = 1.5, label = "Separate\nInternal & External", color = "white", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 3, xmax = 5, ymin = 1, ymax = 2.5, fill = "#27AE60", color = "black") +
+  annotate("text", x = 4, y = 2.1, label = "Step 2", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 4, y = 1.5, label = "Convert\nInternal to External", color = "white", size = 3, lineheight = 0.9) +
+
+  annotate("rect", xmin = 5.5, xmax = 7.5, ymin = 1, ymax = 2.5, fill = "#F39C12", color = "black") +
+  annotate("text", x = 6.5, y = 2.1, label = "Step 3", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 6.5, y = 1.5, label = "Streamline\nAll Elements", color = "white", size = 3, lineheight = 0.9) +
+
+  # Arrows
+  annotate("segment", x = 2.5, xend = 3, y = 1.75, yend = 1.75,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+  annotate("segment", x = 5, xend = 5.5, y = 1.75, yend = 1.75,
+           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
+
+  theme_void() +
+  labs(title = "SMED: Reducing Changeover Time") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  ylim(0.5, 3)
+```
+
+**Key Concepts:**
+
+- **Internal setup**: Tasks that can only be done when the machine is stopped (changing the die itself)
+- **External setup**: Tasks that can be done while the machine is running (preparing tools, preheating)
+
+**Typical SMED Improvements:**
+
+| Technique | Example |
+|-----------|---------|
+| Prepare in advance | Stage tools and materials before stopping the machine |
+| Use quick-release clamps | Replace bolts with cam locks or hydraulic clamps |
+| Eliminate adjustments | Use fixtures, stops, and standardized settings |
+| Parallel operations | Two people working simultaneously on different tasks |
+| Standardize components | Use common bolt sizes, connection types |
+
+#### Poka-Yoke (Error-Proofing)
+
+**Poka-Yoke** (ポカヨケ) means "mistake-proofing" or "error-proofing." These are devices or methods that either prevent errors from occurring or detect them immediately when they do occur.
+
+**Types of Poka-Yoke:**
+
+| Type | Function | Example |
+|------|----------|---------|
+| **Prevention** | Makes errors impossible | Asymmetric connector that only fits one way |
+| **Detection** | Identifies errors immediately | Sensor that stops the line if a part is missing |
+| **Warning** | Alerts operator to potential error | Light or buzzer when a step is skipped |
+
+**Poka-Yoke Design Principles:**
+
+1. **Design out the possibility of error** — The best Poka-Yoke makes the error impossible
+2. **Detect at the source** — Catch errors where they occur, not downstream
+3. **Stop and fix immediately** — Don't pass defects to the next process
+4. **Keep it simple** — Low-cost, reliable solutions are better than complex ones
+
+**Examples in Manufacturing:**
+
+- **Guide pins** that prevent a part from being loaded incorrectly
+- **Counters** that verify the correct number of components were installed
+- **Checklists with physical verification** (e.g., removing a flag for each completed step)
+- **Limit switches** that confirm proper positioning before the cycle starts
+- **Color coding** to match parts with their correct locations
+
+<details>
+<summary>Question: How do you decide which tool to use?</summary>
+
+**Tool Selection Guide:**
+
+- **Pareto Analysis**: Use first to identify which loss to focus on
+- **Why-Why Analysis**: Use for sporadic failures with clear cause-effect relationships
+- **PM Analysis**: Use for chronic losses that keep recurring despite repairs
+- **SMED**: Use specifically for setup/changeover losses (Loss #2)
+- **Poka-Yoke**: Use to prevent defects and human errors (Losses #5, #6)
+
+Often, multiple tools are used together—Pareto to select the problem, Why-Why or PM Analysis to find the root cause, and Poka-Yoke to prevent recurrence.
+
+</details>
+
+#### Summary of Loss Elimination Tools
+
+```{r loss-tools, echo=FALSE}
+tools <- tibble(
+  `Tool` = c("**Pareto Analysis**", "**Why-Why Analysis**", "**PM Analysis**",
+             "**SMED**", "**Poka-Yoke**"),
+  `Purpose` = c("Identify biggest losses to target",
+                "Find root cause of failures",
+                "Analyze chronic losses systematically",
+                "Reduce setup/changeover time",
+                "Error-proof the process"),
+  `Application` = c("Prioritize improvement efforts",
+                    "Breakdown analysis, defect investigation",
+                    "Complex, recurring problems",
+                    "Availability improvement (Loss #2)",
+                    "Quality improvement (Losses #5, #6)")
+)
+
+tools %>%
+  kable(format = "html", caption = "Tools for Loss Elimination") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "12em")
+```
+
+------------------------------------------------------------------------
+
+## TPM Implementation
+
+### The 12 Steps of TPM Implementation
+
+```{r implementation-steps-TPM, echo=FALSE}
+impl_steps <- tibble(
+  `Phase` = c(rep("**Preparation**", 5), rep("**Implementation**", 5), rep("**Stabilization**", 2)),
+  `Step` = 1:12,
+  `Activity` = c("Announce TPM introduction by top management",
+                 "Education and campaign to introduce TPM",
+                 "Create TPM promotion organization",
+                 "Establish basic TPM policies and goals",
+                 "Formulate master plan for TPM development",
+                 "Hold TPM kick-off",
+                 "Improve effectiveness of each piece of equipment",
+                 "Develop autonomous maintenance program",
+                 "Develop planned maintenance program",
+                 "Conduct training to improve skills",
+                 "Develop early equipment management program",
+                 "Perfect TPM implementation and raise levels"),
+  `Duration` = c("1 month", "3-6 months", "1-2 months", "1-2 months", "1-2 months",
+                 "1 day", "6-12 months", "12-24 months", "12-24 months", "Ongoing",
+                 "12-24 months", "Ongoing")
+)
+
+impl_steps %>%
+  kable(format = "html", caption = "12 Steps of TPM Implementation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#16A085", color = "white") %>%
+  row_spec(1:5, background = "#D6EAF8") %>%
+  row_spec(6:10, background = "#D5F5E3") %>%
+  row_spec(11:12, background = "#FCE4D6") %>%
+  column_spec(1, bold = TRUE, width = "10em")
+```
+
+### Success Factors
+
+```{r success-factors, echo=FALSE}
+success <- tibble(
+  `Factor` = c("**Top Management Commitment**", "**Training and Education**",
+               "**Small Group Activities**", "**Visual Management**",
+               "**Patience and Persistence**"),
+  `Why Critical` = c("Resources, culture change, sustained focus",
+                     "Skills to identify problems, perform maintenance",
+                     "Operator involvement, team problem-solving",
+                     "Make abnormalities obvious, track progress",
+                     "TPM takes 3-5 years to fully implement")
+)
+
+success %>%
+  kable(format = "html", caption = "TPM Success Factors") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#27AE60", color = "white") %>%
+  column_spec(1, bold = TRUE, width = "15em")
+```
+
+------------------------------------------------------------------------
+
+## Case Study: TPM Implementation
+
+### Background
+
+**Company:** Automotive component manufacturer
+
+**Equipment:** CNC machining center
+
+**Initial OEE:** 52%
+
+### Problem Analysis
+
+```{r case-oee-initial, echo=TRUE}
+# Initial State
+cat("=== INITIAL OEE BREAKDOWN ===\n\n")
+
+availability_initial <- 78  # %
+performance_initial <- 82   # %
+quality_initial <- 81       # %
+
+oee_initial <- (availability_initial/100) * (performance_initial/100) * (quality_initial/100) * 100
+cat("Availability:", availability_initial, "%\n")
+cat("Performance:", performance_initial, "%\n")
+cat("Quality:", quality_initial, "%\n")
+cat("OEE:", round(oee_initial, 1), "%\n\n")
+
+# Loss breakdown
+cat("=== TOP LOSSES IDENTIFIED ===\n")
+cat("1. Equipment breakdowns: 8% of time\n")
+cat("2. Setup/changeover: 7% of time\n")
+cat("3. Minor stops: 12% of time\n")
+cat("4. Defects: 4% of production\n")
+```
+
+### Improvements Implemented
+
+| Loss | Root Cause | Countermeasure | Result |
+|------|------------|----------------|--------|
+| Breakdowns | Lack of basic maintenance | Autonomous maintenance program | 8% → 3% |
+| Setup time | No standard procedure | SMED implementation | 35 min → 12 min |
+| Minor stops | Chip buildup in sensors | Improved chip management | 12% → 4% |
+| Defects | Tool wear not detected | In-process gauging | 4% → 1.5% |
+
+### Results After 18 Months
+
+```{r case-oee-final, echo=TRUE}
+# After TPM Implementation
+cat("=== FINAL OEE BREAKDOWN ===\n\n")
+
+availability_final <- 91    # %
+performance_final <- 94     # %
+quality_final <- 98.5       # %
+
+oee_final <- (availability_final/100) * (performance_final/100) * (quality_final/100) * 100
+cat("Availability:", availability_final, "% (was", availability_initial, "%)\n")
+cat("Performance:", performance_final, "% (was", performance_initial, "%)\n")
+cat("Quality:", quality_final, "% (was", quality_initial, "%)\n")
+cat("OEE:", round(oee_final, 1), "% (was", round(oee_initial, 1), "%)\n\n")
+
+improvement <- oee_final - oee_initial
+cat("=== IMPROVEMENT ===\n")
+cat("OEE Improvement:", round(improvement, 1), "percentage points\n")
+cat("Relative Improvement:", round((improvement/oee_initial)*100, 0), "%\n")
+```
+
+```{r case-visualization, echo=FALSE, fig.align="center", fig.cap="OEE Improvement: Before and After TPM", fig.width=9, fig.height=5}
+case_data <- data.frame(
+  component = rep(c("Availability", "Performance", "Quality", "OEE"), 2),
+  value = c(78, 82, 81, 52, 91, 94, 98.5, 84),
+  period = rep(c("Before TPM", "After TPM"), each = 4)
+)
+
+ggplot(case_data, aes(x = component, y = value, fill = period)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(value, "%")), position = position_dodge(width = 0.7),
+            vjust = -0.5, size = 3.5) +
+  scale_fill_manual(values = c("Before TPM" = "#E74C3C", "After TPM" = "#27AE60")) +
+  geom_hline(yintercept = 85, linetype = "dashed", color = "#F39C12", linewidth = 1) +
+  annotate("text", x = 4.5, y = 87, label = "World Class", color = "#F39C12", fontface = "bold") +
+  labs(title = "OEE Improvement Through TPM",
+       x = "", y = "Percentage (%)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    legend.position = "bottom"
+  ) +
+  ylim(0, 105)
+```
+
+------------------------------------------------------------------------
+
+## Summary
+
+```{r summary-table-ch10, echo=FALSE}
+summary_data <- tibble(
+  `Topic` = c("**TPM Definition**", "**Eight Pillars**", "**OEE**",
+              "**Six Big Losses**", "**Autonomous Maintenance**", "**Planned Maintenance**"),
+  `Key Points` = c("Total involvement, productive focus, maintenance excellence; zero breakdowns/defects/accidents",
+                   "AM, PM, Quality, Focused Improvement, Early Equipment, Training, Safety, Office — built on 5S",
+                   "OEE = Availability × Performance × Quality; World class > 85%",
+                   "Equipment failure, setup, minor stops, speed loss, defects, startup rejects",
+                   "Operators maintain own equipment; 7 steps from cleaning to full ownership",
+                   "Preventive → Predictive → Proactive; use P-F curve for optimal timing")
+)
+
+summary_data %>%
+  kable(format = "html", caption = "TPM Key Concepts Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = TRUE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#2C3E50", color = "white") %>%
+  column_spec(1, width = "12em")
+```
+
+------------------------------------------------------------------------
+
+## Review Questions
+
+### Conceptual Questions
+
+<details>
+<summary>Question 1: What does "Total" mean in Total Productive Maintenance?</summary>
+
+**"Total" has three dimensions:**
+
+1. **Total participation:** Everyone participates, from operators to top management
+2. **Total equipment effectiveness:** Aim for maximum OEE (zero losses)
+3. **Total system:** Covers the entire equipment lifecycle, from design to disposal
+
+**Key insight:** TPM is not just a maintenance program — it's a company-wide philosophy where everyone takes responsibility for equipment care.
+
+</details>
+
+<details>
+<summary>Question 2: Why is OEE calculated as a product rather than a sum?</summary>
+
+**OEE uses multiplication because losses are sequential and compound:**
+
+1. **Availability** determines how much time is available
+2. **Performance** determines how much of that time is productive
+3. **Quality** determines how much of that production is good
+
+**Example:**
+- If each factor is 90%: OEE = 0.9 × 0.9 × 0.9 = 72.9% (not 270% or 90%)
+- This reflects reality: you can only achieve quality on parts that were produced (performance) during time the machine ran (availability)
+
+**Why this matters:**
+- Small improvements in all three factors compound
+- 5% improvement in each: 0.85 × 0.85 × 0.85 = 61% → 0.90 × 0.90 × 0.90 = 73%
+- Focus on the weakest factor first for biggest impact
+
+</details>
+
+<details>
+<summary>Question 3: What is the difference between autonomous maintenance and planned maintenance?</summary>
+
+| Aspect | Autonomous Maintenance | Planned Maintenance |
+|--------|------------------------|---------------------|
+| **Who** | Operators | Maintenance technicians |
+| **What** | Basic care (clean, inspect, lubricate) | Complex repairs, overhauls |
+| **When** | Daily, during operation | Scheduled intervals |
+| **Skills** | Basic equipment knowledge | Technical expertise |
+| **Goal** | Prevent deterioration | Restore/improve equipment |
+
+**They complement each other:**
+- AM catches problems early (first line of defense)
+- PM provides specialized skills when needed
+- Together they achieve zero breakdowns
+
+</details>
+
+### Calculation Questions
+
+<details>
+<summary>Question 4: Calculate OEE given the following data.</summary>
+
+**Given:**
+- Shift length: 480 minutes
+- Breaks: 30 minutes
+- Changeover: 45 minutes
+- Breakdown: 20 minutes
+- Ideal cycle time: 30 seconds (0.5 min)
+- Total parts produced: 580
+- Rejected parts: 23
+
+**Solution:**
+
+```
+Planned Production Time = 480 - 30 = 450 minutes
+Run Time = 450 - 45 - 20 = 385 minutes
+
+Availability = 385 / 450 = 85.6%
+
+Theoretical Output = 385 / 0.5 = 770 parts
+Performance = 580 / 770 = 75.3%
+
+Quality = (580 - 23) / 580 = 557 / 580 = 96.0%
+
+OEE = 85.6% × 75.3% × 96.0% = 61.9%
+```
+
+**Analysis:** Performance is the biggest opportunity for improvement (75.3% vs. targets of 95%). Investigate minor stops and speed losses.
+
+</details>
+
+<details>
+<summary>Question 5: A machine has OEE of 65% with Availability 90%, Performance 80%, Quality 90%. Which factor should be prioritized?</summary>
+
+**Analysis:**
+
+Current state:
+- Availability: 90% (Gap to world class: 5%)
+- Performance: 80% (Gap to world class: 15%)
+- Quality: 90% (Gap to world class: 9%)
+
+**Performance should be prioritized because:**
+
+1. **Biggest gap:** 15 percentage points below world class (95%)
+2. **Biggest OEE impact:** Improving performance 10% → OEE = 90% × 90% × 90% = 72.9%
+3. **Often overlooked:** Speed losses and minor stops are frequently accepted as normal
+
+**Investigation areas for performance:**
+- Minor stops (jams, blockages, sensor trips)
+- Reduced speed operation
+- Idling and waiting
+- Operator pace
+
+</details>
+
+<details>
+<summary>Question 6: If current OEE is 60% and target is 85%, what improvement is needed in each component assuming equal improvement?</summary>
+
+**Solution:**
+
+Current: 60% = A × P × Q
+
+If we improve each equally, we need:
+- Target: 85% = A' × P' × Q'
+- If A' = P' = Q' = x, then x³ = 0.85
+- x = ∛0.85 = 0.947 = 94.7%
+
+**Each component needs to reach approximately 95%**
+
+**Check:** 0.947 × 0.947 × 0.947 = 0.849 ≈ 85%
+
+**If current factors are A=80%, P=85%, Q=88%:**
+- Availability needs: +15 points (80% → 95%)
+- Performance needs: +10 points (85% → 95%)
+- Quality needs: +7 points (88% → 95%)
+
+**Prioritize by gap size:** Availability first, then Performance, then Quality.
+
+</details>
+
+### Application Questions
+
+<details>
+<summary>Question 7: An operator notices a small oil leak on a machine. Under traditional maintenance vs. TPM, what happens?</summary>
+
+**Traditional Maintenance Approach:**
+1. Operator continues running machine
+2. May or may not report to maintenance
+3. If reported, added to backlog
+4. Maintenance addresses when convenient (days/weeks)
+5. Leak worsens, potential bearing damage
+6. Eventually leads to breakdown
+
+**TPM Approach:**
+1. Operator notices during routine inspection
+2. Tags the abnormality immediately
+3. Determines if operator can fix (blue tag) or needs maintenance (red tag)
+4. If simple: operator tightens fitting or adds sealant
+5. If complex: maintenance prioritizes based on severity
+6. Root cause investigated to prevent recurrence
+7. Finding shared in team meeting
+
+**Key Differences:**
+- **Ownership:** Operator takes responsibility vs. "not my job"
+- **Speed:** Immediate action vs. delayed response
+- **Prevention:** Fixed before failure vs. reactive repair
+- **Cost:** $10 seal vs. $5,000 bearing replacement + downtime
+
+</details>
+
+<details>
+<summary>Question 8: List five items an operator should check during daily autonomous maintenance.</summary>
+
+**Five Essential Daily AM Checks:**
+
+1. **Cleanliness:** Remove chips, debris, dust; clean safety windows and sensors
+   - *Why:* Contamination causes wear, sensor malfunctions, quality issues
+
+2. **Lubrication:** Check oil levels, grease points, coolant level
+   - *Why:* Inadequate lubrication causes friction, heat, accelerated wear
+
+3. **Fasteners:** Check for loose bolts, guards, covers
+   - *Why:* Loose fasteners cause vibration, safety hazards, misalignment
+
+4. **Leaks:** Look for oil, coolant, air, hydraulic leaks
+   - *Why:* Leaks indicate seal failure, waste resources, create hazards
+
+5. **Abnormal sounds/vibration:** Listen and feel during startup
+   - *Why:* Changes indicate developing problems (bearings, alignment)
+
+**Bonus items:**
+- Safety guards in place
+- Emergency stops functional
+- Pressure/temperature gauges in normal range
+- No unusual smells (burning, chemical)
+
+</details>
+
+<details>
+<summary>Question 9: Explain how SMED relates to OEE improvement.</summary>
+
+**SMED (Single Minute Exchange of Die) directly improves Availability:**
+
+**Loss #2: Setup and Adjustment** is an availability loss captured in OEE.
+
+**How SMED helps:**
+
+1. **Reduces changeover time:**
+   - Before SMED: 45-minute changeover
+   - After SMED: 10-minute changeover
+   - Gain: 35 minutes per changeover
+
+2. **Impact on OEE:**
+   - If 2 changeovers per shift: 70 minutes saved
+   - On 450-minute shift: Availability improves 15%+
+
+3. **Secondary benefits:**
+   - More changeovers become practical
+   - Smaller batch sizes possible
+   - Flexibility increased
+   - Less WIP inventory
+
+**SMED Process:**
+1. Separate internal (machine stopped) from external (while running) setup
+2. Convert internal to external where possible
+3. Streamline remaining internal operations
+4. Practice and standardize
+
+**Example:** Die change on press
+- External: Stage next die, prepare tools, preheat
+- Internal: Remove old die, install new die, adjust
+- Target: All possible work done while machine runs
+
+</details>
+
+------------------------------------------------------------------------
+
+## References
+
+- Nakajima, S. (1988). *Introduction to TPM: Total Productive Maintenance*. Productivity Press.
+- Nakajima, S. (1989). *TPM Development Program: Implementing Total Productive Maintenance*. Productivity Press.
+- Shirose, K. (1992). *TPM for Operators*. Productivity Press.
+- Willmott, P., & McCarthy, D. (2001). *TPM: A Route to World-Class Performance*. Butterworth-Heinemann.
+- JIPM (Japan Institute of Plant Maintenance). *TPM Awards Criteria*.
+- Hansen, R.C. (2001). *Overall Equipment Effectiveness*. Industrial Press.
+- Borris, S. (2006). *Total Productive Maintenance*. McGraw-Hill.
+
+------------------------------------------------------------------------
