@@ -53,6 +53,20 @@ budget for full-book recompiles (a few minutes each) while chasing these.
    specifically inside `row_spec(`/`column_spec(`/`cell_spec(` calls; don't
    flag every `color =`/`background =` in the file, since most hits will be
    unrelated ggplot2 aesthetics.
+6. **CI: an R package "auto-install" script that hardcodes
+   `repos = "https://cloud.r-project.org"`.** Not a LaTeX issue, but bit us
+   in the same migration — if you carry over a bookdown-era R script like
+   this (source()'d for local convenience) and call it from CI instead of
+   using `r-lib/actions/setup-r-dependencies`, the hardcoded `repos =`
+   argument overrides `setup-r`'s fast binary repo (RSPM/Posit Package
+   Manager), forcing every package to compile from source with no system
+   libraries installed — failed here with *"there is no package called
+   'rmarkdown'"* (silently, since the script also passes
+   `install.packages(..., quiet = TRUE)`). Fix: in CI, use
+   `r-lib/actions/setup-r-dependencies@v2` with an explicit
+   `extra-packages:` list instead of sourcing the local script — it
+   resolves both binaries and per-package system dependencies correctly.
+   Keep the local script only for interactive/local use.
 
 General diagnostic tip: when `quarto render --to pdf` fails, the error's
 reported line number is in the *compiled* `index.tex`, not your source
@@ -113,6 +127,25 @@ it now.
 
 ## Status
 
+- **Phase 5: done.** New `.github/workflows/publish.yml` replaces the old
+  bookdown workflow (`main.yaml`, renamed away — it had been silently
+  failing on every push since Phase 2 once `index.Rmd` stopped existing;
+  harmless since nothing depended on it, but worth knowing if you see it
+  in history). Pipeline: `r-lib/actions/setup-r` →
+  `r-lib/actions/setup-r-dependencies` (installs the same package list as
+  `R/required_packages.R`, but via binaries + auto-resolved system libs,
+  see gotcha below) → `quarto-dev/quarto-actions/setup` with
+  `tinytex: true` → `quarto render` (all 3 formats) → `peaceiris/
+  actions-gh-pages` deploys `docs/` to the `gh-pages` branch, same as
+  before. First CI run failed
+  (`there is no package called 'rmarkdown'`) — see gotcha #6 below; fixed
+  and second run went green end-to-end (4m12s).
+  **GitHub Pages required making the repo public** — Pages for private
+  repos needs GitHub Pro or higher, which this account doesn't have; user
+  chose public over paying for Pro or moving to EC2. Enabled via
+  `gh api repos/:owner/:repo/pages` (source: `gh-pages` branch). Verified
+  live: homepage, a sample chapter, the PDF, and the EPUB all return
+  HTTP 200 at `https://prof-mv.github.io/Process-Engineering/`.
 - **Phase 4: done.** Ported `_output.yml`'s `pdf_book`/`epub_book` settings
   into `_quarto.yml`'s `format: pdf:`/`format: epub:` blocks (xelatex,
   natbib, `keep-tex`, `documentclass: book`); moved the title-page logo
