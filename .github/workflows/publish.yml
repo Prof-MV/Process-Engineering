@@ -27,7 +27,18 @@ jobs:
           use-public-rspm: true
 
       - name: Install R package dependencies
-        run: Rscript R/required_packages.R
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::knitr
+            any::rmarkdown
+            any::dplyr
+            any::tidyr
+            any::ggplot2
+            any::kableExtra
+            any::stringr
+            any::gridExtra
+            any::ggforce
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
