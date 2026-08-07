@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Quality Management Systems
 ```{r setup-14, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ---------------------
 
@@ -1414,6 +1427,8 @@ The shaft diameter CAPA revealed that setup procedures lacked tool counter verif
 
 ### CAPA Effectiveness Criteria
 
+This worked example is fixed as a reference — read through it once, then try the *editable* example further on in this chapter for yourself.
+
 ```{r capa-effectiveness, echo=TRUE}
 # CAPA Effectiveness Tracking
 set.seed(42)
@@ -2165,9 +2180,10 @@ The seven quality management principles form an interconnected foundation:
 
 Annual revenue: $8,000,000
 
-**Answer:**
+**Answer:** (live — change the cost figures to check your own version)
 
-```{r q6-answer, echo=TRUE}
+```{webr-r}
+#| label: q6-answer
 # Cost of Quality Analysis
 prevention <- 35000 + 25000  # Planning + Training
 appraisal <- 40000 + 55000 + 30000  # Inspections

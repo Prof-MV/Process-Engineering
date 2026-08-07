@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Integrated Manufacturing Systems
 
 ```{r setup-03, include=FALSE}
@@ -5,6 +15,9 @@
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ------------------------------------------------------------------------
 
@@ -300,6 +313,8 @@ time_metrics %>%
 
 ### Takt Time vs. Cycle Time
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r takt-vs-cycle, echo=TRUE}
 # Takt Time Calculation Example
 # Automotive assembly plant
@@ -365,7 +380,10 @@ if (actual_cycle_time <= takt_time) {
 
 ### Manufacturing Cycle Time and Efficiency
 
-```{r mct-mce, echo=TRUE}
+This one is live — edit the time breakdown and re-run it.
+
+```{webr-r}
+#| label: mct-mce
 # Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example
 
 # Given production data
@@ -448,7 +466,10 @@ Where:
 
 ### Line Balancing Example: Electronics Assembly
 
-```{r line-balance-example, echo=TRUE}
+Live cell — try different task times or a different desired output rate.
+
+```{webr-r}
+#| label: line-balance-example
 # Line Balancing Example: Tablet Computer Assembly
 
 # Task data
@@ -584,7 +605,10 @@ Where:
 - $p$ = Probability of station failure per cycle
 - $T$ = Average downtime per failure (minutes)
 
-```{r downtime-analysis, echo=TRUE}
+Live cell — try adding a scenario or changing the number of stations.
+
+```{webr-r}
+#| label: downtime-analysis
 # Automated Line Performance Analysis
 
 # Line parameters

@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Troubleshooting and Root Cause Analysis
 ```{r setup-11, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 
 ## Learning Objectives
@@ -752,6 +765,8 @@ FTA allows quantitative risk analysis by calculating the probability of the top 
 
 **AND Gate:** P(output) = P~A~ × P~B~ × ...
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r fta-calculation, echo=TRUE}
 # Example: Calculate top event probability
 # Basic event probabilities (annual failure rates)
@@ -838,7 +853,10 @@ ggplot(defects, aes(x = Defect_Type)) +
 
 ### Interpreting Pareto Analysis
 
-```{r pareto-interpretation, echo=TRUE}
+Live cell — try different defect counts.
+
+```{webr-r}
+#| label: pareto-interpretation
 # Pareto analysis interpretation
 defects <- data.frame(
   Defect = c("Surface Scratch", "Dimensional Error", "Burrs",
@@ -1588,9 +1606,10 @@ Fixing the root cause (implementing tool life tracking) prevents the problem fro
 | Surface Dents | 67 |
 | Missing Features | 18 |
 
-**Answer:**
+**Answer:** (live — try your own defect counts)
 
-```{r pareto-practice, echo=TRUE}
+```{webr-r}
+#| label: pareto-practice
 # Create and analyze the data
 defects <- data.frame(
   Type = c("Burrs", "Dimensional", "Scratches", "Surface Dents",

@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Process and Design
 
 ```{r setup-02, include=FALSE}
@@ -5,6 +15,9 @@
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ------------------------------------------------------------------------
 
@@ -95,6 +108,8 @@ ggplot(automation_long, aes(x = Metric, y = Score, fill = Type)) +
 - Beverage bottling lines
 - Chemical processing plants
 - Paper manufacturing
+
+This worked example is fixed as a reference — read through it once, then try the *editable* example further on in this chapter for yourself.
 
 ```{r fixed-automation-economics, echo=TRUE}
 # Fixed Automation Economic Analysis
@@ -668,7 +683,10 @@ dfm_guide %>%
 
 DFA systematically evaluates assembly operations to identify improvement opportunities.
 
-```{r dfa-example, echo=TRUE}
+This one is live — try changing the part list or handling/insertion times and re-running.
+
+```{webr-r}
+#| label: dfa-example
 # DFA Analysis Example: Simple Assembly
 # Calculate assembly efficiency using Boothroyd-Dewhurst method
 

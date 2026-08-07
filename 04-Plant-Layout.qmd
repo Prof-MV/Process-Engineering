@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Plant Layout and Facility Design
 ```{r setup-04, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ------------------------------------------------------------------------
 
@@ -419,6 +432,8 @@ p2 <- ggplot(layout_B, aes(x = x, y = y)) +
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r load-distance-calc, echo=TRUE}
 # Calculate Load-Distance scores for both layouts
 # From-To data: Receiving->Machining=100, Machining->Assembly=200,
@@ -537,7 +552,10 @@ ggplot() +
 
 ### Line Balancing Calculation
 
-```{r line-balance-calc, echo=TRUE}
+This one is live — edit the numbers and re-run it to see how the results change.
+
+```{webr-r}
+#| label: line-balance-calc
 # Given data
 total_task_time <- 40 + 25 + 20 + 35 + 15 + 30  # seconds
 desired_output <- 60  # pizzas per hour
@@ -1063,7 +1081,10 @@ li_table %>%
 
 ### NIOSH Lifting Example
 
-```{r niosh-example-plant, echo=TRUE}
+Also live — try changing the box weight, distances, or lift frequency below and re-running.
+
+```{webr-r}
+#| label: niosh-example-plant
 # Example: Worker lifts 35 lb boxes from pallet to conveyor
 # Conditions:
 # - Horizontal distance (H) = 15 inches

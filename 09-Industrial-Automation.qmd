@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Industrial Automation Fundamentals
 ```{r setup-13, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 -----------------------------------
 
@@ -371,6 +384,8 @@ ggplot() +
     plot.subtitle = element_text(hjust = 0.5, size = 13)
   )
 ```
+
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
 
 ```{r scan-time-calc, echo=TRUE}
 # Scan Time Calculation Example
@@ -795,7 +810,10 @@ ggplot() +
   )
 ```
 
-```{r vfd-calculations, echo=TRUE}
+Live cell — try different frequencies or motor parameters.
+
+```{webr-r}
+#| label: vfd-calculations
 # VFD Speed and Torque Calculations
 
 # Motor nameplate data
@@ -1581,9 +1599,10 @@ Industrial automation integrates multiple technologies to improve manufacturing 
 
 <details><summary>**Question 4**: A VFD is controlling a 10 HP, 4-pole motor rated at 1750 RPM and 460V at 60Hz. Calculate the motor speed at 30Hz and 45Hz. What voltage should the VFD supply at these frequencies?</summary>
 
-**Answer:**
+**Answer:** (live — change the numbers to check your own version)
 
-```{r q4-answer, echo=TRUE}
+```{webr-r}
+#| label: q4-answer
 # Motor parameters
 poles <- 4
 rated_voltage <- 460  # V

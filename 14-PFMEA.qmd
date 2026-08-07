@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Process Failure Mode and Effects Analysis (PFMEA)
 ```{r setup-08, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ------------------------------------------------------------------------
 
@@ -773,6 +786,8 @@ The **Risk Priority Number (RPN)** combines all three ratings:
 
 $$\text{RPN} = \text{Severity (S)} \times \text{Occurrence (O)} \times \text{Detection (D)}$$
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r rpn-calculation, echo=TRUE}
 # Example RPN Calculations
 
@@ -988,7 +1003,10 @@ pfmea_example %>%
   column_spec(10, bold = TRUE)
 ```
 
-```{r rpn-improvement, echo=TRUE}
+Live cell — try different S/O/D ratings for each improvement option.
+
+```{webr-r}
+#| label: rpn-improvement
 # Improvement Analysis for Short Shot (Highest RPN = 210)
 
 cat("=== CURRENT STATE ===\n")
@@ -1315,7 +1333,10 @@ Based on the PFMEA, the team implemented:
 2. **Fixture monitoring:** Temperature compensation and wear tracking (O: 4 → 2)
 3. **Enhanced fixture design:** Carbide wear surfaces (O: 4 → 2)
 
-```{r case-study-improvement, echo=TRUE}
+Live cell — try different before/after ratings.
+
+```{webr-r}
+#| label: case-study-improvement
 # Before improvements
 S_before <- 9
 O_before <- 4

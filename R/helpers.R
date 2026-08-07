@@ -1,6 +1,21 @@
 # Helper functions for ENGR-3027 Process Engineering Book
 # These functions provide conditional output for HTML vs PDF rendering
 
+#' Attach jQuery as an HTML dependency
+#'
+#' Quarto's Bootstrap 5 HTML theme does not ship jQuery, but kableExtra's
+#' kePrint.js (used by kable_styling() for tooltips/popovers) assumes it is
+#' present and otherwise throws "$ is not defined" in the browser console.
+#' Call this once per chapter (in the setup chunk) to pull in the copy of
+#' jQuery bundled with the rmarkdown package, offline, ahead of any table.
+#'
+#' @return An htmltools::tagList carrying the jQuery HTML dependency
+inject_jquery <- function() {
+  if (knitr::is_html_output(excludes = "epub")) {
+    htmltools::tagList(rmarkdown::html_dependency_jquery())
+  }
+}
+
 #' Embed a YouTube video with conditional output
 #'
 #' In HTML output, displays a responsive iframe embed.

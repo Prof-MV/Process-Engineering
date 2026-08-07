@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Measurement Systems Analysis
 
 ```{r setup-12, include=FALSE}
@@ -5,6 +15,9 @@
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ----------------------------------------------------------------
 
@@ -273,6 +286,8 @@ ggplot(bias_data, aes(x = measurement, y = value)) +
   theme(plot.title = element_text(face = "bold", size = 14))
 ```
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r bias-calculation, echo=TRUE}
 # Bias study calculation
 reference_value <- 50.000  # Certified reference standard
@@ -338,7 +353,10 @@ ggplot(linearity_data, aes(x = Reference, y = Bias)) +
   theme(plot.title = element_text(face = "bold", size = 14))
 ```
 
-```{r linearity-calc, echo=TRUE}
+Live cell — try a different set of reference points and biases.
+
+```{webr-r}
+#| label: linearity-calc
 # Linearity calculation
 reference <- c(10, 25, 40, 55, 70)
 avg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)
@@ -398,9 +416,10 @@ ggplot(stability_data, aes(x = Day, y = Bias)) +
 
 ### Stability Control Chart
 
-For ongoing stability monitoring, use a control chart:
+For ongoing stability monitoring, use a control chart. Live cell — try different measurements or a different historical sigma.
 
-```{r stability-control-chart, echo=TRUE}
+```{webr-r}
+#| label: stability-control-chart
 # Stability monitoring with control chart
 reference <- 25.000
 measurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,
@@ -530,7 +549,10 @@ kable(grr_design, caption = if (knitr::is_latex_output()) "Standard Gauge R\\&R 
 
 The Range Method is a quick approximation useful for initial screening.
 
-```{r range-method, echo=TRUE}
+Live cell — try different measurement data for the two operators.
+
+```{webr-r}
+#| label: range-method
 # Range Method Gauge R&R Calculation
 # Two operators, five parts, two trials each
 
@@ -1077,7 +1099,10 @@ The **Rule of Ten** states that measurement resolution should be at least 1/10 o
 
 Whichever is smaller.
 
-```{r resolution-check, echo=TRUE}
+Live cell — try different tolerance, process spread, or gauge resolution values.
+
+```{webr-r}
+#| label: resolution-check
 # Resolution adequacy check
 tolerance <- 0.100  # mm total tolerance
 process_6sigma <- 0.080  # 6 sigma of process
@@ -1279,7 +1304,10 @@ ggplot(chart_data, aes(x = Sample, y = Value)) +
 
 ### Effect on Capability Studies
 
-```{r msa-capability-effect, echo=TRUE}
+Live cell — try different tolerance/sigma values or GRR percentages.
+
+```{webr-r}
+#| label: msa-capability-effect
 # True process parameters
 true_mean <- 100
 true_sigma <- 2.0
@@ -1478,7 +1506,10 @@ This measurement system is **unacceptable**:
 
 **Answer:**
 
-```{r q3-answer, echo=TRUE}
+Live cell — check your own version by changing the numbers.
+
+```{webr-r}
+#| label: q3-answer
 reference <- 25.000
 tolerance_total <- 0.100  # ±0.050 = 0.100 total
 measurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,
@@ -1646,7 +1677,10 @@ Study design: 10 parts, 3 operators, 3 trials
 
 **Answer:**
 
-```{r q7-answer, echo=TRUE}
+Live cell — check your own version by changing the ANOVA table values.
+
+```{webr-r}
+#| label: q7-answer
 # Given values from ANOVA table
 MS_part <- 0.03167
 MS_operator <- 0.00125

@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Industrial Robotics
 ```{r setup-15, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ---------------------------------------------------
 
@@ -335,6 +348,8 @@ ggplot() +
 
 ### Payload Considerations
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r payload-calc, echo=TRUE}
 # Payload Calculation Example
 robot_max_payload <- 10  # kg
@@ -561,7 +576,10 @@ kable(eoat, col.names = c("EOAT Type", "Operating Principle", "Applications", "K
 
 ### Gripper Selection Example
 
-```{r gripper-selection, echo=TRUE}
+Live cell — try a different part mass, acceleration, or friction coefficient.
+
+```{webr-r}
+#| label: gripper-selection
 # Gripper Force Calculation
 part_mass <- 3.0        # kg
 acceleration <- 15      # m/s² (robot acceleration)
@@ -1430,9 +1448,10 @@ For most industrial applications, ±0.05 mm repeatability is far more valuable t
 
 <details><summary>**Question 5**: Calculate the required gripper force for a robot picking a 2 kg part with a friction coefficient of 0.4. The robot accelerates at 10 m/s². Use a safety factor of 2.0.</summary>
 
-**Answer:**
+**Answer:** (live — change the numbers to check your own version)
 
-```{r q5-answer, echo=TRUE}
+```{webr-r}
+#| label: q5-answer
 # Given values
 mass <- 2.0            # kg
 acceleration <- 10     # m/s²

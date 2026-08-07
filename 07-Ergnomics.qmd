@@ -1,9 +1,22 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Ergonomics in Automated Manufacturing
 ```{r setup-07, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
 # include the required packages to make sure the page can be built.
 source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
 ```
 ------------------------------------------------------------------------
 
@@ -1326,6 +1339,8 @@ ggplot() +
 
 #### Step-by-Step Assessment
 
+This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+
 ```{r reba-step-by-step, echo=TRUE}
 # =============================================================
 # REBA Assessment: Packaging Station Worker
@@ -1500,7 +1515,10 @@ recommendations %>%
 
 ### REBA Example Calculation
 
-```{r reba-example, echo=TRUE}
+Live cell — plug in your own posture scores and re-run.
+
+```{webr-r}
+#| label: reba-example
 # REBA Assessment Example: Assembly Worker
 
 # Group A Scores (Trunk, Neck, Legs)
@@ -1661,7 +1679,10 @@ li_interp %>%
   row_spec(4, background = "#E74C3C", color = "white")
 ```
 
-```{r niosh-example, echo=TRUE}
+Live cell — change the distances, angle, or frequency and re-run.
+
+```{webr-r}
+#| label: niosh-example
 # NIOSH Lifting Equation Example
 
 # Task parameters
@@ -2067,9 +2088,10 @@ ggplot(results_long, aes(x = metric, y = change)) +
   )
 ```
 
-**ROI Analysis:**
+**ROI Analysis:** (live cell — try different investment or savings figures)
 
-```{r roi-analysis, echo=TRUE}
+```{webr-r}
+#| label: roi-analysis
 # Investment
 equipment_cost <- 150000  # Lift assists, fixtures, cobots
 training_cost <- 15000
