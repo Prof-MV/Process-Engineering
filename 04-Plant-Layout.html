@@ -111,8 +111,1562 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/editor/editor.main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+<style type="text/css">
+.monaco-editor pre {
+  background-color: unset !important;
+}
+
+.qwebr-editor-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.qwebr-editor-toolbar-left-buttons, .qwebr-editor-toolbar-right-buttons {
+  display: flex;
+}
+
+.qwebr-non-interactive-loading-container.qwebr-cell-needs-evaluation, .qwebr-non-interactive-loading-container.qwebr-cell-evaluated {
+  justify-content: center;
+  display: flex;
+  background-color: rgba(250, 250, 250, 0.65);
+  border: 1px solid rgba(233, 236, 239, 0.65);
+  border-radius: 0.5rem;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.qwebr-r-project-logo {
+  color: #2767B0; /* R Project's blue color */
+}
+
+.qwebr-icon-status-spinner {
+  color: #7894c4;
+}
+
+.qwebr-icon-run-code {
+  color: #0d9c29
+}
+
+body.quarto-light .qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.quarto-dark .qwebr-output-code-stdout {
+  color: #EEE;
+}
+
+.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+body.quarto-light .qwebr-editor {
+  border: 1px solid #EEEEEE;
+}
+
+body.quarto-light .qwebr-editor-toolbar {
+  background-color: #EEEEEE;
+  padding: 0.2rem 0.5rem;
+}
+
+body.quarto-dark .qwebr-editor {
+  border: 1px solid #111;
+}
+
+body.quarto-dark .qwebr-editor-toolbar {
+  background-color: #111;
+  padding: 0.2rem 0.5rem;
+}
+
+.qwebr-button {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  padding: 0.375rem 0.75rem;
+  font-size: .9rem;
+  border-radius: 0.25rem;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+body.quarto-light .qwebr-button {
+  background-color: #EEEEEE;
+  color: #000;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-dark .qwebr-button {
+  background-color: #111;
+  color: #EEE;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-light .qwebr-button:hover {
+  color: #000;
+  background-color: #d9dce0;
+  border-color: #c8ccd0;
+}
+
+body.quarto-dark .qwebr-button:hover {
+  color: #d9dce0;
+  background-color: #323232;
+  border-color: #d9dce0;
+}
+
+.qwebr-button:disabled,.qwebr-button.disabled,fieldset:disabled .qwebr-button {
+  pointer-events: none;
+  opacity: .65
+}
+
+.qwebr-button-reset {
+  color: #696969; /*#4682b4;*/
+}
+
+.qwebr-button-copy {
+  color: #696969;
+}
+
+/* Style the code highlight lines */
+body.quarto-light .qwebr-editor-highlight-line {
+  background-color: lightblue;
+}
+
+body.quarto-dark .qwebr-editor-highlight-line {
+  background-color: darkblue;
+}
+
+/* Style the modal pop-up */
+
+/* The Modal (background) */
+.qwebr-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content */
+.qwebr-modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.qwebr-modal-content-code {
+  max-height: 50vh;
+  min-height: 5vh;
+  overflow: scroll;
+  border: 1px solid #888;
+}
+
+/* The Close Button */
+.qwebr-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.qwebr-modal-close:hover,
+.qwebr-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.qwebr-download-btn {
+  margin-top: 10px;
+  text-decoration: none !important;
+}
+
+/* Styling to download image that is created */
+
+.qwebr-canvas-image {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.qwebr-canvas-image-download-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+figure:hover .qwebr-canvas-image-download-btn {
+  display: block;
+}
+
+/* Custom styling for RevealJS Presentations*/
+
+/* Reset the style of the interactive area */
+.reveal div.qwebr-interactive-area {
+  display: block;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Provide space to entries */
+.reveal div.qwebr-output-code-area pre div {
+  margin: 1px 2px 1px 10px;
+}
+
+/* Collapse the inside code tags to avoid extra space between line outputs */
+.reveal pre div code.qwebr-output-code-stdout, .reveal pre div code.qwebr-output-code-stderr {
+  padding: 0;
+  display: contents;
+}
+
+body.reveal.quarto-light pre div code.qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.reveal.quarto-dark pre div code.qwebr-output-code-stdout {
+  color: #EEEEEE;
+}
+
+.reveal pre div code.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+
+/* Create a border around console and output (does not effect graphs) */
+body.reveal.quarto-light div.qwebr-console-area {
+  border: 1px solid #EEEEEE;
+  box-shadow: 2px 2px 10px #EEEEEE;
+}
+
+body.reveal.quarto-dark div.qwebr-console-area {
+  border: 1px solid #111;
+  box-shadow: 2px 2px 10px #111;
+}
+
+
+/* Cap output height and allow text to scroll */
+/* TODO: Is there a better way to fit contents/max it parallel to the monaco editor size? */
+.reveal div.qwebr-output-code-area pre {
+  max-height: 400px;
+  overflow: scroll;
+}
+
+iframe.qwebr-output-code-browse {
+  width: 100%;
+
+  /*
+    TODO: How to make the height automatic according to the widget size,
+    or respect the quarto code block options?
+  */
+  min-height: 500px;
+}
+
+</style>
+<script type="module">
+// Document level settings ----
+
+// Determine if we need to install R packages
+globalThis.qwebrInstallRPackagesList = [''];
+
+// Specify possible locations to search for the repository
+globalThis.qwebrPackageRepoURLS = ['https://repo.r-wasm.org/'];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qwebrSetupRPackages = !(qwebrInstallRPackagesList.indexOf("") !== -1);
+globalThis.qwebrAutoloadRPackages = true;
+
+// Display a startup message?
+globalThis.qwebrShowStartupMessage = true;
+globalThis.qwebrShowHeaderMessage = false;
+
+// Describe the webR settings that should be used
+globalThis.qwebrCustomizedWebROptions = {
+  "baseURL": "https://webr.r-wasm.org/v0.5.2/",
+  "serviceWorkerUrl": "",
+  "homedir": "/home/web_user", 
+  "channelType": "ChannelType.Automatic"
+};
+
+// Store cell data
+globalThis.qwebrCellDetails = [{"code":"# Given data\ntotal_task_time <- 40 + 25 + 20 + 35 + 15 + 30  # seconds\ndesired_output <- 60  # pizzas per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate Cycle Time\ncycle_time <- available_time / desired_output\ncat(\"Cycle Time:\", cycle_time, \"seconds per pizza\\n\")\n\n# Step 2: Calculate Theoretical Minimum Stations\nTM <- total_task_time / cycle_time\ncat(\"Theoretical Minimum Stations:\", TM, \"=\", ceiling(TM), \"stations\\n\")\n\n# Step 3: Assign tasks to stations (one possible solution)\ncat(\"\\n--- Workstation Assignments ---\\n\")\ncat(\"Station 1: A (40s) + B (25s) = 65s > 60s ... EXCEEDS!\\n\")\ncat(\"Let's try again:\\n\")\ncat(\"Station 1: A (40s) = 40s [Idle: 20s]\\n\")\ncat(\"Station 2: B (25s) + D (35s) = 60s [Idle: 0s]\\n\")\ncat(\"Station 3: C (20s) + E (15s) + F (30s) = 65s > 60s... EXCEEDS!\\n\")\ncat(\"Revised:\\n\")\ncat(\"Station 3: C (20s) + E (15s) = 35s [Idle: 25s]\\n\")\ncat(\"Station 4: F (30s) = 30s [Idle: 30s]\\n\")\n\n# With 4 stations\nn_stations <- 4\nefficiency <- (total_task_time / (n_stations * cycle_time)) * 100\ncat(\"\\n--- Results ---\\n\")\ncat(\"Number of Stations:\", n_stations, \"\\n\")\ncat(\"Line Efficiency:\", round(efficiency, 1), \"%\\n\")\ncat(\"Balance Delay (Idle Time):\", round(100 - efficiency, 1), \"%\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Example: Worker lifts 35 lb boxes from pallet to conveyor\n# Conditions:\n# - Horizontal distance (H) = 15 inches\n# - Vertical height at start (V) = 10 inches\n# - Vertical travel distance (D) = 20 inches\n# - Asymmetry angle (A) = 30 degrees\n# - Frequency = 4 lifts per minute, 2 hours\n# - Coupling = Fair (handles present)\n\nLC <- 51  # Load constant (lb)\n\n# Calculate multipliers\nHM <- 10 / 15  # Horizontal multiplier\nVM <- 1 - 0.0075 * abs(10 - 30)  # Vertical multiplier\nDM <- 0.82 + (1.8 / 20)  # Distance multiplier\nAM <- 1 - 0.0032 * 30  # Asymmetric multiplier\nFM <- 0.72  # From NIOSH table: 4 lifts/min, 1-2 hours\nCM <- 0.95  # Fair coupling\n\ncat(\"Multiplier Values:\\n\")\ncat(\"  HM (Horizontal):\", round(HM, 3), \"\\n\")\ncat(\"  VM (Vertical):\", round(VM, 3), \"\\n\")\ncat(\"  DM (Distance):\", round(DM, 3), \"\\n\")\ncat(\"  AM (Asymmetry):\", round(AM, 3), \"\\n\")\ncat(\"  FM (Frequency):\", FM, \"\\n\")\ncat(\"  CM (Coupling):\", CM, \"\\n\")\n\n# Calculate RWL\nRWL <- LC * HM * VM * DM * AM * FM * CM\ncat(\"\\nRecommended Weight Limit (RWL):\", round(RWL, 1), \"lb\\n\")\n\n# Calculate Lifting Index\nactual_weight <- 35\nLI <- actual_weight / RWL\ncat(\"Lifting Index (LI):\", round(LI, 2), \"\\n\")\n\nif (LI <= 1.0) {\n  cat(\"\\nRisk Level: LOW - Task is acceptable\\n\")\n} else if (LI <= 3.0) {\n  cat(\"\\nRisk Level: MODERATE - Consider engineering controls\\n\")\n} else {\n  cat(\"\\nRisk Level: HIGH - Immediate redesign required\\n\")\n}","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"niosh-example-plant","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+
+</script>
+<script type="module">
+// Declare startupMessageQWebR globally
+globalThis.qwebrStartupMessage = document.createElement("p");
+
+// Verify if OffScreenCanvas is supported
+globalThis.qwebrOffScreenCanvasSupport = function() {
+  return typeof OffscreenCanvas !== 'undefined'
+}
+
+// Function to set the button text
+globalThis.qwebrSetInteractiveButtonState = function(buttonText, enableCodeButton = true) {
+  document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+    btn.innerHTML = buttonText;
+    btn.disabled = !enableCodeButton;
+  });
+}
+
+// Function to update the status message in non-interactive cells
+globalThis.qwebrUpdateStatusMessage = function(message) {
+  document.querySelectorAll(".qwebr-status-text.qwebr-cell-needs-evaluation").forEach((elem) => {
+    elem.innerText = message;
+  });
+}
+
+// Function to update the status message
+globalThis.qwebrUpdateStatusHeader = function(message) {
+  qwebrStartupMessage.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i>
+    <span>${message}</span>`;
+}
+
+// Function to return true if element is found, false if not
+globalThis.qwebrCheckHTMLElementExists = function(selector) {
+  const element = document.querySelector(selector);
+  return !!element;
+}
+
+// Function that detects whether reveal.js slides are present
+globalThis.qwebrIsRevealJS = function() {
+  // If the '.reveal .slides' selector exists, RevealJS is likely present
+  return qwebrCheckHTMLElementExists('.reveal .slides');
+}
+
+// Initialize the Quarto sidebar element
+function qwebrSetupQuartoSidebar() {
+  var newSideBarDiv = document.createElement('div');
+  newSideBarDiv.id = 'quarto-margin-sidebar';
+  newSideBarDiv.className = 'sidebar margin-sidebar';
+  newSideBarDiv.style.top = '0px';
+  newSideBarDiv.style.maxHeight = 'calc(0px + 100vh)';
+
+  return newSideBarDiv;
+}
+
+// Position the sidebar in the document
+function qwebrPlaceQuartoSidebar() {
+  // Get the reference to the element with id 'quarto-document-content'
+  var referenceNode = document.getElementById('quarto-document-content');
+
+  // Create the new div element
+  var newSideBarDiv = qwebrSetupQuartoSidebar();
+
+  // Insert the new div before the 'quarto-document-content' element
+  referenceNode.parentNode.insertBefore(newSideBarDiv, referenceNode);
+}
+
+function qwebrPlaceMessageContents(content, html_location = "title-block-header", revealjs_location = "title-slide") {
+
+  // Get references to header elements
+  const headerHTML = document.getElementById(html_location);
+  const headerRevealJS = document.getElementById(revealjs_location);
+
+  // Determine where to insert the quartoTitleMeta element
+  if (headerHTML || headerRevealJS) {
+    // Append to the existing "title-block-header" element or "title-slide" div
+    (headerHTML || headerRevealJS).appendChild(content);
+  } else {
+    // If neither headerHTML nor headerRevealJS is found, insert after "webr-monaco-editor-init" script
+    const monacoScript = document.getElementById("qwebr-monaco-editor-init");
+    const header = document.createElement("header");
+    header.setAttribute("id", "title-block-header");
+    header.appendChild(content);
+    monacoScript.after(header);
+  }
+}
+
+
+
+function qwebrOffScreenCanvasSupportWarningMessage() {
+  
+  // Verify canvas is supported.
+  if(qwebrOffScreenCanvasSupport()) return;
+
+  // Create the main container div
+  var calloutContainer = document.createElement('div');
+  calloutContainer.classList.add('callout', 'callout-style-default', 'callout-warning', 'callout-titled');
+
+  // Create the header div
+  var headerDiv = document.createElement('div');
+  headerDiv.classList.add('callout-header', 'd-flex', 'align-content-center');
+
+  // Create the icon container div
+  var iconContainer = document.createElement('div');
+  iconContainer.classList.add('callout-icon-container');
+
+  // Create the icon element
+  var iconElement = document.createElement('i');
+  iconElement.classList.add('callout-icon');
+
+  // Append the icon element to the icon container
+  iconContainer.appendChild(iconElement);
+
+  // Create the title container div
+  var titleContainer = document.createElement('div');
+  titleContainer.classList.add('callout-title-container', 'flex-fill');
+  titleContainer.innerText = 'Warning: Web Browser Does Not Support Graphing!';
+
+  // Append the icon container and title container to the header div
+  headerDiv.appendChild(iconContainer);
+  headerDiv.appendChild(titleContainer);
+
+  // Create the body container div
+  var bodyContainer = document.createElement('div');
+  bodyContainer.classList.add('callout-body-container', 'callout-body');
+
+  // Create the paragraph element for the body content
+  var paragraphElement = document.createElement('p');
+  paragraphElement.innerHTML = 'This web browser does not have support for displaying graphs through the <code>quarto-webr</code> extension since it lacks an <code>OffScreenCanvas</code>. Please upgrade your web browser to one that supports <code>OffScreenCanvas</code>.';
+
+  // Append the paragraph element to the body container
+  bodyContainer.appendChild(paragraphElement);
+
+  // Append the header div and body container to the main container div
+  calloutContainer.appendChild(headerDiv);
+  calloutContainer.appendChild(bodyContainer);
+
+  // Append the main container div to the document depending on format
+  qwebrPlaceMessageContents(calloutContainer, "title-block-header"); 
+
+}
+
+
+// Function that attaches the document status message and diagnostics
+function displayStartupMessage(showStartupMessage, showHeaderMessage) {
+  if (!showStartupMessage) {
+    return;
+  }
+
+  // Create the outermost div element for metadata
+  const quartoTitleMeta = document.createElement("div");
+  quartoTitleMeta.classList.add("quarto-title-meta");
+
+  // Create the first inner div element
+  const firstInnerDiv = document.createElement("div");
+  firstInnerDiv.setAttribute("id", "qwebr-status-message-area");
+
+  // Create the second inner div element for "WebR Status" heading and contents
+  const secondInnerDiv = document.createElement("div");
+  secondInnerDiv.setAttribute("id", "qwebr-status-message-title");
+  secondInnerDiv.classList.add("quarto-title-meta-heading");
+  secondInnerDiv.innerText = "WebR Status";
+
+  // Create another inner div for contents
+  const secondInnerDivContents = document.createElement("div");
+  secondInnerDivContents.setAttribute("id", "qwebr-status-message-body");
+  secondInnerDivContents.classList.add("quarto-title-meta-contents");
+
+  // Describe the WebR state
+  qwebrStartupMessage.innerText = "🟡 Loading...";
+  qwebrStartupMessage.setAttribute("id", "qwebr-status-message-text");
+  // Add `aria-live` to auto-announce the startup status to screen readers
+  qwebrStartupMessage.setAttribute("aria-live", "assertive");
+
+  // Append the startup message to the contents
+  secondInnerDivContents.appendChild(qwebrStartupMessage);
+
+  // Add a status indicator for COOP and COEP Headers if needed
+  if (showHeaderMessage) {
+    const crossOriginMessage = document.createElement("p");
+    crossOriginMessage.innerText = `${crossOriginIsolated ? '🟢' : '🟡'} COOP & COEP Headers`;
+    crossOriginMessage.setAttribute("id", "qwebr-coop-coep-header");
+    secondInnerDivContents.appendChild(crossOriginMessage);
+  }
+
+  // Combine the inner divs and contents
+  firstInnerDiv.appendChild(secondInnerDiv);
+  firstInnerDiv.appendChild(secondInnerDivContents);
+  quartoTitleMeta.appendChild(firstInnerDiv);
+
+  // Place message on webpage
+  qwebrPlaceMessageContents(quartoTitleMeta); 
+}
+
+function qwebrAddCommandHistoryModal() {
+  // Create the modal div
+  var modalDiv = document.createElement('div');
+  modalDiv.id = 'qwebr-history-modal';
+  modalDiv.className = 'qwebr-modal';
+
+  // Create the modal content div
+  var modalContentDiv = document.createElement('div');
+  modalContentDiv.className = 'qwebr-modal-content';
+
+  // Create the span for closing the modal
+  var closeSpan = document.createElement('span');
+  closeSpan.id = 'qwebr-command-history-close-btn';
+  closeSpan.className = 'qwebr-modal-close';
+  closeSpan.innerHTML = '&times;';
+
+  // Create the h1 element for the modal
+  var modalH1 = document.createElement('h1');
+  modalH1.textContent = 'R History Command Contents';
+
+  // Create an anchor element for downloading the Rhistory file 
+  var downloadLink = document.createElement('a');
+  downloadLink.href = '#';
+  downloadLink.id = 'qwebr-download-history-btn';
+  downloadLink.className = 'qwebr-download-btn';
+
+  // Create an 'i' element for the icon
+  var icon = document.createElement('i');
+  icon.className = 'bi bi-file-code';
+
+  // Append the icon to the anchor element
+  downloadLink.appendChild(icon);
+
+  // Add the text 'Download R History' to the anchor element
+  downloadLink.appendChild(document.createTextNode(' Download R History File'));
+
+  // Create the pre for command history contents
+  var commandContentsPre = document.createElement('pre');
+  commandContentsPre.id = 'qwebr-command-history-contents';
+  commandContentsPre.className = 'qwebr-modal-content-code';
+
+  // Append the close span, h1, and history contents pre to the modal content div
+  modalContentDiv.appendChild(closeSpan);
+  modalContentDiv.appendChild(modalH1);
+  modalContentDiv.appendChild(downloadLink);
+  modalContentDiv.appendChild(commandContentsPre);
+
+  // Append the modal content div to the modal div
+  modalDiv.appendChild(modalContentDiv);
+
+  // Append the modal div to the body
+  document.body.appendChild(modalDiv);
+}
+
+function qwebrRegisterRevealJSCommandHistoryModal() {
+  // Select the <ul> element inside the <div> with data-panel="Custom0"
+  let ulElement = document.querySelector('div[data-panel="Custom0"] > ul.slide-menu-items');
+
+  // Find the last <li> element with class slide-tool-item
+  let lastItem = ulElement.querySelector('li.slide-tool-item:last-child');
+
+  // Calculate the next data-item value
+  let nextItemValue = 0;
+  if (lastItem) {
+      nextItemValue = parseInt(lastItem.dataset.item) + 1;
+  }
+
+  // Create a new <li> element
+  let newListItem = document.createElement('li');
+  newListItem.className = 'slide-tool-item';
+  newListItem.dataset.item = nextItemValue.toString(); // Set the next available data-item value
+
+  // Create the <a> element inside the <li>
+  let newLink = document.createElement('a');
+  newLink.href = '#';
+  newLink.id = 'qwebrRHistoryButton'; // Set the ID for the new link
+  
+  // Create the <kbd> element inside the <a>
+  let newKbd = document.createElement('kbd');
+  newKbd.textContent = ' '; // Set to empty as we are not registering a keyboard shortcut
+
+  // Create text node for the link text
+  let newText = document.createTextNode(' View R History');
+
+  // Append <kbd> and text node to <a>
+  newLink.appendChild(newKbd);
+  newLink.appendChild(newText);
+
+  // Append <a> to <li>
+  newListItem.appendChild(newLink);
+
+  // Append <li> to <ul>
+  ulElement.appendChild(newListItem);
+}
+
+// Handle setting up the R history modal
+function qwebrCodeLinks() {
+
+  if (qwebrIsRevealJS()) {
+    qwebrRegisterRevealJSCommandHistoryModal();
+    return;
+  }
+
+  // Create the container div
+  var containerDiv = document.createElement('div');
+  containerDiv.className = 'quarto-code-links';
+
+  // Create the h2 element
+  var h2 = document.createElement('h2');
+  h2.textContent = 'webR Code Links';
+
+  // Create the ul element
+  var ul = document.createElement('ul');
+
+  // Create the li element
+  var li = document.createElement('li');
+
+  // Create the a_history_btn element
+  var a_history_btn = document.createElement('a');
+  a_history_btn.href = 'javascript:void(0)';
+  a_history_btn.setAttribute('id', 'qwebrRHistoryButton');
+
+  // Create the i_history_btn element
+  var i_history_btn = document.createElement('i');
+  i_history_btn.className = 'bi bi-file-code';
+
+  // Create the text node for the link text
+  var text_history_btn = document.createTextNode('View R History');
+
+  // Append the icon element and link text to the a element
+  a_history_btn.appendChild(i_history_btn);
+  a_history_btn.appendChild(text_history_btn);
+
+  // Append the a element to the li element
+  li.appendChild(a_history_btn);
+
+  // Append the li element to the ul element
+  ul.appendChild(li);
+
+  // Append the h2 and ul elements to the container div
+  containerDiv.appendChild(h2);
+  containerDiv.appendChild(ul);
+
+  // Append the container div to the element with the ID 'quarto-margin-sidebar'
+  var sidebar = document.getElementById('quarto-margin-sidebar');
+    
+  // If the sidebar element is not found, create it
+  if(!sidebar) {
+    qwebrPlaceQuartoSidebar();
+  }
+  
+  // Re-select the sidebar element (if it was just created)
+  sidebar = document.getElementById('quarto-margin-sidebar');   
+
+
+  // If the sidebar element exists, append the container div to it
+  if(sidebar) {
+    // Append the container div to the sidebar
+    sidebar.appendChild(containerDiv);
+    // Force the sidebar to be clickable by removing the 'zindex-bottom' class
+    // added in pre-release: https://github.com/quarto-dev/quarto-cli/commit/f0c53a1ffcaa1de4eccbf07803b096898248adcc
+    sidebar.className = 'sidebar margin-sidebar';
+  } else {
+    // Get a debugger ...
+    console.warn('Element with ID "quarto-margin-sidebar" not found.');
+  }
+}
+
+// Call the function to append the code links for qwebR into the right sidebar
+qwebrCodeLinks();
+
+// Add the command history modal
+qwebrAddCommandHistoryModal();
+
+displayStartupMessage(qwebrShowStartupMessage, qwebrShowHeaderMessage);
+qwebrOffScreenCanvasSupportWarningMessage();
+</script>
+<script type="module">
+// Define a global storage and retrieval solution ----
+
+// Store commands executed in R
+globalThis.qwebrRCommandHistory = [];
+
+// Function to retrieve the command history
+globalThis.qwebrFormatRHistory = function() {
+   return qwebrRCommandHistory.join("\n\n");
+}
+
+// Retrieve HTML Elements ----
+
+// Get the command modal
+const command_history_modal = document.getElementById("qwebr-history-modal");
+
+// Get the button that opens the command modal
+const command_history_btn = document.getElementById("qwebrRHistoryButton");
+
+// Get the <span> element that closes the command modal
+const command_history_close_span = document.getElementById("qwebr-command-history-close-btn");
+
+// Get the download button for r history information
+const command_history_download_btn = document.getElementById("qwebr-download-history-btn");
+
+// Plug in command history into modal/download button ----
+
+// Function to populate the modal with command history
+function populateCommandHistoryModal() {
+    document.getElementById("qwebr-command-history-contents").innerHTML = qwebrFormatRHistory() || "No commands have been executed yet.";
+}
+
+// Function to format the current date and time to
+// a string with the format YYYY-MM-DD-HH-MM-SS
+function formatDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+}
+
+
+// Function to convert document title with datetime to a safe filename
+function safeFileName() {
+    // Get the current page title
+    let pageTitle = document.title;
+
+    // Combine the current page title with the current date and time
+    let pageNameWithDateTime = `Rhistory-${pageTitle}-${formatDateTime()}`;
+
+    // Replace unsafe characters with safe alternatives
+    let safeFilename = pageNameWithDateTime.replace(/[\\/:\*\?! "<>\|]/g, '-');
+
+    return safeFilename;
+}
+
+
+// Function to download list contents as text file
+function downloadRHistory() {
+    // Get the current page title + datetime and use it as the filename
+    const filename = `${safeFileName()}.R`;
+
+    // Get the text contents of the R History list
+    const text = qwebrFormatRHistory();
+
+    // Create a new Blob object with the text contents
+    const blob = new Blob([text], { type: 'text/plain' });
+  
+    // Create a new anchor element for the download
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+
+    // Append the anchor to the body, click it, and remove it
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Register event handlers ----
+
+// When the user clicks the View R History button, open the command modal
+command_history_btn.onclick = function() {
+    populateCommandHistoryModal();
+    command_history_modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the command modal
+command_history_close_span.onclick = function() {
+    command_history_modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the command modal, close it
+window.onclick = function(event) {
+    if (event.target == command_history_modal) {
+        command_history_modal.style.display = "none";
+    }
+}
+
+// Add an onclick event listener to the download button so that
+// the user can download the R history as a text file
+command_history_download_btn.onclick = function() {
+    downloadRHistory();
+};
+</script>
+<script type="module">
+// Supported Evaluation Types for Context
+globalThis.EvalTypes = Object.freeze({
+  Interactive: 'interactive',
+  Setup: 'setup',
+  Output: 'output',
+});
+
+// Function that obtains the font size for a given element 
+globalThis.qwebrCurrentFontSizeOnElement = function(element, cssProperty = 'font-size') {
+
+  const currentFontSize = parseFloat(
+    window
+    .getComputedStyle(element)
+    .getPropertyValue(cssProperty)
+  );
+  
+  return currentFontSize;
+}
+
+// Function to determine font scaling
+globalThis.qwebrScaledFontSize = function(div, qwebrOptions) {
+  // Determine if we should compute font-size using RevealJS's `--r-main-font-size` 
+  // or if we can directly use the document's `font-size`.
+  const cssProperty = document.body.classList.contains('reveal') ? 
+    "--r-main-font-size" : "font-size";
+  
+  // Get the current font size on the div element
+  const elementFontSize = qwebrCurrentFontSizeOnElement(div, cssProperty);
+
+  // Determine the scaled font size value
+  const scaledFontSize = ((qwebrOptions['editor-font-scale'] ?? 1) * elementFontSize) ?? 17.5;
+
+  return scaledFontSize;
+}
+
+
+// Function that dispatches the creation request
+globalThis.qwebrCreateHTMLElement = function (
+  cellData
+) {
+
+  // Extract key components
+  const evalType = cellData.options.context;
+  const qwebrCounter = cellData.id;
+
+  // We make an assumption that insertion points are defined by the Lua filter as:
+  // qwebr-insertion-location-{qwebrCounter} 
+  const elementLocator = document.getElementById(`qwebr-insertion-location-${qwebrCounter}`);
+
+  // Figure out the routine to use to insert the element.
+  let qwebrElement;
+  switch ( evalType ) {
+    case EvalTypes.Interactive:
+      qwebrElement = qwebrCreateInteractiveElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Output: 
+      qwebrElement = qwebrCreateNonInteractiveOutputElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Setup: 
+      qwebrElement = qwebrCreateNonInteractiveSetupElement(qwebrCounter, cellData.options);
+      break;
+    default: 
+      qwebrElement = document.createElement('div');
+      qwebrElement.textContent = 'Error creating `quarto-webr` element';
+  }
+
+  // Insert the dynamically generated object at the document location.
+  elementLocator.appendChild(qwebrElement);
+};
+
+// Function that setups the interactive element creation
+globalThis.qwebrCreateInteractiveElement = function (qwebrCounter, qwebrOptions) {
+
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-interactive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-interactive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create toolbar div
+  var toolbarDiv = document.createElement('div');
+  toolbarDiv.className = 'qwebr-editor-toolbar';
+  toolbarDiv.id = 'qwebr-editor-toolbar-' + qwebrCounter;
+
+  // Create a div to hold the left buttons
+  var leftButtonsDiv = document.createElement('div');
+  leftButtonsDiv.className = 'qwebr-editor-toolbar-left-buttons';
+
+  // Create a div to hold the right buttons
+  var rightButtonsDiv = document.createElement('div');
+  rightButtonsDiv.className = 'qwebr-editor-toolbar-right-buttons';
+
+  // Create Run Code button
+  var runCodeButton = document.createElement('button');
+  runCodeButton.className = 'btn btn-default qwebr-button qwebr-button-run';
+  runCodeButton.disabled = true;
+  runCodeButton.type = 'button';
+  runCodeButton.id = 'qwebr-button-run-' + qwebrCounter;
+  runCodeButton.textContent = '🟡 Loading webR...';
+  runCodeButton.title = `Run code (Shift + Enter)`;
+
+  // Append buttons to the leftButtonsDiv
+  leftButtonsDiv.appendChild(runCodeButton);
+
+  // Create Reset button
+  var resetButton = document.createElement('button');
+  resetButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-reset';
+  resetButton.type = 'button';
+  resetButton.id = 'qwebr-button-reset-' + qwebrCounter;
+  resetButton.title = 'Start over';
+  resetButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i>';
+
+  // Create Copy button
+  var copyButton = document.createElement('button');
+  copyButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-copy';
+  copyButton.type = 'button';
+  copyButton.id = 'qwebr-button-copy-' + qwebrCounter;
+  copyButton.title = 'Copy code';
+  copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+
+  // Append buttons to the rightButtonsDiv
+  rightButtonsDiv.appendChild(resetButton);
+  rightButtonsDiv.appendChild(copyButton);
+
+  // Create console area div
+  var consoleAreaDiv = document.createElement('div');
+  consoleAreaDiv.id = 'qwebr-console-area-' + qwebrCounter;
+  consoleAreaDiv.className = 'qwebr-console-area';
+
+  // Create editor div
+  var editorDiv = document.createElement('div');
+  editorDiv.id = 'qwebr-editor-' + qwebrCounter;
+  editorDiv.className = 'qwebr-editor';
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append buttons to the toolbar
+  toolbarDiv.appendChild(leftButtonsDiv);
+  toolbarDiv.appendChild(rightButtonsDiv);
+
+  // Append all elements to the main div
+  mainDiv.appendChild(toolbarDiv);
+  consoleAreaDiv.appendChild(editorDiv);
+  consoleAreaDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(consoleAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+}
+
+// Function that adds output structure for non-interactive output
+globalThis.qwebrCreateNonInteractiveOutputElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-noninteractive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-noninteractive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+  
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+  
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append all elements to the main div
+  mainDiv.appendChild(statusContainer);
+  mainDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+};
+
+// Function that adds a stub in the page to indicate a setup cell was used.
+globalThis.qwebrCreateNonInteractiveSetupElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = `qwebr-noninteractive-setup-area-${qwebrCounter}`;
+  mainDiv.className = `qwebr-noninteractive-setup-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Append status onto the main div
+  mainDiv.appendChild(statusContainer);
+
+  return mainDiv;
+}
+
+
+// Function to create loading container with specified ID
+globalThis.createLoadingContainer = function(qwebrCounter) {
+
+  // Create a status container
+  const container = document.createElement('div');
+  container.id = `qwebr-non-interactive-loading-container-${qwebrCounter}`;
+  container.className = 'qwebr-non-interactive-loading-container qwebr-cell-needs-evaluation';
+
+  // Create an R project logo to indicate its a code space
+  const rProjectIcon = document.createElement('i');
+  rProjectIcon.className = 'fa-brands fa-r-project fa-3x qwebr-r-project-logo';
+
+  // Setup a loading icon from font awesome
+  const spinnerIcon = document.createElement('i');
+  spinnerIcon.className = 'fa-solid fa-spinner fa-spin fa-1x qwebr-icon-status-spinner';
+
+  // Add a section for status text
+  const statusText = document.createElement('p');
+  statusText.id = `qwebr-status-text-${qwebrCounter}`;
+  statusText.className = `qwebr-status-text qwebr-cell-needs-evaluation`;
+  statusText.innerText = 'Loading webR...';
+
+  // Incorporate an inner container
+  const innerContainer = document.createElement('div');
+
+  // Append elements to the inner container
+  innerContainer.appendChild(spinnerIcon);
+  innerContainer.appendChild(statusText);
+
+  // Append elements to the main container
+  container.appendChild(rProjectIcon);
+  container.appendChild(innerContainer);
+
+  return container;
+}
+</script>
+<script type="module">
+// Function to install a single package
+async function qwebrInstallRPackage(packageName) {
+  await mainWebR.evalRVoid(`webr::install('${packageName}');`);
+}
+
+// Function to load a single package
+async function qwebrLoadRPackage(packageName) {
+  await mainWebR.evalRVoid(`require('${packageName}', quietly = TRUE)`);
+}
+
+// Generic function to process R packages
+async function qwebrProcessRPackagesWithStatus(packages, processType, displayStatusMessageUpdate = true) {
+  // Switch between contexts
+  const messagePrefix = processType === 'install' ? 'Installing' : 'Loading';
+
+  // Modify button state
+  qwebrSetInteractiveButtonState(`🟡 ${messagePrefix} package ...`, false);
+
+  // Iterate over packages
+  for (let i = 0; i < packages.length; i++) {
+    const activePackage = packages[i];
+    const formattedMessage = `${messagePrefix} package ${i + 1} out of ${packages.length}: ${activePackage}`;
+
+    // Display the update in header
+    if (displayStatusMessageUpdate) {
+      qwebrUpdateStatusHeader(formattedMessage);
+    }
+
+    // Display the update in non-active areas
+    qwebrUpdateStatusMessage(formattedMessage);
+
+    // Run package installation
+    if (processType === 'install') {
+      await qwebrInstallRPackage(activePackage);
+    } else {
+      await qwebrLoadRPackage(activePackage);
+    }
+  }
+
+  // Clean slate
+  if (processType === 'load') {
+    await mainWebR.flush();
+  }
+}
+
+// Start a timer
+const initializeWebRTimerStart = performance.now();
+
+// Encase with a dynamic import statement
+globalThis.qwebrInstance = import(qwebrCustomizedWebROptions.baseURL + "webr.mjs").then(
+  async ({ WebR, ChannelType }) => {
+    // Populate WebR options with defaults or new values based on `webr` meta
+    globalThis.mainWebR = new WebR(qwebrCustomizedWebROptions);
+
+    // Initialization WebR
+    await mainWebR.init();
+
+    // Setup a shelter
+    globalThis.mainWebRCodeShelter = await new mainWebR.Shelter();
+
+    // Setup a pager to allow processing help documentation
+    await mainWebR.evalRVoid('webr::pager_install()');
+
+    // Setup a viewer to allow processing htmlwidgets.
+    // This might not be available in old webr version
+    await mainWebR.evalRVoid('try({ webr::viewer_install() })');
+
+    // Override the existing install.packages() to use webr::install()
+    await mainWebR.evalRVoid('webr::shim_install()');
+
+    // Specify the repositories to pull from
+    // Note: webR does not use the `repos` option, but instead uses `webr_pkg_repos`
+    // inside of `install()`. However, other R functions still pull from `repos`.
+    await mainWebR.evalRVoid(`
+      options(
+        webr_pkg_repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')}),
+        repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')})
+      )
+    `);
+
+    // Check to see if any packages need to be installed
+    if (qwebrSetupRPackages) {
+      // Obtain only a unique list of packages
+      const uniqueRPackageList = Array.from(new Set(qwebrInstallRPackagesList));
+
+      // Install R packages one at a time (either silently or with a status update)
+      await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'install', qwebrShowStartupMessage);
+
+      if (qwebrAutoloadRPackages) {
+        // Load R packages one at a time (either silently or with a status update)
+        await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'load', qwebrShowStartupMessage);
+      }
+    }
+  }
+);
+
+// Stop timer
+const initializeWebRTimerEnd = performance.now();
+
+</script>
+<script type="module">
+// Function to verify a given JavaScript Object is empty
+globalThis.qwebrIsObjectEmpty = function (arr) {
+    return Object.keys(arr).length === 0;
+}
+
+// Global version of the Escape HTML function that converts HTML
+// characters to their HTML entities.
+globalThis.qwebrEscapeHTMLCharacters = function(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+};
+
+// Passthrough results
+globalThis.qwebrIdentity = function(x) {
+    return x;
+};
+
+// Append a comment
+globalThis.qwebrPrefixComment = function(x, comment) {
+    return `${comment}${x}`;
+};
+
+// Function to store the code in the history
+globalThis.qwebrLogCodeToHistory = function(codeToRun, options) {
+    qwebrRCommandHistory.push(
+        `# Ran code in ${options.label} at ${new Date().toLocaleString()} ----\n${codeToRun}`
+    );
+};
+
+// Function to attach a download button onto the canvas
+// allowing the user to download the image.
+function qwebrImageCanvasDownloadButton(canvas, canvasContainer) {
+
+    // Create the download button
+    const downloadButton = document.createElement('button');
+    downloadButton.className = 'qwebr-canvas-image-download-btn';
+    downloadButton.textContent = 'Download Image';
+    canvasContainer.appendChild(downloadButton);
+
+    // Trigger a download of the image when the button is clicked
+    downloadButton.addEventListener('click', function() {
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'qwebr-canvas-image.png';
+        link.click();
+    });
+}
+
+
+// Function to parse the pager results
+globalThis.qwebrParseTypePager = async function (msg) {
+
+    // Split out the event data
+    const { path, title, deleteFile } = msg.data;
+
+    // Process the pager data by reading the information from disk
+    const paged_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        // Remove excessive backspace characters until none remain
+        while(content.match(/.[\b]/)){
+            content = content.replace(/.[\b]/g, '');
+        }
+
+        // Returned cleaned data
+        return content;
+    });
+
+    // Unlink file if needed
+    if (deleteFile) {
+        await mainWebR.FS.unlink(path);
+    }
+
+    // Return extracted data with spaces
+    return paged_data;
+};
+
+
+// Function to parse the browse results
+globalThis.qwebrParseTypeBrowse = async function (msg) {
+
+    // msg.type === "browse"
+    const path = msg.data.url;
+
+    // Process the browse data by reading the information from disk
+    const browse_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        return content;
+    });
+
+    // Return extracted data as-is
+    return browse_data;
+};
+
+// Function to run the code using webR and parse the output
+globalThis.qwebrComputeEngine = async function(
+    codeToRun,
+    elements,
+    options) {
+
+    // Call into the R compute engine that persists within the document scope.
+    // To be prepared for all scenarios, the following happens:
+    // 1. We setup a canvas device to write to by making a namespace call into the {webr} package
+    // 2. We use values inside of the options array to set the figure size.
+    // 3. We capture the output stream information (STDOUT and STERR)
+    // 4. We disable the current device's image creation.
+    // 5. Piece-wise parse the results into the different output areas
+
+    // Create a pager variable for help/file contents
+    let pager = [];
+
+    // Handle how output is processed
+    let showMarkup = options.results === "markup" && options.output !== "asis";
+    let processOutput;
+
+    if (showMarkup) {
+        processOutput = qwebrEscapeHTMLCharacters;
+    } else {
+        processOutput = qwebrIdentity;
+    }
+
+    // ----
+    // Convert from Inches to Pixels by using DPI (dots per inch)
+    // for bitmap devices (dpi * inches = pixels)
+    let fig_width = options["fig-width"] * options["dpi"];
+    let fig_height = options["fig-height"] * options["dpi"];
+
+    // Initialize webR
+    await mainWebR.init();
+
+    // Configure capture output
+    let captureOutputOptions = {
+        withAutoprint: true,
+        captureStreams: true,
+        captureConditions: false,
+        // env: webR.objs.emptyEnv, // maintain a global environment for webR v0.2.0
+    };
+
+    // Determine if the browser supports OffScreen
+    if (qwebrOffScreenCanvasSupport()) {
+        // Mirror default options of webr::canvas()
+        // with changes to figure height and width.
+        captureOutputOptions.captureGraphics = {
+            width: fig_width,
+            height: fig_height,
+            bg: "white", // default: transparent
+            pointsize: 12,
+            capture: true
+        };
+    }  else {
+        // Disable generating graphics
+        captureOutputOptions.captureGraphics = false;
+    }
+
+    // Store the code to run in history
+    qwebrLogCodeToHistory(codeToRun, options);
+
+    // Setup a webR canvas by making a namespace call into the {webr} package
+    // Evaluate the R code
+    // Remove the active canvas silently
+    const result = await mainWebRCodeShelter.captureR(
+        `${codeToRun}`,
+        captureOutputOptions
+    );
+
+    // -----
+
+    // Start attempting to parse the result data
+    processResultOutput:try {
+
+        // Avoid running through output processing
+        if (options.results === "hide" || options.output === "false") {
+            break processResultOutput;
+        }
+
+        // Merge output streams of STDOUT and STDErr (messages and errors are combined.)
+        // Require both `warning` and `message` to be true to display `STDErr`.
+        const out = result.output
+        .filter(
+            evt => evt.type === "stdout" ||
+            ( evt.type === "stderr" && (options.warning === "true" && options.message === "true"))
+        )
+        .map((evt, index) => {
+            const className = `qwebr-output-code-${evt.type}`;
+            const outputResult = qwebrPrefixComment(processOutput(evt.data), options.comment);
+            return `<code id="${className}-editor-${elements.id}-result-${index + 1}" class="${className}">${outputResult}</code>`;
+        })
+        .join("\n");
+
+
+        // Clean the state
+        // We're now able to process pager events.
+        // As a result, we cannot maintain a true 1-to-1 output order
+        // without individually feeding each line
+        const msgs = await mainWebR.flush();
+
+        // Use `map` to process the filtered "pager" events asynchronously
+        const pager = [];
+        const browse = [];
+
+        await Promise.all(
+            msgs.map(
+                async (msg) => {
+
+                    const msgType = msg.type || "unknown";
+
+                    switch(msgType) {
+                        case 'pager':
+                            const pager_data = await qwebrParseTypePager(msg);
+                            pager.push(pager_data);
+                            break;
+                        case 'browse':
+                            const browse_data = await qwebrParseTypeBrowse(msg);
+                            browse.push(browse_data);
+                            break;
+                    }
+                    return;
+                }
+            )
+        );
+
+        // Nullify the output area of content
+        elements.outputCodeDiv.innerHTML = "";
+        elements.outputGraphDiv.innerHTML = "";
+
+        // Design an output object for messages
+        const pre = document.createElement("pre");
+        if (/\S/.test(out)) {
+            // Display results as HTML elements to retain output styling
+            const div = document.createElement("div");
+            div.innerHTML = out;
+
+            // Calculate a scaled font-size value
+            const scaledFontSize = qwebrScaledFontSize(
+                elements.outputCodeDiv, options);
+
+            // Override output code cell size
+            pre.style.fontSize = `${scaledFontSize}px`;
+            pre.appendChild(div);
+        } else {
+            // If nothing is present, hide the element.
+            pre.style.visibility = "hidden";
+        }
+
+        elements.outputCodeDiv.appendChild(pre);
+
+        // Determine if we have graphs to display
+        if (result.images.length > 0) {
+
+            // Create figure element
+            const figureElement = document.createElement("figure");
+            figureElement.className = "qwebr-canvas-image";
+
+            // Place each rendered graphic onto a canvas element
+            result.images.forEach((img) => {
+
+                // Construct canvas for object
+                const canvas = document.createElement("canvas");
+
+                // Add an image download button
+                qwebrImageCanvasDownloadButton(canvas, figureElement);
+
+                // Set canvas size to image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // Apply output truncations
+                canvas.style.width = options["out-width"] ? options["out-width"] : `${fig_width}px`;
+                if (options["out-height"]) {
+                    canvas.style.height = options["out-height"];
+                }
+
+                // Apply styling
+                canvas.style.display = "block";
+                canvas.style.margin = "auto";
+
+                // Draw image onto Canvas
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                // Append canvas to figure output area
+                figureElement.appendChild(canvas);
+
+            });
+
+            if (options['fig-cap']) {
+                // Create figcaption element
+                const figcaptionElement = document.createElement('figcaption');
+                figcaptionElement.innerText = options['fig-cap'];
+                // Append figcaption to figure
+                figureElement.appendChild(figcaptionElement);
+            }
+
+            elements.outputGraphDiv.appendChild(figureElement);
+
+        }
+
+        // Display the pager data
+        if (pager.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            pager.forEach((paged_data, index) => {
+                const pre_pager = document.createElement("pre");
+                pre_pager.innerText = paged_data;
+                pre_pager.classList.add("qwebr-output-code-pager");
+                pre_pager.setAttribute("id", `qwebr-output-code-pager-editor-${elements.id}-result-${index + 1}`);
+                elements.outputCodeDiv.appendChild(pre_pager);
+            });
+        }
+
+        // Display the browse data
+        if (browse.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            browse.forEach((browse_data, index) => {
+                const iframe_browse = document.createElement('iframe');
+                iframe_browse.classList.add("qwebr-output-code-browse");
+                iframe_browse.setAttribute("id", `qwebr-output-code-browse-editor-${elements.id}-result-${index + 1}`);
+                iframe_browse.style.width = "100%";
+                iframe_browse.style.minHeight = "500px";
+                elements.outputCodeDiv.appendChild(iframe_browse);
+
+                iframe_browse.contentWindow.document.open();
+                iframe_browse.contentWindow.document.write(browse_data);
+                iframe_browse.contentWindow.document.close();
+            });
+        }
+    } finally {
+        // Clean up the remaining code
+        mainWebRCodeShelter.purge();
+    }
+};
+
+// Function to execute the code (accepts code as an argument)
+globalThis.qwebrExecuteCode = async function (
+    codeToRun,
+    id,
+    options = {}) {
+
+    // If options are not passed, we fall back on the bare minimum to handle the computation
+    if (qwebrIsObjectEmpty(options)) {
+        options = {
+            "context": "interactive",
+            "fig-width": 7, "fig-height": 5,
+            "out-width": "700px", "out-height": "",
+            "dpi": 72,
+            "results": "markup",
+            "warning": "true", "message": "true",
+        };
+    }
+
+    // Next, we access the compute areas values
+    const elements = {
+        runButton: document.getElementById(`qwebr-button-run-${id}`),
+        outputCodeDiv: document.getElementById(`qwebr-output-code-area-${id}`),
+        outputGraphDiv: document.getElementById(`qwebr-output-graph-area-${id}`),
+        id: id,
+    }
+
+    // Disallowing execution of other code cells
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = true;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Emphasize the active code cell
+        elements.runButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i> <span>Run Code</span>';
+    }
+
+    // Evaluate the code and parse the output into the document
+    await qwebrComputeEngine(codeToRun, elements, options);
+
+    // Switch to allowing execution of code
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = false;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Revert to the initial code cell state
+        elements.runButton.innerHTML = '<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>';
+    }
+}
+
+</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -385,6 +1939,290 @@ window.Quarto = {
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/loader.js"></script>
+<script type="module" id="qwebr-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs'
+    }
+  });
+</script>
+<script type="module">
+// Function to update Monaco Editors when body class changes
+function updateMonacoEditorsOnBodyClassChange() {
+    // Select the body element
+    const body = document.querySelector('body');
+
+    // Options for the observer (which mutations to observe)
+    const observerOptions = {
+        attributes: true,  // Observe changes to attributes
+        attributeFilter: ['class'] // Only observe changes to the 'class' attribute
+    };
+
+    // Callback function to execute when mutations are observed
+    const bodyClassChangeCallback = function(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                // Class attribute has changed
+                // Update all Monaco Editors on the page
+                updateMonacoEditorTheme();
+            }
+        }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(bodyClassChangeCallback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(body, observerOptions);
+}
+
+// Function to update all instances of Monaco Editors on the page
+function updateMonacoEditorTheme() {
+    // Determine what VS Theme to use
+    const vsThemeToUse = document.body.classList.contains("quarto-dark") ? 'vs-dark' : 'vs' ;
+
+    // Iterate through all initialized Monaco Editors
+    qwebrEditorInstances.forEach( function(editorInstance) { 
+        editorInstance.updateOptions({ theme: vsThemeToUse }); 
+    });
+}
+
+// Call the function to start observing changes to body class
+updateMonacoEditorsOnBodyClassChange();
+</script>
+<script type="module">
+// Global array to store Monaco Editor instances
+globalThis.qwebrEditorInstances = [];
+
+function isValidCodeLineNumbers(stringCodeLineNumbers) {
+  // Regular expression to match valid input strings
+  const regex = /^(\d+(-\d+)?)(,\d+(-\d+)?)*$/;
+  return regex.test(stringCodeLineNumbers);
+}
+
+// Function that builds and registers a Monaco Editor instance    
+globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
+
+  const initialCode = cellData.code;
+  const qwebrCounter = cellData.id;
+  const qwebrOptions = cellData.options;
+
+  // Retrieve the previously created document elements
+  let runButton = document.getElementById(`qwebr-button-run-${qwebrCounter}`);
+  let resetButton = document.getElementById(`qwebr-button-reset-${qwebrCounter}`);
+  let copyButton = document.getElementById(`qwebr-button-copy-${qwebrCounter}`);
+  let editorDiv = document.getElementById(`qwebr-editor-${qwebrCounter}`);
+
+  // Load the Monaco Editor and create an instance
+  let editor;
+  require(['vs/editor/editor.main'], function () {
+    editor = monaco.editor.create(editorDiv, {
+      value: initialCode,
+      language: 'r',
+      theme: 'vs-light',
+      automaticLayout: true,           // Works wonderfully with RevealJS
+      scrollBeyondLastLine: false,
+      minimap: {
+        enabled: false
+      },
+      fontSize: qwebrScaledFontSize(editorDiv, qwebrOptions),         
+      renderLineHighlight: "none",      // Disable current line highlighting
+      hideCursorInOverviewRuler: true,  // Remove cursor indictor in right hand side scroll bar
+      readOnly: qwebrOptions['read-only'] ?? false,
+      quickSuggestions: qwebrOptions['editor-quick-suggestions'] ?? false,
+      wordWrap: (qwebrOptions['editor-word-wrap'] == 'true' ? "on" : "off")
+    });
+
+    // Store the official counter ID to be used in keyboard shortcuts
+    editor.__qwebrCounter = qwebrCounter;
+
+    // Store the official div container ID
+    editor.__qwebrEditorId = `qwebr-editor-${qwebrCounter}`;
+
+    // Store the initial code value and options
+    editor.__qwebrinitialCode = initialCode;
+    editor.__qwebrOptions = qwebrOptions;
+
+    // Set at the model level the preferred end of line (EOL) character to LF.
+    // This prevent `\r\n` from being given to the webR engine if the user is on Windows.
+    // See details in: https://github.com/coatless/quarto-webr/issues/94
+    // Associated error text: 
+    // Error: <text>:1:7 unexpected input
+
+    // Retrieve the underlying model
+    const model = editor.getModel();
+    // Set EOL for the model
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+    
+    // Dynamically modify the height of the editor window if new lines are added.
+    let ignoreEvent = false;
+    const updateHeight = () => {
+      // Increment editor height by 2 to prevent vertical scroll bar from appearing
+      const contentHeight = editor.getContentHeight() + 2;
+
+      // Retrieve editor-max-height option
+      const maxEditorHeight = qwebrOptions['editor-max-height'];
+
+      // If editor-max-height is missing, allow infinite growth. Otherwise, threshold.
+      const editorHeight = !maxEditorHeight ?  contentHeight : Math.min(contentHeight, maxEditorHeight);
+
+      // We're avoiding a width change
+      //editorDiv.style.width = `${width}px`;
+      editorDiv.style.height = `${editorHeight}px`;
+      try {
+        ignoreEvent = true;
+
+        // The key to resizing is this call
+        editor.layout();
+      } finally {
+        ignoreEvent = false;
+      }
+    };
+
+    // Function to generate decorations to highlight lines
+    // in the editor based on input string.
+    function decoratorHighlightLines(codeLineNumbers) {
+      // Store the lines to be lighlight
+      let linesToHighlight = [];
+      
+      // Parse the codeLineNumbers string to get the line numbers to highlight
+      // First, split the string by commas
+      codeLineNumbers.split(',').forEach(part => {
+        // Check if we have a range of lines
+        if (part.includes('-')) {
+            // Handle range of lines (e.g., "6-8")
+            const [start, end] = part.split('-').map(Number);
+            for (let i = start; i <= end; i++) {
+                linesToHighlight.push(i);
+            }
+        } else {
+            // Handle single line (e.g., "7")
+            linesToHighlight.push(Number(part));
+        }
+      });
+  
+      // Create monaco decorations for the lines to highlight
+      const decorations = linesToHighlight.map(lineNumber => ({
+          range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+          options: {
+              isWholeLine: true,
+              className: 'qwebr-editor-highlight-line'
+          }
+      }));
+  
+      // Return decorations to be applied to the editor
+      return decorations;
+    }
+
+    // Ensure that the editor-code-line-numbers option is set and valid
+    // then apply styling
+    if (qwebrOptions['editor-code-line-numbers']) {
+      // Remove all whitespace from the string
+      const codeLineNumbers = qwebrOptions['editor-code-line-numbers'].replace(/\s/g,'');
+      // Check if the string is valid for line numbers, e.g., "1,3-5,7"
+      if (isValidCodeLineNumbers(codeLineNumbers)) {
+        // Apply the decorations to the editor
+        editor.createDecorationsCollection(decoratorHighlightLines(codeLineNumbers));
+      } else {
+        // Warn the user that the input is invalid
+        console.warn(`Invalid "editor-code-line-numbers" value in code cell ${qwebrOptions['label']}: ${codeLineNumbers}`);
+      }
+    }
+
+    // Helper function to check if selected text is empty
+    function isEmptyCodeText(selectedCodeText) {
+      return (selectedCodeText === null || selectedCodeText === undefined || selectedCodeText === "");
+    }
+
+    // Registry of keyboard shortcuts that should be re-added to each editor window
+    // when focus changes.
+    const addWebRKeyboardShortCutCommands = () => {
+      // Add a keydown event listener for Shift+Enter to run all code in cell
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
+
+        // Retrieve all text inside the editor
+        qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+      });
+
+      // Add a keydown event listener for CMD/Ctrl+Enter to run selected code
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+
+        // Get the selected text from the editor
+        const selectedText = editor.getModel().getValueInRange(editor.getSelection());
+        // Check if no code is selected
+        if (isEmptyCodeText(selectedText)) {
+          // Obtain the current cursor position
+          let currentPosition = editor.getPosition();
+          // Retrieve the current line content
+          let currentLine = editor.getModel().getLineContent(currentPosition.lineNumber);
+
+          // Propose a new position to move the cursor to
+          let newPosition = new monaco.Position(currentPosition.lineNumber + 1, 1);
+
+          // Check if the new position is beyond the last line of the editor
+          if (newPosition.lineNumber > editor.getModel().getLineCount()) {
+            // Add a new line at the end of the editor
+            editor.executeEdits("addNewLine", [{
+            range: new monaco.Range(newPosition.lineNumber, 1, newPosition.lineNumber, 1),
+            text: "\n", 
+            forceMoveMarkers: true,
+            }]);
+          }
+          
+          // Run the entire line of code.
+          qwebrExecuteCode(currentLine, editor.__qwebrCounter, editor.__qwebrOptions);
+
+          // Move cursor to new position
+          editor.setPosition(newPosition);
+        } else {
+          // Code to run when Ctrl+Enter is pressed with selected code
+          qwebrExecuteCode(selectedText, editor.__qwebrCounter, editor.__qwebrOptions);
+        }
+      });
+    }
+
+    // Register an on focus event handler for when a code cell is selected to update
+    // what keyboard shortcut commands should work.
+    // This is a workaround to fix a regression that happened with multiple
+    // editor windows since Monaco 0.32.0 
+    // https://github.com/microsoft/monaco-editor/issues/2947
+    editor.onDidFocusEditorText(addWebRKeyboardShortCutCommands);
+
+    // Register an on change event for when new code is added to the editor window
+    editor.onDidContentSizeChange(updateHeight);
+
+    // Manually re-update height to account for the content we inserted into the call
+    updateHeight();
+
+    // Store the editor instance in the global dictionary
+    qwebrEditorInstances[editor.__qwebrCounter] = editor;
+
+  });
+
+  // Add a click event listener to the run button
+  runButton.onclick = function () {
+    qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+  };
+
+  // Add a click event listener to the reset button
+  copyButton.onclick = function () {
+    // Retrieve current code data
+    const data = editor.getValue();
+    
+    // Write code data onto the clipboard.
+    navigator.clipboard.writeText(data || "");
+  };
+  
+  // Add a click event listener to the copy button
+  resetButton.onclick = function () {
+    editor.setValue(editor.__qwebrinitialCode);
+  };
+  
+}
+</script>
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -441,10 +2279,10 @@ Why is Plant Layout Important?
 <caption>Overview of Facility Layout Types</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Layout Type</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Also Known As</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Best For</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Example Industries</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Layout Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Also Known As</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Best For</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Example Industries</th>
 </tr>
 </thead>
 <tbody>
@@ -523,31 +2361,31 @@ Why is Plant Layout Important?
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Equipment</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Equipment</td>
 <td style="text-align: left;">General-purpose machines</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Labor</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Labor</td>
 <td style="text-align: left;">Skilled workers required</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Flexibility</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Flexibility</td>
 <td style="text-align: left;">High - can handle variety</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Processing Speed</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Processing Speed</td>
 <td style="text-align: left;">Slower due to varied routing</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Material Handling</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Material Handling</td>
 <td style="text-align: left;">Higher costs (complex paths)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Scheduling</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Scheduling</td>
 <td style="text-align: left;">Complex - different routes</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Space Requirements</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Space Requirements</td>
 <td style="text-align: left;">Higher - WIP inventory storage</td>
 </tr>
 </tbody>
@@ -592,30 +2430,30 @@ Discussion Question: Can you identify a process layout in your daily life?
 <caption>Product Layout: Advantages vs. Disadvantages</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Advantage</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Disadvantage</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Advantage</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Disadvantage</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">High production rate</td>
-<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">High initial investment</td>
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 1) !important;">High production rate</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 1) !important;">High initial investment</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Low unit cost</td>
-<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Low flexibility</td>
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 1) !important;">Low unit cost</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 1) !important;">Low flexibility</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Low material handling</td>
-<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Line stops affect all</td>
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 1) !important;">Low material handling</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 1) !important;">Line stops affect all</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Simple scheduling</td>
-<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Monotonous work</td>
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 1) !important;">Simple scheduling</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 1) !important;">Monotonous work</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Less WIP inventory</td>
-<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Requires balanced workloads</td>
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 1) !important;">Less WIP inventory</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 1) !important;">Requires balanced workloads</td>
 </tr>
 </tbody>
 </table>
@@ -699,17 +2537,17 @@ Challenge Question: Managing a Fixed-Position Layout
 <caption>From-To Matrix: Loads per Day Between Departments</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;"></th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Receiving</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Machining</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Assembly</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Painting</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Shipping</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Receiving</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Machining</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Assembly</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Painting</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Shipping</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Receiving</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Receiving</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;">100</td>
 <td style="text-align: left;">50</td>
@@ -717,7 +2555,7 @@ Challenge Question: Managing a Fixed-Position Layout
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Machining</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Machining</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">-</td>
 <td style="text-align: left;">200</td>
@@ -725,7 +2563,7 @@ Challenge Question: Managing a Fixed-Position Layout
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Assembly</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Assembly</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">-</td>
@@ -733,7 +2571,7 @@ Challenge Question: Managing a Fixed-Position Layout
 <td style="text-align: left;">60</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Painting</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Painting</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">0</td>
@@ -741,7 +2579,7 @@ Challenge Question: Managing a Fixed-Position Layout
 <td style="text-align: left;">150</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Shipping</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Shipping</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: left;">0</td>
@@ -772,6 +2610,7 @@ Challenge Question: Managing a Fixed-Position Layout
 </div>
 </div>
 </div>
+<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> examples further on in this chapter for yourself.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Load-Distance scores for both layouts</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># From-To data: Receiving-&gt;Machining=100, Machining-&gt;Assembly=200,</span></span>
@@ -779,23 +2618,21 @@ Challenge Question: Managing a Fixed-Position Layout
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Layout A distances (linear): all adjacent = 1 unit</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>layout_A_score <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">200</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">150</span><span class="sc">*</span><span class="dv">1</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Layout A Total Load-Distance:"</span>, layout_A_score, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Layout A Total Load-Distance:"</span>, layout_A_score, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Layout B distances (compact): most departments closer together</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Receiving to Machining = 1.12 (diagonal)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Machining to Assembly = 1</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Assembly to Painting = 1.12 (diagonal)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Painting to Shipping = 1</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>layout_B_score <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span><span class="fl">1.12</span> <span class="sc">+</span> <span class="dv">200</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span><span class="fl">1.12</span> <span class="sc">+</span> <span class="dv">150</span><span class="sc">*</span><span class="dv">1</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Layout B Total Load-Distance:"</span>, <span class="fu">round</span>(layout_B_score, <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Layout A is better by:"</span>, <span class="fu">round</span>(layout_B_score <span class="sc">-</span> layout_A_score, <span class="dv">1</span>), <span class="st">"units"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Layout A Total Load-Distance: 550 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layout B distances (compact): most departments closer together</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Receiving to Machining = 1.12 (diagonal)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Machining to Assembly = 1</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Assembly to Painting = 1.12 (diagonal)</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Painting to Shipping = 1</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>layout_B_score <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span><span class="fl">1.12</span> <span class="sc">+</span> <span class="dv">200</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span><span class="fl">1.12</span> <span class="sc">+</span> <span class="dv">150</span><span class="sc">*</span><span class="dv">1</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Layout B Total Load-Distance:"</span>, <span class="fu">round</span>(layout_B_score, <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Layout B Total Load-Distance: 574 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Layout A is better by:"</span>, <span class="fu">round</span>(layout_B_score <span class="sc">-</span> layout_A_score, <span class="dv">1</span>), <span class="st">"units"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
+<pre><code>Layout A Total Load-Distance: 550 
+Layout B Total Load-Distance: 574 
+
 Layout A is better by: 24 units</code></pre>
 </div>
 </div>
@@ -841,45 +2678,45 @@ Why does the linear layout win in this case?
 <caption>Pizza Assembly Tasks</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Task</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Time (sec)</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Predecessors</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Task</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Time (sec)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Predecessors</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">A</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">A</td>
 <td style="text-align: left;">Roll dough</td>
 <td style="text-align: right;">40</td>
 <td style="text-align: left;">-</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">B</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">B</td>
 <td style="text-align: left;">Spread sauce</td>
 <td style="text-align: right;">25</td>
 <td style="text-align: left;">A</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">C</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">C</td>
 <td style="text-align: left;">Add cheese</td>
 <td style="text-align: right;">20</td>
 <td style="text-align: left;">B</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">D</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">D</td>
 <td style="text-align: left;">Add toppings</td>
 <td style="text-align: right;">35</td>
 <td style="text-align: left;">B</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">E</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">E</td>
 <td style="text-align: left;">Season</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">C, D</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">F</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">F</td>
 <td style="text-align: left;">Box pizza</td>
 <td style="text-align: right;">30</td>
 <td style="text-align: left;">E</td>
@@ -901,83 +2738,9 @@ Why does the linear layout win in this case?
 </section>
 <section id="line-balancing-calculation" class="level3" data-number="4.8.4">
 <h3 data-number="4.8.4" class="anchored" data-anchor-id="line-balancing-calculation"><span class="header-section-number">4.8.4</span> Line Balancing Calculation</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Given data</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>total_task_time <span class="ot">&lt;-</span> <span class="dv">40</span> <span class="sc">+</span> <span class="dv">25</span> <span class="sc">+</span> <span class="dv">20</span> <span class="sc">+</span> <span class="dv">35</span> <span class="sc">+</span> <span class="dv">15</span> <span class="sc">+</span> <span class="dv">30</span>  <span class="co"># seconds</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>desired_output <span class="ot">&lt;-</span> <span class="dv">60</span>  <span class="co"># pizzas per hour</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>available_time <span class="ot">&lt;-</span> <span class="dv">3600</span>  <span class="co"># seconds per hour</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Calculate Cycle Time</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>cycle_time <span class="ot">&lt;-</span> available_time <span class="sc">/</span> desired_output</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cycle Time:"</span>, cycle_time, <span class="st">"seconds per pizza</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Cycle Time: 60 seconds per pizza</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Calculate Theoretical Minimum Stations</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>TM <span class="ot">&lt;-</span> total_task_time <span class="sc">/</span> cycle_time</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Theoretical Minimum Stations:"</span>, TM, <span class="st">"="</span>, <span class="fu">ceiling</span>(TM), <span class="st">"stations</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Theoretical Minimum Stations: 2.75 = 3 stations</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Assign tasks to stations (one possible solution)</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Workstation Assignments ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
---- Workstation Assignments ---</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 1: A (40s) + B (25s) = 65s &gt; 60s ... EXCEEDS!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Station 1: A (40s) + B (25s) = 65s &gt; 60s ... EXCEEDS!</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Let's try again:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Let's try again:</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 1: A (40s) = 40s [Idle: 20s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Station 1: A (40s) = 40s [Idle: 20s]</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 2: B (25s) + D (35s) = 60s [Idle: 0s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Station 2: B (25s) + D (35s) = 60s [Idle: 0s]</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 3: C (20s) + E (15s) + F (30s) = 65s &gt; 60s... EXCEEDS!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Station 3: C (20s) + E (15s) + F (30s) = 65s &gt; 60s... EXCEEDS!</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Revised:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Revised:</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 3: C (20s) + E (15s) = 35s [Idle: 25s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Station 3: C (20s) + E (15s) = 35s [Idle: 25s]</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 4: F (30s) = 30s [Idle: 30s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Station 4: F (30s) = 30s [Idle: 30s]</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># With 4 stations</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>n_stations <span class="ot">&lt;-</span> <span class="dv">4</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>efficiency <span class="ot">&lt;-</span> (total_task_time <span class="sc">/</span> (n_stations <span class="sc">*</span> cycle_time)) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Results ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
---- Results ---</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Number of Stations:"</span>, n_stations, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Number of Stations: 4 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Line Efficiency:"</span>, <span class="fu">round</span>(efficiency, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Line Efficiency: 68.8 %</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Balance Delay (Idle Time):"</span>, <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">-</span> efficiency, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Balance Delay (Idle Time): 31.2 %</code></pre>
-</div>
-</div>
+<p>This one is live — edit the numbers and re-run it to see how the results change.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <details>
 <summary>
 Try It Yourself: Can you find a better balance?
@@ -1030,39 +2793,39 @@ Try It Yourself: Can you find a better balance?
 <caption>Office Layout Comparison</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Aspect</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Open Plan</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Traditional/Closed</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Aspect</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Open Plan</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Traditional/Closed</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Space</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Space</td>
 <td style="text-align: left;">Shared workspaces</td>
 <td style="text-align: left;">Private offices</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Walls</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Walls</td>
 <td style="text-align: left;">Partitions/dividers</td>
 <td style="text-align: left;">Permanent walls</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Flexibility</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Flexibility</td>
 <td style="text-align: left;">High - easy to reconfigure</td>
 <td style="text-align: left;">Low - expensive to change</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Communication</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Communication</td>
 <td style="text-align: left;">Excellent</td>
 <td style="text-align: left;">Limited</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Privacy</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Privacy</td>
 <td style="text-align: left;">Low</td>
 <td style="text-align: left;">High</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Cost</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 1) !important;">Cost</td>
 <td style="text-align: left;">Lower</td>
 <td style="text-align: left;">Higher</td>
 </tr>
@@ -1139,39 +2902,39 @@ Click to expand: Office Ergonomics Best Practices
 <caption>Food Processing Layout Design Principles</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Principle</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Regulatory Reference</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Principle</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Regulatory Reference</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Linear Flow</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Linear Flow</td>
 <td style="text-align: left;">Raw materials → Processing → Packaging (no backtracking)</td>
 <td style="text-align: left;">FSMA</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Zone Separation</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Zone Separation</td>
 <td style="text-align: left;">Physical barriers between raw and ready-to-eat areas</td>
 <td style="text-align: left;">HACCP</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Cleanability</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Cleanability</td>
 <td style="text-align: left;">Smooth, non-porous surfaces; rounded corners; proper drainage</td>
 <td style="text-align: left;">3-A Standards</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Temperature Control</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Temperature Control</td>
 <td style="text-align: left;">Maintain cold chain; separate refrigerated zones</td>
 <td style="text-align: left;">FDA 21 CFR 110</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Sanitary Design</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Sanitary Design</td>
 <td style="text-align: left;">Handwashing stations, foot baths, air curtains at zone transitions</td>
 <td style="text-align: left;">USDA FSIS</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Allergen Control</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Allergen Control</td>
 <td style="text-align: left;">Dedicated lines or thorough cleaning between allergen products</td>
 <td style="text-align: left;">FALCPA</td>
 </tr>
@@ -1248,34 +3011,34 @@ Video: Boeing 737 Assembly
 <caption>JIT/JIS Requirements and Layout Implications</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Requirement</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Typical Standard</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Layout Impact</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Requirement</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Typical Standard</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Layout Impact</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Delivery Window</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Delivery Window</td>
 <td style="text-align: left;">±30 minutes of scheduled time</td>
 <td style="text-align: left;">Dedicated shipping lane, staging area near dock</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Sequence Accuracy</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Sequence Accuracy</td>
 <td style="text-align: left;">100% (0 sequence errors)</td>
 <td style="text-align: left;">Pick-to-light systems, visual management</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Quality Level</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Quality Level</td>
 <td style="text-align: left;">0 PPM target (Six Sigma)</td>
 <td style="text-align: left;">Inline inspection, mistake-proofing (poka-yoke)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Packaging</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Packaging</td>
 <td style="text-align: left;">Returnable containers to line side</td>
 <td style="text-align: left;">Container cleaning/storage area needed</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Traceability</td>
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Traceability</td>
 <td style="text-align: left;">Full lot/serial traceability required</td>
 <td style="text-align: left;">Barcode/RFID scanning stations throughout</td>
 </tr>
@@ -1300,51 +3063,51 @@ Video: Boeing 737 Assembly
 <caption>NIOSH Lifting Equation Factors</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Factor</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Name</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Formula</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Factor</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Name</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Formula</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">LC</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">LC</td>
 <td style="text-align: left;">Load Constant</td>
 <td style="text-align: left;">51 lb (23 kg)</td>
 <td style="text-align: left;">Maximum weight under ideal conditions</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">HM</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">HM</td>
 <td style="text-align: left;">Horizontal Multiplier</td>
 <td style="text-align: left;">10/H</td>
 <td style="text-align: left;">H = horizontal distance from spine to load (inches)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">VM</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">VM</td>
 <td style="text-align: left;">Vertical Multiplier</td>
 <td style="text-align: left;">1 - 0.0075&amp;#124;V - 30&amp;#124;</td>
 <td style="text-align: left;">V = vertical height of hands at start (inches)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">DM</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">DM</td>
 <td style="text-align: left;">Distance Multiplier</td>
 <td style="text-align: left;">0.82 + 1.8/D</td>
 <td style="text-align: left;">D = vertical travel distance (inches)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">AM</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">AM</td>
 <td style="text-align: left;">Asymmetric Multiplier</td>
 <td style="text-align: left;">1 - 0.0032A</td>
 <td style="text-align: left;">A = angle of asymmetry (degrees)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">FM</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">FM</td>
 <td style="text-align: left;">Frequency Multiplier</td>
 <td style="text-align: left;">Table lookup</td>
 <td style="text-align: left;">Based on lift frequency and duration</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">CM</td>
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 1) !important;">CM</td>
 <td style="text-align: left;">Coupling Multiplier</td>
 <td style="text-align: left;">Table lookup</td>
 <td style="text-align: left;">Based on grip quality (good/fair/poor)</td>
@@ -1363,26 +3126,26 @@ Video: Boeing 737 Assembly
 <caption>Lifting Index Interpretation</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Lifting Index</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Risk Level</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Action Required</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Lifting Index</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Risk Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Action Required</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">LI ≤ 1.0</td>
-<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Low</td>
-<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Task is acceptable for most workers</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">LI ≤ 1.0</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Low</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Task is acceptable for most workers</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">1.0 &lt; LI ≤ 3.0</td>
-<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Moderate</td>
-<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Task poses risk; engineering controls recommended</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 1) !important;">1.0 &lt; LI ≤ 3.0</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 1) !important;">Moderate</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 1) !important;">Task poses risk; engineering controls recommended</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">LI &gt; 3.0</td>
-<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High</td>
-<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Task is unacceptable; immediate redesign required</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">LI &gt; 3.0</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">High</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Task is unacceptable; immediate redesign required</td>
 </tr>
 </tbody>
 </table>
@@ -1391,80 +3154,9 @@ Video: Boeing 737 Assembly
 </section>
 <section id="niosh-lifting-example" class="level3" data-number="4.13.3">
 <h3 data-number="4.13.3" class="anchored" data-anchor-id="niosh-lifting-example"><span class="header-section-number">4.13.3</span> NIOSH Lifting Example</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Worker lifts 35 lb boxes from pallet to conveyor</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Conditions:</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - Horizontal distance (H) = 15 inches</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># - Vertical height at start (V) = 10 inches</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - Vertical travel distance (D) = 20 inches</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co"># - Asymmetry angle (A) = 30 degrees</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co"># - Frequency = 4 lifts per minute, 2 hours</span></span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># - Coupling = Fair (handles present)</span></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>LC <span class="ot">&lt;-</span> <span class="dv">51</span>  <span class="co"># Load constant (lb)</span></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate multipliers</span></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>HM <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="sc">/</span> <span class="dv">15</span>  <span class="co"># Horizontal multiplier</span></span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>VM <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.0075</span> <span class="sc">*</span> <span class="fu">abs</span>(<span class="dv">10</span> <span class="sc">-</span> <span class="dv">30</span>)  <span class="co"># Vertical multiplier</span></span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>DM <span class="ot">&lt;-</span> <span class="fl">0.82</span> <span class="sc">+</span> (<span class="fl">1.8</span> <span class="sc">/</span> <span class="dv">20</span>)  <span class="co"># Distance multiplier</span></span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>AM <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.0032</span> <span class="sc">*</span> <span class="dv">30</span>  <span class="co"># Asymmetric multiplier</span></span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>FM <span class="ot">&lt;-</span> <span class="fl">0.72</span>  <span class="co"># From NIOSH table: 4 lifts/min, 1-2 hours</span></span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>CM <span class="ot">&lt;-</span> <span class="fl">0.95</span>  <span class="co"># Fair coupling</span></span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Multiplier Values:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Multiplier Values:</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  HM (Horizontal):"</span>, <span class="fu">round</span>(HM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  HM (Horizontal): 0.667 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  VM (Vertical):"</span>, <span class="fu">round</span>(VM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  VM (Vertical): 0.85 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  DM (Distance):"</span>, <span class="fu">round</span>(DM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  DM (Distance): 0.91 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  AM (Asymmetry):"</span>, <span class="fu">round</span>(AM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  AM (Asymmetry): 0.904 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  FM (Frequency):"</span>, FM, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  FM (Frequency): 0.72 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  CM (Coupling):"</span>, CM, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  CM (Coupling): 0.95 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate RWL</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>RWL <span class="ot">&lt;-</span> LC <span class="sc">*</span> HM <span class="sc">*</span> VM <span class="sc">*</span> DM <span class="sc">*</span> AM <span class="sc">*</span> FM <span class="sc">*</span> CM</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Recommended Weight Limit (RWL):"</span>, <span class="fu">round</span>(RWL, <span class="dv">1</span>), <span class="st">"lb</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Recommended Weight Limit (RWL): 16.3 lb</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Lifting Index</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>actual_weight <span class="ot">&lt;-</span> <span class="dv">35</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>LI <span class="ot">&lt;-</span> actual_weight <span class="sc">/</span> RWL</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Lifting Index (LI):"</span>, <span class="fu">round</span>(LI, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Lifting Index (LI): 2.15 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (LI <span class="sc">&lt;=</span> <span class="fl">1.0</span>) {</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Risk Level: LOW - Task is acceptable</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (LI <span class="sc">&lt;=</span> <span class="fl">3.0</span>) {</span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Risk Level: MODERATE - Consider engineering controls</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Risk Level: HIGH - Immediate redesign required</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Risk Level: MODERATE - Consider engineering controls</code></pre>
-</div>
-</div>
+<p>Also live — try changing the box weight, distances, or lift frequency below and re-running.</p>
+<div id="qwebr-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <details>
 <summary>
 Discussion Question: Reducing the Lifting Index
@@ -1528,34 +3220,34 @@ Discussion Question: Reducing the Lifting Index
 <caption>Modern Flexible Layout Trends</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Trend</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Benefits</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Trend</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Benefits</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Modular Workstations</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Modular Workstations</td>
 <td style="text-align: left;">Pre-built workstation modules that can be relocated in hours</td>
 <td style="text-align: left;">Rapid response to volume changes, easy expansion</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Reconfigurable Cells</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Reconfigurable Cells</td>
 <td style="text-align: left;">Cells with standardized machine interfaces for quick changeover</td>
 <td style="text-align: left;">Switch between product families without major capital</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Mobile Equipment</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Mobile Equipment</td>
 <td style="text-align: left;">Equipment on wheels or air bearings for rapid repositioning</td>
 <td style="text-align: left;">Eliminate fixed foundations, reduce floor damage</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Flexible Utilities</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Flexible Utilities</td>
 <td style="text-align: left;">Overhead utility drops and floor trenches allow equipment mobility</td>
 <td style="text-align: left;">No hardwired constraints on equipment placement</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Digital Layout Planning</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Digital Layout Planning</td>
 <td style="text-align: left;">Digital twins enable virtual layout testing before physical changes</td>
 <td style="text-align: left;">Reduce trial-and-error, optimize before implementation</td>
 </tr>
@@ -1586,33 +3278,33 @@ Discussion Question: Reducing the Lifting Index
 <caption>AGV/AMR Layout Planning Guidelines</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Consideration</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Design Guidelines</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Consideration</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Design Guidelines</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Route Design</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Route Design</td>
 <td style="text-align: left;">Unidirectional loops preferred; minimize intersections; avoid steep grades</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Charging Locations</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Charging Locations</td>
 <td style="text-align: left;">Opportunity charging at pickup/dropoff points; dedicated charging bays for breaks</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Traffic Intersections</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Traffic Intersections</td>
 <td style="text-align: left;">Yield zones, traffic signals, or elevation changes at crossings</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Floor Requirements</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Floor Requirements</td>
 <td style="text-align: left;">Smooth, level surfaces; magnetic tape or QR codes for navigation; no oil/water</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Safety Zones</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Safety Zones</td>
 <td style="text-align: left;">Minimum 1m clearance from pedestrian paths; light curtains at crossings</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Staging Areas</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Staging Areas</td>
 <td style="text-align: left;">Buffer areas for queue management; waiting positions clear of traffic</td>
 </tr>
 </tbody>
@@ -1642,39 +3334,39 @@ Video: AGV Systems in Modern Warehouses
 <caption>Plant Layout Planning Software Comparison</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Software</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Primary Use</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Key Features</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Typical Users</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Software</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Primary Use</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Key Features</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Typical Users</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">AutoCAD Factory Design Suite</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">AutoCAD Factory Design Suite</td>
 <td style="text-align: left;">2D/3D CAD layout design</td>
 <td style="text-align: left;">Extensive equipment libraries, interference checking, material flow analysis</td>
 <td style="text-align: left;">Facility engineers, architects</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">FlexSim</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">FlexSim</td>
 <td style="text-align: left;">3D discrete event simulation</td>
 <td style="text-align: left;">Drag-and-drop modeling, VR capability, real-time 3D animation</td>
 <td style="text-align: left;">Industrial engineers, consultants</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Arena</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Arena</td>
 <td style="text-align: left;">Process simulation</td>
 <td style="text-align: left;">Statistical analysis, what-if scenarios, bottleneck identification</td>
 <td style="text-align: left;">Process engineers, academics</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Plant Simulation (Siemens)</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Plant Simulation (Siemens)</td>
 <td style="text-align: left;">Digital factory simulation</td>
 <td style="text-align: left;">Full Siemens integration, AGV simulation, energy analysis</td>
 <td style="text-align: left;">Large manufacturers (automotive, aerospace)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">SketchUp + Extensions</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">SketchUp + Extensions</td>
 <td style="text-align: left;">Quick 3D visualization</td>
 <td style="text-align: left;">Low cost, easy learning curve, walkthrough capability</td>
 <td style="text-align: left;">Small businesses, initial concepts</td>
@@ -1877,49 +3569,49 @@ Question 5: A warehouse has three product categories with the following pick fre
 <caption>Chapter 4 Summary: Plant Layout and Facility Design</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Topic</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Key Concepts</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Key Formulas</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Key Concepts</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 1) !important;">Key Formulas</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Layout Types</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Layout Types</td>
 <td style="text-align: left;">Fixed-position, Process, Product, Hybrid/Cellular - selected based on volume and variety</td>
 <td style="text-align: left;">Layout selection: Volume × Variety matrix</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Process Layout Design</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Process Layout Design</td>
 <td style="text-align: left;">From-To matrix, Load-Distance model, Block plans, Closeness relationships</td>
 <td style="text-align: left;">Cost = Σ Lij × Dij × C</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Product Layout (Line Balancing)</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Product Layout (Line Balancing)</td>
 <td style="text-align: left;">Cycle time, Theoretical minimum stations, Precedence diagrams, Line efficiency</td>
 <td style="text-align: left;">C = Time/Output; TM = Σti/C; Eff = Σti/(n×C)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Cellular Manufacturing</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Cellular Manufacturing</td>
 <td style="text-align: left;">Group Technology, Part families, Self-contained cells, Reduced material handling</td>
 <td style="text-align: left;">Cell efficiency = Output/(Input × Time)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Warehouse Design</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Warehouse Design</td>
 <td style="text-align: left;">ABC analysis, High-frequency items near dock, Pick path optimization</td>
 <td style="text-align: left;">Travel distance = Σ(picks × distance)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Ergonomics</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Ergonomics</td>
 <td style="text-align: left;">NIOSH lifting equation, RWL, Lifting Index, Work zones, Workstation design</td>
 <td style="text-align: left;">RWL = LC×HM×VM×DM×AM×FM×CM; LI = Weight/RWL</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Modern Trends</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Modern Trends</td>
 <td style="text-align: left;">Flexible layouts, Industry 4.0, AGV/AMR planning, Digital twins</td>
 <td style="text-align: left;">ROI = (Savings - Investment)/Investment</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Simulation</td>
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 1) !important;">Simulation</td>
 <td style="text-align: left;">FlexSim, Arena, Plant Simulation - virtual testing before physical changes</td>
 <td style="text-align: left;">Simulation accuracy &gt; 90% typical</td>
 </tr>
@@ -2357,8 +4049,124 @@ Question 5: A warehouse has three product categories with the following pick fre
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/04-Plant-Layout.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="module">
+// Handle cell initialization initialization
+qwebrCellDetails.map(
+  (entry) => {
+    // Handle the creation of the element
+    qwebrCreateHTMLElement(entry);
+    // In the event of interactive, initialize the monaco editor
+    if (entry.options.context == EvalTypes.Interactive) {
+      qwebrCreateMonacoEditorInstance(entry);
+    }
+  }
+);
+
+// Identify non-interactive cells (in order)
+const filteredEntries = qwebrCellDetails.filter(entry => {
+  const contextOption = entry.options && entry.options.context;
+  return ['output', 'setup'].includes(contextOption) || (contextOption == "interactive" && entry.options && entry.options.autorun === 'true');
+});
+
+// Condition non-interactive cells to only be run after webR finishes its initialization.
+qwebrInstance.then(
+  async () => {
+    const nHiddenCells = filteredEntries.length;
+    var currentHiddenCell = 0;
+
+
+    // Modify button state
+    qwebrSetInteractiveButtonState(`🟡 Running hidden code cells ...`, false);
+
+    // Begin processing non-interactive sections
+    // Due to the iteration policy, we must use a for() loop.
+    // Otherwise, we would need to switch to using reduce with an empty
+    // starting promise
+    for (const entry of filteredEntries) {
+
+      // Determine cell being examined
+      currentHiddenCell = currentHiddenCell + 1;
+      const formattedMessage = `Evaluating hidden cell ${currentHiddenCell} out of ${nHiddenCells}`;
+
+      // Update the document status header
+      if (qwebrShowStartupMessage) {
+        qwebrUpdateStatusHeader(formattedMessage);
+      }
+
+      // Display the update in non-active areas
+      qwebrUpdateStatusMessage(formattedMessage);
+
+      // Extract details on the active cell
+      const evalType = entry.options.context;
+      const cellCode = entry.code;
+      const qwebrCounter = entry.id;
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        activeContainer.classList.remove('qwebr-cell-needs-evaluation');
+        activeContainer.classList.add('qwebr-cell-evaluated');
+
+        // Update status on the code cell
+        const activeStatus = document.getElementById(`qwebr-status-text-${qwebrCounter}`);
+        activeStatus.innerText = " Evaluating hidden code cell...";
+        activeStatus.classList.remove('qwebr-cell-needs-evaluation');
+        activeStatus.classList.add('qwebr-cell-evaluated');
+      }
+
+      switch (evalType) {
+        case 'interactive':
+          // TODO: Make this more standardized.
+          // At the moment, we're overriding the interactive status update by pretending its
+          // output-like. 
+          const tempOptions = entry.options;
+          tempOptions["context"] = "output"
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, tempOptions);
+          break;
+        case 'output':
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, entry.options);
+          break;
+        case 'setup':
+          const activeDiv = document.getElementById(`qwebr-noninteractive-setup-area-${qwebrCounter}`);
+
+          // Store code in history
+          qwebrLogCodeToHistory(cellCode, entry.options);
+
+          // Run the code in a non-interactive state with all output thrown away
+          await mainWebR.evalRVoid(`${cellCode}`);
+          break;
+        default: 
+          break; 
+      }
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        // Disable visibility
+        activeContainer.style.visibility = 'hidden';
+        activeContainer.style.display = 'none';
+      }
+    }
+  }
+).then(
+  () => {
+    // Release document status as ready
+
+    if (qwebrShowStartupMessage) {
+      qwebrStartupMessage.innerText = "🟢 Ready!"
+    }
+  
+    qwebrSetInteractiveButtonState(
+      `<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>`, 
+      true
+    );  
+  }
+);
+</script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/04-Plant-Layout.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+</body></html>
