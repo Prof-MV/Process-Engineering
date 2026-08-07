@@ -1,0 +1,2578 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>15&nbsp; Troubleshooting and Root Cause Analysis – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./16-AnyLogic-Simulation.html" rel="next">
+<link href="./14-PFMEA.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./15-Troubleshooting-RCA.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">15.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-troubleshooting" id="toc-introduction-to-troubleshooting" class="nav-link" data-scroll-target="#introduction-to-troubleshooting"><span class="header-section-number">15.2</span> Introduction to Troubleshooting</a>
+  <ul class="collapse">
+  <li><a href="#the-cost-of-downtime" id="toc-the-cost-of-downtime" class="nav-link" data-scroll-target="#the-cost-of-downtime"><span class="header-section-number">15.2.1</span> The Cost of Downtime</a></li>
+  <li><a href="#reactive-vs.-proactive-problem-solving" id="toc-reactive-vs.-proactive-problem-solving" class="nav-link" data-scroll-target="#reactive-vs.-proactive-problem-solving"><span class="header-section-number">15.2.2</span> Reactive vs.&nbsp;Proactive Problem Solving</a></li>
+  </ul></li>
+  <li><a href="#systematic-troubleshooting-methodology" id="toc-systematic-troubleshooting-methodology" class="nav-link" data-scroll-target="#systematic-troubleshooting-methodology"><span class="header-section-number">15.3</span> Systematic Troubleshooting Methodology</a>
+  <ul class="collapse">
+  <li><a href="#the-dmaic-troubleshooting-framework" id="toc-the-dmaic-troubleshooting-framework" class="nav-link" data-scroll-target="#the-dmaic-troubleshooting-framework"><span class="header-section-number">15.3.1</span> The DMAIC Troubleshooting Framework</a></li>
+  <li><a href="#step-1-define-the-problem" id="toc-step-1-define-the-problem" class="nav-link" data-scroll-target="#step-1-define-the-problem"><span class="header-section-number">15.3.2</span> Step 1: Define the Problem</a></li>
+  <li><a href="#problem-statement-template" id="toc-problem-statement-template" class="nav-link" data-scroll-target="#problem-statement-template"><span class="header-section-number">15.3.3</span> Problem Statement Template</a></li>
+  <li><a href="#step-2-gather-data-and-observations" id="toc-step-2-gather-data-and-observations" class="nav-link" data-scroll-target="#step-2-gather-data-and-observations"><span class="header-section-number">15.3.4</span> Step 2: Gather Data and Observations</a></li>
+  <li><a href="#the-change-analysis-approach" id="toc-the-change-analysis-approach" class="nav-link" data-scroll-target="#the-change-analysis-approach"><span class="header-section-number">15.3.5</span> The “Change Analysis” Approach</a></li>
+  </ul></li>
+  <li><a href="#understanding-root-cause-vs.-symptoms" id="toc-understanding-root-cause-vs.-symptoms" class="nav-link" data-scroll-target="#understanding-root-cause-vs.-symptoms"><span class="header-section-number">15.4</span> Understanding Root Cause vs.&nbsp;Symptoms</a>
+  <ul class="collapse">
+  <li><a href="#the-causation-hierarchy" id="toc-the-causation-hierarchy" class="nav-link" data-scroll-target="#the-causation-hierarchy"><span class="header-section-number">15.4.1</span> The Causation Hierarchy</a></li>
+  <li><a href="#why-finding-root-cause-matters" id="toc-why-finding-root-cause-matters" class="nav-link" data-scroll-target="#why-finding-root-cause-matters"><span class="header-section-number">15.4.2</span> Why Finding Root Cause Matters</a></li>
+  </ul></li>
+  <li><a href="#the-5-whys-technique" id="toc-the-5-whys-technique" class="nav-link" data-scroll-target="#the-5-whys-technique"><span class="header-section-number">15.5</span> The 5 Whys Technique</a>
+  <ul class="collapse">
+  <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works"><span class="header-section-number">15.5.1</span> How It Works</a></li>
+  <li><a href="#whys-example-production-line-stoppage" id="toc-whys-example-production-line-stoppage" class="nav-link" data-scroll-target="#whys-example-production-line-stoppage"><span class="header-section-number">15.5.2</span> 5 Whys Example: Production Line Stoppage</a></li>
+  <li><a href="#whys-template" id="toc-whys-template" class="nav-link" data-scroll-target="#whys-template"><span class="header-section-number">15.5.3</span> 5 Whys Template</a></li>
+  <li><a href="#multiple-branches-in-5-whys" id="toc-multiple-branches-in-5-whys" class="nav-link" data-scroll-target="#multiple-branches-in-5-whys"><span class="header-section-number">15.5.4</span> Multiple Branches in 5 Whys</a></li>
+  </ul></li>
+  <li><a href="#ishikawa-fishbone-diagram" id="toc-ishikawa-fishbone-diagram" class="nav-link" data-scroll-target="#ishikawa-fishbone-diagram"><span class="header-section-number">15.6</span> Ishikawa (Fishbone) Diagram</a>
+  <ul class="collapse">
+  <li><a href="#the-6m-categories" id="toc-the-6m-categories" class="nav-link" data-scroll-target="#the-6m-categories"><span class="header-section-number">15.6.1</span> The 6M Categories</a></li>
+  <li><a href="#constructing-a-fishbone-diagram" id="toc-constructing-a-fishbone-diagram" class="nav-link" data-scroll-target="#constructing-a-fishbone-diagram"><span class="header-section-number">15.6.2</span> Constructing a Fishbone Diagram</a></li>
+  <li><a href="#fishbone-diagram-best-practices" id="toc-fishbone-diagram-best-practices" class="nav-link" data-scroll-target="#fishbone-diagram-best-practices"><span class="header-section-number">15.6.3</span> Fishbone Diagram Best Practices</a></li>
+  <li><a href="#video-how-to-create-a-fishbone-diagram" id="toc-video-how-to-create-a-fishbone-diagram" class="nav-link" data-scroll-target="#video-how-to-create-a-fishbone-diagram"><span class="header-section-number">15.6.4</span> Video: How to Create a Fishbone Diagram</a></li>
+  </ul></li>
+  <li><a href="#fault-tree-analysis-fta" id="toc-fault-tree-analysis-fta" class="nav-link" data-scroll-target="#fault-tree-analysis-fta"><span class="header-section-number">15.7</span> Fault Tree Analysis (FTA)</a>
+  <ul class="collapse">
+  <li><a href="#fta-symbols" id="toc-fta-symbols" class="nav-link" data-scroll-target="#fta-symbols"><span class="header-section-number">15.7.1</span> FTA Symbols</a></li>
+  <li><a href="#fta-example-pump-fails-to-deliver-flow" id="toc-fta-example-pump-fails-to-deliver-flow" class="nav-link" data-scroll-target="#fta-example-pump-fails-to-deliver-flow"><span class="header-section-number">15.7.2</span> FTA Example: Pump Fails to Deliver Flow</a></li>
+  <li><a href="#calculating-probability-with-fta" id="toc-calculating-probability-with-fta" class="nav-link" data-scroll-target="#calculating-probability-with-fta"><span class="header-section-number">15.7.3</span> Calculating Probability with FTA</a></li>
+  </ul></li>
+  <li><a href="#pareto-analysis" id="toc-pareto-analysis" class="nav-link" data-scroll-target="#pareto-analysis"><span class="header-section-number">15.8</span> Pareto Analysis</a>
+  <ul class="collapse">
+  <li><a href="#creating-a-pareto-chart" id="toc-creating-a-pareto-chart" class="nav-link" data-scroll-target="#creating-a-pareto-chart"><span class="header-section-number">15.8.1</span> Creating a Pareto Chart</a></li>
+  <li><a href="#interpreting-pareto-analysis" id="toc-interpreting-pareto-analysis" class="nav-link" data-scroll-target="#interpreting-pareto-analysis"><span class="header-section-number">15.8.2</span> Interpreting Pareto Analysis</a></li>
+  <li><a href="#stratified-pareto-analysis" id="toc-stratified-pareto-analysis" class="nav-link" data-scroll-target="#stratified-pareto-analysis"><span class="header-section-number">15.8.3</span> Stratified Pareto Analysis</a></li>
+  </ul></li>
+  <li><a href="#isis-not-analysis" id="toc-isis-not-analysis" class="nav-link" data-scroll-target="#isis-not-analysis"><span class="header-section-number">15.9</span> Is/Is Not Analysis</a>
+  <ul class="collapse">
+  <li><a href="#isis-not-matrix" id="toc-isis-not-matrix" class="nav-link" data-scroll-target="#isis-not-matrix"><span class="header-section-number">15.9.1</span> Is/Is Not Matrix</a></li>
+  <li><a href="#key-insights-from-isis-not-analysis" id="toc-key-insights-from-isis-not-analysis" class="nav-link" data-scroll-target="#key-insights-from-isis-not-analysis"><span class="header-section-number">15.9.2</span> Key Insights from Is/Is Not Analysis</a></li>
+  </ul></li>
+  <li><a href="#the-8d-problem-solving-methodology" id="toc-the-8d-problem-solving-methodology" class="nav-link" data-scroll-target="#the-8d-problem-solving-methodology"><span class="header-section-number">15.10</span> The 8D Problem-Solving Methodology</a>
+  <ul class="collapse">
+  <li><a href="#detailed-8d-steps" id="toc-detailed-8d-steps" class="nav-link" data-scroll-target="#detailed-8d-steps"><span class="header-section-number">15.10.1</span> Detailed 8D Steps</a></li>
+  <li><a href="#d3-containment-actions" id="toc-d3-containment-actions" class="nav-link" data-scroll-target="#d3-containment-actions"><span class="header-section-number">15.10.2</span> D3: Containment Actions</a></li>
+  </ul></li>
+  <li><a href="#corrective-action-implementation" id="toc-corrective-action-implementation" class="nav-link" data-scroll-target="#corrective-action-implementation"><span class="header-section-number">15.11</span> Corrective Action Implementation</a>
+  <ul class="collapse">
+  <li><a href="#types-of-corrective-actions" id="toc-types-of-corrective-actions" class="nav-link" data-scroll-target="#types-of-corrective-actions"><span class="header-section-number">15.11.1</span> Types of Corrective Actions</a></li>
+  <li><a href="#smart-corrective-actions" id="toc-smart-corrective-actions" class="nav-link" data-scroll-target="#smart-corrective-actions"><span class="header-section-number">15.11.2</span> SMART Corrective Actions</a></li>
+  </ul></li>
+  <li><a href="#verification-and-validation" id="toc-verification-and-validation" class="nav-link" data-scroll-target="#verification-and-validation"><span class="header-section-number">15.12</span> Verification and Validation</a>
+  <ul class="collapse">
+  <li><a href="#verification-vs.-validation" id="toc-verification-vs.-validation" class="nav-link" data-scroll-target="#verification-vs.-validation"><span class="header-section-number">15.12.1</span> Verification vs.&nbsp;Validation</a></li>
+  <li><a href="#effectiveness-monitoring" id="toc-effectiveness-monitoring" class="nav-link" data-scroll-target="#effectiveness-monitoring"><span class="header-section-number">15.12.2</span> Effectiveness Monitoring</a></li>
+  </ul></li>
+  <li><a href="#case-study-automotive-welding-defects" id="toc-case-study-automotive-welding-defects" class="nav-link" data-scroll-target="#case-study-automotive-welding-defects"><span class="header-section-number">15.13</span> Case Study: Automotive Welding Defects</a>
+  <ul class="collapse">
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link" data-scroll-target="#the-problem"><span class="header-section-number">15.13.1</span> The Problem</a></li>
+  <li><a href="#initial-problem-definition-5w2h" id="toc-initial-problem-definition-5w2h" class="nav-link" data-scroll-target="#initial-problem-definition-5w2h"><span class="header-section-number">15.13.2</span> Initial Problem Definition (5W2H)</a></li>
+  <li><a href="#whys-analysis" id="toc-whys-analysis" class="nav-link" data-scroll-target="#whys-analysis"><span class="header-section-number">15.13.3</span> 5 Whys Analysis</a></li>
+  <li><a href="#fishbone-diagram-findings" id="toc-fishbone-diagram-findings" class="nav-link" data-scroll-target="#fishbone-diagram-findings"><span class="header-section-number">15.13.4</span> Fishbone Diagram Findings</a></li>
+  <li><a href="#d-report-summary" id="toc-d-report-summary" class="nav-link" data-scroll-target="#d-report-summary"><span class="header-section-number">15.13.5</span> 8D Report Summary</a></li>
+  </ul></li>
+  <li><a href="#documentation-and-knowledge-management" id="toc-documentation-and-knowledge-management" class="nav-link" data-scroll-target="#documentation-and-knowledge-management"><span class="header-section-number">15.14</span> Documentation and Knowledge Management</a>
+  <ul class="collapse">
+  <li><a href="#key-documentation-elements" id="toc-key-documentation-elements" class="nav-link" data-scroll-target="#key-documentation-elements"><span class="header-section-number">15.14.1</span> Key Documentation Elements</a></li>
+  <li><a href="#creating-a-troubleshooting-knowledge-base" id="toc-creating-a-troubleshooting-knowledge-base" class="nav-link" data-scroll-target="#creating-a-troubleshooting-knowledge-base"><span class="header-section-number">15.14.2</span> Creating a Troubleshooting Knowledge Base</a></li>
+  </ul></li>
+  <li><a href="#troubleshooting-tools-quick-reference" id="toc-troubleshooting-tools-quick-reference" class="nav-link" data-scroll-target="#troubleshooting-tools-quick-reference"><span class="header-section-number">15.15</span> Troubleshooting Tools Quick Reference</a></li>
+  <li><a href="#video-resources" id="toc-video-resources" class="nav-link" data-scroll-target="#video-resources"><span class="header-section-number">15.16</span> Video Resources</a>
+  <ul class="collapse">
+  <li><a href="#understanding-5-whys" id="toc-understanding-5-whys" class="nav-link" data-scroll-target="#understanding-5-whys"><span class="header-section-number">15.16.1</span> Understanding 5 Whys</a></li>
+  <li><a href="#d-problem-solving" id="toc-d-problem-solving" class="nav-link" data-scroll-target="#d-problem-solving"><span class="header-section-number">15.16.2</span> 8D Problem Solving</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">15.17</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">15.18</span> Review Questions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">15.19</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/15-Troubleshooting-RCA.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="learning-objectives" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">15.1</span> Learning Objectives</h2>
+<p>After completing this chapter, you will be able to:</p>
+<ol type="1">
+<li>Apply systematic troubleshooting methodologies to diagnose equipment and process failures</li>
+<li>Distinguish between symptoms, immediate causes, and root causes</li>
+<li>Use the 5 Whys technique to drill down to fundamental causes</li>
+<li>Construct and analyze Ishikawa (fishbone) diagrams</li>
+<li>Apply Fault Tree Analysis (FTA) to complex failure scenarios</li>
+<li>Use Pareto analysis to prioritize problem-solving efforts</li>
+<li>Implement the 8D problem-solving methodology</li>
+<li>Document findings and implement effective corrective actions</li>
+<li>Prevent problem recurrence through systemic improvements</li>
+</ol>
+<hr>
+</section>
+<section id="introduction-to-troubleshooting" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="introduction-to-troubleshooting"><span class="header-section-number">15.2</span> Introduction to Troubleshooting</h2>
+<p><strong>Troubleshooting</strong> is the systematic process of identifying, diagnosing, and resolving problems in equipment, processes, or systems. For electromechanical technicians, effective troubleshooting is perhaps the most valuable skill you can develop.</p>
+<section id="the-cost-of-downtime" class="level3" data-number="15.2.1">
+<h3 data-number="15.2.1" class="anchored" data-anchor-id="the-cost-of-downtime"><span class="header-section-number">15.2.1</span> The Cost of Downtime</h3>
+<p>Equipment failures and process problems have significant financial impacts:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/downtime-costs-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="reactive-vs.-proactive-problem-solving" class="level3" data-number="15.2.2">
+<h3 data-number="15.2.2" class="anchored" data-anchor-id="reactive-vs.-proactive-problem-solving"><span class="header-section-number">15.2.2</span> Reactive vs.&nbsp;Proactive Problem Solving</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Comparison of Problem-Solving Approaches</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Aspect</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Reactive Approach</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Proactive Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Timing</td>
+<td style="text-align: left; width: 42%; background-color: rgba(255, 204, 204, 255) !important;">After failure occurs</td>
+<td style="text-align: left; width: 43%; background-color: rgba(204, 255, 204, 255) !important;">Before or early in failure</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Focus</td>
+<td style="text-align: left; width: 42%; background-color: rgba(255, 204, 204, 255) !important;">Quick fix to restore operation</td>
+<td style="text-align: left; width: 43%; background-color: rgba(204, 255, 204, 255) !important;">Root cause elimination</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Stress Level</td>
+<td style="text-align: left; width: 42%; background-color: rgba(255, 204, 204, 255) !important;">High - production pressure</td>
+<td style="text-align: left; width: 43%; background-color: rgba(204, 255, 204, 255) !important;">Lower - planned approach</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Cost</td>
+<td style="text-align: left; width: 42%; background-color: rgba(255, 204, 204, 255) !important;">High - emergency repairs</td>
+<td style="text-align: left; width: 43%; background-color: rgba(204, 255, 204, 255) !important;">Lower - scheduled work</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Learning</td>
+<td style="text-align: left; width: 42%; background-color: rgba(255, 204, 204, 255) !important;">Limited - rush to fix</td>
+<td style="text-align: left; width: 43%; background-color: rgba(204, 255, 204, 255) !important;">High - thorough analysis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Documentation</td>
+<td style="text-align: left; width: 42%; background-color: rgba(255, 204, 204, 255) !important;">Often skipped</td>
+<td style="text-align: left; width: 43%; background-color: rgba(204, 255, 204, 255) !important;">Systematic and complete</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+<strong>Think About It</strong>: Why do organizations often default to reactive troubleshooting?
+</summary>
+<p>Common reasons include: - <strong>Time pressure</strong>: Production demands make it tempting to apply quick fixes - <strong>Lack of training</strong>: Technicians may not know RCA methodologies - <strong>Reward systems</strong>: Organizations may reward “firefighters” who quickly restore production - <strong>Missing data</strong>: Without good records, patterns are hard to identify - <strong>Culture</strong>: “We’ve always done it this way” mentality</p>
+The irony is that reactive troubleshooting actually costs more time in the long run due to recurring problems.
+</details>
+<hr>
+</section>
+</section>
+<section id="systematic-troubleshooting-methodology" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="systematic-troubleshooting-methodology"><span class="header-section-number">15.3</span> Systematic Troubleshooting Methodology</h2>
+<p>Effective troubleshooting follows a structured approach rather than random trial-and-error.</p>
+<section id="the-dmaic-troubleshooting-framework" class="level3" data-number="15.3.1">
+<h3 data-number="15.3.1" class="anchored" data-anchor-id="the-dmaic-troubleshooting-framework"><span class="header-section-number">15.3.1</span> The DMAIC Troubleshooting Framework</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/troubleshooting-flow-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-1-define-the-problem" class="level3" data-number="15.3.2">
+<h3 data-number="15.3.2" class="anchored" data-anchor-id="step-1-define-the-problem"><span class="header-section-number">15.3.2</span> Step 1: Define the Problem</h3>
+<p>A well-defined problem is half-solved. Use the <strong>5W2H</strong> method:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>5W2H Problem Definition Framework</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Question</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">What to Ask</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example Response</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">WHAT</td>
+<td style="text-align: left; width: 40%;">What is the problem? What is happening vs. what should happen?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Motor overheating on conveyor line 3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">WHERE</td>
+<td style="text-align: left; width: 40%;">Where does the problem occur? Location, machine, station?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Discharge end of conveyor, motor housing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">WHEN</td>
+<td style="text-align: left; width: 40%;">When did it start? When does it occur? Continuous or intermittent?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Started Monday, occurs after 2 hours of operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">WHO</td>
+<td style="text-align: left; width: 40%;">Who discovered it? Who is affected? Who was operating?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Operator noticed, maintenance called, affects packaging dept</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">WHY</td>
+<td style="text-align: left; width: 40%;">Why is this a problem? What is the impact?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Risk of motor failure, line stoppage, safety hazard</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">HOW</td>
+<td style="text-align: left; width: 40%;">How was the problem detected? How is it manifesting?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Detected by high-temp alarm at 85°C</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">HOW MUCH</td>
+<td style="text-align: left; width: 40%;">How often? How many units affected? What is the magnitude?</td>
+<td style="text-align: left; width: 48%; background-color: rgba(248, 249, 250, 255) !important;">Occurs every day, 100% of shifts, 15°C above normal</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="problem-statement-template" class="level3" data-number="15.3.3">
+<h3 data-number="15.3.3" class="anchored" data-anchor-id="problem-statement-template"><span class="header-section-number">15.3.3</span> Problem Statement Template</h3>
+<blockquote class="blockquote">
+<p><strong>Good Problem Statement Format:</strong> “[WHAT] is occurring at [WHERE] since [WHEN], affecting [WHO/WHAT], with a magnitude of [HOW MUCH].”</p>
+</blockquote>
+<p><strong>Example:</strong> &gt; “Motor overheating (85°C vs.&nbsp;normal 70°C) is occurring at Conveyor Line 3 discharge motor since Monday morning, affecting packaging department production, with the condition occurring every shift after approximately 2 hours of operation.”</p>
+<details>
+<summary>
+<strong>Practice</strong>: Write a problem statement for this scenario
+</summary>
+<p><strong>Scenario:</strong> An injection molding machine is producing parts with short shots (incomplete fill). The problem was noticed by the quality inspector during the night shift. About 15% of parts are affected. The issue seems worse when running the larger 500g parts compared to the smaller 200g parts.</p>
+<strong>Sample Problem Statement:</strong> “Short shots (incomplete cavity fill) are occurring on Injection Molding Machine #4 since night shift on Tuesday, affecting 15% of parts produced, with the defect rate increasing significantly when running 500g parts compared to 200g parts.”
+</details>
+</section>
+<section id="step-2-gather-data-and-observations" class="level3" data-number="15.3.4">
+<h3 data-number="15.3.4" class="anchored" data-anchor-id="step-2-gather-data-and-observations"><span class="header-section-number">15.3.4</span> Step 2: Gather Data and Observations</h3>
+<p>Before making any changes, collect information systematically:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Systematic Data Gathering Checklist</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Data Source</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">What to Check</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Tools/Methods</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Visual Inspection</td>
+<td style="text-align: left;">Physical condition, wear, contamination, alignment, damage</td>
+<td style="text-align: left;">Flashlight, mirror, magnifier, camera</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Operator Interview</td>
+<td style="text-align: left;">What changed? When did it start? Any unusual events?</td>
+<td style="text-align: left;">Open-ended questions, active listening</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Machine Parameters</td>
+<td style="text-align: left;">Temperatures, pressures, speeds, currents, positions</td>
+<td style="text-align: left;">HMI screens, gauges, multimeter, thermal camera</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Historical Records</td>
+<td style="text-align: left;">Maintenance logs, previous repairs, similar issues</td>
+<td style="text-align: left;">CMMS, logbooks, work orders</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Product/Output</td>
+<td style="text-align: left;">Defect patterns, measurements, reject rates</td>
+<td style="text-align: left;">Calipers, gauges, CMM, visual inspection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Environmental</td>
+<td style="text-align: left;">Temperature, humidity, vibration, power quality</td>
+<td style="text-align: left;">Thermometer, hygrometer, vibration analyzer</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-change-analysis-approach" class="level3" data-number="15.3.5">
+<h3 data-number="15.3.5" class="anchored" data-anchor-id="the-change-analysis-approach"><span class="header-section-number">15.3.5</span> The “Change Analysis” Approach</h3>
+<p>Many problems are caused by changes. Ask:</p>
+<ul>
+<li>What changed recently?</li>
+<li>New materials, suppliers, or batches?</li>
+<li>New operators or different shifts?</li>
+<li>Maintenance performed?</li>
+<li>Environmental changes (weather, season)?</li>
+<li>Software updates or parameter changes?</li>
+<li>New products or recipes running?</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/change-timeline-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="understanding-root-cause-vs.-symptoms" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="understanding-root-cause-vs.-symptoms"><span class="header-section-number">15.4</span> Understanding Root Cause vs.&nbsp;Symptoms</h2>
+<p>A critical concept in troubleshooting is distinguishing between different levels of causation.</p>
+<section id="the-causation-hierarchy" class="level3" data-number="15.4.1">
+<h3 data-number="15.4.1" class="anchored" data-anchor-id="the-causation-hierarchy"><span class="header-section-number">15.4.1</span> The Causation Hierarchy</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/causation-levels-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="why-finding-root-cause-matters" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="why-finding-root-cause-matters"><span class="header-section-number">15.4.2</span> Why Finding Root Cause Matters</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Comparison of Fixes at Different Causation Levels</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Fix Level</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Action Taken</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Immediate Result</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Recurrence</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Short-term Cost</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Long-term Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Symptom</td>
+<td style="text-align: left;">Add cooling fan to motor</td>
+<td style="text-align: left;">Motor runs cooler temporarily</td>
+<td style="text-align: left;">Problem returns in days</td>
+<td style="text-align: left;">$50</td>
+<td style="text-align: left;">$5000+ (repeated failures)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Immediate Cause</td>
+<td style="text-align: left;">Replace worn bearing</td>
+<td style="text-align: left;">Motor works for a while</td>
+<td style="text-align: left;">Problem returns in months</td>
+<td style="text-align: left;">$200</td>
+<td style="text-align: left;">$2400 (annual replacements)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important; width: 12%; font-weight: bold;">Root Cause</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Implement PM schedule with lubrication tasks</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Problem eliminated permanently</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Problem does not recur</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">$500</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">$500 (one-time implementation)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="the-5-whys-technique" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="the-5-whys-technique"><span class="header-section-number">15.5</span> The 5 Whys Technique</h2>
+<p>The <strong>5 Whys</strong> is a simple but powerful technique developed by Sakichi Toyoda and used within Toyota’s manufacturing methods.</p>
+<section id="how-it-works" class="level3" data-number="15.5.1">
+<h3 data-number="15.5.1" class="anchored" data-anchor-id="how-it-works"><span class="header-section-number">15.5.1</span> How It Works</h3>
+<ol type="1">
+<li>State the problem</li>
+<li>Ask “Why?” to identify the cause</li>
+<li>Ask “Why?” again about that cause</li>
+<li>Continue asking “Why?” until you reach the root cause</li>
+<li>Typically requires 5 iterations (sometimes more, sometimes less)</li>
+</ol>
+</section>
+<section id="whys-example-production-line-stoppage" class="level3" data-number="15.5.2">
+<h3 data-number="15.5.2" class="anchored" data-anchor-id="whys-example-production-line-stoppage"><span class="header-section-number">15.5.2</span> 5 Whys Example: Production Line Stoppage</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/five-whys-visual-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="whys-template" class="level3" data-number="15.5.3">
+<h3 data-number="15.5.3" class="anchored" data-anchor-id="whys-template"><span class="header-section-number">15.5.3</span> 5 Whys Template</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>5 Whys Analysis Template</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Step</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Typical Cause Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Problem Statement</td>
+<td style="text-align: left;">Clear, specific description of what happened</td>
+<td style="text-align: left;">Symptom</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Why #1</td>
+<td style="text-align: left;">First-level cause (usually technical/physical)</td>
+<td style="text-align: left;">Physical</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Why #2</td>
+<td style="text-align: left;">Why did that first cause occur?</td>
+<td style="text-align: left;">Physical/Human</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Why #3</td>
+<td style="text-align: left;">Why did the second cause occur?</td>
+<td style="text-align: left;">Human/Process</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Why #4</td>
+<td style="text-align: left;">Why did the third cause occur?</td>
+<td style="text-align: left;">Process/System</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Why #5</td>
+<td style="text-align: left;">Why did the fourth cause occur?</td>
+<td style="text-align: left;">System/Culture</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Root Cause</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">The fundamental cause that, if fixed, prevents recurrence</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Root</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="multiple-branches-in-5-whys" class="level3" data-number="15.5.4">
+<h3 data-number="15.5.4" class="anchored" data-anchor-id="multiple-branches-in-5-whys"><span class="header-section-number">15.5.4</span> Multiple Branches in 5 Whys</h3>
+<p>Sometimes a problem has multiple causes. When you encounter this, branch your analysis:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/branching-whys-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+<strong>Practice Exercise</strong>: Perform a 5 Whys Analysis
+</summary>
+<p><strong>Scenario:</strong> A CNC machine produced 50 parts that were all 0.5mm undersize on a critical diameter.</p>
+<p>Try to complete the 5 Whys analysis before looking at the sample answer below.</p>
+<hr>
+<p><strong>Sample Analysis:</strong></p>
+<ol type="1">
+<li><strong>Problem:</strong> CNC produced 50 undersize parts</li>
+<li><strong>Why #1:</strong> The tool offset was set incorrectly</li>
+<li><strong>Why #2:</strong> The operator entered the wrong offset value</li>
+<li><strong>Why #3:</strong> The operator misread the setup sheet</li>
+<li><strong>Why #4:</strong> The setup sheet had poor formatting and small print</li>
+<li><strong>Why #5:</strong> No standard format exists for setup documentation</li>
+</ol>
+<p><strong>Root Cause:</strong> Lack of standardized, clear setup documentation</p>
+<strong>Corrective Actions:</strong> - Create standardized setup sheet template with large, clear fonts - Add visual verification step (photo of correct setup) - Implement first-piece inspection requirement before production run
+</details>
+<hr>
+</section>
+</section>
+<section id="ishikawa-fishbone-diagram" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="ishikawa-fishbone-diagram"><span class="header-section-number">15.6</span> Ishikawa (Fishbone) Diagram</h2>
+<p>The <strong>Ishikawa diagram</strong>, also called a <strong>fishbone diagram</strong> or <strong>cause-and-effect diagram</strong>, was developed by Kaoru Ishikawa in the 1960s. It provides a structured way to brainstorm and categorize potential causes.</p>
+<section id="the-6m-categories" class="level3" data-number="15.6.1">
+<h3 data-number="15.6.1" class="anchored" data-anchor-id="the-6m-categories"><span class="header-section-number">15.6.1</span> The 6M Categories</h3>
+<p>Manufacturing problems are typically organized using the <strong>6M</strong> categories:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/6m-categories-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="constructing-a-fishbone-diagram" class="level3" data-number="15.6.2">
+<h3 data-number="15.6.2" class="anchored" data-anchor-id="constructing-a-fishbone-diagram"><span class="header-section-number">15.6.2</span> Constructing a Fishbone Diagram</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(data = spine, aes(x = x[1], y = y[1], xend = x[2], : All aesthetics have length 1, but the data has 2 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/fishbone-example-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fishbone-diagram-best-practices" class="level3" data-number="15.6.3">
+<h3 data-number="15.6.3" class="anchored" data-anchor-id="fishbone-diagram-best-practices"><span class="header-section-number">15.6.3</span> Fishbone Diagram Best Practices</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Best Practices for Fishbone Diagram Development</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Guideline</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 28%; font-weight: bold;">Team Approach</td>
+<td style="text-align: left;">Include operators, engineers, maintenance, quality - diverse perspectives</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 28%; font-weight: bold;">No Evaluation During Brainstorming</td>
+<td style="text-align: left;">Capture all ideas first; evaluate feasibility later</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 28%; font-weight: bold;">Use Specific Language</td>
+<td style="text-align: left;">Not 'machine problem' but 'bearing wear on spindle motor'</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 28%; font-weight: bold;">Aim for 3-5 Causes per Category</td>
+<td style="text-align: left;">Some categories may have more; don't force causes into categories</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 28%; font-weight: bold;">Circle the Most Likely</td>
+<td style="text-align: left;">After brainstorming, identify 2-3 most probable causes to investigate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 28%; font-weight: bold;">Verify with Data</td>
+<td style="text-align: left;">Don't assume - test hypotheses with data before implementing fixes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="video-how-to-create-a-fishbone-diagram" class="level3" data-number="15.6.4">
+<h3 data-number="15.6.4" class="anchored" data-anchor-id="video-how-to-create-a-fishbone-diagram"><span class="header-section-number">15.6.4</span> Video: How to Create a Fishbone Diagram</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mLvizyDFLQ4" title="Fishbone Diagram Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<hr>
+</section>
+</section>
+<section id="fault-tree-analysis-fta" class="level2" data-number="15.7">
+<h2 data-number="15.7" class="anchored" data-anchor-id="fault-tree-analysis-fta"><span class="header-section-number">15.7</span> Fault Tree Analysis (FTA)</h2>
+<p><strong>Fault Tree Analysis</strong> is a top-down, deductive analysis method that uses Boolean logic to analyze undesired events. Originally developed for the aerospace industry, FTA is particularly useful for complex systems with multiple potential failure paths.</p>
+<section id="fta-symbols" class="level3" data-number="15.7.1">
+<h3 data-number="15.7.1" class="anchored" data-anchor-id="fta-symbols"><span class="header-section-number">15.7.1</span> FTA Symbols</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Fault Tree Analysis Symbols</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Symbol</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Meaning</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Rectangle</td>
+<td style="text-align: left; width: 18%;">Intermediate Event</td>
+<td style="text-align: left;">A fault event that results from combination of other events</td>
+<td style="text-align: left;">Pump fails to deliver flow</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Circle</td>
+<td style="text-align: left; width: 18%;">Basic Event</td>
+<td style="text-align: left;">A basic failure that cannot be broken down further</td>
+<td style="text-align: left;">Motor winding burnout</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Diamond</td>
+<td style="text-align: left; width: 18%;">Undeveloped Event</td>
+<td style="text-align: left;">Event not analyzed further (outside scope or insufficient data)</td>
+<td style="text-align: left;">Power grid failure</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">House</td>
+<td style="text-align: left; width: 18%;">Normal Event</td>
+<td style="text-align: left;">An event expected to occur during normal operation</td>
+<td style="text-align: left;">Normal wear over time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">AND Gate</td>
+<td style="text-align: left; width: 18%;">AND Gate</td>
+<td style="text-align: left;">Output occurs only if ALL inputs occur</td>
+<td style="text-align: left;">Both sensor AND controller fail</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">OR Gate</td>
+<td style="text-align: left; width: 18%;">OR Gate</td>
+<td style="text-align: left;">Output occurs if ANY input occurs</td>
+<td style="text-align: left;">Either fuse blows OR breaker trips</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="fta-example-pump-fails-to-deliver-flow" class="level3" data-number="15.7.2">
+<h3 data-number="15.7.2" class="anchored" data-anchor-id="fta-example-pump-fails-to-deliver-flow"><span class="header-section-number">15.7.2</span> FTA Example: Pump Fails to Deliver Flow</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/fta-example-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="calculating-probability-with-fta" class="level3" data-number="15.7.3">
+<h3 data-number="15.7.3" class="anchored" data-anchor-id="calculating-probability-with-fta"><span class="header-section-number">15.7.3</span> Calculating Probability with FTA</h3>
+<p>FTA allows quantitative risk analysis by calculating the probability of the top event:</p>
+<p><strong>OR Gate:</strong> P(output) = 1 - [(1 - P<sub>A</sub>) × (1 - P<sub>B</sub>) × …] <em>Simplified:</em> P(output) ≈ P<sub>A</sub> + P<sub>B</sub> (when probabilities are small)</p>
+<p><strong>AND Gate:</strong> P(output) = P<sub>A</sub> × P<sub>B</sub> × …</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Calculate top event probability</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic event probabilities (annual failure rates)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>P_breaker_trip <span class="ot">&lt;-</span> <span class="fl">0.02</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>P_motor_fail <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>P_impeller_worn <span class="ot">&lt;-</span> <span class="fl">0.03</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>P_impeller_break <span class="ot">&lt;-</span> <span class="fl">0.005</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>P_shaft_seize <span class="ot">&lt;-</span> <span class="fl">0.008</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>P_tank_empty <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>P_valve_closed <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>P_line_blocked <span class="ot">&lt;-</span> <span class="fl">0.02</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Impeller failure (OR gate)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>P_impeller_fail <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_impeller_worn) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_impeller_break)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(Impeller failure):"</span>, <span class="fu">round</span>(P_impeller_fail, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>P(Impeller failure): 0.0349 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mechanical failure (OR gate)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>P_mechanical <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_motor_fail) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_impeller_fail) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_shaft_seize)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(Mechanical failure):"</span>, <span class="fu">round</span>(P_mechanical, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>P(Mechanical failure): 0.0521 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># No fluid available (OR gate)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>P_no_fluid <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_tank_empty) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_valve_closed) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_line_blocked)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(No fluid available):"</span>, <span class="fu">round</span>(P_no_fluid, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>P(No fluid available): 0.0783 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Top event: Pump fails (OR gate)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>P_top <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_breaker_trip) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_mechanical) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_no_fluid)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(Pump fails to deliver flow):"</span>, <span class="fu">round</span>(P_top, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>P(Pump fails to deliver flow): 0.1438 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This represents a"</span>, <span class="fu">round</span>(P_top <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"% annual probability of failure"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This represents a 14.4 % annual probability of failure</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="pareto-analysis" class="level2" data-number="15.8">
+<h2 data-number="15.8" class="anchored" data-anchor-id="pareto-analysis"><span class="header-section-number">15.8</span> Pareto Analysis</h2>
+<p><strong>Pareto Analysis</strong> is based on the Pareto Principle (80/20 rule): roughly 80% of effects come from 20% of causes. This helps prioritize problem-solving efforts.</p>
+<section id="creating-a-pareto-chart" class="level3" data-number="15.8.1">
+<h3 data-number="15.8.1" class="anchored" data-anchor-id="creating-a-pareto-chart"><span class="header-section-number">15.8.1</span> Creating a Pareto Chart</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/pareto-example-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpreting-pareto-analysis" class="level3" data-number="15.8.2">
+<h3 data-number="15.8.2" class="anchored" data-anchor-id="interpreting-pareto-analysis"><span class="header-section-number">15.8.2</span> Interpreting Pareto Analysis</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pareto analysis interpretation</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>defects <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Defect =</span> <span class="fu">c</span>(<span class="st">"Surface Scratch"</span>, <span class="st">"Dimensional Error"</span>, <span class="st">"Burrs"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Missing Feature"</span>, <span class="st">"Wrong Material"</span>, <span class="st">"Contamination"</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Color Mismatch"</span>, <span class="st">"Packaging Damage"</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Count =</span> <span class="fu">c</span>(<span class="dv">145</span>, <span class="dv">98</span>, <span class="dv">67</span>, <span class="dv">34</span>, <span class="dv">28</span>, <span class="dv">21</span>, <span class="dv">15</span>, <span class="dv">12</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>defects <span class="ot">&lt;-</span> defects[<span class="fu">order</span>(<span class="sc">-</span>defects<span class="sc">$</span>Count),]</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>defects<span class="sc">$</span>Cumulative_Pct <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(defects<span class="sc">$</span>Count) <span class="sc">/</span> <span class="fu">sum</span>(defects<span class="sc">$</span>Count) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the "vital few" (those that contribute to 80%)</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>vital_few <span class="ot">&lt;-</span> defects[defects<span class="sc">$</span>Cumulative_Pct <span class="sc">&lt;=</span> <span class="dv">80</span> <span class="sc">|</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">c</span>(<span class="cn">TRUE</span>, defects<span class="sc">$</span>Cumulative_Pct[<span class="sc">-</span><span class="fu">nrow</span>(defects)] <span class="sc">&lt;</span> <span class="dv">80</span>),]</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total defects:"</span>, <span class="fu">sum</span>(defects<span class="sc">$</span>Count), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total defects: 420 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Vital Few (contributing to ~80% of defects):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Vital Few (contributing to ~80% of defects):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(vital_few[, <span class="fu">c</span>(<span class="st">"Defect"</span>, <span class="st">"Count"</span>, <span class="st">"Cumulative_Pct"</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Defect Count Cumulative_Pct
+1   Surface Scratch   145       34.52381
+2 Dimensional Error    98       57.85714
+3             Burrs    67       73.80952
+4   Missing Feature    34       81.90476</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Focusing on these"</span>, <span class="fu">nrow</span>(vital_few), <span class="st">"defect types addresses"</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">max</span>(vital_few<span class="sc">$</span>Cumulative_Pct), <span class="dv">1</span>), <span class="st">"% of all defects"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Focusing on these 4 defect types addresses 81.9 % of all defects</code></pre>
+</div>
+</div>
+</section>
+<section id="stratified-pareto-analysis" class="level3" data-number="15.8.3">
+<h3 data-number="15.8.3" class="anchored" data-anchor-id="stratified-pareto-analysis"><span class="header-section-number">15.8.3</span> Stratified Pareto Analysis</h3>
+<p>Sometimes you need to break down categories further:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/stratified-pareto-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="isis-not-analysis" class="level2" data-number="15.9">
+<h2 data-number="15.9" class="anchored" data-anchor-id="isis-not-analysis"><span class="header-section-number">15.9</span> Is/Is Not Analysis</h2>
+<p><strong>Is/Is Not Analysis</strong> is a structured comparison technique that helps narrow down the scope and identify distinguishing factors of a problem.</p>
+<section id="isis-not-matrix" class="level3" data-number="15.9.1">
+<h3 data-number="15.9.1" class="anchored" data-anchor-id="isis-not-matrix"><span class="header-section-number">15.9.1</span> Is/Is Not Matrix</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Is/Is Not Analysis: Motor Overheating Problem</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Dimension</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Question</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IS</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IS NOT</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">What's Different?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8%; font-weight: bold;">WHAT</td>
+<td style="text-align: left; width: 20%;">What object has the problem?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">Motor on Line 3</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Motors on Lines 1, 2, 4</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Line 3 motor is older, different model</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8%; font-weight: bold;">WHAT</td>
+<td style="text-align: left; width: 20%;">What is the defect/symptom?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">Overheating (85°C)</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Noise, vibration, or failure</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Thermal issue, not mechanical yet</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8%; font-weight: bold;">WHERE</td>
+<td style="text-align: left; width: 20%;">Where is the problem observed?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">Packaging area, Station 4</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Any other station</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Station 4 has higher load demand</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8%; font-weight: bold;">WHERE</td>
+<td style="text-align: left; width: 20%;">Where on the object is the defect?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">Motor housing, bearing end</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Drive end, junction box</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Bearing end runs hotter normally</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8%; font-weight: bold;">WHEN</td>
+<td style="text-align: left; width: 20%;">When was it first observed?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">Monday morning shift</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Before weekend (Friday OK)</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Something changed over weekend</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8%; font-weight: bold;">WHEN</td>
+<td style="text-align: left; width: 20%;">When in the process/cycle?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">After 2 hours of operation</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Cold start or end of shift</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Heat buildup issue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8%; font-weight: bold;">EXTENT</td>
+<td style="text-align: left; width: 20%;">How many units affected?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">100% - every shift</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Intermittent</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Consistent problem</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8%; font-weight: bold;">EXTENT</td>
+<td style="text-align: left; width: 20%;">Is it trending up/down/stable?</td>
+<td style="text-align: left; width: 22%; background-color: rgba(212, 237, 218, 255) !important;">Stable - same every day</td>
+<td style="text-align: left; width: 22%; background-color: rgba(248, 215, 218, 255) !important;">Getting worse over time</td>
+<td style="text-align: left; width: 28%; background-color: rgba(255, 243, 205, 255) !important;">Stable - not progressive failure</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="key-insights-from-isis-not-analysis" class="level3" data-number="15.9.2">
+<h3 data-number="15.9.2" class="anchored" data-anchor-id="key-insights-from-isis-not-analysis"><span class="header-section-number">15.9.2</span> Key Insights from Is/Is Not Analysis</h3>
+<p>From the example above, we can identify:</p>
+<ol type="1">
+<li><strong>Line 3 specific</strong> - Not a general problem across all lines</li>
+<li><strong>Thermal, not mechanical</strong> - Overheating but no noise/vibration yet</li>
+<li><strong>After warm-up</strong> - Heat accumulation issue</li>
+<li><strong>Started after weekend</strong> - Something changed</li>
+</ol>
+<p><strong>Investigation focus:</strong> What changed over the weekend? Check maintenance logs, any work done on Line 3, any environmental changes.</p>
+<hr>
+</section>
+</section>
+<section id="the-8d-problem-solving-methodology" class="level2" data-number="15.10">
+<h2 data-number="15.10" class="anchored" data-anchor-id="the-8d-problem-solving-methodology"><span class="header-section-number">15.10</span> The 8D Problem-Solving Methodology</h2>
+<p>The <strong>8D (Eight Disciplines)</strong> methodology is a comprehensive problem-solving approach developed by Ford Motor Company. It’s widely used in automotive and other industries.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/8d-overview-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="detailed-8d-steps" class="level3" data-number="15.10.1">
+<h3 data-number="15.10.1" class="anchored" data-anchor-id="detailed-8d-steps"><span class="header-section-number">15.10.1</span> Detailed 8D Steps</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>8D Methodology Detailed Breakdown</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Discipline</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Key Activities</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Deliverables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">D0: Plan</td>
+<td style="text-align: left;">Emergency response actions, initial assessment, determine if 8D needed</td>
+<td style="text-align: left;">8D initiation decision, emergency actions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">D1: Team</td>
+<td style="text-align: left;">Select team leader, identify required expertise, define roles</td>
+<td style="text-align: left;">Team charter, member list with expertise</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">D2: Problem</td>
+<td style="text-align: left;">5W2H, Is/Is Not, quantify impact, identify affected parts/lots</td>
+<td style="text-align: left;">Problem statement, scope definition</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">D3: Containment</td>
+<td style="text-align: left;">Sort suspect material, increase inspection, alert downstream</td>
+<td style="text-align: left;">Containment actions, protected customer</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">D4: Root Cause</td>
+<td style="text-align: left;">5 Whys, Fishbone, FTA, verify cause by testing</td>
+<td style="text-align: left;">Verified root cause(s)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">D5: Corrective Actions</td>
+<td style="text-align: left;">Brainstorm solutions, verify effectiveness before full rollout</td>
+<td style="text-align: left;">Verified corrective action plan</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">D6: Implementation</td>
+<td style="text-align: left;">Execute action plan, validate results, monitor KPIs</td>
+<td style="text-align: left;">Implemented actions, validated results</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">D7: Prevention</td>
+<td style="text-align: left;">Update FMEAs, procedures, training, share across organization</td>
+<td style="text-align: left;">Updated procedures, similar problem prevention</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">D8: Closure</td>
+<td style="text-align: left;">Final documentation, lessons learned, team recognition</td>
+<td style="text-align: left;">8D report, closed status</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="d3-containment-actions" class="level3" data-number="15.10.2">
+<h3 data-number="15.10.2" class="anchored" data-anchor-id="d3-containment-actions"><span class="header-section-number">15.10.2</span> D3: Containment Actions</h3>
+<p>Containment is crucial to protect the customer while you investigate:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Types of Containment Actions</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Sort &amp; Inspect</td>
+<td style="text-align: left;">100% inspection of suspect inventory to separate good from bad</td>
+<td style="text-align: left;">Inspect all parts from Lot 2024-0215</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Rework/Repair</td>
+<td style="text-align: left;">Repair nonconforming units if possible and economical</td>
+<td style="text-align: left;">Re-machine undersize diameters to specification</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Scrap</td>
+<td style="text-align: left;">Dispose of units that cannot be repaired</td>
+<td style="text-align: left;">Dispose of parts with cracks</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Hold/Quarantine</td>
+<td style="text-align: left;">Prevent movement of suspect material until disposition</td>
+<td style="text-align: left;">Tag and segregate all parts from affected shift</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Increase Monitoring</td>
+<td style="text-align: left;">Add inspections, increase sampling, tighten control limits</td>
+<td style="text-align: left;">Add 100% visual inspection at Pack station</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Supplier Notification</td>
+<td style="text-align: left;">Notify suppliers if incoming material is suspected</td>
+<td style="text-align: left;">Request material certification from steel supplier</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Customer Alert</td>
+<td style="text-align: left;">Alert customers to check their inventory if product shipped</td>
+<td style="text-align: left;">Contact distributor about potentially affected batch</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="corrective-action-implementation" class="level2" data-number="15.11">
+<h2 data-number="15.11" class="anchored" data-anchor-id="corrective-action-implementation"><span class="header-section-number">15.11</span> Corrective Action Implementation</h2>
+<p>Effective corrective actions address the root cause and prevent recurrence.</p>
+<section id="types-of-corrective-actions" class="level3" data-number="15.11.1">
+<h3 data-number="15.11.1" class="anchored" data-anchor-id="types-of-corrective-actions"><span class="header-section-number">15.11.1</span> Types of Corrective Actions</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/corrective-action-hierarchy-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="smart-corrective-actions" class="level3" data-number="15.11.2">
+<h3 data-number="15.11.2" class="anchored" data-anchor-id="smart-corrective-actions"><span class="header-section-number">15.11.2</span> SMART Corrective Actions</h3>
+<p>Corrective actions should be <strong>SMART</strong>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>SMART Corrective Action Criteria</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Meaning</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Poor Example</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Good Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 4%; font-weight: bold; color: white !important; background-color: rgba(70, 130, 180, 255) !important;">S</td>
+<td style="text-align: left;">Specific</td>
+<td style="text-align: left;">Clearly defined action, not vague</td>
+<td style="text-align: left; background-color: rgba(248, 215, 218, 255) !important;">Improve quality</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Install poka-yoke sensor on Station 3 to detect missing holes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 4%; font-weight: bold; color: white !important; background-color: rgba(70, 130, 180, 255) !important;">M</td>
+<td style="text-align: left;">Measurable</td>
+<td style="text-align: left;">Can verify completion and effectiveness</td>
+<td style="text-align: left; background-color: rgba(248, 215, 218, 255) !important;">Train operators</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Train all operators on new SOP-234 with signed competency verification</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 4%; font-weight: bold; color: white !important; background-color: rgba(70, 130, 180, 255) !important;">A</td>
+<td style="text-align: left;">Achievable</td>
+<td style="text-align: left;">Realistic with available resources</td>
+<td style="text-align: left; background-color: rgba(248, 215, 218, 255) !important;">Redesign entire product line</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Add inspection step (1 min/part) with existing CMM capacity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 4%; font-weight: bold; color: white !important; background-color: rgba(70, 130, 180, 255) !important;">R</td>
+<td style="text-align: left;">Relevant</td>
+<td style="text-align: left;">Directly addresses the root cause</td>
+<td style="text-align: left; background-color: rgba(248, 215, 218, 255) !important;">Repaint the floor</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Add check fixture to verify hole position before assembly</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 4%; font-weight: bold; color: white !important; background-color: rgba(70, 130, 180, 255) !important;">T</td>
+<td style="text-align: left;">Time-bound</td>
+<td style="text-align: left;">Has a target completion date</td>
+<td style="text-align: left; background-color: rgba(248, 215, 218, 255) !important;">Do this sometime soon</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Complete by March 15, 2024</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="verification-and-validation" class="level2" data-number="15.12">
+<h2 data-number="15.12" class="anchored" data-anchor-id="verification-and-validation"><span class="header-section-number">15.12</span> Verification and Validation</h2>
+<p>Before closing out a problem, verify that your actions worked.</p>
+<section id="verification-vs.-validation" class="level3" data-number="15.12.1">
+<h3 data-number="15.12.1" class="anchored" data-anchor-id="verification-vs.-validation"><span class="header-section-number">15.12.1</span> Verification vs.&nbsp;Validation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Verification vs. Validation of Corrective Actions</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Aspect</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Verification</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Validation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Definition</td>
+<td style="text-align: left; background-color: rgba(227, 242, 253, 255) !important;">Did we implement the action correctly?</td>
+<td style="text-align: left; background-color: rgba(232, 245, 233, 255) !important;">Did the action solve the problem?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Focus</td>
+<td style="text-align: left; background-color: rgba(227, 242, 253, 255) !important;">Process compliance</td>
+<td style="text-align: left; background-color: rgba(232, 245, 233, 255) !important;">Results and effectiveness</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Question</td>
+<td style="text-align: left; background-color: rgba(227, 242, 253, 255) !important;">Did we build the fix right?</td>
+<td style="text-align: left; background-color: rgba(232, 245, 233, 255) !important;">Did we build the right fix?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Timing</td>
+<td style="text-align: left; background-color: rgba(227, 242, 253, 255) !important;">During/after implementation</td>
+<td style="text-align: left; background-color: rgba(232, 245, 233, 255) !important;">After implementation, during monitoring</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Methods</td>
+<td style="text-align: left; background-color: rgba(227, 242, 253, 255) !important;">Audits, inspections, checklists</td>
+<td style="text-align: left; background-color: rgba(232, 245, 233, 255) !important;">Data analysis, trend charts, capability studies</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="effectiveness-monitoring" class="level3" data-number="15.12.2">
+<h3 data-number="15.12.2" class="anchored" data-anchor-id="effectiveness-monitoring"><span class="header-section-number">15.12.2</span> Effectiveness Monitoring</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in scale_x_date(): A &lt;numeric&gt; value was passed to a Date scale.
+ℹ The value was converted to a &lt;Date&gt; object.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="15-Troubleshooting-RCA_files/figure-html/effectiveness-tracking-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate improvement</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>before_avg <span class="ot">&lt;-</span> <span class="fu">mean</span>(defect_rate[<span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>])</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>after_avg <span class="ot">&lt;-</span> <span class="fu">mean</span>(defect_rate[<span class="dv">15</span><span class="sc">:</span><span class="dv">30</span>])</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>improvement <span class="ot">&lt;-</span> (before_avg <span class="sc">-</span> after_avg) <span class="sc">/</span> before_avg <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Before corrective action: "</span>, <span class="fu">round</span>(before_avg, <span class="dv">2</span>), <span class="st">"% defect rate</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Before corrective action:  5.03 % defect rate</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"After corrective action:  "</span>, <span class="fu">round</span>(after_avg, <span class="dv">2</span>), <span class="st">"% defect rate</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>After corrective action:   1.33 % defect rate</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Improvement:              "</span>, <span class="fu">round</span>(improvement, <span class="dv">1</span>), <span class="st">"% reduction</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Improvement:               73.5 % reduction</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="case-study-automotive-welding-defects" class="level2" data-number="15.13">
+<h2 data-number="15.13" class="anchored" data-anchor-id="case-study-automotive-welding-defects"><span class="header-section-number">15.13</span> Case Study: Automotive Welding Defects</h2>
+<p>Let’s work through a comprehensive troubleshooting case using multiple RCA tools.</p>
+<section id="the-problem" class="level3" data-number="15.13.1">
+<h3 data-number="15.13.1" class="anchored" data-anchor-id="the-problem"><span class="header-section-number">15.13.1</span> The Problem</h3>
+<p>A Tier-1 automotive supplier is experiencing weld porosity defects on a critical structural component. Customer complaints have increased, and the plant has received a quality alert.</p>
+</section>
+<section id="initial-problem-definition-5w2h" class="level3" data-number="15.13.2">
+<h3 data-number="15.13.2" class="anchored" data-anchor-id="initial-problem-definition-5w2h"><span class="header-section-number">15.13.2</span> Initial Problem Definition (5W2H)</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Case Study Problem Definition</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Question</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">WHAT</td>
+<td style="text-align: left;">Porosity (gas pockets) in MIG welds on crossmember subassembly</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">WHERE</td>
+<td style="text-align: left;">Robot welding Cell 4, occurring at weld joint W-23 (corner weld)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">WHEN</td>
+<td style="text-align: left;">Started approximately 2 weeks ago, occurs on all shifts</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">WHO</td>
+<td style="text-align: left;">Detected by customer during their incoming inspection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">WHY</td>
+<td style="text-align: left;">Customer rejecting parts; risk of production line stop</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">HOW</td>
+<td style="text-align: left;">Visible voids on X-ray inspection; some visible to naked eye</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">HOW MUCH</td>
+<td style="text-align: left;">Estimated 8% of parts affected (up from baseline of 0.5%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="whys-analysis" class="level3" data-number="15.13.3">
+<h3 data-number="15.13.3" class="anchored" data-anchor-id="whys-analysis"><span class="header-section-number">15.13.3</span> 5 Whys Analysis</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>5 Whys Analysis: Weld Porosity</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Level</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Finding</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Problem</td>
+<td style="text-align: left;">Porosity in welds at joint W-23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Why #1</td>
+<td style="text-align: left;">Gas entrapment during solidification</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Why #2</td>
+<td style="text-align: left;">Inadequate shielding gas coverage</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Why #3</td>
+<td style="text-align: left;">Gas flow rate dropped below specification</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Why #4</td>
+<td style="text-align: left;">Flow meter was not calibrated; showing higher than actual</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Why #5</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">No calibration schedule existed for welding gas flow meters</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="fishbone-diagram-findings" class="level3" data-number="15.13.4">
+<h3 data-number="15.13.4" class="anchored" data-anchor-id="fishbone-diagram-findings"><span class="header-section-number">15.13.4</span> Fishbone Diagram Findings</h3>
+<p>After brainstorming with the cross-functional team:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Fishbone Analysis Results with Verification</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Category</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Potential Cause</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Likelihood</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Verification Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Machine</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Gas flow meter out of calibration</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">HIGH</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">YES - Root cause</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Machine</td>
+<td style="text-align: left;">Worn contact tip affecting arc stability</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">No - tips OK</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Material</td>
+<td style="text-align: left;">Different wire lot from new supplier</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">No - tested OK</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Material</td>
+<td style="text-align: left;">Base metal surface contamination</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No - clean parts</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Method</td>
+<td style="text-align: left;">Robot path too fast for corner weld</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">Partial contributor</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold; background-color: rgba(212, 237, 218, 255) !important;">Method</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">Gas pre-flow time insufficient</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">HIGH</td>
+<td style="text-align: left; background-color: rgba(212, 237, 218, 255) !important;">YES - Contributing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Man</td>
+<td style="text-align: left;">Recent operator turnover, less experience</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No - all shifts affected</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Environment</td>
+<td style="text-align: left;">Seasonal humidity changes</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">No - controlled</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="d-report-summary" class="level3" data-number="15.13.5">
+<h3 data-number="15.13.5" class="anchored" data-anchor-id="d-report-summary"><span class="header-section-number">15.13.5</span> 8D Report Summary</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>8D Report: Weld Porosity Case Study</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">D#</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Discipline</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 6%; font-weight: bold;">D1</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Team</td>
+<td style="text-align: left;">Team: Weld Engineer (lead), Quality, Maintenance, Production Supervisor, Supplier Quality</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6%; font-weight: bold;">D2</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Problem</td>
+<td style="text-align: left;">8% porosity rate at W-23 joint since Jan 15; customer quality alert received Jan 28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 6%; font-weight: bold;">D3</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Containment</td>
+<td style="text-align: left;">100% X-ray inspection of all crossmembers; sort and quarantine 3 days production</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6%; font-weight: bold;">D4</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Root Cause</td>
+<td style="text-align: left;">Primary: Flow meter out of calibration (reading 25 CFH, actual 18 CFH). Contributing: Pre-flow time was 0.3s, spec requires 0.5s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 6%; font-weight: bold;">D5</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Corrective Actions</td>
+<td style="text-align: left;">1. Recalibrate flow meter immediately; 2. Increase pre-flow time to 0.5s; 3. Add flow meter to calibration schedule</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6%; font-weight: bold;">D6</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Implementation</td>
+<td style="text-align: left;">Actions completed Feb 5; validation testing shows 0.1% porosity rate (below 0.5% target)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 6%; font-weight: bold;">D7</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Prevention</td>
+<td style="text-align: left;">Updated PM schedule to include all gas flow meters quarterly; added to PFMEA with RPN recalculation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6%; font-weight: bold;">D8</td>
+<td style="text-align: left; width: 15%; font-weight: bold;">Closure</td>
+<td style="text-align: left;">Customer satisfied with response; 8D closed Feb 15; cost avoidance: $45,000 (avoided line stop)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="documentation-and-knowledge-management" class="level2" data-number="15.14">
+<h2 data-number="15.14" class="anchored" data-anchor-id="documentation-and-knowledge-management"><span class="header-section-number">15.14</span> Documentation and Knowledge Management</h2>
+<p>Proper documentation ensures learnings are captured and problems don’t recur.</p>
+<section id="key-documentation-elements" class="level3" data-number="15.14.1">
+<h3 data-number="15.14.1" class="anchored" data-anchor-id="key-documentation-elements"><span class="header-section-number">15.14.1</span> Key Documentation Elements</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>RCA Documentation Checklist</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Element</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Contents</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Problem Description</td>
+<td style="text-align: left;">5W2H, problem statement, impact/cost</td>
+<td style="text-align: left;">Clear reference for similar future problems</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Timeline</td>
+<td style="text-align: left;">When discovered, key investigation dates, implementation dates</td>
+<td style="text-align: left;">Understanding of response time, identifying delays</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Data Collected</td>
+<td style="text-align: left;">Measurements, photos, test results, operator interviews</td>
+<td style="text-align: left;">Evidence-based analysis, reference for future</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Root Cause Analysis</td>
+<td style="text-align: left;">5 Whys, fishbone diagrams, FTA as applicable</td>
+<td style="text-align: left;">Documented logical process, training material</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Corrective Actions</td>
+<td style="text-align: left;">Actions taken, responsible parties, target/actual dates</td>
+<td style="text-align: left;">Accountability, closure verification</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Verification Results</td>
+<td style="text-align: left;">Before/after data, statistical comparison, effectiveness %</td>
+<td style="text-align: left;">Proof of effectiveness, audit trail</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Lessons Learned</td>
+<td style="text-align: left;">What we'd do differently, recommendations for similar situations</td>
+<td style="text-align: left;">Continuous improvement, organizational learning</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">System Updates</td>
+<td style="text-align: left;">PFMEA updates, procedure changes, training records</td>
+<td style="text-align: left;">Prevention of recurrence, compliance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="creating-a-troubleshooting-knowledge-base" class="level3" data-number="15.14.2">
+<h3 data-number="15.14.2" class="anchored" data-anchor-id="creating-a-troubleshooting-knowledge-base"><span class="header-section-number">15.14.2</span> Creating a Troubleshooting Knowledge Base</h3>
+<p>Build organizational memory by:</p>
+<ol type="1">
+<li><strong>Standardized templates</strong> - Use consistent formats for all RCA documents</li>
+<li><strong>Searchable database</strong> - Store in CMMS, SharePoint, or dedicated quality system</li>
+<li><strong>Categories and tags</strong> - Equipment type, failure mode, root cause category</li>
+<li><strong>Cross-references</strong> - Link related issues and solutions</li>
+<li><strong>Regular reviews</strong> - Periodic analysis of trends and patterns</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="troubleshooting-tools-quick-reference" class="level2" data-number="15.15">
+<h2 data-number="15.15" class="anchored" data-anchor-id="troubleshooting-tools-quick-reference"><span class="header-section-number">15.15</span> Troubleshooting Tools Quick Reference</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>RCA Tool Selection Guide</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Tool</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Best For</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">When to Use</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Team Size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">5 Whys</td>
+<td style="text-align: left;">Simple problems with linear cause chains</td>
+<td style="text-align: left;">Quick investigations, starting point for analysis</td>
+<td style="text-align: left;">1-3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Fishbone Diagram</td>
+<td style="text-align: left;">Brainstorming multiple potential causes</td>
+<td style="text-align: left;">Team problem-solving sessions</td>
+<td style="text-align: left;">4-8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Fault Tree Analysis</td>
+<td style="text-align: left;">Complex systems with multiple failure paths</td>
+<td style="text-align: left;">Safety-critical systems, reliability analysis</td>
+<td style="text-align: left;">2-5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Pareto Chart</td>
+<td style="text-align: left;">Prioritizing which problems to tackle first</td>
+<td style="text-align: left;">When facing multiple problems or defect types</td>
+<td style="text-align: left;">1-3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Is/Is Not</td>
+<td style="text-align: left;">Narrowing down scope and identifying distinctions</td>
+<td style="text-align: left;">When problem is hard to define clearly</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">8D</td>
+<td style="text-align: left;">Customer complaints requiring formal response</td>
+<td style="text-align: left;">Formal quality requirements, major issues</td>
+<td style="text-align: left;">5-10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Change Analysis</td>
+<td style="text-align: left;">Problems that started suddenly</td>
+<td style="text-align: left;">When timing of problem onset is known</td>
+<td style="text-align: left;">1-4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="video-resources" class="level2" data-number="15.16">
+<h2 data-number="15.16" class="anchored" data-anchor-id="video-resources"><span class="header-section-number">15.16</span> Video Resources</h2>
+<section id="understanding-5-whys" class="level3" data-number="15.16.1">
+<h3 data-number="15.16.1" class="anchored" data-anchor-id="understanding-5-whys"><span class="header-section-number">15.16.1</span> Understanding 5 Whys</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SrlYkx41wEE" title="5 Whys Root Cause Analysis" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</section>
+<section id="d-problem-solving" class="level3" data-number="15.16.2">
+<h3 data-number="15.16.2" class="anchored" data-anchor-id="d-problem-solving"><span class="header-section-number">15.16.2</span> 8D Problem Solving</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-9MUBLT0DjI" title="8D Problem Solving Methodology" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="15.17">
+<h2 data-number="15.17" class="anchored" data-anchor-id="summary"><span class="header-section-number">15.17</span> Summary</h2>
+<p>Effective troubleshooting and root cause analysis require:</p>
+<ol type="1">
+<li><strong>Systematic approach</strong> - Don’t guess; follow a structured methodology</li>
+<li><strong>Clear problem definition</strong> - Use 5W2H to clearly define what you’re solving</li>
+<li><strong>Data-driven analysis</strong> - Collect facts before jumping to conclusions</li>
+<li><strong>Root cause focus</strong> - Don’t stop at symptoms; dig to fundamental causes</li>
+<li><strong>Multiple tools</strong> - Use 5 Whys, Fishbone, FTA, Pareto as appropriate</li>
+<li><strong>Effective corrective actions</strong> - Aim for elimination, not just mitigation</li>
+<li><strong>Verification</strong> - Confirm your fix actually works with data</li>
+<li><strong>Documentation</strong> - Capture learnings to prevent recurrence</li>
+</ol>
+<p>Remember: The goal isn’t just to fix today’s problem - it’s to prevent tomorrow’s.</p>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="15.18">
+<h2 data-number="15.18" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">15.18</span> Review Questions</h2>
+<details>
+<summary>
+<strong>Question 1</strong>: What is the difference between a symptom, immediate cause, and root cause? Provide an example of each for a machine that is producing parts with excessive surface roughness.
+</summary>
+<p><strong>Answer:</strong></p>
+<ul>
+<li><strong>Symptom</strong>: The observable effect of the problem
+<ul>
+<li><em>Example: Parts have Ra surface roughness of 3.2 μm when specification is 1.6 μm</em></li>
+</ul></li>
+<li><strong>Immediate cause</strong>: The direct, technical cause of the symptom
+<ul>
+<li><em>Example: Cutting tool is worn beyond its effective life</em></li>
+</ul></li>
+<li><strong>Root cause</strong>: The fundamental reason that, if eliminated, prevents recurrence
+<ul>
+<li><em>Example: No tool life monitoring system exists; operators judge tool changes by intuition rather than data</em></li>
+</ul></li>
+</ul>
+Fixing the root cause (implementing tool life tracking) prevents the problem from recurring, whereas just replacing the tool (addressing immediate cause) means it will happen again.
+</details>
+<details>
+<summary>
+<strong>Question 2</strong>: A food processing plant is experiencing frequent jams on their packaging line. Perform a 5 Whys analysis given the following information: The jam occurs at the carton loading station, started last week, happens 4-5 times per shift, and the maintenance team found the timing of the pusher mechanism is off.
+</summary>
+<p><strong>Answer:</strong></p>
+<ol type="1">
+<li><strong>Problem</strong>: Carton loading station jams 4-5 times per shift</li>
+<li><strong>Why #1</strong>: Cartons are not in position when pusher activates → Timing mismatch</li>
+<li><strong>Why #2</strong>: Pusher timing is off by approximately 0.3 seconds</li>
+<li><strong>Why #3</strong>: Timing adjustment was changed during last week’s maintenance</li>
+<li><strong>Why #4</strong>: Technician didn’t have correct specification for timing setting</li>
+<li><strong>Why #5</strong>: Maintenance procedure doesn’t include timing specifications</li>
+</ol>
+<p><strong>Root Cause</strong>: Maintenance procedures lack critical parameter specifications</p>
+<strong>Corrective Actions</strong>: - Update maintenance procedure with correct timing specification (180ms ± 10ms) - Restore timing to correct setting immediately - Review other procedures for missing specifications - Add parameter verification checklist to PM activities
+</details>
+<details>
+<summary>
+<strong>Question 3</strong>: Create a fishbone diagram outline (list the potential causes under each 6M category) for the problem “CNC machine producing parts 0.05mm oversize.”
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>MAN (People)</strong> - Operator entered wrong offset - Incorrect setup procedure followed - Inadequate training on new program - Fatigue/distraction during setup</p>
+<p><strong>MACHINE (Equipment)</strong> - Spindle thermal growth - Ballscrew wear/backlash - Tool holder runout - Axis positioning error</p>
+<p><strong>MATERIAL</strong> - Material hardness variation - Different lot from supplier - Material springback - Incorrect material grade</p>
+<p><strong>METHOD (Process)</strong> - Wrong tool offset entered - Program error in G-code - Incorrect cutting parameters - Missing roughing pass</p>
+<p><strong>MEASUREMENT</strong> - Gauge out of calibration - Wrong measurement technique - Temperature affecting measurement - Incorrect datum reference</p>
+<strong>MOTHER NATURE (Environment)</strong> - Shop temperature variation - Coolant temperature change - Vibration from nearby equipment - Humidity affecting gauges
+</details>
+<details>
+<summary>
+<strong>Question 4</strong>: Given the following defect data from a sheet metal stamping operation, create a Pareto analysis and identify the vital few defects to focus on.
+</summary>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Defect Type</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Scratches</td>
+<td>89</td>
+</tr>
+<tr class="even">
+<td>Burrs</td>
+<td>156</td>
+</tr>
+<tr class="odd">
+<td>Wrinkles</td>
+<td>45</td>
+</tr>
+<tr class="even">
+<td>Splits/Cracks</td>
+<td>28</td>
+</tr>
+<tr class="odd">
+<td>Dimensional</td>
+<td>112</td>
+</tr>
+<tr class="even">
+<td>Surface Dents</td>
+<td>67</td>
+</tr>
+<tr class="odd">
+<td>Missing Features</td>
+<td>18</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Answer:</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and analyze the data</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>defects <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Type =</span> <span class="fu">c</span>(<span class="st">"Burrs"</span>, <span class="st">"Dimensional"</span>, <span class="st">"Scratches"</span>, <span class="st">"Surface Dents"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">"Wrinkles"</span>, <span class="st">"Splits/Cracks"</span>, <span class="st">"Missing Features"</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Count =</span> <span class="fu">c</span>(<span class="dv">156</span>, <span class="dv">112</span>, <span class="dv">89</span>, <span class="dv">67</span>, <span class="dv">45</span>, <span class="dv">28</span>, <span class="dv">18</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by count descending</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>defects <span class="ot">&lt;-</span> defects[<span class="fu">order</span>(<span class="sc">-</span>defects<span class="sc">$</span>Count),]</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate percentages</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>defects<span class="sc">$</span>Percent <span class="ot">&lt;-</span> defects<span class="sc">$</span>Count <span class="sc">/</span> <span class="fu">sum</span>(defects<span class="sc">$</span>Count) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>defects<span class="sc">$</span>Cumulative <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(defects<span class="sc">$</span>Percent)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Display results</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(defects)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Type Count   Percent Cumulative
+1            Burrs   156 30.291262   30.29126
+2      Dimensional   112 21.747573   52.03883
+3        Scratches    89 17.281553   69.32039
+4    Surface Dents    67 13.009709   82.33010
+5         Wrinkles    45  8.737864   91.06796
+6    Splits/Cracks    28  5.436893   96.50485
+7 Missing Features    18  3.495146  100.00000</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify vital few</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>vital_few <span class="ot">&lt;-</span> defects<span class="sc">$</span>Type[defects<span class="sc">$</span>Cumulative <span class="sc">&lt;=</span> <span class="dv">80</span> <span class="sc">|</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">c</span>(<span class="cn">TRUE</span>, defects<span class="sc">$</span>Cumulative[<span class="sc">-</span><span class="fu">nrow</span>(defects)] <span class="sc">&lt;</span> <span class="dv">80</span>)]</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Vital Few (contributing to ~80%):"</span>, <span class="fu">paste</span>(vital_few, <span class="at">collapse =</span> <span class="st">", "</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Vital Few (contributing to ~80%): Burrs, Dimensional, Scratches, Surface Dents</code></pre>
+</div>
+</div>
+The <strong>vital few</strong> are Burrs, Dimensional errors, and Scratches - addressing these three defect types would address approximately 69% of all defects. Adding Surface Dents would bring the total to 82%.
+</details>
+<details>
+<summary>
+<strong>Question 5</strong>: What are the key differences between verification and validation in the context of corrective actions?
+</summary>
+<p><strong>Answer:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 41%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Verification</th>
+<th>Validation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Question asked</td>
+<td>Did we implement the action correctly?</td>
+<td>Did the action solve the problem?</td>
+</tr>
+<tr class="even">
+<td>Focus</td>
+<td>Process compliance</td>
+<td>Results/outcomes</td>
+</tr>
+<tr class="odd">
+<td>Timing</td>
+<td>During/immediately after implementation</td>
+<td>Ongoing monitoring after implementation</td>
+</tr>
+<tr class="even">
+<td>Methods</td>
+<td>Audits, checklists, inspections</td>
+<td>Data analysis, trend charts, SPC</td>
+</tr>
+<tr class="odd">
+<td>Example</td>
+<td>Confirm new sensor was installed per specification</td>
+<td>Measure defect rate over 30 days to confirm reduction</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Verification</strong> confirms the action was done right. <strong>Validation</strong> confirms we did the right action.</p>
+Both are required - an action can be implemented perfectly (verified) but still not solve the problem (not validated).
+</details>
+<details>
+<summary>
+<strong>Question 6</strong>: An aerospace manufacturer has a requirement to use the 8D methodology for customer complaints. What happens in D3 (Containment) and why is it critical?
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>D3 Containment Actions</strong> protect the customer while the root cause investigation continues. Key activities include:</p>
+<ol type="1">
+<li><strong>Immediate actions</strong>:
+<ul>
+<li>Quarantine suspect inventory (tagged, segregated)</li>
+<li>100% inspection of suspect lots</li>
+<li>Increase monitoring at subsequent operations</li>
+<li>Sort parts at customer location if already shipped</li>
+</ul></li>
+<li><strong>Documentation</strong>:
+<ul>
+<li>Identify affected lot numbers, date codes, serial numbers</li>
+<li>Quantify the scope of potential exposure</li>
+<li>Document all containment actions taken</li>
+</ul></li>
+<li><strong>Communication</strong>:
+<ul>
+<li>Notify customer of actions being taken</li>
+<li>Alert downstream operations</li>
+<li>Inform suppliers if incoming material involved</li>
+</ul></li>
+</ol>
+<p><strong>Why critical</strong>: - Prevents additional defective product from reaching the customer - Limits the scope of the problem (cost, liability) - Demonstrates responsiveness to customer - Buys time for proper root cause investigation - In aerospace, safety-of-flight concerns make containment essential</p>
+Without effective containment, the problem continues while you investigate, increasing customer impact and costs exponentially.
+</details>
+<details>
+<summary>
+<strong>Question 7</strong>: Why might a team’s 5 Whys analysis stop too early? What are signs that you haven’t reached the true root cause?
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>Reasons teams stop too early</strong>: 1. <strong>Blame arrives</strong> - Analysis ends at “operator error” without asking why the error occurred 2. <strong>Comfort zone</strong> - Team stops when they reach a cause they can easily fix 3. <strong>Time pressure</strong> - Rush to implement a fix, skipping deeper analysis 4. <strong>Technical limit</strong> - Team lacks expertise to go deeper into certain areas 5. <strong>Defensiveness</strong> - Reaching causes that implicate management or systems creates resistance</p>
+<p><strong>Signs you haven’t reached root cause</strong>: 1. <strong>Recurrence</strong> - If the fix is “more training” or “be more careful,” problem will return 2. <strong>Human-based answer</strong> - Root causes should typically be systems/processes, not individuals 3. <strong>No prevention mechanism</strong> - If fixing this cause doesn’t prevent future occurrences, keep asking why 4. <strong>Can still ask “why?”</strong> - If there’s a logical next level to investigate 5. <strong>Administrative fix only</strong> - If the solution is just a procedure or checklist with no engineering controls</p>
+<p><strong>Example of stopping too early</strong>: - Stopping at: “Operator set wrong parameter” - Should continue: Why? → No parameter sheet at workstation → Why? → No standard work documentation exists → Root cause: Missing standardized work process</p>
+The true root cause typically relates to systems, processes, or management decisions rather than individual actions.
+</details>
+<details>
+<summary>
+<strong>Question 8</strong>: Describe how you would use Pareto analysis in a stratified manner to drill down into a quality problem.
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>Stratified Pareto Analysis</strong> involves creating multiple levels of Pareto charts, progressively drilling down into the vital few categories.</p>
+<p><strong>Example: High scrap rate at a machining shop</strong></p>
+<p><strong>Level 1: Scrap by defect type</strong> 1. Create Pareto of all defect types 2. Result: “Dimensional errors” is 45% of all scrap - investigate this first</p>
+<p><strong>Level 2: Dimensional errors by machine</strong> 1. Create Pareto of dimensional errors broken down by machine 2. Result: Machine #4 accounts for 60% of dimensional errors</p>
+<p><strong>Level 3: Machine #4 dimensional errors by feature</strong> 1. Create Pareto of which dimensions are failing on Machine #4 2. Result: Bore diameter is 70% of Machine #4 dimensional issues</p>
+<p><strong>Level 4: Bore diameter issues by shift/operator</strong> 1. Create Pareto by shift 2. Result: Evenly distributed - not operator-dependent (machine issue confirmed)</p>
+<p><strong>Final Analysis</strong>: Investigate boring operation on Machine #4 specifically - likely tool wear, spindle issue, or program error.</p>
+The stratified approach efficiently narrows focus from “we have a scrap problem” to “boring operation on Machine #4 has a systematic error.”
+</details>
+<details>
+<summary>
+<strong>Question 9</strong>: A defense contractor needs to analyze a safety-critical failure. Why might Fault Tree Analysis (FTA) be preferred over simpler methods like 5 Whys?
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>FTA advantages for safety-critical analysis</strong>:</p>
+<ol type="1">
+<li><strong>Handles complexity</strong>:
+<ul>
+<li>Safety-critical systems often have multiple redundancies and complex failure paths</li>
+<li>FTA can model combinations of events that must occur together (AND gates) or alternatively (OR gates)</li>
+<li>5 Whys follows single linear path; FTA captures parallel paths</li>
+</ul></li>
+<li><strong>Quantitative capability</strong>:
+<ul>
+<li>FTA allows probability calculations for top event</li>
+<li>Can identify minimum cut sets (smallest combinations that cause failure)</li>
+<li>Supports reliability and safety integrity level (SIL) calculations</li>
+<li>Defense/aerospace require quantitative risk assessment</li>
+</ul></li>
+<li><strong>Documentation requirements</strong>:
+<ul>
+<li>Regulatory bodies (FAA, DoD) often require FTA for critical systems</li>
+<li>Provides auditable, traceable analysis</li>
+<li>Standard symbols and methodology</li>
+</ul></li>
+<li><strong>Identifies hidden failures</strong>:
+<ul>
+<li>Can reveal single points of failure</li>
+<li>Shows where redundancy is (or isn’t) effective</li>
+<li>Identifies common cause failures that defeat redundancy</li>
+</ul></li>
+<li><strong>Design improvement</strong>:
+<ul>
+<li>Visual representation helps identify where to add safeguards</li>
+<li>Sensitivity analysis shows which basic events most affect risk</li>
+<li>Supports design reviews and safety cases</li>
+</ul></li>
+</ol>
+<strong>Example</strong>: A missile guidance system failure - 5 Whys might identify one cause path - FTA would show all possible failure paths, calculate overall failure probability, and identify that two specific sensor failures AND a software error all occurring together could cause the top event, even though each alone is unlikely.
+</details>
+<hr>
+</section>
+<section id="references" class="level2" data-number="15.19">
+<h2 data-number="15.19" class="anchored" data-anchor-id="references"><span class="header-section-number">15.19</span> References</h2>
+<ol type="1">
+<li><p>Latino, R.J., Latino, K.C., &amp; Latino, M.A.&nbsp;(2019). <em>Root Cause Analysis: Improving Performance for Bottom-Line Results</em> (5th ed.). CRC Press.</p></li>
+<li><p>Okes, D. (2019). <em>Root Cause Analysis: The Core of Problem Solving and Corrective Action</em> (2nd ed.). ASQ Quality Press.</p></li>
+<li><p>Andersen, B., &amp; Fagerhaug, T. (2006). <em>Root Cause Analysis: Simplified Tools and Techniques</em> (2nd ed.). ASQ Quality Press.</p></li>
+<li><p>AIAG. (2018). <em>CQI-20: Effective Problem Solving Guide</em>. Automotive Industry Action Group.</p></li>
+<li><p>IEC 61025:2006. <em>Fault Tree Analysis (FTA)</em>. International Electrotechnical Commission.</p></li>
+<li><p>Ishikawa, K. (1990). <em>Introduction to Quality Control</em>. 3A Corporation.</p></li>
+<li><p>Juran, J.M. (1988). <em>Juran on Planning for Quality</em>. Free Press.</p></li>
+<li><p>Ford Motor Company. (2019). <em>Global 8D Problem Solving Manual</em>. Ford Motor Company.</p></li>
+<li><p>NASA. (2002). <em>Fault Tree Handbook with Aerospace Applications</em>. NASA Office of Safety and Mission Assurance.</p></li>
+<li><p>Wilson, P.F., Dell, L.D., &amp; Anderson, G.F. (1993). <em>Root Cause Analysis: A Tool for Total Quality Management</em>. ASQ Quality Press.</p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./14-PFMEA.html" class="pagination-link" aria-label="Process Failure Mode and Effects Analysis (PFMEA)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./16-AnyLogic-Simulation.html" class="pagination-link" aria-label="Simulation Modeling with AnyLogic">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/15-Troubleshooting-RCA.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>2&nbsp; Process and Design – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03-Integrated-Manufacturing-Systems.html" rel="next">
+<link href="./01-Types-of-Manufacturing.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-Process-and-Design.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">2.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-process-engineering" id="toc-introduction-to-process-engineering" class="nav-link" data-scroll-target="#introduction-to-process-engineering"><span class="header-section-number">2.2</span> Introduction to Process Engineering</a></li>
+  <li><a href="#types-of-manufacturing-automation" id="toc-types-of-manufacturing-automation" class="nav-link" data-scroll-target="#types-of-manufacturing-automation"><span class="header-section-number">2.3</span> Types of Manufacturing Automation</a>
+  <ul class="collapse">
+  <li><a href="#fixed-automation" id="toc-fixed-automation" class="nav-link" data-scroll-target="#fixed-automation"><span class="header-section-number">2.3.1</span> Fixed Automation</a></li>
+  <li><a href="#programmable-automation" id="toc-programmable-automation" class="nav-link" data-scroll-target="#programmable-automation"><span class="header-section-number">2.3.2</span> Programmable Automation</a></li>
+  <li><a href="#flexible-automation" id="toc-flexible-automation" class="nav-link" data-scroll-target="#flexible-automation"><span class="header-section-number">2.3.3</span> Flexible Automation</a></li>
+  <li><a href="#automation-advantages-and-disadvantages" id="toc-automation-advantages-and-disadvantages" class="nav-link" data-scroll-target="#automation-advantages-and-disadvantages"><span class="header-section-number">2.3.4</span> Automation Advantages and Disadvantages</a></li>
+  </ul></li>
+  <li><a href="#project-development-phases" id="toc-project-development-phases" class="nav-link" data-scroll-target="#project-development-phases"><span class="header-section-number">2.4</span> Project Development Phases</a>
+  <ul class="collapse">
+  <li><a href="#phase-1-concept-development" id="toc-phase-1-concept-development" class="nav-link" data-scroll-target="#phase-1-concept-development"><span class="header-section-number">2.4.1</span> Phase 1: Concept Development</a></li>
+  <li><a href="#phase-2-front-end-engineering-design-feed" id="toc-phase-2-front-end-engineering-design-feed" class="nav-link" data-scroll-target="#phase-2-front-end-engineering-design-feed"><span class="header-section-number">2.4.2</span> Phase 2: Front-End Engineering Design (FEED)</a></li>
+  <li><a href="#phase-3-detailed-engineering" id="toc-phase-3-detailed-engineering" class="nav-link" data-scroll-target="#phase-3-detailed-engineering"><span class="header-section-number">2.4.3</span> Phase 3: Detailed Engineering</a></li>
+  <li><a href="#phase-4-7-construction-commissioning-and-start-up" id="toc-phase-4-7-construction-commissioning-and-start-up" class="nav-link" data-scroll-target="#phase-4-7-construction-commissioning-and-start-up"><span class="header-section-number">2.4.4</span> Phase 4-7: Construction, Commissioning, and Start-up</a></li>
+  </ul></li>
+  <li><a href="#process-documentation" id="toc-process-documentation" class="nav-link" data-scroll-target="#process-documentation"><span class="header-section-number">2.5</span> Process Documentation</a>
+  <ul class="collapse">
+  <li><a href="#process-flow-diagrams-pfds" id="toc-process-flow-diagrams-pfds" class="nav-link" data-scroll-target="#process-flow-diagrams-pfds"><span class="header-section-number">2.5.1</span> Process Flow Diagrams (PFDs)</a></li>
+  <li><a href="#piping-instrumentation-diagrams-pids" id="toc-piping-instrumentation-diagrams-pids" class="nav-link" data-scroll-target="#piping-instrumentation-diagrams-pids"><span class="header-section-number">2.5.2</span> Piping &amp; Instrumentation Diagrams (P&amp;IDs)</a></li>
+  </ul></li>
+  <li><a href="#design-for-manufacturing-dfm-and-assembly-dfa" id="toc-design-for-manufacturing-dfm-and-assembly-dfa" class="nav-link" data-scroll-target="#design-for-manufacturing-dfm-and-assembly-dfa"><span class="header-section-number">2.6</span> Design for Manufacturing (DFM) and Assembly (DFA)</a>
+  <ul class="collapse">
+  <li><a href="#dfm-principles" id="toc-dfm-principles" class="nav-link" data-scroll-target="#dfm-principles"><span class="header-section-number">2.6.1</span> DFM Principles</a></li>
+  <li><a href="#dfa-analysis" id="toc-dfa-analysis" class="nav-link" data-scroll-target="#dfa-analysis"><span class="header-section-number">2.6.2</span> DFA Analysis</a></li>
+  </ul></li>
+  <li><a href="#hazop-studies" id="toc-hazop-studies" class="nav-link" data-scroll-target="#hazop-studies"><span class="header-section-number">2.7</span> HAZOP Studies</a>
+  <ul class="collapse">
+  <li><a href="#hazop-methodology" id="toc-hazop-methodology" class="nav-link" data-scroll-target="#hazop-methodology"><span class="header-section-number">2.7.1</span> HAZOP Methodology</a></li>
+  <li><a href="#hazop-example" id="toc-hazop-example" class="nav-link" data-scroll-target="#hazop-example"><span class="header-section-number">2.7.2</span> HAZOP Example</a></li>
+  </ul></li>
+  <li><a href="#cost-estimation" id="toc-cost-estimation" class="nav-link" data-scroll-target="#cost-estimation"><span class="header-section-number">2.8</span> Cost Estimation</a></li>
+  <li><a href="#case-study-automotive-paint-line-project" id="toc-case-study-automotive-paint-line-project" class="nav-link" data-scroll-target="#case-study-automotive-paint-line-project"><span class="header-section-number">2.9</span> Case Study: Automotive Paint Line Project</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">2.10</span> Review Questions</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">2.11</span> Summary</a>
+  <ul class="collapse">
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">2.11.1</span> Key Takeaways</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">2.12</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/02-Process-and-Design.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">2.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ol type="1">
+<li>Describe the stages of process plant project development from concept to operation</li>
+<li>Differentiate between fixed, programmable, and flexible automation systems</li>
+<li>Interpret Process Flow Diagrams (PFDs) and Piping &amp; Instrumentation Diagrams (P&amp;IDs)</li>
+<li>Explain the purpose and content of Front-End Engineering Design (FEED)</li>
+<li>Apply Design for Manufacturing (DFM) and Design for Assembly (DFA) principles</li>
+<li>Understand the role of HAZOP studies in process safety</li>
+<li>Identify key engineering deliverables for each project phase</li>
+</ol>
+<hr>
+</section>
+<section id="introduction-to-process-engineering" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="introduction-to-process-engineering"><span class="header-section-number">2.2</span> Introduction to Process Engineering</h2>
+<p><strong>Process engineering</strong> is a specialized branch of engineering that focuses on the design, optimization, and implementation of manufacturing processes and production systems. Process engineers work at the intersection of design and production, ensuring that products can be manufactured efficiently, safely, and economically.</p>
+<details>
+<summary>
+What is the role of a process engineer?
+</summary>
+<p>Process engineers are responsible for:</p>
+<ul>
+<li><strong>Designing production processes</strong> - Selecting equipment, defining sequences, optimizing flow</li>
+<li><strong>Improving existing processes</strong> - Reducing waste, increasing throughput, improving quality</li>
+<li><strong>Scaling up from lab to production</strong> - Taking R&amp;D concepts to full-scale manufacturing</li>
+<li><strong>Ensuring safety and compliance</strong> - Meeting regulatory and environmental requirements</li>
+<li><strong>Supporting production</strong> - Troubleshooting issues, training operators</li>
+<li><strong>Cost optimization</strong> - Reducing manufacturing costs while maintaining quality</li>
+</ul>
+</details>
+<hr>
+</section>
+<section id="types-of-manufacturing-automation" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="types-of-manufacturing-automation"><span class="header-section-number">2.3</span> Types of Manufacturing Automation</h2>
+<p>Automation is essential for achieving high productivity, consistent quality, and competitive manufacturing costs. There are three fundamental types of automation, each suited to different production scenarios.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-Process-and-Design_files/figure-html/automation-comparison-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Comparison of Automation Types</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="fixed-automation" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="fixed-automation"><span class="header-section-number">2.3.1</span> Fixed Automation</h3>
+<p><strong>Fixed automation</strong> (also called “hard automation”) uses specialized equipment designed for a specific product. The sequence of operations is determined by the equipment configuration and cannot be easily changed.</p>
+<p><strong>Characteristics:</strong> - Very high production rates (thousands per hour) - Low per-unit cost at high volumes - High initial capital investment - Inflexible - dedicated to one product</p>
+<p><strong>Examples:</strong> - Automotive transfer lines for engine blocks - Beverage bottling lines - Chemical processing plants - Paper manufacturing</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fixed Automation Economic Analysis</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># When does fixed automation make sense?</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Automotive transfer line for cylinder heads</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>fixed_automation_cost <span class="ot">&lt;-</span> <span class="dv">5000000</span>  <span class="co"># Initial equipment cost</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>annual_production <span class="ot">&lt;-</span> <span class="dv">500000</span>       <span class="co"># Parts per year</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fixed_cost_per_part <span class="ot">&lt;-</span> <span class="fl">2.50</span>       <span class="co"># Operating cost per part</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>equipment_life_years <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate total cost per part including amortization</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>annual_equipment_cost <span class="ot">&lt;-</span> fixed_automation_cost <span class="sc">/</span> equipment_life_years</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>total_annual_cost <span class="ot">&lt;-</span> annual_equipment_cost <span class="sc">+</span> (fixed_cost_per_part <span class="sc">*</span> annual_production)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>cost_per_part <span class="ot">&lt;-</span> total_annual_cost <span class="sc">/</span> annual_production</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fixed Automation Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fixed Automation Analysis:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"==========================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>==========================</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Equipment cost: $%s</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">format</span>(fixed_automation_cost, <span class="at">big.mark=</span><span class="st">","</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Equipment cost: $5e+06</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Annual production: %s parts</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">format</span>(annual_production, <span class="at">big.mark=</span><span class="st">","</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Annual production: 5e+05 parts</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Operating cost per part: $%.2f</span><span class="sc">\n</span><span class="st">"</span>, fixed_cost_per_part))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Operating cost per part: $2.50</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Amortized equipment cost per part: $%.2f</span><span class="sc">\n</span><span class="st">"</span>, annual_equipment_cost<span class="sc">/</span>annual_production))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Amortized equipment cost per part: $1.00</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Total cost per part: $%.2f</span><span class="sc">\n</span><span class="st">"</span>, cost_per_part))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total cost per part: $3.50</code></pre>
+</div>
+</div>
+</section>
+<section id="programmable-automation" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="programmable-automation"><span class="header-section-number">2.3.2</span> Programmable Automation</h3>
+<p><strong>Programmable automation</strong> allows the production equipment to be reprogrammed for different products. It’s suited for batch production where products change periodically.</p>
+<p><strong>Characteristics:</strong> - Medium production rates - Significant changeover time between products - Lower initial cost than fixed automation - Suitable for batch sizes of 100-10,000</p>
+<p><strong>Examples:</strong> - CNC machining centers - Industrial robots - PLC-controlled assembly machines - Batch chemical reactors</p>
+<details>
+<summary>
+Discussion: When should you choose programmable over fixed automation?
+</summary>
+<p><strong>Choose programmable automation when:</strong></p>
+<ol type="1">
+<li><strong>Product variety</strong> - You make multiple products on the same equipment</li>
+<li><strong>Volume uncertainty</strong> - Demand may shift between products</li>
+<li><strong>Product evolution</strong> - Frequent design changes expected</li>
+<li><strong>Lower volumes</strong> - Not enough volume to justify dedicated equipment</li>
+<li><strong>Capital constraints</strong> - Can’t afford multiple dedicated lines</li>
+</ol>
+<p><strong>Example scenario:</strong> A machine shop that makes 20 different part numbers for aerospace customers would use CNC machines (programmable) rather than dedicated transfer lines (fixed) because: - Volumes per part number are low (100-1,000/year) - New part designs are introduced regularly - Flexibility to respond to customer changes is critical</p>
+</details>
+</section>
+<section id="flexible-automation" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="flexible-automation"><span class="header-section-number">2.3.3</span> Flexible Automation</h3>
+<p><strong>Flexible automation</strong> can produce a variety of parts with minimal changeover time. It combines the flexibility of programmable automation with the productivity approaching fixed automation.</p>
+<p><strong>Characteristics:</strong> - Medium-high production rates - Very fast changeover (minutes, not hours) - High initial investment - Suitable for medium variety, medium volume</p>
+<p><strong>Examples:</strong> - Flexible Manufacturing Systems (FMS) - Robotic assembly cells - Automated guided vehicle (AGV) systems - Modern automotive final assembly lines</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Automation Type Selection Guide</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Production Characteristic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Fixed Automation</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Programmable Automation</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Flexible Automation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Annual Volume</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">&gt; 1,000,000 units</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">1,000 - 100,000 units</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">10,000 - 500,000 units</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Product Variety</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Single product</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Several products in batches</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Many products, mixed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Changeover Frequency</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Rarely (years)</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Weekly to monthly</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Hours to minutes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Initial Investment</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Very High ($5M+)</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Medium ($500K-$2M)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">High ($2M-$10M)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Operating Cost</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Lowest per unit</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Medium per unit</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Low-medium per unit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Best Industries</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Automotive, Beverage, Chemical</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Job shops, Aerospace, Medical</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Electronics, Automotive suppliers</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+List industries where you can find various automated process systems
+</summary>
+<p><strong>By automation type:</strong></p>
+<p><strong>Fixed Automation:</strong> - Oil refineries - Chemical plants - Food processing (high-volume) - Beverage bottling - Automotive powertrain - Steel mills - Paper/pulp mills</p>
+<p><strong>Programmable Automation:</strong> - Aerospace manufacturing - Medical device production - Pharmaceutical (batch) - Job shops - Tool &amp; die making - Defense contractors</p>
+<p><strong>Flexible Automation:</strong> - Electronics assembly - Automotive final assembly - Warehouse/distribution - Semiconductor fabrication - Consumer appliances - Furniture manufacturing</p>
+</details>
+</section>
+<section id="automation-advantages-and-disadvantages" class="level3" data-number="2.3.4">
+<h3 data-number="2.3.4" class="anchored" data-anchor-id="automation-advantages-and-disadvantages"><span class="header-section-number">2.3.4</span> Automation Advantages and Disadvantages</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Advantages and Disadvantages of Manufacturing Automation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Category</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Point</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Lowered Operating Costs - Reduced labor per unit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Improved Worker Safety - Removes humans from hazardous operations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Reduced Factory Lead Times - Faster, more predictable production</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Increased Production Output - 24/7 operation possible</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Smaller Environmental Footprint - Optimized resource usage</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Increased Productivity and Efficiency - Consistent cycle times</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Advantages</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Increased System Versatility - Modern systems adapt to changes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Disadvantages</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Higher Start-up Cost - Significant capital investment required</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Disadvantages</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Higher Cost of Maintenance - Specialized technicians needed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Disadvantages</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Obsolescence/Depreciation - Technology changes rapidly</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Disadvantages</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Workforce Displacement - Fewer direct labor jobs</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Disadvantages</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Not Economical for Small Scale - Minimum volumes required</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="project-development-phases" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="project-development-phases"><span class="header-section-number">2.4</span> Project Development Phases</h2>
+<p>Manufacturing projects follow a structured development process from initial concept to full operation. Understanding these phases is essential for process engineers.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-Process-and-Design_files/figure-html/project-phases-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Project Development Phases and Gate Reviews</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="phase-1-concept-development" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="phase-1-concept-development"><span class="header-section-number">2.4.1</span> Phase 1: Concept Development</h3>
+<p>The initial phase defines the project scope, evaluates feasibility, and develops preliminary cost estimates.</p>
+<p><strong>Key Deliverables:</strong> - Project charter and business case - Preliminary process flow diagrams - Order-of-magnitude cost estimate (±30-50%) - Initial schedule - Risk assessment</p>
+</section>
+<section id="phase-2-front-end-engineering-design-feed" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="phase-2-front-end-engineering-design-feed"><span class="header-section-number">2.4.2</span> Phase 2: Front-End Engineering Design (FEED)</h3>
+<p>FEED (also called FEL - Front-End Loading) develops the project definition to a level sufficient for final investment decision.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/gSkoGFLDxF0" title="FEED Process Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<p><strong>FEED Deliverables include:</strong></p>
+<ul>
+<li>Project organization chart</li>
+<li>Defined project scope</li>
+<li>Process Flow Diagrams (PFDs)</li>
+<li>Piping &amp; Instrumentation Diagrams (P&amp;IDs)</li>
+<li>Equipment datasheets and specifications</li>
+<li>Major equipment list</li>
+<li>2D and 3D preliminary models</li>
+<li>Equipment layout and installation plan</li>
+<li>HAZOP and safety studies</li>
+<li>Automation strategy</li>
+<li>Budget estimate (±10-15%)</li>
+<li>Project timeline</li>
+<li>Fixed-bid quote capability</li>
+</ul>
+<details>
+<summary>
+What are the steps of Process System Design and Engineering?
+</summary>
+<ol type="1">
+<li><strong>Process Development</strong>
+<ul>
+<li>Develop PFDs &amp; P&amp;IDs</li>
+<li>Process simulation</li>
+<li>Heat and mass balance</li>
+</ul></li>
+<li><strong>Equipment Engineering</strong>
+<ul>
+<li>2D &amp; 3D models</li>
+<li>Equipment layout and installation plan</li>
+<li>Skid design</li>
+<li>Mechanical &amp; structural design</li>
+</ul></li>
+<li><strong>Systems Engineering</strong>
+<ul>
+<li>Piping design</li>
+<li>Electrical design</li>
+<li>Instrumentation design</li>
+<li>Control system architecture</li>
+</ul></li>
+<li><strong>Installation Planning</strong>
+<ul>
+<li>Lifts &amp; installation planning</li>
+<li>Construction sequencing</li>
+<li>Tie-in planning</li>
+</ul></li>
+</ol>
+</details>
+</section>
+<section id="phase-3-detailed-engineering" class="level3" data-number="2.4.3">
+<h3 data-number="2.4.3" class="anchored" data-anchor-id="phase-3-detailed-engineering"><span class="header-section-number">2.4.3</span> Phase 3: Detailed Engineering</h3>
+<p>Detailed engineering produces all documents needed for procurement and construction.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Engineering Disciplines and Deliverables</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Discipline</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Key Deliverables</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Systems Provided</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Process</td>
+<td style="text-align: left;">P&amp;IDs, datasheets, process packages, operating procedures</td>
+<td style="text-align: left;">Process units, utility systems</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Mechanical</td>
+<td style="text-align: left;">Vessel drawings, heat exchanger specs, rotating equipment specs</td>
+<td style="text-align: left;">Pressure vessels, tanks, exchangers, pumps</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Piping</td>
+<td style="text-align: left;">Isometrics, pipe specs, stress analysis, 3D models</td>
+<td style="text-align: left;">Process piping, utility piping</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Electrical</td>
+<td style="text-align: left;">Single-line diagrams, load lists, cable schedules, lighting</td>
+<td style="text-align: left;">Power distribution, motor control, lighting</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">I&amp;C</td>
+<td style="text-align: left;">Logic diagrams, instrument index, control narratives, HMI specs</td>
+<td style="text-align: left;">DCS/PLC, safety systems, instruments</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Civil/Structural</td>
+<td style="text-align: left;">Foundation drawings, structural steel, buildings, roads</td>
+<td style="text-align: left;">Foundations, structures, buildings</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Automation and Controls Engineering needs to include which tasks?
+</summary>
+<p><strong>Control System Design:</strong> - Automation architecture design - Control panel fabrication drawings - PLC/DCS programming - HMI/SCADA design - Safety system design (SIS)</p>
+<p><strong>Documentation:</strong> - Control narratives - Logic diagrams (cause &amp; effect) - Instrument datasheets - Loop diagrams - Cable schedules</p>
+<p><strong>Integration:</strong> - Controls integration services - Network architecture - Cybersecurity - Historian configuration - MES integration</p>
+</details>
+</section>
+<section id="phase-4-7-construction-commissioning-and-start-up" class="level3" data-number="2.4.4">
+<h3 data-number="2.4.4" class="anchored" data-anchor-id="phase-4-7-construction-commissioning-and-start-up"><span class="header-section-number">2.4.4</span> Phase 4-7: Construction, Commissioning, and Start-up</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Later Project Phases</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Phase</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Key Activities</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Process Engineer Role</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Typical Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Procurement &amp; Fabrication</td>
+<td style="text-align: left;">Purchase equipment, fabricate skids, manufacture custom items</td>
+<td style="text-align: left;">Review vendor documents, approve equipment</td>
+<td style="text-align: left;">3-12 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Construction</td>
+<td style="text-align: left;">Civil work, install equipment, piping, electrical, instrumentation</td>
+<td style="text-align: left;">Supervise installation, resolve field issues</td>
+<td style="text-align: left;">6-24 months</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Commissioning</td>
+<td style="text-align: left;">System checkout, loop testing, safety system validation</td>
+<td style="text-align: left;">Verify system operation, support testing</td>
+<td style="text-align: left;">1-3 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Start-up</td>
+<td style="text-align: left;">Initial operation, performance testing, operator training</td>
+<td style="text-align: left;">Optimize process, troubleshoot issues, train operators</td>
+<td style="text-align: left;">1-3 months</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+What needs to be planned for Testing &amp; Commissioning?
+</summary>
+<p><strong>Pre-Commissioning:</strong> - Mechanical completion checks - Piping pressure tests - Electrical continuity tests - Instrument calibration</p>
+<p><strong>Commissioning:</strong> - Loop checking - Control system function tests - Safety system (SIS) validation - Utility systems start-up - Dry run testing</p>
+<p><strong>Performance Testing:</strong> - Factory Acceptance Tests (FAT) - Site Acceptance Tests (SAT) - Performance guarantee tests - Reliability testing</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="process-documentation" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="process-documentation"><span class="header-section-number">2.5</span> Process Documentation</h2>
+<section id="process-flow-diagrams-pfds" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="process-flow-diagrams-pfds"><span class="header-section-number">2.5.1</span> Process Flow Diagrams (PFDs)</h3>
+<p>PFDs show the overall process flow, major equipment, and key operating conditions. They are the “big picture” view of the process.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Process Flow Diagram (PFD) Content</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Element</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">What's Shown</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">What's NOT Shown</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Major Equipment</td>
+<td style="text-align: left;">Reactors, vessels, heat exchangers, pumps, compressors</td>
+<td style="text-align: left;">Pipe sizes, valve types, instrument details</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Process Streams</td>
+<td style="text-align: left;">Main process flow lines with arrows</td>
+<td style="text-align: left;">Minor bypasses, drain lines, vent lines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Operating Conditions</td>
+<td style="text-align: left;">Temperature, pressure, flow rates at key points</td>
+<td style="text-align: left;">All intermediate conditions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Control Loops</td>
+<td style="text-align: left;">Major control loops only</td>
+<td style="text-align: left;">Local instruments, minor controls</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Utility Streams</td>
+<td style="text-align: left;">Steam, cooling water, nitrogen (simplified)</td>
+<td style="text-align: left;">Detailed utility connections</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Stream Data</td>
+<td style="text-align: left;">Stream numbers with heat/mass balance table</td>
+<td style="text-align: left;">All intermediate streams</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="piping-instrumentation-diagrams-pids" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="piping-instrumentation-diagrams-pids"><span class="header-section-number">2.5.2</span> Piping &amp; Instrumentation Diagrams (P&amp;IDs)</h3>
+<p>P&amp;IDs are the detailed “roadmap” of the process, showing all equipment, piping, valves, and instrumentation.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/j4EOTerfyTY" title="How to Read P&amp;IDs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-Process-and-Design_files/figure-html/pid-symbols-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Common P&amp;ID Symbols (Simplified)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>ISA Instrument Tag Structure</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">First Letter</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Measured Variable</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Modifier Letters</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Example Tag</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">F</td>
+<td style="text-align: left;">Flow</td>
+<td style="text-align: left;">T = Transmitter</td>
+<td style="text-align: left;">FT-101 (Flow Transmitter)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">L</td>
+<td style="text-align: left;">Level</td>
+<td style="text-align: left;">C = Controller</td>
+<td style="text-align: left;">LC-201 (Level Controller)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">P</td>
+<td style="text-align: left;">Pressure</td>
+<td style="text-align: left;">I = Indicator</td>
+<td style="text-align: left;">PI-301 (Pressure Indicator)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">T</td>
+<td style="text-align: left;">Temperature</td>
+<td style="text-align: left;">E = Element/Sensor</td>
+<td style="text-align: left;">TE-401 (Temperature Element)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">A</td>
+<td style="text-align: left;">Analysis</td>
+<td style="text-align: left;">V = Valve</td>
+<td style="text-align: left;">AT-501 (Analyzer Transmitter)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">S</td>
+<td style="text-align: left;">Speed</td>
+<td style="text-align: left;">A = Alarm</td>
+<td style="text-align: left;">SI-601 (Speed Indicator)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Quick Quiz: Decode these instrument tags
+</summary>
+<p><strong>Decode the following P&amp;ID tags:</strong></p>
+<ol type="1">
+<li><strong>FIC-101</strong> = ?</li>
+<li><strong>TT-205</strong> = ?</li>
+<li><strong>PSV-301</strong> = ?</li>
+<li><strong>LCV-402</strong> = ?</li>
+</ol>
+<p><strong>Answers:</strong></p>
+<ol type="1">
+<li><strong>FIC-101</strong> = Flow Indicating Controller (loop 101)</li>
+<li><strong>TT-205</strong> = Temperature Transmitter (loop 205)</li>
+<li><strong>PSV-301</strong> = Pressure Safety Valve (loop 301)</li>
+<li><strong>LCV-402</strong> = Level Control Valve (loop 402)</li>
+</ol>
+</details>
+<hr>
+</section>
+</section>
+<section id="design-for-manufacturing-dfm-and-assembly-dfa" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="design-for-manufacturing-dfm-and-assembly-dfa"><span class="header-section-number">2.6</span> Design for Manufacturing (DFM) and Assembly (DFA)</h2>
+<p><strong>DFM</strong> and <strong>DFA</strong> are methodologies that consider manufacturing and assembly constraints during product design, reducing cost and improving quality.</p>
+<section id="dfm-principles" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="dfm-principles"><span class="header-section-number">2.6.1</span> DFM Principles</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-Process-and-Design_files/figure-html/dfm-principles-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>DFM Guidelines</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Design for Manufacturing Guidelines</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">DFM Guideline</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Why It Matters</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Minimize total number of parts</td>
+<td style="text-align: left;">Fewer parts = fewer chances for failure, less inventory, lower cost</td>
+<td style="text-align: left;">Combine bracket and housing into single molded part</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Use standard components</td>
+<td style="text-align: left;">Standard parts are cheaper, faster to procure, easier to replace</td>
+<td style="text-align: left;">Use M6 bolts instead of custom fasteners</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Design for ease of fabrication</td>
+<td style="text-align: left;">Complex features increase manufacturing cost and defect rates</td>
+<td style="text-align: left;">Avoid undercuts, deep pockets, thin walls</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Design for ease of assembly</td>
+<td style="text-align: left;">Reduces assembly time and errors</td>
+<td style="text-align: left;">Use snap-fits instead of screws where appropriate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Minimize assembly directions</td>
+<td style="text-align: left;">Multiple directions require repositioning, increasing time</td>
+<td style="text-align: left;">All parts insert from top-down in assembly</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Maximize compliance in assembly</td>
+<td style="text-align: left;">Tight tolerances increase cost; allow self-alignment where possible</td>
+<td style="text-align: left;">Use tapered holes for self-centering pins</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Design for ease of service</td>
+<td style="text-align: left;">Products will need maintenance; design for technician access</td>
+<td style="text-align: left;">Locate service points on accessible panels</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="dfa-analysis" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="dfa-analysis"><span class="header-section-number">2.6.2</span> DFA Analysis</h3>
+<p>DFA systematically evaluates assembly operations to identify improvement opportunities.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DFA Analysis Example: Simple Assembly</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate assembly efficiency using Boothroyd-Dewhurst method</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Assembly data (simplified)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>parts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Part =</span> <span class="fu">c</span>(<span class="st">"Base"</span>, <span class="st">"PCB"</span>, <span class="st">"Cover"</span>, <span class="st">"Screw 1"</span>, <span class="st">"Screw 2"</span>, <span class="st">"Screw 3"</span>, <span class="st">"Screw 4"</span>, <span class="st">"Label"</span>),</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Handling_Time =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="fl">3.0</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="fl">4.0</span>),  <span class="co"># seconds</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Insertion_Time =</span> <span class="fu">c</span>(<span class="fl">3.0</span>, <span class="fl">4.0</span>, <span class="fl">3.5</span>, <span class="fl">6.0</span>, <span class="fl">6.0</span>, <span class="fl">6.0</span>, <span class="fl">6.0</span>, <span class="fl">2.0</span>),  <span class="co"># seconds</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Theoretically_Necessary =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculations</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>total_parts <span class="ot">&lt;-</span> <span class="fu">nrow</span>(parts)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>total_time <span class="ot">&lt;-</span> <span class="fu">sum</span>(parts<span class="sc">$</span>Handling_Time <span class="sc">+</span> parts<span class="sc">$</span>Insertion_Time)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>min_parts <span class="ot">&lt;-</span> <span class="fu">sum</span>(parts<span class="sc">$</span>Theoretically_Necessary)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>ideal_time <span class="ot">&lt;-</span> min_parts <span class="sc">*</span> <span class="dv">3</span>  <span class="co"># 3 seconds is theoretical minimum per part</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>efficiency <span class="ot">&lt;-</span> (ideal_time <span class="sc">/</span> total_time) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"DFA Analysis Results:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DFA Analysis Results:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=====================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=====================</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Total parts: %d</span><span class="sc">\n</span><span class="st">"</span>, total_parts))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total parts: 8</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Theoretically minimum parts: %d</span><span class="sc">\n</span><span class="st">"</span>, min_parts))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Theoretically minimum parts: 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Total assembly time: %.1f seconds</span><span class="sc">\n</span><span class="st">"</span>, total_time))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total assembly time: 62.5 seconds</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Ideal assembly time: %.1f seconds</span><span class="sc">\n</span><span class="st">"</span>, ideal_time))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ideal assembly time: 9.0 seconds</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Design Efficiency: %.1f%%</span><span class="sc">\n</span><span class="st">"</span>, efficiency))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Design Efficiency: 14.4%</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Opportunity: Combine 4 screws into snap-fit design</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Opportunity: Combine 4 screws into snap-fit design</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Case Study: Redesigning for DFM/DFA
+</summary>
+<p><strong>Original Design:</strong> - 15 parts - 4 different screw types - Assembly time: 180 seconds - Multiple assembly directions - Special tools required</p>
+<p><strong>Redesigned using DFM/DFA:</strong> - 8 parts (47% reduction) - 1 standard screw type - Assembly time: 75 seconds (58% reduction) - Single assembly direction (top-down) - No special tools</p>
+<p><strong>Cost Impact:</strong> - Part cost reduced 35% - Assembly labor reduced 58% - Quality defects reduced 60% - Total product cost reduced 40%</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="hazop-studies" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="hazop-studies"><span class="header-section-number">2.7</span> HAZOP Studies</h2>
+<p><strong>HAZOP</strong> (Hazard and Operability Study) is a systematic method to identify hazards and operability problems in process plants.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/6AqtX8oCpKI&amp;t" title="HAZOP Study Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/ukn0RRt0ReA&amp;list=PLeTiXOrLeXhI5IZKv3GeOUMOYpz5mG36S" title="HAZOP Study Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<section id="hazop-methodology" class="level3" data-number="2.7.1">
+<h3 data-number="2.7.1" class="anchored" data-anchor-id="hazop-methodology"><span class="header-section-number">2.7.1</span> HAZOP Methodology</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>HAZOP Guide Words and Examples</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Guide Word</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Meaning</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Example with FLOW</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">NO/NOT</td>
+<td style="text-align: left;">Complete negation of design intent</td>
+<td style="text-align: left;">No flow - pump failure, blocked line</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">MORE</td>
+<td style="text-align: left;">Quantitative increase</td>
+<td style="text-align: left;">More flow - control valve fails open</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">LESS</td>
+<td style="text-align: left;">Quantitative decrease</td>
+<td style="text-align: left;">Less flow - partial blockage, pump wear</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">AS WELL AS</td>
+<td style="text-align: left;">Qualitative modification/addition</td>
+<td style="text-align: left;">Flow + contamination - upstream leak</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">PART OF</td>
+<td style="text-align: left;">Qualitative decrease</td>
+<td style="text-align: left;">Only part of intended flow path active</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">REVERSE</td>
+<td style="text-align: left;">Logical opposite of intent</td>
+<td style="text-align: left;">Reverse flow - check valve failure</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">OTHER THAN</td>
+<td style="text-align: left;">Complete substitution</td>
+<td style="text-align: left;">Wrong material flowing</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="hazop-example" class="level3" data-number="2.7.2">
+<h3 data-number="2.7.2" class="anchored" data-anchor-id="hazop-example"><span class="header-section-number">2.7.2</span> HAZOP Example</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>HAZOP Worksheet Example</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Node</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Parameter</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Guide Word</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Deviation</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Cause</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Consequence</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Safeguard</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">Feed Pump P-101 to Reactor R-101</td>
+<td style="text-align: left;">Flow</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No Flow</td>
+<td style="text-align: left;">Pump failure, blocked suction</td>
+<td style="text-align: left;">Reactor starved, runaway possible</td>
+<td style="text-align: left;">Low flow alarm, interlock</td>
+<td style="text-align: left;">Verify interlock function</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em;">Feed Pump P-101 to Reactor R-101</td>
+<td style="text-align: left;">Flow</td>
+<td style="text-align: left;">More</td>
+<td style="text-align: left;">More Flow</td>
+<td style="text-align: left;">Control valve fails open</td>
+<td style="text-align: left;">Reactor overflow, environmental release</td>
+<td style="text-align: left;">High level alarm, overflow protection</td>
+<td style="text-align: left;">Add independent high-high level trip</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">Feed Pump P-101 to Reactor R-101</td>
+<td style="text-align: left;">Pressure</td>
+<td style="text-align: left;">More</td>
+<td style="text-align: left;">High Pressure</td>
+<td style="text-align: left;">Downstream blockage</td>
+<td style="text-align: left;">Pipe rupture, personnel injury</td>
+<td style="text-align: left;">Relief valve, high pressure trip</td>
+<td style="text-align: left;">Verify relief valve sizing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em;">Feed Pump P-101 to Reactor R-101</td>
+<td style="text-align: left;">Temperature</td>
+<td style="text-align: left;">Less</td>
+<td style="text-align: left;">Low Temperature</td>
+<td style="text-align: left;">Cooling water leak into feed</td>
+<td style="text-align: left;">Reaction incomplete, off-spec product</td>
+<td style="text-align: left;">Low temp alarm, feed analysis</td>
+<td style="text-align: left;">Add temperature interlock</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Why is HAZOP done during FEED, not later?
+</summary>
+<p>HAZOP should be completed during FEED because:</p>
+<ol type="1">
+<li><strong>Cost of changes</strong> - Changes during FEED cost 1x; during detailed design cost 10x; during construction cost 100x</li>
+<li><strong>Design influence</strong> - P&amp;IDs are still being developed and can be modified</li>
+<li><strong>Equipment selection</strong> - Safety requirements may affect equipment sizing</li>
+<li><strong>Budget accuracy</strong> - Safety systems must be included in project budget</li>
+<li><strong>Regulatory approval</strong> - Many jurisdictions require HAZOP before construction permits</li>
+</ol>
+<p><strong>Best practice:</strong> Conduct preliminary HAZOP early in FEED, then detailed HAZOP when P&amp;IDs are 60-80% complete.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="cost-estimation" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="cost-estimation"><span class="header-section-number">2.8</span> Cost Estimation</h2>
+<p>Accurate cost estimation is critical for project approval and budget management.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Cost Estimate Classification (AACE International)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">AACE Class</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Project Phase</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Engineering Complete</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Accuracy Range</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Class 5</td>
+<td style="text-align: left;">Concept Screening</td>
+<td style="text-align: left;">0-2%</td>
+<td style="text-align: left;">-50% to +100%</td>
+<td style="text-align: left;">Screening alternatives</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Class 4</td>
+<td style="text-align: left;">Concept Study</td>
+<td style="text-align: left;">1-15%</td>
+<td style="text-align: left;">-30% to +50%</td>
+<td style="text-align: left;">Feasibility</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Class 3</td>
+<td style="text-align: left;">FEED/Budget</td>
+<td style="text-align: left;">10-40%</td>
+<td style="text-align: left;">-20% to +30%</td>
+<td style="text-align: left;">Authorization</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Class 2</td>
+<td style="text-align: left;">Detailed Design</td>
+<td style="text-align: left;">30-75%</td>
+<td style="text-align: left;">-15% to +20%</td>
+<td style="text-align: left;">Control</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Class 1</td>
+<td style="text-align: left;">Construction</td>
+<td style="text-align: left;">65-100%</td>
+<td style="text-align: left;">-10% to +15%</td>
+<td style="text-align: left;">Bid/Tender</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-Process-and-Design_files/figure-html/cost-breakdown-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Typical Process Plant Cost Breakdown</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="case-study-automotive-paint-line-project" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="case-study-automotive-paint-line-project"><span class="header-section-number">2.9</span> Case Study: Automotive Paint Line Project</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-Process-and-Design_files/figure-html/case-study-timeline-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Automotive Paint Line Project Timeline</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Case Study Details: Paint Line Engineering Challenges
+</summary>
+<p><strong>Project Overview:</strong> - New automotive paint line for SUV body shop - Capacity: 60 jobs per hour (JPH) - Process: E-coat, primer, basecoat, clearcoat</p>
+<p><strong>Key Engineering Challenges:</strong></p>
+<p><strong>1. Environmental Control</strong> - Temperature: ±1°C throughout paint booth - Humidity: 65% ±5% RH - Air cleanliness: Class 10,000</p>
+<p><strong>2. Automation Requirements</strong> - 48 paint robots (8 per zone) - Conveyor system with 2m pitch - Zone tracking and recipe management</p>
+<p><strong>3. Safety Systems</strong> - Explosion-proof electrical classification - Fire suppression throughout - VOC monitoring and control</p>
+<p><strong>4. Quality Systems</strong> - Inline thickness measurement - Automated visual inspection - Recipe management and traceability</p>
+<p><strong>Project Outcome:</strong> - On-time completion - Under budget by 3% - Quality metrics exceeded targets - 99.2% first-pass yield achieved</p>
+</details>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">2.10</span> Review Questions</h2>
+<details>
+<summary>
+Question 1: Automation Selection
+</summary>
+<p><strong>A medical device company needs to produce 5,000 units per year of a surgical instrument. The design is mature and not expected to change. Volumes could grow to 50,000 units if successful. Which automation type should they initially choose?</strong></p>
+<p><strong>Answer:</strong> <strong>Programmable automation</strong> (CNC machining, robotic cells)</p>
+<p><strong>Reasoning:</strong> - Current volume (5,000/year) doesn’t justify fixed automation - Flexibility allows for minor design refinements - Can scale up by adding shifts or machines - Lower initial investment preserves capital - If volume grows to 50,000, can justify dedicated equipment later</p>
+</details>
+<details>
+<summary>
+Question 2: P&amp;ID Interpretation
+</summary>
+<p><strong>Decode the following instrument tags and explain their function:</strong></p>
+<ol type="a">
+<li>FIC-201</li>
+<li>PSV-305</li>
+<li>TT-401</li>
+<li>LCV-150</li>
+</ol>
+<p><strong>Answers:</strong></p>
+<ol type="a">
+<li><strong>FIC-201</strong> - Flow Indicating Controller (loop 201)
+<ul>
+<li>Measures flow, displays value, and controls a valve</li>
+</ul></li>
+<li><strong>PSV-305</strong> - Pressure Safety Valve (loop 305)
+<ul>
+<li>Relieves pressure if it exceeds setpoint (safety device)</li>
+</ul></li>
+<li><strong>TT-401</strong> - Temperature Transmitter (loop 401)
+<ul>
+<li>Converts temperature measurement to 4-20mA signal</li>
+</ul></li>
+<li><strong>LCV-150</strong> - Level Control Valve (loop 150)
+<ul>
+<li>Valve that is manipulated by a level controller</li>
+</ul></li>
+</ol>
+</details>
+<details>
+<summary>
+Question 3: Project Phases
+</summary>
+<p><strong>Why is FEED often considered the most critical project phase?</strong></p>
+<p><strong>Answer:</strong> FEED is critical because:</p>
+<ol type="1">
+<li><strong>Defines scope</strong> - All subsequent work based on FEED deliverables</li>
+<li><strong>Locks in 80% of cost</strong> - Design decisions determine equipment and construction costs</li>
+<li><strong>Lowest cost to change</strong> - Changes cost 10-100x more in later phases</li>
+<li><strong>Authorization basis</strong> - Management approves project based on FEED estimate</li>
+<li><strong>Risk identification</strong> - HAZOP and risk studies identify safety requirements</li>
+<li><strong>Contractor selection</strong> - FEED package used for competitive bidding</li>
+</ol>
+<p><strong>Poor FEED = project overruns, scope changes, and budget problems.</strong></p>
+</details>
+<details>
+<summary>
+Question 4: DFM Application
+</summary>
+<p><strong>A product currently uses 12 screws of 3 different sizes for assembly. Apply DFM principles to improve this design.</strong></p>
+<p><strong>Answer:</strong> Apply these DFM principles:</p>
+<ol type="1">
+<li><p><strong>Minimize parts</strong>: Can some screws be eliminated by using integral snap-fits?</p></li>
+<li><p><strong>Standardize</strong>: Use one screw size instead of three</p>
+<ul>
+<li>Reduces inventory complexity</li>
+<li>Single tool for assembly</li>
+<li>Lower procurement cost</li>
+</ul></li>
+<li><p><strong>Design for ease</strong>: Consider alternatives:</p>
+<ul>
+<li>Snap-fit connections (no tools)</li>
+<li>Twist-lock features</li>
+<li>Press-fit pins</li>
+</ul></li>
+</ol>
+<p><strong>Possible redesign:</strong> - Reduce from 12 screws to 4 screws (for serviceability) - All same size (M3 × 8) - Add 4 snap-fits for initial positioning - Result: 67% fewer fasteners, single tool, faster assembly</p>
+</details>
+<details>
+<summary>
+Question 5: HAZOP Analysis
+</summary>
+<p><strong>For a reactor feed pump, apply the HAZOP guide word “REVERSE” to the parameter “FLOW”. What could cause this? What are the consequences? What safeguards would you recommend?</strong></p>
+<p><strong>Answer:</strong></p>
+<p><strong>Deviation:</strong> Reverse flow through feed pump</p>
+<p><strong>Causes:</strong> - Pump stops while discharge valve open - Check valve fails (stuck open or missing) - Parallel pump creates backflow - Reactor pressure exceeds pump shutoff head</p>
+<p><strong>Consequences:</strong> - Reactor contents backflow into feed tank - Contamination of feed material - Possible chemical reaction in feed system - Pump damage (running backward)</p>
+<p><strong>Safeguards:</strong> - Check valve on pump discharge - Automatic pump discharge block valve (closes on pump stop) - Low flow alarm and trip - Reactor pressure monitoring - Backflow-preventing orifice</p>
+</details>
+<hr>
+</section>
+<section id="summary" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">2.11</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Chapter 2 Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Key Takeaway</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Automation Types</td>
+<td style="text-align: left;">Fixed for high volume single product; Programmable for batch; Flexible for variety with quick changeover</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Project Phases</td>
+<td style="text-align: left;">Concept → FEED → Detailed Design → Construction → Commissioning → Start-up</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">PFDs vs P&amp;IDs</td>
+<td style="text-align: left;">PFD = big picture (equipment, flows); P&amp;ID = detailed (all instruments, valves, piping)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">DFM/DFA</td>
+<td style="text-align: left;">Design for easy manufacturing and assembly reduces cost 20-40%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">HAZOP</td>
+<td style="text-align: left;">Systematic hazard identification using guide words; do it during FEED</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Cost Estimation</td>
+<td style="text-align: left;">Estimate accuracy improves with engineering completion; AACE Class 1-5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="key-takeaways" class="level3" data-number="2.11.1">
+<h3 data-number="2.11.1" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">2.11.1</span> Key Takeaways</h3>
+<ol type="1">
+<li><strong>Automation selection</strong> depends on production volume, variety, and changeover requirements</li>
+<li><strong>FEED phase</strong> defines 80% of project cost with only 10-15% of engineering effort</li>
+<li><strong>P&amp;IDs</strong> are the critical document connecting design to construction</li>
+<li><strong>DFM/DFA</strong> should be applied early in design to maximize impact</li>
+<li><strong>HAZOP</strong> identifies hazards systematically and must be done before construction</li>
+<li><strong>Cost estimates</strong> improve in accuracy as engineering progresses</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="references" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="references"><span class="header-section-number">2.12</span> References</h2>
+<ol type="1">
+<li>Towler, G., &amp; Sinnott, R. (2021). <em>Chemical Engineering Design</em> (7th ed.). Elsevier.</li>
+<li>AACE International. (2020). <em>Cost Estimate Classification System</em>.</li>
+<li>ISA-5.1. (2022). <em>Instrumentation Symbols and Identification</em>.</li>
+<li>Boothroyd, G., Dewhurst, P., &amp; Knight, W.A. (2011). <em>Product Design for Manufacture and Assembly</em> (3rd ed.). CRC Press.</li>
+<li>CCPS. (2008). <em>Guidelines for Hazard Evaluation Procedures</em> (3rd ed.). Wiley.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01-Types-of-Manufacturing.html" class="pagination-link" aria-label="Types of Manufacturing Processes">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03-Integrated-Manufacturing-Systems.html" class="pagination-link" aria-label="Integrated Manufacturing Systems">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/02-Process-and-Design.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

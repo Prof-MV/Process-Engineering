@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>8&nbsp; Industrial Robotics – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./09-Industrial-Automation.html" rel="next">
+<link href="./07-Ergnomics.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-Industrial-Robotics.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">8.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-industrial-robotics" id="toc-introduction-to-industrial-robotics" class="nav-link" data-scroll-target="#introduction-to-industrial-robotics"><span class="header-section-number">8.2</span> Introduction to Industrial Robotics</a>
+  <ul class="collapse">
+  <li><a href="#why-use-robots" id="toc-why-use-robots" class="nav-link" data-scroll-target="#why-use-robots"><span class="header-section-number">8.2.1</span> Why Use Robots?</a></li>
+  <li><a href="#robot-market-growth" id="toc-robot-market-growth" class="nav-link" data-scroll-target="#robot-market-growth"><span class="header-section-number">8.2.2</span> Robot Market Growth</a></li>
+  <li><a href="#industries-using-robots" id="toc-industries-using-robots" class="nav-link" data-scroll-target="#industries-using-robots"><span class="header-section-number">8.2.3</span> Industries Using Robots</a></li>
+  </ul></li>
+  <li><a href="#robot-configurations" id="toc-robot-configurations" class="nav-link" data-scroll-target="#robot-configurations"><span class="header-section-number">8.3</span> Robot Configurations</a>
+  <ul class="collapse">
+  <li><a href="#common-robot-types" id="toc-common-robot-types" class="nav-link" data-scroll-target="#common-robot-types"><span class="header-section-number">8.3.1</span> Common Robot Types</a></li>
+  <li><a href="#detailed-configuration-comparison" id="toc-detailed-configuration-comparison" class="nav-link" data-scroll-target="#detailed-configuration-comparison"><span class="header-section-number">8.3.2</span> Detailed Configuration Comparison</a></li>
+  <li><a href="#degrees-of-freedom" id="toc-degrees-of-freedom" class="nav-link" data-scroll-target="#degrees-of-freedom"><span class="header-section-number">8.3.3</span> Degrees of Freedom</a></li>
+  </ul></li>
+  <li><a href="#robot-specifications" id="toc-robot-specifications" class="nav-link" data-scroll-target="#robot-specifications"><span class="header-section-number">8.4</span> Robot Specifications</a>
+  <ul class="collapse">
+  <li><a href="#key-specifications" id="toc-key-specifications" class="nav-link" data-scroll-target="#key-specifications"><span class="header-section-number">8.4.1</span> Key Specifications</a></li>
+  <li><a href="#work-envelope" id="toc-work-envelope" class="nav-link" data-scroll-target="#work-envelope"><span class="header-section-number">8.4.2</span> Work Envelope</a></li>
+  <li><a href="#payload-considerations" id="toc-payload-considerations" class="nav-link" data-scroll-target="#payload-considerations"><span class="header-section-number">8.4.3</span> Payload Considerations</a></li>
+  <li><a href="#repeatability-vs-accuracy" id="toc-repeatability-vs-accuracy" class="nav-link" data-scroll-target="#repeatability-vs-accuracy"><span class="header-section-number">8.4.4</span> Repeatability vs Accuracy</a></li>
+  </ul></li>
+  <li><a href="#robot-system-components" id="toc-robot-system-components" class="nav-link" data-scroll-target="#robot-system-components"><span class="header-section-number">8.5</span> Robot System Components</a>
+  <ul class="collapse">
+  <li><a href="#system-architecture" id="toc-system-architecture" class="nav-link" data-scroll-target="#system-architecture"><span class="header-section-number">8.5.1</span> System Architecture</a></li>
+  <li><a href="#end-effectors-eoat" id="toc-end-effectors-eoat" class="nav-link" data-scroll-target="#end-effectors-eoat"><span class="header-section-number">8.5.2</span> End Effectors (EOAT)</a></li>
+  <li><a href="#gripper-selection-example" id="toc-gripper-selection-example" class="nav-link" data-scroll-target="#gripper-selection-example"><span class="header-section-number">8.5.3</span> Gripper Selection Example</a></li>
+  </ul></li>
+  <li><a href="#coordinate-systems-and-motion" id="toc-coordinate-systems-and-motion" class="nav-link" data-scroll-target="#coordinate-systems-and-motion"><span class="header-section-number">8.6</span> Coordinate Systems and Motion</a>
+  <ul class="collapse">
+  <li><a href="#coordinate-frames" id="toc-coordinate-frames" class="nav-link" data-scroll-target="#coordinate-frames"><span class="header-section-number">8.6.1</span> Coordinate Frames</a></li>
+  <li><a href="#motion-types" id="toc-motion-types" class="nav-link" data-scroll-target="#motion-types"><span class="header-section-number">8.6.2</span> Motion Types</a></li>
+  </ul></li>
+  <li><a href="#robot-applications" id="toc-robot-applications" class="nav-link" data-scroll-target="#robot-applications"><span class="header-section-number">8.7</span> Robot Applications</a>
+  <ul class="collapse">
+  <li><a href="#automotive-applications" id="toc-automotive-applications" class="nav-link" data-scroll-target="#automotive-applications"><span class="header-section-number">8.7.1</span> Automotive Applications</a></li>
+  <li><a href="#food-beverage-applications" id="toc-food-beverage-applications" class="nav-link" data-scroll-target="#food-beverage-applications"><span class="header-section-number">8.7.2</span> Food &amp; Beverage Applications</a></li>
+  <li><a href="#aerospacedefense-applications" id="toc-aerospacedefense-applications" class="nav-link" data-scroll-target="#aerospacedefense-applications"><span class="header-section-number">8.7.3</span> Aerospace/Defense Applications</a></li>
+  </ul></li>
+  <li><a href="#robot-safety" id="toc-robot-safety" class="nav-link" data-scroll-target="#robot-safety"><span class="header-section-number">8.8</span> Robot Safety</a>
+  <ul class="collapse">
+  <li><a href="#hazard-categories" id="toc-hazard-categories" class="nav-link" data-scroll-target="#hazard-categories"><span class="header-section-number">8.8.1</span> Hazard Categories</a></li>
+  <li><a href="#safety-standards" id="toc-safety-standards" class="nav-link" data-scroll-target="#safety-standards"><span class="header-section-number">8.8.2</span> Safety Standards</a></li>
+  <li><a href="#safeguarding-methods" id="toc-safeguarding-methods" class="nav-link" data-scroll-target="#safeguarding-methods"><span class="header-section-number">8.8.3</span> Safeguarding Methods</a></li>
+  </ul></li>
+  <li><a href="#collaborative-robots-cobots" id="toc-collaborative-robots-cobots" class="nav-link" data-scroll-target="#collaborative-robots-cobots"><span class="header-section-number">8.9</span> Collaborative Robots (Cobots)</a>
+  <ul class="collapse">
+  <li><a href="#cobot-characteristics" id="toc-cobot-characteristics" class="nav-link" data-scroll-target="#cobot-characteristics"><span class="header-section-number">8.9.1</span> Cobot Characteristics</a></li>
+  <li><a href="#collaborative-operation-modes-isots-15066" id="toc-collaborative-operation-modes-isots-15066" class="nav-link" data-scroll-target="#collaborative-operation-modes-isots-15066"><span class="header-section-number">8.9.2</span> Collaborative Operation Modes (ISO/TS 15066)</a></li>
+  <li><a href="#force-and-pressure-limits" id="toc-force-and-pressure-limits" class="nav-link" data-scroll-target="#force-and-pressure-limits"><span class="header-section-number">8.9.3</span> Force and Pressure Limits</a></li>
+  </ul></li>
+  <li><a href="#robot-programming-basics" id="toc-robot-programming-basics" class="nav-link" data-scroll-target="#robot-programming-basics"><span class="header-section-number">8.10</span> Robot Programming Basics</a>
+  <ul class="collapse">
+  <li><a href="#programming-methods" id="toc-programming-methods" class="nav-link" data-scroll-target="#programming-methods"><span class="header-section-number">8.10.1</span> Programming Methods</a></li>
+  <li><a href="#basic-program-structure" id="toc-basic-program-structure" class="nav-link" data-scroll-target="#basic-program-structure"><span class="header-section-number">8.10.2</span> Basic Program Structure</a></li>
+  <li><a href="#key-programming-concepts" id="toc-key-programming-concepts" class="nav-link" data-scroll-target="#key-programming-concepts"><span class="header-section-number">8.10.3</span> Key Programming Concepts</a></li>
+  </ul></li>
+  <li><a href="#video-resources" id="toc-video-resources" class="nav-link" data-scroll-target="#video-resources"><span class="header-section-number">8.11</span> Video Resources</a>
+  <ul class="collapse">
+  <li><a href="#introduction-to-industrial-robots" id="toc-introduction-to-industrial-robots" class="nav-link" data-scroll-target="#introduction-to-industrial-robots"><span class="header-section-number">8.11.1</span> Introduction to Industrial Robots</a></li>
+  <li><a href="#collaborative-robots-explained" id="toc-collaborative-robots-explained" class="nav-link" data-scroll-target="#collaborative-robots-explained"><span class="header-section-number">8.11.2</span> Collaborative Robots Explained</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">8.12</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">8.13</span> Review Questions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">8.14</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/08-Industrial-Robotics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">8.1</span> Learning Objectives</h2>
+<p>After completing this chapter, you will be able to:</p>
+<ol type="1">
+<li>Define industrial robots and explain their role in modern manufacturing</li>
+<li>Identify the main types of robot configurations and their applications</li>
+<li>Describe robot specifications including payload, reach, repeatability, and speed</li>
+<li>Explain the components of a robotic system (manipulator, controller, teach pendant, end effector)</li>
+<li>Understand robot coordinate systems and motion types</li>
+<li>Identify common robot applications in automotive, food, and defense industries</li>
+<li>Apply robot safety standards and safeguarding methods</li>
+<li>Describe collaborative robot (cobot) technology and applications</li>
+<li>Understand basic robot programming concepts</li>
+</ol>
+<hr>
+</section>
+<section id="introduction-to-industrial-robotics" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="introduction-to-industrial-robotics"><span class="header-section-number">8.2</span> Introduction to Industrial Robotics</h2>
+<p>An <strong>industrial robot</strong> is defined by ISO 8373 as “an automatically controlled, reprogrammable, multipurpose manipulator, programmable in three or more axes, which can be either fixed in place or mobile for use in industrial automation applications.”</p>
+<section id="why-use-robots" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="why-use-robots"><span class="header-section-number">8.2.1</span> Why Use Robots?</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/robot-benefits-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="robot-market-growth" class="level3" data-number="8.2.2">
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="robot-market-growth"><span class="header-section-number">8.2.2</span> Robot Market Growth</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/robot-market-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="industries-using-robots" class="level3" data-number="8.2.3">
+<h3 data-number="8.2.3" class="anchored" data-anchor-id="industries-using-robots"><span class="header-section-number">8.2.3</span> Industries Using Robots</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Industrial Robot Usage by Industry Sector</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Industry</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Market Share (%)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Key Applications</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Growth Trend</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Automotive</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">Welding, painting, assembly, material handling</td>
+<td style="text-align: left;">Stable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Electrical/Electronics</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">Assembly, testing, packaging, dispensing</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Metal &amp; Machinery</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">Machine tending, welding, cutting</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Food &amp; Beverage</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Palletizing, packaging, pick-and-place</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Plastics &amp; Chemicals</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Injection molding, packaging, assembly</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Aerospace/Defense</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Drilling, fastening, inspection, composite layup</td>
+<td style="text-align: left;">High</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="robot-configurations" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="robot-configurations"><span class="header-section-number">8.3</span> Robot Configurations</h2>
+<p>Industrial robots come in various mechanical configurations, each suited to different applications.</p>
+<section id="common-robot-types" class="level3" data-number="8.3.1">
+<h3 data-number="8.3.1" class="anchored" data-anchor-id="common-robot-types"><span class="header-section-number">8.3.1</span> Common Robot Types</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/robot-types-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="detailed-configuration-comparison" class="level3" data-number="8.3.2">
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="detailed-configuration-comparison"><span class="header-section-number">8.3.2</span> Detailed Configuration Comparison</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Robot Configuration Comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Configuration</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Axes</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Payload Range</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Reach</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Repeatability</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Speed</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Cost</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Best Applications</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 14%; font-weight: bold;">6-Axis Articulated</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">3-2300 kg</td>
+<td style="text-align: left;">0.5-4 m</td>
+<td style="text-align: left;">±0.02-0.1 mm</td>
+<td style="text-align: left;">Moderate-Fast</td>
+<td style="text-align: left;">$$-$$$$</td>
+<td style="text-align: left;">Complex 3D tasks, maximum flexibility</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14%; font-weight: bold;">SCARA</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">1-20 kg</td>
+<td style="text-align: left;">0.2-1.2 m</td>
+<td style="text-align: left;">±0.01-0.05 mm</td>
+<td style="text-align: left;">Very Fast</td>
+<td style="text-align: left;">$$</td>
+<td style="text-align: left;">Fast assembly, pick-place, screw driving</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 14%; font-weight: bold;">Delta/Parallel</td>
+<td style="text-align: left;">3-4</td>
+<td style="text-align: left;">0.5-12 kg</td>
+<td style="text-align: left;">0.5-1.5 m</td>
+<td style="text-align: left;">±0.05-0.1 mm</td>
+<td style="text-align: left;">Extremely Fast</td>
+<td style="text-align: left;">$$$</td>
+<td style="text-align: left;">High-speed picking, packaging lines</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14%; font-weight: bold;">Cartesian/Gantry</td>
+<td style="text-align: left;">3-6</td>
+<td style="text-align: left;">5-1000+ kg</td>
+<td style="text-align: left;">Custom (meters)</td>
+<td style="text-align: left;">±0.05-0.5 mm</td>
+<td style="text-align: left;">Moderate</td>
+<td style="text-align: left;">$-$$$$</td>
+<td style="text-align: left;">Large work areas, heavy loads, simple paths</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="degrees-of-freedom" class="level3" data-number="8.3.3">
+<h3 data-number="8.3.3" class="anchored" data-anchor-id="degrees-of-freedom"><span class="header-section-number">8.3.3</span> Degrees of Freedom</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/degrees-freedom-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="robot-specifications" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="robot-specifications"><span class="header-section-number">8.4</span> Robot Specifications</h2>
+<p>Understanding robot specifications is essential for proper selection and application.</p>
+<section id="key-specifications" class="level3" data-number="8.4.1">
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="key-specifications"><span class="header-section-number">8.4.1</span> Key Specifications</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Key Robot Specifications Explained</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Specification</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Definition</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Typical_Values</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Payload</td>
+<td style="text-align: left;">Maximum mass the robot can handle at full speed</td>
+<td style="text-align: left;">3-2300 kg (varies widely by type)</td>
+<td style="text-align: left;">Must exceed part + gripper + safety factor</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Reach</td>
+<td style="text-align: left;">Maximum distance from base to tool center point</td>
+<td style="text-align: left;">500-4000 mm for articulated robots</td>
+<td style="text-align: left;">Must cover all required work positions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Repeatability</td>
+<td style="text-align: left;">Ability to return to same position repeatedly</td>
+<td style="text-align: left;">±0.01 to ±0.1 mm</td>
+<td style="text-align: left;">Critical for precision assembly; welding</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Accuracy</td>
+<td style="text-align: left;">Ability to reach a commanded position exactly</td>
+<td style="text-align: left;">±0.1 to ±1.0 mm</td>
+<td style="text-align: left;">Important for offline programming</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Maximum Speed</td>
+<td style="text-align: left;">Maximum velocity at tool center point or joint speeds</td>
+<td style="text-align: left;">1-12 m/s TCP; 100-500°/s joint</td>
+<td style="text-align: left;">Affects cycle time; may be derated with payload</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Degrees of Freedom</td>
+<td style="text-align: left;">Number of independent axes of motion</td>
+<td style="text-align: left;">4-7 axes</td>
+<td style="text-align: left;">More axes = more flexibility</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Mounting</td>
+<td style="text-align: left;">How robot is installed (floor, ceiling, wall, angle)</td>
+<td style="text-align: left;">Floor (most common), ceiling, wall, shelf</td>
+<td style="text-align: left;">Affects work envelope and floor space</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">IP Rating</td>
+<td style="text-align: left;">Ingress Protection rating for dust/water resistance</td>
+<td style="text-align: left;">IP40 (standard) to IP67 (harsh environments)</td>
+<td style="text-align: left;">Required for foundry, food, wash-down applications</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="work-envelope" class="level3" data-number="8.4.2">
+<h3 data-number="8.4.2" class="anchored" data-anchor-id="work-envelope"><span class="header-section-number">8.4.2</span> Work Envelope</h3>
+<p>The <strong>work envelope</strong> (or workspace) is the three-dimensional space the robot can reach.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/work-envelope-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="payload-considerations" class="level3" data-number="8.4.3">
+<h3 data-number="8.4.3" class="anchored" data-anchor-id="payload-considerations"><span class="header-section-number">8.4.3</span> Payload Considerations</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Payload Calculation Example</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>robot_max_payload <span class="ot">&lt;-</span> <span class="dv">10</span>  <span class="co"># kg</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>gripper_weight <span class="ot">&lt;-</span> <span class="fl">2.5</span>    <span class="co"># kg</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>part_weight <span class="ot">&lt;-</span> <span class="fl">5.0</span>       <span class="co"># kg</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>safety_factor <span class="ot">&lt;-</span> <span class="fl">1.2</span>     <span class="co"># 20% safety margin</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>total_load <span class="ot">&lt;-</span> gripper_weight <span class="sc">+</span> part_weight</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>required_capacity <span class="ot">&lt;-</span> total_load <span class="sc">*</span> safety_factor</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>available_capacity <span class="ot">&lt;-</span> robot_max_payload <span class="sc">-</span> gripper_weight</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Payload Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Payload Analysis:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─────────────────────────────</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Robot maximum payload:"</span>, robot_max_payload, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Robot maximum payload: 10 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gripper weight:"</span>, gripper_weight, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gripper weight: 2.5 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Part weight:"</span>, part_weight, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Part weight: 5 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total load:"</span>, total_load, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total load: 7.5 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"With safety factor ("</span>, safety_factor, <span class="st">"x):"</span>, required_capacity, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>With safety factor ( 1.2 x): 9 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─────────────────────────────</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Available capacity for part:"</span>, available_capacity, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Available capacity for part: 7.5 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(required_capacity <span class="sc">&lt;=</span> robot_max_payload) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Result: ACCEPTABLE - Robot can handle this load</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Result: EXCEEDED - Select larger robot or lighter gripper</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Result: ACCEPTABLE - Robot can handle this load</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note about moment load</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Note: Also verify moment load (payload × distance from flange)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Note: Also verify moment load (payload × distance from flange)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Moment at wrist:"</span>, part_weight, <span class="st">"kg ×"</span>, <span class="fl">0.3</span>, <span class="st">"m ="</span>, part_weight <span class="sc">*</span> <span class="fl">0.3</span>, <span class="st">"kg·m</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Moment at wrist: 5 kg × 0.3 m = 1.5 kg·m</code></pre>
+</div>
+</div>
+</section>
+<section id="repeatability-vs-accuracy" class="level3" data-number="8.4.4">
+<h3 data-number="8.4.4" class="anchored" data-anchor-id="repeatability-vs-accuracy"><span class="header-section-number">8.4.4</span> Repeatability vs Accuracy</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_point(aes(x = 0, y = 0), color = "red", size = 4, shape = 3, : All aesthetics have length 1, but the data has 90 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_circle(aes(x0 = 0, y0 = 0, r = 0.05), inherit.aes = FALSE, : All aesthetics have length 1, but the data has 90 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/repeat-vs-accuracy-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+<strong>Understanding the Difference</strong>
+</summary>
+<p><strong>Repeatability:</strong> - Ability to return to the SAME taught position - More important for most applications - Quoted spec (e.g., ±0.05mm) is typically 3σ - Achieved through consistent mechanical design and servo control</p>
+<p><strong>Accuracy:</strong> - Ability to reach a COMMANDED position - Important for offline programming - Affected by mechanical tolerances, deflection, calibration - Can be improved through calibration</p>
+<strong>Why Repeatability Matters More:</strong> In most applications, the robot is taught positions by jogging to them. As long as it returns to those positions consistently (repeatability), accuracy doesn’t matter. Accuracy only matters when positions are calculated (offline programming) rather than taught.
+</details>
+<hr>
+</section>
+</section>
+<section id="robot-system-components" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="robot-system-components"><span class="header-section-number">8.5</span> Robot System Components</h2>
+<p>A complete robotic system consists of several integrated components.</p>
+<section id="system-architecture" class="level3" data-number="8.5.1">
+<h3 data-number="8.5.1" class="anchored" data-anchor-id="system-architecture"><span class="header-section-number">8.5.1</span> System Architecture</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/robot-system-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="end-effectors-eoat" class="level3" data-number="8.5.2">
+<h3 data-number="8.5.2" class="anchored" data-anchor-id="end-effectors-eoat"><span class="header-section-number">8.5.2</span> End Effectors (EOAT)</h3>
+<p><strong>End of Arm Tooling (EOAT)</strong> is the device attached to the robot’s wrist to interact with parts.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Common End Effector Types</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">EOAT Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Operating Principle</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Applications</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Key Considerations</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Mechanical Gripper</td>
+<td style="text-align: left;">Fingers actuated by pneumatic, electric, or hydraulic</td>
+<td style="text-align: left;">General part handling; assembly</td>
+<td style="text-align: left;">Part geometry; grip force; cycle time</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Vacuum Gripper</td>
+<td style="text-align: left;">Suction cups powered by venturi or vacuum pump</td>
+<td style="text-align: left;">Flat surfaces; sheet material; boxes</td>
+<td style="text-align: left;">Surface porosity; part weight; seal</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Magnetic Gripper</td>
+<td style="text-align: left;">Electromagnetic or permanent magnet</td>
+<td style="text-align: left;">Ferrous metal parts; steel sheets</td>
+<td style="text-align: left;">Part material; residual magnetism</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Welding Torch</td>
+<td style="text-align: left;">MIG, TIG, spot welding equipment</td>
+<td style="text-align: left;">Automotive body, frames, components</td>
+<td style="text-align: left;">Process parameters; wire feed; shielding</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Spray Gun</td>
+<td style="text-align: left;">Paint, adhesive, sealant dispensing</td>
+<td style="text-align: left;">Automotive painting; sealing</td>
+<td style="text-align: left;">Pattern; coverage; waste</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Deburring Tool</td>
+<td style="text-align: left;">Rotary tool for edge finishing</td>
+<td style="text-align: left;">Casting, machining finishing</td>
+<td style="text-align: left;">Speed; pressure; consistency</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Force/Torque Sensor</td>
+<td style="text-align: left;">Measures forces and torques at tool</td>
+<td style="text-align: left;">Assembly; polishing; insertion</td>
+<td style="text-align: left;">Sensitivity; overload protection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Vision Camera</td>
+<td style="text-align: left;">2D or 3D imaging for guidance</td>
+<td style="text-align: left;">Part location; inspection; guidance</td>
+<td style="text-align: left;">Resolution; lighting; processing speed</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="gripper-selection-example" class="level3" data-number="8.5.3">
+<h3 data-number="8.5.3" class="anchored" data-anchor-id="gripper-selection-example"><span class="header-section-number">8.5.3</span> Gripper Selection Example</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gripper Force Calculation</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>part_mass <span class="ot">&lt;-</span> <span class="fl">3.0</span>        <span class="co"># kg</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>acceleration <span class="ot">&lt;-</span> <span class="dv">15</span>      <span class="co"># m/s² (robot acceleration)</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>gravity <span class="ot">&lt;-</span> <span class="fl">9.81</span>         <span class="co"># m/s²</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>safety_factor <span class="ot">&lt;-</span> <span class="fl">2.0</span>    <span class="co"># Minimum safety factor</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>friction_coefficient <span class="ot">&lt;-</span> <span class="fl">0.3</span>  <span class="co"># Steel on rubber</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate forces</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>weight_force <span class="ot">&lt;-</span> part_mass <span class="sc">*</span> gravity</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>inertia_force <span class="ot">&lt;-</span> part_mass <span class="sc">*</span> acceleration</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>total_force <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(weight_force<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> inertia_force<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Required grip force (friction gripper)</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>required_grip <span class="ot">&lt;-</span> total_force <span class="sc">/</span> friction_coefficient <span class="sc">*</span> safety_factor</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gripper Force Calculation:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gripper Force Calculation:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─────────────────────────────</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Part mass:"</span>, part_mass, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Part mass: 3 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Weight force:"</span>, <span class="fu">round</span>(weight_force, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Weight force: 29.4 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Inertia force:"</span>, <span class="fu">round</span>(inertia_force, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inertia force: 45 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Combined force:"</span>, <span class="fu">round</span>(total_force, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Combined force: 53.8 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Friction coefficient:"</span>, friction_coefficient, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Friction coefficient: 0.3 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Safety factor:"</span>, safety_factor, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Safety factor: 2 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─────────────────────────────</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Required grip force:"</span>, <span class="fu">round</span>(required_grip, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Required grip force: 358.5 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Select gripper with grip force ≥"</span>, <span class="fu">ceiling</span>(required_grip<span class="sc">/</span><span class="dv">10</span>)<span class="sc">*</span><span class="dv">10</span>, <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Select gripper with grip force ≥ 360 N</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="coordinate-systems-and-motion" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="coordinate-systems-and-motion"><span class="header-section-number">8.6</span> Coordinate Systems and Motion</h2>
+<p>Understanding coordinate systems is essential for robot programming.</p>
+<section id="coordinate-frames" class="level3" data-number="8.6.1">
+<h3 data-number="8.6.1" class="anchored" data-anchor-id="coordinate-frames"><span class="header-section-number">8.6.1</span> Coordinate Frames</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/coordinate-frames-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="motion-types" class="level3" data-number="8.6.2">
+<h3 data-number="8.6.2" class="anchored" data-anchor-id="motion-types"><span class="header-section-number">8.6.2</span> Motion Types</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Robot Motion Types</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Motion Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Path Characteristic</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Speed Control</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">When to Use</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Cycle Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Joint Move (MoveJ)</td>
+<td style="text-align: left;">Unpredictable path; each joint moves at constant speed</td>
+<td style="text-align: left;">Joint velocity (% or deg/s)</td>
+<td style="text-align: left;">Fast point-to-point; collision-free space; approach moves</td>
+<td style="text-align: left;">Fastest</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Linear Move (MoveL)</td>
+<td style="text-align: left;">Straight line from start to end; TCP follows linear path</td>
+<td style="text-align: left;">TCP velocity (mm/s)</td>
+<td style="text-align: left;">Process paths (welding, sealing); precise positioning</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Circular Move (MoveC)</td>
+<td style="text-align: left;">Arc or circle; defined by start, via, and end points</td>
+<td style="text-align: left;">TCP velocity (mm/s)</td>
+<td style="text-align: left;">Arc welding; edge following; contoured surfaces</td>
+<td style="text-align: left;">Slowest</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/motion-visualization-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="robot-applications" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="robot-applications"><span class="header-section-number">8.7</span> Robot Applications</h2>
+<section id="automotive-applications" class="level3" data-number="8.7.1">
+<h3 data-number="8.7.1" class="anchored" data-anchor-id="automotive-applications"><span class="header-section-number">8.7.1</span> Automotive Applications</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/auto-applications-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="food-beverage-applications" class="level3" data-number="8.7.2">
+<h3 data-number="8.7.2" class="anchored" data-anchor-id="food-beverage-applications"><span class="header-section-number">8.7.2</span> Food &amp; Beverage Applications</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Food &amp; Beverage Robot Applications</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Application</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Robot Type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Special Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Palletizing</td>
+<td style="text-align: left;">Stack cases/bags onto pallets in patterns</td>
+<td style="text-align: left;">4-axis palletizer, 6-axis</td>
+<td style="text-align: left;">IP65+, washdown, food-safe lubricants</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Case Packing</td>
+<td style="text-align: left;">Load products into cases/cartons</td>
+<td style="text-align: left;">Delta, SCARA, 6-axis</td>
+<td style="text-align: left;">High speed, gentle handling</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Pick and Place</td>
+<td style="text-align: left;">Transfer products between conveyors/stations</td>
+<td style="text-align: left;">Delta (high speed), SCARA</td>
+<td style="text-align: left;">Extremely fast cycles, hygienic design</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Cutting/Portioning</td>
+<td style="text-align: left;">Protein portioning, cake cutting</td>
+<td style="text-align: left;">6-axis with vision</td>
+<td style="text-align: left;">Precise cutting, washdown capable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Decorating</td>
+<td style="text-align: left;">Applying icing, toppings, decorations</td>
+<td style="text-align: left;">6-axis, delta</td>
+<td style="text-align: left;">Food-grade materials, precise dispensing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Quality Inspection</td>
+<td style="text-align: left;">Vision-based defect detection, grading</td>
+<td style="text-align: left;">6-axis with vision</td>
+<td style="text-align: left;">Hygienic design, reliable detection</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="aerospacedefense-applications" class="level3" data-number="8.7.3">
+<h3 data-number="8.7.3" class="anchored" data-anchor-id="aerospacedefense-applications"><span class="header-section-number">8.7.3</span> Aerospace/Defense Applications</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Aerospace/Defense Robot Applications</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Application</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Accuracy Required</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Challenges</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Drilling &amp; Fastening</td>
+<td style="text-align: left;">Precision hole drilling; rivet/bolt installation</td>
+<td style="text-align: left;">±0.05mm position</td>
+<td style="text-align: left;">Drill normal to curved surfaces; chip management</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Composite Layup</td>
+<td style="text-align: left;">Automated fiber placement (AFP); tape laying</td>
+<td style="text-align: left;">±0.25mm fiber placement</td>
+<td style="text-align: left;">Complex contours; material handling</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">NDT/Inspection</td>
+<td style="text-align: left;">Ultrasonic, X-ray, visual inspection of structures</td>
+<td style="text-align: left;">Full coverage</td>
+<td style="text-align: left;">Large part access; data management</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Surface Treatment</td>
+<td style="text-align: left;">Painting, coating, surface prep for bonding</td>
+<td style="text-align: left;">Consistent thickness</td>
+<td style="text-align: left;">Large envelopes; environmental control</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Assembly</td>
+<td style="text-align: left;">Large structure assembly; wing-to-fuselage</td>
+<td style="text-align: left;">±0.5mm</td>
+<td style="text-align: left;">Heavy payloads; coordination of multiple robots</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="robot-safety" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="robot-safety"><span class="header-section-number">8.8</span> Robot Safety</h2>
+<p>Robot safety is critical to protect workers from potential hazards.</p>
+<section id="hazard-categories" class="level3" data-number="8.8.1">
+<h3 data-number="8.8.1" class="anchored" data-anchor-id="hazard-categories"><span class="header-section-number">8.8.1</span> Hazard Categories</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Robot Hazard Categories and Mitigations</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Hazard</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Risk_Factors</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Impact</td>
+<td style="text-align: left;">Robot strikes person with arm or tooling</td>
+<td style="text-align: left;">Speed, mass, sharp edges, unexpected motion</td>
+<td style="text-align: left;">Guarding, reduced speed zones, sensors</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Crushing</td>
+<td style="text-align: left;">Person caught between robot and fixed object</td>
+<td style="text-align: left;">Limited escape space, high forces</td>
+<td style="text-align: left;">Minimum clearances, presence detection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Trapping</td>
+<td style="text-align: left;">Body part caught in articulating joints or mechanisms</td>
+<td style="text-align: left;">Pinch points at joints, insufficient clearance</td>
+<td style="text-align: left;">Joint covers, clearance design</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12%; font-weight: bold;">Ejection</td>
+<td style="text-align: left;">Part or tool flies off due to grip failure or breakage</td>
+<td style="text-align: left;">Grip force, centrifugal force, tool condition</td>
+<td style="text-align: left;">Grip verification, part detection, enclosure</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12%; font-weight: bold;">Other</td>
+<td style="text-align: left;">Electrical, thermal, noise, radiation hazards</td>
+<td style="text-align: left;">Voltage, heat, welding arc, laser</td>
+<td style="text-align: left;">Proper grounding, barriers, PPE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="safety-standards" class="level3" data-number="8.8.2">
+<h3 data-number="8.8.2" class="anchored" data-anchor-id="safety-standards"><span class="header-section-number">8.8.2</span> Safety Standards</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Key Robot Safety Standards</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Standard</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Scope</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Key Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">ISO 10218-1:2011</td>
+<td style="text-align: left;">Robot manufacturer requirements</td>
+<td style="text-align: left;">Stop functions, speed limiting, singularity protection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">ISO 10218-2:2011</td>
+<td style="text-align: left;">Robot system integrator requirements</td>
+<td style="text-align: left;">Risk assessment, safeguarding, layout, validation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">ISO/TS 15066:2016</td>
+<td style="text-align: left;">Collaborative robot safety</td>
+<td style="text-align: left;">Force/pressure limits, speed/separation monitoring</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">ANSI/RIA R15.06</td>
+<td style="text-align: left;">US equivalent to ISO 10218</td>
+<td style="text-align: left;">Safeguarding devices, risk assessment</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">ANSI/RIA R15.08</td>
+<td style="text-align: left;">Industrial mobile robots</td>
+<td style="text-align: left;">Navigation safety, personnel detection</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="safeguarding-methods" class="level3" data-number="8.8.3">
+<h3 data-number="8.8.3" class="anchored" data-anchor-id="safeguarding-methods"><span class="header-section-number">8.8.3</span> Safeguarding Methods</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="08-Industrial-Robotics_files/figure-html/safeguarding-1.png" class="img-fluid figure-img" width="1248"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="collaborative-robots-cobots" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="collaborative-robots-cobots"><span class="header-section-number">8.9</span> Collaborative Robots (Cobots)</h2>
+<p><strong>Collaborative robots</strong> are designed to work safely alongside humans without traditional guarding.</p>
+<section id="cobot-characteristics" class="level3" data-number="8.9.1">
+<h3 data-number="8.9.1" class="anchored" data-anchor-id="cobot-characteristics"><span class="header-section-number">8.9.1</span> Cobot Characteristics</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Traditional Robot vs. Collaborative Robot Comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Traditional Industrial Robot</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Collaborative Robot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Safety Approach</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Safeguarded cell; humans excluded</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Inherently safe; force/speed limited</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Payload</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Up to 2300 kg</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Typically 3-35 kg</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Speed</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Very high (&gt;2 m/s)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Limited (&lt;1.5 m/s typically)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Reach</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Up to 4 m</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">500-1300 mm typical</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Programming</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Specialized programmers</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Intuitive; hand guiding</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Guarding</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Required (fences, curtains)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Often not required</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Investment</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High ($50K-500K+ with cell)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Lower ($25K-75K typical)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Applications</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High-volume, dedicated tasks</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Flexible, shared workspace</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="collaborative-operation-modes-isots-15066" class="level3" data-number="8.9.2">
+<h3 data-number="8.9.2" class="anchored" data-anchor-id="collaborative-operation-modes-isots-15066"><span class="header-section-number">8.9.2</span> Collaborative Operation Modes (ISO/TS 15066)</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>ISO/TS 15066 Collaborative Operation Modes</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Collaboration Mode</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Application</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Safety-Rated Monitored Stop</td>
+<td style="text-align: left;">Robot stops when human enters collaborative zone; resumes when clear</td>
+<td style="text-align: left;">Loading/unloading where human enters occasionally</td>
+<td style="text-align: left;">Safety-rated sensors; safe zone definition</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20%; font-weight: bold;">Hand Guiding</td>
+<td style="text-align: left;">Operator physically guides robot; robot follows input forces</td>
+<td style="text-align: left;">Teaching positions; flexible positioning tasks</td>
+<td style="text-align: left;">Emergency stop; safe torque control</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Speed and Separation Monitoring</td>
+<td style="text-align: left;">Robot adjusts speed based on distance to human; stops if too close</td>
+<td style="text-align: left;">Shared workspace with variable human presence</td>
+<td style="text-align: left;">Distance sensing; certified safety functions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20%; font-weight: bold;">Power and Force Limiting</td>
+<td style="text-align: left;">Robot limits force/pressure on contact to safe levels</td>
+<td style="text-align: left;">Direct human-robot collaboration; assembly assist</td>
+<td style="text-align: left;">Compliant design; verified force limits</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="force-and-pressure-limits" class="level3" data-number="8.9.3">
+<h3 data-number="8.9.3" class="anchored" data-anchor-id="force-and-pressure-limits"><span class="header-section-number">8.9.3</span> Force and Pressure Limits</h3>
+<p>ISO/TS 15066 specifies maximum contact forces and pressures for different body areas:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>ISO/TS 15066 Biomechanical Limits (Selected Values)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Body Area</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Max Pressure (N/cm²)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Quasi-Static Pressure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Max Force (N)</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Quasi-Static Force</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Skull/Forehead</td>
+<td style="text-align: right;">130</td>
+<td style="text-align: right;">130</td>
+<td style="text-align: right;">130</td>
+<td style="text-align: right;">130</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Face</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">65</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Neck (front/back)</td>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">150</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Chest</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">140</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Abdomen</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">110</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Hand/Finger</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">140</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Arm</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">150</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Leg</td>
+<td style="text-align: right;">220</td>
+<td style="text-align: right;">220</td>
+<td style="text-align: right;">220</td>
+<td style="text-align: right;">220</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="robot-programming-basics" class="level2" data-number="8.10">
+<h2 data-number="8.10" class="anchored" data-anchor-id="robot-programming-basics"><span class="header-section-number">8.10</span> Robot Programming Basics</h2>
+<section id="programming-methods" class="level3" data-number="8.10.1">
+<h3 data-number="8.10.1" class="anchored" data-anchor-id="programming-methods"><span class="header-section-number">8.10.1</span> Programming Methods</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Robot Programming Methods Comparison</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Method</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Advantages</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Disadvantages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Online/Teach Pendant</td>
+<td style="text-align: left;">Use teach pendant to jog robot to positions and record</td>
+<td style="text-align: left;">Direct; precise; see actual positions</td>
+<td style="text-align: left;">Production downtime; time-consuming for complex paths</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Lead-Through/Hand Guiding</td>
+<td style="text-align: left;">Physically move robot arm to desired positions</td>
+<td style="text-align: left;">Intuitive; fast for simple paths; no programming skill needed</td>
+<td style="text-align: left;">Limited to cobot-style robots; not precise</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18%; font-weight: bold;">Offline Programming</td>
+<td style="text-align: left;">Create programs on PC without robot; download later</td>
+<td style="text-align: left;">No production downtime; complex paths; optimization</td>
+<td style="text-align: left;">Requires accurate cell model; calibration needed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18%; font-weight: bold;">Simulation-Based</td>
+<td style="text-align: left;">Program and test in virtual environment; transfer to real robot</td>
+<td style="text-align: left;">Risk-free testing; cycle time estimation; collision checking</td>
+<td style="text-align: left;">Model accuracy critical; license costs</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="basic-program-structure" class="level3" data-number="8.10.2">
+<h3 data-number="8.10.2" class="anchored" data-anchor-id="basic-program-structure"><span class="header-section-number">8.10.2</span> Basic Program Structure</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Example Robot Program (ABB RAPID-style pseudocode):</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>────────────────────────────────────────────────────</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+PROGRAM Main()
+
+  ! Initialize
+  HomePosition()
+  GripperOpen()
+
+  ! Main cycle
+  WHILE running DO
+
+    ! Move to pick position
+    MoveJ pApproach, v500, z50, tool1
+    MoveL pPick, v100, fine, tool1
+
+    ! Pick part
+    GripperClose()
+    WaitTime 0.2
+
+    ! Move to place position
+    MoveL pApproach, v200, z50, tool1
+    MoveJ pPlaceApproach, v500, z50, tool1
+    MoveL pPlace, v100, fine, tool1
+
+    ! Place part
+    GripperOpen()
+    WaitTime 0.2
+
+    ! Return
+    MoveL pPlaceApproach, v200, z50, tool1
+
+    ! Increment counter
+    PartCount := PartCount + 1
+
+  ENDWHILE
+
+ENDPROGRAM</code></pre>
+</div>
+</div>
+</section>
+<section id="key-programming-concepts" class="level3" data-number="8.10.3">
+<h3 data-number="8.10.3" class="anchored" data-anchor-id="key-programming-concepts"><span class="header-section-number">8.10.3</span> Key Programming Concepts</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Key Robot Programming Concepts</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Concept</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Position/Target</td>
+<td style="text-align: left;">Stored robot position (joint angles or Cartesian coordinates)</td>
+<td style="text-align: left;">pHome, pPick, pPlace</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Motion Instruction</td>
+<td style="text-align: left;">Command to move robot (MoveJ, MoveL, MoveC)</td>
+<td style="text-align: left;">MoveL pTarget, v100, fine, tool1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Speed Data</td>
+<td style="text-align: left;">Velocity parameter (mm/s for TCP, % for joints)</td>
+<td style="text-align: left;">v100 = 100 mm/s, v500 = 500 mm/s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Zone Data</td>
+<td style="text-align: left;">Corner path blending (fine = stop at point, z10 = 10mm blend)</td>
+<td style="text-align: left;">fine = stop, z5 = 5mm radius blend</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">Tool Data</td>
+<td style="text-align: left;">Definition of tool center point relative to flange</td>
+<td style="text-align: left;">tool1 with TCP offset [0, 0, 150, 0, 0, 0]</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 16%; font-weight: bold;">Work Object</td>
+<td style="text-align: left;">Definition of work coordinate system for part positions</td>
+<td style="text-align: left;">wobj_fixture with base offset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 16%; font-weight: bold;">I/O Commands</td>
+<td style="text-align: left;">Control external devices (SetDO, WaitDI, etc.)</td>
+<td style="text-align: left;">SetDO doGripper, 1; WaitDI diPartPresent, 1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="video-resources" class="level2" data-number="8.11">
+<h2 data-number="8.11" class="anchored" data-anchor-id="video-resources"><span class="header-section-number">8.11</span> Video Resources</h2>
+<section id="introduction-to-industrial-robots" class="level3" data-number="8.11.1">
+<h3 data-number="8.11.1" class="anchored" data-anchor-id="introduction-to-industrial-robots"><span class="header-section-number">8.11.1</span> Introduction to Industrial Robots</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2O7yj9g_oRQ" title="Industrial Robots Introduction" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</section>
+<section id="collaborative-robots-explained" class="level3" data-number="8.11.2">
+<h3 data-number="8.11.2" class="anchored" data-anchor-id="collaborative-robots-explained"><span class="header-section-number">8.11.2</span> Collaborative Robots Explained</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KIw3iQKC6BE" title="Collaborative Robots" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="8.12">
+<h2 data-number="8.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">8.12</span> Summary</h2>
+<p>Industrial robotics is a fundamental technology in modern manufacturing:</p>
+<ol type="1">
+<li><strong>Robot types</strong> include articulated (most versatile), SCARA (fast assembly), delta (high-speed picking), and cartesian (large work areas)</li>
+<li><strong>Key specifications</strong> include payload, reach, repeatability, speed, and degrees of freedom</li>
+<li><strong>System components</strong> work together: manipulator, controller, teach pendant, end effector, and safety system</li>
+<li><strong>Coordinate systems</strong> (world, tool, user) enable flexible programming and positioning</li>
+<li><strong>Applications</strong> span automotive, food &amp; beverage, and aerospace with industry-specific requirements</li>
+<li><strong>Safety</strong> requires comprehensive risk assessment and appropriate safeguarding</li>
+<li><strong>Collaborative robots</strong> enable human-robot cooperation with force/speed limiting</li>
+<li><strong>Programming</strong> can be online (teach pendant), lead-through, or offline</li>
+</ol>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="8.13">
+<h2 data-number="8.13" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">8.13</span> Review Questions</h2>
+<details>
+<summary>
+<strong>Question 1</strong>: Compare articulated (6-axis) robots, SCARA robots, and delta robots. For each, describe the typical applications and key advantages.
+</summary>
+<p><strong>Answer:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 23%">
+<col style="width: 25%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Robot Type</th>
+<th>Configuration</th>
+<th>Key Advantages</th>
+<th>Typical Applications</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>6-Axis Articulated</strong></td>
+<td>6 revolute joints; human-like arm</td>
+<td>Maximum flexibility; can reach any orientation; large payload range</td>
+<td>Welding, painting, assembly, material handling, machine tending</td>
+</tr>
+<tr class="even">
+<td><strong>SCARA</strong></td>
+<td>4 axes; selective compliance</td>
+<td>Very fast horizontal motion; rigid vertical; compact; precise</td>
+<td>Pick-and-place, assembly, screw driving, packaging</td>
+</tr>
+<tr class="odd">
+<td><strong>Delta (Parallel)</strong></td>
+<td>3-4 axes; parallel linkage</td>
+<td>Extremely fast (150+ picks/min); low moving mass</td>
+<td>High-speed picking, packaging, sorting, light assembly</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Detailed Comparison:</strong></p>
+<p><strong>6-Axis Articulated:</strong> - Most versatile - can position tool at any angle - Wide payload range (3 kg to 2300+ kg) - Can reach around obstacles - Complex programming possible - <em>Best for:</em> Tasks requiring complex orientations, welding seams, painting</p>
+<p><strong>SCARA:</strong> - Inherently rigid in Z (vertical) - good for insertion - Very fast in X-Y plane - Lower cost than 6-axis - Compact footprint - <em>Best for:</em> Assembly operations, circuit board population, packaging</p>
+<strong>Delta:</strong> - Highest speed of any configuration - Low inertia (motors at base, not moving) - Limited payload (typically &lt;15 kg) - Requires overhead mounting - <em>Best for:</em> High-speed sorting, packaging lines, food handling
+</details>
+<details>
+<summary>
+<strong>Question 2</strong>: A robot has a maximum payload of 15 kg. The gripper weighs 4 kg and the part weighs 8 kg. Is this robot suitable? What other factors should be considered?
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>Initial Assessment:</strong></p>
+<pre><code>Total load = Gripper weight + Part weight
+Total load = 4 kg + 8 kg = 12 kg
+
+Robot capacity: 15 kg
+Load: 12 kg
+Remaining margin: 3 kg (20%)</code></pre>
+<p><strong>Consideration with Safety Factor:</strong></p>
+<pre><code>Typical safety factor: 1.2 - 1.5
+Required capacity = 12 kg × 1.25 = 15 kg
+
+This equals the robot's maximum capacity - marginal!</code></pre>
+<p><strong>Additional Factors to Consider:</strong></p>
+<ol type="1">
+<li><strong>Moment Load (Torque at Wrist)</strong>
+<ul>
+<li>Distance from flange to center of gravity matters</li>
+<li>If part is held 300mm from flange: Moment = 8 kg × 0.3 m = 2.4 kg·m</li>
+<li>Robot specs include moment limits - must verify</li>
+</ul></li>
+<li><strong>Inertia</strong>
+<ul>
+<li>Fast motion requires acceleration</li>
+<li>Higher mass + longer distance = higher inertia</li>
+<li>May need to derate payload for high-speed applications</li>
+</ul></li>
+<li><strong>Payload Derating with Reach</strong>
+<ul>
+<li>Many robots derate payload at extended reach</li>
+<li>15 kg at 500mm may become 10 kg at 1500mm</li>
+<li>Check payload diagram in robot specifications</li>
+</ul></li>
+<li><strong>Orientation</strong>
+<ul>
+<li>Payload may vary with wrist orientation</li>
+<li>Horizontal reach vs.&nbsp;vertical lift differ</li>
+</ul></li>
+<li><strong>Acceleration Requirements</strong>
+<ul>
+<li>Higher acceleration = higher effective load</li>
+<li>May need to reduce speed/acceleration</li>
+</ul></li>
+</ol>
+<strong>Recommendation:</strong> The 15 kg robot is marginal for this application. Consider: - Select next size up (20 kg) for adequate margin - Use lighter gripper (3 kg or less) - Reduce part handling distance from flange - Limit acceleration/speed if using this robot
+</details>
+<details>
+<summary>
+<strong>Question 3</strong>: Explain the difference between repeatability and accuracy. Why is repeatability often more important than accuracy for robot applications?
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>Definitions:</strong></p>
+<p><strong>Repeatability:</strong> - Ability to return to the <strong>same taught position</strong> multiple times - Measures consistency/precision of motion - Quoted as ± value (e.g., ±0.05 mm at 3σ) - Affected by: mechanical wear, servo control, thermal effects</p>
+<p><strong>Accuracy:</strong> - Ability to reach a <strong>commanded position</strong> exactly - Measures how close actual position is to theoretical position - Typically worse than repeatability (e.g., ±0.5 mm) - Affected by: manufacturing tolerances, calibration, deflection, backlash</p>
+<p><strong>Why Repeatability is Usually More Important:</strong></p>
+<ol type="1">
+<li><strong>Teaching Method</strong>
+<ul>
+<li>Most robots are programmed by teaching (jogging to positions)</li>
+<li>Robot doesn’t need to know where it “should” be - just return to where it was taught</li>
+<li>As long as it returns consistently (repeatability), accuracy doesn’t matter</li>
+</ul></li>
+<li><strong>Process Requirements</strong>
+<ul>
+<li>Welding: Need to follow same seam every time → repeatability</li>
+<li>Assembly: Need to insert part in same hole every time → repeatability</li>
+<li>Pick-place: Need to pick from same fixture position → repeatability</li>
+</ul></li>
+<li><strong>Compensation Possible</strong>
+<ul>
+<li>Poor accuracy can be compensated by adjusting taught points</li>
+<li>Poor repeatability cannot be compensated</li>
+</ul></li>
+</ol>
+<p><strong>When Accuracy Matters:</strong></p>
+<ol type="1">
+<li><strong>Offline Programming</strong>
+<ul>
+<li>Positions calculated from CAD data, not taught</li>
+<li>Robot must go where commanded, first time</li>
+<li>Common in aerospace (large parts, tight access)</li>
+</ul></li>
+<li><strong>Multi-Robot Systems</strong>
+<ul>
+<li>Robots must agree on positions</li>
+<li>Calibration to common frame requires accuracy</li>
+</ul></li>
+<li><strong>Frequent Program Changes</strong>
+<ul>
+<li>If programs are frequently changed without re-teaching</li>
+<li>Offline modifications need accurate execution</li>
+</ul></li>
+</ol>
+<strong>Bottom Line:</strong> For most industrial applications, ±0.05 mm repeatability is far more valuable than ±0.5 mm accuracy because taught positions are used.
+</details>
+<details>
+<summary>
+<strong>Question 4</strong>: Describe the four collaborative operation modes defined in ISO/TS 15066. Give an example application for each.
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>1. Safety-Rated Monitored Stop</strong></p>
+<p><em>Description:</em> Robot operates at normal speed when workspace is clear. When a person enters the collaborative zone, the robot stops and holds position. Robot resumes automatically when person exits.</p>
+<p><em>Technical Requirements:</em> - Safety-rated sensors (light curtains, scanners) - Safety-rated monitored stop function - Clearly defined collaborative zone</p>
+<p><em>Example Application:</em> Machine tending cell where operator occasionally loads raw material. Robot works at full speed during machining cycle but stops safely when operator enters to load/unload.</p>
+<hr>
+<p><strong>2. Hand Guiding</strong></p>
+<p><em>Description:</em> Operator physically contacts the robot through a hand guiding device and manually moves it. Robot follows operator’s force input.</p>
+<p><em>Technical Requirements:</em> - Hand guiding device (force/torque sensing) - Emergency stop accessible at guiding device - Speed reduction while guiding - Safe torque control</p>
+<p><em>Example Application:</em> Teaching a paint path on an aerospace component. Operator guides robot along surface contour while robot records positions. Also used for “collaborative finishing” where operator guides robot holding a polishing tool.</p>
+<hr>
+<p><strong>3. Speed and Separation Monitoring</strong></p>
+<p><em>Description:</em> Robot continuously monitors distance to the nearest person. Speed adjusts based on separation: full speed when far, reduced speed when closer, stop if minimum distance breached.</p>
+<p><em>Technical Requirements:</em> - Safety-rated distance monitoring (usually area scanners) - Safety-rated speed control - Multiple speed/distance zones defined - Real-time separation calculation</p>
+<p><em>Example Application:</em> Shared packaging area where robot palletizes cases while operator moves around the cell. Robot slows when operator approaches, stops if too close, and resumes at appropriate speed as operator moves away.</p>
+<hr>
+<p><strong>4. Power and Force Limiting</strong></p>
+<p><em>Description:</em> Robot is designed so that forces and pressures from any contact are below injury thresholds. Contact is allowed because it cannot cause harm.</p>
+<p><em>Technical Requirements:</em> - Inherently safe design (compliant joints, low mass, rounded surfaces) - Force/torque sensing or current monitoring - Verified force limits per ISO/TS 15066 body area tables - May include padding/soft covers</p>
+<em>Example Application:</em> Assembly assist where robot holds a heavy part while human worker installs fasteners. Robot and human are in direct contact, with robot providing position support and human providing dexterity. Force is limited so accidental contact causes no injury.
+</details>
+<details>
+<summary>
+<strong>Question 5</strong>: Calculate the required gripper force for a robot picking a 2 kg part with a friction coefficient of 0.4. The robot accelerates at 10 m/s². Use a safety factor of 2.0.
+</summary>
+<p><strong>Answer:</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Given values</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>mass <span class="ot">&lt;-</span> <span class="fl">2.0</span>            <span class="co"># kg</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>acceleration <span class="ot">&lt;-</span> <span class="dv">10</span>     <span class="co"># m/s²</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>gravity <span class="ot">&lt;-</span> <span class="fl">9.81</span>        <span class="co"># m/s²</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>friction_coef <span class="ot">&lt;-</span> <span class="fl">0.4</span>   <span class="co"># Coefficient of friction</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>safety_factor <span class="ot">&lt;-</span> <span class="fl">2.0</span>   <span class="co"># Safety factor</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate forces</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Weight force (vertical)</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>F_gravity <span class="ot">&lt;-</span> mass <span class="sc">*</span> gravity</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Inertia force (from acceleration)</span></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>F_inertia <span class="ot">&lt;-</span> mass <span class="sc">*</span> acceleration</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Combined force (vector sum for worst case)</span></span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Worst case: acceleration horizontal while holding against gravity</span></span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>F_combined <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(F_gravity<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> F_inertia<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Required friction force to hold part</span></span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a><span class="co"># F_friction = μ × F_normal</span></span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a><span class="co"># F_normal = Grip force</span></span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a><span class="co"># F_friction must overcome F_combined</span></span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Without safety factor:</span></span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>F_grip_min <span class="ot">&lt;-</span> F_combined <span class="sc">/</span> friction_coef</span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a><span class="co"># With safety factor:</span></span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>F_grip_required <span class="ot">&lt;-</span> F_grip_min <span class="sc">*</span> safety_factor</span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Gripper Force Calculation:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Gripper Force Calculation:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"═══════════════════════════════════════</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>═══════════════════════════════════════</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Input Parameters:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Input Parameters:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Part mass:"</span>, mass, <span class="st">"kg</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Part mass: 2 kg</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Robot acceleration:"</span>, acceleration, <span class="st">"m/s²</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Robot acceleration: 10 m/s²</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Friction coefficient:"</span>, friction_coef, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Friction coefficient: 0.4 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Safety factor:"</span>, safety_factor, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Safety factor: 2 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Force Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Force Analysis:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Gravity force: F_g = m × g ="</span>, mass, <span class="st">"×"</span>, gravity, <span class="st">"="</span>,</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(F_gravity, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Gravity force: F_g = m × g = 2 × 9.81 = 19.6 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Inertia force: F_i = m × a ="</span>, mass, <span class="st">"×"</span>, acceleration, <span class="st">"="</span>,</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(F_inertia, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Inertia force: F_i = m × a = 2 × 10 = 20 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Combined force: F_c = √(F_g² + F_i²) ="</span>, <span class="fu">round</span>(F_combined, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Combined force: F_c = √(F_g² + F_i²) = 28 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Grip Force Calculation:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Grip Force Calculation:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  F_friction = μ × F_grip ≥ F_combined</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  F_friction = μ × F_grip ≥ F_combined</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  F_grip ≥ F_combined / μ ="</span>, <span class="fu">round</span>(F_combined, <span class="dv">1</span>), <span class="st">"/"</span>, friction_coef,</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"="</span>, <span class="fu">round</span>(F_grip_min, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  F_grip ≥ F_combined / μ = 28 / 0.4 = 70 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  With safety factor:"</span>, <span class="fu">round</span>(F_grip_min, <span class="dv">1</span>), <span class="st">"×"</span>, safety_factor,</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"="</span>, <span class="fu">round</span>(F_grip_required, <span class="dv">1</span>), <span class="st">"N</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  With safety factor: 70 × 2 = 140.1 N</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"═══════════════════════════════════════</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>═══════════════════════════════════════</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"REQUIRED GRIPPER FORCE:"</span>, <span class="fu">ceiling</span>(F_grip_required), <span class="st">"N minimum</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>REQUIRED GRIPPER FORCE: 141 N minimum</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Select gripper rated for ≥"</span>, <span class="fu">ceiling</span>(F_grip_required<span class="sc">/</span><span class="dv">10</span>)<span class="sc">*</span><span class="dv">10</span>, <span class="st">"N</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Select gripper rated for ≥ 150 N</code></pre>
+</div>
+</div>
+</details>
+<details>
+<summary>
+<strong>Question 6</strong>: List and describe five safety devices used to protect personnel around industrial robots.
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>1. Physical Barriers (Safety Fencing)</strong></p>
+<p><em>Description:</em> Fixed guards or fencing that physically prevent access to the robot work envelope.</p>
+<p><em>Characteristics:</em> - Rigid construction (steel, aluminum, polycarbonate) - Must withstand expected impact forces - Minimum height (typically ≥1.8 m) - Properly anchored to floor - May include interlocked gates for authorized entry</p>
+<p><em>Application:</em> Primary safeguard for most traditional robot cells.</p>
+<hr>
+<p><strong>2. Light Curtains (AOPD - Active Opto-electronic Protective Device)</strong></p>
+<p><em>Description:</em> Transmitter and receiver create a sensing field of infrared beams. Breaking any beam triggers a stop.</p>
+<p><em>Characteristics:</em> - Type 2 or Type 4 (safety-rated) - Resolution (14mm for finger, 40mm for hand/arm) - Muting capability for material transfer - Very fast response (&lt;20ms)</p>
+<p><em>Application:</em> Access points where frequent entry needed; allows material flow while protecting personnel.</p>
+<hr>
+<p><strong>3. Safety Mats (Pressure-Sensitive Mats)</strong></p>
+<p><em>Description:</em> Floor mats that detect weight/pressure and trigger stop when stepped on.</p>
+<p><em>Characteristics:</em> - Placed in hazardous zones - Withstand industrial environment (oil, debris) - Fast response - Self-monitoring for failures</p>
+<p><em>Application:</em> Areas where overhead detection isn’t practical; around robot bases.</p>
+<hr>
+<p><strong>4. Area Scanners (Safety Laser Scanners)</strong></p>
+<p><em>Description:</em> Laser scanner detects objects/personnel entering defined zones. Multiple warning and stop zones configurable.</p>
+<p><em>Characteristics:</em> - 270° field of view typical - Multiple programmable zones - Warning zone (slow robot) and stop zone (stop robot) - Type 3 safety rating - Detects at floor level</p>
+<p><em>Application:</em> Open cells requiring flexibility; mobile robot protection; speed/separation monitoring.</p>
+<hr>
+<p><strong>5. Interlocked Gates/Doors</strong></p>
+<p><em>Description:</em> Access gates with safety switches that stop robot when opened.</p>
+<p><em>Characteristics:</em> - Mechanical or magnetic interlock switches - Trapped key systems for lockout - May include guard locking (prevent opening while robot moving) - Escape release from inside - Meets ISO 14119</p>
+<p><em>Application:</em> Authorized entry points for maintenance, setup, troubleshooting.</p>
+<hr>
+<p><strong>Additional Devices:</strong></p>
+<ul>
+<li><strong>E-Stop (Emergency Stop)</strong>: Palm-operated buttons to immediately stop robot</li>
+<li><strong>Two-Hand Controls</strong>: Require both hands on buttons to initiate motion</li>
+<li><strong>Enabling Devices</strong>: 3-position switches held by personnel in restricted area</li>
+<li><strong>Presence-Sensing Devices</strong>: Capacitive, radar, or vision-based detection</li>
+</ul>
+</details>
+<details>
+<summary>
+<strong>Question 7</strong>: Explain the difference between MoveJ (Joint Move) and MoveL (Linear Move). When would you use each?
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>MoveJ (Joint Move)</strong></p>
+<p><em>How It Works:</em> - Each joint moves from start to end angle independently - All joints start and stop together (coordinated) - Path of TCP (Tool Center Point) is unpredictable - curved - Robot calculates joint interpolation, not TCP path</p>
+<p><em>Characteristics:</em> - Fastest point-to-point motion - No singularity issues during move - Path may vary depending on starting configuration - Speed specified in % of max or joint velocity (°/s)</p>
+<p><em>When to Use:</em> - Moving between distant points through free space - Approach movements before precise positioning - Home position moves - Any time when path doesn’t matter, only endpoints - Escaping from near-singularity positions</p>
+<hr>
+<p><strong>MoveL (Linear Move)</strong></p>
+<p><em>How It Works:</em> - TCP follows a straight line from start to end - Robot calculates joint positions to maintain linear TCP path - Orientation is interpolated linearly as well - All axes coordinated to produce straight line</p>
+<p><em>Characteristics:</em> - Guaranteed straight path - Consistent, predictable motion - Slower than MoveJ for same endpoint distance - Can encounter singularities during move - Speed specified in mm/s at TCP</p>
+<p><em>When to Use:</em> - Process paths (welding, sealing, cutting) - Insertion/extraction operations - Approach to pick/place positions - Any time path must be straight - When moving close to obstacles</p>
+<hr>
+<p><strong>Practical Example:</strong></p>
+<p>Imagine picking a part from a fixture:</p>
+<pre><code>! Move from home to near pick position - path doesn't matter
+MoveJ pApproach, v1000, z50, tool1    ! Joint move - fast
+
+! Move down to pick - must be straight to avoid collision
+MoveL pPick, v100, fine, tool1        ! Linear move - controlled
+
+! Pick part, then retract straight up
+GripperClose()
+MoveL pApproach, v200, z10, tool1     ! Linear move - straight up
+
+! Move to place area - through open space
+MoveJ pPlaceApproach, v1000, z50, tool1  ! Joint move - fast</code></pre>
+<strong>Key Decision:</strong> - If path matters → MoveL - If only destination matters → MoveJ
+</details>
+<details>
+<summary>
+<strong>Question 8</strong>: A manufacturing engineer needs to select a robot for a palletizing application. The requirements are: 25 kg payload, 2.2 m horizontal reach, 10 cycles per minute, floor-mounted. Recommend a robot type and justify your selection.
+</summary>
+<p><strong>Answer:</strong></p>
+<p><strong>Application Analysis:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 39%">
+<col style="width: 21%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Requirement</th>
+<th>Value</th>
+<th>Implication</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Payload</td>
+<td>25 kg</td>
+<td>Medium-heavy; rules out delta and most SCARA</td>
+</tr>
+<tr class="even">
+<td>Reach</td>
+<td>2.2 m</td>
+<td>Large work envelope needed</td>
+</tr>
+<tr class="odd">
+<td>Cycle rate</td>
+<td>10/min</td>
+<td>6 seconds/cycle; moderate speed</td>
+</tr>
+<tr class="even">
+<td>Mounting</td>
+<td>Floor</td>
+<td>Typical industrial installation</td>
+</tr>
+<tr class="odd">
+<td>Motion type</td>
+<td>Palletizing</td>
+<td>Mainly vertical and horizontal; some rotation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Robot Type Evaluation:</strong></p>
+<p><strong>1. 4-Axis Palletizing Robot (RECOMMENDED)</strong> - Specifically designed for palletizing - 4 axes: base rotation, arm, elbow, wrist - High payload capability (25-700+ kg available) - Long reach available (up to 3.2m) - Fast for palletizing motions - Lower cost than 6-axis - Examples: FANUC M-410iC, KUKA KR QUANTEC PA, ABB IRB 460</p>
+<p><em>Verdict: Excellent match for this application</em></p>
+<p><strong>2. 6-Axis Articulated Robot</strong> - Maximum flexibility - Can handle complex pallet patterns - Higher cost than 4-axis for same payload - May be over-specified for simple palletizing - Examples: FANUC M-710iC/50, ABB IRB 6700</p>
+<p><em>Verdict: Capable but potentially over-specified and more expensive</em></p>
+<p><strong>3. Cartesian/Gantry Robot</strong> - Can cover very large areas - Simple motion control - Higher installation complexity - Less common for palletizing applications</p>
+<p><em>Verdict: Possible but not ideal for this payload/cycle rate</em></p>
+<p><strong>Recommended Selection:</strong></p>
+<p><strong>FANUC M-410iC/185</strong> or similar 4-axis palletizer - Payload: 185 kg (well above 25 kg requirement with margin for gripper) - Reach: 3.143 m (exceeds 2.2 m requirement) - Repeatability: ±0.5 mm - Axes: 4</p>
+<p><strong>Justification:</strong> 1. <strong>Purpose-built</strong>: Designed specifically for palletizing 2. <strong>Adequate payload</strong>: 185 kg allows for heavy gripper + multiple parts 3. <strong>Reach</strong>: 3.1 m provides margin for future needs 4. <strong>Speed</strong>: Optimized kinematics for palletizing motion profile 5. <strong>Reliability</strong>: Proven in thousands of palletizing applications 6. <strong>Cost</strong>: Lower than equivalent 6-axis robot 7. <strong>Simplicity</strong>: 4 axes easier to program and maintain than 6</p>
+<strong>Additional Recommendations:</strong> - Vacuum or mechanical gripper depending on product - Vision system for product detection if variety exists - Safety scanner for operator access during pallet changes - Interface to conveyor for product delivery
+</details>
+<hr>
+</section>
+<section id="references" class="level2" data-number="8.14">
+<h2 data-number="8.14" class="anchored" data-anchor-id="references"><span class="header-section-number">8.14</span> References</h2>
+<ol type="1">
+<li><p>Siciliano, B., &amp; Khatib, O. (Eds.). (2016). <em>Springer Handbook of Robotics</em> (2nd ed.). Springer.</p></li>
+<li><p>ISO 10218-1:2011. <em>Robots and Robotic Devices - Safety Requirements for Industrial Robots - Part 1: Robots</em>.</p></li>
+<li><p>ISO 10218-2:2011. <em>Robots and Robotic Devices - Safety Requirements for Industrial Robots - Part 2: Robot Systems and Integration</em>.</p></li>
+<li><p>ISO/TS 15066:2016. <em>Robots and Robotic Devices - Collaborative Robots</em>.</p></li>
+<li><p>International Federation of Robotics. (2023). <em>World Robotics Report</em>. IFR.</p></li>
+<li><p>Niku, S.B. (2020). <em>Introduction to Robotics: Analysis, Control, Applications</em> (3rd ed.). Wiley.</p></li>
+<li><p>Craig, J.J. (2018). <em>Introduction to Robotics: Mechanics and Control</em> (4th ed.). Pearson.</p></li>
+<li><p>FANUC Corporation. (2023). <em>Robot Technical Manuals</em>. FANUC.</p></li>
+<li><p>ABB Robotics. (2023). <em>Technical Reference Manual - RAPID Instructions</em>. ABB.</p></li>
+<li><p>Robotic Industries Association. (2023). <em>ANSI/RIA R15.06-2012: Industrial Robots and Robot Systems - Safety Requirements</em>. RIA.</p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./07-Ergnomics.html" class="pagination-link" aria-label="Ergonomics in Automated Manufacturing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./09-Industrial-Automation.html" class="pagination-link" aria-label="Industrial Automation Fundamentals">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/08-Industrial-Robotics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

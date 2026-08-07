@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>4&nbsp; Plant Layout and Facility Design – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./05-Lean-Manufacturing.html" rel="next">
+<link href="./03-Integrated-Manufacturing-Systems.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04-Plant-Layout.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">4.1</span> Learning Objectives</a></li>
+  <li><a href="#types-of-facility-layouts" id="toc-types-of-facility-layouts" class="nav-link" data-scroll-target="#types-of-facility-layouts"><span class="header-section-number">4.2</span> Types of Facility Layouts</a>
+  <ul class="collapse">
+  <li><a href="#visualizing-the-layout-spectrum" id="toc-visualizing-the-layout-spectrum" class="nav-link" data-scroll-target="#visualizing-the-layout-spectrum"><span class="header-section-number">4.2.1</span> Visualizing the Layout Spectrum</a></li>
+  </ul></li>
+  <li><a href="#process-layout-functional-layout" id="toc-process-layout-functional-layout" class="nav-link" data-scroll-target="#process-layout-functional-layout"><span class="header-section-number">4.3</span> Process Layout (Functional Layout)</a>
+  <ul class="collapse">
+  <li><a href="#characteristics-of-process-layouts" id="toc-characteristics-of-process-layouts" class="nav-link" data-scroll-target="#characteristics-of-process-layouts"><span class="header-section-number">4.3.1</span> Characteristics of Process Layouts</a></li>
+  <li><a href="#real-world-examples" id="toc-real-world-examples" class="nav-link" data-scroll-target="#real-world-examples"><span class="header-section-number">4.3.2</span> Real-World Examples</a></li>
+  </ul></li>
+  <li><a href="#product-layout-assembly-line" id="toc-product-layout-assembly-line" class="nav-link" data-scroll-target="#product-layout-assembly-line"><span class="header-section-number">4.4</span> Product Layout (Assembly Line)</a>
+  <ul class="collapse">
+  <li><a href="#characteristics-of-product-layouts" id="toc-characteristics-of-product-layouts" class="nav-link" data-scroll-target="#characteristics-of-product-layouts"><span class="header-section-number">4.4.1</span> Characteristics of Product Layouts</a></li>
+  </ul></li>
+  <li><a href="#hybrid-layout-cellular-manufacturing" id="toc-hybrid-layout-cellular-manufacturing" class="nav-link" data-scroll-target="#hybrid-layout-cellular-manufacturing"><span class="header-section-number">4.5</span> Hybrid Layout (Cellular Manufacturing)</a>
+  <ul class="collapse">
+  <li><a href="#group-technology-concept" id="toc-group-technology-concept" class="nav-link" data-scroll-target="#group-technology-concept"><span class="header-section-number">4.5.1</span> Group Technology Concept</a></li>
+  </ul></li>
+  <li><a href="#fixed-position-layout" id="toc-fixed-position-layout" class="nav-link" data-scroll-target="#fixed-position-layout"><span class="header-section-number">4.6</span> Fixed-Position Layout</a>
+  <ul class="collapse">
+  <li><a href="#examples-of-fixed-position-layouts" id="toc-examples-of-fixed-position-layouts" class="nav-link" data-scroll-target="#examples-of-fixed-position-layouts"><span class="header-section-number">4.6.1</span> Examples of Fixed-Position Layouts</a></li>
+  </ul></li>
+  <li><a href="#designing-process-layouts" id="toc-designing-process-layouts" class="nav-link" data-scroll-target="#designing-process-layouts"><span class="header-section-number">4.7</span> Designing Process Layouts</a>
+  <ul class="collapse">
+  <li><a href="#step-1-gather-information" id="toc-step-1-gather-information" class="nav-link" data-scroll-target="#step-1-gather-information"><span class="header-section-number">4.7.1</span> Step 1: Gather Information</a></li>
+  <li><a href="#step-2-develop-block-plans" id="toc-step-2-develop-block-plans" class="nav-link" data-scroll-target="#step-2-develop-block-plans"><span class="header-section-number">4.7.2</span> Step 2: Develop Block Plans</a></li>
+  <li><a href="#interactive-example-comparing-two-layouts" id="toc-interactive-example-comparing-two-layouts" class="nav-link" data-scroll-target="#interactive-example-comparing-two-layouts"><span class="header-section-number">4.7.3</span> Interactive Example: Comparing Two Layouts</a></li>
+  <li><a href="#step-3-develop-detailed-layout" id="toc-step-3-develop-detailed-layout" class="nav-link" data-scroll-target="#step-3-develop-detailed-layout"><span class="header-section-number">4.7.4</span> Step 3: Develop Detailed Layout</a></li>
+  </ul></li>
+  <li><a href="#designing-product-layouts-line-balancing" id="toc-designing-product-layouts-line-balancing" class="nav-link" data-scroll-target="#designing-product-layouts-line-balancing"><span class="header-section-number">4.8</span> Designing Product Layouts (Line Balancing)</a>
+  <ul class="collapse">
+  <li><a href="#line-balancing-steps" id="toc-line-balancing-steps" class="nav-link" data-scroll-target="#line-balancing-steps"><span class="header-section-number">4.8.1</span> Line Balancing Steps</a></li>
+  <li><a href="#key-formulas" id="toc-key-formulas" class="nav-link" data-scroll-target="#key-formulas"><span class="header-section-number">4.8.2</span> Key Formulas</a></li>
+  <li><a href="#interactive-example-pizza-assembly-line" id="toc-interactive-example-pizza-assembly-line" class="nav-link" data-scroll-target="#interactive-example-pizza-assembly-line"><span class="header-section-number">4.8.3</span> Interactive Example: Pizza Assembly Line</a></li>
+  <li><a href="#line-balancing-calculation" id="toc-line-balancing-calculation" class="nav-link" data-scroll-target="#line-balancing-calculation"><span class="header-section-number">4.8.4</span> Line Balancing Calculation</a></li>
+  </ul></li>
+  <li><a href="#warehouse-layout-design" id="toc-warehouse-layout-design" class="nav-link" data-scroll-target="#warehouse-layout-design"><span class="header-section-number">4.9</span> Warehouse Layout Design</a>
+  <ul class="collapse">
+  <li><a href="#key-principles" id="toc-key-principles" class="nav-link" data-scroll-target="#key-principles"><span class="header-section-number">4.9.1</span> Key Principles</a></li>
+  </ul></li>
+  <li><a href="#office-layout-design" id="toc-office-layout-design" class="nav-link" data-scroll-target="#office-layout-design"><span class="header-section-number">4.10</span> Office Layout Design</a>
+  <ul class="collapse">
+  <li><a href="#two-main-approaches" id="toc-two-main-approaches" class="nav-link" data-scroll-target="#two-main-approaches"><span class="header-section-number">4.10.1</span> Two Main Approaches</a></li>
+  <li><a href="#office-ergonomics-checklist" id="toc-office-ergonomics-checklist" class="nav-link" data-scroll-target="#office-ergonomics-checklist"><span class="header-section-number">4.10.2</span> Office Ergonomics Checklist</a></li>
+  <li><a href="#the-future-of-office-design" id="toc-the-future-of-office-design" class="nav-link" data-scroll-target="#the-future-of-office-design"><span class="header-section-number">4.10.3</span> The Future of Office Design</a></li>
+  </ul></li>
+  <li><a href="#summary-choosing-the-right-layout" id="toc-summary-choosing-the-right-layout" class="nav-link" data-scroll-target="#summary-choosing-the-right-layout"><span class="header-section-number">4.11</span> Summary: Choosing the Right Layout</a>
+  <ul class="collapse">
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">4.11.1</span> Key Takeaways</a></li>
+  </ul></li>
+  <li><a href="#industry-case-studies" id="toc-industry-case-studies" class="nav-link" data-scroll-target="#industry-case-studies"><span class="header-section-number">4.12</span> Industry Case Studies</a>
+  <ul class="collapse">
+  <li><a href="#case-study-1-food-processing-plant-layout" id="toc-case-study-1-food-processing-plant-layout" class="nav-link" data-scroll-target="#case-study-1-food-processing-plant-layout"><span class="header-section-number">4.12.1</span> Case Study 1: Food Processing Plant Layout</a></li>
+  <li><a href="#case-study-2-aerospace-manufacturing-facility" id="toc-case-study-2-aerospace-manufacturing-facility" class="nav-link" data-scroll-target="#case-study-2-aerospace-manufacturing-facility"><span class="header-section-number">4.12.2</span> Case Study 2: Aerospace Manufacturing Facility</a></li>
+  <li><a href="#case-study-3-automotive-supplier---hybrid-cell-layout" id="toc-case-study-3-automotive-supplier---hybrid-cell-layout" class="nav-link" data-scroll-target="#case-study-3-automotive-supplier---hybrid-cell-layout"><span class="header-section-number">4.12.3</span> Case Study 3: Automotive Supplier - Hybrid Cell Layout</a></li>
+  </ul></li>
+  <li><a href="#ergonomics-in-manufacturing" id="toc-ergonomics-in-manufacturing" class="nav-link" data-scroll-target="#ergonomics-in-manufacturing"><span class="header-section-number">4.13</span> Ergonomics in Manufacturing</a>
+  <ul class="collapse">
+  <li><a href="#the-niosh-lifting-equation" id="toc-the-niosh-lifting-equation" class="nav-link" data-scroll-target="#the-niosh-lifting-equation"><span class="header-section-number">4.13.1</span> The NIOSH Lifting Equation</a></li>
+  <li><a href="#lifting-index-calculation" id="toc-lifting-index-calculation" class="nav-link" data-scroll-target="#lifting-index-calculation"><span class="header-section-number">4.13.2</span> Lifting Index Calculation</a></li>
+  <li><a href="#niosh-lifting-example" id="toc-niosh-lifting-example" class="nav-link" data-scroll-target="#niosh-lifting-example"><span class="header-section-number">4.13.3</span> NIOSH Lifting Example</a></li>
+  <li><a href="#ergonomic-workstation-design" id="toc-ergonomic-workstation-design" class="nav-link" data-scroll-target="#ergonomic-workstation-design"><span class="header-section-number">4.13.4</span> Ergonomic Workstation Design</a></li>
+  </ul></li>
+  <li><a href="#modern-layout-trends-and-industry-4.0" id="toc-modern-layout-trends-and-industry-4.0" class="nav-link" data-scroll-target="#modern-layout-trends-and-industry-4.0"><span class="header-section-number">4.14</span> Modern Layout Trends and Industry 4.0</a>
+  <ul class="collapse">
+  <li><a href="#flexible-manufacturing-layouts" id="toc-flexible-manufacturing-layouts" class="nav-link" data-scroll-target="#flexible-manufacturing-layouts"><span class="header-section-number">4.14.1</span> Flexible Manufacturing Layouts</a></li>
+  <li><a href="#industry-4.0-layout-considerations" id="toc-industry-4.0-layout-considerations" class="nav-link" data-scroll-target="#industry-4.0-layout-considerations"><span class="header-section-number">4.14.2</span> Industry 4.0 Layout Considerations</a></li>
+  <li><a href="#agv-and-amr-traffic-planning" id="toc-agv-and-amr-traffic-planning" class="nav-link" data-scroll-target="#agv-and-amr-traffic-planning"><span class="header-section-number">4.14.3</span> AGV and AMR Traffic Planning</a></li>
+  </ul></li>
+  <li><a href="#layout-simulation-software" id="toc-layout-simulation-software" class="nav-link" data-scroll-target="#layout-simulation-software"><span class="header-section-number">4.15</span> Layout Simulation Software</a>
+  <ul class="collapse">
+  <li><a href="#common-layout-planning-software" id="toc-common-layout-planning-software" class="nav-link" data-scroll-target="#common-layout-planning-software"><span class="header-section-number">4.15.1</span> Common Layout Planning Software</a></li>
+  <li><a href="#simulation-benefits" id="toc-simulation-benefits" class="nav-link" data-scroll-target="#simulation-benefits"><span class="header-section-number">4.15.2</span> Simulation Benefits</a></li>
+  </ul></li>
+  <li><a href="#practice-problems" id="toc-practice-problems" class="nav-link" data-scroll-target="#practice-problems"><span class="header-section-number">4.16</span> Practice Problems</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">4.17</span> Review Questions</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">4.18</span> Chapter Summary</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">4.19</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/04-Plant-Layout.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">4.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Identify and describe the four basic types of facility layouts</li>
+<li>Compare the advantages and disadvantages of each layout type</li>
+<li>Apply the steps involved in designing a process layout</li>
+<li>Calculate cycle time, theoretical minimum stations, and line efficiency for product layouts</li>
+<li>Understand the principles of warehouse and office layout design</li>
+</ul>
+<details>
+<summary>
+Why is Plant Layout Important?
+</summary>
+<p>Plant layout directly impacts:</p>
+<ul>
+<li><strong>Productivity:</strong> Efficient layouts minimize wasted movement and time</li>
+<li><strong>Cost:</strong> Poor layouts increase material handling costs by 20-50%</li>
+<li><strong>Safety:</strong> Well-designed layouts reduce accidents and injuries</li>
+<li><strong>Flexibility:</strong> The right layout allows adaptation to changing demands</li>
+<li><strong>Employee Morale:</strong> Good layouts improve working conditions</li>
+</ul>
+</details>
+<hr>
+</section>
+<section id="types-of-facility-layouts" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="types-of-facility-layouts"><span class="header-section-number">4.2</span> Types of Facility Layouts</h2>
+<p>There are <strong>four basic layout types</strong>, each suited to different production requirements:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small">
+<caption>Overview of Facility Layout Types</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Layout Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Also Known As</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Best For</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Example Industries</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Process Layout</td>
+<td style="text-align: left;">Functional Layout, Job Shop</td>
+<td style="text-align: left;">High variety, low volume</td>
+<td style="text-align: left;">Hospitals, Machine Shops, Universities</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Product Layout</td>
+<td style="text-align: left;">Flow Line, Assembly Line</td>
+<td style="text-align: left;">Low variety, high volume</td>
+<td style="text-align: left;">Automotive Assembly, Food Processing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Hybrid/Cellular Layout</td>
+<td style="text-align: left;">Group Technology, Cell Layout</td>
+<td style="text-align: left;">Medium variety, medium volume</td>
+<td style="text-align: left;">Electronics Manufacturing, Furniture</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Fixed-Position Layout</td>
+<td style="text-align: left;">Project Layout</td>
+<td style="text-align: left;">Very large or immobile products</td>
+<td style="text-align: left;">Shipbuilding, Aircraft, Construction</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="visualizing-the-layout-spectrum" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="visualizing-the-layout-spectrum"><span class="header-section-number">4.2.1</span> Visualizing the Layout Spectrum</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/layout-spectrum-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Product Variety vs.&nbsp;Production Volume for Different Layouts</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="process-layout-functional-layout" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="process-layout-functional-layout"><span class="header-section-number">4.3</span> Process Layout (Functional Layout)</h2>
+<p>In a <strong>process layout</strong>, similar resources (machines, equipment, workers with similar skills) are grouped together. Work flows between departments based on the specific requirements of each job.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/process-layout-diagram-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Example Process Layout - Machine Shop</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="characteristics-of-process-layouts" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="characteristics-of-process-layouts"><span class="header-section-number">4.3.1</span> Characteristics of Process Layouts</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Process Layout Characteristics</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Characteristic</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Equipment</td>
+<td style="text-align: left;">General-purpose machines</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Labor</td>
+<td style="text-align: left;">Skilled workers required</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Flexibility</td>
+<td style="text-align: left;">High - can handle variety</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Processing Speed</td>
+<td style="text-align: left;">Slower due to varied routing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Material Handling</td>
+<td style="text-align: left;">Higher costs (complex paths)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Scheduling</td>
+<td style="text-align: left;">Complex - different routes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Space Requirements</td>
+<td style="text-align: left;">Higher - WIP inventory storage</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion Question: Can you identify a process layout in your daily life?
+</summary>
+<p><strong>Think about:</strong> - A hospital emergency room (patients routed based on their needs) - A university campus (students move between buildings for different classes) - A grocery store (customers choose their own path) - A machine shop (parts routed based on required operations)</p>
+<p><strong>What makes these process layouts?</strong> Similar functions are grouped together, and “products” (patients, students, customers) follow different paths based on their individual needs.</p>
+</details>
+</section>
+<section id="real-world-examples" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="real-world-examples"><span class="header-section-number">4.3.2</span> Real-World Examples</h3>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/DrO5sS51Yk8&amp;t" title="Process Layout Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
+  </iframe>
+</div>
+<hr>
+</section>
+</section>
+<section id="product-layout-assembly-line" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="product-layout-assembly-line"><span class="header-section-number">4.4</span> Product Layout (Assembly Line)</h2>
+<p>In a <strong>product layout</strong>, equipment and workstations are arranged in a line according to the sequence of operations needed to produce the product. Every unit follows the same path.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/product-layout-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Product Layout - Assembly Line</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="characteristics-of-product-layouts" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="characteristics-of-product-layouts"><span class="header-section-number">4.4.1</span> Characteristics of Product Layouts</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Product Layout: Advantages vs. Disadvantages</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Advantage</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Disadvantage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">High production rate</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">High initial investment</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Low unit cost</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Low flexibility</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Low material handling</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Line stops affect all</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Simple scheduling</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Monotonous work</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; background-color: rgba(213, 245, 227, 255) !important;">Less WIP inventory</td>
+<td style="text-align: left; width: 15em; background-color: rgba(250, 219, 216, 255) !important;">Requires balanced workloads</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Quick Quiz: Product Layout
+</summary>
+<p><strong>Question:</strong> A car wash where vehicles move through a series of cleaning stations is an example of which layout type?</p>
+<p><strong>Answer:</strong> Product Layout - all cars follow the same path through the same sequence of operations.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="hybrid-layout-cellular-manufacturing" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="hybrid-layout-cellular-manufacturing"><span class="header-section-number">4.5</span> Hybrid Layout (Cellular Manufacturing)</h2>
+<p><strong>Hybrid layouts</strong> combine the flexibility of process layouts with the efficiency of product layouts. The most common type is the <strong>cellular layout</strong> using Group Technology.</p>
+<section id="group-technology-concept" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="group-technology-concept"><span class="header-section-number">4.5.1</span> Group Technology Concept</h3>
+<p>Group Technology (GT) identifies parts with similar characteristics and groups them into <strong>part families</strong>. Machines are then arranged into <strong>cells</strong> to process these families.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/cellular-layout-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Cellular Layout with Manufacturing Cells</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Discussion Question: Benefits of Cellular Manufacturing
+</summary>
+<p><strong>What are the main benefits of cellular manufacturing over traditional process layouts?</strong></p>
+<ol type="1">
+<li><strong>Reduced material handling</strong> - Parts stay within the cell</li>
+<li><strong>Shorter lead times</strong> - No waiting between departments</li>
+<li><strong>Less WIP inventory</strong> - Smaller batches, faster flow</li>
+<li><strong>Improved quality</strong> - Workers responsible for complete part</li>
+<li><strong>Team accountability</strong> - Cell teams own their output</li>
+</ol>
+</details>
+<hr>
+</section>
+</section>
+<section id="fixed-position-layout" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="fixed-position-layout"><span class="header-section-number">4.6</span> Fixed-Position Layout</h2>
+<p>In a <strong>fixed-position layout</strong>, the product remains stationary while workers, equipment, and materials are brought to it. This is used when the product is too large or heavy to move.</p>
+<section id="examples-of-fixed-position-layouts" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="examples-of-fixed-position-layouts"><span class="header-section-number">4.6.1</span> Examples of Fixed-Position Layouts</h3>
+<ul>
+<li><strong>Shipbuilding</strong> - Ships built in dry docks</li>
+<li><strong>Aircraft manufacturing</strong> - Large aircraft assembled in hangars</li>
+<li><strong>Construction</strong> - Buildings, bridges, dams</li>
+<li><strong>Surgery</strong> - Patient remains stationary</li>
+</ul>
+<details>
+<summary>
+Challenge Question: Managing a Fixed-Position Layout
+</summary>
+<p><strong>What are the unique challenges of managing a fixed-position layout?</strong></p>
+<p>Think about: - Scheduling deliveries of materials and equipment - Coordinating multiple contractors/teams - Limited space around the product - Weather and environmental factors (outdoor projects) - Ensuring safety with many workers in one area</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="designing-process-layouts" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="designing-process-layouts"><span class="header-section-number">4.7</span> Designing Process Layouts</h2>
+<p>Designing an effective process layout involves <strong>three main steps</strong>:</p>
+<section id="step-1-gather-information" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="step-1-gather-information"><span class="header-section-number">4.7.1</span> Step 1: Gather Information</h3>
+<p>You need to determine: - <strong>Space requirements</strong> for each department - <strong>Available space</strong> in the facility - <strong>Closeness relationships</strong> between departments</p>
+<section id="from-to-matrix-load-matrix" class="level4" data-number="4.7.1.1">
+<h4 data-number="4.7.1.1" class="anchored" data-anchor-id="from-to-matrix-load-matrix"><span class="header-section-number">4.7.1.1</span> From-To Matrix (Load Matrix)</h4>
+<p>A From-To matrix shows the number of trips or loads between departments:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>From-To Matrix: Loads per Day Between Departments</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;"></th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Receiving</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Machining</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Assembly</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Painting</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Shipping</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Receiving</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Machining</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">200</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Assembly</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Painting</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">150</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Shipping</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="step-2-develop-block-plans" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="step-2-develop-block-plans"><span class="header-section-number">4.7.2</span> Step 2: Develop Block Plans</h3>
+<p>Use the <strong>Load-Distance Model</strong> to evaluate layout alternatives:</p>
+<p><span class="math display">\[\text{Total Cost} = \sum_{i=1}^{n} \sum_{j=1}^{n} L_{ij} \times D_{ij} \times C\]</span></p>
+<p>Where: - <span class="math inline">\(L_{ij}\)</span> = Number of loads between departments <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> - <span class="math inline">\(D_{ij}\)</span> = Distance between departments <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> - <span class="math inline">\(C\)</span> = Cost per unit distance</p>
+</section>
+<section id="interactive-example-comparing-two-layouts" class="level3" data-number="4.7.3">
+<h3 data-number="4.7.3" class="anchored" data-anchor-id="interactive-example-comparing-two-layouts"><span class="header-section-number">4.7.3</span> Interactive Example: Comparing Two Layouts</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/layout-comparison-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Comparing Two Process Layout Alternatives</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Load-Distance scores for both layouts</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># From-To data: Receiving-&gt;Machining=100, Machining-&gt;Assembly=200,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#               Assembly-&gt;Painting=100, Painting-&gt;Shipping=150</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Layout A distances (linear): all adjacent = 1 unit</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>layout_A_score <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">200</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">150</span><span class="sc">*</span><span class="dv">1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Layout A Total Load-Distance:"</span>, layout_A_score, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Layout A Total Load-Distance: 550 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layout B distances (compact): most departments closer together</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Receiving to Machining = 1.12 (diagonal)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Machining to Assembly = 1</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Assembly to Painting = 1.12 (diagonal)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Painting to Shipping = 1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>layout_B_score <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span><span class="fl">1.12</span> <span class="sc">+</span> <span class="dv">200</span><span class="sc">*</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">100</span><span class="sc">*</span><span class="fl">1.12</span> <span class="sc">+</span> <span class="dv">150</span><span class="sc">*</span><span class="dv">1</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Layout B Total Load-Distance:"</span>, <span class="fu">round</span>(layout_B_score, <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Layout B Total Load-Distance: 574 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Layout A is better by:"</span>, <span class="fu">round</span>(layout_B_score <span class="sc">-</span> layout_A_score, <span class="dv">1</span>), <span class="st">"units"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Layout A is better by: 24 units</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Why does the linear layout win in this case?
+</summary>
+<p>In this example, the linear layout (A) wins because the process flow is essentially sequential (Receiving → Machining → Assembly → Painting → Shipping).</p>
+<p>When flow is <strong>sequential</strong>, a <strong>product layout</strong> (linear arrangement) is more efficient. Process layouts are better when there’s <strong>varied routing</strong> between departments.</p>
+</details>
+</section>
+<section id="step-3-develop-detailed-layout" class="level3" data-number="4.7.4">
+<h3 data-number="4.7.4" class="anchored" data-anchor-id="step-3-develop-detailed-layout"><span class="header-section-number">4.7.4</span> Step 3: Develop Detailed Layout</h3>
+<p>Once the block plan is selected: - Determine exact sizes and shapes of departments - Plan aisle locations and widths - Consider utilities, safety exits, and accessibility - Use CAD software or 3D modeling for visualization</p>
+<hr>
+</section>
+</section>
+<section id="designing-product-layouts-line-balancing" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="designing-product-layouts-line-balancing"><span class="header-section-number">4.8</span> Designing Product Layouts (Line Balancing)</h2>
+<p>The key challenge in product layout design is <strong>line balancing</strong> - assigning tasks to workstations to minimize idle time while meeting production requirements.</p>
+<section id="line-balancing-steps" class="level3" data-number="4.8.1">
+<h3 data-number="4.8.1" class="anchored" data-anchor-id="line-balancing-steps"><span class="header-section-number">4.8.1</span> Line Balancing Steps</h3>
+<ol type="1">
+<li><strong>Identify tasks and precedence relationships</strong></li>
+<li><strong>Calculate required cycle time</strong></li>
+<li><strong>Calculate theoretical minimum number of stations</strong></li>
+<li><strong>Assign tasks to stations</strong></li>
+<li><strong>Calculate efficiency</strong></li>
+</ol>
+</section>
+<section id="key-formulas" class="level3" data-number="4.8.2">
+<h3 data-number="4.8.2" class="anchored" data-anchor-id="key-formulas"><span class="header-section-number">4.8.2</span> Key Formulas</h3>
+<p><strong>Cycle Time:</strong> <span class="math display">\[C = \frac{\text{Available Production Time}}{\text{Desired Output}}\]</span></p>
+<p><strong>Theoretical Minimum Stations:</strong> <span class="math display">\[TM = \frac{\sum t_i}{C}\]</span></p>
+<p><strong>Line Efficiency:</strong> <span class="math display">\[\text{Efficiency} = \frac{\sum t_i}{n \times C} \times 100\%\]</span></p>
+<p>Where: - <span class="math inline">\(C\)</span> = Cycle time - <span class="math inline">\(\sum t_i\)</span> = Total task time - <span class="math inline">\(n\)</span> = Number of workstations</p>
+</section>
+<section id="interactive-example-pizza-assembly-line" class="level3" data-number="4.8.3">
+<h3 data-number="4.8.3" class="anchored" data-anchor-id="interactive-example-pizza-assembly-line"><span class="header-section-number">4.8.3</span> Interactive Example: Pizza Assembly Line</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Pizza Assembly Tasks</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Task</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Time (sec)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Predecessors</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">A</td>
+<td style="text-align: left;">Roll dough</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">B</td>
+<td style="text-align: left;">Spread sauce</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">A</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">C</td>
+<td style="text-align: left;">Add cheese</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">B</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">D</td>
+<td style="text-align: left;">Add toppings</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: left;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">E</td>
+<td style="text-align: left;">Season</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">C, D</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">F</td>
+<td style="text-align: left;">Box pizza</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">E</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/pizza-precedence-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Precedence Diagram for Pizza Assembly</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="line-balancing-calculation" class="level3" data-number="4.8.4">
+<h3 data-number="4.8.4" class="anchored" data-anchor-id="line-balancing-calculation"><span class="header-section-number">4.8.4</span> Line Balancing Calculation</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Given data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>total_task_time <span class="ot">&lt;-</span> <span class="dv">40</span> <span class="sc">+</span> <span class="dv">25</span> <span class="sc">+</span> <span class="dv">20</span> <span class="sc">+</span> <span class="dv">35</span> <span class="sc">+</span> <span class="dv">15</span> <span class="sc">+</span> <span class="dv">30</span>  <span class="co"># seconds</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>desired_output <span class="ot">&lt;-</span> <span class="dv">60</span>  <span class="co"># pizzas per hour</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>available_time <span class="ot">&lt;-</span> <span class="dv">3600</span>  <span class="co"># seconds per hour</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Calculate Cycle Time</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>cycle_time <span class="ot">&lt;-</span> available_time <span class="sc">/</span> desired_output</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cycle Time:"</span>, cycle_time, <span class="st">"seconds per pizza</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cycle Time: 60 seconds per pizza</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Calculate Theoretical Minimum Stations</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>TM <span class="ot">&lt;-</span> total_task_time <span class="sc">/</span> cycle_time</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Theoretical Minimum Stations:"</span>, TM, <span class="st">"="</span>, <span class="fu">ceiling</span>(TM), <span class="st">"stations</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Theoretical Minimum Stations: 2.75 = 3 stations</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Assign tasks to stations (one possible solution)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Workstation Assignments ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Workstation Assignments ---</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 1: A (40s) + B (25s) = 65s &gt; 60s ... EXCEEDS!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Station 1: A (40s) + B (25s) = 65s &gt; 60s ... EXCEEDS!</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Let's try again:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Let's try again:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 1: A (40s) = 40s [Idle: 20s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Station 1: A (40s) = 40s [Idle: 20s]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 2: B (25s) + D (35s) = 60s [Idle: 0s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Station 2: B (25s) + D (35s) = 60s [Idle: 0s]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 3: C (20s) + E (15s) + F (30s) = 65s &gt; 60s... EXCEEDS!</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Station 3: C (20s) + E (15s) + F (30s) = 65s &gt; 60s... EXCEEDS!</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Revised:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Revised:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 3: C (20s) + E (15s) = 35s [Idle: 25s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Station 3: C (20s) + E (15s) = 35s [Idle: 25s]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Station 4: F (30s) = 30s [Idle: 30s]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Station 4: F (30s) = 30s [Idle: 30s]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># With 4 stations</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>n_stations <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>efficiency <span class="ot">&lt;-</span> (total_task_time <span class="sc">/</span> (n_stations <span class="sc">*</span> cycle_time)) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Results ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Results ---</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Number of Stations:"</span>, n_stations, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of Stations: 4 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Line Efficiency:"</span>, <span class="fu">round</span>(efficiency, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Line Efficiency: 68.8 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Balance Delay (Idle Time):"</span>, <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">-</span> efficiency, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Balance Delay (Idle Time): 31.2 %</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Try It Yourself: Can you find a better balance?
+</summary>
+<p><strong>Challenge:</strong> Can you assign tasks to only 3 stations while respecting the precedence constraints?</p>
+<p><strong>Hint:</strong> Consider these assignments: - Station 1: A (40s) + ? - Station 2: B (25s) + ? + ? - Station 3: ? + ?</p>
+<p>Remember: Total time per station cannot exceed 60 seconds!</p>
+<p><strong>Solution:</strong> It’s actually possible with careful planning: - Station 1: A (40s) = 40s - Station 2: B (25s) + C (20s) + E (15s) = 60s (but E needs C AND D complete!)</p>
+<p>So 3 stations is NOT feasible due to precedence constraints. The minimum is 4 stations for this problem.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="warehouse-layout-design" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="warehouse-layout-design"><span class="header-section-number">4.9</span> Warehouse Layout Design</h2>
+<p>Warehouse layouts are a special case of process layouts focused on <strong>minimizing material handling</strong>.</p>
+<section id="key-principles" class="level3" data-number="4.9.1">
+<h3 data-number="4.9.1" class="anchored" data-anchor-id="key-principles"><span class="header-section-number">4.9.1</span> Key Principles</h3>
+<ol type="1">
+<li><strong>Place high-volume items near the dock</strong></li>
+<li><strong>Group items that are often picked together</strong></li>
+<li><strong>Use ABC analysis</strong> for storage assignment:
+<ul>
+<li><strong>A items</strong> (20% of SKUs, 80% of picks): Prime locations</li>
+<li><strong>B items</strong> (30% of SKUs, 15% of picks): Secondary locations</li>
+<li><strong>C items</strong> (50% of SKUs, 5% of picks): Remote locations</li>
+</ul></li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/warehouse-viz-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Warehouse Layout: ABC Storage Strategy</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="office-layout-design" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="office-layout-design"><span class="header-section-number">4.10</span> Office Layout Design</h2>
+<p>Office layouts balance <strong>communication needs</strong> with <strong>privacy requirements</strong>.</p>
+<section id="two-main-approaches" class="level3" data-number="4.10.1">
+<h3 data-number="4.10.1" class="anchored" data-anchor-id="two-main-approaches"><span class="header-section-number">4.10.1</span> Two Main Approaches</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Office Layout Comparison</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Aspect</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Open Plan</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Traditional/Closed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Space</td>
+<td style="text-align: left;">Shared workspaces</td>
+<td style="text-align: left;">Private offices</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Walls</td>
+<td style="text-align: left;">Partitions/dividers</td>
+<td style="text-align: left;">Permanent walls</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Flexibility</td>
+<td style="text-align: left;">High - easy to reconfigure</td>
+<td style="text-align: left;">Low - expensive to change</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Communication</td>
+<td style="text-align: left;">Excellent</td>
+<td style="text-align: left;">Limited</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Privacy</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(214, 234, 248, 255) !important;">Cost</td>
+<td style="text-align: left;">Lower</td>
+<td style="text-align: left;">Higher</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="office-ergonomics-checklist" class="level3" data-number="4.10.2">
+<h3 data-number="4.10.2" class="anchored" data-anchor-id="office-ergonomics-checklist"><span class="header-section-number">4.10.2</span> Office Ergonomics Checklist</h3>
+<details>
+<summary>
+Click to expand: Office Ergonomics Best Practices
+</summary>
+<p><strong>Posture:</strong> - Support the small of the back - Keep shoulders relaxed - Maintain neutral wrist position - Feet flat on floor or footrest</p>
+<p><strong>Lighting:</strong> - Position monitor to reduce glare - Adjust brightness for screen vs.&nbsp;paper work - Use task lighting when needed</p>
+<p><strong>Workstation:</strong> - Monitor at arm’s length - Top of screen at or below eye level - Keyboard and mouse at elbow height</p>
+<p><strong>Work Habits:</strong> - Take breaks every 30-60 minutes - Vary tasks to prevent repetitive strain - Use keyboard shortcuts to reduce mouse use</p>
+</details>
+</section>
+<section id="the-future-of-office-design" class="level3" data-number="4.10.3">
+<h3 data-number="4.10.3" class="anchored" data-anchor-id="the-future-of-office-design"><span class="header-section-number">4.10.3</span> The Future of Office Design</h3>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/0X_tKMhxNXA" title="Office of Today, Workplace of Tomorrow" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
+  </iframe>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary-choosing-the-right-layout" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="summary-choosing-the-right-layout"><span class="header-section-number">4.11</span> Summary: Choosing the Right Layout</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/decision-flowchart-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Layout Selection Decision Guide</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="key-takeaways" class="level3" data-number="4.11.1">
+<h3 data-number="4.11.1" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">4.11.1</span> Key Takeaways</h3>
+<ol type="1">
+<li><strong>Process layouts</strong> offer flexibility for varied products but have higher material handling costs</li>
+<li><strong>Product layouts</strong> are efficient for high-volume, standardized products</li>
+<li><strong>Cellular layouts</strong> provide a middle ground with benefits of both</li>
+<li><strong>Fixed-position layouts</strong> are necessary when products cannot be moved</li>
+<li><strong>Line balancing</strong> is critical for efficient product layouts</li>
+<li><strong>Warehouse layouts</strong> should minimize travel distance for high-frequency items</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="industry-case-studies" class="level2" data-number="4.12">
+<h2 data-number="4.12" class="anchored" data-anchor-id="industry-case-studies"><span class="header-section-number">4.12</span> Industry Case Studies</h2>
+<section id="case-study-1-food-processing-plant-layout" class="level3" data-number="4.12.1">
+<h3 data-number="4.12.1" class="anchored" data-anchor-id="case-study-1-food-processing-plant-layout"><span class="header-section-number">4.12.1</span> Case Study 1: Food Processing Plant Layout</h3>
+<p>Food processing facilities have unique layout requirements due to food safety, hygiene, and regulatory compliance.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/food-processing-layout-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Food Processing Plant Layout Example</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Design Principles for Food Processing:</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Food Processing Layout Design Principles</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Principle</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Regulatory Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Linear Flow</td>
+<td style="text-align: left;">Raw materials → Processing → Packaging (no backtracking)</td>
+<td style="text-align: left;">FSMA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Zone Separation</td>
+<td style="text-align: left;">Physical barriers between raw and ready-to-eat areas</td>
+<td style="text-align: left;">HACCP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Cleanability</td>
+<td style="text-align: left;">Smooth, non-porous surfaces; rounded corners; proper drainage</td>
+<td style="text-align: left;">3-A Standards</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Temperature Control</td>
+<td style="text-align: left;">Maintain cold chain; separate refrigerated zones</td>
+<td style="text-align: left;">FDA 21 CFR 110</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Sanitary Design</td>
+<td style="text-align: left;">Handwashing stations, foot baths, air curtains at zone transitions</td>
+<td style="text-align: left;">USDA FSIS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Allergen Control</td>
+<td style="text-align: left;">Dedicated lines or thorough cleaning between allergen products</td>
+<td style="text-align: left;">FALCPA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion Question: Cross-Contamination Prevention
+</summary>
+<p><strong>Question:</strong> A food processing plant produces both peanut butter products and tree nut-free products. What layout considerations are essential?</p>
+<p><strong>Key Considerations:</strong></p>
+<ol type="1">
+<li><strong>Physical Separation:</strong> Completely separate production lines with physical barriers (walls, not just distance)</li>
+<li><strong>Air Handling:</strong> Separate HVAC systems to prevent airborne allergen transfer</li>
+<li><strong>Personnel Flow:</strong> Dedicated workers for each line, or strict gowning/cleaning procedures when crossing zones</li>
+<li><strong>Scheduling:</strong> If shared equipment is unavoidable, schedule allergen products last before deep cleaning</li>
+<li><strong>Traffic Patterns:</strong> Forklift and cart paths should not cross between allergen zones</li>
+<li><strong>Verification:</strong> Air sampling and surface swabs to verify effectiveness</li>
+</ol>
+</details>
+</section>
+<section id="case-study-2-aerospace-manufacturing-facility" class="level3" data-number="4.12.2">
+<h3 data-number="4.12.2" class="anchored" data-anchor-id="case-study-2-aerospace-manufacturing-facility"><span class="header-section-number">4.12.2</span> Case Study 2: Aerospace Manufacturing Facility</h3>
+<p>Aerospace facilities often use <strong>fixed-position layouts</strong> combined with <strong>process layouts</strong> for component fabrication.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/aerospace-layout-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Aerospace Assembly Facility Layout</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Aerospace Layout Characteristics:</strong></p>
+<ul>
+<li><strong>Clean rooms</strong> for precision components (hydraulics, avionics)</li>
+<li><strong>High-bay areas</strong> for large assembly operations</li>
+<li><strong>Overhead cranes</strong> for moving heavy components</li>
+<li><strong>Flow-line final assembly</strong> (aircraft moves through stations) for high-volume commercial aircraft</li>
+<li><strong>Fixed-position</strong> for military aircraft or low-volume production</li>
+<li><strong>Strict FOD (Foreign Object Debris)</strong> control throughout</li>
+</ul>
+<details>
+<summary>
+Video: Boeing 737 Assembly
+</summary>
+<p>Watch how Boeing uses a moving assembly line for high-volume aircraft production:</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/u7nFmYLdgJI" title="Boeing 737 Assembly" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
+  </iframe>
+</div>
+</details>
+</section>
+<section id="case-study-3-automotive-supplier---hybrid-cell-layout" class="level3" data-number="4.12.3">
+<h3 data-number="4.12.3" class="anchored" data-anchor-id="case-study-3-automotive-supplier---hybrid-cell-layout"><span class="header-section-number">4.12.3</span> Case Study 3: Automotive Supplier - Hybrid Cell Layout</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/auto-supplier-layout-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Automotive Supplier Facility with Cellular Layout</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>JIT Delivery Requirements:</strong></p>
+<p>Automotive suppliers must often deliver directly to the assembly line in <strong>sequence</strong> (JIS - Just-In-Sequence):</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>JIT/JIS Requirements and Layout Implications</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Requirement</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Typical Standard</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Layout Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Delivery Window</td>
+<td style="text-align: left;">±30 minutes of scheduled time</td>
+<td style="text-align: left;">Dedicated shipping lane, staging area near dock</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Sequence Accuracy</td>
+<td style="text-align: left;">100% (0 sequence errors)</td>
+<td style="text-align: left;">Pick-to-light systems, visual management</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Quality Level</td>
+<td style="text-align: left;">0 PPM target (Six Sigma)</td>
+<td style="text-align: left;">Inline inspection, mistake-proofing (poka-yoke)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Packaging</td>
+<td style="text-align: left;">Returnable containers to line side</td>
+<td style="text-align: left;">Container cleaning/storage area needed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Traceability</td>
+<td style="text-align: left;">Full lot/serial traceability required</td>
+<td style="text-align: left;">Barcode/RFID scanning stations throughout</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="ergonomics-in-manufacturing" class="level2" data-number="4.13">
+<h2 data-number="4.13" class="anchored" data-anchor-id="ergonomics-in-manufacturing"><span class="header-section-number">4.13</span> Ergonomics in Manufacturing</h2>
+<p>Ergonomics (human factors engineering) is critical for plant layout design to ensure worker safety, reduce injuries, and improve productivity.</p>
+<section id="the-niosh-lifting-equation" class="level3" data-number="4.13.1">
+<h3 data-number="4.13.1" class="anchored" data-anchor-id="the-niosh-lifting-equation"><span class="header-section-number">4.13.1</span> The NIOSH Lifting Equation</h3>
+<p>The National Institute for Occupational Safety and Health (NIOSH) developed an equation to evaluate manual lifting tasks:</p>
+<p><span class="math display">\[RWL = LC \times HM \times VM \times DM \times AM \times FM \times CM\]</span></p>
+<p>Where <strong>RWL</strong> = Recommended Weight Limit (in pounds or kg)</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>NIOSH Lifting Equation Factors</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Factor</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Name</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Formula</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">LC</td>
+<td style="text-align: left;">Load Constant</td>
+<td style="text-align: left;">51 lb (23 kg)</td>
+<td style="text-align: left;">Maximum weight under ideal conditions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">HM</td>
+<td style="text-align: left;">Horizontal Multiplier</td>
+<td style="text-align: left;">10/H</td>
+<td style="text-align: left;">H = horizontal distance from spine to load (inches)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">VM</td>
+<td style="text-align: left;">Vertical Multiplier</td>
+<td style="text-align: left;">1 - 0.0075&amp;#124;V - 30&amp;#124;</td>
+<td style="text-align: left;">V = vertical height of hands at start (inches)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">DM</td>
+<td style="text-align: left;">Distance Multiplier</td>
+<td style="text-align: left;">0.82 + 1.8/D</td>
+<td style="text-align: left;">D = vertical travel distance (inches)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">AM</td>
+<td style="text-align: left;">Asymmetric Multiplier</td>
+<td style="text-align: left;">1 - 0.0032A</td>
+<td style="text-align: left;">A = angle of asymmetry (degrees)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">FM</td>
+<td style="text-align: left;">Frequency Multiplier</td>
+<td style="text-align: left;">Table lookup</td>
+<td style="text-align: left;">Based on lift frequency and duration</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold; background-color: rgba(254, 249, 231, 255) !important;">CM</td>
+<td style="text-align: left;">Coupling Multiplier</td>
+<td style="text-align: left;">Table lookup</td>
+<td style="text-align: left;">Based on grip quality (good/fair/poor)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="lifting-index-calculation" class="level3" data-number="4.13.2">
+<h3 data-number="4.13.2" class="anchored" data-anchor-id="lifting-index-calculation"><span class="header-section-number">4.13.2</span> Lifting Index Calculation</h3>
+<p><span class="math display">\[LI = \frac{\text{Actual Weight}}{\text{RWL}}\]</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Lifting Index Interpretation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Lifting Index</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Risk Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">LI ≤ 1.0</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Low</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Task is acceptable for most workers</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">1.0 &lt; LI ≤ 3.0</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Moderate</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Task poses risk; engineering controls recommended</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">LI &gt; 3.0</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Task is unacceptable; immediate redesign required</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="niosh-lifting-example" class="level3" data-number="4.13.3">
+<h3 data-number="4.13.3" class="anchored" data-anchor-id="niosh-lifting-example"><span class="header-section-number">4.13.3</span> NIOSH Lifting Example</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Worker lifts 35 lb boxes from pallet to conveyor</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Conditions:</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - Horizontal distance (H) = 15 inches</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># - Vertical height at start (V) = 10 inches</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - Vertical travel distance (D) = 20 inches</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co"># - Asymmetry angle (A) = 30 degrees</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co"># - Frequency = 4 lifts per minute, 2 hours</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># - Coupling = Fair (handles present)</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>LC <span class="ot">&lt;-</span> <span class="dv">51</span>  <span class="co"># Load constant (lb)</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate multipliers</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>HM <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="sc">/</span> <span class="dv">15</span>  <span class="co"># Horizontal multiplier</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>VM <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.0075</span> <span class="sc">*</span> <span class="fu">abs</span>(<span class="dv">10</span> <span class="sc">-</span> <span class="dv">30</span>)  <span class="co"># Vertical multiplier</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>DM <span class="ot">&lt;-</span> <span class="fl">0.82</span> <span class="sc">+</span> (<span class="fl">1.8</span> <span class="sc">/</span> <span class="dv">20</span>)  <span class="co"># Distance multiplier</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>AM <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.0032</span> <span class="sc">*</span> <span class="dv">30</span>  <span class="co"># Asymmetric multiplier</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>FM <span class="ot">&lt;-</span> <span class="fl">0.72</span>  <span class="co"># From NIOSH table: 4 lifts/min, 1-2 hours</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>CM <span class="ot">&lt;-</span> <span class="fl">0.95</span>  <span class="co"># Fair coupling</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Multiplier Values:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Multiplier Values:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  HM (Horizontal):"</span>, <span class="fu">round</span>(HM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  HM (Horizontal): 0.667 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  VM (Vertical):"</span>, <span class="fu">round</span>(VM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  VM (Vertical): 0.85 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  DM (Distance):"</span>, <span class="fu">round</span>(DM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  DM (Distance): 0.91 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  AM (Asymmetry):"</span>, <span class="fu">round</span>(AM, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  AM (Asymmetry): 0.904 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  FM (Frequency):"</span>, FM, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  FM (Frequency): 0.72 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  CM (Coupling):"</span>, CM, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  CM (Coupling): 0.95 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate RWL</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>RWL <span class="ot">&lt;-</span> LC <span class="sc">*</span> HM <span class="sc">*</span> VM <span class="sc">*</span> DM <span class="sc">*</span> AM <span class="sc">*</span> FM <span class="sc">*</span> CM</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Recommended Weight Limit (RWL):"</span>, <span class="fu">round</span>(RWL, <span class="dv">1</span>), <span class="st">"lb</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Recommended Weight Limit (RWL): 16.3 lb</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Lifting Index</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>actual_weight <span class="ot">&lt;-</span> <span class="dv">35</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>LI <span class="ot">&lt;-</span> actual_weight <span class="sc">/</span> RWL</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Lifting Index (LI):"</span>, <span class="fu">round</span>(LI, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Lifting Index (LI): 2.15 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (LI <span class="sc">&lt;=</span> <span class="fl">1.0</span>) {</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Risk Level: LOW - Task is acceptable</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (LI <span class="sc">&lt;=</span> <span class="fl">3.0</span>) {</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Risk Level: MODERATE - Consider engineering controls</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Risk Level: HIGH - Immediate redesign required</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Risk Level: MODERATE - Consider engineering controls</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Discussion Question: Reducing the Lifting Index
+</summary>
+<p><strong>Based on the example above, what layout or workstation changes could reduce the Lifting Index?</strong></p>
+<p><strong>Solutions (in order of effectiveness):</strong></p>
+<ol type="1">
+<li><strong>Reduce horizontal distance (H):</strong> Move conveyor closer to pallet position
+<ul>
+<li>If H = 10”: HM improves from 0.67 to 1.0 → RWL increases by 50%</li>
+</ul></li>
+<li><strong>Raise the starting height (V):</strong> Use elevated pallet positions or pallet lifters
+<ul>
+<li>If V = 30” (optimal): VM improves from 0.85 to 1.0 → RWL increases by 18%</li>
+</ul></li>
+<li><strong>Eliminate asymmetry (A):</strong> Reposition conveyor directly in front of pallet
+<ul>
+<li>If A = 0°: AM improves from 0.90 to 1.0 → RWL increases by 11%</li>
+</ul></li>
+<li><strong>Reduce frequency:</strong> Add a second worker or use automation
+<ul>
+<li>If 1 lift/min: FM improves from 0.72 to 0.94 → RWL increases by 31%</li>
+</ul></li>
+<li><strong>Improve coupling:</strong> Use boxes with good handles
+<ul>
+<li>If good coupling: CM improves from 0.95 to 1.0 → RWL increases by 5%</li>
+</ul></li>
+</ol>
+<p><strong>Best solution:</strong> Implement a scissor lift for the pallet (adjustable height) and move the conveyor closer. This addresses the largest multiplier reductions.</p>
+</details>
+</section>
+<section id="ergonomic-workstation-design" class="level3" data-number="4.13.4">
+<h3 data-number="4.13.4" class="anchored" data-anchor-id="ergonomic-workstation-design"><span class="header-section-number">4.13.4</span> Ergonomic Workstation Design</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/ergonomic-zones-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Ergonomic Work Zones for Standing Operations</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Layout Implications:</strong></p>
+<ul>
+<li><strong>Primary zone:</strong> Most frequently used tools and parts</li>
+<li><strong>Secondary zone:</strong> Regularly used items, occasional reaches</li>
+<li><strong>Tertiary zone:</strong> Rarely needed items, should trigger redesign if frequent use required</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="modern-layout-trends-and-industry-4.0" class="level2" data-number="4.14">
+<h2 data-number="4.14" class="anchored" data-anchor-id="modern-layout-trends-and-industry-4.0"><span class="header-section-number">4.14</span> Modern Layout Trends and Industry 4.0</h2>
+<section id="flexible-manufacturing-layouts" class="level3" data-number="4.14.1">
+<h3 data-number="4.14.1" class="anchored" data-anchor-id="flexible-manufacturing-layouts"><span class="header-section-number">4.14.1</span> Flexible Manufacturing Layouts</h3>
+<p>Modern facilities must adapt quickly to changing product demands. Key trends include:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Modern Flexible Layout Trends</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Trend</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Benefits</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Modular Workstations</td>
+<td style="text-align: left;">Pre-built workstation modules that can be relocated in hours</td>
+<td style="text-align: left;">Rapid response to volume changes, easy expansion</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Reconfigurable Cells</td>
+<td style="text-align: left;">Cells with standardized machine interfaces for quick changeover</td>
+<td style="text-align: left;">Switch between product families without major capital</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Mobile Equipment</td>
+<td style="text-align: left;">Equipment on wheels or air bearings for rapid repositioning</td>
+<td style="text-align: left;">Eliminate fixed foundations, reduce floor damage</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Flexible Utilities</td>
+<td style="text-align: left;">Overhead utility drops and floor trenches allow equipment mobility</td>
+<td style="text-align: left;">No hardwired constraints on equipment placement</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Digital Layout Planning</td>
+<td style="text-align: left;">Digital twins enable virtual layout testing before physical changes</td>
+<td style="text-align: left;">Reduce trial-and-error, optimize before implementation</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="industry-4.0-layout-considerations" class="level3" data-number="4.14.2">
+<h3 data-number="4.14.2" class="anchored" data-anchor-id="industry-4.0-layout-considerations"><span class="header-section-number">4.14.2</span> Industry 4.0 Layout Considerations</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/industry-4-layout-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Industry 4.0 Enabled Plant Layout Elements</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="agv-and-amr-traffic-planning" class="level3" data-number="4.14.3">
+<h3 data-number="4.14.3" class="anchored" data-anchor-id="agv-and-amr-traffic-planning"><span class="header-section-number">4.14.3</span> AGV and AMR Traffic Planning</h3>
+<p>Automated Guided Vehicles (AGVs) and Autonomous Mobile Robots (AMRs) require careful layout planning:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>AGV/AMR Layout Planning Guidelines</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Consideration</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Design Guidelines</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Route Design</td>
+<td style="text-align: left;">Unidirectional loops preferred; minimize intersections; avoid steep grades</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Charging Locations</td>
+<td style="text-align: left;">Opportunity charging at pickup/dropoff points; dedicated charging bays for breaks</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Traffic Intersections</td>
+<td style="text-align: left;">Yield zones, traffic signals, or elevation changes at crossings</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Floor Requirements</td>
+<td style="text-align: left;">Smooth, level surfaces; magnetic tape or QR codes for navigation; no oil/water</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Safety Zones</td>
+<td style="text-align: left;">Minimum 1m clearance from pedestrian paths; light curtains at crossings</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Staging Areas</td>
+<td style="text-align: left;">Buffer areas for queue management; waiting positions clear of traffic</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Video: AGV Systems in Modern Warehouses
+</summary>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/quWFjS3Ci7A" title="AGV Systems in Modern Manufacturing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
+  </iframe>
+</div>
+</details>
+<hr>
+</section>
+</section>
+<section id="layout-simulation-software" class="level2" data-number="4.15">
+<h2 data-number="4.15" class="anchored" data-anchor-id="layout-simulation-software"><span class="header-section-number">4.15</span> Layout Simulation Software</h2>
+<p>Modern plant layout design relies heavily on simulation software to test alternatives before physical implementation.</p>
+<section id="common-layout-planning-software" class="level3" data-number="4.15.1">
+<h3 data-number="4.15.1" class="anchored" data-anchor-id="common-layout-planning-software"><span class="header-section-number">4.15.1</span> Common Layout Planning Software</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Plant Layout Planning Software Comparison</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Software</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Primary Use</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Key Features</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Typical Users</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">AutoCAD Factory Design Suite</td>
+<td style="text-align: left;">2D/3D CAD layout design</td>
+<td style="text-align: left;">Extensive equipment libraries, interference checking, material flow analysis</td>
+<td style="text-align: left;">Facility engineers, architects</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">FlexSim</td>
+<td style="text-align: left;">3D discrete event simulation</td>
+<td style="text-align: left;">Drag-and-drop modeling, VR capability, real-time 3D animation</td>
+<td style="text-align: left;">Industrial engineers, consultants</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Arena</td>
+<td style="text-align: left;">Process simulation</td>
+<td style="text-align: left;">Statistical analysis, what-if scenarios, bottleneck identification</td>
+<td style="text-align: left;">Process engineers, academics</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Plant Simulation (Siemens)</td>
+<td style="text-align: left;">Digital factory simulation</td>
+<td style="text-align: left;">Full Siemens integration, AGV simulation, energy analysis</td>
+<td style="text-align: left;">Large manufacturers (automotive, aerospace)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">SketchUp + Extensions</td>
+<td style="text-align: left;">Quick 3D visualization</td>
+<td style="text-align: left;">Low cost, easy learning curve, walkthrough capability</td>
+<td style="text-align: left;">Small businesses, initial concepts</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="simulation-benefits" class="level3" data-number="4.15.2">
+<h3 data-number="4.15.2" class="anchored" data-anchor-id="simulation-benefits"><span class="header-section-number">4.15.2</span> Simulation Benefits</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="04-Plant-Layout_files/figure-html/simulation-benefits-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Benefits of Layout Simulation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>ROI of Simulation:</strong></p>
+<ul>
+<li><strong>10-20x</strong> return on simulation investment typical</li>
+<li><strong>30-50%</strong> reduction in layout change costs</li>
+<li><strong>Weeks to months</strong> saved in ramp-up time</li>
+<li><strong>Stakeholder alignment</strong> - visual communication of concepts</li>
+</ul>
+<details>
+<summary>
+Video: Plant Simulation Demo
+</summary>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/b5U6VlgRPnU" title="Plant Simulation Software Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
+  </iframe>
+</div>
+</details>
+<hr>
+</section>
+</section>
+<section id="practice-problems" class="level2" data-number="4.16">
+<h2 data-number="4.16" class="anchored" data-anchor-id="practice-problems"><span class="header-section-number">4.16</span> Practice Problems</h2>
+<details>
+<summary>
+Problem 1: Layout Selection
+</summary>
+<p><strong>Scenario:</strong> A company manufactures custom kitchen cabinets. Each order is unique, with different dimensions, materials, and finishes. Production volume is about 50 units per month.</p>
+<p><strong>Question:</strong> Which layout type would you recommend and why?</p>
+<p><strong>Answer:</strong> A <strong>process layout</strong> would be most appropriate because: - High product variety (custom orders) - Low production volume - Different operations needed for each order - Flexibility is more important than efficiency</p>
+</details>
+<details>
+<summary>
+Problem 2: Line Balancing
+</summary>
+<p><strong>Given:</strong> - Total task time: 240 seconds - Desired output: 30 units per hour - Available time: 3600 seconds per hour</p>
+<p><strong>Calculate:</strong> 1. Cycle time 2. Theoretical minimum number of stations 3. If you use 3 stations, what is the efficiency?</p>
+<p><strong>Solution:</strong> 1. Cycle time = 3600 / 30 = <strong>120 seconds</strong> 2. TM = 240 / 120 = <strong>2 stations</strong> 3. Efficiency = (240 / (3 × 120)) × 100 = <strong>66.7%</strong></p>
+</details>
+<details>
+<summary>
+Problem 3: Warehouse Layout
+</summary>
+<p><strong>Scenario:</strong> A warehouse has the following items: - Item X: 500 picks/day - Item Y: 100 picks/day - Item Z: 50 picks/day</p>
+<p><strong>Question:</strong> How should these items be positioned relative to the shipping dock?</p>
+<p><strong>Answer:</strong> Using ABC analysis: - Item X (high frequency): <strong>Closest to dock</strong> (A zone) - Item Y (medium frequency): <strong>Middle distance</strong> (B zone) - Item Z (low frequency): <strong>Farthest from dock</strong> (C zone)</p>
+</details>
+<hr>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="4.17">
+<h2 data-number="4.17" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">4.17</span> Review Questions</h2>
+<details>
+<summary>
+Question 1: What distinguishes a cellular layout from both process and product layouts?
+</summary>
+<p><strong>Answer:</strong> A cellular layout combines characteristics of both:</p>
+<ul>
+<li><strong>From process layout:</strong> Equipment variety within each cell, flexibility to handle part variations</li>
+<li><strong>From product layout:</strong> Sequential flow within the cell, dedicated equipment for part families</li>
+<li><strong>Unique characteristics:</strong>
+<ul>
+<li>Parts grouped into families using Group Technology</li>
+<li>Cells are self-contained mini-factories</li>
+<li>Workers often cross-trained to operate multiple machines</li>
+<li>Reduced material handling compared to process layout</li>
+<li>More flexibility than pure product layout</li>
+</ul></li>
+</ul>
+</details>
+<details>
+<summary>
+Question 2: Calculate the Lifting Index for the following scenario
+</summary>
+<p><strong>Scenario:</strong> A worker lifts 25 kg boxes from floor level (V=0) to a shelf at waist height. The horizontal distance is 40 cm, vertical travel is 75 cm, no asymmetry, frequency is 2 lifts per minute for 4 hours, and coupling is poor (no handles).</p>
+<p><strong>Given multipliers:</strong> - LC = 23 kg - HM = 25/H (H in cm) - VM = 1 - 0.003|V - 75| (V in cm) - DM = 0.82 + 4.5/D (D in cm) - AM = 1.0 (no asymmetry) - FM = 0.65 (from tables) - CM = 0.90 (poor coupling)</p>
+<p><strong>Solution:</strong></p>
+<pre><code>HM = 25/40 = 0.625
+VM = 1 - 0.003|0 - 75| = 1 - 0.225 = 0.775
+DM = 0.82 + 4.5/75 = 0.82 + 0.06 = 0.88
+AM = 1.0
+FM = 0.65
+CM = 0.90
+
+RWL = 23 × 0.625 × 0.775 × 0.88 × 1.0 × 0.65 × 0.90
+RWL = 23 × 0.625 × 0.775 × 0.88 × 0.65 × 0.90
+RWL = 5.7 kg
+
+LI = 25/5.7 = 4.4
+
+Risk Level: HIGH (LI &gt; 3.0) - Immediate redesign required</code></pre>
+<p><strong>Recommended actions:</strong> Raise starting height (use pallet lifter), reduce horizontal distance, add handles to boxes, reduce frequency.</p>
+</details>
+<details>
+<summary>
+Question 3: List three Industry 4.0 technologies that impact plant layout design
+</summary>
+<p><strong>Answer:</strong> (Any three of the following)</p>
+<ol type="1">
+<li><strong>AGVs/AMRs:</strong> Require route planning, charging stations, floor markings, safety zones</li>
+<li><strong>Collaborative robots (cobots):</strong> Need safety zones, but smaller footprint than traditional robot cells</li>
+<li><strong>Digital twins:</strong> Enable virtual layout testing, reduce physical prototyping</li>
+<li><strong>IoT sensors:</strong> Require network infrastructure (5G/WiFi), edge computing locations</li>
+<li><strong>AR/VR systems:</strong> Training stations, remote assistance capabilities</li>
+<li><strong>Flexible automation:</strong> Modular equipment, quick-connect utilities</li>
+</ol>
+</details>
+<details>
+<summary>
+Question 4: What are the key differences between food processing plant layouts and general manufacturing?
+</summary>
+<p><strong>Answer:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 34%">
+<col style="width: 47%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Food Processing</th>
+<th>General Manufacturing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Flow direction</td>
+<td>Strictly one-way (raw → finished)</td>
+<td>Can have backtracking</td>
+</tr>
+<tr class="even">
+<td>Zone separation</td>
+<td>Physical barriers between raw/clean</td>
+<td>Logical separation often sufficient</td>
+</tr>
+<tr class="odd">
+<td>Surfaces</td>
+<td>Sanitary design, smooth, cleanable</td>
+<td>Durability focused</td>
+</tr>
+<tr class="even">
+<td>Temperature</td>
+<td>Multiple temperature zones (cold chain)</td>
+<td>Generally ambient</td>
+</tr>
+<tr class="odd">
+<td>Regulatory</td>
+<td>HACCP, FSMA, FDA oversight</td>
+<td>OSHA, industry standards</td>
+</tr>
+<tr class="even">
+<td>Allergen control</td>
+<td>Dedicated lines or validated cleaning</td>
+<td>Not typically a concern</td>
+</tr>
+<tr class="odd">
+<td>Traceability</td>
+<td>Lot-level required by regulation</td>
+<td>Often batch-level sufficient</td>
+</tr>
+</tbody>
+</table>
+</details>
+<details>
+<summary>
+Question 5: A warehouse has three product categories with the following pick frequencies. Design the storage zones.
+</summary>
+<p><strong>Data:</strong> - Category A: 1200 picks/day, 500 SKUs - Category B: 600 picks/day, 1500 SKUs - Category C: 200 picks/day, 3000 SKUs</p>
+<p><strong>Solution:</strong></p>
+<p>Using ABC analysis based on pick frequency: - <strong>Category A</strong> (60% of picks, 10% of SKUs): Prime locations closest to shipping dock - <strong>Category B</strong> (30% of picks, 30% of SKUs): Secondary locations, moderate distance - <strong>Category C</strong> (10% of picks, 60% of SKUs): Remote locations, maximum distance from dock</p>
+<p><strong>Additional considerations:</strong> - Within each zone, use cube utilization for dense storage of slow movers - Consider pick path optimization (serpentine vs.&nbsp;return routing) - High-frequency items at ergonomic pick heights (waist level) - Reserve space near dock for cross-docking high-velocity items</p>
+</details>
+<hr>
+</section>
+<section id="chapter-summary" class="level2" data-number="4.18">
+<h2 data-number="4.18" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">4.18</span> Chapter Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Chapter 4 Summary: Plant Layout and Facility Design</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Key Concepts</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(68, 114, 196, 255) !important;">Key Formulas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Layout Types</td>
+<td style="text-align: left;">Fixed-position, Process, Product, Hybrid/Cellular - selected based on volume and variety</td>
+<td style="text-align: left;">Layout selection: Volume × Variety matrix</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Process Layout Design</td>
+<td style="text-align: left;">From-To matrix, Load-Distance model, Block plans, Closeness relationships</td>
+<td style="text-align: left;">Cost = Σ Lij × Dij × C</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Product Layout (Line Balancing)</td>
+<td style="text-align: left;">Cycle time, Theoretical minimum stations, Precedence diagrams, Line efficiency</td>
+<td style="text-align: left;">C = Time/Output; TM = Σti/C; Eff = Σti/(n×C)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Cellular Manufacturing</td>
+<td style="text-align: left;">Group Technology, Part families, Self-contained cells, Reduced material handling</td>
+<td style="text-align: left;">Cell efficiency = Output/(Input × Time)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Warehouse Design</td>
+<td style="text-align: left;">ABC analysis, High-frequency items near dock, Pick path optimization</td>
+<td style="text-align: left;">Travel distance = Σ(picks × distance)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Ergonomics</td>
+<td style="text-align: left;">NIOSH lifting equation, RWL, Lifting Index, Work zones, Workstation design</td>
+<td style="text-align: left;">RWL = LC×HM×VM×DM×AM×FM×CM; LI = Weight/RWL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Modern Trends</td>
+<td style="text-align: left;">Flexible layouts, Industry 4.0, AGV/AMR planning, Digital twins</td>
+<td style="text-align: left;">ROI = (Savings - Investment)/Investment</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(235, 245, 251, 255) !important;">Simulation</td>
+<td style="text-align: left;">FlexSim, Arena, Plant Simulation - virtual testing before physical changes</td>
+<td style="text-align: left;">Simulation accuracy &gt; 90% typical</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="references" class="level2" data-number="4.19">
+<h2 data-number="4.19" class="anchored" data-anchor-id="references"><span class="header-section-number">4.19</span> References</h2>
+<ul>
+<li>Reid, R. D., &amp; Sanders, N. R. (2019). <em>Operations Management: An Integrated Approach</em> (7th ed.). Wiley. Chapter 10.</li>
+<li>Groover, M. P. (2020). <em>Automation, Production Systems, and Computer-Integrated Manufacturing</em> (5th ed.). Pearson.</li>
+<li>Waters, T. R., Putz-Anderson, V., &amp; Garg, A. (1994). <em>Applications Manual for the Revised NIOSH Lifting Equation</em>. NIOSH Publication No.&nbsp;94-110.</li>
+<li>Tompkins, J. A., White, J. A., Bozer, Y. A., &amp; Tanchoco, J. M. A. (2010). <em>Facilities Planning</em> (4th ed.). Wiley.</li>
+<li>FDA. (2021). <em>Current Good Manufacturing Practice, Hazard Analysis, and Risk-Based Preventive Controls for Human Food</em>. 21 CFR Part 117.</li>
+<li>OSHA. (2021). <em>Ergonomics: The Study of Work</em>. OSHA Publication 3125.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./03-Integrated-Manufacturing-Systems.html" class="pagination-link" aria-label="Integrated Manufacturing Systems">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./05-Lean-Manufacturing.html" class="pagination-link" aria-label="Lean Manufacturing">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/04-Plant-Layout.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

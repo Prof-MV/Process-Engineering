@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>5&nbsp; Lean Manufacturing – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./06-Machine-Guarding-and-Safety.html" rel="next">
+<link href="./04-Plant-Layout.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-Lean-Manufacturing.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">5.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-lean-manufacturing" id="toc-introduction-to-lean-manufacturing" class="nav-link" data-scroll-target="#introduction-to-lean-manufacturing"><span class="header-section-number">5.2</span> Introduction to Lean Manufacturing</a>
+  <ul class="collapse">
+  <li><a href="#definition-of-lean" id="toc-definition-of-lean" class="nav-link" data-scroll-target="#definition-of-lean"><span class="header-section-number">5.2.1</span> Definition of Lean</a></li>
+  </ul></li>
+  <li><a href="#evolution-of-manufacturing-systems" id="toc-evolution-of-manufacturing-systems" class="nav-link" data-scroll-target="#evolution-of-manufacturing-systems"><span class="header-section-number">5.3</span> Evolution of Manufacturing Systems</a>
+  <ul class="collapse">
+  <li><a href="#comparison-of-manufacturing-systems" id="toc-comparison-of-manufacturing-systems" class="nav-link" data-scroll-target="#comparison-of-manufacturing-systems"><span class="header-section-number">5.3.1</span> Comparison of Manufacturing Systems</a></li>
+  </ul></li>
+  <li><a href="#the-toyota-production-system-tps" id="toc-the-toyota-production-system-tps" class="nav-link" data-scroll-target="#the-toyota-production-system-tps"><span class="header-section-number">5.4</span> The Toyota Production System (TPS)</a>
+  <ul class="collapse">
+  <li><a href="#historical-context" id="toc-historical-context" class="nav-link" data-scroll-target="#historical-context"><span class="header-section-number">5.4.1</span> Historical Context</a></li>
+  <li><a href="#two-pillars-of-tps" id="toc-two-pillars-of-tps" class="nav-link" data-scroll-target="#two-pillars-of-tps"><span class="header-section-number">5.4.2</span> Two Pillars of TPS</a></li>
+  </ul></li>
+  <li><a href="#the-3-ms-of-lean" id="toc-the-3-ms-of-lean" class="nav-link" data-scroll-target="#the-3-ms-of-lean"><span class="header-section-number">5.5</span> The 3 M’s of Lean</a></li>
+  <li><a href="#the-seven-types-of-waste-muda" id="toc-the-seven-types-of-waste-muda" class="nav-link" data-scroll-target="#the-seven-types-of-waste-muda"><span class="header-section-number">5.6</span> The Seven Types of Waste (MUDA)</a>
+  <ul class="collapse">
+  <li><a href="#detailed-breakdown-of-the-seven-wastes" id="toc-detailed-breakdown-of-the-seven-wastes" class="nav-link" data-scroll-target="#detailed-breakdown-of-the-seven-wastes"><span class="header-section-number">5.6.1</span> Detailed Breakdown of the Seven Wastes</a></li>
+  </ul></li>
+  <li><a href="#the-5s-methodology" id="toc-the-5s-methodology" class="nav-link" data-scroll-target="#the-5s-methodology"><span class="header-section-number">5.7</span> The 5S Methodology</a>
+  <ul class="collapse">
+  <li><a href="#visual-factory" id="toc-visual-factory" class="nav-link" data-scroll-target="#visual-factory"><span class="header-section-number">5.7.1</span> Visual Factory</a></li>
+  </ul></li>
+  <li><a href="#just-in-time-jit-production" id="toc-just-in-time-jit-production" class="nav-link" data-scroll-target="#just-in-time-jit-production"><span class="header-section-number">5.8</span> Just-in-Time (JIT) Production</a>
+  <ul class="collapse">
+  <li><a href="#the-jit-philosophy" id="toc-the-jit-philosophy" class="nav-link" data-scroll-target="#the-jit-philosophy"><span class="header-section-number">5.8.1</span> The JIT Philosophy</a></li>
+  <li><a href="#push-vs.-pull-systems" id="toc-push-vs.-pull-systems" class="nav-link" data-scroll-target="#push-vs.-pull-systems"><span class="header-section-number">5.8.2</span> Push vs.&nbsp;Pull Systems</a></li>
+  <li><a href="#kanban-system" id="toc-kanban-system" class="nav-link" data-scroll-target="#kanban-system"><span class="header-section-number">5.8.3</span> Kanban System</a></li>
+  </ul></li>
+  <li><a href="#key-time-metrics" id="toc-key-time-metrics" class="nav-link" data-scroll-target="#key-time-metrics"><span class="header-section-number">5.9</span> Key Time Metrics</a>
+  <ul class="collapse">
+  <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions"><span class="header-section-number">5.9.1</span> Definitions</a></li>
+  <li><a href="#formulas-and-calculations" id="toc-formulas-and-calculations" class="nav-link" data-scroll-target="#formulas-and-calculations"><span class="header-section-number">5.9.2</span> Formulas and Calculations</a></li>
+  <li><a href="#interactive-example-calculating-takt-time" id="toc-interactive-example-calculating-takt-time" class="nav-link" data-scroll-target="#interactive-example-calculating-takt-time"><span class="header-section-number">5.9.3</span> Interactive Example: Calculating Takt Time</a></li>
+  </ul></li>
+  <li><a href="#setup-reduction-smed" id="toc-setup-reduction-smed" class="nav-link" data-scroll-target="#setup-reduction-smed"><span class="header-section-number">5.10</span> Setup Reduction (SMED)</a>
+  <ul class="collapse">
+  <li><a href="#the-smed-concept" id="toc-the-smed-concept" class="nav-link" data-scroll-target="#the-smed-concept"><span class="header-section-number">5.10.1</span> The SMED Concept</a></li>
+  <li><a href="#smed-methodology" id="toc-smed-methodology" class="nav-link" data-scroll-target="#smed-methodology"><span class="header-section-number">5.10.2</span> SMED Methodology</a></li>
+  </ul></li>
+  <li><a href="#kaizen-continuous-improvement" id="toc-kaizen-continuous-improvement" class="nav-link" data-scroll-target="#kaizen-continuous-improvement"><span class="header-section-number">5.11</span> Kaizen: Continuous Improvement</a>
+  <ul class="collapse">
+  <li><a href="#kaizen-principles" id="toc-kaizen-principles" class="nav-link" data-scroll-target="#kaizen-principles"><span class="header-section-number">5.11.1</span> Kaizen Principles</a></li>
+  <li><a href="#key-kaizen-concepts" id="toc-key-kaizen-concepts" class="nav-link" data-scroll-target="#key-kaizen-concepts"><span class="header-section-number">5.11.2</span> Key Kaizen Concepts</a></li>
+  </ul></li>
+  <li><a href="#value-stream-mapping-vsm" id="toc-value-stream-mapping-vsm" class="nav-link" data-scroll-target="#value-stream-mapping-vsm"><span class="header-section-number">5.12</span> Value Stream Mapping (VSM)</a>
+  <ul class="collapse">
+  <li><a href="#vsm-symbols" id="toc-vsm-symbols" class="nav-link" data-scroll-target="#vsm-symbols"><span class="header-section-number">5.12.1</span> VSM Symbols</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.13</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">5.14</span> Review Questions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">5.15</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/05-Lean-Manufacturing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">5.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Define Lean Manufacturing and explain its origins</li>
+<li>Identify and describe the 3 M’s of Lean (Muda, Mura, Muri)</li>
+<li>Recognize and eliminate the seven types of waste</li>
+<li>Apply the 5S methodology to workplace organization</li>
+<li>Understand Just-in-Time (JIT) principles and Kanban systems</li>
+<li>Calculate Takt time and apply line balancing concepts</li>
+<li>Implement setup reduction techniques (SMED)</li>
+</ul>
+<blockquote class="blockquote">
+<p>“Perfection is not attainable. But if we chase perfection, we can catch excellence.” — Vince Lombardi</p>
+</blockquote>
+<hr>
+</section>
+<section id="introduction-to-lean-manufacturing" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="introduction-to-lean-manufacturing"><span class="header-section-number">5.2</span> Introduction to Lean Manufacturing</h2>
+<p><strong>Lean Manufacturing</strong> is the systematic elimination of waste. The term can be traced to Jim Womack, Daniel Jones, and Daniel Roos’ book <em>The Machine that Changed the World</em> (1991), which examined the Toyota Production System.</p>
+<details>
+<summary>
+What does “Lean” actually mean?
+</summary>
+<p>The term “Lean” refers to cutting “fat” from production activities — eliminating anything that doesn’t add value to the customer. Think of it like a lean athlete: no excess weight, maximum efficiency, peak performance.</p>
+</details>
+<section id="definition-of-lean" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="definition-of-lean"><span class="header-section-number">5.2.1</span> Definition of Lean</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Lean Manufacturing Targets (Womack, Jones, Roos 1990)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 125, 50, 255) !important;">Metric</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 125, 50, 255) !important;">Lean Target</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">Human effort in factory</td>
+<td style="text-align: left; width: 12em; background-color: rgba(232, 245, 233, 255) !important;">Half the hours</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">Defects in finished product</td>
+<td style="text-align: left; width: 12em; background-color: rgba(232, 245, 233, 255) !important;">Half the defects</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">Engineering effort</td>
+<td style="text-align: left; width: 12em; background-color: rgba(232, 245, 233, 255) !important;">One-third the hours</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">Factory space for same output</td>
+<td style="text-align: left; width: 12em; background-color: rgba(232, 245, 233, 255) !important;">Half the space</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">In-process inventories</td>
+<td style="text-align: left; width: 12em; background-color: rgba(232, 245, 233, 255) !important;">A tenth or less</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="evolution-of-manufacturing-systems" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="evolution-of-manufacturing-systems"><span class="header-section-number">5.3</span> Evolution of Manufacturing Systems</h2>
+<p>Manufacturing has evolved through three major paradigms. Understanding this evolution helps us appreciate why Lean emerged as the dominant philosophy.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/manufacturing-evolution-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Evolution of Manufacturing Systems</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="comparison-of-manufacturing-systems" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="comparison-of-manufacturing-systems"><span class="header-section-number">5.3.1</span> Comparison of Manufacturing Systems</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Evolution of Manufacturing Systems</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Characteristic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Craft Manufacturing</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Mass Manufacturing</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Lean Manufacturing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Time Period</td>
+<td style="text-align: left;">Late 1800s</td>
+<td style="text-align: left;">1920s (Ford)</td>
+<td style="text-align: left;">1970s - Present</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Process</td>
+<td style="text-align: left;">Built on blocks, workers walk around</td>
+<td style="text-align: left;">Assembly line</td>
+<td style="text-align: left;">Cells or flexible lines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Workforce</td>
+<td style="text-align: left;">Craftsmen with pride</td>
+<td style="text-align: left;">Low skilled, simplistic jobs</td>
+<td style="text-align: left;">Highly skilled, proud of product</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Components</td>
+<td style="text-align: left;">Hand-crafted, hand-fitted</td>
+<td style="text-align: left;">Interchangeable parts</td>
+<td style="text-align: left;">Interchangeable, high variety</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Quality</td>
+<td style="text-align: left;">Excellent</td>
+<td style="text-align: left;">Lower</td>
+<td style="text-align: left;">Excellent (mandatory)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Cost</td>
+<td style="text-align: left;">Very expensive</td>
+<td style="text-align: left;">Affordable</td>
+<td style="text-align: left;">Continuously decreasing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Volume</td>
+<td style="text-align: left;">Few produced</td>
+<td style="text-align: left;">Billions - identical</td>
+<td style="text-align: left;">High volume, high variety</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Flexibility</td>
+<td style="text-align: left;">Very high</td>
+<td style="text-align: left;">Very low</td>
+<td style="text-align: left;">High</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Why did Mass Manufacturing dominate for so long?
+</summary>
+<p>Mass manufacturing dominated because:</p>
+<ol type="1">
+<li><strong>Economies of scale</strong> - Higher volume = lower unit cost</li>
+<li><strong>Predictable demand</strong> - Post-war boom created stable markets</li>
+<li><strong>Limited competition</strong> - Few global competitors</li>
+<li><strong>Consumer acceptance</strong> - “Any color as long as it’s black” (Henry Ford)</li>
+</ol>
+<p><strong>What changed?</strong> - Global competition (especially from Japan) - Customers demanded variety and quality - Product lifecycles shortened - Technology enabled flexibility</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="the-toyota-production-system-tps" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="the-toyota-production-system-tps"><span class="header-section-number">5.4</span> The Toyota Production System (TPS)</h2>
+<p>The most influential lean manufacturing model is the <strong>Toyota Production System (TPS)</strong>, developed by Taiichi Ohno and Shigeo Shingo at Toyota.</p>
+<section id="historical-context" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="historical-context"><span class="header-section-number">5.4.1</span> Historical Context</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/tps-timeline-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Toyota’s Journey to Lean Excellence</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>In 1949</strong>, Toyota was on the brink of bankruptcy. Ford’s car production was at least <strong>8 times more efficient</strong> than Toyota’s.</p>
+<blockquote class="blockquote">
+<p><strong>Kiichiro Toyoda’s Challenge:</strong> “To achieve the same rate of production as the United States in three years.”</p>
+</blockquote>
+<p><strong>Taiichi Ohno</strong> accepted this challenge. Inspired by American supermarkets, he developed the Just-in-Time method.</p>
+</section>
+<section id="two-pillars-of-tps" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="two-pillars-of-tps"><span class="header-section-number">5.4.2</span> Two Pillars of TPS</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/tps-pillars-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>The Two Pillars of Toyota Production System</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>1. Just-in-Time (JIT):</strong> Produce only what is needed, when it is needed, in the amount needed.</p>
+<p><strong>2. Jidoka (Built-in Quality):</strong> Automation with a human touch — stop production immediately when a defect is detected.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/F5vtCRFRAK0" title="Lean Manufacturing - A Pursuit of Perfection" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+  </iframe>
+</div>
+<hr>
+</section>
+</section>
+<section id="the-3-ms-of-lean" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="the-3-ms-of-lean"><span class="header-section-number">5.5</span> The 3 M’s of Lean</h2>
+<p>Lean manufacturing focuses on eliminating three types of inefficiency, known as the <strong>3 M’s</strong>:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/three-ms-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>The 3 M’s of Lean Manufacturing</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>The 3 M's Explained</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Japanese</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">English</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">**Muda** (無駄) |W</td>
+<td style="text-align: left;">ste |A</td>
+<td style="text-align: left;">tivities that consume resources without adding value |E</td>
+<td style="text-align: left;">cess inventory, waiting, defects |</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em;">**Mura** (斑) |</td>
+<td style="text-align: left;">nconsistency/Unevenness |</td>
+<td style="text-align: left;">ariation and lack of uniformity in processes |</td>
+<td style="text-align: left;">neven production schedules, variable quality |</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">**Muri** (無理) |O</td>
+<td style="text-align: left;">erburden/Unreasonableness |O</td>
+<td style="text-align: left;">erburdening people or equipment beyond capacity |U</td>
+<td style="text-align: left;">realistic deadlines, overworked employees |</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="the-seven-types-of-waste-muda" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="the-seven-types-of-waste-muda"><span class="header-section-number">5.6</span> The Seven Types of Waste (MUDA)</h2>
+<p><strong>Shigeo Shingo</strong> identified seven categories of waste common to manufacturing. These are activities that add cost without adding value.</p>
+<blockquote class="blockquote">
+<p>“Waste is everything that is not absolutely essential.” — Hiroyuki Hirano</p>
+</blockquote>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/seven-wastes-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The Seven Types of Waste (TIMWOOD)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="detailed-breakdown-of-the-seven-wastes" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="detailed-breakdown-of-the-seven-wastes"><span class="header-section-number">5.6.1</span> Detailed Breakdown of the Seven Wastes</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>The Seven Wastes: Detailed Analysis</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">#</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Waste Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Examples</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(192, 57, 43, 255) !important;">Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important; width: 3em; font-weight: bold;">1</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">**Overproduction**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Producing more than needed, earlier than needed</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Building to forecast, large batch sizes</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Pull systems, smaller batches</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important; width: 3em; font-weight: bold;">2</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">**Inventory**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Excess raw materials, WIP, or finished goods</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Safety stock, buffer inventory, obsolete stock</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">JIT delivery, kanban systems</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">3</td>
+<td style="text-align: left;">**Waiting**</td>
+<td style="text-align: left;">Idle time waiting for materials, information, or equipment</td>
+<td style="text-align: left;">Machine downtime, waiting for approvals</td>
+<td style="text-align: left;">TPM, better scheduling</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">4</td>
+<td style="text-align: left;">**Transportation**</td>
+<td style="text-align: left;">Unnecessary movement of materials between processes</td>
+<td style="text-align: left;">Long distances between operations, poor layout</td>
+<td style="text-align: left;">Cellular layout, co-location</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">5</td>
+<td style="text-align: left;">**Over-processing**</td>
+<td style="text-align: left;">Doing more work than the customer requires</td>
+<td style="text-align: left;">Tighter tolerances than needed, redundant inspections</td>
+<td style="text-align: left;">Value engineering, standardization</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">6</td>
+<td style="text-align: left;">**Motion**</td>
+<td style="text-align: left;">Unnecessary movement of people</td>
+<td style="text-align: left;">Reaching, bending, walking to get tools</td>
+<td style="text-align: left;">5S, ergonomic workstations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">7</td>
+<td style="text-align: left;">**Defects**</td>
+<td style="text-align: left;">Products that don't meet specifications</td>
+<td style="text-align: left;">Scrap, rework, warranty claims</td>
+<td style="text-align: left;">Poka-yoke, root cause analysis</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Memory Aid: TIMWOOD
+</summary>
+<p>Use <strong>TIMWOOD</strong> to remember the seven wastes:</p>
+<ul>
+<li><strong>T</strong>ransportation</li>
+<li><strong>I</strong>nventory</li>
+<li><strong>M</strong>otion</li>
+<li><strong>W</strong>aiting</li>
+<li><strong>O</strong>verproduction</li>
+<li><strong>O</strong>ver-processing</li>
+<li><strong>D</strong>efects</li>
+</ul>
+<p>Some people also use <strong>DOWNTIME</strong> (adding “Non-utilized talent” as an 8th waste).</p>
+</details>
+<details>
+<summary>
+Interactive Exercise: Identify the Waste
+</summary>
+<p><strong>Scenario 1:</strong> A worker walks 50 feet to get a tool, uses it for 30 seconds, then walks back.</p>
+<p><strong>Answer:</strong> This is <strong>Motion</strong> waste. The solution would be to place tools at the point of use (5S).</p>
+<p><strong>Scenario 2:</strong> A machine produces 1000 parts, but only 800 are needed this week.</p>
+<p><strong>Answer:</strong> This is <strong>Overproduction</strong> waste. The solution would be to implement pull production based on actual demand.</p>
+<p><strong>Scenario 3:</strong> Parts sit in a queue for 3 days before being processed at the next station.</p>
+<p><strong>Answer:</strong> This is both <strong>Inventory</strong> and <strong>Waiting</strong> waste. The solution would be to balance the line and implement one-piece flow.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="the-5s-methodology" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="the-5s-methodology"><span class="header-section-number">5.7</span> The 5S Methodology</h2>
+<p><strong>5S</strong> is a workplace organization methodology that creates a clean, efficient, and safe working environment.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/five-s-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The 5S Methodology</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>The 5S Steps Explained</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Step</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Japanese</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">English</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Action</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Key Question</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">1S</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">**Seiri**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Sort</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Remove unnecessary items from the workplace</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Do we need this?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">2S</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">**Seiton**</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Set in Order</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Organize items so they are easy to find and use</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Where does this belong?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">3S</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">**Seiso**</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Shine</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Clean the workplace regularly</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Is everything clean?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">4S</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">**Seiketsu**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Standardize</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Create standards for maintaining 1S-3S</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">How do we keep it this way?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(232, 218, 239, 255) !important;">5S</td>
+<td style="text-align: left; background-color: rgba(232, 218, 239, 255) !important;">**Shitsuke**</td>
+<td style="text-align: left; background-color: rgba(232, 218, 239, 255) !important;">Sustain</td>
+<td style="text-align: left; background-color: rgba(232, 218, 239, 255) !important;">Build discipline to maintain standards</td>
+<td style="text-align: left; background-color: rgba(232, 218, 239, 255) !important;">Are we following our standards?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="visual-factory" class="level3" data-number="5.7.1">
+<h3 data-number="5.7.1" class="anchored" data-anchor-id="visual-factory"><span class="header-section-number">5.7.1</span> Visual Factory</h3>
+<blockquote class="blockquote">
+<p>“The ability to understand the status of a production area in <strong>5 minutes or less</strong> by simple observation without use of computers or speaking to anyone.”</p>
+</blockquote>
+<p>A well-implemented 5S creates a <strong>visual factory</strong> where problems are immediately apparent.</p>
+<hr>
+</section>
+</section>
+<section id="just-in-time-jit-production" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="just-in-time-jit-production"><span class="header-section-number">5.8</span> Just-in-Time (JIT) Production</h2>
+<section id="the-jit-philosophy" class="level3" data-number="5.8.1">
+<h3 data-number="5.8.1" class="anchored" data-anchor-id="the-jit-philosophy"><span class="header-section-number">5.8.1</span> The JIT Philosophy</h3>
+<blockquote class="blockquote">
+<p>“Deliver the right material, in the exact quantity, with perfect quality, in the right place, just before it is needed.” — Ohno and Shingo</p>
+</blockquote>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 5.4, xend = 5.9, y = 1, yend = 1), arrow = arrow(length = unit(0.3, : All aesthetics have length 1, but the data has 5 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/jit-concept-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Just-in-Time: The Right Everything</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="push-vs.-pull-systems" class="level3" data-number="5.8.2">
+<h3 data-number="5.8.2" class="anchored" data-anchor-id="push-vs.-pull-systems"><span class="header-section-number">5.8.2</span> Push vs.&nbsp;Pull Systems</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/push-pull-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Push vs.&nbsp;Pull Production Systems</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Push vs. Pull System Comparison</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Aspect</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Push System</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Pull System</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Production trigger</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Forecast/Schedule</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Actual demand/Kanban signal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Information flow</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Forward (upstream to downstream)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Backward (downstream to upstream)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Inventory levels</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High (buffers at each station)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Low (minimal buffers)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Flexibility</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Low</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">High</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Problem visibility</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Problems hidden by inventory</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Problems immediately visible</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Customer responsiveness</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Slow</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Fast</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="kanban-system" class="level3" data-number="5.8.3">
+<h3 data-number="5.8.3" class="anchored" data-anchor-id="kanban-system"><span class="header-section-number">5.8.3</span> Kanban System</h3>
+<p><strong>Kanban</strong> (看板) is Japanese for “signboard” or “billboard.” It’s a scheduling system for lean and JIT production.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/kanban-example-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Example Kanban Card</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="key-time-metrics" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="key-time-metrics"><span class="header-section-number">5.9</span> Key Time Metrics</h2>
+<p>Understanding time metrics is essential for lean manufacturing analysis and improvement.</p>
+<section id="definitions" class="level3" data-number="5.9.1">
+<h3 data-number="5.9.1" class="anchored" data-anchor-id="definitions"><span class="header-section-number">5.9.1</span> Definitions</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/time-metrics-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Relationship Between Time Metrics</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="formulas-and-calculations" class="level3" data-number="5.9.2">
+<h3 data-number="5.9.2" class="anchored" data-anchor-id="formulas-and-calculations"><span class="header-section-number">5.9.2</span> Formulas and Calculations</h3>
+<p><strong>Takt Time</strong> — The pace of production to meet customer demand:</p>
+<p><span class="math display">\[\text{Takt Time} = \frac{\text{Available Production Time}}{\text{Customer Demand}}\]</span></p>
+<p><strong>Cycle Time</strong> — Time to complete one unit at a workstation:</p>
+<p><span class="math display">\[\text{Cycle Time} = \frac{\text{Net Operating Time}}{\text{Units Produced}}\]</span></p>
+<p><strong>Throughput Time</strong> — Total time from start to finish:</p>
+<p><span class="math display">\[\text{Throughput Time} = \text{Processing} + \text{Inspection} + \text{Queue} + \text{Move Time}\]</span></p>
+</section>
+<section id="interactive-example-calculating-takt-time" class="level3" data-number="5.9.3">
+<h3 data-number="5.9.3" class="anchored" data-anchor-id="interactive-example-calculating-takt-time"><span class="header-section-number">5.9.3</span> Interactive Example: Calculating Takt Time</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Given data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>available_time_per_day <span class="ot">&lt;-</span> <span class="dv">8</span> <span class="sc">*</span> <span class="dv">60</span>  <span class="co"># 8 hours = 480 minutes</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>breaks_and_meetings <span class="ot">&lt;-</span> <span class="dv">60</span>         <span class="co"># 60 minutes for breaks/meetings</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>customer_demand <span class="ot">&lt;-</span> <span class="dv">240</span>            <span class="co"># 240 units per day</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate net available time</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>net_available_time <span class="ot">&lt;-</span> available_time_per_day <span class="sc">-</span> breaks_and_meetings</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Net Available Time:"</span>, net_available_time, <span class="st">"minutes/day</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Net Available Time: 420 minutes/day</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Takt Time</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>takt_time <span class="ot">&lt;-</span> net_available_time <span class="sc">/</span> customer_demand</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Takt Time:"</span>, takt_time, <span class="st">"minutes per unit</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Takt Time: 1.75 minutes per unit</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Takt Time:"</span>, takt_time <span class="sc">*</span> <span class="dv">60</span>, <span class="st">"seconds per unit</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Takt Time: 105 seconds per unit</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Interpretation ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Interpretation ---</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"To meet customer demand, we must produce 1 unit every"</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    takt_time, <span class="st">"minutes ("</span>, takt_time <span class="sc">*</span> <span class="dv">60</span>, <span class="st">"seconds).</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>To meet customer demand, we must produce 1 unit every 1.75 minutes ( 105 seconds).</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Practice Problem: Calculate Your Takt Time
+</summary>
+<p><strong>Given:</strong> - Shift length: 10 hours - Two 15-minute breaks and one 30-minute lunch - Customer requires 300 units per shift</p>
+<p><strong>Calculate:</strong> 1. Net available production time 2. Takt time in minutes 3. Takt time in seconds</p>
+<p><strong>Solution:</strong></p>
+<pre><code>Net time = (10 × 60) - (15 + 15 + 30) = 600 - 60 = 540 minutes
+Takt time = 540 / 300 = 1.8 minutes = 108 seconds per unit</code></pre>
+</details>
+<hr>
+</section>
+</section>
+<section id="setup-reduction-smed" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="setup-reduction-smed"><span class="header-section-number">5.10</span> Setup Reduction (SMED)</h2>
+<p><strong>SMED</strong> (Single Minute Exchange of Dies) is a methodology developed by Shigeo Shingo to dramatically reduce changeover time.</p>
+<section id="the-smed-concept" class="level3" data-number="5.10.1">
+<h3 data-number="5.10.1" class="anchored" data-anchor-id="the-smed-concept"><span class="header-section-number">5.10.1</span> The SMED Concept</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/smed-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>SMED: Internal vs External Setup</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="smed-methodology" class="level3" data-number="5.10.2">
+<h3 data-number="5.10.2" class="anchored" data-anchor-id="smed-methodology"><span class="header-section-number">5.10.2</span> SMED Methodology</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>The Four Steps of SMED</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Step</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Action</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold;">1</td>
+<td style="text-align: left;">**Document current process**</td>
+<td style="text-align: left;">Video the entire changeover, identify all steps</td>
+<td style="text-align: left;">Time each step of die change</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold;">2</td>
+<td style="text-align: left;">**Separate internal and external**</td>
+<td style="text-align: left;">Internal = machine must be stopped; External = can be done while running</td>
+<td style="text-align: left;">Getting tools = external; Removing die = internal</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 5em; font-weight: bold;">3</td>
+<td style="text-align: left;">**Convert internal to external**</td>
+<td style="text-align: left;">Find ways to perform 'internal' tasks while machine is running</td>
+<td style="text-align: left;">Pre-stage next die, pre-heat tools</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 5em; font-weight: bold;">4</td>
+<td style="text-align: left;">**Streamline all operations**</td>
+<td style="text-align: left;">Reduce time for remaining internal tasks through better methods</td>
+<td style="text-align: left;">Use quick-release clamps instead of bolts</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Case Study: Press Setup Reduction
+</summary>
+<p><strong>Problem:</strong> Presses were idle more than 50% of the time due to setup. - Average production run: 1-2 days - Setup time: 1-2 days</p>
+<p><strong>Root Cause Analysis:</strong> - Using standard bolt fasteners with open-end wrenches - No pre-staging of tools or dies - Sequential operations that could be parallel</p>
+<p><strong>Solutions Implemented:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Change</th>
+<th>Time Saved</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Socket sets + power tools</td>
+<td>10%</td>
+</tr>
+<tr class="even">
+<td>Quick-release clamps</td>
+<td>50%</td>
+</tr>
+<tr class="odd">
+<td>Pre-staging materials</td>
+<td>20%</td>
+</tr>
+<tr class="even">
+<td>Parallel operations</td>
+<td>20%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result:</strong> Setup time reduced from 1-2 days to 4-6 hours, with a target of under 1 hour.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="kaizen-continuous-improvement" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="kaizen-continuous-improvement"><span class="header-section-number">5.11</span> Kaizen: Continuous Improvement</h2>
+<p><strong>Kaizen</strong> (改善) means “change for the better” — the philosophy of continuous, incremental improvement.</p>
+<section id="kaizen-principles" class="level3" data-number="5.11.1">
+<h3 data-number="5.11.1" class="anchored" data-anchor-id="kaizen-principles"><span class="header-section-number">5.11.1</span> Kaizen Principles</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05-Lean-Manufacturing_files/figure-html/kaizen-cycle-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>The Kaizen Continuous Improvement Cycle</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="key-kaizen-concepts" class="level3" data-number="5.11.2">
+<h3 data-number="5.11.2" class="anchored" data-anchor-id="key-kaizen-concepts"><span class="header-section-number">5.11.2</span> Key Kaizen Concepts</h3>
+<ul>
+<li><strong>Everyone participates</strong> — from CEO to frontline workers</li>
+<li><strong>Small, incremental changes</strong> — not major overhauls</li>
+<li><strong>Focus on process</strong> — blame the process, not the person</li>
+<li><strong>Data-driven decisions</strong> — measure before and after</li>
+<li><strong>Standardize improvements</strong> — lock in gains</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="value-stream-mapping-vsm" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="value-stream-mapping-vsm"><span class="header-section-number">5.12</span> Value Stream Mapping (VSM)</h2>
+<p><strong>Value Stream Mapping</strong> is a lean tool for analyzing the flow of materials and information required to bring a product to the customer.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/GQSq54OcgCA" title="Value Stream Mapping" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+  </iframe>
+</div>
+<section id="vsm-symbols" class="level3" data-number="5.12.1">
+<h3 data-number="5.12.1" class="anchored" data-anchor-id="vsm-symbols"><span class="header-section-number">5.12.1</span> VSM Symbols</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Key Metrics in Value Stream Maps</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Metric</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Typical Location</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">**Process Time (PT)**</td>
+<td style="text-align: left;">Time to actually process one unit</td>
+<td style="text-align: left;">In process box</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">**Lead Time (LT)**</td>
+<td style="text-align: left;">Total time from raw material to finished good</td>
+<td style="text-align: left;">Timeline at bottom</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">**Changeover Time (C/O)**</td>
+<td style="text-align: left;">Time to switch between products</td>
+<td style="text-align: left;">In process box</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">**Uptime**</td>
+<td style="text-align: left;">Percentage of time equipment is available</td>
+<td style="text-align: left;">In process box</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">**Takt Time**</td>
+<td style="text-align: left;">Required pace to meet demand</td>
+<td style="text-align: left;">Noted on map</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">**WIP Inventory**</td>
+<td style="text-align: left;">Units waiting between processes</td>
+<td style="text-align: left;">Triangle symbol between processes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.13</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Lean Manufacturing: Key Concepts Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Concept</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Definition</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Key Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**Lean Manufacturing**</td>
+<td style="text-align: left;">Systematic elimination of waste</td>
+<td style="text-align: left;">Reduced cost, improved quality</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**3 M's**</td>
+<td style="text-align: left;">Muda (waste), Mura (inconsistency), Muri (overburden)</td>
+<td style="text-align: left;">Framework for identifying improvement opportunities</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**7 Wastes**</td>
+<td style="text-align: left;">TIMWOOD: Transport, Inventory, Motion, Waiting, Overproduction, Over-processing, Defects</td>
+<td style="text-align: left;">Systematic waste identification</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**5S**</td>
+<td style="text-align: left;">Sort, Set in Order, Shine, Standardize, Sustain</td>
+<td style="text-align: left;">Organized, efficient workplace</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**JIT**</td>
+<td style="text-align: left;">Right part, right quantity, right quality, right place, right time</td>
+<td style="text-align: left;">Minimal inventory, fast response</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**Kanban**</td>
+<td style="text-align: left;">Visual signal system for pull production</td>
+<td style="text-align: left;">Controlled WIP, smooth flow</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**SMED**</td>
+<td style="text-align: left;">Single Minute Exchange of Dies - rapid changeover</td>
+<td style="text-align: left;">Flexibility, reduced batch sizes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**Kaizen**</td>
+<td style="text-align: left;">Continuous incremental improvement</td>
+<td style="text-align: left;">Engaged workforce, sustained improvement</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="5.14">
+<h2 data-number="5.14" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">5.14</span> Review Questions</h2>
+<details>
+<summary>
+Question 1: What are the seven types of waste, and which is often considered the most impactful?
+</summary>
+<p>The seven types of waste (TIMWOOD) are: 1. <strong>T</strong>ransportation 2. <strong>I</strong>nventory 3. <strong>M</strong>otion 4. <strong>W</strong>aiting 5. <strong>O</strong>verproduction 6. <strong>O</strong>ver-processing 7. <strong>D</strong>efects</p>
+<p><strong>Inventory</strong> is often considered the most impactful because it hides other problems, ties up capital, and can become obsolete.</p>
+</details>
+<details>
+<summary>
+Question 2: Explain the difference between Push and Pull production systems.
+</summary>
+<p><strong>Push System:</strong> - Production based on forecasts - Materials pushed through the system - Results in high inventory - Problems hidden by buffer stock</p>
+<p><strong>Pull System:</strong> - Production triggered by actual demand - Materials pulled by downstream operations - Minimal inventory - Problems immediately visible</p>
+</details>
+<details>
+<summary>
+Question 3: Calculate the Takt time for a facility with 450 minutes of available time and demand of 150 units.
+</summary>
+<p><span class="math display">\[\text{Takt Time} = \frac{450 \text{ minutes}}{150 \text{ units}} = 3 \text{ minutes per unit}\]</span></p>
+<p>This means we need to produce one unit every 3 minutes (180 seconds) to meet customer demand.</p>
+</details>
+<details>
+<summary>
+Question 4: What is the difference between internal and external setup in SMED?
+</summary>
+<p><strong>Internal Setup:</strong> Activities that can ONLY be performed when the machine is stopped (e.g., physically removing the old die).</p>
+<p><strong>External Setup:</strong> Activities that CAN be performed while the machine is still running (e.g., getting tools, pre-staging the next die, preparing materials).</p>
+<p>The key to SMED is converting as many internal activities to external as possible.</p>
+</details>
+<hr>
+</section>
+<section id="references" class="level2" data-number="5.15">
+<h2 data-number="5.15" class="anchored" data-anchor-id="references"><span class="header-section-number">5.15</span> References</h2>
+<ul>
+<li>Womack, J., Jones, D., &amp; Roos, D. (1990). <em>The Machine that Changed the World</em>.</li>
+<li>Ohno, T. (1988). <em>Toyota Production System: Beyond Large-Scale Production</em>.</li>
+<li>Shingo, S. (1985). <em>A Revolution in Manufacturing: The SMED System</em>.</li>
+<li>Liker, J. (2004). <em>The Toyota Way</em>.</li>
+<li>Wang, H.P., Chang, T.C., &amp; Wysk, R.A. (2007). <em>Computer Aided Manufacturing</em>, Chapter 18.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./04-Plant-Layout.html" class="pagination-link" aria-label="Plant Layout and Facility Design">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./06-Machine-Guarding-and-Safety.html" class="pagination-link" aria-label="Machine Guarding and Functional Safety">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/05-Lean-Manufacturing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

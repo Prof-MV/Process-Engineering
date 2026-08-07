@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>10&nbsp; Statistical Process Control (SPC) – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./11-MSA.html" rel="next">
+<link href="./09-Industrial-Automation.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./10-SPC.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">10.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-spc" id="toc-introduction-to-spc" class="nav-link" data-scroll-target="#introduction-to-spc"><span class="header-section-number">10.2</span> Introduction to SPC</a>
+  <ul class="collapse">
+  <li><a href="#what-is-statistical-process-control" id="toc-what-is-statistical-process-control" class="nav-link" data-scroll-target="#what-is-statistical-process-control"><span class="header-section-number">10.2.1</span> What is Statistical Process Control?</a></li>
+  <li><a href="#brief-history-of-spc" id="toc-brief-history-of-spc" class="nav-link" data-scroll-target="#brief-history-of-spc"><span class="header-section-number">10.2.2</span> Brief History of SPC</a></li>
+  <li><a href="#why-spc-matters" id="toc-why-spc-matters" class="nav-link" data-scroll-target="#why-spc-matters"><span class="header-section-number">10.2.3</span> Why SPC Matters</a></li>
+  </ul></li>
+  <li><a href="#understanding-variation" id="toc-understanding-variation" class="nav-link" data-scroll-target="#understanding-variation"><span class="header-section-number">10.3</span> Understanding Variation</a>
+  <ul class="collapse">
+  <li><a href="#common-cause-vs.-special-cause-variation" id="toc-common-cause-vs.-special-cause-variation" class="nav-link" data-scroll-target="#common-cause-vs.-special-cause-variation"><span class="header-section-number">10.3.1</span> Common Cause vs.&nbsp;Special Cause Variation</a></li>
+  <li><a href="#the-two-mistakes-in-process-control" id="toc-the-two-mistakes-in-process-control" class="nav-link" data-scroll-target="#the-two-mistakes-in-process-control"><span class="header-section-number">10.3.2</span> The Two Mistakes in Process Control</a></li>
+  <li><a href="#when-is-a-process-in-control" id="toc-when-is-a-process-in-control" class="nav-link" data-scroll-target="#when-is-a-process-in-control"><span class="header-section-number">10.3.3</span> When is a Process “In Control”?</a></li>
+  </ul></li>
+  <li><a href="#control-charts-the-foundation-of-spc" id="toc-control-charts-the-foundation-of-spc" class="nav-link" data-scroll-target="#control-charts-the-foundation-of-spc"><span class="header-section-number">10.4</span> Control Charts: The Foundation of SPC</a>
+  <ul class="collapse">
+  <li><a href="#what-is-a-control-chart" id="toc-what-is-a-control-chart" class="nav-link" data-scroll-target="#what-is-a-control-chart"><span class="header-section-number">10.4.1</span> What is a Control Chart?</a></li>
+  <li><a href="#control-chart-components" id="toc-control-chart-components" class="nav-link" data-scroll-target="#control-chart-components"><span class="header-section-number">10.4.2</span> Control Chart Components</a></li>
+  <li><a href="#why-3-sigma" id="toc-why-3-sigma" class="nav-link" data-scroll-target="#why-3-sigma"><span class="header-section-number">10.4.3</span> Why ±3 Sigma?</a></li>
+  <li><a href="#choosing-the-right-control-chart" id="toc-choosing-the-right-control-chart" class="nav-link" data-scroll-target="#choosing-the-right-control-chart"><span class="header-section-number">10.4.4</span> Choosing the Right Control Chart</a></li>
+  </ul></li>
+  <li><a href="#variable-control-charts" id="toc-variable-control-charts" class="nav-link" data-scroll-target="#variable-control-charts"><span class="header-section-number">10.5</span> Variable Control Charts</a>
+  <ul class="collapse">
+  <li><a href="#x-bar-and-r-chart" id="toc-x-bar-and-r-chart" class="nav-link" data-scroll-target="#x-bar-and-r-chart"><span class="header-section-number">10.5.1</span> X-bar and R Chart</a></li>
+  <li><a href="#control-chart-constants" id="toc-control-chart-constants" class="nav-link" data-scroll-target="#control-chart-constants"><span class="header-section-number">10.5.2</span> Control Chart Constants</a></li>
+  <li><a href="#individual-and-moving-range-i-mr-chart" id="toc-individual-and-moving-range-i-mr-chart" class="nav-link" data-scroll-target="#individual-and-moving-range-i-mr-chart"><span class="header-section-number">10.5.3</span> Individual and Moving Range (I-MR) Chart</a></li>
+  </ul></li>
+  <li><a href="#attribute-control-charts" id="toc-attribute-control-charts" class="nav-link" data-scroll-target="#attribute-control-charts"><span class="header-section-number">10.6</span> Attribute Control Charts</a>
+  <ul class="collapse">
+  <li><a href="#p-chart-proportion-defective" id="toc-p-chart-proportion-defective" class="nav-link" data-scroll-target="#p-chart-proportion-defective"><span class="header-section-number">10.6.1</span> p Chart (Proportion Defective)</a></li>
+  <li><a href="#c-chart-count-of-defects" id="toc-c-chart-count-of-defects" class="nav-link" data-scroll-target="#c-chart-count-of-defects"><span class="header-section-number">10.6.2</span> c Chart (Count of Defects)</a></li>
+  </ul></li>
+  <li><a href="#interpreting-control-charts" id="toc-interpreting-control-charts" class="nav-link" data-scroll-target="#interpreting-control-charts"><span class="header-section-number">10.7</span> Interpreting Control Charts</a>
+  <ul class="collapse">
+  <li><a href="#out-of-control-signals-western-electric-rules" id="toc-out-of-control-signals-western-electric-rules" class="nav-link" data-scroll-target="#out-of-control-signals-western-electric-rules"><span class="header-section-number">10.7.1</span> Out-of-Control Signals (Western Electric Rules)</a></li>
+  <li><a href="#additional-patterns-to-watch-for" id="toc-additional-patterns-to-watch-for" class="nav-link" data-scroll-target="#additional-patterns-to-watch-for"><span class="header-section-number">10.7.2</span> Additional Patterns to Watch For</a></li>
+  </ul></li>
+  <li><a href="#process-capability" id="toc-process-capability" class="nav-link" data-scroll-target="#process-capability"><span class="header-section-number">10.8</span> Process Capability</a>
+  <ul class="collapse">
+  <li><a href="#what-is-process-capability" id="toc-what-is-process-capability" class="nav-link" data-scroll-target="#what-is-process-capability"><span class="header-section-number">10.8.1</span> What is Process Capability?</a></li>
+  <li><a href="#capability-indices" id="toc-capability-indices" class="nav-link" data-scroll-target="#capability-indices"><span class="header-section-number">10.8.2</span> Capability Indices</a></li>
+  <li><a href="#cp-vs.-cpk-why-both-matter" id="toc-cp-vs.-cpk-why-both-matter" class="nav-link" data-scroll-target="#cp-vs.-cpk-why-both-matter"><span class="header-section-number">10.8.3</span> Cp vs.&nbsp;Cpk: Why Both Matter</a></li>
+  <li><a href="#capability-example-calculation" id="toc-capability-example-calculation" class="nav-link" data-scroll-target="#capability-example-calculation"><span class="header-section-number">10.8.4</span> Capability Example Calculation</a></li>
+  <li><a href="#capability-index-interpretation" id="toc-capability-index-interpretation" class="nav-link" data-scroll-target="#capability-index-interpretation"><span class="header-section-number">10.8.5</span> Capability Index Interpretation</a></li>
+  </ul></li>
+  <li><a href="#responding-to-out-of-control-signals" id="toc-responding-to-out-of-control-signals" class="nav-link" data-scroll-target="#responding-to-out-of-control-signals"><span class="header-section-number">10.9</span> Responding to Out-of-Control Signals</a>
+  <ul class="collapse">
+  <li><a href="#the-response-process" id="toc-the-response-process" class="nav-link" data-scroll-target="#the-response-process"><span class="header-section-number">10.9.1</span> The Response Process</a></li>
+  <li><a href="#investigation-checklist-5-ms-e" id="toc-investigation-checklist-5-ms-e" class="nav-link" data-scroll-target="#investigation-checklist-5-ms-e"><span class="header-section-number">10.9.2</span> Investigation Checklist (5 Ms + E)</a></li>
+  </ul></li>
+  <li><a href="#spc-implementation" id="toc-spc-implementation" class="nav-link" data-scroll-target="#spc-implementation"><span class="header-section-number">10.10</span> SPC Implementation</a>
+  <ul class="collapse">
+  <li><a href="#steps-to-implement-spc" id="toc-steps-to-implement-spc" class="nav-link" data-scroll-target="#steps-to-implement-spc"><span class="header-section-number">10.10.1</span> Steps to Implement SPC</a></li>
+  <li><a href="#common-spc-mistakes" id="toc-common-spc-mistakes" class="nav-link" data-scroll-target="#common-spc-mistakes"><span class="header-section-number">10.10.2</span> Common SPC Mistakes</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">10.11</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">10.12</span> Review Questions</a>
+  <ul class="collapse">
+  <li><a href="#conceptual-questions" id="toc-conceptual-questions" class="nav-link" data-scroll-target="#conceptual-questions"><span class="header-section-number">10.12.1</span> Conceptual Questions</a></li>
+  <li><a href="#calculation-questions" id="toc-calculation-questions" class="nav-link" data-scroll-target="#calculation-questions"><span class="header-section-number">10.12.2</span> Calculation Questions</a></li>
+  <li><a href="#application-questions" id="toc-application-questions" class="nav-link" data-scroll-target="#application-questions"><span class="header-section-number">10.12.3</span> Application Questions</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">10.13</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/10-SPC.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">10.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Explain the purpose and benefits of Statistical Process Control</li>
+<li>Distinguish between common cause and special cause variation</li>
+<li>Select the appropriate control chart for different data types</li>
+<li>Construct and interpret X-bar/R, X-bar/S, and Individual-MR charts</li>
+<li>Construct and interpret attribute control charts (p, np, c, u)</li>
+<li>Apply control chart interpretation rules (Western Electric rules)</li>
+<li>Calculate and interpret process capability indices (Cp, Cpk, Pp, Ppk)</li>
+<li>Respond appropriately to out-of-control signals</li>
+</ul>
+<blockquote class="blockquote">
+<p>“In God we trust; all others must bring data.” — W. Edwards Deming</p>
+</blockquote>
+<hr>
+</section>
+<section id="introduction-to-spc" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="introduction-to-spc"><span class="header-section-number">10.2</span> Introduction to SPC</h2>
+<section id="what-is-statistical-process-control" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="what-is-statistical-process-control"><span class="header-section-number">10.2.1</span> What is Statistical Process Control?</h3>
+<p><strong>Statistical Process Control (SPC)</strong> is a method of quality control that uses statistical methods to monitor and control a process. It helps ensure that the process operates at its full potential to produce conforming product.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/spc-concept-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The SPC Philosophy: Prevention Through Monitoring</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="brief-history-of-spc" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="brief-history-of-spc"><span class="header-section-number">10.2.2</span> Brief History of SPC</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Evolution of Statistical Process Control</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Year</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Development</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Significance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">1920s</td>
+<td style="text-align: left;">Walter Shewhart develops control charts at Bell Labs</td>
+<td style="text-align: left;">Birth of modern quality control</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">1930s-40s</td>
+<td style="text-align: left;">SPC used in WWII military production</td>
+<td style="text-align: left;">Proved effectiveness in mass production</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">1950s</td>
+<td style="text-align: left;">Deming teaches SPC to Japanese industry</td>
+<td style="text-align: left;">Foundation of Japanese quality revolution</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">1980s</td>
+<td style="text-align: left;">US automotive industry adopts SPC</td>
+<td style="text-align: left;">Response to Japanese competition</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">1990s</td>
+<td style="text-align: left;">SPC becomes requirement in ISO/QS-9000</td>
+<td style="text-align: left;">Industry-wide standardization</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">2000s+</td>
+<td style="text-align: left;">Real-time SPC, automated data collection</td>
+<td style="text-align: left;">Integration with Industry 4.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="why-spc-matters" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="why-spc-matters"><span class="header-section-number">10.2.3</span> Why SPC Matters</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/spc-benefits-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Benefits of SPC Implementation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="understanding-variation" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="understanding-variation"><span class="header-section-number">10.3</span> Understanding Variation</h2>
+<p><strong>All processes exhibit variation.</strong> No two products are ever exactly identical. The key insight of SPC is that variation comes from two fundamentally different sources, and we must respond to them differently.</p>
+<section id="common-cause-vs.-special-cause-variation" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="common-cause-vs.-special-cause-variation"><span class="header-section-number">10.3.1</span> Common Cause vs.&nbsp;Special Cause Variation</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/variation-types-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Two Types of Variation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Common Cause vs. Special Cause Variation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Characteristic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Common Cause Variation</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Special Cause Variation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Other Names**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Random, chance, noise, inherent</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Assignable, non-random, signal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Source**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Built into the process; many small factors</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Specific, identifiable event</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Pattern**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Random, stable, predictable pattern</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Non-random; shifts, trends, patterns</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Predictability**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Statistically predictable within limits</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Unpredictable; something changed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Examples**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Machine vibration, material variation, ambient temperature</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Tool breakage, new operator, bad material lot, power surge</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Action Required**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Improve the system (management decision)</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Find and eliminate the cause</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Who Acts**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Management — requires system change</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Operators/technicians — local action</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-two-mistakes-in-process-control" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="the-two-mistakes-in-process-control"><span class="header-section-number">10.3.2</span> The Two Mistakes in Process Control</h3>
+<p>Understanding variation prevents two costly mistakes:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/two-mistakes-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The Two Fundamental Mistakes</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+The Funnel Experiment: Why Tampering Makes Things Worse
+</summary>
+<p><strong>Deming’s Funnel Experiment</strong> demonstrates why adjusting a stable process increases variation:</p>
+<p><strong>Setup:</strong> Drop a ball through a funnel onto a target. The ball lands near (but not exactly on) the target due to common cause variation.</p>
+<p><strong>Rule 1 (Correct):</strong> Leave the funnel alone. Variation remains constant.</p>
+<p><strong>Rule 2 (Tampering):</strong> After each drop, move the funnel to compensate for the last error. - Result: Variation DOUBLES!</p>
+<p><strong>Rule 3 (More Tampering):</strong> Move funnel to compensate relative to the target. - Result: Variation increases without bound!</p>
+<p><strong>Lesson:</strong> Adjusting a stable process based on individual deviations (common cause) actually makes the process worse. Only adjust when special causes are identified.</p>
+<p><strong>Real-World Example:</strong> An operator notices a part is 0.02mm below target and adjusts the machine. The next part is 0.03mm above target (the adjustment plus normal variation). They adjust again… and the process oscillates with increasing variation.</p>
+</details>
+</section>
+<section id="when-is-a-process-in-control" class="level3" data-number="10.3.3">
+<h3 data-number="10.3.3" class="anchored" data-anchor-id="when-is-a-process-in-control"><span class="header-section-number">10.3.3</span> When is a Process “In Control”?</h3>
+<p>A process is <strong>in statistical control</strong> when:</p>
+<ol type="1">
+<li>Only common cause variation is present</li>
+<li>All points fall within control limits</li>
+<li>No non-random patterns exist</li>
+<li>The process is stable and predictable</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/in-control-definition-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>In-Control vs.&nbsp;Out-of-Control Process</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="control-charts-the-foundation-of-spc" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="control-charts-the-foundation-of-spc"><span class="header-section-number">10.4</span> Control Charts: The Foundation of SPC</h2>
+<section id="what-is-a-control-chart" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="what-is-a-control-chart"><span class="header-section-number">10.4.1</span> What is a Control Chart?</h3>
+<p>A <strong>control chart</strong> is a graph that shows process data over time with statistically determined control limits. It provides a visual method for distinguishing between common and special cause variation.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/control-chart-anatomy-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Anatomy of a Control Chart</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="control-chart-components" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="control-chart-components"><span class="header-section-number">10.4.2</span> Control Chart Components</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Control Chart Components</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Component</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Center Line (CL)**</td>
+<td style="text-align: left;">The process average; target for the process</td>
+<td style="text-align: left;">Shows where process is centered</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Upper Control Limit (UCL)**</td>
+<td style="text-align: left;">Upper boundary of expected variation (+3σ)</td>
+<td style="text-align: left;">Signals if process shifted too high</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Lower Control Limit (LCL)**</td>
+<td style="text-align: left;">Lower boundary of expected variation (-3σ)</td>
+<td style="text-align: left;">Signals if process shifted too low</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Data Points**</td>
+<td style="text-align: left;">Individual or subgroup statistics plotted over time</td>
+<td style="text-align: left;">Visual representation of process behavior</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Zones A, B, C**</td>
+<td style="text-align: left;">Regions between ±1σ, ±2σ, and ±3σ for pattern analysis</td>
+<td style="text-align: left;">Used for detecting trends and patterns</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="why-3-sigma" class="level3" data-number="10.4.3">
+<h3 data-number="10.4.3" class="anchored" data-anchor-id="why-3-sigma"><span class="header-section-number">10.4.3</span> Why ±3 Sigma?</h3>
+<p>Control limits are set at <strong>±3 standard deviations</strong> from the center line. This is not arbitrary:</p>
+<ul>
+<li>For a normal distribution, 99.73% of data falls within ±3σ</li>
+<li>Only 0.27% (about 3 in 1000) will fall outside by chance</li>
+<li>This balances the risk of both mistakes (false alarms vs.&nbsp;missed signals)</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/normal-distribution-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Normal Distribution and Control Limits</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="choosing-the-right-control-chart" class="level3" data-number="10.4.4">
+<h3 data-number="10.4.4" class="anchored" data-anchor-id="choosing-the-right-control-chart"><span class="header-section-number">10.4.4</span> Choosing the Right Control Chart</h3>
+<p>The type of control chart depends on the <strong>type of data</strong> being collected:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/chart-selection-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Control Chart Selection Flowchart</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Control Chart Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Chart Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Data Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Sample Size</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">What It Charts</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Typical Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 8em; font-weight: bold;">**X-bar / R**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Variable</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">2-9 per subgroup</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Subgroup mean and range</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Production sampling, multiple measurements</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 8em; font-weight: bold;">**X-bar / S**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Variable</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">≥10 per subgroup</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Subgroup mean and std dev</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Large subgroups, automated measurement</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 8em; font-weight: bold;">**I-MR**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Variable</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">1 (individuals)</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Individual values and moving range</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Continuous processes, expensive testing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important; width: 8em; font-weight: bold;">**p chart**</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Attribute</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Variable or constant</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Proportion defective</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Pass/fail inspection, variable sample size</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important; width: 8em; font-weight: bold;">**np chart**</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Attribute</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Constant</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Number defective</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Pass/fail inspection, fixed sample size</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important; width: 8em; font-weight: bold;">**c chart**</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Attribute</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Constant</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Number of defects</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Defects per item (scratches, errors)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important; width: 8em; font-weight: bold;">**u chart**</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Attribute</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Variable</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Defects per unit</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Defects per unit area or time</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Question: Variable vs.&nbsp;Attribute Data - What’s the Difference?
+</summary>
+<p><strong>Variable Data (Measured):</strong> - Can take any value within a range - Measured on a continuous scale - Examples: length, weight, temperature, voltage, pressure - More information per measurement - Smaller sample sizes needed</p>
+<p><strong>Attribute Data (Counted):</strong> - Discrete categories (good/bad, pass/fail) - Counted, not measured - Examples: number of defects, number of rejects, yes/no - Less information per observation - Larger sample sizes needed</p>
+<p><strong>When to Use Each:</strong> - Use variable data when you CAN measure (more powerful) - Use attribute data when you can only classify or count - Sometimes you convert variable to attribute (e.g., pass/fail based on tolerance)</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="variable-control-charts" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="variable-control-charts"><span class="header-section-number">10.5</span> Variable Control Charts</h2>
+<section id="x-bar-and-r-chart" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="x-bar-and-r-chart"><span class="header-section-number">10.5.1</span> X-bar and R Chart</h3>
+<p>The <strong>X-bar and R chart</strong> is the most common control chart for variable data. It tracks both the process average (X-bar) and the process spread (Range).</p>
+<section id="constructing-an-x-barr-chart" class="level4" data-number="10.5.1.1">
+<h4 data-number="10.5.1.1" class="anchored" data-anchor-id="constructing-an-x-barr-chart"><span class="header-section-number">10.5.1.1</span> Constructing an X-bar/R Chart</h4>
+<p><strong>Step 1:</strong> Collect data in subgroups (typically 4-5 samples)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Measuring shaft diameter (mm)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 25 subgroups of 5 measurements each</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n_subgroups <span class="ot">&lt;-</span> <span class="dv">25</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate data</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n_subgroups <span class="sc">*</span> n_samples, <span class="at">mean =</span> <span class="fl">25.00</span>, <span class="at">sd =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">nrow =</span> n_subgroups, <span class="at">ncol =</span> n_samples)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a special cause (shift) at subgroup 18</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data[<span class="dv">18</span>, ] <span class="ot">&lt;-</span> data[<span class="dv">18</span>, ] <span class="sc">+</span> <span class="fl">0.12</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate statistics for each subgroup</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>xbar <span class="ot">&lt;-</span> <span class="fu">apply</span>(data, <span class="dv">1</span>, mean)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">apply</span>(data, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"First 5 subgroups:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>First 5 subgroups:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(data[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ], <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        [,1]    [,2]    [,3]    [,4]    [,5]
+[1,] 24.9749 24.9781 24.9776 25.0006 24.9834
+[2,] 25.0066 24.9640 24.9131 24.9456 25.0682
+[3,] 24.9961 25.0115 25.0089 25.0135 24.9765
+[4,] 25.0443 24.9421 25.0949 25.0504 25.0421
+[5,] 25.0058 25.0124 24.8864 24.8963 24.9271</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">X-bar values:"</span>, <span class="fu">round</span>(xbar[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+X-bar values: 24.9829 24.9795 25.0013 25.0348 24.9456</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Range values:"</span>, <span class="fu">round</span>(R[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Range values: 0.0257 0.1551 0.037 0.1528 0.126</code></pre>
+</div>
+</div>
+<p><strong>Step 2:</strong> Calculate control limits</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Control chart constants for n=5</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>A2 <span class="ot">&lt;-</span> <span class="fl">0.577</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>D3 <span class="ot">&lt;-</span> <span class="dv">0</span>      <span class="co"># D3 = 0 for n &lt; 7</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>D4 <span class="ot">&lt;-</span> <span class="fl">2.114</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate grand mean and average range</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>X_double_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(xbar)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>R_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(R)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Grand Mean (X-double-bar):"</span>, <span class="fu">round</span>(X_double_bar, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Grand Mean (X-double-bar): 25.004 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Average Range (R-bar):"</span>, <span class="fu">round</span>(R_bar, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Average Range (R-bar): 0.1023 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># X-bar chart limits</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>UCL_xbar <span class="ot">&lt;-</span> X_double_bar <span class="sc">+</span> A2 <span class="sc">*</span> R_bar</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>LCL_xbar <span class="ot">&lt;-</span> X_double_bar <span class="sc">-</span> A2 <span class="sc">*</span> R_bar</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"X-bar Chart:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X-bar Chart:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  UCL ="</span>, <span class="fu">round</span>(UCL_xbar, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  UCL = 25.0631 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  CL  ="</span>, <span class="fu">round</span>(X_double_bar, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  CL  = 25.004 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  LCL ="</span>, <span class="fu">round</span>(LCL_xbar, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  LCL = 24.945 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R chart limits</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>UCL_R <span class="ot">&lt;-</span> D4 <span class="sc">*</span> R_bar</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>LCL_R <span class="ot">&lt;-</span> D3 <span class="sc">*</span> R_bar</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"R Chart:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R Chart:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  UCL ="</span>, <span class="fu">round</span>(UCL_R, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  UCL = 0.2164 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  CL  ="</span>, <span class="fu">round</span>(R_bar, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  CL  = 0.1023 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  LCL ="</span>, <span class="fu">round</span>(LCL_R, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  LCL = 0 mm</code></pre>
+</div>
+</div>
+<p><strong>Step 3:</strong> Plot the charts</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/xbar-r-plot-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>X-bar and R Control Charts</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation:</strong> Subgroup 18 shows a point above the UCL on the X-bar chart, indicating a special cause. Investigation reveals the cause and corrective action is taken.</p>
+</section>
+</section>
+<section id="control-chart-constants" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="control-chart-constants"><span class="header-section-number">10.5.2</span> Control Chart Constants</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Control Chart Constants for X-bar/R Charts</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">n</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">A2</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">D3</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">D4</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">d2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.880</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">3.267</td>
+<td style="text-align: right;">1.128</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.023</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">2.574</td>
+<td style="text-align: right;">1.693</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.729</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">2.282</td>
+<td style="text-align: right;">2.059</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">5</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">0.577</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">0.000</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">2.114</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">2.326</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.483</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">2.004</td>
+<td style="text-align: right;">2.534</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.419</td>
+<td style="text-align: right;">0.076</td>
+<td style="text-align: right;">1.924</td>
+<td style="text-align: right;">2.704</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0.373</td>
+<td style="text-align: right;">0.136</td>
+<td style="text-align: right;">1.864</td>
+<td style="text-align: right;">2.847</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0.337</td>
+<td style="text-align: right;">0.184</td>
+<td style="text-align: right;">1.816</td>
+<td style="text-align: right;">2.970</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.308</td>
+<td style="text-align: right;">0.223</td>
+<td style="text-align: right;">1.777</td>
+<td style="text-align: right;">3.078</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="individual-and-moving-range-i-mr-chart" class="level3" data-number="10.5.3">
+<h3 data-number="10.5.3" class="anchored" data-anchor-id="individual-and-moving-range-i-mr-chart"><span class="header-section-number">10.5.3</span> Individual and Moving Range (I-MR) Chart</h3>
+<p>When sample size is <strong>n = 1</strong> (one measurement per time period), use the <strong>I-MR chart</strong>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/imr-example-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Individual and Moving Range Chart</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>I-MR Chart Formulas:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 43%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Chart</th>
+<th>Center Line</th>
+<th>UCL</th>
+<th>LCL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I Chart</td>
+<td><span class="math inline">\(\bar{X}\)</span></td>
+<td><span class="math inline">\(\bar{X} + 2.66\bar{MR}\)</span></td>
+<td><span class="math inline">\(\bar{X} - 2.66\bar{MR}\)</span></td>
+</tr>
+<tr class="even">
+<td>MR Chart</td>
+<td><span class="math inline">\(\bar{MR}\)</span></td>
+<td><span class="math inline">\(3.267 \times \bar{MR}\)</span></td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="attribute-control-charts" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="attribute-control-charts"><span class="header-section-number">10.6</span> Attribute Control Charts</h2>
+<section id="p-chart-proportion-defective" class="level3" data-number="10.6.1">
+<h3 data-number="10.6.1" class="anchored" data-anchor-id="p-chart-proportion-defective"><span class="header-section-number">10.6.1</span> p Chart (Proportion Defective)</h3>
+<p>The <strong>p chart</strong> tracks the proportion of defective units when sample sizes may vary.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Daily inspection data</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Varying sample sizes (different production volumes)</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">300</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">80</span><span class="sc">:</span><span class="dv">120</span>, days, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>defectives <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(days, sample_sizes, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a special cause on day 15</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>defectives[<span class="dv">15</span>] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, sample_sizes[<span class="dv">15</span>], <span class="at">prob =</span> <span class="fl">0.12</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate proportion</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> defectives <span class="sc">/</span> sample_sizes</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate p-bar (weighted average)</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>p_bar <span class="ot">&lt;-</span> <span class="fu">sum</span>(defectives) <span class="sc">/</span> <span class="fu">sum</span>(sample_sizes)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"p-bar (average proportion defective):"</span>, <span class="fu">round</span>(p_bar, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-bar (average proportion defective): 0.0493 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate control limits (vary with sample size)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>UCL_p <span class="ot">&lt;-</span> p_bar <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p_bar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_bar) <span class="sc">/</span> sample_sizes)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>LCL_p <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, p_bar <span class="sc">-</span> <span class="dv">3</span> <span class="sc">*</span> <span class="fu">sqrt</span>(p_bar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_bar) <span class="sc">/</span> sample_sizes))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sample of control limits (varying with n):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample of control limits (varying with n):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Day 1: UCL ="</span>, <span class="fu">round</span>(UCL_p[<span class="dv">1</span>], <span class="dv">4</span>), <span class="st">", LCL ="</span>, <span class="fu">round</span>(LCL_p[<span class="dv">1</span>], <span class="dv">4</span>), <span class="st">"(n ="</span>, sample_sizes[<span class="dv">1</span>], <span class="st">")</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Day 1: UCL = 0.1167 , LCL = 0 (n = 93 )</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Day 5: UCL ="</span>, <span class="fu">round</span>(UCL_p[<span class="dv">5</span>], <span class="dv">4</span>), <span class="st">", LCL ="</span>, <span class="fu">round</span>(LCL_p[<span class="dv">5</span>], <span class="dv">4</span>), <span class="st">"(n ="</span>, sample_sizes[<span class="dv">5</span>], <span class="st">")</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Day 5: UCL = 0.1143 , LCL = 0 (n = 100 )</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/p-chart-plot-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>p Chart for Proportion Defective</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="c-chart-count-of-defects" class="level3" data-number="10.6.2">
+<h3 data-number="10.6.2" class="anchored" data-anchor-id="c-chart-count-of-defects"><span class="header-section-number">10.6.2</span> c Chart (Count of Defects)</h3>
+<p>The <strong>c chart</strong> tracks the number of defects when the sample size (area of opportunity) is constant.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/c-chart-example-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>c Chart for Defects per Unit</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Attribute Control Chart Formulas</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">Chart</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">Center Line</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">UCL</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">LCL</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">**p chart**</td>
+<td style="text-align: left;">$\bar{p} = \frac{\sum d}{\sum n}$</td>
+<td style="text-align: left;">$\bar{p} + 3\sqrt{\frac{\bar{p}(1-\bar{p})}{n}}$</td>
+<td style="text-align: left;">$\bar{p} - 3\sqrt{\frac{\bar{p}(1-\bar{p})}{n}}$</td>
+<td style="text-align: left;">Variable sample size, proportion needed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">**np chart**</td>
+<td style="text-align: left;">$\bar{np} = \frac{\sum d}{k}$</td>
+<td style="text-align: left;">$\bar{np} + 3\sqrt{\bar{np}(1-\bar{p})}$</td>
+<td style="text-align: left;">$\bar{np} - 3\sqrt{\bar{np}(1-\bar{p})}$</td>
+<td style="text-align: left;">Constant sample size, count preferred</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">**c chart**</td>
+<td style="text-align: left;">$\bar{c} = \frac{\sum c}{k}$</td>
+<td style="text-align: left;">$\bar{c} + 3\sqrt{\bar{c}}$</td>
+<td style="text-align: left;">$\bar{c} - 3\sqrt{\bar{c}}$</td>
+<td style="text-align: left;">Constant opportunity, counting defects</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">**u chart**</td>
+<td style="text-align: left;">$\bar{u} = \frac{\sum c}{\sum n}$</td>
+<td style="text-align: left;">$\bar{u} + 3\sqrt{\frac{\bar{u}}{n}}$</td>
+<td style="text-align: left;">$\bar{u} - 3\sqrt{\frac{\bar{u}}{n}}$</td>
+<td style="text-align: left;">Variable opportunity, defects per unit</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="interpreting-control-charts" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="interpreting-control-charts"><span class="header-section-number">10.7</span> Interpreting Control Charts</h2>
+<section id="out-of-control-signals-western-electric-rules" class="level3" data-number="10.7.1">
+<h3 data-number="10.7.1" class="anchored" data-anchor-id="out-of-control-signals-western-electric-rules"><span class="header-section-number">10.7.1</span> Out-of-Control Signals (Western Electric Rules)</h3>
+<p>A point doesn’t have to be outside the control limits to indicate a problem. The <strong>Western Electric Rules</strong> identify non-random patterns:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Western Electric Rules for Control Chart Interpretation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Rule</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Pattern</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">What It Indicates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 6em; font-weight: bold;">Rule 1</td>
+<td style="text-align: left;">**Point beyond control limit**</td>
+<td style="text-align: left;">One point above UCL or below LCL</td>
+<td style="text-align: left;">Sudden shift, extreme event</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6em; font-weight: bold;">Rule 2</td>
+<td style="text-align: left;">**Zone A: 2 of 3 consecutive points**</td>
+<td style="text-align: left;">2 out of 3 consecutive points in Zone A (&gt;2σ) or beyond, same side</td>
+<td style="text-align: left;">Process shift</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 6em; font-weight: bold;">Rule 3</td>
+<td style="text-align: left;">**Zone B: 4 of 5 consecutive points**</td>
+<td style="text-align: left;">4 out of 5 consecutive points in Zone B (&gt;1σ) or beyond, same side</td>
+<td style="text-align: left;">Process shift</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6em; font-weight: bold;">Rule 4</td>
+<td style="text-align: left;">**8 consecutive points on one side**</td>
+<td style="text-align: left;">8 consecutive points above or below the center line</td>
+<td style="text-align: left;">Process shift (mean has moved)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/we-rules-visual-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Visual Examples of Western Electric Rules</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="additional-patterns-to-watch-for" class="level3" data-number="10.7.2">
+<h3 data-number="10.7.2" class="anchored" data-anchor-id="additional-patterns-to-watch-for"><span class="header-section-number">10.7.2</span> Additional Patterns to Watch For</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Additional Control Chart Patterns</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Pattern</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Possible Causes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Trend**</td>
+<td style="text-align: left;">6 or more consecutive points steadily increasing or decreasing</td>
+<td style="text-align: left;">Tool wear, temperature drift, operator fatigue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Cycle**</td>
+<td style="text-align: left;">Repeating high-low pattern</td>
+<td style="text-align: left;">Shift changes, batch effects, temperature cycles</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Stratification**</td>
+<td style="text-align: left;">Points consistently near center line (too little variation)</td>
+<td style="text-align: left;">Incorrect limits, data manipulation, mixed streams</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Mixture**</td>
+<td style="text-align: left;">Points avoiding center line (bimodal distribution)</td>
+<td style="text-align: left;">Two machines, two operators, two material lots</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Interactive Exercise: Identify the Out-of-Control Condition
+</summary>
+<p><strong>Look at this sequence of points (standardized values):</strong></p>
+<p>0.5, 0.8, 1.2, 0.9, 1.4, 1.6, 1.3, 1.8, -0.2, 0.3</p>
+<p><strong>Questions:</strong></p>
+<ol type="1">
+<li>Are any points beyond ±3σ?</li>
+<li>Is there a Rule 4 violation (8 consecutive on one side)?</li>
+<li>What pattern do you see?</li>
+</ol>
+<p><strong>Answers:</strong></p>
+<ol type="1">
+<li>No — all points are within ±3σ</li>
+<li><strong>YES</strong> — Points 1-8 are all positive (above center line)</li>
+<li>This is a <strong>Rule 4 violation</strong>: 8 consecutive points above the center line indicates a likely process shift upward</li>
+</ol>
+<p><strong>Action:</strong> Investigate what changed — new material lot? Different operator? Equipment adjustment?</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="process-capability" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="process-capability"><span class="header-section-number">10.8</span> Process Capability</h2>
+<section id="what-is-process-capability" class="level3" data-number="10.8.1">
+<h3 data-number="10.8.1" class="anchored" data-anchor-id="what-is-process-capability"><span class="header-section-number">10.8.1</span> What is Process Capability?</h3>
+<p><strong>Process capability</strong> compares the process performance to the specification limits. It answers: “Can this process consistently produce parts within tolerance?”</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/capability-concept-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Process Capability: Comparing Process to Specifications</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="capability-indices" class="level3" data-number="10.8.2">
+<h3 data-number="10.8.2" class="anchored" data-anchor-id="capability-indices"><span class="header-section-number">10.8.2</span> Capability Indices</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Process Capability Indices</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Index</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Formula</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">What It Measures</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">σ Estimation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 6em; font-weight: bold;">**Cp**</td>
+<td style="text-align: left;">$\frac{USL - LSL}{6\sigma}$</td>
+<td style="text-align: left;">Potential capability (spread only)</td>
+<td style="text-align: left;">Within-subgroup (R-bar/d2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6em; font-weight: bold;">**Cpk**</td>
+<td style="text-align: left;">$\min\left(\frac{USL - \bar{X}}{3\sigma}, \frac{\bar{X} - LSL}{3\sigma}\right)$</td>
+<td style="text-align: left;">Actual capability (spread + centering)</td>
+<td style="text-align: left;">Within-subgroup (R-bar/d2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 6em; font-weight: bold;">**Pp**</td>
+<td style="text-align: left;">$\frac{USL - LSL}{6s}$</td>
+<td style="text-align: left;">Overall performance (spread only)</td>
+<td style="text-align: left;">Overall standard deviation (s)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 6em; font-weight: bold;">**Ppk**</td>
+<td style="text-align: left;">$\min\left(\frac{USL - \bar{X}}{3s}, \frac{\bar{X} - LSL}{3s}\right)$</td>
+<td style="text-align: left;">Overall performance (spread + centering)</td>
+<td style="text-align: left;">Overall standard deviation (s)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="cp-vs.-cpk-why-both-matter" class="level3" data-number="10.8.3">
+<h3 data-number="10.8.3" class="anchored" data-anchor-id="cp-vs.-cpk-why-both-matter"><span class="header-section-number">10.8.3</span> Cp vs.&nbsp;Cpk: Why Both Matter</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/cp-cpk-comparison-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Cp vs.&nbsp;Cpk: The Importance of Centering</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="capability-example-calculation" class="level3" data-number="10.8.4">
+<h3 data-number="10.8.4" class="anchored" data-anchor-id="capability-example-calculation"><span class="header-section-number">10.8.4</span> Capability Example Calculation</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Shaft diameter specification 25.00 ± 0.15 mm</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Process data from 25 subgroups of 5</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>USL <span class="ot">&lt;-</span> <span class="fl">25.15</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>LSL <span class="ot">&lt;-</span> <span class="fl">24.85</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>Target <span class="ot">&lt;-</span> <span class="fl">25.00</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Using earlier X-bar/R data</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>X_bar_cap <span class="ot">&lt;-</span> <span class="fu">mean</span>(xbar)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>R_bar_cap <span class="ot">&lt;-</span> <span class="fu">mean</span>(R)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate sigma using R-bar/d2 (d2 = 2.326 for n=5)</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fl">2.326</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>sigma_within <span class="ot">&lt;-</span> R_bar_cap <span class="sc">/</span> d2</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Process Statistics:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Process Statistics:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Mean (X-bar):"</span>, <span class="fu">round</span>(X_bar_cap, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Mean (X-bar): 25.004 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Sigma (estimated):"</span>, <span class="fu">round</span>(sigma_within, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Sigma (estimated): 0.044 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cp</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>Cp <span class="ot">&lt;-</span> (USL <span class="sc">-</span> LSL) <span class="sc">/</span> (<span class="dv">6</span> <span class="sc">*</span> sigma_within)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cp ="</span>, <span class="fu">round</span>(Cp, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cp = 1.14 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cpk</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>Cpu <span class="ot">&lt;-</span> (USL <span class="sc">-</span> X_bar_cap) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> sigma_within)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>Cpl <span class="ot">&lt;-</span> (X_bar_cap <span class="sc">-</span> LSL) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> sigma_within)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>Cpk <span class="ot">&lt;-</span> <span class="fu">min</span>(Cpu, Cpl)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpu ="</span>, <span class="fu">round</span>(Cpu, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cpu = 1.11 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpl ="</span>, <span class="fu">round</span>(Cpl, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cpl = 1.17 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpk ="</span>, <span class="fu">round</span>(Cpk, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cpk = 1.11 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Interpretation:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interpretation:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (Cpk <span class="sc">&gt;=</span> <span class="fl">1.33</span>) {</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is CAPABLE (Cpk &gt;= 1.33)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (Cpk <span class="sc">&gt;=</span> <span class="fl">1.00</span>) {</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is MARGINALLY CAPABLE (1.00 &lt;= Cpk &lt; 1.33)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is NOT CAPABLE (Cpk &lt; 1.00)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Process is MARGINALLY CAPABLE (1.00 &lt;= Cpk &lt; 1.33)</code></pre>
+</div>
+</div>
+</section>
+<section id="capability-index-interpretation" class="level3" data-number="10.8.5">
+<h3 data-number="10.8.5" class="anchored" data-anchor-id="capability-index-interpretation"><span class="header-section-number">10.8.5</span> Capability Index Interpretation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Capability Index Interpretation Guide</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Cpk Value</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Sigma Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">PPM Defective</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Interpretation</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Typical Industry</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important; width: 8em; font-weight: bold;">&lt; 1.00</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">&lt; 3σ</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">&gt; 2,700</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Not capable — improvement required</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Requires immediate action</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important; width: 8em; font-weight: bold;">1.00 - 1.33</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">3σ - 4σ</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">2,700 - 64</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Marginally capable — monitor closely</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Consumer products</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 8em; font-weight: bold;">1.33 - 1.67</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">4σ - 5σ</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">64 - 0.6</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Capable — meets typical requirements</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">General manufacturing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 8em; font-weight: bold;">1.67 - 2.00</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">5σ - 6σ</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">0.6 - 0.002</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Good capability — automotive/aerospace</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Automotive Tier 1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 8em; font-weight: bold;">&gt; 2.00</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">&gt; 6σ</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">&lt; 0.002</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Excellent — Six Sigma level</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Aerospace, medical devices</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Question: When to use Cp/Cpk vs.&nbsp;Pp/Ppk?
+</summary>
+<p><strong>Cp/Cpk (Process Capability):</strong> - Uses within-subgroup variation (σ estimated from R-bar/d2) - Represents the POTENTIAL capability if process is in control - Use for ongoing process monitoring - Requires process to be in statistical control</p>
+<p><strong>Pp/Ppk (Process Performance):</strong> - Uses overall standard deviation (s) of all data - Represents ACTUAL performance including all variation - Use for initial capability studies or when process stability is unknown - Includes both common and special cause variation</p>
+<p><strong>Rule of Thumb:</strong> - If Pp ≈ Cp and Ppk ≈ Cpk → Process is stable - If Pp &lt; Cp or Ppk &lt; Cpk → Process has special cause variation (not in control)</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="responding-to-out-of-control-signals" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="responding-to-out-of-control-signals"><span class="header-section-number">10.9</span> Responding to Out-of-Control Signals</h2>
+<section id="the-response-process" class="level3" data-number="10.9.1">
+<h3 data-number="10.9.1" class="anchored" data-anchor-id="the-response-process"><span class="header-section-number">10.9.1</span> The Response Process</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="10-SPC_files/figure-html/response-process-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Responding to Out-of-Control Conditions</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="investigation-checklist-5-ms-e" class="level3" data-number="10.9.2">
+<h3 data-number="10.9.2" class="anchored" data-anchor-id="investigation-checklist-5-ms-e"><span class="header-section-number">10.9.2</span> Investigation Checklist (5 Ms + E)</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Investigation Checklist: 5 Ms + E</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Category</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Questions to Ask</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Man**</td>
+<td style="text-align: left;">Different operator? New employee? Fatigue? Training issue?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Machine**</td>
+<td style="text-align: left;">Equipment malfunction? Tool wear? Maintenance due? Setup change?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Material**</td>
+<td style="text-align: left;">New lot? Different supplier? Out-of-spec material?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Method**</td>
+<td style="text-align: left;">Procedure changed? Parameter drift? Wrong program?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Measurement**</td>
+<td style="text-align: left;">Gauge drift? Calibration due? Different inspector?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Environment**</td>
+<td style="text-align: left;">Temperature change? Humidity? Vibration? Contamination?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="spc-implementation" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="spc-implementation"><span class="header-section-number">10.10</span> SPC Implementation</h2>
+<section id="steps-to-implement-spc" class="level3" data-number="10.10.1">
+<h3 data-number="10.10.1" class="anchored" data-anchor-id="steps-to-implement-spc"><span class="header-section-number">10.10.1</span> Steps to Implement SPC</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>SPC Implementation Steps</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Step</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Action</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Key Considerations</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; width: 5em; font-weight: bold;">1</td>
+<td style="text-align: left;">Select the process and characteristic</td>
+<td style="text-align: left;">Start with critical/problem processes</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 5em; font-weight: bold;">2</td>
+<td style="text-align: left;">Determine measurement system adequacy (MSA)</td>
+<td style="text-align: left;">Gauge R&amp;R must be acceptable (&lt; 30%)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 5em; font-weight: bold;">3</td>
+<td style="text-align: left;">Collect initial data (25+ subgroups)</td>
+<td style="text-align: left;">Process must be running normally</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 5em; font-weight: bold;">4</td>
+<td style="text-align: left;">Calculate trial control limits</td>
+<td style="text-align: left;">Limits based on actual process, not specs</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 5em; font-weight: bold;">5</td>
+<td style="text-align: left;">Identify and remove special causes</td>
+<td style="text-align: left;">Investigate each out-of-control point</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 5em; font-weight: bold;">6</td>
+<td style="text-align: left;">Recalculate limits with stable data</td>
+<td style="text-align: left;">These become the standard limits</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 5em; font-weight: bold;">7</td>
+<td style="text-align: left;">Implement ongoing monitoring</td>
+<td style="text-align: left;">Train operators, establish reaction plans</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 5em; font-weight: bold;">8</td>
+<td style="text-align: left;">Review and improve continuously</td>
+<td style="text-align: left;">Update limits when process improves</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="common-spc-mistakes" class="level3" data-number="10.10.2">
+<h3 data-number="10.10.2" class="anchored" data-anchor-id="common-spc-mistakes"><span class="header-section-number">10.10.2</span> Common SPC Mistakes</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Common SPC Mistakes and Corrections</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Mistake</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Why It's Wrong</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Correct Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 18em; font-weight: bold;">**Using specification limits as control limits**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Control limits are based on process performance, not specs</td>
+<td style="text-align: left;">Calculate limits from process data (mean ± 3σ)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; font-weight: bold;">**Changing limits too frequently**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Limits should only change when process fundamentally changes</td>
+<td style="text-align: left;">Use stable baseline; recalculate only after sustained improvement</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; font-weight: bold;">**Ignoring the R chart**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">R chart often signals problems before X-bar chart</td>
+<td style="text-align: left;">Always analyze R chart first — variation stability</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 18em; font-weight: bold;">**Over-adjusting (tampering)**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Adjusting for common cause variation increases variation</td>
+<td style="text-align: left;">Only adjust when special cause is identified</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 18em; font-weight: bold;">**Not acting on signals**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Defeats the purpose of SPC</td>
+<td style="text-align: left;">Investigate and act on every out-of-control signal</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">10.11</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>SPC Key Concepts Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Key Points</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">**Variation**</td>
+<td style="text-align: left;">Common cause (inherent) vs. special cause (assignable); respond differently</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em;">**Control Charts**</td>
+<td style="text-align: left;">Graph with UCL/LCL at ±3σ; distinguishes between variation types</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">**Variable Charts**</td>
+<td style="text-align: left;">X-bar/R (n=2-9), X-bar/S (n≥10), I-MR (n=1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em;">**Attribute Charts**</td>
+<td style="text-align: left;">p (proportion), np (count defectives), c (defects), u (defects/unit)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em;">**Interpretation**</td>
+<td style="text-align: left;">Western Electric rules: beyond limits, 2 of 3 in Zone A, 4 of 5 in Zone B, 8 consecutive</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em;">**Capability**</td>
+<td style="text-align: left;">Cp (potential), Cpk (actual); ≥1.33 is capable; ≥1.67 for automotive</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">10.12</span> Review Questions</h2>
+<section id="conceptual-questions" class="level3" data-number="10.12.1">
+<h3 data-number="10.12.1" class="anchored" data-anchor-id="conceptual-questions"><span class="header-section-number">10.12.1</span> Conceptual Questions</h3>
+<details>
+<summary>
+Question 1: What is the difference between common cause and special cause variation?
+</summary>
+<p><strong>Common Cause Variation:</strong> - Inherent to the process - Always present - Random and predictable - Many small factors - System-level improvement required - Examples: machine vibration, material variation, ambient temperature</p>
+<p><strong>Special Cause Variation:</strong> - External to normal process - Intermittent or new - Non-random patterns - Specific assignable cause - Local action to eliminate - Examples: tool breakage, new operator, bad material lot</p>
+<p><strong>Key Point:</strong> Only act on special causes. Attempting to adjust for common cause variation (tampering) makes the process worse.</p>
+</details>
+<details>
+<summary>
+Question 2: Why are control limits set at ±3 sigma rather than ±2 sigma?
+</summary>
+<p><strong>At ±3σ:</strong> - 99.73% of data falls within limits (when in control) - Only 0.27% false alarm rate (about 3 per 1000 points) - Good balance between detecting real problems and avoiding false alarms</p>
+<p><strong>If we used ±2σ:</strong> - 95.45% of data within limits - 4.55% false alarm rate (about 45 per 1000 points!) - Too many false alarms → operators ignore the chart</p>
+<p><strong>If we used ±4σ:</strong> - 99.99% within limits - Almost no false alarms - But we’d miss real problems (low sensitivity)</p>
+<p><strong>The ±3σ choice balances:</strong> - Risk of false alarm (treating common cause as special) - Risk of missed signal (treating special cause as common)</p>
+</details>
+<details>
+<summary>
+Question 3: When would you use an I-MR chart instead of an X-bar/R chart?
+</summary>
+<p><strong>Use I-MR Chart When:</strong></p>
+<ol type="1">
+<li><strong>Sample size is n = 1</strong> — only one measurement per time period</li>
+<li><strong>Destructive testing</strong> — can’t afford multiple samples</li>
+<li><strong>Expensive measurement</strong> — time or cost prohibitive</li>
+<li><strong>Continuous process</strong> — each reading is independent (batch process)</li>
+<li><strong>Long intervals</strong> — measurements far apart in time</li>
+<li><strong>Homogeneous batches</strong> — within-batch variation is negligible</li>
+</ol>
+<p><strong>Examples:</strong> - Daily chemical batch analysis - Weekly calibration check - Each lot incoming inspection (one sample per lot) - Continuous process temperature readings</p>
+<p><strong>Caution:</strong> I-MR charts are less sensitive than X-bar charts because averaging in subgroups reduces noise.</p>
+</details>
+</section>
+<section id="calculation-questions" class="level3" data-number="10.12.2">
+<h3 data-number="10.12.2" class="anchored" data-anchor-id="calculation-questions"><span class="header-section-number">10.12.2</span> Calculation Questions</h3>
+<details>
+<summary>
+Question 4: Calculate control limits for an X-bar/R chart given the following data.
+</summary>
+<p><strong>Given:</strong> - 20 subgroups of n = 4 measurements - Grand mean (X-double-bar) = 50.25 - Average range (R-bar) = 2.40 - Constants for n = 4: A2 = 0.729, D3 = 0, D4 = 2.282</p>
+<p><strong>Calculate UCL and LCL for both charts.</strong></p>
+<p><strong>Solution:</strong></p>
+<p><strong>X-bar Chart:</strong></p>
+<pre><code>UCL = X-double-bar + A2 × R-bar
+UCL = 50.25 + 0.729 × 2.40 = 50.25 + 1.75 = 52.00
+
+LCL = X-double-bar - A2 × R-bar
+LCL = 50.25 - 0.729 × 2.40 = 50.25 - 1.75 = 48.50
+
+CL = 50.25</code></pre>
+<p><strong>R Chart:</strong></p>
+<pre><code>UCL = D4 × R-bar = 2.282 × 2.40 = 5.48
+
+LCL = D3 × R-bar = 0 × 2.40 = 0
+
+CL = 2.40</code></pre>
+</details>
+<details>
+<summary>
+Question 5: Calculate Cp and Cpk for a process with the following data.
+</summary>
+<p><strong>Given:</strong> - Specification: 100 ± 5 (USL = 105, LSL = 95) - Process mean = 102 - Process standard deviation (σ) = 1.5</p>
+<p><strong>Solution:</strong></p>
+<p><strong>Cp (Potential Capability):</strong></p>
+<pre><code>Cp = (USL - LSL) / (6σ)
+Cp = (105 - 95) / (6 × 1.5)
+Cp = 10 / 9 = 1.11</code></pre>
+<p><strong>Cpk (Actual Capability):</strong></p>
+<pre><code>Cpu = (USL - X-bar) / (3σ) = (105 - 102) / (3 × 1.5) = 3 / 4.5 = 0.67
+Cpl = (X-bar - LSL) / (3σ) = (102 - 95) / (3 × 1.5) = 7 / 4.5 = 1.56
+
+Cpk = min(Cpu, Cpl) = min(0.67, 1.56) = 0.67</code></pre>
+<p><strong>Interpretation:</strong> - Cp = 1.11 suggests process spread could fit within specs IF centered - Cpk = 0.67 shows process is NOT capable because it’s shifted toward USL - Action: Center the process closer to 100 (target)</p>
+</details>
+<details>
+<summary>
+Question 6: A p chart has p-bar = 0.04 and sample size n = 200. Calculate control limits.
+</summary>
+<p><strong>Solution:</strong></p>
+<p><strong>Center Line:</strong></p>
+<pre><code>CL = p-bar = 0.04 (4% defective)</code></pre>
+<p><strong>Upper Control Limit:</strong></p>
+<pre><code>UCL = p-bar + 3 × √(p-bar × (1 - p-bar) / n)
+UCL = 0.04 + 3 × √(0.04 × 0.96 / 200)
+UCL = 0.04 + 3 × √(0.000192)
+UCL = 0.04 + 3 × 0.01386
+UCL = 0.04 + 0.0416 = 0.0816 (8.16%)</code></pre>
+<p><strong>Lower Control Limit:</strong></p>
+<pre><code>LCL = p-bar - 3 × √(p-bar × (1 - p-bar) / n)
+LCL = 0.04 - 0.0416 = -0.0016
+
+Since LCL cannot be negative: LCL = 0</code></pre>
+<p><strong>Final Limits:</strong> - UCL = 8.16% - CL = 4.00% - LCL = 0%</p>
+</details>
+</section>
+<section id="application-questions" class="level3" data-number="10.12.3">
+<h3 data-number="10.12.3" class="anchored" data-anchor-id="application-questions"><span class="header-section-number">10.12.3</span> Application Questions</h3>
+<details>
+<summary>
+Question 7: You observe 8 consecutive points above the center line but all within control limits. What does this indicate?
+</summary>
+<p><strong>This is a Rule 4 violation (Western Electric Rules).</strong></p>
+<p><strong>What it indicates:</strong> - The process mean has shifted upward - This is a SPECIAL CAUSE signal - Even though no points are beyond limits, the pattern is not random</p>
+<p><strong>Probability analysis:</strong> - Probability of a point above CL (random) = 0.5 - Probability of 8 consecutive above CL = 0.5^8 = 0.0039 (0.39%) - This is very unlikely by chance alone</p>
+<p><strong>Action required:</strong> 1. Stop and mark the chart 2. Investigate what changed around the time of the first high point 3. Check: new material lot? Tool change? Operator change? Temperature? 4. Correct the cause 5. Monitor to verify process returns to normal</p>
+</details>
+<details>
+<summary>
+Question 8: A process has Cp = 2.0 but Cpk = 1.0. What does this tell you?
+</summary>
+<p><strong>Analysis:</strong></p>
+<p><strong>Cp = 2.0 means:</strong> - Process spread (6σ) is half the specification width - The process COULD produce no defects if centered - Potential capability is excellent</p>
+<p><strong>Cpk = 1.0 means:</strong> - Process is off-center - Actual capability is only marginal - Some defects are being produced</p>
+<p><strong>The difference (Cp - Cpk = 1.0) indicates:</strong> - The process mean is shifted 3σ from the target - One side has much less margin than the other</p>
+<p><strong>Visual:</strong></p>
+<pre><code>LSL        Target        USL
+|           |           |
+      [====PROCESS====]
+      ↑ shifted to one side</code></pre>
+<p><strong>Action:</strong> - Center the process on target - After centering, Cpk should approach Cp (both ≈ 2.0) - This is an adjustment action, not a variation reduction</p>
+</details>
+<details>
+<summary>
+Question 9: Why should you always analyze the R chart before the X-bar chart?
+</summary>
+<p><strong>The R chart should be analyzed first because:</strong></p>
+<ol type="1">
+<li><strong>Control limits depend on variation:</strong>
+<ul>
+<li>X-bar limits are calculated using R-bar</li>
+<li>If R is out of control, X-bar limits are unreliable</li>
+</ul></li>
+<li><strong>R chart is more sensitive to variation changes:</strong>
+<ul>
+<li>Tool wear shows on R chart before X-bar</li>
+<li>Inconsistent setup appears as increased R</li>
+</ul></li>
+<li><strong>Process must be stable in variation first:</strong>
+<ul>
+<li>A process can’t be “in control” if variation is changing</li>
+<li>Stable variation is a prerequisite for evaluating the mean</li>
+</ul></li>
+<li><strong>Different actions for each:</strong>
+<ul>
+<li>R chart problem → variation issue (consistency)</li>
+<li>X-bar problem → centering issue (average)</li>
+</ul></li>
+</ol>
+<p><strong>Rule:</strong> If R chart is out of control, fix that FIRST before interpreting the X-bar chart.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="references" class="level2" data-number="10.13">
+<h2 data-number="10.13" class="anchored" data-anchor-id="references"><span class="header-section-number">10.13</span> References</h2>
+<ul>
+<li>Montgomery, D.C. (2019). <em>Introduction to Statistical Quality Control</em> (8th ed.). Wiley.</li>
+<li>Wheeler, D.J., &amp; Chambers, D.S. (1992). <em>Understanding Statistical Process Control</em> (2nd ed.). SPC Press.</li>
+<li>AIAG. (2005). <em>Statistical Process Control (SPC) Reference Manual</em> (2nd ed.).</li>
+<li>Western Electric. (1956). <em>Statistical Quality Control Handbook</em>. AT&amp;T.</li>
+<li>Deming, W.E. (1986). <em>Out of the Crisis</em>. MIT Press.</li>
+<li>Shewhart, W.A. (1931). <em>Economic Control of Quality of Manufactured Product</em>. Van Nostrand.</li>
+<li>ASTM E2587. Standard Practice for Use of Control Charts in Statistical Process Control.</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./09-Industrial-Automation.html" class="pagination-link" aria-label="Industrial Automation Fundamentals">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./11-MSA.html" class="pagination-link" aria-label="Measurement Systems Analysis">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/10-SPC.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>3&nbsp; Integrated Manufacturing Systems – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./04-Plant-Layout.html" rel="next">
+<link href="./02-Process-and-Design.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-Integrated-Manufacturing-Systems.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">3.1</span> Learning Objectives</a></li>
+  <li><a href="#material-handling-methods-systems" id="toc-material-handling-methods-systems" class="nav-link" data-scroll-target="#material-handling-methods-systems"><span class="header-section-number">3.2</span> Material Handling Methods &amp; Systems</a></li>
+  <li><a href="#fundamentals-of-production-lines" id="toc-fundamentals-of-production-lines" class="nav-link" data-scroll-target="#fundamentals-of-production-lines"><span class="header-section-number">3.3</span> Fundamentals of Production Lines</a>
+  <ul class="collapse">
+  <li><a href="#methods-of-work-transport" id="toc-methods-of-work-transport" class="nav-link" data-scroll-target="#methods-of-work-transport"><span class="header-section-number">3.3.1</span> Methods of Work Transport</a></li>
+  <li><a href="#work-cycle-types" id="toc-work-cycle-types" class="nav-link" data-scroll-target="#work-cycle-types"><span class="header-section-number">3.3.2</span> Work Cycle Types</a></li>
+  </ul></li>
+  <li><a href="#key-time-metrics" id="toc-key-time-metrics" class="nav-link" data-scroll-target="#key-time-metrics"><span class="header-section-number">3.4</span> Key Time Metrics</a>
+  <ul class="collapse">
+  <li><a href="#takt-time-vs.-cycle-time" id="toc-takt-time-vs.-cycle-time" class="nav-link" data-scroll-target="#takt-time-vs.-cycle-time"><span class="header-section-number">3.4.1</span> Takt Time vs.&nbsp;Cycle Time</a></li>
+  <li><a href="#manufacturing-cycle-time-and-efficiency" id="toc-manufacturing-cycle-time-and-efficiency" class="nav-link" data-scroll-target="#manufacturing-cycle-time-and-efficiency"><span class="header-section-number">3.4.2</span> Manufacturing Cycle Time and Efficiency</a></li>
+  </ul></li>
+  <li><a href="#manual-assembly-lines" id="toc-manual-assembly-lines" class="nav-link" data-scroll-target="#manual-assembly-lines"><span class="header-section-number">3.5</span> Manual Assembly Lines</a>
+  <ul class="collapse">
+  <li><a href="#line-balancing" id="toc-line-balancing" class="nav-link" data-scroll-target="#line-balancing"><span class="header-section-number">3.5.1</span> Line Balancing</a></li>
+  <li><a href="#line-balancing-example-electronics-assembly" id="toc-line-balancing-example-electronics-assembly" class="nav-link" data-scroll-target="#line-balancing-example-electronics-assembly"><span class="header-section-number">3.5.2</span> Line Balancing Example: Electronics Assembly</a></li>
+  </ul></li>
+  <li><a href="#automated-production-lines" id="toc-automated-production-lines" class="nav-link" data-scroll-target="#automated-production-lines"><span class="header-section-number">3.6</span> Automated Production Lines</a>
+  <ul class="collapse">
+  <li><a href="#impact-of-station-failures" id="toc-impact-of-station-failures" class="nav-link" data-scroll-target="#impact-of-station-failures"><span class="header-section-number">3.6.1</span> Impact of Station Failures</a></li>
+  <li><a href="#buffer-sizing" id="toc-buffer-sizing" class="nav-link" data-scroll-target="#buffer-sizing"><span class="header-section-number">3.6.2</span> Buffer Sizing</a></li>
+  </ul></li>
+  <li><a href="#cellular-manufacturing" id="toc-cellular-manufacturing" class="nav-link" data-scroll-target="#cellular-manufacturing"><span class="header-section-number">3.7</span> Cellular Manufacturing</a>
+  <ul class="collapse">
+  <li><a href="#part-families-and-machine-cells" id="toc-part-families-and-machine-cells" class="nav-link" data-scroll-target="#part-families-and-machine-cells"><span class="header-section-number">3.7.1</span> Part Families and Machine Cells</a></li>
+  </ul></li>
+  <li><a href="#flexible-manufacturing-systems-fms" id="toc-flexible-manufacturing-systems-fms" class="nav-link" data-scroll-target="#flexible-manufacturing-systems-fms"><span class="header-section-number">3.8</span> Flexible Manufacturing Systems (FMS)</a>
+  <ul class="collapse">
+  <li><a href="#fms-components" id="toc-fms-components" class="nav-link" data-scroll-target="#fms-components"><span class="header-section-number">3.8.1</span> FMS Components</a></li>
+  </ul></li>
+  <li><a href="#modern-manufacturing-concepts" id="toc-modern-manufacturing-concepts" class="nav-link" data-scroll-target="#modern-manufacturing-concepts"><span class="header-section-number">3.9</span> Modern Manufacturing Concepts</a>
+  <ul class="collapse">
+  <li><a href="#smed-single-minute-exchange-of-die" id="toc-smed-single-minute-exchange-of-die" class="nav-link" data-scroll-target="#smed-single-minute-exchange-of-die"><span class="header-section-number">3.9.1</span> SMED (Single-Minute Exchange of Die)</a></li>
+  <li><a href="#agv-and-amr-systems" id="toc-agv-and-amr-systems" class="nav-link" data-scroll-target="#agv-and-amr-systems"><span class="header-section-number">3.9.2</span> AGV and AMR Systems</a></li>
+  <li><a href="#digital-twin" id="toc-digital-twin" class="nav-link" data-scroll-target="#digital-twin"><span class="header-section-number">3.9.3</span> Digital Twin</a></li>
+  </ul></li>
+  <li><a href="#industry-applications" id="toc-industry-applications" class="nav-link" data-scroll-target="#industry-applications"><span class="header-section-number">3.10</span> Industry Applications</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">3.11</span> Review Questions</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">3.12</span> Summary</a>
+  <ul class="collapse">
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">3.12.1</span> Key Takeaways</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">3.13</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/03-Integrated-Manufacturing-Systems.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">3.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ol type="1">
+<li>Compare different types of production facility layouts and material handling methods</li>
+<li>Calculate Manufacturing Cycle Time (MCT) and Manufacturing Cycle Efficiency (MCE)</li>
+<li>Analyze production line performance including the impact of station failures</li>
+<li>Apply line balancing techniques to optimize workstation assignments</li>
+<li>Explain the concepts of takt time, cycle time, and their relationship</li>
+<li>Describe Flexible Manufacturing Systems (FMS) and their applications</li>
+<li>Understand modern concepts including digital twins and Industry 4.0</li>
+</ol>
+<hr>
+</section>
+<section id="material-handling-methods-systems" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="material-handling-methods-systems"><span class="header-section-number">3.2</span> Material Handling Methods &amp; Systems</h2>
+<p>There are four common types of production facility layouts, each with distinct features and material handling requirements:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small">
+<caption>Material Handling Methods by Plant Layout</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Layout Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Product Characteristics</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Material Handling</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Fixed-Position</td>
+<td style="text-align: left;">Large, heavy, or immobile products</td>
+<td style="text-align: left;">Cranes, hoists, fork lifts bring materials to product</td>
+<td style="text-align: left;">Ships, aircraft, buildings, large machinery</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Process (Job Shop)</td>
+<td style="text-align: left;">High variety, low volume, custom work</td>
+<td style="text-align: left;">Fork lifts, AGVs, carts move WIP between departments</td>
+<td style="text-align: left;">Machine shops, hospitals, universities</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Cellular</td>
+<td style="text-align: left;">Part families, medium variety/volume</td>
+<td style="text-align: left;">Conveyors within cells, carts between cells</td>
+<td style="text-align: left;">Electronics assembly, engine components</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Product (Flow Line)</td>
+<td style="text-align: left;">Standardized products, high volume</td>
+<td style="text-align: left;">Conveyors, automated transfer systems</td>
+<td style="text-align: left;">Automotive assembly, bottling, food processing</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Discussion: How do you choose between layout types?
+</summary>
+<p><strong>Selection criteria:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Factor</th>
+<th>Favors Process Layout</th>
+<th>Favors Product Layout</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Volume</td>
+<td>Low (&lt; 1,000/year)</td>
+<td>High (&gt; 10,000/year)</td>
+</tr>
+<tr class="even">
+<td>Variety</td>
+<td>High (many products)</td>
+<td>Low (1-2 products)</td>
+</tr>
+<tr class="odd">
+<td>Routing</td>
+<td>Variable by product</td>
+<td>Fixed, same for all</td>
+</tr>
+<tr class="even">
+<td>Equipment</td>
+<td>General-purpose</td>
+<td>Specialized</td>
+</tr>
+<tr class="odd">
+<td>Worker skills</td>
+<td>High, varied</td>
+<td>Specific, repetitive</td>
+</tr>
+<tr class="even">
+<td>WIP inventory</td>
+<td>High</td>
+<td>Low</td>
+</tr>
+<tr class="odd">
+<td>Lead time</td>
+<td>Long</td>
+<td>Short</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When in doubt:</strong> If volume and variety are moderate, consider cellular manufacturing as a compromise.</p>
+</details>
+<hr>
+</section>
+<section id="fundamentals-of-production-lines" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="fundamentals-of-production-lines"><span class="header-section-number">3.3</span> Fundamentals of Production Lines</h2>
+<p>A <strong>production line</strong> consists of workstations arranged so that the product moves from one station to the next, with a portion of the total work performed at each location.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/production-line-viz-1.png" class="img-fluid figure-img" width="1056"></p>
+<figcaption>Production Line Concept</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="methods-of-work-transport" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="methods-of-work-transport"><span class="header-section-number">3.3.1</span> Methods of Work Transport</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Work Transport Methods in Production Lines</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Method</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Advantages</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Disadvantages</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Applications</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Manual</td>
+<td style="text-align: left;">Workers pass parts by hand or using simple carts</td>
+<td style="text-align: left;">Low cost, flexible, easy to implement</td>
+<td style="text-align: left;">Variable pace, potential blocking/starving</td>
+<td style="text-align: left;">Low-volume assembly, repair shops</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Continuous</td>
+<td style="text-align: left;">Conveyor moves at constant speed; work done while moving</td>
+<td style="text-align: left;">Smooth flow, no transfer time between stations</td>
+<td style="text-align: left;">Work must be done on moving product</td>
+<td style="text-align: left;">Beverage bottling, canning lines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Synchronous (Intermittent)</td>
+<td style="text-align: left;">All units move simultaneously in discrete steps</td>
+<td style="text-align: left;">Fixed cycle time, easy to control</td>
+<td style="text-align: left;">Rigid timing, all stations must finish together</td>
+<td style="text-align: left;">Automotive body welding, transfer lines</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Asynchronous</td>
+<td style="text-align: left;">Units move independently when released by worker</td>
+<td style="text-align: left;">Absorbs variation, no blocking/starving</td>
+<td style="text-align: left;">Requires buffers, more complex control</td>
+<td style="text-align: left;">Electronics assembly, flexible lines</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 0.5, xend = 5.5, y = 3, yend = 3), color = "#3498DB", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 0.7, xend = 1.3, y = 2, yend = 2), color = "#E74C3C", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 1.7, xend = 2.3, y = 2, yend = 2), color = "#E74C3C", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 2.7, xend = 3.3, y = 2, yend = 2), color = "#E74C3C", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 3.7, xend = 4.3, y = 2, yend = 2), color = "#E74C3C", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4.7, xend = 5.3, y = 2, yend = 2), color = "#E74C3C", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 0.7, xend = 1.1, y = 1, yend = 1), color = "#27AE60", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 1.9, xend = 2.5, y = 1, yend = 1), color = "#27AE60", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 2.7, xend = 3.1, y = 1, yend = 1), color = "#27AE60", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4, xend = 4.4, y = 1, yend = 1), color = "#27AE60", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4.8, xend = 5.3, y = 1, yend = 1), color = "#27AE60", : All aesthetics have length 1, but the data has 15 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/transport-diagrams-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Work Transport System Types</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+What causes blocking and starving in production lines?
+</summary>
+<p><strong>Starving:</strong> A station is ready to work but has no parts to process. - <strong>Causes:</strong> Upstream station is slower, upstream breakdown, material shortage</p>
+<p><strong>Blocking:</strong> A station finishes but cannot release the part. - <strong>Causes:</strong> Downstream station still working, downstream breakdown, no buffer space</p>
+<p><strong>Solutions:</strong> 1. <strong>Buffers</strong> - Storage between stations absorbs variation 2. <strong>Line balancing</strong> - Equalize work content across stations 3. <strong>Parallel stations</strong> - Add capacity at bottlenecks 4. <strong>Preventive maintenance</strong> - Reduce breakdowns</p>
+</details>
+</section>
+<section id="work-cycle-types" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="work-cycle-types"><span class="header-section-number">3.3.2</span> Work Cycle Types</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_tile(aes(x = 50, y = 3), width = 100, height = 0.5, fill = "#F39C12"): All aesthetics have length 1, but the data has 3 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_tile(aes(x = 20, y = 2), width = 40, height = 0.5, fill = "#F39C12"): All aesthetics have length 1, but the data has 3 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_tile(aes(x = 70, y = 2), width = 60, height = 0.5, fill = "#3498DB"): All aesthetics have length 1, but the data has 3 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_tile(aes(x = 2.5, y = 1), width = 5, height = 0.5, fill = "#F39C12"): All aesthetics have length 1, but the data has 3 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_tile(aes(x = 52.5, y = 1), width = 95, height = 0.5, fill = "#3498DB"): All aesthetics have length 1, but the data has 3 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/work-cycle-viz-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Manual, Semi-Automated, and Fully Automated Machine Cycles</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="key-time-metrics" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="key-time-metrics"><span class="header-section-number">3.4</span> Key Time Metrics</h2>
+<p>Understanding time metrics is essential for analyzing and improving production systems.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Key Manufacturing Time Metrics</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Metric</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Definition</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Formula</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Takt Time</td>
+<td style="text-align: left;">Available production time ÷ Customer demand</td>
+<td style="text-align: left;">$T_{takt} = \frac{\text{Available Time}}{\text{Demand}}$</td>
+<td style="text-align: left;">Sets the pace of production to match demand</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Cycle Time</td>
+<td style="text-align: left;">Time between units coming off the line</td>
+<td style="text-align: left;">$T_c = \frac{60}{R_p}$ (min, if Rp in units/hr)</td>
+<td style="text-align: left;">Actual pace of the production line</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Lead Time</td>
+<td style="text-align: left;">Total time from order to delivery</td>
+<td style="text-align: left;">Order processing + Manufacturing + Delivery</td>
+<td style="text-align: left;">Customer's wait time</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Throughput Time</td>
+<td style="text-align: left;">Time from raw material to finished goods</td>
+<td style="text-align: left;">Processing + Waiting + Moving + Inspection</td>
+<td style="text-align: left;">Internal manufacturing efficiency</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="takt-time-vs.-cycle-time" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="takt-time-vs.-cycle-time"><span class="header-section-number">3.4.1</span> Takt Time vs.&nbsp;Cycle Time</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Takt Time Calculation Example</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Automotive assembly plant</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Given data</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>shift_length_min <span class="ot">&lt;-</span> <span class="dv">480</span>      <span class="co"># 8 hours = 480 minutes</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>breaks_min <span class="ot">&lt;-</span> <span class="dv">30</span>             <span class="co"># Two 15-minute breaks</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>planned_downtime_min <span class="ot">&lt;-</span> <span class="dv">20</span>   <span class="co"># Changeover, meetings</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>customer_demand <span class="ot">&lt;-</span> <span class="dv">60</span>        <span class="co"># Cars per shift</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate available time</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>available_time <span class="ot">&lt;-</span> shift_length_min <span class="sc">-</span> breaks_min <span class="sc">-</span> planned_downtime_min</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Available Production Time:"</span>, available_time, <span class="st">"minutes per shift</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Available Production Time: 430 minutes per shift</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Takt Time</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>takt_time <span class="ot">&lt;-</span> available_time <span class="sc">/</span> customer_demand</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Takt Time:"</span>, <span class="fu">round</span>(takt_time, <span class="dv">2</span>), <span class="st">"minutes per car</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Takt Time: 7.17 minutes per car</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"         ="</span>, <span class="fu">round</span>(takt_time <span class="sc">*</span> <span class="dv">60</span>, <span class="dv">1</span>), <span class="st">"seconds per car</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         = 430 seconds per car</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare to actual cycle time</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>actual_cycle_time <span class="ot">&lt;-</span> <span class="fl">7.5</span>  <span class="co"># minutes (current performance)</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Actual Cycle Time:"</span>, actual_cycle_time, <span class="st">"minutes per car</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Actual Cycle Time: 7.5 minutes per car</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (actual_cycle_time <span class="sc">&lt;=</span> takt_time) {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Status: MEETING DEMAND - Cycle time is within takt time</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Capacity margin:"</span>, <span class="fu">round</span>((<span class="dv">1</span> <span class="sc">-</span> actual_cycle_time<span class="sc">/</span>takt_time) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Status: CANNOT MEET DEMAND - Cycle time exceeds takt time</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Shortfall:"</span>, <span class="fu">round</span>((actual_cycle_time<span class="sc">/</span>takt_time <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"% over capacity</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Status: CANNOT MEET DEMAND - Cycle time exceeds takt time
+Shortfall: 4.7 % over capacity</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Discussion: What happens when cycle time exceeds takt time?
+</summary>
+<p><strong>When Cycle Time &gt; Takt Time, you cannot meet customer demand.</strong></p>
+<p><strong>Options to fix this:</strong></p>
+<ol type="1">
+<li><strong>Reduce cycle time:</strong>
+<ul>
+<li>Kaizen improvements at bottleneck</li>
+<li>Better tools/fixtures</li>
+<li>Automation of slow tasks</li>
+</ul></li>
+<li><strong>Increase available time:</strong>
+<ul>
+<li>Add overtime</li>
+<li>Add shifts</li>
+<li>Reduce breaks (carefully!)</li>
+</ul></li>
+<li><strong>Add capacity:</strong>
+<ul>
+<li>Parallel stations at bottleneck</li>
+<li>Additional production lines</li>
+<li>Outsourcing</li>
+</ul></li>
+<li><strong>Manage demand:</strong>
+<ul>
+<li>Negotiate delivery schedules</li>
+<li>Build inventory in advance</li>
+<li>Redirect to other facilities</li>
+</ul></li>
+</ol>
+<p><strong>Key insight:</strong> Takt time is the “heartbeat” of lean manufacturing - everything should be synchronized to it.</p>
+</details>
+</section>
+<section id="manufacturing-cycle-time-and-efficiency" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="manufacturing-cycle-time-and-efficiency"><span class="header-section-number">3.4.2</span> Manufacturing Cycle Time and Efficiency</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Given production data</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>production_time_min <span class="ot">&lt;-</span> <span class="dv">480</span>   <span class="co"># Total time equipment ran</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>units_produced <span class="ot">&lt;-</span> <span class="dv">60</span>         <span class="co"># Good units produced</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># MCT Calculation</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>MCT <span class="ot">&lt;-</span> production_time_min <span class="sc">/</span> units_produced</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Manufacturing Cycle Time (MCT):"</span>, MCT, <span class="st">"minutes per unit</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Manufacturing Cycle Time (MCT): 8 minutes per unit</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MCE Calculation requires understanding of value-added time</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Typical breakdown of production time:</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>value_added_time <span class="ot">&lt;-</span> <span class="fl">3.5</span>      <span class="co"># Actual processing time (minutes)</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>inspection_time <span class="ot">&lt;-</span> <span class="fl">0.5</span>       <span class="co"># Quality checks</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>wait_time <span class="ot">&lt;-</span> <span class="fl">2.5</span>             <span class="co"># Queuing between operations</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>move_time <span class="ot">&lt;-</span> <span class="fl">1.5</span>             <span class="co"># Transport between stations</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>total_time_per_unit <span class="ot">&lt;-</span> value_added_time <span class="sc">+</span> inspection_time <span class="sc">+</span> wait_time <span class="sc">+</span> move_time</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Time breakdown per unit:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time breakdown per unit:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Value-added (processing):"</span>, value_added_time, <span class="st">"min</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Value-added (processing): 3.5 min</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Inspection:"</span>, inspection_time, <span class="st">"min</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Inspection: 0.5 min</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Waiting:"</span>, wait_time, <span class="st">"min</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Waiting: 2.5 min</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Moving:"</span>, move_time, <span class="st">"min</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Moving: 1.5 min</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total:"</span>, total_time_per_unit, <span class="st">"min</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Total: 8 min</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MCE Calculation</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>MCE <span class="ot">&lt;-</span> (value_added_time <span class="sc">/</span> total_time_per_unit) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Manufacturing Cycle Efficiency (MCE):"</span>, <span class="fu">round</span>(MCE, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Manufacturing Cycle Efficiency (MCE): 43.8 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Interpretation: Only"</span>, <span class="fu">round</span>(MCE, <span class="dv">1</span>), <span class="st">"% of time adds value.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Interpretation: Only 43.8 % of time adds value.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Opportunity:"</span>, <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">-</span> MCE, <span class="dv">1</span>), <span class="st">"% of time is waste that could be reduced.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Opportunity: 56.2 % of time is waste that could be reduced.</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/mce-visual-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Manufacturing Cycle Efficiency - Where Does Time Go?</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="manual-assembly-lines" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="manual-assembly-lines"><span class="header-section-number">3.5</span> Manual Assembly Lines</h2>
+<p>Manual assembly lines use human workers at each station. The efficiency depends on how well work is balanced across stations.</p>
+<section id="line-balancing" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="line-balancing"><span class="header-section-number">3.5.1</span> Line Balancing</h3>
+<p><strong>Line balancing</strong> assigns tasks to workstations to minimize idle time while meeting production rate requirements.</p>
+<p><strong>Key formulas:</strong></p>
+<p><span class="math display">\[T_c = \frac{\text{Available Time}}{\text{Required Output}} = \frac{60}{R_p}\]</span></p>
+<p><span class="math display">\[TM = \frac{\sum t_i}{T_c} = \frac{T_{wc}}{T_c}\]</span></p>
+<p><span class="math display">\[E_b = \frac{T_{wc}}{n \times T_c} \times 100\%\]</span></p>
+<p>Where: - <span class="math inline">\(T_c\)</span> = Cycle time (time available per unit) - <span class="math inline">\(R_p\)</span> = Production rate (units per hour) - <span class="math inline">\(TM\)</span> = Theoretical minimum stations - <span class="math inline">\(T_{wc}\)</span> = Total work content (sum of all task times) - <span class="math inline">\(n\)</span> = Actual number of stations - <span class="math inline">\(E_b\)</span> = Line efficiency (balance efficiency)</p>
+</section>
+<section id="line-balancing-example-electronics-assembly" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="line-balancing-example-electronics-assembly"><span class="header-section-number">3.5.2</span> Line Balancing Example: Electronics Assembly</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Line Balancing Example: Tablet Computer Assembly</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Task data</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>tasks <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Task =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>, <span class="st">"E"</span>, <span class="st">"F"</span>, <span class="st">"G"</span>, <span class="st">"H"</span>),</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Description =</span> <span class="fu">c</span>(<span class="st">"Install battery"</span>, <span class="st">"Mount display"</span>, <span class="st">"Connect cables"</span>,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"Install motherboard"</span>, <span class="st">"Add memory"</span>, <span class="st">"Install camera"</span>,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"Attach case back"</span>, <span class="st">"Final test"</span>),</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time_sec =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">45</span>, <span class="dv">20</span>, <span class="dv">55</span>, <span class="dv">15</span>, <span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">40</span>),</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Predecessors =</span> <span class="fu">c</span>(<span class="st">"-"</span>, <span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B,C"</span>, <span class="st">"D"</span>, <span class="st">"D"</span>, <span class="st">"E,F"</span>, <span class="st">"G"</span>)</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Display task data</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Assembly Tasks:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Assembly Tasks:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tasks[, <span class="fu">c</span>(<span class="st">"Task"</span>, <span class="st">"Description"</span>, <span class="st">"Time_sec"</span>, <span class="st">"Predecessors"</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Task         Description Time_sec Predecessors
+1    A     Install battery       30            -
+2    B       Mount display       45            A
+3    C      Connect cables       20            A
+4    D Install motherboard       55          B,C
+5    E          Add memory       15            D
+6    F      Install camera       25            D
+7    G    Attach case back       35          E,F
+8    H          Final test       40            G</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate metrics</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>total_work_content <span class="ot">&lt;-</span> <span class="fu">sum</span>(tasks<span class="sc">$</span>Time_sec)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Total Work Content:"</span>, total_work_content, <span class="st">"seconds</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Total Work Content: 265 seconds</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Production requirements</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>desired_output <span class="ot">&lt;-</span> <span class="dv">45</span>  <span class="co"># units per hour</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>available_time <span class="ot">&lt;-</span> <span class="dv">3600</span>  <span class="co"># seconds per hour</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Calculate cycle time</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>cycle_time <span class="ot">&lt;-</span> available_time <span class="sc">/</span> desired_output</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Step 1 - Cycle Time:"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Step 1 - Cycle Time:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  Required output:"</span>, desired_output, <span class="st">"units/hour"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Required output: 45 units/hour</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  Cycle time = 3600 /"</span>, desired_output, <span class="st">"="</span>, cycle_time, <span class="st">"seconds</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Cycle time = 3600 / 45 = 80 seconds</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Calculate theoretical minimum stations</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>TM <span class="ot">&lt;-</span> total_work_content <span class="sc">/</span> cycle_time</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Step 2 - Theoretical Minimum Stations:"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Step 2 - Theoretical Minimum Stations:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  TM ="</span>, total_work_content, <span class="st">"/"</span>, cycle_time, <span class="st">"="</span>, <span class="fu">round</span>(TM, <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  TM = 265 / 80 = 3.31</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  Minimum stations required:"</span>, <span class="fu">ceiling</span>(TM), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Minimum stations required: 4 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Assign tasks to stations (using largest task time rule)</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Step 3 - Station Assignments (respecting precedence):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Step 3 - Station Assignments (respecting precedence):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 1: A (30s) + C (20s) + B (45s) = 95s &gt; 80s... EXCEEDS</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 1: A (30s) + C (20s) + B (45s) = 95s &gt; 80s... EXCEEDS</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Let's try: A (30s) + C (20s) = 50s [30s idle]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Let's try: A (30s) + C (20s) = 50s [30s idle]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 2: B (45s) + E (15s) = 60s... wait, E needs D</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 2: B (45s) + E (15s) = 60s... wait, E needs D</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 2: B (45s) + D (55s) = 100s &gt; 80s... EXCEEDS</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 2: B (45s) + D (55s) = 100s &gt; 80s... EXCEEDS</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 2: B (45s) = 45s [35s idle]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 2: B (45s) = 45s [35s idle]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 3: D (55s) = 55s [25s idle]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 3: D (55s) = 55s [25s idle]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Station 5: H (40s) = 40s [40s idle]</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Station 5: H (40s) = 40s [40s idle]</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>n_stations <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>efficiency <span class="ot">&lt;-</span> (total_work_content <span class="sc">/</span> (n_stations <span class="sc">*</span> cycle_time)) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>balance_delay <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">-</span> efficiency</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Step 4 - Results:"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Step 4 - Results:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  Number of stations:"</span>, n_stations)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Number of stations: 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  Line efficiency:"</span>, <span class="fu">round</span>(efficiency, <span class="dv">1</span>), <span class="st">"%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Line efficiency: 66.2 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">  Balance delay (idle time):"</span>, <span class="fu">round</span>(balance_delay, <span class="dv">1</span>), <span class="st">"%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Balance delay (idle time): 33.8 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">  This is poor balance - consider redesigning tasks or adding parallel stations."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+  This is poor balance - consider redesigning tasks or adding parallel stations.</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/precedence-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Precedence Diagram for Tablet Assembly</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Try It: Can you find a better balance?
+</summary>
+<p><strong>Challenge:</strong> Reassign tasks to improve efficiency above 80%.</p>
+<p><strong>Hints:</strong> - Can task A be split into two smaller tasks? - Could parallel workstations handle the bottleneck task D? - What if we allow 85 seconds per station (slower line, fewer stations)?</p>
+<p><strong>One solution with parallel stations:</strong> - Station 1: A + C = 50s - Station 2a: B = 45s (parallel) - Station 2b: B = 45s (parallel) - Station 3: D = 55s - Station 4: E + F = 40s - Station 5: G + H = 75s</p>
+<p>With parallelism at Station 2, effective cycle time stays at 55s (Station 3 bottleneck), but we can now achieve higher throughput.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="automated-production-lines" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="automated-production-lines"><span class="header-section-number">3.6</span> Automated Production Lines</h2>
+<p>Automated lines reduce human intervention using mechanized transfer systems and automated workstations. They’re used for high-volume production with well-defined work content.</p>
+<section id="impact-of-station-failures" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="impact-of-station-failures"><span class="header-section-number">3.6.1</span> Impact of Station Failures</h3>
+<p>The performance of automated lines is degraded by station failures. Even small failure probabilities can significantly reduce output.</p>
+<p><strong>Actual Cycle Time:</strong> <span class="math display">\[T_p = T_c + pT\]</span></p>
+<p><strong>Actual Production Rate:</strong> <span class="math display">\[R_p = \frac{60}{T_p} = \frac{60}{T_c + pT}\]</span></p>
+<p>Where: - <span class="math inline">\(T_c\)</span> = Ideal cycle time (minutes) - <span class="math inline">\(p\)</span> = Probability of station failure per cycle - <span class="math inline">\(T\)</span> = Average downtime per failure (minutes)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Automated Line Performance Analysis</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Line parameters</span></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>ideal_cycle_time <span class="ot">&lt;-</span> <span class="fl">1.0</span>    <span class="co"># minutes per part (ideal)</span></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>n_stations <span class="ot">&lt;-</span> <span class="dv">10</span>           <span class="co"># Number of stations</span></span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Scenario comparison</span></span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Scenario =</span> <span class="fu">c</span>(<span class="st">"World Class"</span>, <span class="st">"Good"</span>, <span class="st">"Average"</span>, <span class="st">"Poor"</span>),</span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Failure_Prob =</span> <span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.02</span>, <span class="fl">0.05</span>, <span class="fl">0.10</span>),  <span class="co"># Per station per cycle</span></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Repair_Time =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>)  <span class="co"># Minutes average</span></span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate line performance for each scenario</span></span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Automated Line Performance Analysis</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Automated Line Performance Analysis</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"===================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>===================================</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Ideal cycle time:"</span>, ideal_cycle_time, <span class="st">"min/part</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ideal cycle time: 1 min/part</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Number of stations:"</span>, n_stations, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of stations: 10 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Ideal production rate:"</span>, <span class="dv">60</span><span class="sc">/</span>ideal_cycle_time, <span class="st">"parts/hour</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ideal production rate: 60 parts/hour</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(scenarios)) {</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>Failure_Prob[i]</span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>  T <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>Repair_Time[i]</span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Line failure probability (any station)</span></span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a>  p_line <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> p)<span class="sc">^</span>n_stations</span>
+<span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Actual cycle time</span></span>
+<span id="cb104-9"><a href="#cb104-9" aria-hidden="true" tabindex="-1"></a>  Tp <span class="ot">&lt;-</span> ideal_cycle_time <span class="sc">+</span> p_line <span class="sc">*</span> T</span>
+<span id="cb104-10"><a href="#cb104-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-11"><a href="#cb104-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Actual production rate</span></span>
+<span id="cb104-12"><a href="#cb104-12" aria-hidden="true" tabindex="-1"></a>  Rp <span class="ot">&lt;-</span> <span class="dv">60</span> <span class="sc">/</span> Tp</span>
+<span id="cb104-13"><a href="#cb104-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-14"><a href="#cb104-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Efficiency</span></span>
+<span id="cb104-15"><a href="#cb104-15" aria-hidden="true" tabindex="-1"></a>  efficiency <span class="ot">&lt;-</span> (ideal_cycle_time <span class="sc">/</span> Tp) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb104-16"><a href="#cb104-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-17"><a href="#cb104-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"%s Performance:</span><span class="sc">\n</span><span class="st">"</span>, scenarios<span class="sc">$</span>Scenario[i]))</span>
+<span id="cb104-18"><a href="#cb104-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Station failure prob: %.1f%%</span><span class="sc">\n</span><span class="st">"</span>, p <span class="sc">*</span> <span class="dv">100</span>))</span>
+<span id="cb104-19"><a href="#cb104-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Line failure prob: %.1f%%</span><span class="sc">\n</span><span class="st">"</span>, p_line <span class="sc">*</span> <span class="dv">100</span>))</span>
+<span id="cb104-20"><a href="#cb104-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Average repair time: %d min</span><span class="sc">\n</span><span class="st">"</span>, T))</span>
+<span id="cb104-21"><a href="#cb104-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Actual cycle time: %.2f min</span><span class="sc">\n</span><span class="st">"</span>, Tp))</span>
+<span id="cb104-22"><a href="#cb104-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Actual production: %.1f parts/hour</span><span class="sc">\n</span><span class="st">"</span>, Rp))</span>
+<span id="cb104-23"><a href="#cb104-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Line efficiency: %.1f%%</span><span class="sc">\n\n</span><span class="st">"</span>, efficiency))</span>
+<span id="cb104-24"><a href="#cb104-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>World Class Performance:
+  Station failure prob: 0.5%
+  Line failure prob: 4.9%
+  Average repair time: 2 min
+  Actual cycle time: 1.10 min
+  Actual production: 54.7 parts/hour
+  Line efficiency: 91.1%
+
+Good Performance:
+  Station failure prob: 2.0%
+  Line failure prob: 18.3%
+  Average repair time: 5 min
+  Actual cycle time: 1.91 min
+  Actual production: 31.3 parts/hour
+  Line efficiency: 52.2%
+
+Average Performance:
+  Station failure prob: 5.0%
+  Line failure prob: 40.1%
+  Average repair time: 10 min
+  Actual cycle time: 5.01 min
+  Actual production: 12.0 parts/hour
+  Line efficiency: 19.9%
+
+Poor Performance:
+  Station failure prob: 10.0%
+  Line failure prob: 65.1%
+  Average repair time: 15 min
+  Actual cycle time: 10.77 min
+  Actual production: 5.6 parts/hour
+  Line efficiency: 9.3%</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/downtime-visual-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Impact of Station Failures on Production Rate</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Why is preventive maintenance critical for automated lines?
+</summary>
+<p><strong>The math shows why:</strong> - At 5% failure probability with 10-minute repairs, you lose 25% of capacity - This costs more than the maintenance to prevent it</p>
+<p><strong>Cost comparison (example):</strong> - Lost production: 15 parts/hour × $50/part × 8 hours = $6,000/day - Preventive maintenance: $500/day - <strong>ROI of PM: 12:1</strong></p>
+<p><strong>Best practices:</strong> 1. Track failure data by station 2. Prioritize PM on high-failure stations 3. Stock critical spare parts 4. Train operators on quick changeover/repair 5. Consider redundant stations for bottlenecks</p>
+</details>
+</section>
+<section id="buffer-sizing" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="buffer-sizing"><span class="header-section-number">3.6.2</span> Buffer Sizing</h3>
+<p>Buffers between stations decouple operations and improve overall line availability.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/buffer-analysis-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Effect of Buffers on Line Availability</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="cellular-manufacturing" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="cellular-manufacturing"><span class="header-section-number">3.7</span> Cellular Manufacturing</h2>
+<p><strong>Cellular manufacturing</strong> applies Group Technology to organize production into cells that specialize in “families” of similar parts.</p>
+<section id="part-families-and-machine-cells" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="part-families-and-machine-cells"><span class="header-section-number">3.7.1</span> Part Families and Machine Cells</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/cellular-concept-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Cellular Manufacturing: From Process Layout to Cells</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Cellular Manufacturing Benefits vs. Traditional Process Layout</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Metric</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Traditional (Process)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Cellular</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Typical Improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Setup time</td>
+<td style="text-align: left;">High - frequent changeovers</td>
+<td style="text-align: left;">Low - dedicated to family</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">50-90% reduction</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Work-in-process</td>
+<td style="text-align: left;">High - batches waiting</td>
+<td style="text-align: left;">Low - continuous flow</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">50-90% reduction</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Lead time</td>
+<td style="text-align: left;">Long - complex routing</td>
+<td style="text-align: left;">Short - U-cell flow</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">50-80% reduction</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Quality defects</td>
+<td style="text-align: left;">Higher - multiple handoffs</td>
+<td style="text-align: left;">Lower - cell ownership</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">30-50% reduction</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Material handling</td>
+<td style="text-align: left;">High - long distances</td>
+<td style="text-align: left;">Low - within cell</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">40-70% reduction</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Floor space</td>
+<td style="text-align: left;">More - large aisles</td>
+<td style="text-align: left;">Less - compact cells</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">20-50% reduction</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Worker skills</td>
+<td style="text-align: left;">Specialized by machine</td>
+<td style="text-align: left;">Cross-trained on cell</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Increased flexibility</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="flexible-manufacturing-systems-fms" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="flexible-manufacturing-systems-fms"><span class="header-section-number">3.8</span> Flexible Manufacturing Systems (FMS)</h2>
+<p>An <strong>FMS</strong> is a highly automated cell consisting of CNC machines interconnected by automated material handling, all controlled by a central computer.</p>
+<section id="fms-components" class="level3" data-number="3.8.1">
+<h3 data-number="3.8.1" class="anchored" data-anchor-id="fms-components"><span class="header-section-number">3.8.1</span> FMS Components</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4, xend = 2.5, y = 2.4, yend = 2.3), linetype = "dotted"): All aesthetics have length 1, but the data has 6 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4, xend = 4, y = 2.4, yend = 2.6), linetype = "dotted"): All aesthetics have length 1, but the data has 6 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4, xend = 5.5, y = 2.4, yend = 2.3), linetype = "dotted"): All aesthetics have length 1, but the data has 6 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 4, xend = 4, y = 1.6, yend = 1.4), linetype = "dotted"): All aesthetics have length 1, but the data has 6 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/fms-components-1.png" class="img-fluid figure-img" width="1056"></p>
+<figcaption>Flexible Manufacturing System Components</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>FMS Characteristics and Applications</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Characteristic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">FMS Capability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Production Volume</td>
+<td style="text-align: left;">Medium (2,000 - 100,000/year per part type)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Part Variety</td>
+<td style="text-align: left;">Medium (4-100 different part types)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Batch Size</td>
+<td style="text-align: left;">Small to medium (1-500 per batch)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Setup Time</td>
+<td style="text-align: left;">Minimal (automatic pallet/fixture changes)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Typical Parts</td>
+<td style="text-align: left;">Prismatic parts (housings, brackets, covers)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Investment</td>
+<td style="text-align: left;">$5M - $50M+ depending on size</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold; background-color: rgba(232, 218, 239, 255) !important;">Best Suited For</td>
+<td style="text-align: left;">Aerospace, automotive components, job shops with repeat parts</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="modern-manufacturing-concepts" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="modern-manufacturing-concepts"><span class="header-section-number">3.9</span> Modern Manufacturing Concepts</h2>
+<section id="smed-single-minute-exchange-of-die" class="level3" data-number="3.9.1">
+<h3 data-number="3.9.1" class="anchored" data-anchor-id="smed-single-minute-exchange-of-die"><span class="header-section-number">3.9.1</span> SMED (Single-Minute Exchange of Die)</h3>
+<p><strong>SMED</strong> is a lean manufacturing technique to reduce changeover time to under 10 minutes (“single digit minutes”).</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>SMED Methodology for Setup Reduction</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Step</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Examples</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Typical Improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">1. Separate</td>
+<td style="text-align: left;">Distinguish internal setup (machine stopped) from external setup (machine running)</td>
+<td style="text-align: left;">Pre-stage tools while machine runs; Pre-heat molds; Prepare fixtures</td>
+<td style="text-align: left;">30-50% reduction</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">2. Convert</td>
+<td style="text-align: left;">Convert as much internal setup to external setup as possible</td>
+<td style="text-align: left;">Use quick-release clamps instead of bolts; Standardize tool heights</td>
+<td style="text-align: left;">Additional 20-30%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold; background-color: rgba(250, 219, 216, 255) !important;">3. Streamline</td>
+<td style="text-align: left;">Reduce time for remaining internal and external activities</td>
+<td style="text-align: left;">Eliminate adjustments; Use one-turn fasteners; Parallel operations with 2 people</td>
+<td style="text-align: left;">Additional 10-20%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Case Study: Injection Molding Changeover
+</summary>
+<p><strong>Before SMED:</strong> - Changeover time: 90 minutes - Machine stopped for entire process - One operator working alone</p>
+<p><strong>After SMED analysis:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 15%">
+<col style="width: 17%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Activity</th>
+<th>Before</th>
+<th>Type</th>
+<th>After</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Find tools</td>
+<td>10 min</td>
+<td>Internal</td>
+<td>0</td>
+<td>External - tools pre-staged</td>
+</tr>
+<tr class="even">
+<td>Remove old mold</td>
+<td>15 min</td>
+<td>Internal</td>
+<td>5 min</td>
+<td>Quick-release clamps</td>
+</tr>
+<tr class="odd">
+<td>Get new mold</td>
+<td>10 min</td>
+<td>Internal</td>
+<td>0</td>
+<td>External - mold pre-staged at machine</td>
+</tr>
+<tr class="even">
+<td>Install new mold</td>
+<td>20 min</td>
+<td>Internal</td>
+<td>8 min</td>
+<td>Standardized mold heights</td>
+</tr>
+<tr class="odd">
+<td>Connect utilities</td>
+<td>10 min</td>
+<td>Internal</td>
+<td>4 min</td>
+<td>Quick-connect fittings</td>
+</tr>
+<tr class="even">
+<td>Adjust settings</td>
+<td>15 min</td>
+<td>Internal</td>
+<td>3 min</td>
+<td>Pre-programmed recipes</td>
+</tr>
+<tr class="odd">
+<td>First article</td>
+<td>10 min</td>
+<td>Internal</td>
+<td>5 min</td>
+<td>Improved documentation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Results:</strong> - Total changeover: 25 minutes (72% reduction) - Additional capacity: +15 changeovers/week possible - Smaller batch sizes now economical</p>
+</details>
+</section>
+<section id="agv-and-amr-systems" class="level3" data-number="3.9.2">
+<h3 data-number="3.9.2" class="anchored" data-anchor-id="agv-and-amr-systems"><span class="header-section-number">3.9.2</span> AGV and AMR Systems</h3>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/7Pq-S557XQU" title="AGV vs AMR Comparison" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
+  </iframe>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>AGV vs. AMR Comparison</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Feature</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">AGV (Automated Guided Vehicle)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">AMR (Autonomous Mobile Robot)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Navigation</td>
+<td style="text-align: left;">Fixed path (wires, magnets, tape)</td>
+<td style="text-align: left;">Dynamic (SLAM, vision, sensors)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Flexibility</td>
+<td style="text-align: left;">Low - follows predetermined routes</td>
+<td style="text-align: left;">High - calculates optimal routes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Infrastructure</td>
+<td style="text-align: left;">Requires installation (floor modifications)</td>
+<td style="text-align: left;">Minimal (maps environment)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Cost</td>
+<td style="text-align: left;">Lower vehicle cost, higher infrastructure</td>
+<td style="text-align: left;">Higher vehicle cost, lower infrastructure</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Path Changes</td>
+<td style="text-align: left;">Requires physical modification</td>
+<td style="text-align: left;">Software update only</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Obstacle Handling</td>
+<td style="text-align: left;">Stops and waits</td>
+<td style="text-align: left;">Navigates around obstacles</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(236, 240, 241, 255) !important;">Best Application</td>
+<td style="text-align: left;">High-volume, repetitive routes</td>
+<td style="text-align: left;">Variable routes, dynamic environments</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="digital-twin" class="level3" data-number="3.9.3">
+<h3 data-number="3.9.3" class="anchored" data-anchor-id="digital-twin"><span class="header-section-number">3.9.3</span> Digital Twin</h3>
+<p>A <strong>digital twin</strong> is a virtual representation of a physical manufacturing system that is updated in real-time with sensor data.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-Integrated-Manufacturing-Systems_files/figure-html/digital-twin-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Digital Twin Concept</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Digital Twin Applications:</strong> - Predictive maintenance (predict failures before they occur) - Process optimization (simulate changes before implementation) - Training (virtual commissioning and operator training) - Quality prediction (correlate parameters with outcomes)</p>
+<hr>
+</section>
+</section>
+<section id="industry-applications" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="industry-applications"><span class="header-section-number">3.10</span> Industry Applications</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Manufacturing System Applications by Industry</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">System Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Automotive</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Food Processing</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Aerospace/Defense</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Transfer Line</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Engine block machining, cylinder head lines</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Beverage bottling, canning lines</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High-volume fastener production</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Manual Assembly</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Final vehicle assembly, interior trim</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Packaging, quality inspection</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Aircraft final assembly, inspection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">FMS</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Transmission components, brake parts</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Multi-product bakery equipment</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Structural component machining</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">Cellular</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Subassemblies, wiring harnesses</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Specialty product lines</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Avionics assembly, repair cells</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold; background-color: rgba(212, 230, 241, 255) !important;">AGV/AMR</td>
+<td style="text-align: left; background-color: rgba(252, 243, 207, 255) !important;">Body shop material delivery, parts sequencing</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Ingredient delivery, packaging transport</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Large assembly transport, tool delivery</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">3.11</span> Review Questions</h2>
+<details>
+<summary>
+Question 1: Takt Time Calculation
+</summary>
+<p><strong>A plant operates 8-hour shifts with 30 minutes of breaks. Daily demand is 400 units. Calculate the takt time.</strong></p>
+<p><strong>Solution:</strong></p>
+<p>Available time = 8 hours × 60 min - 30 min = 450 minutes</p>
+<p>Takt time = 450 min / 400 units = <strong>1.125 minutes per unit</strong> = 67.5 seconds</p>
+<p>If actual cycle time is 60 seconds, the plant has (67.5 - 60)/67.5 = <strong>11% capacity margin</strong>.</p>
+</details>
+<details>
+<summary>
+Question 2: Line Efficiency
+</summary>
+<p><strong>A 6-station assembly line has a cycle time of 2 minutes. The task times at each station are: 1.8, 1.9, 2.0, 1.7, 1.6, and 1.5 minutes. Calculate the line efficiency.</strong></p>
+<p><strong>Solution:</strong></p>
+<p>Total work content = 1.8 + 1.9 + 2.0 + 1.7 + 1.6 + 1.5 = 10.5 minutes</p>
+<p>Line efficiency = (10.5) / (6 × 2.0) × 100% = 10.5/12 × 100% = <strong>87.5%</strong></p>
+<p>Balance delay (idle time) = 100% - 87.5% = <strong>12.5%</strong></p>
+</details>
+<details>
+<summary>
+Question 3: Downtime Impact
+</summary>
+<p><strong>An automated line has 8 stations, each with 3% failure probability per cycle and 8-minute average repair time. The ideal cycle time is 0.5 minutes. What is the actual production rate?</strong></p>
+<p><strong>Solution:</strong></p>
+<p>Line failure probability = 1 - (1 - 0.03)^8 = 1 - 0.97^8 = 1 - 0.784 = <strong>21.6%</strong></p>
+<p>Actual cycle time = 0.5 + (0.216 × 8) = 0.5 + 1.73 = <strong>2.23 minutes</strong></p>
+<p>Actual production rate = 60 / 2.23 = <strong>26.9 parts/hour</strong></p>
+<p>(vs.&nbsp;ideal of 120 parts/hour - only 22% of ideal capacity!)</p>
+<p>This shows why reliability is critical in automated systems.</p>
+</details>
+<details>
+<summary>
+Question 4: FMS Selection
+</summary>
+<p><strong>A company makes 15 different part numbers with annual volumes of 500-5,000 each. Parts are machined from aluminum and require milling, drilling, and tapping. Which system is most appropriate: dedicated transfer line, FMS, or CNC job shop?</strong></p>
+<p><strong>Answer:</strong> <strong>FMS is most appropriate</strong> because:</p>
+<ul>
+<li><strong>Volume range (500-5,000)</strong> is ideal for FMS</li>
+<li><strong>Part variety (15 types)</strong> requires flexibility</li>
+<li><strong>Similar operations</strong> (milling, drilling, tapping) can share equipment</li>
+<li><strong>Material (aluminum)</strong> machines well on CNC</li>
+</ul>
+<p>Transfer line would require too much volume per part. Job shop would have high setup times and low efficiency for these volumes.</p>
+</details>
+<details>
+<summary>
+Question 5: SMED Application
+</summary>
+<p><strong>A stamping press has a 45-minute die change. Internal activities are 35 minutes, external are 10 minutes but currently done with machine stopped. How much can SMED reduce this?</strong></p>
+<p><strong>Answer:</strong></p>
+<p><strong>Step 1 - Separate:</strong> Do the 10 minutes of external work while press runs. - New changeover: 35 minutes (30% reduction)</p>
+<p><strong>Step 2 - Convert:</strong> Analyze the 35 minutes: - If 15 minutes can be converted to external (pre-staging, etc.): New changeover = 20 minutes</p>
+<p><strong>Step 3 - Streamline:</strong> Quick-release clamps, standardization might save another 5 minutes. - Final changeover: <strong>15 minutes (67% reduction)</strong></p>
+<p>This enables smaller batch sizes and more frequent changeovers.</p>
+</details>
+<hr>
+</section>
+<section id="summary" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">3.12</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Chapter 3 Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(26, 82, 118, 255) !important;">Key Points</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Production Lines</td>
+<td style="text-align: left;">Manual, continuous, synchronous, or asynchronous transfer; each has trade-offs</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Time Metrics</td>
+<td style="text-align: left;">Takt time = demand pace; Cycle time = actual pace; MCE measures value-added %</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Line Balancing</td>
+<td style="text-align: left;">Assign tasks to minimize idle time; Efficiency = work content / (stations × cycle time)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Automated Lines</td>
+<td style="text-align: left;">Reliability is critical; Small failure probabilities cause large capacity losses</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Cellular Manufacturing</td>
+<td style="text-align: left;">Group Technology groups part families; Reduces setup, WIP, lead time 50-90%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">FMS</td>
+<td style="text-align: left;">Automated cells for medium variety/volume; Computer-controlled flexibility</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Modern Concepts</td>
+<td style="text-align: left;">SMED for quick changeover; AGV/AMR for material handling; Digital twins for optimization</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="key-takeaways" class="level3" data-number="3.12.1">
+<h3 data-number="3.12.1" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">3.12.1</span> Key Takeaways</h3>
+<ol type="1">
+<li><strong>Match system to product</strong> - Volume and variety determine optimal manufacturing system</li>
+<li><strong>Takt time sets the pace</strong> - Everything should be designed to meet customer demand rate</li>
+<li><strong>Balance matters</strong> - Unbalanced lines waste capacity through idle time</li>
+<li><strong>Reliability is critical</strong> - Small failures compound to large losses in automated systems</li>
+<li><strong>Flexibility has value</strong> - FMS and cellular systems enable quick response to change</li>
+<li><strong>Technology evolves</strong> - Digital twins and AMRs are transforming manufacturing</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="references" class="level2" data-number="3.13">
+<h2 data-number="3.13" class="anchored" data-anchor-id="references"><span class="header-section-number">3.13</span> References</h2>
+<ol type="1">
+<li>Groover, M.P. (2020). <em>Automation, Production Systems, and Computer-Integrated Manufacturing</em> (5th ed.). Pearson.</li>
+<li>Liker, J.K. (2004). <em>The Toyota Way</em>. McGraw-Hill.</li>
+<li>Shingo, S. (1985). <em>A Revolution in Manufacturing: The SMED System</em>. Productivity Press.</li>
+<li>Black, J.T. (1991). <em>The Design of the Factory with a Future</em>. McGraw-Hill.</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./02-Process-and-Design.html" class="pagination-link" aria-label="Process and Design">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./04-Plant-Layout.html" class="pagination-link" aria-label="Plant Layout and Facility Design">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/03-Integrated-Manufacturing-Systems.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

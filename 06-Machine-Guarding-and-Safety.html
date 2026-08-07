@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>6&nbsp; Machine Guarding and Functional Safety – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./07-Ergnomics.html" rel="next">
+<link href="./05-Lean-Manufacturing.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-Machine-Guarding-and-Safety.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">6.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-the-safety-hierarchy" id="toc-introduction-the-safety-hierarchy" class="nav-link" data-scroll-target="#introduction-the-safety-hierarchy"><span class="header-section-number">6.2</span> Introduction: The Safety Hierarchy</a></li>
+  <li><a href="#physical-guarding-and-interlocks" id="toc-physical-guarding-and-interlocks" class="nav-link" data-scroll-target="#physical-guarding-and-interlocks"><span class="header-section-number">6.3</span> Physical Guarding and Interlocks</a>
+  <ul class="collapse">
+  <li><a href="#fixed-guards" id="toc-fixed-guards" class="nav-link" data-scroll-target="#fixed-guards"><span class="header-section-number">6.3.1</span> Fixed Guards</a></li>
+  <li><a href="#interlocked-guards" id="toc-interlocked-guards" class="nav-link" data-scroll-target="#interlocked-guards"><span class="header-section-number">6.3.2</span> Interlocked Guards</a></li>
+  <li><a href="#stop-categories" id="toc-stop-categories" class="nav-link" data-scroll-target="#stop-categories"><span class="header-section-number">6.3.3</span> Stop Categories</a></li>
+  <li><a href="#trapped-key-systems-lock-outtag-out" id="toc-trapped-key-systems-lock-outtag-out" class="nav-link" data-scroll-target="#trapped-key-systems-lock-outtag-out"><span class="header-section-number">6.3.4</span> Trapped Key Systems (Lock-Out/Tag-Out)</a></li>
+  </ul></li>
+  <li><a href="#presence-sensing-devices" id="toc-presence-sensing-devices" class="nav-link" data-scroll-target="#presence-sensing-devices"><span class="header-section-number">6.4</span> Presence-Sensing Devices</a>
+  <ul class="collapse">
+  <li><a href="#light-curtains" id="toc-light-curtains" class="nav-link" data-scroll-target="#light-curtains"><span class="header-section-number">6.4.1</span> Light Curtains</a></li>
+  <li><a href="#laser-area-scanners" id="toc-laser-area-scanners" class="nav-link" data-scroll-target="#laser-area-scanners"><span class="header-section-number">6.4.2</span> Laser Area Scanners</a></li>
+  <li><a href="#pressure-sensitive-safety-mats" id="toc-pressure-sensitive-safety-mats" class="nav-link" data-scroll-target="#pressure-sensitive-safety-mats"><span class="header-section-number">6.4.3</span> Pressure-Sensitive Safety Mats</a></li>
+  </ul></li>
+  <li><a href="#control-actuated-safety-devices" id="toc-control-actuated-safety-devices" class="nav-link" data-scroll-target="#control-actuated-safety-devices"><span class="header-section-number">6.5</span> Control-Actuated Safety Devices</a>
+  <ul class="collapse">
+  <li><a href="#two-hand-controls" id="toc-two-hand-controls" class="nav-link" data-scroll-target="#two-hand-controls"><span class="header-section-number">6.5.1</span> Two-Hand Controls</a></li>
+  <li><a href="#enabledeadman-switches" id="toc-enabledeadman-switches" class="nav-link" data-scroll-target="#enabledeadman-switches"><span class="header-section-number">6.5.2</span> Enable/Deadman Switches</a></li>
+  </ul></li>
+  <li><a href="#collaborative-robotics-cobots" id="toc-collaborative-robotics-cobots" class="nav-link" data-scroll-target="#collaborative-robotics-cobots"><span class="header-section-number">6.6</span> Collaborative Robotics (Cobots)</a>
+  <ul class="collapse">
+  <li><a href="#collaborative-operation-methods" id="toc-collaborative-operation-methods" class="nav-link" data-scroll-target="#collaborative-operation-methods"><span class="header-section-number">6.6.1</span> Collaborative Operation Methods</a></li>
+  <li><a href="#power-and-force-limiting-pfl" id="toc-power-and-force-limiting-pfl" class="nav-link" data-scroll-target="#power-and-force-limiting-pfl"><span class="header-section-number">6.6.2</span> Power and Force Limiting (PFL)</a></li>
+  </ul></li>
+  <li><a href="#safety-distance-calculation" id="toc-safety-distance-calculation" class="nav-link" data-scroll-target="#safety-distance-calculation"><span class="header-section-number">6.7</span> Safety Distance Calculation</a>
+  <ul class="collapse">
+  <li><a href="#the-safety-distance-formula" id="toc-the-safety-distance-formula" class="nav-link" data-scroll-target="#the-safety-distance-formula"><span class="header-section-number">6.7.1</span> The Safety Distance Formula</a></li>
+  <li><a href="#standard-values-for-k" id="toc-standard-values-for-k" class="nav-link" data-scroll-target="#standard-values-for-k"><span class="header-section-number">6.7.2</span> Standard Values for K</a></li>
+  <li><a href="#penetration-depth-c" id="toc-penetration-depth-c" class="nav-link" data-scroll-target="#penetration-depth-c"><span class="header-section-number">6.7.3</span> Penetration Depth (C)</a></li>
+  <li><a href="#example-calculation" id="toc-example-calculation" class="nav-link" data-scroll-target="#example-calculation"><span class="header-section-number">6.7.4</span> Example Calculation</a></li>
+  </ul></li>
+  <li><a href="#emergency-stop-e-stop-systems" id="toc-emergency-stop-e-stop-systems" class="nav-link" data-scroll-target="#emergency-stop-e-stop-systems"><span class="header-section-number">6.8</span> Emergency Stop (E-Stop) Systems</a>
+  <ul class="collapse">
+  <li><a href="#e-stop-pull-cords" id="toc-e-stop-pull-cords" class="nav-link" data-scroll-target="#e-stop-pull-cords"><span class="header-section-number">6.8.1</span> E-Stop Pull Cords</a></li>
+  </ul></li>
+  <li><a href="#functional-safety-standards" id="toc-functional-safety-standards" class="nav-link" data-scroll-target="#functional-safety-standards"><span class="header-section-number">6.9</span> Functional Safety Standards</a>
+  <ul class="collapse">
+  <li><a href="#safety-integrity-levels-sil---iec-62061" id="toc-safety-integrity-levels-sil---iec-62061" class="nav-link" data-scroll-target="#safety-integrity-levels-sil---iec-62061"><span class="header-section-number">6.9.1</span> Safety Integrity Levels (SIL) - IEC 62061</a></li>
+  <li><a href="#performance-levels-pl---iso-13849-1" id="toc-performance-levels-pl---iso-13849-1" class="nav-link" data-scroll-target="#performance-levels-pl---iso-13849-1"><span class="header-section-number">6.9.2</span> Performance Levels (PL) - ISO 13849-1</a></li>
+  </ul></li>
+  <li><a href="#risk-assessment-process" id="toc-risk-assessment-process" class="nav-link" data-scroll-target="#risk-assessment-process"><span class="header-section-number">6.10</span> Risk Assessment Process</a>
+  <ul class="collapse">
+  <li><a href="#risk-estimation" id="toc-risk-estimation" class="nav-link" data-scroll-target="#risk-estimation"><span class="header-section-number">6.10.1</span> Risk Estimation</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">6.11</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">6.12</span> Review Questions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">6.13</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/06-Machine-Guarding-and-Safety.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">6.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Apply the Hierarchy of Controls to manufacturing safety design</li>
+<li>Identify and specify appropriate physical guarding and interlock systems</li>
+<li>Select and position presence-sensing devices (light curtains, area scanners)</li>
+<li>Calculate safety distances for protective device placement</li>
+<li>Understand collaborative robot safety requirements</li>
+<li>Design emergency stop systems according to standards</li>
+<li>Differentiate between safety integrity levels (SIL) and performance levels (PL)</li>
+</ul>
+<blockquote class="blockquote">
+<p>“Safety isn’t expensive, it’s priceless.” — Anonymous</p>
+</blockquote>
+<hr>
+</section>
+<section id="introduction-the-safety-hierarchy" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="introduction-the-safety-hierarchy"><span class="header-section-number">6.2</span> Introduction: The Safety Hierarchy</h2>
+<p>In process engineering, safety is not merely a feature added at the end of a project; it is a <strong>fundamental design constraint</strong>. Before deploying safety devices, the engineer must apply the <strong>Hierarchy of Controls</strong> — a systematic approach to eliminating or reducing workplace hazards.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/hierarchy-controls-viz-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>The Hierarchy of Controls (Most to Least Effective)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Hierarchy of Controls: Detailed Breakdown</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Priority</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Control Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Example</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Effectiveness</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important; width: 5em; font-weight: bold;">1</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">**Elimination**</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Physically remove the hazard entirely</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Eliminate pinch point by redesigning mechanism</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Most Effective</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important; width: 5em; font-weight: bold;">2</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">**Substitution**</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Replace with something less hazardous</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Use lower voltage (24V DC instead of 120V AC)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Very Effective</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important; width: 5em; font-weight: bold;">3</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">**Engineering Controls**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Isolate people from the hazard through design</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Install machine guarding, light curtains, interlocks</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Effective</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(254, 249, 231, 255) !important; width: 5em; font-weight: bold;">4</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">**Administrative Controls**</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Change the way people work</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Safety procedures, training, warning signs, lock-out/tag-out</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Less Effective</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important; width: 5em; font-weight: bold;">5</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">**PPE**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Protect the worker with equipment</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Safety glasses, gloves, steel-toe boots, hearing protection</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Least Effective</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Why not just rely on PPE?
+</summary>
+<p><strong>PPE (Personal Protective Equipment)</strong> is the least effective control because:</p>
+<ol type="1">
+<li><strong>It doesn’t eliminate the hazard</strong> — the danger still exists</li>
+<li><strong>It depends on human compliance</strong> — workers may forget or choose not to wear it</li>
+<li><strong>It can fail</strong> — equipment degrades, doesn’t fit properly, or is damaged</li>
+<li><strong>It’s the last line of defense</strong> — if PPE fails, the worker is exposed</li>
+</ol>
+<p><strong>Key Principle:</strong> The more we can design out hazards through engineering controls, the less we depend on human behavior to keep people safe.</p>
+<blockquote class="blockquote">
+<p>“If you have to post a warning sign, you’ve already failed at design.”</p>
+</blockquote>
+</details>
+<hr>
+</section>
+<section id="physical-guarding-and-interlocks" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="physical-guarding-and-interlocks"><span class="header-section-number">6.3</span> Physical Guarding and Interlocks</h2>
+<p>Physical barriers are the most intuitive form of protection. They create a “hard” separation between the operator and moving parts, ensuring that humans cannot enter the danger zone during machine operation.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/guarding-types-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Types of Physical Guarding</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="fixed-guards" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="fixed-guards"><span class="header-section-number">6.3.1</span> Fixed Guards</h3>
+<p><strong>Fixed guards</strong> are permanent barriers that require tools to remove. They are the simplest and most reliable form of protection.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Fixed Guards: Key Characteristics</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Characteristic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Construction</td>
+<td style="text-align: left;">Wire mesh, polycarbonate sheets, or solid metal panels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Removal</td>
+<td style="text-align: left;">Requires tools (screws, bolts) to remove</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Best Application</td>
+<td style="text-align: left;">Areas that need infrequent access for maintenance only</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Advantages</td>
+<td style="text-align: left;">Simple, reliable, low cost, no moving parts to fail</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Disadvantages</td>
+<td style="text-align: left;">Impedes visibility, slows maintenance, can be removed and not replaced</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="interlocked-guards" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="interlocked-guards"><span class="header-section-number">6.3.2</span> Interlocked Guards</h3>
+<p><strong>Interlocked guards</strong> are access points equipped with sensors. When the guard is opened, the safety controller initiates a stop.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/interlock-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Interlocked Guard Operation Principle</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="stop-categories" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="stop-categories"><span class="header-section-number">6.3.3</span> Stop Categories</h3>
+<p>When an interlock is triggered, the machine must stop. The <strong>stop category</strong> determines how this happens:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Machine Stop Categories (IEC 60204-1)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Category</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Method</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Application</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">**Category 0**</td>
+<td style="text-align: left;">Uncontrolled Stop</td>
+<td style="text-align: left;">Immediate removal of power to actuators</td>
+<td style="text-align: left;">Emergency stops, dangerous machines</td>
+<td style="text-align: left;">Press brake E-stop</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">**Category 1**</td>
+<td style="text-align: left;">Controlled Stop</td>
+<td style="text-align: left;">Controlled deceleration, then power removed</td>
+<td style="text-align: left;">High-inertia machines, robots</td>
+<td style="text-align: left;">Industrial robot guard open</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">**Category 2**</td>
+<td style="text-align: left;">Controlled Stop</td>
+<td style="text-align: left;">Controlled stop with power maintained</td>
+<td style="text-align: left;">Process that cannot be interrupted abruptly</td>
+<td style="text-align: left;">CNC spindle during tool change</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="trapped-key-systems-lock-outtag-out" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="trapped-key-systems-lock-outtag-out"><span class="header-section-number">6.3.4</span> Trapped Key Systems (Lock-Out/Tag-Out)</h3>
+<p><strong>Trapped key systems</strong> use a mechanical sequence to ensure that a machine cannot be energized unless all access keys are returned to the control panel.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/loto-sequence-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Trapped Key System Sequence</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Case Study: The Fatal Bypass
+</summary>
+<p><strong>Incident:</strong> A maintenance worker was killed when a robot arm unexpectedly activated while he was inside a robotic cell.</p>
+<p><strong>What Happened:</strong> - The guard interlock had been bypassed with a “defeat device” (a magnet taped to fool the sensor) - Workers had bypassed the interlock because it slowed down troubleshooting - The bypass had been in place for months without management knowledge</p>
+<p><strong>Root Causes:</strong> 1. Interlock caused inconvenience during frequent troubleshooting 2. No monitoring system to detect bypasses 3. Culture that tolerated “workarounds”</p>
+<p><strong>Lessons Learned:</strong> - Design interlocks that don’t impede normal operations - Use tamper-evident or tamper-resistant devices - Regular safety audits to detect bypasses - Zero-tolerance policy for defeating safety devices</p>
+<blockquote class="blockquote">
+<p><strong>Never bypass a safety device, even temporarily.</strong></p>
+</blockquote>
+</details>
+<hr>
+</section>
+</section>
+<section id="presence-sensing-devices" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="presence-sensing-devices"><span class="header-section-number">6.4</span> Presence-Sensing Devices</h2>
+<p>Presence-sensing devices allow for a <strong>“fence-less” environment</strong>, improving visibility and ergonomics while maintaining high safety levels. They detect when a person enters a hazardous zone and trigger a machine stop.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/presence-sensing-overview-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Types of Presence-Sensing Devices</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="light-curtains" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="light-curtains"><span class="header-section-number">6.4.1</span> Light Curtains</h3>
+<p><strong>Light curtains</strong> use a transmitter and receiver to create an array of infrared beams. If any beam is broken, the safety circuit is interrupted.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/light-curtain-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Light Curtain Operating Principle</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Light Curtain Specifications by Application</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 255) !important;">Parameter</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 255) !important;">Finger Detection (14mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 255) !important;">Hand Detection (30mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 255) !important;">Body Detection (40mm+)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Resolution</td>
+<td style="text-align: left;">14mm beam spacing</td>
+<td style="text-align: left;">30mm beam spacing</td>
+<td style="text-align: left;">40mm+ beam spacing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Height</td>
+<td style="text-align: left;">150-1800mm</td>
+<td style="text-align: left;">300-1800mm</td>
+<td style="text-align: left;">900-2000mm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Range</td>
+<td style="text-align: left;">0.5-20m</td>
+<td style="text-align: left;">0.5-20m</td>
+<td style="text-align: left;">0.5-30m</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Response Time</td>
+<td style="text-align: left;">5-15ms</td>
+<td style="text-align: left;">10-20ms</td>
+<td style="text-align: left;">15-30ms</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Application</td>
+<td style="text-align: left;">Point of operation guarding</td>
+<td style="text-align: left;">Perimeter guarding</td>
+<td style="text-align: left;">Area access detection</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="laser-area-scanners" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="laser-area-scanners"><span class="header-section-number">6.4.2</span> Laser Area Scanners</h3>
+<p><strong>Laser area scanners</strong> use LiDAR technology to monitor a 2D plane. They are highly flexible and allow for programmable zones.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/area-scanner-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Laser Area Scanner Zones</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Light Curtains vs. Area Scanners</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Feature</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Light Curtains</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Area Scanners</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Detection Type</td>
+<td style="text-align: left;">Vertical/Linear Barrier</td>
+<td style="text-align: left;">Horizontal/Area Coverage</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Flexibility</td>
+<td style="text-align: left;">Fixed installation</td>
+<td style="text-align: left;">Programmable zones</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Zone Configuration</td>
+<td style="text-align: left;">Single detection plane</td>
+<td style="text-align: left;">Multiple warning + safety zones</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Cost</td>
+<td style="text-align: left;">Generally lower ($1,000-5,000)</td>
+<td style="text-align: left;">Higher ($3,000-10,000)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Best Use Case</td>
+<td style="text-align: left;">Clear entry/exit points, press brakes</td>
+<td style="text-align: left;">Large open floors, AGV paths, flexible cells</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Environmental Limits</td>
+<td style="text-align: left;">Dust/debris can cause false trips</td>
+<td style="text-align: left;">More tolerant of dust, outdoor rated available</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="pressure-sensitive-safety-mats" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="pressure-sensitive-safety-mats"><span class="header-section-number">6.4.3</span> Pressure-Sensitive Safety Mats</h3>
+<p><strong>Pressure-sensitive mats</strong> detect the presence of a person standing on them. They are used primarily in legacy systems or specific zones where optical sensors may be obscured.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/pressure-mat-diagram-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Pressure-Sensitive Safety Mat Construction</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+When to Use Pressure Mats vs.&nbsp;Optical Sensors
+</summary>
+<p><strong>Use Pressure Mats When:</strong> - Environment has heavy dust, smoke, or steam (blinds optical sensors) - Detection area is well-defined and doesn’t change - Workers need to stand in a specific location - Budget is limited</p>
+<p><strong>Use Optical Sensors When:</strong> - Flexibility in zone configuration is needed - Environment is relatively clean - Detection area is large or needs to change - Higher integrity level is required</p>
+<p><strong>Hybrid Approach:</strong> Many modern systems use both — area scanners for perimeter protection and pressure mats for specific danger zones near the machine.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="control-actuated-safety-devices" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="control-actuated-safety-devices"><span class="header-section-number">6.5</span> Control-Actuated Safety Devices</h2>
+<p>These devices ensure that the operator’s body—specifically their hands—is in a predetermined <strong>safe location</strong> before the machine can cycle.</p>
+<section id="two-hand-controls" class="level3" data-number="6.5.1">
+<h3 data-number="6.5.1" class="anchored" data-anchor-id="two-hand-controls"><span class="header-section-number">6.5.1</span> Two-Hand Controls</h3>
+<p><strong>Two-hand controls</strong> are common in pressing or stamping operations. To initiate a cycle, the operator must press two buttons simultaneously.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/two-hand-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Two-Hand Control System</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Anti-Tie-Down Requirement:</strong> Modern systems require both buttons to be pressed within <strong>0.5 seconds</strong> of each other. This prevents operators from taping one button down to work with one hand.</p>
+</blockquote>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Two-Hand Control Requirements</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Requirement</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Standard Value</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Synchronous activation</td>
+<td style="text-align: left;">Within 0.5 seconds</td>
+<td style="text-align: left;">Prevents one-hand operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Continuous pressure</td>
+<td style="text-align: left;">Must be held throughout cycle</td>
+<td style="text-align: left;">Ensures hands stay on controls</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Release before restart</td>
+<td style="text-align: left;">Both must be released before next cycle</td>
+<td style="text-align: left;">Prevents automatic cycling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Button spacing</td>
+<td style="text-align: left;">Minimum 260mm (10 inches) apart</td>
+<td style="text-align: left;">Cannot press both with one hand/arm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Guards around buttons</td>
+<td style="text-align: left;">Prevent accidental activation</td>
+<td style="text-align: left;">Prevents hip, elbow, or object activation</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="enabledeadman-switches" class="level3" data-number="6.5.2">
+<h3 data-number="6.5.2" class="anchored" data-anchor-id="enabledeadman-switches"><span class="header-section-number">6.5.2</span> Enable/Deadman Switches</h3>
+<p><strong>Enable switches</strong> (also called deadman switches) are used during <strong>Teach Mode</strong> for robotics. The operator must hold a three-position trigger in the <strong>middle</strong> position.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/enable-switch-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Three-Position Enable Switch Operation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Why Three Positions?
+</summary>
+<p>The three-position design accounts for <strong>two natural human reactions</strong> to danger:</p>
+<ol type="1">
+<li><strong>Panic (Release):</strong> When frightened, people often release what they’re holding — robot stops.</li>
+<li><strong>Startle (Squeeze):</strong> When startled, people often grip tighter — robot stops.</li>
+</ol>
+<p>Only a deliberate, controlled <strong>middle hold</strong> allows the robot to move. This is fundamental to safe teach pendant operation.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="collaborative-robotics-cobots" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="collaborative-robotics-cobots"><span class="header-section-number">6.6</span> Collaborative Robotics (Cobots)</h2>
+<p><strong>Collaborative robots (cobots)</strong> represent a shift from “separation” to “collaboration.” They rely on sophisticated internal sensors rather than external cages, allowing humans and robots to work in the same space.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/cobot-comparison-guarding-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Traditional Robot vs.&nbsp;Collaborative Robot</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="collaborative-operation-methods" class="level3" data-number="6.6.1">
+<h3 data-number="6.6.1" class="anchored" data-anchor-id="collaborative-operation-methods"><span class="header-section-number">6.6.1</span> Collaborative Operation Methods</h3>
+<p>ISO 10218 and ISO/TS 15066 define <strong>four methods</strong> for safe collaborative operation:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Four Methods of Collaborative Robot Operation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 255) !important;">Method</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 255) !important;">How It Works</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 255) !important;">Sensors Used</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 255) !important;">Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Safety-Rated Monitored Stop**</td>
+<td style="text-align: left;">Robot stops when human enters workspace, resumes when clear</td>
+<td style="text-align: left;">Area scanners, light curtains</td>
+<td style="text-align: left;">Large robot needing occasional access</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Hand Guiding**</td>
+<td style="text-align: left;">Operator physically guides robot through motions</td>
+<td style="text-align: left;">Force/torque sensors in joints</td>
+<td style="text-align: left;">Teaching, positioning</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Speed and Separation Monitoring**</td>
+<td style="text-align: left;">Robot slows or stops based on human proximity</td>
+<td style="text-align: left;">Area scanners, radar, cameras</td>
+<td style="text-align: left;">Shared workspace with varying proximity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Power and Force Limiting**</td>
+<td style="text-align: left;">Robot limits force/power to safe levels on contact</td>
+<td style="text-align: left;">Joint torque sensors</td>
+<td style="text-align: left;">Direct contact applications</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="power-and-force-limiting-pfl" class="level3" data-number="6.6.2">
+<h3 data-number="6.6.2" class="anchored" data-anchor-id="power-and-force-limiting-pfl"><span class="header-section-number">6.6.2</span> Power and Force Limiting (PFL)</h3>
+<p>The most common cobot safety method is <strong>Power and Force Limiting</strong>. The robot detects a change in torque in its joints. If it bumps into a human, it stops before a regulated amount of force is exceeded.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>ISO/TS 15066 Biomechanical Limits (Quasi-static contact)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Body Region</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Maximum Pressure (N/cm²)</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Maximum Force (N)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Risk Level</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important; width: 12em; font-weight: bold;">Skull/Forehead</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important;">130</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important;">130</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Critical</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important; width: 12em; font-weight: bold;">Face</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important;">65</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important;">65</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Critical</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important; width: 12em; font-weight: bold;">Neck</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important;">145</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important;">150</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Critical</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Back/Shoulders</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Chest</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Abdomen</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Hand/Fingers</td>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: left;">Lower</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Are Cobots Always Safe?
+</summary>
+<p><strong>Common Misconception:</strong> “Cobots are safe, so we don’t need to do a risk assessment.”</p>
+<p><strong>Reality:</strong> Cobots are <em>potentially</em> safe, but a <strong>risk assessment is always required</strong>.</p>
+<p><strong>Factors that can make a cobot unsafe:</strong></p>
+<ol type="1">
+<li><strong>End-of-arm tooling</strong> — A soft gripper is different from a sharp blade</li>
+<li><strong>Workpiece</strong> — Carrying a heavy or sharp object increases risk</li>
+<li><strong>Speed</strong> — Even force-limited robots can cause injury at high speed</li>
+<li><strong>Application</strong> — Some tasks bring humans closer to hazards</li>
+<li><strong>Environment</strong> — Slippery floors, confined spaces, etc.</li>
+</ol>
+<blockquote class="blockquote">
+<p><strong>Every collaborative application requires a documented risk assessment per ISO 12100.</strong></p>
+</blockquote>
+</details>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/u48fm391FGk" title="Collaborative Robot Safety Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+  </iframe>
+</div>
+<hr>
+</section>
+</section>
+<section id="safety-distance-calculation" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="safety-distance-calculation"><span class="header-section-number">6.7</span> Safety Distance Calculation</h2>
+<p>A safety device cannot be placed arbitrarily. It must be far enough away that the machine comes to a <strong>complete halt</strong> before the human can reach the hazard.</p>
+<section id="the-safety-distance-formula" class="level3" data-number="6.7.1">
+<h3 data-number="6.7.1" class="anchored" data-anchor-id="the-safety-distance-formula"><span class="header-section-number">6.7.1</span> The Safety Distance Formula</h3>
+<p>The minimum safety distance <span class="math inline">\(S\)</span> is calculated as:</p>
+<p><span class="math display">\[S = (K \times T) + C\]</span></p>
+<p>Where:</p>
+<ul>
+<li><strong><span class="math inline">\(K\)</span></strong>: The hand/body approach speed (standardized values)</li>
+<li><strong><span class="math inline">\(T\)</span></strong>: The total stopping time of the system (device response + machine stop time)</li>
+<li><strong><span class="math inline">\(C\)</span></strong>: The “penetration depth” (how far a hand can reach through before being detected)</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/safety-distance-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Safety Distance Components</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="standard-values-for-k" class="level3" data-number="6.7.2">
+<h3 data-number="6.7.2" class="anchored" data-anchor-id="standard-values-for-k"><span class="header-section-number">6.7.2</span> Standard Values for K</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Standard Approach Speed Values (ISO 13855)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Approach Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">K Value (mm/s)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">Hand/Arm Approach (fast)</td>
+<td style="text-align: left;">2000</td>
+<td style="text-align: left;">Close approach to point of operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">Hand/Arm Approach (normal)</td>
+<td style="text-align: left;">1600</td>
+<td style="text-align: left;">General approach to machines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">Walking Approach</td>
+<td style="text-align: left;">1600</td>
+<td style="text-align: left;">Area access detection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">Standing Reach</td>
+<td style="text-align: left;">0 (static)</td>
+<td style="text-align: left;">Worker already in position</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="penetration-depth-c" class="level3" data-number="6.7.3">
+<h3 data-number="6.7.3" class="anchored" data-anchor-id="penetration-depth-c"><span class="header-section-number">6.7.3</span> Penetration Depth (C)</h3>
+<p>The penetration depth depends on the <strong>resolution</strong> of the sensing device:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Penetration Depth Values Based on Resolution</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Resolution (mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">C Value (mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Detection Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">≤14</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Finger detection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;14 to ≤20</td>
+<td style="text-align: left;">80</td>
+<td style="text-align: left;">Finger/Hand</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt;20 to ≤30</td>
+<td style="text-align: left;">130</td>
+<td style="text-align: left;">Hand detection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;30 to ≤40</td>
+<td style="text-align: left;">240</td>
+<td style="text-align: left;">Hand/Arm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt;40</td>
+<td style="text-align: left;">850</td>
+<td style="text-align: left;">Body detection</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="example-calculation" class="level3" data-number="6.7.4">
+<h3 data-number="6.7.4" class="anchored" data-anchor-id="example-calculation"><span class="header-section-number">6.7.4</span> Example Calculation</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Given parameters</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">2000</span>        <span class="co"># Approach speed (mm/s) - fast hand approach</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>T_device <span class="ot">&lt;-</span> <span class="fl">0.020</span>  <span class="co"># Light curtain response time (20 ms = 0.020 s)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>T_machine <span class="ot">&lt;-</span> <span class="fl">0.150</span> <span class="co"># Machine stopping time (150 ms = 0.150 s)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="dv">0</span>           <span class="co"># Penetration depth for 14mm resolution</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate total stopping time</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>T_total <span class="ot">&lt;-</span> T_device <span class="sc">+</span> T_machine</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total stopping time (T):"</span>, T_total <span class="sc">*</span> <span class="dv">1000</span>, <span class="st">"ms</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total stopping time (T): 170 ms</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate minimum safety distance</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> (K <span class="sc">*</span> T_total) <span class="sc">+</span> C</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Minimum safety distance (S):"</span>, S, <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Minimum safety distance (S): 340 mm</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Minimum safety distance (S):"</span>, S <span class="sc">/</span> <span class="fl">25.4</span>, <span class="st">"inches</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Minimum safety distance (S): 13.38583 inches</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Interpretation ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Interpretation ---</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The light curtain must be at least"</span>, S, <span class="st">"mm from the hazard.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The light curtain must be at least 340 mm from the hazard.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This ensures the machine stops before a person can reach the danger zone.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This ensures the machine stops before a person can reach the danger zone.</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Practice Problem: Calculate Safety Distance
+</summary>
+<p><strong>Given:</strong> - Light curtain resolution: 30mm (hand detection) - Light curtain response time: 15ms - Machine stopping time: 200ms - Application: Operator hand approach</p>
+<p><strong>Calculate the minimum safety distance.</strong></p>
+<p><strong>Solution:</strong></p>
+<pre><code>K = 1600 mm/s (normal hand approach)
+T = 0.015 + 0.200 = 0.215 seconds
+C = 130 mm (for 30mm resolution)
+
+S = (K × T) + C
+S = (1600 × 0.215) + 130
+S = 344 + 130
+S = 474 mm (approximately 18.7 inches)</code></pre>
+<p>The light curtain must be installed at least <strong>474mm</strong> from the nearest hazard point.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="emergency-stop-e-stop-systems" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="emergency-stop-e-stop-systems"><span class="header-section-number">6.8</span> Emergency Stop (E-Stop) Systems</h2>
+<p>The <strong>Emergency Stop</strong> is the “last resort” — it is not a safety device but a <strong>complementary protective measure</strong>. It must be available to stop the machine when all other measures have failed.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/estop-design-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>E-Stop Design Requirements</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>E-Stop Requirements per IEC 60204-1</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Requirement</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Standard</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Color</td>
+<td style="text-align: left;">Red (RAL 3000 or equivalent)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Shape</td>
+<td style="text-align: left;">Mushroom head (palm or fist operated)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Background</td>
+<td style="text-align: left;">Yellow (high contrast)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Operation</td>
+<td style="text-align: left;">Self-latching (stays activated when pressed)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Reset</td>
+<td style="text-align: left;">Manual reset required (twist, pull, or key)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Accessibility</td>
+<td style="text-align: left;">Within easy reach of all operators</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Wiring</td>
+<td style="text-align: left;">Normally closed contacts (fail-safe)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Function</td>
+<td style="text-align: left;">Category 0 or Category 1 stop</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="e-stop-pull-cords" class="level3" data-number="6.8.1">
+<h3 data-number="6.8.1" class="anchored" data-anchor-id="e-stop-pull-cords"><span class="header-section-number">6.8.1</span> E-Stop Pull Cords</h3>
+<p>For long conveyors or machines where an operator cannot quickly reach a fixed button, <strong>pull cords</strong> provide continuous E-Stop coverage.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/pull-cord-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>E-Stop Pull Cord System</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Common E-Stop Mistakes
+</summary>
+<p><strong>Mistake 1: Using E-Stop for normal stopping</strong> - E-Stops are for emergencies only - Normal stops should use a separate control - Frequent E-Stop use causes wear and desensitizes operators</p>
+<p><strong>Mistake 2: E-Stop that doesn’t stop everything</strong> - All hazardous motion must stop - Auxiliary equipment (conveyors, feeders) often forgotten - Review entire system, not just the primary machine</p>
+<p><strong>Mistake 3: Automatic restart after E-Stop reset</strong> - Machine must NOT automatically restart when E-Stop is released - Separate “Start” action required - This prevents unexpected motion after reset</p>
+<p><strong>Mistake 4: Hidden or blocked E-Stops</strong> - E-Stops must be visible and accessible - Guard placement sometimes blocks access - Regular audits needed to ensure accessibility</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="functional-safety-standards" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="functional-safety-standards"><span class="header-section-number">6.9</span> Functional Safety Standards</h2>
+<p>Modern safety systems must meet specific <strong>performance levels</strong> to ensure reliability. Two main frameworks exist:</p>
+<section id="safety-integrity-levels-sil---iec-62061" class="level3" data-number="6.9.1">
+<h3 data-number="6.9.1" class="anchored" data-anchor-id="safety-integrity-levels-sil---iec-62061"><span class="header-section-number">6.9.1</span> Safety Integrity Levels (SIL) - IEC 62061</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Safety Integrity Levels (PFH = Probability of Dangerous Failure per Hour)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">SIL Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">PFH Range</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Approximate Meaning</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Typical Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; font-weight: bold;">SIL 1</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">≥10⁻⁶ to &lt;10⁻⁵</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Dangerous failure less than once per 11 years</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Low-risk tasks</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important; font-weight: bold;">SIL 2</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">≥10⁻⁷ to &lt;10⁻⁶</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Dangerous failure less than once per 114 years</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Most industrial machinery</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important; font-weight: bold;">SIL 3</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">≥10⁻⁸ to &lt;10⁻⁷</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Dangerous failure less than once per 1,140 years</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">High-risk processes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="performance-levels-pl---iso-13849-1" class="level3" data-number="6.9.2">
+<h3 data-number="6.9.2" class="anchored" data-anchor-id="performance-levels-pl---iso-13849-1"><span class="header-section-number">6.9.2</span> Performance Levels (PL) - ISO 13849-1</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Performance Levels per ISO 13849-1</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Performance Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">PFH Range</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Risk Reduction</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Equivalent SIL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">PL a</td>
+<td style="text-align: left;">≥10⁻⁵ to &lt;10⁻⁴</td>
+<td style="text-align: left;">Lowest</td>
+<td style="text-align: left;">&lt; SIL 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">PL b</td>
+<td style="text-align: left;">≥3×10⁻⁶ to &lt;10⁻⁵</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">SIL 1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">PL c</td>
+<td style="text-align: left;">≥10⁻⁶ to &lt;3×10⁻⁶</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">SIL 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">PL d</td>
+<td style="text-align: left;">≥10⁻⁷ to &lt;10⁻⁶</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">SIL 2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">PL e</td>
+<td style="text-align: left;">≥10⁻⁸ to &lt;10⁻⁷</td>
+<td style="text-align: left;">Highest</td>
+<td style="text-align: left;">SIL 3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/sil-pl-relationship-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Relationship Between SIL and PL</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Which Standard to Use: SIL or PL?
+</summary>
+<p><strong>Use ISO 13849-1 (Performance Levels) when:</strong> - Designing safety functions for standard machinery - Using off-the-shelf safety components - Simpler systems with well-defined safety functions</p>
+<p><strong>Use IEC 62061 (SIL) when:</strong> - Complex programmable systems (safety PLCs) - Process industries - When customer or regulation specifies SIL</p>
+<p><strong>Note:</strong> Many modern systems use both standards, as they are harmonized and can be used together. The choice often depends on industry practice and customer requirements.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="risk-assessment-process" class="level2" data-number="6.10">
+<h2 data-number="6.10" class="anchored" data-anchor-id="risk-assessment-process"><span class="header-section-number">6.10</span> Risk Assessment Process</h2>
+<p>Before selecting any safety device, a <strong>risk assessment</strong> must be performed. This is required by ISO 12100.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/risk-assessment-process-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Risk Assessment Process (ISO 12100)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="risk-estimation" class="level3" data-number="6.10.1">
+<h3 data-number="6.10.1" class="anchored" data-anchor-id="risk-estimation"><span class="header-section-number">6.10.1</span> Risk Estimation</h3>
+<p>Risk is typically estimated using three factors:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="06-Machine-Guarding-and-Safety_files/figure-html/risk-matrix-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Risk Estimation Matrix</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="6.11">
+<h2 data-number="6.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">6.11</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Machine Guarding and Safety: Key Concepts Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Key Points</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Critical Remember</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em;">**Hierarchy of Controls**</td>
+<td style="text-align: left;">Elimination &gt; Substitution &gt; Engineering &gt; Administrative &gt; PPE</td>
+<td style="text-align: left;">Always start at the top of the hierarchy</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;">**Physical Guarding**</td>
+<td style="text-align: left;">Fixed guards, interlocked gates, trapped key systems</td>
+<td style="text-align: left;">Stop category (0, 1, 2) determines how machine stops</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em;">**Presence Sensing**</td>
+<td style="text-align: left;">Light curtains, area scanners, pressure mats</td>
+<td style="text-align: left;">Resolution determines detection capability</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;">**Control-Actuated Devices**</td>
+<td style="text-align: left;">Two-hand controls, enable/deadman switches</td>
+<td style="text-align: left;">Anti-tie-down prevents one-hand bypass</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em;">**Collaborative Robots**</td>
+<td style="text-align: left;">PFL, speed/separation monitoring, hand guiding</td>
+<td style="text-align: left;">Risk assessment required for every cobot application</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;">**Safety Distance**</td>
+<td style="text-align: left;">S = (K × T) + C formula for device placement</td>
+<td style="text-align: left;">Include device response AND machine stop time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em;">**E-Stop Systems**</td>
+<td style="text-align: left;">Red mushroom on yellow, self-latching, manual reset</td>
+<td style="text-align: left;">E-Stop is last resort, not normal operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;">**Functional Safety**</td>
+<td style="text-align: left;">SIL (IEC 62061) and PL (ISO 13849-1) standards</td>
+<td style="text-align: left;">Required performance level from risk assessment</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="6.12">
+<h2 data-number="6.12" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">6.12</span> Review Questions</h2>
+<details>
+<summary>
+Question 1: What are the five levels of the Hierarchy of Controls, and why is PPE the least effective?
+</summary>
+<p>The five levels are (from most to least effective):</p>
+<ol type="1">
+<li><strong>Elimination</strong> — Physically remove the hazard</li>
+<li><strong>Substitution</strong> — Replace with something less hazardous</li>
+<li><strong>Engineering Controls</strong> — Isolate people from the hazard</li>
+<li><strong>Administrative Controls</strong> — Change how people work</li>
+<li><strong>PPE</strong> — Protect the worker with equipment</li>
+</ol>
+<p><strong>PPE is least effective because:</strong> - The hazard still exists - It depends on human compliance - Equipment can fail or be worn incorrectly - It’s the last line of defense</p>
+</details>
+<details>
+<summary>
+Question 2: A light curtain has a response time of 12ms and resolution of 14mm. The machine takes 180ms to stop. Calculate the minimum safety distance for hand approach.
+</summary>
+<p><strong>Given:</strong> - K = 2000 mm/s (hand approach, use higher value for safety) - T = 0.012 + 0.180 = 0.192 seconds - C = 0 mm (14mm resolution)</p>
+<p><strong>Calculation:</strong> <span class="math display">\[S = (K \times T) + C\]</span> <span class="math display">\[S = (2000 \times 0.192) + 0\]</span> <span class="math display">\[S = 384 \text{ mm}\]</span></p>
+<p>The light curtain must be installed at least <strong>384mm</strong> (approximately 15 inches) from the hazard.</p>
+</details>
+<details>
+<summary>
+Question 3: Explain why a three-position enable switch stops the robot in both position 1 (released) and position 3 (fully pressed).
+</summary>
+<p>The three-position design accounts for two natural human reactions to danger:</p>
+<p><strong>Position 1 (Released):</strong> - When frightened, people often release what they’re holding (panic response) - Robot stops immediately</p>
+<p><strong>Position 3 (Fully Pressed):</strong> - When startled, people often grip tighter (startle response) - Robot stops immediately</p>
+<p><strong>Position 2 (Middle):</strong> - Only a deliberate, controlled hold allows operation - Requires conscious effort to maintain - This ensures the operator is alert and in control</p>
+</details>
+<details>
+<summary>
+Question 4: What are the four methods of collaborative robot operation according to ISO 10218?
+</summary>
+<ol type="1">
+<li><strong>Safety-Rated Monitored Stop</strong>
+<ul>
+<li>Robot stops when human enters workspace</li>
+<li>Resumes when human leaves</li>
+<li>Uses area scanners or light curtains</li>
+</ul></li>
+<li><strong>Hand Guiding</strong>
+<ul>
+<li>Operator physically guides robot</li>
+<li>Force/torque sensors enable safe teaching</li>
+</ul></li>
+<li><strong>Speed and Separation Monitoring</strong>
+<ul>
+<li>Robot speed varies based on human proximity</li>
+<li>Uses external sensors to track human position</li>
+</ul></li>
+<li><strong>Power and Force Limiting (PFL)</strong>
+<ul>
+<li>Robot limits contact force to safe levels</li>
+<li>Built-in joint torque sensors</li>
+<li>Most common cobot method</li>
+</ul></li>
+</ol>
+</details>
+<details>
+<summary>
+Question 5: What are the requirements for an E-Stop button according to IEC 60204-1?
+</summary>
+<p><strong>Physical Requirements:</strong> - <strong>Color:</strong> Red - <strong>Shape:</strong> Mushroom head (palm or fist operated) - <strong>Background:</strong> Yellow (high contrast)</p>
+<p><strong>Functional Requirements:</strong> - <strong>Self-latching:</strong> Stays activated when pressed - <strong>Manual reset:</strong> Requires deliberate action to release - <strong>Accessibility:</strong> Within easy reach of all operators - <strong>Wiring:</strong> Normally closed contacts (fail-safe) - <strong>Function:</strong> Category 0 or Category 1 stop - <strong>No automatic restart:</strong> Separate start action required after reset</p>
+</details>
+<hr>
+</section>
+<section id="references" class="level2" data-number="6.13">
+<h2 data-number="6.13" class="anchored" data-anchor-id="references"><span class="header-section-number">6.13</span> References</h2>
+<ul>
+<li>ISO 12100:2010 — Safety of machinery — General principles for design — Risk assessment and risk reduction</li>
+<li>ISO 13849-1:2015 — Safety of machinery — Safety-related parts of control systems</li>
+<li>ISO 13855:2010 — Safety of machinery — Positioning of safeguards with respect to approach speeds</li>
+<li>ISO 10218-1/2:2011 — Robots and robotic devices — Safety requirements for industrial robots</li>
+<li>ISO/TS 15066:2016 — Robots and robotic devices — Collaborative robots</li>
+<li>IEC 60204-1:2016 — Safety of machinery — Electrical equipment of machines</li>
+<li>IEC 62061:2021 — Safety of machinery — Functional safety of safety-related control systems</li>
+<li>OSHA 29 CFR 1910.212 — General requirements for all machines</li>
+<li>ANSI/RIA TR R15.306 — Task-based risk assessment methodology</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./05-Lean-Manufacturing.html" class="pagination-link" aria-label="Lean Manufacturing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./07-Ergnomics.html" class="pagination-link" aria-label="Ergonomics in Automated Manufacturing">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/06-Machine-Guarding-and-Safety.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

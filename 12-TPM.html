@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>12&nbsp; Total Productive Maintenance (TPM) – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./13-Quality-Systems.html" rel="next">
+<link href="./11-MSA.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./12-TPM.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">12.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-tpm" id="toc-introduction-to-tpm" class="nav-link" data-scroll-target="#introduction-to-tpm"><span class="header-section-number">12.2</span> Introduction to TPM</a>
+  <ul class="collapse">
+  <li><a href="#what-is-total-productive-maintenance" id="toc-what-is-total-productive-maintenance" class="nav-link" data-scroll-target="#what-is-total-productive-maintenance"><span class="header-section-number">12.2.1</span> What is Total Productive Maintenance?</a></li>
+  <li><a href="#history-of-tpm" id="toc-history-of-tpm" class="nav-link" data-scroll-target="#history-of-tpm"><span class="header-section-number">12.2.2</span> History of TPM</a></li>
+  <li><a href="#the-goals-of-tpm" id="toc-the-goals-of-tpm" class="nav-link" data-scroll-target="#the-goals-of-tpm"><span class="header-section-number">12.2.3</span> The Goals of TPM</a></li>
+  <li><a href="#traditional-vs.-tpm-approach" id="toc-traditional-vs.-tpm-approach" class="nav-link" data-scroll-target="#traditional-vs.-tpm-approach"><span class="header-section-number">12.2.4</span> Traditional vs.&nbsp;TPM Approach</a></li>
+  </ul></li>
+  <li><a href="#the-eight-pillars-of-tpm" id="toc-the-eight-pillars-of-tpm" class="nav-link" data-scroll-target="#the-eight-pillars-of-tpm"><span class="header-section-number">12.3</span> The Eight Pillars of TPM</a></li>
+  <li><a href="#overall-equipment-effectiveness-oee" id="toc-overall-equipment-effectiveness-oee" class="nav-link" data-scroll-target="#overall-equipment-effectiveness-oee"><span class="header-section-number">12.4</span> Overall Equipment Effectiveness (OEE)</a>
+  <ul class="collapse">
+  <li><a href="#what-is-oee" id="toc-what-is-oee" class="nav-link" data-scroll-target="#what-is-oee"><span class="header-section-number">12.4.1</span> What is OEE?</a></li>
+  <li><a href="#oee-component-formulas" id="toc-oee-component-formulas" class="nav-link" data-scroll-target="#oee-component-formulas"><span class="header-section-number">12.4.2</span> OEE Component Formulas</a></li>
+  <li><a href="#oee-calculation-example" id="toc-oee-calculation-example" class="nav-link" data-scroll-target="#oee-calculation-example"><span class="header-section-number">12.4.3</span> OEE Calculation Example</a></li>
+  <li><a href="#oee-benchmarks" id="toc-oee-benchmarks" class="nav-link" data-scroll-target="#oee-benchmarks"><span class="header-section-number">12.4.4</span> OEE Benchmarks</a></li>
+  </ul></li>
+  <li><a href="#the-six-big-losses" id="toc-the-six-big-losses" class="nav-link" data-scroll-target="#the-six-big-losses"><span class="header-section-number">12.5</span> The Six Big Losses</a>
+  <ul class="collapse">
+  <li><a href="#typical-loss-distribution" id="toc-typical-loss-distribution" class="nav-link" data-scroll-target="#typical-loss-distribution"><span class="header-section-number">12.5.1</span> Typical Loss Distribution</a></li>
+  </ul></li>
+  <li><a href="#autonomous-maintenance" id="toc-autonomous-maintenance" class="nav-link" data-scroll-target="#autonomous-maintenance"><span class="header-section-number">12.6</span> Autonomous Maintenance</a>
+  <ul class="collapse">
+  <li><a href="#the-seven-steps-of-autonomous-maintenance" id="toc-the-seven-steps-of-autonomous-maintenance" class="nav-link" data-scroll-target="#the-seven-steps-of-autonomous-maintenance"><span class="header-section-number">12.6.1</span> The Seven Steps of Autonomous Maintenance</a></li>
+  <li><a href="#the-am-tag-system" id="toc-the-am-tag-system" class="nav-link" data-scroll-target="#the-am-tag-system"><span class="header-section-number">12.6.2</span> The AM Tag System</a></li>
+  <li><a href="#example-am-cleaning-and-inspection-checklist" id="toc-example-am-cleaning-and-inspection-checklist" class="nav-link" data-scroll-target="#example-am-cleaning-and-inspection-checklist"><span class="header-section-number">12.6.3</span> Example: AM Cleaning and Inspection Checklist</a></li>
+  </ul></li>
+  <li><a href="#planned-maintenance" id="toc-planned-maintenance" class="nav-link" data-scroll-target="#planned-maintenance"><span class="header-section-number">12.7</span> Planned Maintenance</a>
+  <ul class="collapse">
+  <li><a href="#types-of-maintenance" id="toc-types-of-maintenance" class="nav-link" data-scroll-target="#types-of-maintenance"><span class="header-section-number">12.7.1</span> Types of Maintenance</a></li>
+  <li><a href="#predictive-maintenance-technologies" id="toc-predictive-maintenance-technologies" class="nav-link" data-scroll-target="#predictive-maintenance-technologies"><span class="header-section-number">12.7.2</span> Predictive Maintenance Technologies</a></li>
+  <li><a href="#the-p-f-curve" id="toc-the-p-f-curve" class="nav-link" data-scroll-target="#the-p-f-curve"><span class="header-section-number">12.7.3</span> The P-F Curve</a></li>
+  </ul></li>
+  <li><a href="#focused-improvement-kobetsu-kaizen" id="toc-focused-improvement-kobetsu-kaizen" class="nav-link" data-scroll-target="#focused-improvement-kobetsu-kaizen"><span class="header-section-number">12.8</span> Focused Improvement (Kobetsu Kaizen)</a>
+  <ul class="collapse">
+  <li><a href="#the-kaizen-process" id="toc-the-kaizen-process" class="nav-link" data-scroll-target="#the-kaizen-process"><span class="header-section-number">12.8.1</span> The Kaizen Process</a></li>
+  <li><a href="#loss-elimination-tools" id="toc-loss-elimination-tools" class="nav-link" data-scroll-target="#loss-elimination-tools"><span class="header-section-number">12.8.2</span> Loss Elimination Tools</a></li>
+  </ul></li>
+  <li><a href="#tpm-implementation" id="toc-tpm-implementation" class="nav-link" data-scroll-target="#tpm-implementation"><span class="header-section-number">12.9</span> TPM Implementation</a>
+  <ul class="collapse">
+  <li><a href="#the-12-steps-of-tpm-implementation" id="toc-the-12-steps-of-tpm-implementation" class="nav-link" data-scroll-target="#the-12-steps-of-tpm-implementation"><span class="header-section-number">12.9.1</span> The 12 Steps of TPM Implementation</a></li>
+  <li><a href="#success-factors" id="toc-success-factors" class="nav-link" data-scroll-target="#success-factors"><span class="header-section-number">12.9.2</span> Success Factors</a></li>
+  </ul></li>
+  <li><a href="#case-study-tpm-implementation" id="toc-case-study-tpm-implementation" class="nav-link" data-scroll-target="#case-study-tpm-implementation"><span class="header-section-number">12.10</span> Case Study: TPM Implementation</a>
+  <ul class="collapse">
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background"><span class="header-section-number">12.10.1</span> Background</a></li>
+  <li><a href="#problem-analysis" id="toc-problem-analysis" class="nav-link" data-scroll-target="#problem-analysis"><span class="header-section-number">12.10.2</span> Problem Analysis</a></li>
+  <li><a href="#improvements-implemented" id="toc-improvements-implemented" class="nav-link" data-scroll-target="#improvements-implemented"><span class="header-section-number">12.10.3</span> Improvements Implemented</a></li>
+  <li><a href="#results-after-18-months" id="toc-results-after-18-months" class="nav-link" data-scroll-target="#results-after-18-months"><span class="header-section-number">12.10.4</span> Results After 18 Months</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">12.11</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">12.12</span> Review Questions</a>
+  <ul class="collapse">
+  <li><a href="#conceptual-questions" id="toc-conceptual-questions" class="nav-link" data-scroll-target="#conceptual-questions"><span class="header-section-number">12.12.1</span> Conceptual Questions</a></li>
+  <li><a href="#calculation-questions" id="toc-calculation-questions" class="nav-link" data-scroll-target="#calculation-questions"><span class="header-section-number">12.12.2</span> Calculation Questions</a></li>
+  <li><a href="#application-questions" id="toc-application-questions" class="nav-link" data-scroll-target="#application-questions"><span class="header-section-number">12.12.3</span> Application Questions</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">12.13</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/12-TPM.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">12.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Define Total Productive Maintenance and explain its objectives</li>
+<li>Describe the 8 pillars of TPM and their interconnections</li>
+<li>Calculate Overall Equipment Effectiveness (OEE) and its components</li>
+<li>Identify and categorize the Six Big Losses</li>
+<li>Implement autonomous maintenance activities</li>
+<li>Develop preventive and predictive maintenance strategies</li>
+<li>Apply TPM principles to improve equipment reliability and productivity</li>
+</ul>
+<blockquote class="blockquote">
+<p>“Take care of your equipment, and it will take care of your production.” — Seiichi Nakajima, Father of TPM</p>
+</blockquote>
+<hr>
+</section>
+<section id="introduction-to-tpm" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="introduction-to-tpm"><span class="header-section-number">12.2</span> Introduction to TPM</h2>
+<section id="what-is-total-productive-maintenance" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="what-is-total-productive-maintenance"><span class="header-section-number">12.2.1</span> What is Total Productive Maintenance?</h3>
+<p><strong>Total Productive Maintenance (TPM)</strong> is a holistic approach to equipment maintenance that strives to achieve perfect production with no breakdowns, no defects, and no accidents. It involves everyone in the organization, from operators to top management.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/tpm-definition-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The TPM Philosophy</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="history-of-tpm" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="history-of-tpm"><span class="header-section-number">12.2.2</span> History of TPM</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Evolution of Maintenance Philosophy</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Era</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Maintenance Approach</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 73, 94, 255) !important;">Key Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">Pre-1950s</td>
+<td style="text-align: left;">Breakdown Maintenance</td>
+<td style="text-align: left;">Fix it when it breaks; reactive only</td>
+<td style="text-align: left;">No prevention</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">1950s</td>
+<td style="text-align: left;">Preventive Maintenance</td>
+<td style="text-align: left;">Scheduled maintenance to prevent failures</td>
+<td style="text-align: left;">Time-based prevention</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">1960s</td>
+<td style="text-align: left;">Productive Maintenance</td>
+<td style="text-align: left;">Maintenance focused on reliability and maintainability</td>
+<td style="text-align: left;">Design for maintenance</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 8em; font-weight: bold;">1970s</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">TPM Developed</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Nakajima develops TPM at Nippondenso (Toyota supplier)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Operator involvement</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;">1980s</td>
+<td style="text-align: left;">TPM Spreads Globally</td>
+<td style="text-align: left;">Adopted by automotive, electronics, process industries worldwide</td>
+<td style="text-align: left;">World-class standard</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;">1990s-Present</td>
+<td style="text-align: left;">TPM + Industry 4.0</td>
+<td style="text-align: left;">Integration with predictive analytics, IoT sensors, AI</td>
+<td style="text-align: left;">Data-driven maintenance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-goals-of-tpm" class="level3" data-number="12.2.3">
+<h3 data-number="12.2.3" class="anchored" data-anchor-id="the-goals-of-tpm"><span class="header-section-number">12.2.3</span> The Goals of TPM</h3>
+<p>TPM aims to achieve <strong>zero</strong> targets:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/tpm-goals-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>TPM Zero Targets</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="traditional-vs.-tpm-approach" class="level3" data-number="12.2.4">
+<h3 data-number="12.2.4" class="anchored" data-anchor-id="traditional-vs.-tpm-approach"><span class="header-section-number">12.2.4</span> Traditional vs.&nbsp;TPM Approach</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Traditional Maintenance vs. TPM</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Aspect</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Traditional Maintenance</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">TPM Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Equipment ownership**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">'Maintenance owns the machines'</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">'We all own the machines'</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Maintenance responsibility**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Maintenance department only</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Everyone (operators + maintenance)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Operator role**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Operate; call maintenance when broken</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Operate, clean, inspect, maintain</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Maintenance focus**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Fix breakdowns quickly</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Prevent breakdowns; extend life</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Problem solving**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Reactive; fire-fighting</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Proactive; root cause elimination</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 14em; font-weight: bold;">**Goal**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Minimize maintenance cost</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Maximize equipment effectiveness</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Question: Why involve operators in maintenance?
+</summary>
+<p><strong>Operators are the first line of defense because:</strong></p>
+<ol type="1">
+<li><strong>They know the equipment:</strong> Operators work with machines every day and notice subtle changes</li>
+<li><strong>Early detection:</strong> Small problems are detected before becoming major failures</li>
+<li><strong>Ownership mindset:</strong> People take better care of things they “own”</li>
+<li><strong>Reduced response time:</strong> Operators can address minor issues immediately</li>
+<li><strong>Freed maintenance resources:</strong> Technicians can focus on complex tasks</li>
+</ol>
+<p><strong>Example:</strong> An operator notices a slight vibration change in a motor. Under traditional maintenance, they might ignore it. Under TPM, they report it, potentially preventing a $50,000 breakdown.</p>
+<blockquote class="blockquote">
+<p>“No one knows a machine better than the person who operates it every day.”</p>
+</blockquote>
+</details>
+<hr>
+</section>
+</section>
+<section id="the-eight-pillars-of-tpm" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="the-eight-pillars-of-tpm"><span class="header-section-number">12.3</span> The Eight Pillars of TPM</h2>
+<p>TPM is built on <strong>eight pillars</strong>, each addressing a specific aspect of equipment management and organizational culture.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/eight-pillars-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The Eight Pillars of TPM</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>The Eight Pillars of TPM</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">#</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Pillar</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Purpose</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 255) !important;">Key Activities</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">1</td>
+<td style="text-align: left;">**Autonomous Maintenance**</td>
+<td style="text-align: left;">Operators maintain their own equipment</td>
+<td style="text-align: left;">Cleaning, inspection, lubrication, minor repairs</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">2</td>
+<td style="text-align: left;">**Planned Maintenance**</td>
+<td style="text-align: left;">Scheduled maintenance by specialists</td>
+<td style="text-align: left;">PM schedules, predictive maintenance, spare parts</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">3</td>
+<td style="text-align: left;">**Quality Maintenance**</td>
+<td style="text-align: left;">Zero defects through equipment conditions</td>
+<td style="text-align: left;">Identify equipment conditions causing defects</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">4</td>
+<td style="text-align: left;">**Focused Improvement**</td>
+<td style="text-align: left;">Eliminate losses through kaizen activities</td>
+<td style="text-align: left;">Loss analysis, root cause, countermeasures</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">5</td>
+<td style="text-align: left;">**Early Equipment Management**</td>
+<td style="text-align: left;">Design equipment for maintainability</td>
+<td style="text-align: left;">Design reviews, vertical startup, LCC analysis</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">6</td>
+<td style="text-align: left;">**Training &amp; Education**</td>
+<td style="text-align: left;">Develop skilled operators and technicians</td>
+<td style="text-align: left;">Skills matrix, training programs, OJT</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">7</td>
+<td style="text-align: left;">**Safety, Health, Environment**</td>
+<td style="text-align: left;">Zero accidents, safe workplace</td>
+<td style="text-align: left;">Hazard identification, safety audits, ergonomics</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">8</td>
+<td style="text-align: left;">**TPM in Office**</td>
+<td style="text-align: left;">Apply TPM principles to administrative processes</td>
+<td style="text-align: left;">Streamline workflows, reduce waste in offices</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="overall-equipment-effectiveness-oee" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="overall-equipment-effectiveness-oee"><span class="header-section-number">12.4</span> Overall Equipment Effectiveness (OEE)</h2>
+<section id="what-is-oee" class="level3" data-number="12.4.1">
+<h3 data-number="12.4.1" class="anchored" data-anchor-id="what-is-oee"><span class="header-section-number">12.4.1</span> What is OEE?</h3>
+<p><strong>Overall Equipment Effectiveness (OEE)</strong> is the primary metric of TPM. It measures how effectively equipment is being used by combining three factors: Availability, Performance, and Quality.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/oee-formula-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>OEE Formula and Components</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="oee-component-formulas" class="level3" data-number="12.4.2">
+<h3 data-number="12.4.2" class="anchored" data-anchor-id="oee-component-formulas"><span class="header-section-number">12.4.2</span> OEE Component Formulas</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>OEE Component Formulas</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Component</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Formula</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">What It Measures</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Losses Captured</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Availability**</td>
+<td style="text-align: left;">$\frac{\text{Run Time}}{\text{Planned Production Time}} \times 100\%$</td>
+<td style="text-align: left;">Time the equipment is running vs. planned time</td>
+<td style="text-align: left;">Breakdowns, changeovers, adjustments</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Performance**</td>
+<td style="text-align: left;">$\frac{\text{Ideal Cycle Time} \times \text{Total Count}}{\text{Run Time}} \times 100\%$</td>
+<td style="text-align: left;">How fast equipment runs vs. design speed</td>
+<td style="text-align: left;">Minor stops, reduced speed, idling</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Quality**</td>
+<td style="text-align: left;">$\frac{\text{Good Count}}{\text{Total Count}} \times 100\%$</td>
+<td style="text-align: left;">Good parts vs. total parts produced</td>
+<td style="text-align: left;">Defects, rework, startup rejects</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 10em; font-weight: bold;">**OEE**</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">$\text{Availability} \times \text{Performance} \times \text{Quality}$</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Overall effectiveness combining all three</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">All six big losses combined</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="oee-calculation-example" class="level3" data-number="12.4.3">
+<h3 data-number="12.4.3" class="anchored" data-anchor-id="oee-calculation-example"><span class="header-section-number">12.4.3</span> OEE Calculation Example</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OEE Calculation Example: Injection Molding Machine</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== SHIFT DATA ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== SHIFT DATA ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Time data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>shift_length <span class="ot">&lt;-</span> <span class="dv">480</span>  <span class="co"># minutes (8 hours)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>planned_downtime <span class="ot">&lt;-</span> <span class="dv">30</span>  <span class="co"># breaks, planned maintenance</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>planned_production_time <span class="ot">&lt;-</span> shift_length <span class="sc">-</span> planned_downtime</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Planned Production Time:"</span>, planned_production_time, <span class="st">"minutes</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Planned Production Time: 450 minutes</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Downtime losses</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>breakdown_time <span class="ot">&lt;-</span> <span class="dv">25</span>  <span class="co"># equipment failure</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>changeover_time <span class="ot">&lt;-</span> <span class="dv">35</span>  <span class="co"># mold changes</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>adjustment_time <span class="ot">&lt;-</span> <span class="dv">10</span>  <span class="co"># setup adjustments</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>total_downtime <span class="ot">&lt;-</span> breakdown_time <span class="sc">+</span> changeover_time <span class="sc">+</span> adjustment_time</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unplanned Downtime:"</span>, total_downtime, <span class="st">"minutes</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unplanned Downtime: 70 minutes</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>run_time <span class="ot">&lt;-</span> planned_production_time <span class="sc">-</span> total_downtime</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Run Time:"</span>, run_time, <span class="st">"minutes</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Run Time: 380 minutes</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Production data</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ideal_cycle_time <span class="ot">&lt;-</span> <span class="fl">0.5</span>  <span class="co"># minutes per part (design spec)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>total_parts <span class="ot">&lt;-</span> <span class="dv">700</span>  <span class="co"># parts produced</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>good_parts <span class="ot">&lt;-</span> <span class="dv">665</span>   <span class="co"># parts passing inspection</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>defects <span class="ot">&lt;-</span> total_parts <span class="sc">-</span> good_parts</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== PRODUCTION DATA ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== PRODUCTION DATA ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total Parts Produced:"</span>, total_parts, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total Parts Produced: 700 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Good Parts:"</span>, good_parts, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Good Parts: 665 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Defects:"</span>, defects, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Defects: 35 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate OEE Components</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== OEE CALCULATION ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== OEE CALCULATION ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Availability</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>availability <span class="ot">&lt;-</span> (run_time <span class="sc">/</span> planned_production_time) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AVAILABILITY:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AVAILABILITY:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  = Run Time / Planned Production Time</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = Run Time / Planned Production Time</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ="</span>, run_time, <span class="st">"/"</span>, planned_production_time, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = 380 / 450 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ="</span>, <span class="fu">round</span>(availability, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = 84.4 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Performance</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Actual output vs. theoretical output during run time</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>theoretical_output <span class="ot">&lt;-</span> run_time <span class="sc">/</span> ideal_cycle_time</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>performance <span class="ot">&lt;-</span> (total_parts <span class="sc">/</span> theoretical_output) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"PERFORMANCE:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>PERFORMANCE:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Theoretical Output ="</span>, theoretical_output, <span class="st">"parts</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Theoretical Output = 760 parts</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Actual Output ="</span>, total_parts, <span class="st">"parts</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Actual Output = 700 parts</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  = Actual / Theoretical</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = Actual / Theoretical</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ="</span>, <span class="fu">round</span>(performance, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = 92.1 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Quality</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>quality <span class="ot">&lt;-</span> (good_parts <span class="sc">/</span> total_parts) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"QUALITY:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>QUALITY:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  = Good Parts / Total Parts</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = Good Parts / Total Parts</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ="</span>, good_parts, <span class="st">"/"</span>, total_parts, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = 665 / 700 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ="</span>, <span class="fu">round</span>(quality, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  = 95 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Overall OEE</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>oee <span class="ot">&lt;-</span> (availability<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> (performance<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> (quality<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== OVERALL OEE ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== OVERALL OEE ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"OEE ="</span>, <span class="fu">round</span>(availability, <span class="dv">1</span>), <span class="st">"% ×"</span>, <span class="fu">round</span>(performance, <span class="dv">1</span>), <span class="st">"% ×"</span>, <span class="fu">round</span>(quality, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OEE = 84.4 % × 92.1 % × 95 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"OEE ="</span>, <span class="fu">round</span>(oee, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OEE = 73.9 %</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/oee-waterfall-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>OEE Waterfall Chart: Where Time Goes</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="oee-benchmarks" class="level3" data-number="12.4.4">
+<h3 data-number="12.4.4" class="anchored" data-anchor-id="oee-benchmarks"><span class="header-section-number">12.4.4</span> OEE Benchmarks</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>OEE Benchmarks</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">OEE Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Classification</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Interpretation</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Component Targets</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important; width: 8em; font-weight: bold;">&lt; 65%</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Unacceptable</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Significant improvement opportunities exist</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important; width: 8em; font-weight: bold;">65% - 75%</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Typical</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">Average for discrete manufacturing</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 255) !important;">A: 90%, P: 85%, Q: 95%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 8em; font-weight: bold;">75% - 85%</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Good</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Well-managed operations</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">A: 92%, P: 90%, Q: 97%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important; width: 8em; font-weight: bold;">&gt; 85%</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">World Class</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">Best-in-class performance</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(213, 245, 227, 255) !important;">A: 95%, P: 95%, Q: 99%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Interactive Exercise: Calculate OEE
+</summary>
+<p><strong>Given the following shift data, calculate OEE:</strong></p>
+<ul>
+<li>Shift length: 480 minutes</li>
+<li>Planned breaks: 40 minutes</li>
+<li>Equipment breakdown: 30 minutes</li>
+<li>Setup/changeover: 20 minutes</li>
+<li>Ideal cycle time: 1 minute/part</li>
+<li>Total parts produced: 350</li>
+<li>Rejected parts: 14</li>
+</ul>
+<p><strong>Work through the calculation:</strong></p>
+<p><strong>Solution:</strong></p>
+<pre><code>Planned Production Time = 480 - 40 = 440 minutes
+Run Time = 440 - 30 - 20 = 390 minutes
+
+Availability = 390 / 440 = 88.6%
+
+Theoretical Output = 390 / 1 = 390 parts
+Performance = 350 / 390 = 89.7%
+
+Quality = (350 - 14) / 350 = 336 / 350 = 96.0%
+
+OEE = 88.6% × 89.7% × 96.0% = 76.3%</code></pre>
+<p><strong>Interpretation:</strong> This is “Good” performance, above the typical range. The biggest opportunity is in Performance (speed losses).</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="the-six-big-losses" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="the-six-big-losses"><span class="header-section-number">12.5</span> The Six Big Losses</h2>
+<p>TPM categorizes all equipment losses into <strong>six categories</strong>, which map directly to the OEE components.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/six-big-losses-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>The Six Big Losses</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>The Six Big Losses Explained</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">#</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">Loss Category</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">OEE Component</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(230, 126, 34, 255) !important;">Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important; width: 3em; font-weight: bold;">1</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">**Equipment Failure**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Availability</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Unplanned equipment breakdown</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Motor failure, sensor malfunction, mechanical breakdown</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important; width: 3em; font-weight: bold;">2</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">**Setup &amp; Adjustment**</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Availability</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Time for changeover, tool changes, adjustments</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Die change, product changeover, calibration</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important; width: 3em; font-weight: bold;">3</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">**Idling &amp; Minor Stops**</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Performance</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Brief stoppages (jams, blockages, cleaning)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Sensor trips, material jams, overloads (&lt;5 min)</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important; width: 3em; font-weight: bold;">4</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">**Reduced Speed**</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Performance</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Running slower than design speed</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Worn tooling, operator caution, material variability</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important; width: 3em; font-weight: bold;">5</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">**Process Defects**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Quality</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Defects produced during normal operation</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Scrap, rework, out-of-spec product</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(250, 219, 216, 255) !important; width: 3em; font-weight: bold;">6</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">**Startup Rejects**</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Quality</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">Defects during warmup, startup, changeover</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 255) !important;">First-off rejects, warming up, stabilization</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="typical-loss-distribution" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="typical-loss-distribution"><span class="header-section-number">12.5.1</span> Typical Loss Distribution</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/loss-distribution-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Typical Distribution of the Six Big Losses</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="autonomous-maintenance" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="autonomous-maintenance"><span class="header-section-number">12.6</span> Autonomous Maintenance</h2>
+<p><strong>Autonomous Maintenance (AM)</strong> is the first and most visible pillar of TPM. It transfers basic maintenance tasks from maintenance specialists to operators.</p>
+<section id="the-seven-steps-of-autonomous-maintenance" class="level3" data-number="12.6.1">
+<h3 data-number="12.6.1" class="anchored" data-anchor-id="the-seven-steps-of-autonomous-maintenance"><span class="header-section-number">12.6.1</span> The Seven Steps of Autonomous Maintenance</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/am-seven-steps-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Seven Steps of Autonomous Maintenance</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Autonomous Maintenance Steps in Detail</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Step</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Name</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Activities</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; width: 4em; font-weight: bold;">1</td>
+<td style="text-align: left;">**Initial Cleaning**</td>
+<td style="text-align: left;">Deep clean equipment; identify abnormalities</td>
+<td style="text-align: left;">Equipment baseline; 100+ abnormalities found typical</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 4em; font-weight: bold;">2</td>
+<td style="text-align: left;">**Eliminate Contamination Sources**</td>
+<td style="text-align: left;">Find and fix sources of dirt, leaks, contamination</td>
+<td style="text-align: left;">Reduced cleaning time; contamination controlled</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 4em; font-weight: bold;">3</td>
+<td style="text-align: left;">**Cleaning &amp; Lubrication Standards**</td>
+<td style="text-align: left;">Create standards for cleaning, lubricating, inspection</td>
+<td style="text-align: left;">Consistent equipment condition; clear expectations</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 4em; font-weight: bold;">4</td>
+<td style="text-align: left;">**General Inspection**</td>
+<td style="text-align: left;">Train operators on equipment function; expand skills</td>
+<td style="text-align: left;">Skilled operators; detect abnormalities early</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 4em; font-weight: bold;">5</td>
+<td style="text-align: left;">**Autonomous Inspection**</td>
+<td style="text-align: left;">Operators perform scheduled inspections independently</td>
+<td style="text-align: left;">Reliable self-directed maintenance program</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 4em; font-weight: bold;">6</td>
+<td style="text-align: left;">**Organization &amp; Tidiness**</td>
+<td style="text-align: left;">Standardize workplace; visual management</td>
+<td style="text-align: left;">Efficient, safe, visual workplace</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 4em; font-weight: bold;">7</td>
+<td style="text-align: left;">**Full Autonomous Maintenance**</td>
+<td style="text-align: left;">Continuous improvement; operators propose improvements</td>
+<td style="text-align: left;">Empowered operators; sustained improvement</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-am-tag-system" class="level3" data-number="12.6.2">
+<h3 data-number="12.6.2" class="anchored" data-anchor-id="the-am-tag-system"><span class="header-section-number">12.6.2</span> The AM Tag System</h3>
+<p>During autonomous maintenance activities, operators identify abnormalities using <strong>tags</strong>:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/tag-system-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>AM Tag System</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="example-am-cleaning-and-inspection-checklist" class="level3" data-number="12.6.3">
+<h3 data-number="12.6.3" class="anchored" data-anchor-id="example-am-cleaning-and-inspection-checklist"><span class="header-section-number">12.6.3</span> Example: AM Cleaning and Inspection Checklist</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Sample AM Inspection Checklist</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">#</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Check Item</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Method</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Standard</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 255) !important;">Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">1</td>
+<td style="text-align: left;">General cleanliness</td>
+<td style="text-align: left;">Visual</td>
+<td style="text-align: left;">No dust, debris, contamination</td>
+<td style="text-align: left;">Daily</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">2</td>
+<td style="text-align: left;">Oil/lubricant levels</td>
+<td style="text-align: left;">Visual/gauge</td>
+<td style="text-align: left;">Between min-max marks</td>
+<td style="text-align: left;">Daily</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">3</td>
+<td style="text-align: left;">Loose bolts/fasteners</td>
+<td style="text-align: left;">Touch/wrench</td>
+<td style="text-align: left;">Hand tight + 1/4 turn</td>
+<td style="text-align: left;">Weekly</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">4</td>
+<td style="text-align: left;">Unusual sounds</td>
+<td style="text-align: left;">Listen</td>
+<td style="text-align: left;">Normal operating sound</td>
+<td style="text-align: left;">Each startup</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">5</td>
+<td style="text-align: left;">Vibration</td>
+<td style="text-align: left;">Touch</td>
+<td style="text-align: left;">Minimal, no unusual patterns</td>
+<td style="text-align: left;">Each startup</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">6</td>
+<td style="text-align: left;">Temperature</td>
+<td style="text-align: left;">Touch/thermometer</td>
+<td style="text-align: left;">&lt; 60°C (or per spec)</td>
+<td style="text-align: left;">Hourly</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; width: 3em; font-weight: bold;">7</td>
+<td style="text-align: left;">Leaks (oil, air, coolant)</td>
+<td style="text-align: left;">Visual</td>
+<td style="text-align: left;">No visible leaks</td>
+<td style="text-align: left;">Daily</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; width: 3em; font-weight: bold;">8</td>
+<td style="text-align: left;">Safety guards in place</td>
+<td style="text-align: left;">Visual</td>
+<td style="text-align: left;">All guards secure</td>
+<td style="text-align: left;">Each shift</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="planned-maintenance" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="planned-maintenance"><span class="header-section-number">12.7</span> Planned Maintenance</h2>
+<p><strong>Planned Maintenance</strong> is the second pillar, focusing on scheduled maintenance activities performed by maintenance specialists.</p>
+<section id="types-of-maintenance" class="level3" data-number="12.7.1">
+<h3 data-number="12.7.1" class="anchored" data-anchor-id="types-of-maintenance"><span class="header-section-number">12.7.1</span> Types of Maintenance</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/maintenance-types-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Types of Maintenance Activities</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Maintenance Strategy Comparison</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Approach</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Advantages</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Disadvantages</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 255) !important;">Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Breakdown**</td>
+<td style="text-align: left;">Run to failure</td>
+<td style="text-align: left;">No upfront cost</td>
+<td style="text-align: left;">Unplanned downtime, secondary damage</td>
+<td style="text-align: left;">Non-critical, cheap to replace</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Preventive**</td>
+<td style="text-align: left;">Time/cycle-based replacement</td>
+<td style="text-align: left;">Planned downtime, parts availability</td>
+<td style="text-align: left;">May replace good parts</td>
+<td style="text-align: left;">Wear items with known life</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Predictive**</td>
+<td style="text-align: left;">Condition monitoring</td>
+<td style="text-align: left;">Optimal component life, targeted actions</td>
+<td style="text-align: left;">Monitoring investment required</td>
+<td style="text-align: left;">Critical equipment, expensive failures</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">**Proactive**</td>
+<td style="text-align: left;">Root cause elimination</td>
+<td style="text-align: left;">Prevents future failures</td>
+<td style="text-align: left;">Requires analysis capability</td>
+<td style="text-align: left;">Recurring problems</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="predictive-maintenance-technologies" class="level3" data-number="12.7.2">
+<h3 data-number="12.7.2" class="anchored" data-anchor-id="predictive-maintenance-technologies"><span class="header-section-number">12.7.2</span> Predictive Maintenance Technologies</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Predictive Maintenance Technologies</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Technology</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">What It Detects</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Equipment Applications</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 255) !important;">Typical Warning Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Vibration Analysis**</td>
+<td style="text-align: left;">Imbalance, misalignment, bearing wear, looseness</td>
+<td style="text-align: left;">Rotating equipment (motors, pumps, fans, gearboxes)</td>
+<td style="text-align: left;">Weeks to months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Thermography**</td>
+<td style="text-align: left;">Hot spots, electrical issues, friction, insulation problems</td>
+<td style="text-align: left;">Electrical panels, motors, bearings, refractory</td>
+<td style="text-align: left;">Hours to days</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Oil Analysis**</td>
+<td style="text-align: left;">Contamination, wear particles, lubricant degradation</td>
+<td style="text-align: left;">Gearboxes, hydraulics, engines, compressors</td>
+<td style="text-align: left;">Weeks to months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Ultrasound**</td>
+<td style="text-align: left;">Leaks, bearing defects, electrical discharge</td>
+<td style="text-align: left;">Steam traps, valves, bearings, electrical equipment</td>
+<td style="text-align: left;">Days to weeks</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Motor Current Analysis**</td>
+<td style="text-align: left;">Motor winding issues, rotor bar problems, power quality</td>
+<td style="text-align: left;">Electric motors, drives, generators</td>
+<td style="text-align: left;">Days to weeks</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-p-f-curve" class="level3" data-number="12.7.3">
+<h3 data-number="12.7.3" class="anchored" data-anchor-id="the-p-f-curve"><span class="header-section-number">12.7.3</span> The P-F Curve</h3>
+<p>The <strong>P-F Curve</strong> illustrates the concept of detecting potential failure (P) before functional failure (F).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/pf-curve-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>The P-F Curve: Detecting Failure Early</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Question: Why is predictive maintenance better than preventive maintenance?
+</summary>
+<p><strong>Preventive Maintenance (Time-Based):</strong> - Replaces parts at fixed intervals regardless of condition - May replace parts still in good condition (waste) - May miss failures that occur before scheduled replacement - Based on average life, not individual component condition</p>
+<p><strong>Predictive Maintenance (Condition-Based):</strong> - Monitors actual equipment condition - Replaces parts when condition indicates need - Maximizes component life - Provides warning time to plan repairs</p>
+<p><strong>Example:</strong> - Preventive: Replace bearing every 6 months (may last 9 months or fail at 4 months) - Predictive: Monitor vibration; replace when trending indicates 2-3 weeks to failure - Result: Optimal component life, planned downtime, no unexpected failures</p>
+<p><strong>Cost Comparison:</strong> - Reactive repair: $10,000 (including secondary damage, lost production) - Preventive replacement: $3,000 (may waste $1,000 in parts life) - Predictive replacement: $2,500 (optimal timing, minimal waste)</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="focused-improvement-kobetsu-kaizen" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="focused-improvement-kobetsu-kaizen"><span class="header-section-number">12.8</span> Focused Improvement (Kobetsu Kaizen)</h2>
+<p><strong>Focused Improvement</strong> uses cross-functional teams to eliminate specific losses identified through OEE analysis.</p>
+<section id="the-kaizen-process" class="level3" data-number="12.8.1">
+<h3 data-number="12.8.1" class="anchored" data-anchor-id="the-kaizen-process"><span class="header-section-number">12.8.1</span> The Kaizen Process</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/kaizen-process-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Focused Improvement Process</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="understanding-kaizen" class="level4" data-number="12.8.1.1">
+<h4 data-number="12.8.1.1" class="anchored" data-anchor-id="understanding-kaizen"><span class="header-section-number">12.8.1.1</span> Understanding Kaizen</h4>
+<p><strong>Kaizen</strong> (改善) is a Japanese term meaning “change for better” or <strong>continuous improvement</strong>. Unlike large-scale transformation projects, Kaizen focuses on small, incremental improvements made consistently over time. The philosophy is built on the belief that every process can be improved, and everyone—from operators to managers—should participate in identifying and implementing improvements.</p>
+<p><strong>Core Principles of Kaizen:</strong></p>
+<ul>
+<li><strong>Good processes bring good results</strong> — Focus on improving the process, not blaming people</li>
+<li><strong>Go see for yourself (Gemba)</strong> — Understand the actual situation at the workplace</li>
+<li><strong>Speak with data</strong> — Base decisions on facts and measurements</li>
+<li><strong>Take action to contain and correct root causes</strong> — Don’t just treat symptoms</li>
+<li><strong>Work as a team</strong> — Cross-functional collaboration produces better solutions</li>
+<li><strong>Kaizen is everybody’s business</strong> — Every employee can contribute improvements</li>
+</ul>
+</section>
+<section id="the-five-steps-in-detail" class="level4" data-number="12.8.1.2">
+<h4 data-number="12.8.1.2" class="anchored" data-anchor-id="the-five-steps-in-detail"><span class="header-section-number">12.8.1.2</span> The Five Steps in Detail</h4>
+<p><strong>Step 1: SELECT — Identify the Biggest Loss</strong></p>
+<p>The first step uses data to identify which loss has the greatest impact on OEE. This typically involves:</p>
+<ul>
+<li>Reviewing OEE data and breakdown logs</li>
+<li>Creating Pareto charts to visualize loss magnitude</li>
+<li>Selecting a loss that is significant, measurable, and within the team’s ability to address</li>
+<li>Forming a cross-functional team with members who understand the equipment and process</li>
+</ul>
+<p><em>Key question: “Which single problem, if solved, would give us the biggest improvement?”</em></p>
+<p><strong>Step 2: ANALYZE — Root Cause Analysis</strong></p>
+<p>Once a loss is selected, the team investigates its root cause using structured problem-solving tools:</p>
+<ul>
+<li><strong>Why-Why Analysis (5 Whys)</strong>: Repeatedly asking “why” to drill down from symptoms to root causes</li>
+<li><strong>Fishbone Diagram (Ishikawa)</strong>: Categorizing potential causes by Machine, Method, Material, Man, Measurement, Environment</li>
+<li><strong>PM Analysis</strong>: A systematic method for chronic losses that examines physical mechanisms</li>
+<li><strong>Data collection</strong>: Gathering facts at the Gemba (actual workplace)</li>
+</ul>
+<p><em>Key principle: Never assume you know the cause—verify with evidence.</em></p>
+<p><strong>Step 3: DEVELOP — Create Countermeasures</strong></p>
+<p>Based on root cause analysis, the team develops countermeasures—actions designed to eliminate or reduce the root cause:</p>
+<ul>
+<li>Brainstorm multiple potential solutions</li>
+<li>Evaluate options based on effectiveness, cost, and implementation time</li>
+<li>Create an action plan with clear responsibilities and deadlines</li>
+<li>Consider both immediate fixes and permanent solutions</li>
+<li>Apply error-proofing (Poka-Yoke) where possible</li>
+</ul>
+<p><em>Important: Countermeasures address root causes, not just symptoms.</em></p>
+<p><strong>Step 4: IMPLEMENT — Execute the Plan</strong></p>
+<p>The team puts countermeasures into action:</p>
+<ul>
+<li>Follow the action plan systematically</li>
+<li>Make changes during planned downtime when possible</li>
+<li>Document all modifications made</li>
+<li>Train affected personnel on new procedures</li>
+<li>Monitor results immediately after implementation</li>
+<li>Be prepared to adjust if initial results are not as expected</li>
+</ul>
+<p><em>Tip: Start with small-scale trials before full implementation when possible.</em></p>
+<p><strong>Step 5: SUSTAIN — Standardize and Share</strong></p>
+<p>The final step ensures improvements are maintained and shared across the organization:</p>
+<ul>
+<li><strong>Standardize</strong>: Update procedures, checklists, and work instructions to reflect the new method</li>
+<li><strong>Visualize</strong>: Create visual controls that make the standard easy to follow</li>
+<li><strong>Train</strong>: Ensure all shifts and new employees learn the improved method</li>
+<li><strong>Verify</strong>: Include checks in AM routines or audits to confirm the standard is being followed</li>
+<li><strong>Share</strong>: Communicate successful improvements to other areas that might benefit (Yokoten—horizontal deployment)</li>
+</ul>
+<p><em>Kaizen is never finished—today’s standard is tomorrow’s baseline for further improvement.</em></p>
+</section>
+<section id="kaizen-event-vs.-daily-kaizen" class="level4" data-number="12.8.1.3">
+<h4 data-number="12.8.1.3" class="anchored" data-anchor-id="kaizen-event-vs.-daily-kaizen"><span class="header-section-number">12.8.1.3</span> Kaizen Event vs.&nbsp;Daily Kaizen</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 48%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Kaizen Event (Blitz)</th>
+<th>Daily Kaizen</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Duration</strong></td>
+<td>3-5 days intensive</td>
+<td>Ongoing, small improvements</td>
+</tr>
+<tr class="even">
+<td><strong>Scope</strong></td>
+<td>Focused on one specific problem</td>
+<td>Any improvement opportunity</td>
+</tr>
+<tr class="odd">
+<td><strong>Team</strong></td>
+<td>Dedicated cross-functional team</td>
+<td>Individual or small group</td>
+</tr>
+<tr class="even">
+<td><strong>Impact</strong></td>
+<td>Significant, measurable improvement</td>
+<td>Cumulative effect over time</td>
+</tr>
+<tr class="odd">
+<td><strong>Example</strong></td>
+<td>Reduce changeover time by 50%</td>
+<td>Reorganize tool storage for easier access</td>
+</tr>
+</tbody>
+</table>
+<p>Both approaches are valuable—Kaizen events tackle significant losses while daily Kaizen builds a culture of continuous improvement.</p>
+</section>
+</section>
+<section id="loss-elimination-tools" class="level3" data-number="12.8.2">
+<h3 data-number="12.8.2" class="anchored" data-anchor-id="loss-elimination-tools"><span class="header-section-number">12.8.2</span> Loss Elimination Tools</h3>
+<p>Effective loss elimination requires systematic tools that help teams identify problems, find root causes, and implement lasting solutions. The following tools are essential for Focused Improvement activities.</p>
+<section id="pareto-analysis" class="level4" data-number="12.8.2.1">
+<h4 data-number="12.8.2.1" class="anchored" data-anchor-id="pareto-analysis"><span class="header-section-number">12.8.2.1</span> Pareto Analysis</h4>
+<p><strong>Pareto Analysis</strong> applies the 80/20 rule: roughly 80% of losses come from 20% of causes. By creating a Pareto chart, teams can visualize which losses have the greatest impact and prioritize their improvement efforts accordingly.</p>
+<p><strong>How to use:</strong></p>
+<ol type="1">
+<li>Collect data on all losses (downtime events, defects, speed reductions)</li>
+<li>Categorize losses by type or cause</li>
+<li>Calculate the frequency or duration of each category</li>
+<li>Rank categories from highest to lowest</li>
+<li>Create a bar chart with a cumulative percentage line</li>
+<li>Focus improvement efforts on the “vital few” categories that account for most losses</li>
+</ol>
+</section>
+<section id="why-why-analysis-5-whys" class="level4" data-number="12.8.2.2">
+<h4 data-number="12.8.2.2" class="anchored" data-anchor-id="why-why-analysis-5-whys"><span class="header-section-number">12.8.2.2</span> Why-Why Analysis (5 Whys)</h4>
+<p><strong>Why-Why Analysis</strong> is a simple but powerful technique for drilling down from a symptom to its root cause by repeatedly asking “Why?” The goal is to go beyond surface-level explanations to find the fundamental cause that, if addressed, will prevent recurrence.</p>
+<p><strong>Example:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 40%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Level</th>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Problem</td>
+<td>Machine stopped</td>
+<td>Overload tripped</td>
+</tr>
+<tr class="even">
+<td>Why 1?</td>
+<td>Why did the overload trip?</td>
+<td>Motor drew excessive current</td>
+</tr>
+<tr class="odd">
+<td>Why 2?</td>
+<td>Why excessive current?</td>
+<td>Bearing was seized</td>
+</tr>
+<tr class="even">
+<td>Why 3?</td>
+<td>Why was bearing seized?</td>
+<td>Insufficient lubrication</td>
+</tr>
+<tr class="odd">
+<td>Why 4?</td>
+<td>Why insufficient lubrication?</td>
+<td>Lubrication schedule not followed</td>
+</tr>
+<tr class="even">
+<td>Why 5?</td>
+<td>Why not followed?</td>
+<td>No visual indicator when lubrication is due</td>
+</tr>
+<tr class="odd">
+<td><strong>Root Cause</strong></td>
+<td></td>
+<td>Missing visual management for lubrication schedule</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tips for effective Why-Why Analysis:</strong></p>
+<ul>
+<li>Stay focused on one causal chain at a time</li>
+<li>Base answers on facts, not assumptions—verify at the Gemba</li>
+<li>Don’t stop at “human error”—ask why the error was possible</li>
+<li>The number 5 is a guideline, not a rule—continue until you reach a controllable root cause</li>
+</ul>
+</section>
+<section id="pm-analysis" class="level4" data-number="12.8.2.3">
+<h4 data-number="12.8.2.3" class="anchored" data-anchor-id="pm-analysis"><span class="header-section-number">12.8.2.3</span> PM Analysis</h4>
+<p><strong>PM Analysis</strong> (Physical Mechanism Analysis or Phenomenon-Mechanism Analysis) is a systematic method for analyzing <strong>chronic losses</strong>—problems that occur repeatedly despite multiple repair attempts. It examines the physical principles behind equipment failures.</p>
+<p><strong>The PM Analysis Process:</strong></p>
+<ol type="1">
+<li><strong>Clarify the phenomenon</strong>: Describe exactly what happens, when, and under what conditions</li>
+<li><strong>Conduct physical analysis</strong>: Understand the physical principles involved (friction, heat, vibration, etc.)</li>
+<li><strong>Identify conditions that produce the phenomenon</strong>: List all conditions required for the problem to occur</li>
+<li><strong>Investigate equipment, materials, and methods</strong>: Examine each condition against the 4Ms (Machine, Material, Method, Man)</li>
+<li><strong>Plan and implement countermeasures</strong>: Address the conditions that allow the problem to occur</li>
+<li><strong>Verify results</strong>: Confirm the chronic loss has been eliminated</li>
+</ol>
+<p><em>PM Analysis is particularly valuable when Why-Why Analysis doesn’t resolve a recurring problem.</em></p>
+</section>
+<section id="smed-single-minute-exchange-of-die" class="level4" data-number="12.8.2.4">
+<h4 data-number="12.8.2.4" class="anchored" data-anchor-id="smed-single-minute-exchange-of-die"><span class="header-section-number">12.8.2.4</span> SMED (Single-Minute Exchange of Die)</h4>
+<p><strong>SMED</strong> is a systematic approach to reducing changeover or setup time—the time between the last good part of one product and the first good part of the next. The goal is to complete changeovers in under 10 minutes (single-digit minutes).</p>
+<p><strong>The SMED Process:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/smed-steps2-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>SMED Methodology</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li><strong>Internal setup</strong>: Tasks that can only be done when the machine is stopped (changing the die itself)</li>
+<li><strong>External setup</strong>: Tasks that can be done while the machine is running (preparing tools, preheating)</li>
+</ul>
+<p><strong>Typical SMED Improvements:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 55%">
+<col style="width: 45%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Technique</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Prepare in advance</td>
+<td>Stage tools and materials before stopping the machine</td>
+</tr>
+<tr class="even">
+<td>Use quick-release clamps</td>
+<td>Replace bolts with cam locks or hydraulic clamps</td>
+</tr>
+<tr class="odd">
+<td>Eliminate adjustments</td>
+<td>Use fixtures, stops, and standardized settings</td>
+</tr>
+<tr class="even">
+<td>Parallel operations</td>
+<td>Two people working simultaneously on different tasks</td>
+</tr>
+<tr class="odd">
+<td>Standardize components</td>
+<td>Use common bolt sizes, connection types</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="poka-yoke-error-proofing" class="level4" data-number="12.8.2.5">
+<h4 data-number="12.8.2.5" class="anchored" data-anchor-id="poka-yoke-error-proofing"><span class="header-section-number">12.8.2.5</span> Poka-Yoke (Error-Proofing)</h4>
+<p><strong>Poka-Yoke</strong> (ポカヨケ) means “mistake-proofing” or “error-proofing.” These are devices or methods that either prevent errors from occurring or detect them immediately when they do occur.</p>
+<p><strong>Types of Poka-Yoke:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 40%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Function</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Prevention</strong></td>
+<td>Makes errors impossible</td>
+<td>Asymmetric connector that only fits one way</td>
+</tr>
+<tr class="even">
+<td><strong>Detection</strong></td>
+<td>Identifies errors immediately</td>
+<td>Sensor that stops the line if a part is missing</td>
+</tr>
+<tr class="odd">
+<td><strong>Warning</strong></td>
+<td>Alerts operator to potential error</td>
+<td>Light or buzzer when a step is skipped</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Poka-Yoke Design Principles:</strong></p>
+<ol type="1">
+<li><strong>Design out the possibility of error</strong> — The best Poka-Yoke makes the error impossible</li>
+<li><strong>Detect at the source</strong> — Catch errors where they occur, not downstream</li>
+<li><strong>Stop and fix immediately</strong> — Don’t pass defects to the next process</li>
+<li><strong>Keep it simple</strong> — Low-cost, reliable solutions are better than complex ones</li>
+</ol>
+<p><strong>Examples in Manufacturing:</strong></p>
+<ul>
+<li><strong>Guide pins</strong> that prevent a part from being loaded incorrectly</li>
+<li><strong>Counters</strong> that verify the correct number of components were installed</li>
+<li><strong>Checklists with physical verification</strong> (e.g., removing a flag for each completed step)</li>
+<li><strong>Limit switches</strong> that confirm proper positioning before the cycle starts</li>
+<li><strong>Color coding</strong> to match parts with their correct locations</li>
+</ul>
+<details>
+<summary>
+Question: How do you decide which tool to use?
+</summary>
+<p><strong>Tool Selection Guide:</strong></p>
+<ul>
+<li><strong>Pareto Analysis</strong>: Use first to identify which loss to focus on</li>
+<li><strong>Why-Why Analysis</strong>: Use for sporadic failures with clear cause-effect relationships</li>
+<li><strong>PM Analysis</strong>: Use for chronic losses that keep recurring despite repairs</li>
+<li><strong>SMED</strong>: Use specifically for setup/changeover losses (Loss #2)</li>
+<li><strong>Poka-Yoke</strong>: Use to prevent defects and human errors (Losses #5, #6)</li>
+</ul>
+<p>Often, multiple tools are used together—Pareto to select the problem, Why-Why or PM Analysis to find the root cause, and Poka-Yoke to prevent recurrence.</p>
+</details>
+</section>
+<section id="summary-of-loss-elimination-tools" class="level4" data-number="12.8.2.6">
+<h4 data-number="12.8.2.6" class="anchored" data-anchor-id="summary-of-loss-elimination-tools"><span class="header-section-number">12.8.2.6</span> Summary of Loss Elimination Tools</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Tools for Loss Elimination</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Tool</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Purpose</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Pareto Analysis**</td>
+<td style="text-align: left;">Identify biggest losses to target</td>
+<td style="text-align: left;">Prioritize improvement efforts</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Why-Why Analysis**</td>
+<td style="text-align: left;">Find root cause of failures</td>
+<td style="text-align: left;">Breakdown analysis, defect investigation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**PM Analysis**</td>
+<td style="text-align: left;">Analyze chronic losses systematically</td>
+<td style="text-align: left;">Complex, recurring problems</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">**SMED**</td>
+<td style="text-align: left;">Reduce setup/changeover time</td>
+<td style="text-align: left;">Availability improvement (Loss #2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">**Poka-Yoke**</td>
+<td style="text-align: left;">Error-proof the process</td>
+<td style="text-align: left;">Quality improvement (Losses #5, #6)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="tpm-implementation" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="tpm-implementation"><span class="header-section-number">12.9</span> TPM Implementation</h2>
+<section id="the-12-steps-of-tpm-implementation" class="level3" data-number="12.9.1">
+<h3 data-number="12.9.1" class="anchored" data-anchor-id="the-12-steps-of-tpm-implementation"><span class="header-section-number">12.9.1</span> The 12 Steps of TPM Implementation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>12 Steps of TPM Implementation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Phase</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Step</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Activity</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 255) !important;">Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 10em; font-weight: bold;">**Preparation**</td>
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important;">1</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Announce TPM introduction by top management</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">1 month</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 10em; font-weight: bold;">**Preparation**</td>
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important;">2</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Education and campaign to introduce TPM</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">3-6 months</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 10em; font-weight: bold;">**Preparation**</td>
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important;">3</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Create TPM promotion organization</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">1-2 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 10em; font-weight: bold;">**Preparation**</td>
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important;">4</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Establish basic TPM policies and goals</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">1-2 months</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important; width: 10em; font-weight: bold;">**Preparation**</td>
+<td style="text-align: right; background-color: rgba(214, 234, 248, 255) !important;">5</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">Formulate master plan for TPM development</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 255) !important;">1-2 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 10em; font-weight: bold;">**Implementation**</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">6</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Hold TPM kick-off</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">1 day</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 10em; font-weight: bold;">**Implementation**</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">7</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Improve effectiveness of each piece of equipment</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">6-12 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 10em; font-weight: bold;">**Implementation**</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">8</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Develop autonomous maintenance program</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">12-24 months</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 10em; font-weight: bold;">**Implementation**</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">9</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Develop planned maintenance program</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">12-24 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important; width: 10em; font-weight: bold;">**Implementation**</td>
+<td style="text-align: right; background-color: rgba(213, 245, 227, 255) !important;">10</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Conduct training to improve skills</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 255) !important;">Ongoing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important; width: 10em; font-weight: bold;">**Stabilization**</td>
+<td style="text-align: right; background-color: rgba(252, 228, 214, 255) !important;">11</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Develop early equipment management program</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">12-24 months</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important; width: 10em; font-weight: bold;">**Stabilization**</td>
+<td style="text-align: right; background-color: rgba(252, 228, 214, 255) !important;">12</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Perfect TPM implementation and raise levels</td>
+<td style="text-align: left; background-color: rgba(252, 228, 214, 255) !important;">Ongoing</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="success-factors" class="level3" data-number="12.9.2">
+<h3 data-number="12.9.2" class="anchored" data-anchor-id="success-factors"><span class="header-section-number">12.9.2</span> Success Factors</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>TPM Success Factors</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Factor</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 255) !important;">Why Critical</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Top Management Commitment**</td>
+<td style="text-align: left;">Resources, culture change, sustained focus</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Training and Education**</td>
+<td style="text-align: left;">Skills to identify problems, perform maintenance</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Small Group Activities**</td>
+<td style="text-align: left;">Operator involvement, team problem-solving</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Visual Management**</td>
+<td style="text-align: left;">Make abnormalities obvious, track progress</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">**Patience and Persistence**</td>
+<td style="text-align: left;">TPM takes 3-5 years to fully implement</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="case-study-tpm-implementation" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="case-study-tpm-implementation"><span class="header-section-number">12.10</span> Case Study: TPM Implementation</h2>
+<section id="background" class="level3" data-number="12.10.1">
+<h3 data-number="12.10.1" class="anchored" data-anchor-id="background"><span class="header-section-number">12.10.1</span> Background</h3>
+<p><strong>Company:</strong> Automotive component manufacturer</p>
+<p><strong>Equipment:</strong> CNC machining center</p>
+<p><strong>Initial OEE:</strong> 52%</p>
+</section>
+<section id="problem-analysis" class="level3" data-number="12.10.2">
+<h3 data-number="12.10.2" class="anchored" data-anchor-id="problem-analysis"><span class="header-section-number">12.10.2</span> Problem Analysis</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initial State</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== INITIAL OEE BREAKDOWN ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== INITIAL OEE BREAKDOWN ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>availability_initial <span class="ot">&lt;-</span> <span class="dv">78</span>  <span class="co"># %</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>performance_initial <span class="ot">&lt;-</span> <span class="dv">82</span>   <span class="co"># %</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>quality_initial <span class="ot">&lt;-</span> <span class="dv">81</span>       <span class="co"># %</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>oee_initial <span class="ot">&lt;-</span> (availability_initial<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> (performance_initial<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> (quality_initial<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Availability:"</span>, availability_initial, <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Availability: 78 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Performance:"</span>, performance_initial, <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Performance: 82 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Quality:"</span>, quality_initial, <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Quality: 81 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"OEE:"</span>, <span class="fu">round</span>(oee_initial, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OEE: 51.8 %</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loss breakdown</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== TOP LOSSES IDENTIFIED ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== TOP LOSSES IDENTIFIED ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1. Equipment breakdowns: 8% of time</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1. Equipment breakdowns: 8% of time</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"2. Setup/changeover: 7% of time</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2. Setup/changeover: 7% of time</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"3. Minor stops: 12% of time</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3. Minor stops: 12% of time</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"4. Defects: 4% of production</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4. Defects: 4% of production</code></pre>
+</div>
+</div>
+</section>
+<section id="improvements-implemented" class="level3" data-number="12.10.3">
+<h3 data-number="12.10.3" class="anchored" data-anchor-id="improvements-implemented"><span class="header-section-number">12.10.3</span> Improvements Implemented</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 28%">
+<col style="width: 38%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Loss</th>
+<th>Root Cause</th>
+<th>Countermeasure</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Breakdowns</td>
+<td>Lack of basic maintenance</td>
+<td>Autonomous maintenance program</td>
+<td>8% → 3%</td>
+</tr>
+<tr class="even">
+<td>Setup time</td>
+<td>No standard procedure</td>
+<td>SMED implementation</td>
+<td>35 min → 12 min</td>
+</tr>
+<tr class="odd">
+<td>Minor stops</td>
+<td>Chip buildup in sensors</td>
+<td>Improved chip management</td>
+<td>12% → 4%</td>
+</tr>
+<tr class="even">
+<td>Defects</td>
+<td>Tool wear not detected</td>
+<td>In-process gauging</td>
+<td>4% → 1.5%</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="results-after-18-months" class="level3" data-number="12.10.4">
+<h3 data-number="12.10.4" class="anchored" data-anchor-id="results-after-18-months"><span class="header-section-number">12.10.4</span> Results After 18 Months</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># After TPM Implementation</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== FINAL OEE BREAKDOWN ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== FINAL OEE BREAKDOWN ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>availability_final <span class="ot">&lt;-</span> <span class="dv">91</span>    <span class="co"># %</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>performance_final <span class="ot">&lt;-</span> <span class="dv">94</span>     <span class="co"># %</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>quality_final <span class="ot">&lt;-</span> <span class="fl">98.5</span>       <span class="co"># %</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>oee_final <span class="ot">&lt;-</span> (availability_final<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> (performance_final<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> (quality_final<span class="sc">/</span><span class="dv">100</span>) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Availability:"</span>, availability_final, <span class="st">"% (was"</span>, availability_initial, <span class="st">"%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Availability: 91 % (was 78 %)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Performance:"</span>, performance_final, <span class="st">"% (was"</span>, performance_initial, <span class="st">"%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Performance: 94 % (was 82 %)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Quality:"</span>, quality_final, <span class="st">"% (was"</span>, quality_initial, <span class="st">"%)</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Quality: 98.5 % (was 81 %)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"OEE:"</span>, <span class="fu">round</span>(oee_final, <span class="dv">1</span>), <span class="st">"% (was"</span>, <span class="fu">round</span>(oee_initial, <span class="dv">1</span>), <span class="st">"%)</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OEE: 84.3 % (was 51.8 %)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>improvement <span class="ot">&lt;-</span> oee_final <span class="sc">-</span> oee_initial</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== IMPROVEMENT ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== IMPROVEMENT ===</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"OEE Improvement:"</span>, <span class="fu">round</span>(improvement, <span class="dv">1</span>), <span class="st">"percentage points</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OEE Improvement: 32.4 percentage points</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Relative Improvement:"</span>, <span class="fu">round</span>((improvement<span class="sc">/</span>oee_initial)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">0</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Relative Improvement: 63 %</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-TPM_files/figure-html/case-visualization-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>OEE Improvement: Before and After TPM</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">12.11</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>TPM Key Concepts Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 255) !important;">Key Points</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**TPM Definition**</td>
+<td style="text-align: left;">Total involvement, productive focus, maintenance excellence; zero breakdowns/defects/accidents</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**Eight Pillars**</td>
+<td style="text-align: left;">AM, PM, Quality, Focused Improvement, Early Equipment, Training, Safety, Office — built on 5S</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**OEE**</td>
+<td style="text-align: left;">OEE = Availability × Performance × Quality; World class &gt; 85%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**Six Big Losses**</td>
+<td style="text-align: left;">Equipment failure, setup, minor stops, speed loss, defects, startup rejects</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em;">**Autonomous Maintenance**</td>
+<td style="text-align: left;">Operators maintain own equipment; 7 steps from cleaning to full ownership</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em;">**Planned Maintenance**</td>
+<td style="text-align: left;">Preventive → Predictive → Proactive; use P-F curve for optimal timing</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="12.12">
+<h2 data-number="12.12" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">12.12</span> Review Questions</h2>
+<section id="conceptual-questions" class="level3" data-number="12.12.1">
+<h3 data-number="12.12.1" class="anchored" data-anchor-id="conceptual-questions"><span class="header-section-number">12.12.1</span> Conceptual Questions</h3>
+<details>
+<summary>
+Question 1: What does “Total” mean in Total Productive Maintenance?
+</summary>
+<p><strong>“Total” has three dimensions:</strong></p>
+<ol type="1">
+<li><strong>Total participation:</strong> Everyone participates, from operators to top management</li>
+<li><strong>Total equipment effectiveness:</strong> Aim for maximum OEE (zero losses)</li>
+<li><strong>Total system:</strong> Covers the entire equipment lifecycle, from design to disposal</li>
+</ol>
+<p><strong>Key insight:</strong> TPM is not just a maintenance program — it’s a company-wide philosophy where everyone takes responsibility for equipment care.</p>
+</details>
+<details>
+<summary>
+Question 2: Why is OEE calculated as a product rather than a sum?
+</summary>
+<p><strong>OEE uses multiplication because losses are sequential and compound:</strong></p>
+<ol type="1">
+<li><strong>Availability</strong> determines how much time is available</li>
+<li><strong>Performance</strong> determines how much of that time is productive</li>
+<li><strong>Quality</strong> determines how much of that production is good</li>
+</ol>
+<p><strong>Example:</strong> - If each factor is 90%: OEE = 0.9 × 0.9 × 0.9 = 72.9% (not 270% or 90%) - This reflects reality: you can only achieve quality on parts that were produced (performance) during time the machine ran (availability)</p>
+<p><strong>Why this matters:</strong> - Small improvements in all three factors compound - 5% improvement in each: 0.85 × 0.85 × 0.85 = 61% → 0.90 × 0.90 × 0.90 = 73% - Focus on the weakest factor first for biggest impact</p>
+</details>
+<details>
+<summary>
+Question 3: What is the difference between autonomous maintenance and planned maintenance?
+</summary>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 45%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Autonomous Maintenance</th>
+<th>Planned Maintenance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Who</strong></td>
+<td>Operators</td>
+<td>Maintenance technicians</td>
+</tr>
+<tr class="even">
+<td><strong>What</strong></td>
+<td>Basic care (clean, inspect, lubricate)</td>
+<td>Complex repairs, overhauls</td>
+</tr>
+<tr class="odd">
+<td><strong>When</strong></td>
+<td>Daily, during operation</td>
+<td>Scheduled intervals</td>
+</tr>
+<tr class="even">
+<td><strong>Skills</strong></td>
+<td>Basic equipment knowledge</td>
+<td>Technical expertise</td>
+</tr>
+<tr class="odd">
+<td><strong>Goal</strong></td>
+<td>Prevent deterioration</td>
+<td>Restore/improve equipment</td>
+</tr>
+</tbody>
+</table>
+<p><strong>They complement each other:</strong> - AM catches problems early (first line of defense) - PM provides specialized skills when needed - Together they achieve zero breakdowns</p>
+</details>
+</section>
+<section id="calculation-questions" class="level3" data-number="12.12.2">
+<h3 data-number="12.12.2" class="anchored" data-anchor-id="calculation-questions"><span class="header-section-number">12.12.2</span> Calculation Questions</h3>
+<details>
+<summary>
+Question 4: Calculate OEE given the following data.
+</summary>
+<p><strong>Given:</strong> - Shift length: 480 minutes - Breaks: 30 minutes - Changeover: 45 minutes - Breakdown: 20 minutes - Ideal cycle time: 30 seconds (0.5 min) - Total parts produced: 580 - Rejected parts: 23</p>
+<p><strong>Solution:</strong></p>
+<pre><code>Planned Production Time = 480 - 30 = 450 minutes
+Run Time = 450 - 45 - 20 = 385 minutes
+
+Availability = 385 / 450 = 85.6%
+
+Theoretical Output = 385 / 0.5 = 770 parts
+Performance = 580 / 770 = 75.3%
+
+Quality = (580 - 23) / 580 = 557 / 580 = 96.0%
+
+OEE = 85.6% × 75.3% × 96.0% = 61.9%</code></pre>
+<p><strong>Analysis:</strong> Performance is the biggest opportunity for improvement (75.3% vs.&nbsp;targets of 95%). Investigate minor stops and speed losses.</p>
+</details>
+<details>
+<summary>
+Question 5: A machine has OEE of 65% with Availability 90%, Performance 80%, Quality 90%. Which factor should be prioritized?
+</summary>
+<p><strong>Analysis:</strong></p>
+<p>Current state: - Availability: 90% (Gap to world class: 5%) - Performance: 80% (Gap to world class: 15%) - Quality: 90% (Gap to world class: 9%)</p>
+<p><strong>Performance should be prioritized because:</strong></p>
+<ol type="1">
+<li><strong>Biggest gap:</strong> 15 percentage points below world class (95%)</li>
+<li><strong>Biggest OEE impact:</strong> Improving performance 10% → OEE = 90% × 90% × 90% = 72.9%</li>
+<li><strong>Often overlooked:</strong> Speed losses and minor stops are frequently accepted as normal</li>
+</ol>
+<p><strong>Investigation areas for performance:</strong> - Minor stops (jams, blockages, sensor trips) - Reduced speed operation - Idling and waiting - Operator pace</p>
+</details>
+<details>
+<summary>
+Question 6: If current OEE is 60% and target is 85%, what improvement is needed in each component assuming equal improvement?
+</summary>
+<p><strong>Solution:</strong></p>
+<p>Current: 60% = A × P × Q</p>
+<p>If we improve each equally, we need: - Target: 85% = A’ × P’ × Q’ - If A’ = P’ = Q’ = x, then x³ = 0.85 - x = ∛0.85 = 0.947 = 94.7%</p>
+<p><strong>Each component needs to reach approximately 95%</strong></p>
+<p><strong>Check:</strong> 0.947 × 0.947 × 0.947 = 0.849 ≈ 85%</p>
+<p><strong>If current factors are A=80%, P=85%, Q=88%:</strong> - Availability needs: +15 points (80% → 95%) - Performance needs: +10 points (85% → 95%) - Quality needs: +7 points (88% → 95%)</p>
+<p><strong>Prioritize by gap size:</strong> Availability first, then Performance, then Quality.</p>
+</details>
+</section>
+<section id="application-questions" class="level3" data-number="12.12.3">
+<h3 data-number="12.12.3" class="anchored" data-anchor-id="application-questions"><span class="header-section-number">12.12.3</span> Application Questions</h3>
+<details>
+<summary>
+Question 7: An operator notices a small oil leak on a machine. Under traditional maintenance vs.&nbsp;TPM, what happens?
+</summary>
+<p><strong>Traditional Maintenance Approach:</strong> 1. Operator continues running machine 2. May or may not report to maintenance 3. If reported, added to backlog 4. Maintenance addresses when convenient (days/weeks) 5. Leak worsens, potential bearing damage 6. Eventually leads to breakdown</p>
+<p><strong>TPM Approach:</strong> 1. Operator notices during routine inspection 2. Tags the abnormality immediately 3. Determines if operator can fix (blue tag) or needs maintenance (red tag) 4. If simple: operator tightens fitting or adds sealant 5. If complex: maintenance prioritizes based on severity 6. Root cause investigated to prevent recurrence 7. Finding shared in team meeting</p>
+<p><strong>Key Differences:</strong> - <strong>Ownership:</strong> Operator takes responsibility vs.&nbsp;“not my job” - <strong>Speed:</strong> Immediate action vs.&nbsp;delayed response - <strong>Prevention:</strong> Fixed before failure vs.&nbsp;reactive repair - <strong>Cost:</strong> $10 seal vs.&nbsp;$5,000 bearing replacement + downtime</p>
+</details>
+<details>
+<summary>
+Question 8: List five items an operator should check during daily autonomous maintenance.
+</summary>
+<p><strong>Five Essential Daily AM Checks:</strong></p>
+<ol type="1">
+<li><strong>Cleanliness:</strong> Remove chips, debris, dust; clean safety windows and sensors
+<ul>
+<li><em>Why:</em> Contamination causes wear, sensor malfunctions, quality issues</li>
+</ul></li>
+<li><strong>Lubrication:</strong> Check oil levels, grease points, coolant level
+<ul>
+<li><em>Why:</em> Inadequate lubrication causes friction, heat, accelerated wear</li>
+</ul></li>
+<li><strong>Fasteners:</strong> Check for loose bolts, guards, covers
+<ul>
+<li><em>Why:</em> Loose fasteners cause vibration, safety hazards, misalignment</li>
+</ul></li>
+<li><strong>Leaks:</strong> Look for oil, coolant, air, hydraulic leaks
+<ul>
+<li><em>Why:</em> Leaks indicate seal failure, waste resources, create hazards</li>
+</ul></li>
+<li><strong>Abnormal sounds/vibration:</strong> Listen and feel during startup
+<ul>
+<li><em>Why:</em> Changes indicate developing problems (bearings, alignment)</li>
+</ul></li>
+</ol>
+<p><strong>Bonus items:</strong> - Safety guards in place - Emergency stops functional - Pressure/temperature gauges in normal range - No unusual smells (burning, chemical)</p>
+</details>
+<details>
+<summary>
+Question 9: Explain how SMED relates to OEE improvement.
+</summary>
+<p><strong>SMED (Single Minute Exchange of Die) directly improves Availability:</strong></p>
+<p><strong>Loss #2: Setup and Adjustment</strong> is an availability loss captured in OEE.</p>
+<p><strong>How SMED helps:</strong></p>
+<ol type="1">
+<li><strong>Reduces changeover time:</strong>
+<ul>
+<li>Before SMED: 45-minute changeover</li>
+<li>After SMED: 10-minute changeover</li>
+<li>Gain: 35 minutes per changeover</li>
+</ul></li>
+<li><strong>Impact on OEE:</strong>
+<ul>
+<li>If 2 changeovers per shift: 70 minutes saved</li>
+<li>On 450-minute shift: Availability improves 15%+</li>
+</ul></li>
+<li><strong>Secondary benefits:</strong>
+<ul>
+<li>More changeovers become practical</li>
+<li>Smaller batch sizes possible</li>
+<li>Flexibility increased</li>
+<li>Less WIP inventory</li>
+</ul></li>
+</ol>
+<p><strong>SMED Process:</strong> 1. Separate internal (machine stopped) from external (while running) setup 2. Convert internal to external where possible 3. Streamline remaining internal operations 4. Practice and standardize</p>
+<p><strong>Example:</strong> Die change on press - External: Stage next die, prepare tools, preheat - Internal: Remove old die, install new die, adjust - Target: All possible work done while machine runs</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="references" class="level2" data-number="12.13">
+<h2 data-number="12.13" class="anchored" data-anchor-id="references"><span class="header-section-number">12.13</span> References</h2>
+<ul>
+<li>Nakajima, S. (1988). <em>Introduction to TPM: Total Productive Maintenance</em>. Productivity Press.</li>
+<li>Nakajima, S. (1989). <em>TPM Development Program: Implementing Total Productive Maintenance</em>. Productivity Press.</li>
+<li>Shirose, K. (1992). <em>TPM for Operators</em>. Productivity Press.</li>
+<li>Willmott, P., &amp; McCarthy, D. (2001). <em>TPM: A Route to World-Class Performance</em>. Butterworth-Heinemann.</li>
+<li>JIPM (Japan Institute of Plant Maintenance). <em>TPM Awards Criteria</em>.</li>
+<li>Hansen, R.C. (2001). <em>Overall Equipment Effectiveness</em>. Industrial Press.</li>
+<li>Borris, S. (2006). <em>Total Productive Maintenance</em>. McGraw-Hill.</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./11-MSA.html" class="pagination-link" aria-label="Measurement Systems Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./13-Quality-Systems.html" class="pagination-link" aria-label="Quality Management Systems">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/12-TPM.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

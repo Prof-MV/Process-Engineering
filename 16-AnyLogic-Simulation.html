@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>16&nbsp; Simulation Modeling with AnyLogic – ENGR-3027 Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./20-Teaching-with-AI.html" rel="next">
+<link href="./15-Troubleshooting-RCA.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a8d14d036aacfc61ba52a6ee93c515d2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./16-AnyLogic-Simulation.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ENGR-3027 Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Teaching-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">16.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-simulation-modeling" id="toc-introduction-to-simulation-modeling" class="nav-link" data-scroll-target="#introduction-to-simulation-modeling"><span class="header-section-number">16.2</span> Introduction to Simulation Modeling</a>
+  <ul class="collapse">
+  <li><a href="#what-is-simulation" id="toc-what-is-simulation" class="nav-link" data-scroll-target="#what-is-simulation"><span class="header-section-number">16.2.1</span> What is Simulation?</a></li>
+  <li><a href="#why-anylogic" id="toc-why-anylogic" class="nav-link" data-scroll-target="#why-anylogic"><span class="header-section-number">16.2.2</span> Why AnyLogic?</a></li>
+  </ul></li>
+  <li><a href="#sec-paradigms-17" id="toc-sec-paradigms-17" class="nav-link" data-scroll-target="#sec-paradigms-17"><span class="header-section-number">16.3</span> The Three Simulation Paradigms</a>
+  <ul class="collapse">
+  <li><a href="#discrete-event-simulation-des" id="toc-discrete-event-simulation-des" class="nav-link" data-scroll-target="#discrete-event-simulation-des"><span class="header-section-number">16.3.1</span> Discrete-Event Simulation (DES)</a></li>
+  <li><a href="#agent-based-modeling-abm" id="toc-agent-based-modeling-abm" class="nav-link" data-scroll-target="#agent-based-modeling-abm"><span class="header-section-number">16.3.2</span> Agent-Based Modeling (ABM)</a></li>
+  <li><a href="#system-dynamics-sd" id="toc-system-dynamics-sd" class="nav-link" data-scroll-target="#system-dynamics-sd"><span class="header-section-number">16.3.3</span> System Dynamics (SD)</a></li>
+  <li><a href="#choosing-the-right-paradigm" id="toc-choosing-the-right-paradigm" class="nav-link" data-scroll-target="#choosing-the-right-paradigm"><span class="header-section-number">16.3.4</span> Choosing the Right Paradigm</a></li>
+  </ul></li>
+  <li><a href="#sec-interface-17" id="toc-sec-interface-17" class="nav-link" data-scroll-target="#sec-interface-17"><span class="header-section-number">16.4</span> The AnyLogic Interface and Libraries</a>
+  <ul class="collapse">
+  <li><a href="#the-anylogic-workspace" id="toc-the-anylogic-workspace" class="nav-link" data-scroll-target="#the-anylogic-workspace"><span class="header-section-number">16.4.1</span> The AnyLogic Workspace</a></li>
+  <li><a href="#essential-libraries-for-manufacturing" id="toc-essential-libraries-for-manufacturing" class="nav-link" data-scroll-target="#essential-libraries-for-manufacturing"><span class="header-section-number">16.4.2</span> Essential Libraries for Manufacturing</a></li>
+  <li><a href="#the-process-modeling-library" id="toc-the-process-modeling-library" class="nav-link" data-scroll-target="#the-process-modeling-library"><span class="header-section-number">16.4.3</span> The Process Modeling Library</a></li>
+  </ul></li>
+  <li><a href="#sec-production-17" id="toc-sec-production-17" class="nav-link" data-scroll-target="#sec-production-17"><span class="header-section-number">16.5</span> Production Line Simulation</a>
+  <ul class="collapse">
+  <li><a href="#case-study-automotive-door-panel-assembly-line" id="toc-case-study-automotive-door-panel-assembly-line" class="nav-link" data-scroll-target="#case-study-automotive-door-panel-assembly-line"><span class="header-section-number">16.5.1</span> Case Study: Automotive Door Panel Assembly Line</a></li>
+  <li><a href="#step-1-calculate-required-takt-time" id="toc-step-1-calculate-required-takt-time" class="nav-link" data-scroll-target="#step-1-calculate-required-takt-time"><span class="header-section-number">16.5.2</span> Step 1: Calculate Required Takt Time</a></li>
+  <li><a href="#step-2-define-process-parameters" id="toc-step-2-define-process-parameters" class="nav-link" data-scroll-target="#step-2-define-process-parameters"><span class="header-section-number">16.5.3</span> Step 2: Define Process Parameters</a></li>
+  <li><a href="#step-3-build-the-simulation-model" id="toc-step-3-build-the-simulation-model" class="nav-link" data-scroll-target="#step-3-build-the-simulation-model"><span class="header-section-number">16.5.4</span> Step 3: Build the Simulation Model</a></li>
+  <li><a href="#step-4-simulate-and-analyze-results" id="toc-step-4-simulate-and-analyze-results" class="nav-link" data-scroll-target="#step-4-simulate-and-analyze-results"><span class="header-section-number">16.5.5</span> Step 4: Simulate and Analyze Results</a></li>
+  <li><a href="#interpreting-the-results" id="toc-interpreting-the-results" class="nav-link" data-scroll-target="#interpreting-the-results"><span class="header-section-number">16.5.6</span> Interpreting the Results</a></li>
+  <li><a href="#step-5-test-improvement-scenarios" id="toc-step-5-test-improvement-scenarios" class="nav-link" data-scroll-target="#step-5-test-improvement-scenarios"><span class="header-section-number">16.5.7</span> Step 5: Test Improvement Scenarios</a></li>
+  </ul></li>
+  <li><a href="#sec-warehouse-17" id="toc-sec-warehouse-17" class="nav-link" data-scroll-target="#sec-warehouse-17"><span class="header-section-number">16.6</span> Warehouse Simulation: Picking and Order Fulfillment</a>
+  <ul class="collapse">
+  <li><a href="#the-warehouse-challenge" id="toc-the-warehouse-challenge" class="nav-link" data-scroll-target="#the-warehouse-challenge"><span class="header-section-number">16.6.1</span> The Warehouse Challenge</a></li>
+  <li><a href="#case-study-e-commerce-distribution-center" id="toc-case-study-e-commerce-distribution-center" class="nav-link" data-scroll-target="#case-study-e-commerce-distribution-center"><span class="header-section-number">16.6.2</span> Case Study: E-Commerce Distribution Center</a></li>
+  <li><a href="#picking-strategies-compared" id="toc-picking-strategies-compared" class="nav-link" data-scroll-target="#picking-strategies-compared"><span class="header-section-number">16.6.3</span> Picking Strategies Compared</a></li>
+  <li><a href="#simulating-picker-movement" id="toc-simulating-picker-movement" class="nav-link" data-scroll-target="#simulating-picker-movement"><span class="header-section-number">16.6.4</span> Simulating Picker Movement</a></li>
+  <li><a href="#autonomous-mobile-robots-amrs-in-warehouses" id="toc-autonomous-mobile-robots-amrs-in-warehouses" class="nav-link" data-scroll-target="#autonomous-mobile-robots-amrs-in-warehouses"><span class="header-section-number">16.6.5</span> Autonomous Mobile Robots (AMRs) in Warehouses</a></li>
+  </ul></li>
+  <li><a href="#sec-examples-17" id="toc-sec-examples-17" class="nav-link" data-scroll-target="#sec-examples-17"><span class="header-section-number">16.7</span> Built-in AnyLogic Examples</a>
+  <ul class="collapse">
+  <li><a href="#manufacturing-examples" id="toc-manufacturing-examples" class="nav-link" data-scroll-target="#manufacturing-examples"><span class="header-section-number">16.7.1</span> Manufacturing Examples</a></li>
+  <li><a href="#warehouse-and-logistics-examples" id="toc-warehouse-and-logistics-examples" class="nav-link" data-scroll-target="#warehouse-and-logistics-examples"><span class="header-section-number">16.7.2</span> Warehouse and Logistics Examples</a></li>
+  </ul></li>
+  <li><a href="#sec-tutorial-17" id="toc-sec-tutorial-17" class="nav-link" data-scroll-target="#sec-tutorial-17"><span class="header-section-number">16.8</span> Building Your First Model: Step-by-Step Tutorial</a>
+  <ul class="collapse">
+  <li><a href="#tutorial-three-station-production-line" id="toc-tutorial-three-station-production-line" class="nav-link" data-scroll-target="#tutorial-three-station-production-line"><span class="header-section-number">16.8.1</span> Tutorial: Three-Station Production Line</a></li>
+  </ul></li>
+  <li><a href="#sec-advanced-17" id="toc-sec-advanced-17" class="nav-link" data-scroll-target="#sec-advanced-17"><span class="header-section-number">16.9</span> Advanced Topics</a>
+  <ul class="collapse">
+  <li><a href="#d-visualization" id="toc-d-visualization" class="nav-link" data-scroll-target="#d-visualization"><span class="header-section-number">16.9.1</span> 3D Visualization</a></li>
+  <li><a href="#integration-with-real-data" id="toc-integration-with-real-data" class="nav-link" data-scroll-target="#integration-with-real-data"><span class="header-section-number">16.9.2</span> Integration with Real Data</a></li>
+  <li><a href="#optimization-experiments" id="toc-optimization-experiments" class="nav-link" data-scroll-target="#optimization-experiments"><span class="header-section-number">16.9.3</span> Optimization Experiments</a></li>
+  </ul></li>
+  <li><a href="#sec-summary-17" id="toc-sec-summary-17" class="nav-link" data-scroll-target="#sec-summary-17"><span class="header-section-number">16.10</span> Key Takeaways</a></li>
+  <li><a href="#sec-problems-17" id="toc-sec-problems-17" class="nav-link" data-scroll-target="#sec-problems-17"><span class="header-section-number">16.11</span> Practice Problems</a>
+  <ul class="collapse">
+  <li><a href="#problem-1-takt-time-calculation" id="toc-problem-1-takt-time-calculation" class="nav-link" data-scroll-target="#problem-1-takt-time-calculation"><span class="header-section-number">16.11.1</span> Problem 1: Takt Time Calculation</a></li>
+  <li><a href="#problem-2-simulation-model-design" id="toc-problem-2-simulation-model-design" class="nav-link" data-scroll-target="#problem-2-simulation-model-design"><span class="header-section-number">16.11.2</span> Problem 2: Simulation Model Design</a></li>
+  <li><a href="#problem-3-warehouse-picking-analysis" id="toc-problem-3-warehouse-picking-analysis" class="nav-link" data-scroll-target="#problem-3-warehouse-picking-analysis"><span class="header-section-number">16.11.3</span> Problem 3: Warehouse Picking Analysis</a></li>
+  <li><a href="#problem-4-amr-fleet-sizing" id="toc-problem-4-amr-fleet-sizing" class="nav-link" data-scroll-target="#problem-4-amr-fleet-sizing"><span class="header-section-number">16.11.4</span> Problem 4: AMR Fleet Sizing</a></li>
+  </ul></li>
+  <li><a href="#sec-resources-17" id="toc-sec-resources-17" class="nav-link" data-scroll-target="#sec-resources-17"><span class="header-section-number">16.12</span> Further Resources</a>
+  <ul class="collapse">
+  <li><a href="#anylogic-official-resources" id="toc-anylogic-official-resources" class="nav-link" data-scroll-target="#anylogic-official-resources"><span class="header-section-number">16.12.1</span> AnyLogic Official Resources</a></li>
+  <li><a href="#academic-resources" id="toc-academic-resources" class="nav-link" data-scroll-target="#academic-resources"><span class="header-section-number">16.12.2</span> Academic Resources</a></li>
+  <li><a href="#industry-case-studies" id="toc-industry-case-studies" class="nav-link" data-scroll-target="#industry-case-studies"><span class="header-section-number">16.12.3</span> Industry Case Studies</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/16-AnyLogic-Simulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="chap-17-anylogic" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">16.1</span> Learning Objectives</h2>
+<p>After completing this chapter, you will be able to:</p>
+<ol type="1">
+<li>Explain what simulation modeling is and why it is essential for manufacturing system design</li>
+<li>Describe the three simulation paradigms available in AnyLogic (discrete-event, agent-based, and system dynamics)</li>
+<li>Identify the key components and libraries in AnyLogic for manufacturing simulation</li>
+<li>Build a basic production line simulation using the Process Modeling Library</li>
+<li>Model warehouse picking and order fulfillment operations</li>
+<li>Analyze simulation results to optimize throughput, reduce bottlenecks, and improve efficiency</li>
+<li>Apply simulation to validate design decisions before physical implementation</li>
+<li>Use built-in AnyLogic examples to accelerate model development</li>
+</ol>
+<hr>
+</section>
+<section id="introduction-to-simulation-modeling" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="introduction-to-simulation-modeling"><span class="header-section-number">16.2</span> Introduction to Simulation Modeling</h2>
+<div class="callout-think">
+<p><strong>Before You Read:</strong> Imagine you are designing a new automotive assembly line that will cost $50 million to build. How would you test whether your design will meet production targets <em>before</em> spending any money on construction?</p>
+</div>
+<p>In manufacturing, making the wrong design decision can be incredibly expensive. A misplaced workstation, an undersized conveyor, or an incorrect staffing level can result in millions of dollars in lost productivity. <strong>Simulation modeling</strong> allows engineers to build virtual representations of manufacturing systems and test them under various conditions—all without spending a single dollar on physical equipment.</p>
+<section id="what-is-simulation" class="level3" data-number="16.2.1">
+<h3 data-number="16.2.1" class="anchored" data-anchor-id="what-is-simulation"><span class="header-section-number">16.2.1</span> What is Simulation?</h3>
+<p><strong>Simulation</strong> is the process of creating a computer model that mimics the behavior of a real-world system over time. Unlike static calculations or spreadsheet analysis, simulation captures the <em>dynamic</em> nature of manufacturing systems:</p>
+<ul>
+<li>Products arrive at random intervals</li>
+<li>Machines break down unexpectedly</li>
+<li>Workers take breaks</li>
+<li>Quality defects occur randomly</li>
+<li>Rush orders disrupt schedules</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-simulation-value" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-simulation-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-simulation-value-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-simulation-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.1: The value of simulation in reducing project risk
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-industry">
+<p><strong>Industry Application:</strong> Mercedes-Benz engineers used AnyLogic simulation to optimize their Sprinter van production line, achieving a <strong>5% efficiency gain</strong> by identifying and eliminating bottlenecks before any physical changes were made. This saved millions in potential rework costs.</p>
+</div>
+</section>
+<section id="why-anylogic" class="level3" data-number="16.2.2">
+<h3 data-number="16.2.2" class="anchored" data-anchor-id="why-anylogic"><span class="header-section-number">16.2.2</span> Why AnyLogic?</h3>
+<p><strong>AnyLogic</strong> is one of the world’s leading simulation platforms, used by companies including Tesla, BMW, Amazon, Ford, and General Electric. It stands out from other simulation software for several key reasons:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>AnyLogic compared to typical simulation software</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Feature</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">AnyLogic</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Other Software</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Multi-method modeling</td>
+<td style="text-align: center;">Yes - all three paradigms</td>
+<td style="text-align: center;">Usually single method</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Manufacturing libraries</td>
+<td style="text-align: center;">Material Handling Library</td>
+<td style="text-align: center;">Varies</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3D visualization</td>
+<td style="text-align: center;">Built-in 3D</td>
+<td style="text-align: center;">Often requires plugins</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cloud-based simulation</td>
+<td style="text-align: center;">AnyLogic Cloud</td>
+<td style="text-align: center;">Limited</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Academic version</td>
+<td style="text-align: center;">Free for students</td>
+<td style="text-align: center;">Varies</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Agent-based modeling</td>
+<td style="text-align: center;">Industry-leading</td>
+<td style="text-align: center;">Limited support</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-paradigms-17" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="sec-paradigms-17"><span class="header-section-number">16.3</span> The Three Simulation Paradigms</h2>
+<p>AnyLogic is unique because it supports <strong>three different simulation approaches</strong> within a single platform. Understanding when to use each paradigm is essential for effective modeling.</p>
+<section id="discrete-event-simulation-des" class="level3" data-number="16.3.1">
+<h3 data-number="16.3.1" class="anchored" data-anchor-id="discrete-event-simulation-des"><span class="header-section-number">16.3.1</span> Discrete-Event Simulation (DES)</h3>
+<p><strong>Discrete-event simulation</strong> models systems as a sequence of events that occur at specific points in time. Between events, nothing changes. This is the most common approach for manufacturing simulation.</p>
+<div class="callout-concept">
+<p><strong>Key Concept: Discrete-Event Simulation</strong> In DES, entities (products, orders, customers) flow through a series of processes (workstations, queues, resources). The simulation “jumps” from event to event, making it computationally efficient.</p>
+</div>
+<p><strong>Best for:</strong> - Assembly lines and production systems - Warehouse operations and logistics - Service processes and queuing systems - Call centers and order processing</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-des-flow" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-des-flow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-des-flow-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-des-flow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.2: Discrete-event simulation flow diagram
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="agent-based-modeling-abm" class="level3" data-number="16.3.2">
+<h3 data-number="16.3.2" class="anchored" data-anchor-id="agent-based-modeling-abm"><span class="header-section-number">16.3.2</span> Agent-Based Modeling (ABM)</h3>
+<p><strong>Agent-based modeling</strong> simulates systems by defining individual agents (workers, robots, vehicles) that have their own behaviors, goals, and decision rules. Agents interact with each other and their environment, and complex system behavior <em>emerges</em> from these interactions.</p>
+<p><strong>Best for:</strong> - Autonomous mobile robots (AMRs) and AGVs - Pedestrian and crowd simulation - Market and consumer behavior - Complex adaptive systems</p>
+<div class="callout-industry">
+<p><strong>Industry Application:</strong> Tesla uses agent-based simulation in AnyLogic to optimize the deployment of autonomous mobile robots in their manufacturing facilities. Each robot is modeled as an agent with its own task allocation logic, collision avoidance, and charging behavior.</p>
+</div>
+</section>
+<section id="system-dynamics-sd" class="level3" data-number="16.3.3">
+<h3 data-number="16.3.3" class="anchored" data-anchor-id="system-dynamics-sd"><span class="header-section-number">16.3.3</span> System Dynamics (SD)</h3>
+<p><strong>System dynamics</strong> models systems using stocks, flows, and feedback loops. It focuses on aggregate behavior over time rather than individual entities.</p>
+<p><strong>Best for:</strong> - Strategic planning and capacity modeling - Supply chain dynamics - Policy analysis - Long-term trends and forecasting</p>
+</section>
+<section id="choosing-the-right-paradigm" class="level3" data-number="16.3.4">
+<h3 data-number="16.3.4" class="anchored" data-anchor-id="choosing-the-right-paradigm"><span class="header-section-number">16.3.4</span> Choosing the Right Paradigm</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `label.size` argument of `geom_label()` is deprecated as of ggplot2 3.5.0.
+ℹ Please use the `linewidth` argument instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-paradigm-selection" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-paradigm-selection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-paradigm-selection-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-paradigm-selection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.3: Decision framework for selecting simulation paradigm
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-check">
+<p><strong>Quick Check:</strong> A company wants to simulate their new automated warehouse with 50 mobile robots that must navigate, avoid collisions, and coordinate pickups. Which paradigm would you recommend and why?</p>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-interface-17" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="sec-interface-17"><span class="header-section-number">16.4</span> The AnyLogic Interface and Libraries</h2>
+<section id="the-anylogic-workspace" class="level3" data-number="16.4.1">
+<h3 data-number="16.4.1" class="anchored" data-anchor-id="the-anylogic-workspace"><span class="header-section-number">16.4.1</span> The AnyLogic Workspace</h3>
+<p>When you open AnyLogic, you’ll see several key areas:</p>
+<ol type="1">
+<li><strong>Model Browser</strong> (left panel) - Shows all elements in your model</li>
+<li><strong>Graphical Editor</strong> (center) - Where you build your model visually</li>
+<li><strong>Palette</strong> (right panel) - Contains libraries and elements you can drag into your model</li>
+<li><strong>Properties</strong> (bottom) - Configure selected elements</li>
+</ol>
+</section>
+<section id="essential-libraries-for-manufacturing" class="level3" data-number="16.4.2">
+<h3 data-number="16.4.2" class="anchored" data-anchor-id="essential-libraries-for-manufacturing"><span class="header-section-number">16.4.2</span> Essential Libraries for Manufacturing</h3>
+<p>AnyLogic includes specialized libraries that dramatically accelerate model development:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Key AnyLogic libraries for manufacturing simulation</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Library</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Primary Use</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Key Elements</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Process Modeling Library</td>
+<td style="text-align: left;">Discrete-event simulation of any process</td>
+<td style="text-align: left;">Source, Queue, Delay, Service, Sink</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Material Handling Library</td>
+<td style="text-align: left;">Conveyors, cranes, AGVs, forklifts</td>
+<td style="text-align: left;">Conveyor, Station, Transporter, Crane</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Pedestrian Library</td>
+<td style="text-align: left;">Worker movement and ergonomics</td>
+<td style="text-align: left;">PedSource, PedService, PedSink</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Road Traffic Library</td>
+<td style="text-align: left;">Truck logistics and yard management</td>
+<td style="text-align: left;">CarSource, Road, Intersection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Rail Library</td>
+<td style="text-align: left;">Rail-based transport systems</td>
+<td style="text-align: left;">RailNetwork, Train, RailYard</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Fluid Library</td>
+<td style="text-align: left;">Bulk material and liquid processing</td>
+<td style="text-align: left;">Tank, Pipe, Valve, FlowRate</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-process-modeling-library" class="level3" data-number="16.4.3">
+<h3 data-number="16.4.3" class="anchored" data-anchor-id="the-process-modeling-library"><span class="header-section-number">16.4.3</span> The Process Modeling Library</h3>
+<p>The <strong>Process Modeling Library</strong> is the foundation for most manufacturing simulations. It provides building blocks for creating flowchart-based models:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-pml-elements" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pml-elements-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-pml-elements-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pml-elements-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.4: Key Process Modeling Library elements
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-activity">
+<p><strong>Hands-On Activity:</strong> Open AnyLogic and create a new model. Drag a Source, Queue, Delay, and Sink from the Process Modeling Library. Connect them in sequence. Run the simulation and observe entities flowing through.</p>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-production-17" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="sec-production-17"><span class="header-section-number">16.5</span> Production Line Simulation</h2>
+<p>Now let’s apply these concepts to design and analyze an automotive production line. We’ll walk through a complete example using AnyLogic’s built-in examples as a starting point.</p>
+<section id="case-study-automotive-door-panel-assembly-line" class="level3" data-number="16.5.1">
+<h3 data-number="16.5.1" class="anchored" data-anchor-id="case-study-automotive-door-panel-assembly-line"><span class="header-section-number">16.5.1</span> Case Study: Automotive Door Panel Assembly Line</h3>
+<div class="callout-case">
+<p><strong>The Scenario:</strong> You are designing a door panel assembly line for an automotive supplier. The line must:</p>
+<ul>
+<li>Process <strong>480 door panels per 8-hour shift</strong> (1 panel per minute)</li>
+<li>Include 5 workstations: stamping, welding, painting, assembly, and inspection</li>
+<li>Meet quality target of <strong>&lt; 2% defect rate</strong></li>
+<li>Maintain <strong>85% overall equipment effectiveness (OEE)</strong></li>
+</ul>
+<p>Your task is to simulate this line to verify it meets these requirements before construction begins.</p>
+</div>
+</section>
+<section id="step-1-calculate-required-takt-time" class="level3" data-number="16.5.2">
+<h3 data-number="16.5.2" class="anchored" data-anchor-id="step-1-calculate-required-takt-time"><span class="header-section-number">16.5.2</span> Step 1: Calculate Required Takt Time</h3>
+<p>Before building the simulation, we need to calculate the <strong>takt time</strong>—the maximum time allowed per unit to meet demand.</p>
+<p><span id="eq-takt-time"><span class="math display">\[
+Takt\ Time = \frac{Available\ Production\ Time}{Customer\ Demand}
+\tag{16.1}\]</span></span></p>
+<p>For our example:</p>
+<p><span class="math display">\[Takt\ Time = \frac{8\ hours \times 60\ min/hour}{480\ panels} = 1\ minute/panel\]</span></p>
+<p>This means each workstation must complete its operation in <strong>less than 1 minute</strong> to avoid becoming a bottleneck.</p>
+</section>
+<section id="step-2-define-process-parameters" class="level3" data-number="16.5.3">
+<h3 data-number="16.5.3" class="anchored" data-anchor-id="step-2-define-process-parameters"><span class="header-section-number">16.5.3</span> Step 2: Define Process Parameters</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Process parameters for door panel assembly line</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Station</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Mean Time (sec)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Std Dev (sec)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Defect Rate (%)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Availability (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Stamping</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">95</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Welding</td>
+<td style="text-align: center;">52</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0.8</td>
+<td style="text-align: center;">92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Painting</td>
+<td style="text-align: center;">48</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;">90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Assembly</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">94</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Inspection</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">98</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="step-3-build-the-simulation-model" class="level3" data-number="16.5.4">
+<h3 data-number="16.5.4" class="anchored" data-anchor-id="step-3-build-the-simulation-model"><span class="header-section-number">16.5.4</span> Step 3: Build the Simulation Model</h3>
+<p>In AnyLogic, we would create this model by:</p>
+<ol type="1">
+<li>Dragging a <strong>Source</strong> block to generate door panels at the required rate</li>
+<li>Adding <strong>Service</strong> blocks for each workstation (with appropriate process times)</li>
+<li>Connecting <strong>Queue</strong> blocks between stations to handle waiting</li>
+<li>Adding <strong>SelectOutput</strong> blocks after each station to route defective parts</li>
+<li>Placing a <strong>Sink</strong> at the end to collect finished panels</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-production-line-model" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-production-line-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-production-line-model-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-production-line-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.5: AnyLogic production line model structure
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-4-simulate-and-analyze-results" class="level3" data-number="16.5.5">
+<h3 data-number="16.5.5" class="anchored" data-anchor-id="step-4-simulate-and-analyze-results"><span class="header-section-number">16.5.5</span> Step 4: Simulate and Analyze Results</h3>
+<p>Let’s simulate what the output might look like when we run this model:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate production line results</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate hourly production data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>hours <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>good_parts <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">56</span>, <span class="dv">58</span>, <span class="dv">55</span>, <span class="dv">57</span>, <span class="dv">59</span>, <span class="dv">54</span>, <span class="dv">58</span>, <span class="dv">57</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>defects <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>target <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">60</span>, <span class="dv">8</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>production_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Hour =</span> hours,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Good =</span> good_parts,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Defects =</span> defects,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Target =</span> target</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate queue length data over time</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>time_points <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">480</span>, <span class="at">by =</span> <span class="dv">5</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>queue_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time =</span> <span class="fu">rep</span>(time_points, <span class="dv">5</span>),</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Queue =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Q1"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q4"</span>, <span class="st">"Q5"</span>), <span class="at">each =</span> <span class="fu">length</span>(time_points)),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">Length =</span> <span class="fu">c</span>(</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time_points), <span class="dv">2</span>, <span class="dv">1</span>)),    <span class="co"># Q1</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time_points), <span class="dv">5</span>, <span class="dv">2</span>)),    <span class="co"># Q2 - bottleneck</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time_points), <span class="dv">3</span>, <span class="fl">1.5</span>)),  <span class="co"># Q3</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time_points), <span class="dv">4</span>, <span class="fl">1.8</span>)),  <span class="co"># Q4</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time_points), <span class="dv">1</span>, <span class="fl">0.5</span>))   <span class="co"># Q5</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Create multi-panel plot</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(production_df, <span class="fu">aes</span>(<span class="at">x =</span> Hour)) <span class="sc">+</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> Good), <span class="at">fill =</span> <span class="st">"#2ECC71"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="sc">-</span>Defects), <span class="at">fill =</span> <span class="st">"#E74C3C"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Target), <span class="at">color =</span> <span class="st">"#3498DB"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">8.5</span>, <span class="at">y =</span> <span class="dv">60</span>, <span class="at">label =</span> <span class="st">"Target"</span>, <span class="at">color =</span> <span class="st">"#3498DB"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Hourly Production Output"</span>,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Green = Good parts, Red = Defects, Dashed = Target"</span>,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Hour"</span>,</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Units"</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(queue_data, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> Length, <span class="at">color =</span> Queue)) <span class="sc">+</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">450</span>, <span class="at">y =</span> <span class="dv">6</span>, <span class="at">label =</span> <span class="st">"Warning</span><span class="sc">\n</span><span class="st">Threshold"</span>,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Queue Lengths Over Shift"</span>,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Q2 (after Stamping) shows potential bottleneck"</span>,</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Time (minutes)"</span>,</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Queue Length"</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-production-results" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-production-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-production-results-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-production-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.6: Simulated production line performance over 8-hour shift
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpreting-the-results" class="level3" data-number="16.5.6">
+<h3 data-number="16.5.6" class="anchored" data-anchor-id="interpreting-the-results"><span class="header-section-number">16.5.6</span> Interpreting the Results</h3>
+<p>From our simulation, we can observe:</p>
+<ol type="1">
+<li><strong>Production Target:</strong> The line produces approximately 454 good parts per shift (454/480 = 94.6% of target)</li>
+<li><strong>Defect Rate:</strong> 13 defects / 467 total = 2.8% (exceeds our 2% target)</li>
+<li><strong>Bottleneck Identified:</strong> Queue Q2 (after Stamping) consistently has the longest queue, indicating the <strong>Welding station</strong> is the bottleneck</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Critical Finding:</strong> The Welding station with a mean process time of 52 seconds and 8% variability is creating a bottleneck. Even though 52 seconds is under the 60-second takt time, the variability combined with 92% availability causes cumulative delays.</p>
+</div>
+</div>
+</section>
+<section id="step-5-test-improvement-scenarios" class="level3" data-number="16.5.7">
+<h3 data-number="16.5.7" class="anchored" data-anchor-id="step-5-test-improvement-scenarios"><span class="header-section-number">16.5.7</span> Step 5: Test Improvement Scenarios</h3>
+<p>The power of simulation is testing “what-if” scenarios. Let’s compare different improvement options:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create scenario comparison data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>scenarios <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Scenario =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Current State"</span>, <span class="st">"Add Buffer"</span>, <span class="st">"Reduce Variability"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Add Parallel Station"</span>, <span class="st">"Combined Approach"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Current State"</span>, <span class="st">"Add Buffer"</span>, <span class="st">"Reduce Variability"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Add Parallel Station"</span>, <span class="st">"Combined Approach"</span>)),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Throughput =</span> <span class="fu">c</span>(<span class="dv">454</span>, <span class="dv">462</span>, <span class="dv">471</span>, <span class="dv">485</span>, <span class="dv">498</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Investment =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">50</span>, <span class="dv">200</span>, <span class="dv">180</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ROI =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">53</span>, <span class="dv">34</span>, <span class="fl">15.5</span>, <span class="fl">24.4</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Throughput comparison</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(scenarios, <span class="fu">aes</span>(<span class="at">x =</span> Scenario, <span class="at">y =</span> Throughput, <span class="at">fill =</span> Scenario)) <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">480</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Throughput), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="dv">485</span>, <span class="at">label =</span> <span class="st">"Target: 480"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>) <span class="sc">+</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Throughput by Improvement Scenario"</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Simulation results for 8-hour shift"</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Parts per Shift"</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">30</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-improvement-scenarios" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-improvement-scenarios-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-improvement-scenarios-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-improvement-scenarios-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.7: Comparison of improvement scenarios
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-discussion">
+<p><strong>Group Discussion:</strong> Based on these results, which improvement option would you recommend? Consider not just throughput but also implementation cost, timeline, and risk. Discuss the trade-offs with your team.</p>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-warehouse-17" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="sec-warehouse-17"><span class="header-section-number">16.6</span> Warehouse Simulation: Picking and Order Fulfillment</h2>
+<p>Modern warehouses face immense pressure to fulfill orders quickly and accurately. Simulation helps optimize picking strategies, staffing levels, and automation investments.</p>
+<section id="the-warehouse-challenge" class="level3" data-number="16.6.1">
+<h3 data-number="16.6.1" class="anchored" data-anchor-id="the-warehouse-challenge"><span class="header-section-number">16.6.1</span> The Warehouse Challenge</h3>
+<div class="callout-think">
+<p><strong>Before You Read:</strong> If you had to fill 1,000 customer orders per day from a warehouse with 50,000 different products (SKUs), how would you organize the picking process? What factors would affect efficiency?</p>
+</div>
+<p>Warehouse operations involve complex interactions between:</p>
+<ul>
+<li><strong>Order arrivals</strong> (often unpredictable)</li>
+<li><strong>Picker movement</strong> (walking is typically 50% of picker time)</li>
+<li><strong>Storage locations</strong> (where products are stored affects travel time)</li>
+<li><strong>Picking strategies</strong> (single-order vs.&nbsp;batch picking)</li>
+<li><strong>Material handling equipment</strong> (carts, forklifts, conveyor systems)</li>
+<li><strong>Packing and shipping</strong> (labor-intensive final steps)</li>
+</ul>
+</section>
+<section id="case-study-e-commerce-distribution-center" class="level3" data-number="16.6.2">
+<h3 data-number="16.6.2" class="anchored" data-anchor-id="case-study-e-commerce-distribution-center"><span class="header-section-number">16.6.2</span> Case Study: E-Commerce Distribution Center</h3>
+<div class="callout-case">
+<p><strong>The Scenario:</strong> An e-commerce company is designing a new distribution center to handle:</p>
+<ul>
+<li><strong>13,000 order lines per day</strong> (an order line = one product in one order)</li>
+<li><strong>750 picking cartons</strong> processed daily</li>
+<li>Peak periods with <strong>3x normal order volume</strong></li>
+<li>Delivery promise of <strong>same-day shipping</strong> for orders before 2 PM</li>
+</ul>
+<p>They need to decide: What picking algorithm will minimize fulfillment time while meeting labor cost targets?</p>
+</div>
+</section>
+<section id="picking-strategies-compared" class="level3" data-number="16.6.3">
+<h3 data-number="16.6.3" class="anchored" data-anchor-id="picking-strategies-compared"><span class="header-section-number">16.6.3</span> Picking Strategies Compared</h3>
+<p>AnyLogic allows us to simulate and compare different picking strategies:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Warehouse picking strategies</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Strategy</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Single-Order Picking</td>
+<td style="text-align: left; width: 45%;">One picker completes one order at a time</td>
+<td style="text-align: left; width: 40%;">Small operations, high accuracy required</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Batch Picking</td>
+<td style="text-align: left; width: 45%;">Picker collects items for multiple orders simultaneously</td>
+<td style="text-align: left; width: 40%;">High-volume with clustered SKUs</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Zone Picking</td>
+<td style="text-align: left; width: 45%;">Warehouse divided into zones; each picker handles one zone</td>
+<td style="text-align: left; width: 40%;">Very large warehouses</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15%; font-weight: bold;">Wave Picking</td>
+<td style="text-align: left; width: 45%;">Orders grouped into waves released at intervals</td>
+<td style="text-align: left; width: 40%;">Managing workload throughout shift</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15%; font-weight: bold;">Cluster Picking</td>
+<td style="text-align: left; width: 45%;">Multiple orders picked into compartmentalized cart</td>
+<td style="text-align: left; width: 40%;">Medium volume, diverse products</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="simulating-picker-movement" class="level3" data-number="16.6.4">
+<h3 data-number="16.6.4" class="anchored" data-anchor-id="simulating-picker-movement"><span class="header-section-number">16.6.4</span> Simulating Picker Movement</h3>
+<p>One of the key factors in warehouse efficiency is picker travel distance. AnyLogic can model this using the <strong>Pedestrian Library</strong> combined with the <strong>Process Modeling Library</strong>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate picker travel data for different storage strategies</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Random storage vs. velocity-based storage</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>n_picks <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>random_storage <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_picks, <span class="at">mean =</span> <span class="dv">180</span>, <span class="at">sd =</span> <span class="dv">40</span>)  <span class="co"># feet per pick</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>velocity_storage <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_picks, <span class="at">mean =</span> <span class="dv">95</span>, <span class="at">sd =</span> <span class="dv">25</span>)  <span class="co"># feet per pick</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>abc_storage <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_picks, <span class="at">mean =</span> <span class="dv">120</span>, <span class="at">sd =</span> <span class="dv">30</span>)      <span class="co"># feet per pick</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>travel_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Strategy =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Random Storage"</span>, <span class="st">"ABC Analysis"</span>, <span class="st">"Velocity-Based"</span>), <span class="at">each =</span> n_picks),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Distance =</span> <span class="fu">c</span>(random_storage, abc_storage, velocity_storage)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(travel_data, <span class="fu">aes</span>(<span class="at">x =</span> Strategy, <span class="at">y =</span> Distance, <span class="at">fill =</span> Strategy)) <span class="sc">+</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(velocity_storage), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#2ECC71"</span>) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">shape =</span> <span class="dv">18</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">3.35</span>, <span class="at">y =</span> <span class="fu">mean</span>(velocity_storage),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"Best: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(velocity_storage)), <span class="st">" ft"</span>),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"#2ECC71"</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#E74C3C"</span>, <span class="st">"#F39C12"</span>, <span class="st">"#2ECC71"</span>)) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Picker Travel Distance by Storage Strategy"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Red diamond = mean; Velocity-based storage reduces travel by 47%"</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Storage Assignment Strategy"</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Travel Distance per Pick (feet)"</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-picker-travel" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-picker-travel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-picker-travel-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-picker-travel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.8: Impact of storage assignment on picker travel distance
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-industry">
+<p><strong>Industry Application:</strong> Kuehne+Nagel used AnyLogic simulation to design a new warehouse processing 13,000 order lines per day. By testing different picking algorithms in simulation, they identified the optimal approach before building the physical facility, avoiding costly redesigns.</p>
+</div>
+</section>
+<section id="autonomous-mobile-robots-amrs-in-warehouses" class="level3" data-number="16.6.5">
+<h3 data-number="16.6.5" class="anchored" data-anchor-id="autonomous-mobile-robots-amrs-in-warehouses"><span class="header-section-number">16.6.5</span> Autonomous Mobile Robots (AMRs) in Warehouses</h3>
+<p>Modern warehouses increasingly use <strong>autonomous mobile robots</strong> to reduce picker travel time. Instead of workers walking to products, robots bring shelving units to stationary pick stations.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate AMR performance</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>amr_counts <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fulfillment_times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">28</span>, <span class="dv">18</span>, <span class="dv">13</span>, <span class="fl">10.5</span>, <span class="dv">9</span>, <span class="fl">8.2</span>, <span class="fl">7.8</span>, <span class="fl">7.6</span>, <span class="fl">7.5</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>utilization <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">98</span>, <span class="dv">95</span>, <span class="dv">88</span>, <span class="dv">78</span>, <span class="dv">68</span>, <span class="dv">58</span>, <span class="dv">52</span>, <span class="dv">48</span>, <span class="dv">45</span>, <span class="dv">43</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>amr_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">AMRs =</span> amr_counts,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time =</span> fulfillment_times,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Utilization =</span> utilization</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Dual y-axis plot</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>coeff <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(amr_data, <span class="fu">aes</span>(<span class="at">x =</span> AMRs)) <span class="sc">+</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Time), <span class="at">color =</span> <span class="st">"#3498DB"</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> Time), <span class="at">color =</span> <span class="st">"#3498DB"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Utilization <span class="sc">*</span> coeff), <span class="at">color =</span> <span class="st">"#E74C3C"</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> Utilization <span class="sc">*</span> coeff), <span class="at">color =</span> <span class="st">"#E74C3C"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">25</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"#2ECC71"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">27</span>, <span class="at">y =</span> <span class="dv">40</span>, <span class="at">label =</span> <span class="st">"Optimal</span><span class="sc">\n</span><span class="st">Point"</span>, <span class="at">color =</span> <span class="st">"#2ECC71"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Fulfillment Time (minutes)"</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">sec.axis =</span> <span class="fu">sec_axis</span>(<span class="sc">~</span> . <span class="sc">/</span> coeff, <span class="at">name =</span> <span class="st">"Robot Utilization (%)"</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Finding the Optimal Number of Autonomous Mobile Robots"</span>,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Blue = Fulfillment time (lower is better); Red = Robot utilization (higher is better)"</span>,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of AMRs"</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y.left =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#3498DB"</span>),</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y.right =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#E74C3C"</span>)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-amr-simulation" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-amr-simulation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-amr-simulation-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-amr-simulation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.9: Simulation results: order fulfillment time vs.&nbsp;number of AMRs
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This simulation reveals a classic trade-off: adding more robots reduces order fulfillment time but also decreases utilization (robots spend more time idle). The <strong>optimal point</strong> balances these factors based on business requirements.</p>
+<div class="callout-check">
+<p><strong>Quick Check:</strong> 1. Why does adding more robots eventually show diminishing returns? 2. If robots cost $50,000 each and labor costs $25/hour, how would you calculate the breakeven point? 3. What other factors should be considered beyond raw cost?</p>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-examples-17" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="sec-examples-17"><span class="header-section-number">16.7</span> Built-in AnyLogic Examples</h2>
+<p>AnyLogic includes numerous pre-built example models that serve as excellent learning resources and starting points for your own projects. Here are the key examples relevant to manufacturing and warehouse operations:</p>
+<section id="manufacturing-examples" class="level3" data-number="16.7.1">
+<h3 data-number="16.7.1" class="anchored" data-anchor-id="manufacturing-examples"><span class="header-section-number">16.7.1</span> Manufacturing Examples</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Key manufacturing example models in AnyLogic</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Location</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">What You'll Learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Job Shop</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Manufacturing</td>
+<td style="text-align: left;">Routing jobs through multiple machines, scheduling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20%; font-weight: bold;">Assembly Line</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Manufacturing</td>
+<td style="text-align: left;">Line balancing, takt time, bottleneck analysis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Flexible Manufacturing System</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Manufacturing</td>
+<td style="text-align: left;">Flexible routing, machine selection, setup times</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20%; font-weight: bold;">Conveyor System</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Material Handling</td>
+<td style="text-align: left;">Conveyor design, merging, diverting, accumulation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">AGV System</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Material Handling</td>
+<td style="text-align: left;">Vehicle dispatching, path planning, charging stations</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="warehouse-and-logistics-examples" class="level3" data-number="16.7.2">
+<h3 data-number="16.7.2" class="anchored" data-anchor-id="warehouse-and-logistics-examples"><span class="header-section-number">16.7.2</span> Warehouse and Logistics Examples</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Key warehouse example models in AnyLogic</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Location</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">What You'll Learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Warehouse</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Logistics</td>
+<td style="text-align: left;">Storage assignment, inventory management</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20%; font-weight: bold;">Distribution Center</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Logistics</td>
+<td style="text-align: left;">Receiving, put-away, picking, shipping integration</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Order Picking</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Logistics</td>
+<td style="text-align: left;">Picking route optimization, batch vs. single order</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20%; font-weight: bold;">AS/RS System</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Material Handling</td>
+<td style="text-align: left;">Automated storage retrieval, crane sequencing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20%; font-weight: bold;">Cross-Docking</td>
+<td style="text-align: left;">Help &gt; Example Models &gt; Logistics</td>
+<td style="text-align: left;">Minimal storage, direct transfer operations</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="callout-activity">
+<p><strong>Hands-On Activity:</strong> Open AnyLogic and navigate to Help &gt; Example Models. Open the “Assembly Line” example and run it. Then: 1. Identify the bottleneck station (highest queue length) 2. Modify the process time for that station 3. Observe how throughput changes 4. Document your findings</p>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-tutorial-17" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="sec-tutorial-17"><span class="header-section-number">16.8</span> Building Your First Model: Step-by-Step Tutorial</h2>
+<p>Let’s walk through building a simple but complete production line model from scratch.</p>
+<section id="tutorial-three-station-production-line" class="level3" data-number="16.8.1">
+<h3 data-number="16.8.1" class="anchored" data-anchor-id="tutorial-three-station-production-line"><span class="header-section-number">16.8.1</span> Tutorial: Three-Station Production Line</h3>
+<p><strong>Objective:</strong> Model a production line with three workstations and analyze throughput.</p>
+<section id="step-1-create-a-new-model" class="level4" data-number="16.8.1.1">
+<h4 data-number="16.8.1.1" class="anchored" data-anchor-id="step-1-create-a-new-model"><span class="header-section-number">16.8.1.1</span> Step 1: Create a New Model</h4>
+<ol type="1">
+<li>Open AnyLogic</li>
+<li>File &gt; New &gt; Model</li>
+<li>Name it “ProductionLine_Tutorial”</li>
+<li>Select “Discrete Event” as the model type</li>
+</ol>
+</section>
+<section id="step-2-add-the-process-flow" class="level4" data-number="16.8.1.2">
+<h4 data-number="16.8.1.2" class="anchored" data-anchor-id="step-2-add-the-process-flow"><span class="header-section-number">16.8.1.2</span> Step 2: Add the Process Flow</h4>
+<p>From the <strong>Process Modeling Library</strong>, drag these elements onto the canvas in order:</p>
+<ol type="1">
+<li><strong>Source</strong> - Generates parts entering the system</li>
+<li><strong>Queue</strong> - Holds parts waiting for Station 1</li>
+<li><strong>Delay</strong> - Represents Station 1 processing time</li>
+<li><strong>Queue</strong> - Holds parts waiting for Station 2</li>
+<li><strong>Service</strong> - Represents Station 2 (requires a worker resource)</li>
+<li><strong>Queue</strong> - Holds parts waiting for Station 3</li>
+<li><strong>Delay</strong> - Represents Station 3 processing time</li>
+<li><strong>Sink</strong> - Removes completed parts from the system</li>
+</ol>
+</section>
+<section id="step-3-connect-the-elements" class="level4" data-number="16.8.1.3">
+<h4 data-number="16.8.1.3" class="anchored" data-anchor-id="step-3-connect-the-elements"><span class="header-section-number">16.8.1.3</span> Step 3: Connect the Elements</h4>
+<p>Click on the output port of each element and drag to the input port of the next element. The flow should look like:</p>
+<pre><code>Source → Queue → Delay → Queue → Service → Queue → Delay → Sink</code></pre>
+</section>
+<section id="step-4-configure-parameters" class="level4" data-number="16.8.1.4">
+<h4 data-number="16.8.1.4" class="anchored" data-anchor-id="step-4-configure-parameters"><span class="header-section-number">16.8.1.4</span> Step 4: Configure Parameters</h4>
+<p>Click each element and set these properties:</p>
+<p><strong>Source:</strong> - Arrivals defined by: Inter-arrival time - Inter-arrival time: <code>exponential(1)</code> (1 part per minute on average)</p>
+<p><strong>Delays (Stations 1 and 3):</strong> - Delay time: <code>triangular(0.5, 0.8, 1.2)</code> (minutes)</p>
+<p><strong>Service (Station 2):</strong> - Delay time: <code>triangular(0.6, 0.9, 1.5)</code> (minutes) - Requires a Resource Pool (add one and set capacity to 1)</p>
+<p><strong>Queues:</strong> - Maximum capacity: 10</p>
+</section>
+<section id="step-5-add-statistics-collection" class="level4" data-number="16.8.1.5">
+<h4 data-number="16.8.1.5" class="anchored" data-anchor-id="step-5-add-statistics-collection"><span class="header-section-number">16.8.1.5</span> Step 5: Add Statistics Collection</h4>
+<p>Add these statistics to track performance:</p>
+<ol type="1">
+<li><strong>TimeMeasureStart</strong> - After Source</li>
+<li><strong>TimeMeasureEnd</strong> - Before Sink</li>
+<li><strong>Dataset</strong> - To log throughput over time</li>
+</ol>
+</section>
+<section id="step-6-run-and-analyze" class="level4" data-number="16.8.1.6">
+<h4 data-number="16.8.1.6" class="anchored" data-anchor-id="step-6-run-and-analyze"><span class="header-section-number">16.8.1.6</span> Step 6: Run and Analyze</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate expected results</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">789</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>time <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">480</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate cumulative throughput</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>throughput <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="fu">rpois</span>(<span class="fu">length</span>(time), <span class="at">lambda =</span> <span class="fl">0.85</span>))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate queue lengths</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time), <span class="fl">1.5</span>, <span class="fl">0.8</span>))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time), <span class="fl">3.2</span>, <span class="fl">1.2</span>))  <span class="co"># Bottleneck</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>q3 <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="fu">length</span>(time), <span class="fl">0.8</span>, <span class="fl">0.5</span>))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>tutorial_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Time =</span> time,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Throughput =</span> throughput,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Q1 =</span> q1,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Q2 =</span> q2,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">Q3 =</span> q3</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(tutorial_data, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> Throughput)) <span class="sc">+</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#2ECC71"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">400</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">50</span>, <span class="at">y =</span> <span class="dv">420</span>, <span class="at">label =</span> <span class="st">"Target: 400"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cumulative Throughput"</span>, <span class="at">x =</span> <span class="st">"Time (min)"</span>, <span class="at">y =</span> <span class="st">"Parts Completed"</span>) <span class="sc">+</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>tutorial_long <span class="ot">&lt;-</span> tutorial_data <span class="sc">%&gt;%</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Q1, Q2, Q3), <span class="at">names_to =</span> <span class="st">"Queue"</span>, <span class="at">values_to =</span> <span class="st">"Length"</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(tutorial_long, <span class="fu">aes</span>(<span class="at">x =</span> Time, <span class="at">y =</span> Length, <span class="at">color =</span> Queue)) <span class="sc">+</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#3498DB"</span>, <span class="st">"#E74C3C"</span>, <span class="st">"#F39C12"</span>),</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Before Station 1"</span>, <span class="st">"Before Station 2"</span>, <span class="st">"Before Station 3"</span>)) <span class="sc">+</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Queue Lengths"</span>, <span class="at">x =</span> <span class="st">"Time (min)"</span>, <span class="at">y =</span> <span class="st">"Parts Waiting"</span>) <span class="sc">+</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-tutorial-results" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tutorial-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-tutorial-results-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tutorial-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.10: Expected results from tutorial model
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-check">
+<p><strong>Verify Your Model:</strong> After running, you should observe: - Approximately 400-420 parts completed in 480 minutes - Queue 2 (before Station 2) has the longest average length - The system is stable (queues don’t grow without bound)</p>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="sec-advanced-17" class="level2" data-number="16.9">
+<h2 data-number="16.9" class="anchored" data-anchor-id="sec-advanced-17"><span class="header-section-number">16.9</span> Advanced Topics</h2>
+<section id="d-visualization" class="level3" data-number="16.9.1">
+<h3 data-number="16.9.1" class="anchored" data-anchor-id="d-visualization"><span class="header-section-number">16.9.1</span> 3D Visualization</h3>
+<p>AnyLogic includes powerful 3D visualization capabilities that help communicate simulation results to stakeholders who may not understand abstract flowcharts.</p>
+<p>Benefits of 3D visualization: - Easier validation with plant managers (“Does this look like our facility?”) - Executive presentations and funding requests - Training material for new employees - Virtual commissioning before physical construction</p>
+</section>
+<section id="integration-with-real-data" class="level3" data-number="16.9.2">
+<h3 data-number="16.9.2" class="anchored" data-anchor-id="integration-with-real-data"><span class="header-section-number">16.9.2</span> Integration with Real Data</h3>
+<p>Production simulations become more valuable when connected to real data:</p>
+<ul>
+<li><strong>Historical data import:</strong> Load actual order data, machine logs, or production records</li>
+<li><strong>Real-time dashboards:</strong> Connect to databases for live monitoring</li>
+<li><strong>Digital twin operation:</strong> Mirror physical operations in real-time</li>
+</ul>
+</section>
+<section id="optimization-experiments" class="level3" data-number="16.9.3">
+<h3 data-number="16.9.3" class="anchored" data-anchor-id="optimization-experiments"><span class="header-section-number">16.9.3</span> Optimization Experiments</h3>
+<p>AnyLogic includes an <strong>Optimization</strong> experiment type that automatically searches for the best parameter values:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate optimization process</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>iterations <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>staff_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">7</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">8</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">7</span>, <span class="dv">5</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="dv">7</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">7</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="dv">7</span>, <span class="dv">5</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>throughput <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">380</span>, <span class="dv">10</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">445</span>, <span class="dv">8</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">420</span>, <span class="dv">9</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">450</span>, <span class="dv">7</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">448</span>, <span class="dv">7</span>),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="dv">425</span>, <span class="dv">8</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">450</span>, <span class="dv">6</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">452</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">455</span>, <span class="dv">4</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>opt_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Iteration =</span> iterations,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Staff =</span> staff_levels,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Throughput =</span> throughput</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>opt_data<span class="sc">$</span>Best <span class="ot">&lt;-</span> <span class="fu">cummax</span>(opt_data<span class="sc">$</span>Throughput)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(opt_data, <span class="fu">aes</span>(<span class="at">x =</span> Iteration)) <span class="sc">+</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> Throughput), <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#3498DB"</span>) <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Best), <span class="at">color =</span> <span class="st">"#E74C3C"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">455</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#2ECC71"</span>) <span class="sc">+</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">45</span>, <span class="at">y =</span> <span class="dv">460</span>, <span class="at">label =</span> <span class="st">"Optimal: 7 staff, 455 parts"</span>,</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"#2ECC71"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Optimization Experiment: Finding Optimal Staffing"</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Blue points = individual runs; Red line = best found so far"</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Iteration"</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Throughput (parts/shift)"</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-optimization" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-optimization-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="16-AnyLogic-Simulation_files/figure-html/fig-optimization-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optimization-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.11: Optimization search finding the best staffing level
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-summary-17" class="level2" data-number="16.10">
+<h2 data-number="16.10" class="anchored" data-anchor-id="sec-summary-17"><span class="header-section-number">16.10</span> Key Takeaways</h2>
+<div class="callout-summary">
+<p><strong>What We Learned:</strong></p>
+<ol type="1">
+<li><p><strong>Simulation enables risk-free experimentation</strong> - Test design changes in virtual environments before spending money on physical implementation</p></li>
+<li><p><strong>AnyLogic supports three paradigms</strong> - Discrete-event (for process flows), agent-based (for autonomous entities), and system dynamics (for strategic planning)</p></li>
+<li><p><strong>Manufacturing simulation identifies bottlenecks</strong> - Queue analysis reveals which stations limit throughput</p></li>
+<li><p><strong>Warehouse simulation optimizes picking</strong> - Compare strategies like batch picking, zone picking, and AMR deployment before implementation</p></li>
+<li><p><strong>Built-in examples accelerate learning</strong> - Start from AnyLogic’s example models to understand best practices</p></li>
+<li><p><strong>The value is in the “what-if”</strong> - Simulation’s true power is comparing scenarios to find optimal solutions</p></li>
+</ol>
+<p><strong>Key Equations:</strong> - Takt Time: Equation <a href="#eq-takt-time" class="quarto-xref">Equation&nbsp;<span>16.1</span></a></p>
+<p><strong>Before Moving On:</strong> - Can you explain when to use discrete-event vs.&nbsp;agent-based simulation? - Can you build a basic three-station production line in AnyLogic? - Can you identify how simulation could help in your workplace or industry?</p>
+</div>
+<hr>
+</section>
+<section id="sec-problems-17" class="level2" data-number="16.11">
+<h2 data-number="16.11" class="anchored" data-anchor-id="sec-problems-17"><span class="header-section-number">16.11</span> Practice Problems</h2>
+<section id="problem-1-takt-time-calculation" class="level3" data-number="16.11.1">
+<h3 data-number="16.11.1" class="anchored" data-anchor-id="problem-1-takt-time-calculation"><span class="header-section-number">16.11.1</span> Problem 1: Takt Time Calculation</h3>
+<p>A refrigerator assembly plant operates two 8-hour shifts per day with a 30-minute lunch break per shift. Customer demand is 720 units per day.</p>
+<ol type="a">
+<li>Calculate the takt time in seconds</li>
+<li>If the bottleneck station has a cycle time of 62 seconds, will they meet demand? Why or why not?</li>
+<li>Suggest two approaches to resolve the issue</li>
+</ol>
+</section>
+<section id="problem-2-simulation-model-design" class="level3" data-number="16.11.2">
+<h3 data-number="16.11.2" class="anchored" data-anchor-id="problem-2-simulation-model-design"><span class="header-section-number">16.11.2</span> Problem 2: Simulation Model Design</h3>
+<p>You are asked to simulate a paint shop with: - 3 spray booths operating in parallel - Conveyor system bringing parts from preparation area - Curing oven with 30-minute cycle time - Quality inspection with 5% rejection rate</p>
+<ol type="a">
+<li>Sketch the simulation model structure</li>
+<li>List which AnyLogic libraries you would use</li>
+<li>Identify potential bottlenecks to investigate</li>
+</ol>
+</section>
+<section id="problem-3-warehouse-picking-analysis" class="level3" data-number="16.11.3">
+<h3 data-number="16.11.3" class="anchored" data-anchor-id="problem-3-warehouse-picking-analysis"><span class="header-section-number">16.11.3</span> Problem 3: Warehouse Picking Analysis</h3>
+<p>A warehouse uses single-order picking with 5 pickers. Each picker walks an average of 3 miles per 8-hour shift. The company is considering batch picking with specialized carts.</p>
+<ol type="a">
+<li>If batch picking reduces travel by 35%, how many miles would be saved per picker per shift?</li>
+<li>If workers walk at 3 mph and pick items at a rate of 2 per minute while at a location, what percentage of time is currently spent walking?</li>
+<li>What information would you need to simulate this scenario in AnyLogic?</li>
+</ol>
+</section>
+<section id="problem-4-amr-fleet-sizing" class="level3" data-number="16.11.4">
+<h3 data-number="16.11.4" class="anchored" data-anchor-id="problem-4-amr-fleet-sizing"><span class="header-section-number">16.11.4</span> Problem 4: AMR Fleet Sizing</h3>
+<p>Using the graph in <a href="#fig-amr-simulation" class="quarto-xref">Figure&nbsp;<span>16.9</span></a> as a reference:</p>
+<ol type="a">
+<li>If the company requires fulfillment time under 12 minutes, what is the minimum number of AMRs needed?</li>
+<li>What trade-off occurs when moving from 25 to 50 AMRs?</li>
+<li>If each AMR costs $50,000 and operates for 5 years, what is the daily cost per AMR?</li>
+</ol>
+<div class="callout-challenge">
+<p><strong>Challenge Problem:</strong> Design a simulation experiment to determine the optimal number of pickers and AMRs for a warehouse with variable order volumes. The solution should: - Handle daily order volumes ranging from 5,000 to 20,000 lines - Meet a 2-hour fulfillment target - Minimize total labor and equipment costs</p>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-resources-17" class="level2" data-number="16.12">
+<h2 data-number="16.12" class="anchored" data-anchor-id="sec-resources-17"><span class="header-section-number">16.12</span> Further Resources</h2>
+<section id="anylogic-official-resources" class="level3" data-number="16.12.1">
+<h3 data-number="16.12.1" class="anchored" data-anchor-id="anylogic-official-resources"><span class="header-section-number">16.12.1</span> AnyLogic Official Resources</h3>
+<ul>
+<li><strong>AnyLogic University:</strong> Free online courses covering all simulation paradigms</li>
+<li><strong>Example Models:</strong> Help &gt; Example Models in AnyLogic software</li>
+<li><strong>Cloud Platform:</strong> cloud.anylogic.com for running simulations online</li>
+</ul>
+</section>
+<section id="academic-resources" class="level3" data-number="16.12.2">
+<h3 data-number="16.12.2" class="anchored" data-anchor-id="academic-resources"><span class="header-section-number">16.12.2</span> Academic Resources</h3>
+<ul>
+<li>Borshchev, A. (2013). <em>The Big Book of Simulation Modeling</em>. AnyLogic North America.</li>
+<li>Law, A.M. (2015). <em>Simulation Modeling and Analysis</em> (5th ed.). McGraw-Hill.</li>
+</ul>
+</section>
+<section id="industry-case-studies" class="level3" data-number="16.12.3">
+<h3 data-number="16.12.3" class="anchored" data-anchor-id="industry-case-studies"><span class="header-section-number">16.12.3</span> Industry Case Studies</h3>
+<ul>
+<li>Mercedes-Benz Sprinter production optimization</li>
+<li>Kuehne+Nagel warehouse picking algorithm selection</li>
+<li>Tesla autonomous mobile robot deployment</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Getting Started:</strong> Download the free Personal Learning Edition of AnyLogic from anylogic.com. It includes all features and example models—the only limitation is model size.</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./15-Troubleshooting-RCA.html" class="pagination-link" aria-label="Troubleshooting and Root Cause Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./20-Teaching-with-AI.html" class="pagination-link" aria-label="Working Effectively with AI">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/16-AnyLogic-Simulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
