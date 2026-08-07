@@ -51,6 +51,27 @@ it now.
   `\@ref(fig-amr-simulation)` is missing the required colon
   (`fig:amr-simulation`) — fix while converting that chapter's refs anyway.
 
+## Status
+
+- **Phase 1: done.** New private repo live at
+  `https://github.com/Prof-MV/Process-Engineering` (fresh git history, old
+  bookdown repo untouched). `_quarto.yml` scaffold in place, referencing the
+  existing `NN-Name.Rmd` chapter files directly (Quarto's knitr engine
+  renders `.Rmd` natively — renaming to `.qmd` is deferred to Phase 3 as a
+  cleanup, not a functional requirement). Full local book render
+  (`quarto render`) succeeded for all 18 pages with **zero errors** — good
+  signal the migration is low-risk. `gh` CLI is now installed and
+  authenticated as `Prof-MV` locally, so future phases can use it directly
+  for repo/PR/Actions work. `execute: freeze: auto` is set in `_quarto.yml`
+  but no `_freeze/` cache has been committed yet (first real render across
+  all chapters in Phase 3 should commit it).
+- `_bookdown.yml` / `_output.yml` were intentionally **left in place**
+  (not yet superseded — PDF/EPUB settings still need porting in Phase 4);
+  remove them in Phase 6 once `_quarto.yml` fully covers their content.
+- Not yet done: renaming chapters to `.qmd`, converting `\@ref()` crossrefs,
+  PDF/EPUB formats, CI workflow, `docs/` is currently gitignored (not
+  committed) per the plan's recommendation.
+
 ## Phased execution (one phase ≈ one future chat)
 
 **Phase 1 — Repo & scaffold**
