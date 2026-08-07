@@ -72,10 +72,10 @@ approach_comparison <- data.frame(
 
 kable(approach_comparison, col.names = c("Aspect", "Reactive Approach", "Proactive Approach"),
       caption = "Comparison of Problem-Solving Approaches") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%") %>%
-  column_spec(2, background = "#ffcccc", width = "42%") %>%
-  column_spec(3, background = "#ccffcc", width = "43%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL) %>%
+  column_spec(2, background = "#ffcccc", width = if (knitr::is_html_output()) "42%" else NULL) %>%
+  column_spec(3, background = "#ccffcc", width = if (knitr::is_html_output()) "43%" else NULL)
 ```
 
 <details><summary>**Think About It**: Why do organizations often default to reactive troubleshooting?</summary>
@@ -161,10 +161,10 @@ w2h <- data.frame(
 
 kable(w2h, col.names = c("Question", "What to Ask", "Example Response"),
       caption = "5W2H Problem Definition Framework") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, color = "white", background = "#2c3e50", width = "12%") %>%
-  column_spec(2, width = "40%") %>%
-  column_spec(3, width = "48%", background = "#f8f9fa")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, color = "white", background = "#2c3e50", width = if (knitr::is_html_output()) "12%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "40%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "48%" else NULL, background = "#f8f9fa")
 ```
 
 ### Problem Statement Template
@@ -211,8 +211,8 @@ data_sources <- data.frame(
 
 kable(data_sources, col.names = c("Data Source", "What to Check", "Tools/Methods"),
       caption = "Systematic Data Gathering Checklist") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### The "Change Analysis" Approach
@@ -329,9 +329,9 @@ fix_levels <- data.frame(
 kable(fix_levels, col.names = c("Fix Level", "Action Taken", "Immediate Result",
                                  "Recurrence", "Short-term Cost", "Long-term Cost"),
       caption = "Comparison of Fixes at Different Causation Levels") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   row_spec(3, background = "#d4edda", bold = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%")
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL)
 ```
 
 ---
@@ -402,8 +402,8 @@ template <- data.frame(
 
 kable(template, col.names = c("Step", "Description", "Typical Cause Type"),
       caption = "5 Whys Analysis Template") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   row_spec(7, background = "#d4edda", bold = TRUE)
 ```
 
@@ -617,8 +617,8 @@ tips <- data.frame(
 )
 
 kable(tips, caption = "Best Practices for Fishbone Diagram Development") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "28%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "28%" else NULL)
 ```
 
 ### Video: How to Create a Fishbone Diagram
@@ -657,9 +657,9 @@ symbols <- data.frame(
 )
 
 kable(symbols, caption = "Fault Tree Analysis Symbols") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%") %>%
-  column_spec(2, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### FTA Example: Pump Fails to Deliver Flow
@@ -956,12 +956,12 @@ is_isnot <- data.frame(
 
 kable(is_isnot, col.names = c("Dimension", "Question", "IS", "IS NOT", "What's Different?"),
       caption = "Is/Is Not Analysis: Motor Overheating Problem") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "8%") %>%
-  column_spec(2, width = "20%") %>%
-  column_spec(3, background = "#d4edda", width = "22%") %>%
-  column_spec(4, background = "#f8d7da", width = "22%") %>%
-  column_spec(5, background = "#fff3cd", width = "28%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "8%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "20%" else NULL) %>%
+  column_spec(3, background = "#d4edda", width = if (knitr::is_html_output()) "22%" else NULL) %>%
+  column_spec(4, background = "#f8d7da", width = if (knitr::is_html_output()) "22%" else NULL) %>%
+  column_spec(5, background = "#fff3cd", width = if (knitr::is_html_output()) "28%" else NULL)
 ```
 
 ### Key Insights from Is/Is Not Analysis
@@ -1047,8 +1047,8 @@ d8_detail <- data.frame(
 
 kable(d8_detail, col.names = c("Discipline", "Key Activities", "Deliverables"),
       caption = "8D Methodology Detailed Breakdown") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### D3: Containment Actions
@@ -1080,8 +1080,8 @@ containment <- data.frame(
 )
 
 kable(containment, caption = "Types of Containment Actions") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ---
@@ -1166,8 +1166,8 @@ smart <- data.frame(
 
 kable(smart, col.names = c("", "Meaning", "Description", "Poor Example", "Good Example"),
       caption = "SMART Corrective Action Criteria") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, background = "steelblue", color = "white", width = "4%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, background = "#4682B4", color = "white", width = if (knitr::is_html_output()) "4%" else NULL) %>%
   column_spec(4, background = "#f8d7da") %>%
   column_spec(5, background = "#d4edda")
 ```
@@ -1201,8 +1201,8 @@ vv <- data.frame(
 
 kable(vv, col.names = c("Aspect", "Verification", "Validation"),
       caption = "Verification vs. Validation of Corrective Actions") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL) %>%
   column_spec(2, background = "#e3f2fd") %>%
   column_spec(3, background = "#e8f5e9")
 ```
@@ -1296,8 +1296,8 @@ case_problem <- data.frame(
 
 kable(case_problem, col.names = c("Question", "Details"),
       caption = "Case Study Problem Definition") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ### 5 Whys Analysis
@@ -1316,8 +1316,8 @@ case_whys <- data.frame(
 )
 
 kable(case_whys, caption = "5 Whys Analysis: Weld Porosity") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL) %>%
   row_spec(6, background = "#d4edda", bold = TRUE)
 ```
 
@@ -1349,8 +1349,8 @@ fishbone_findings <- data.frame(
 kable(fishbone_findings,
       col.names = c("Category", "Potential Cause", "Likelihood", "Verification Result"),
       caption = "Fishbone Analysis Results with Verification") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL) %>%
   row_spec(c(1, 6), background = "#d4edda")
 ```
 
@@ -1375,9 +1375,9 @@ d8_report <- data.frame(
 
 kable(d8_report, col.names = c("D#", "Discipline", "Summary"),
       caption = "8D Report: Weld Porosity Case Study") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "6%") %>%
-  column_spec(2, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "6%" else NULL) %>%
+  column_spec(2, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ---
@@ -1416,8 +1416,8 @@ doc_elements <- data.frame(
 )
 
 kable(doc_elements, caption = "RCA Documentation Checklist") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Creating a Troubleshooting Knowledge Base
@@ -1462,8 +1462,8 @@ tool_guide <- data.frame(
 kable(tool_guide,
       col.names = c("Tool", "Best For", "When to Use", "Team Size"),
       caption = "RCA Tool Selection Guide") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ---

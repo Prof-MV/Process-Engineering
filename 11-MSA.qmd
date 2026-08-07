@@ -96,8 +96,8 @@ cost_impacts <- data.frame(
 )
 
 kable(cost_impacts, caption = "Business Impact of Poor Measurement Systems") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "22%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "22%" else NULL)
 ```
 
 ### MSA in Industry Standards
@@ -225,8 +225,8 @@ ap_table <- data.frame(
 
 kable(ap_table, col.names = c("", "Definition", "Affected By", "Correctable?", "Primary Metric"),
       caption = "Accuracy vs. Precision Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL)
 ```
 
 ---
@@ -497,9 +497,9 @@ rr_defs <- data.frame(
 )
 
 kable(rr_defs, col.names = c("Component", "Also Known As", "Definition", "Caused By"),
-      caption = "Gauge R&R Components") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+      caption = if (knitr::is_latex_output()) "Gauge R\\&R Components" else "Gauge R&R Components") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Gauge R&R Study Design
@@ -521,9 +521,9 @@ grr_design <- data.frame(
   )
 )
 
-kable(grr_design, caption = "Standard Gauge R&R Study Design Parameters") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+kable(grr_design, caption = if (knitr::is_latex_output()) "Standard Gauge R\\&R Study Design Parameters" else "Standard Gauge R&R Study Design Parameters") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ### Range Method (Short Form)
@@ -797,12 +797,12 @@ acceptance <- data.frame(
   )
 )
 
-kable(acceptance, caption = "AIAG Gauge R&R Acceptance Guidelines") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+kable(acceptance, caption = if (knitr::is_latex_output()) "AIAG Gauge R\\&R Acceptance Guidelines" else "AIAG Gauge R&R Acceptance Guidelines") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   row_spec(c(1, 4), background = "#d4edda") %>%
   row_spec(c(2, 5), background = "#fff3cd") %>%
   row_spec(c(3, 6), background = "#f8d7da") %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ### Visual Analysis of Gauge R&R
@@ -931,8 +931,8 @@ kappa_table <- data.frame(
 )
 
 kable(kappa_table, caption = "Kappa Statistic Interpretation Guide") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   row_spec(5:6, background = "#d4edda") %>%
   row_spec(3:4, background = "#fff3cd") %>%
   row_spec(1:2, background = "#f8d7da")
@@ -1059,8 +1059,8 @@ attr_practices <- data.frame(
 )
 
 kable(attr_practices, caption = "Best Practices for Attribute MSA Studies") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "25%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "25%" else NULL)
 ```
 
 ---
@@ -1211,8 +1211,8 @@ improvement_actions <- data.frame(
 kable(improvement_actions,
       col.names = c("Issue Identified", "Likely Causes", "Improvement Actions"),
       caption = "MSA Issues and Improvement Actions") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ---
@@ -1380,9 +1380,9 @@ template <- data.frame(
 
 # Show first 12 rows as example
 kable(head(template, 12),
-      caption = "Gauge R&R Data Collection Sheet (Partial Example)") %>%
+      caption = if (knitr::is_latex_output()) "Gauge R\\&R Data Collection Sheet (Partial Example)" else "Gauge R&R Data Collection Sheet (Partial Example)") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
-  column_spec(1:4, width = "20%")
+  column_spec(1:4, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ---

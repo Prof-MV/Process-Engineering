@@ -103,8 +103,8 @@ industries <- data.frame(
 
 kable(industries, col.names = c("Industry", "Market Share (%)", "Key Applications", "Growth Trend"),
       caption = "Industrial Robot Usage by Industry Sector") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ---
@@ -178,8 +178,8 @@ config_table <- data.frame(
 kable(config_table, col.names = c("Configuration", "Axes", "Payload Range", "Reach",
                                    "Repeatability", "Speed", "Cost", "Best Applications"),
       caption = "Robot Configuration Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "14%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "14%" else NULL)
 ```
 
 ### Degrees of Freedom
@@ -278,8 +278,8 @@ specs <- data.frame(
 )
 
 kable(specs, caption = "Key Robot Specifications Explained") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ### Work Envelope
@@ -555,8 +555,8 @@ eoat <- data.frame(
 
 kable(eoat, col.names = c("EOAT Type", "Operating Principle", "Applications", "Key Considerations"),
       caption = "Common End Effector Types") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "16%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "16%" else NULL)
 ```
 
 ### Gripper Selection Example
@@ -682,8 +682,8 @@ motion_table <- data.frame(
 kable(motion_table, col.names = c("Motion Type", "Path Characteristic",
                                    "Speed Control", "When to Use", "Cycle Time"),
       caption = "Robot Motion Types") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "16%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "16%" else NULL)
 ```
 
 ```{r motion-visualization, echo=FALSE, fig.width=11, fig.height=5}
@@ -802,9 +802,9 @@ food_apps <- data.frame(
 )
 
 kable(food_apps, col.names = c("Application", "Description", "Robot Type", "Special Requirements"),
-      caption = "Food & Beverage Robot Applications") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "16%")
+      caption = if (knitr::is_latex_output()) "Food \\& Beverage Robot Applications" else "Food & Beverage Robot Applications") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "16%" else NULL)
 ```
 
 ### Aerospace/Defense Applications
@@ -833,8 +833,8 @@ aero_apps <- data.frame(
 
 kable(aero_apps, col.names = c("Application", "Description", "Accuracy Required", "Challenges"),
       caption = "Aerospace/Defense Robot Applications") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "16%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "16%" else NULL)
 ```
 
 ---
@@ -872,8 +872,8 @@ hazards <- data.frame(
 )
 
 kable(hazards, caption = "Robot Hazard Categories and Mitigations") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL)
 ```
 
 ### Safety Standards
@@ -900,8 +900,8 @@ standards <- data.frame(
 
 kable(standards, col.names = c("Standard", "Scope", "Key Requirements"),
       caption = "Key Robot Safety Standards") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Safeguarding Methods
@@ -1026,8 +1026,8 @@ cobot_compare <- data.frame(
 
 kable(cobot_compare, col.names = c("", "Traditional Industrial Robot", "Collaborative Robot"),
       caption = "Traditional Robot vs. Collaborative Robot Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   column_spec(2, background = "#fadbd8") %>%
   column_spec(3, background = "#d5f5e3")
 ```
@@ -1060,8 +1060,8 @@ cobot_modes <- data.frame(
 
 kable(cobot_modes, col.names = c("Collaboration Mode", "Description", "Application", "Requirements"),
       caption = "ISO/TS 15066 Collaborative Operation Modes") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ### Force and Pressure Limits
@@ -1081,8 +1081,8 @@ force_limits <- data.frame(
 kable(force_limits, col.names = c("Body Area", "Max Pressure (N/cm²)", "Quasi-Static Pressure",
                                    "Max Force (N)", "Quasi-Static Force"),
       caption = "ISO/TS 15066 Biomechanical Limits (Selected Values)") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ---
@@ -1116,8 +1116,8 @@ prog_methods <- data.frame(
 )
 
 kable(prog_methods, caption = "Robot Programming Methods Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Basic Program Structure
@@ -1193,8 +1193,8 @@ concepts <- data.frame(
 )
 
 kable(concepts, caption = "Key Robot Programming Concepts") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "16%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "16%" else NULL)
 ```
 
 ---

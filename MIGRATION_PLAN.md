@@ -1,5 +1,65 @@
 # Bookdown → Quarto Migration Plan
 
+## Reusable: kableExtra/LaTeX gotchas found converting to PDF format
+
+These are **generic bookdown→Quarto PDF issues**, not specific to this book —
+worth checking for in any other kableExtra-heavy R Markdown/bookdown project
+being converted, since bookdown's `pdf_book` target is often left untested
+(CI usually only builds the HTML/gitbook target, so these bugs go unnoticed
+until someone actually renders to PDF for the first time — exactly what
+happened here). All are things that render fine in HTML/gitbook but break or
+silently corrupt LaTeX/PDF output. Diagnostic approach: Quarto book PDF
+output is always ONE merged LaTeX document (`index.tex`/`index.pdf`) — you
+cannot render a single chapter's PDF in isolation to speed up iteration, so
+budget for full-book recompiles (a few minutes each) while chasing these.
+
+1. **`kable(format = "html", ...)` hardcoded.** Forces HTML table generation
+   regardless of actual render target → PDF render fails outright with
+   *"Functions that produce HTML output found in document targeting pdf
+   output."* Fix: delete the hardcoded `format = "html", ` argument entirely
+   and let knitr/kableExtra auto-detect the real output format (this is the
+   default, correct, portable behavior — visible already in any chapters
+   that never had the hardcoded argument in the first place).
+2. **`kable_styling(..., full_width = TRUE, ...)`.** For LaTeX, `full_width`
+   pushes kableExtra into an auto column-width-balancing engine
+   (`tabu`/`longtabu`) that can overflow and abort compilation with
+   *"Dimension too large... I can't work with sizes bigger than about 19
+   feet"* on wide/text-heavy tables. Fix: make it format-aware —
+   `full_width = knitr::is_html_output()` — so HTML keeps the original
+   full-width behavior and PDF falls back to normal fixed-width tables.
+3. **`column_spec(N, width = "18%")`.** CSS percentage widths are valid for
+   HTML but not a valid LaTeX `p{}` dimension — produces malformed LaTeX
+   (`p{18%}`) that can cascade into unrelated-looking errors much later in
+   the document (e.g. *"Paragraph ended before ...LT@array was complete"*
+   right after some *other* table). Fix: format-aware again —
+   `width = if (knitr::is_html_output()) "18%" else NULL` (kableExtra treats
+   `NULL` as "don't set a width," which is a safe LaTeX default).
+4. **Literal special characters (`&`, likely also `%`/`#`/`_`/`$`) inside
+   `caption = "..."` strings.** `kable()`'s default `escape = TRUE` escapes
+   table *body* content automatically, but captions are passed to LaTeX
+   verbatim — an un-escaped `&` produces *"Misplaced alignment tab
+   character &."* Fix: format-aware escaping —
+   `caption = if (knitr::is_latex_output()) "Gauge R\\&R" else "Gauge R&R"`
+   (HTML/EPUB render literal `&` fine via pandoc's own text escaping, so only
+   the LaTeX branch needs it).
+5. **CSS/R named colors that aren't valid base `xcolor` names** (e.g.
+   `"steelblue"`) passed to `row_spec()`/`column_spec(..., background = ...)`.
+   Valid in HTML/CSS and even valid as an R/ggplot2 color name (so
+   `geom_point(color = "steelblue")` in a *plot* is completely unaffected —
+   only kableExtra *table* styling calls route through LaTeX's `xcolor`,
+   which only recognizes ~19 base names). Fails with *"Undefined color
+   `steelblue`."* Fix: swap in the hex equivalent (`"#4682B4"`) — works
+   identically in both HTML and LaTeX, no conditional needed. Search
+   specifically inside `row_spec(`/`column_spec(`/`cell_spec(` calls; don't
+   flag every `color =`/`background =` in the file, since most hits will be
+   unrelated ggplot2 aesthetics.
+
+General diagnostic tip: when `quarto render --to pdf` fails, the error's
+reported line number is in the *compiled* `index.tex`, not your source
+`.qmd` — search the `.tex` file for the `\label{tab:...}` / caption text
+near the failure to identify which chunk/table it came from, then find that
+chunk by its label or caption text in the source.
+
 ## Context
 
 This folder (`ProcessEngineering`) is a working copy of the ENGR-3027 "Process
@@ -53,6 +113,29 @@ it now.
 
 ## Status
 
+- **Phase 4: done.** Ported `_output.yml`'s `pdf_book`/`epub_book` settings
+  into `_quarto.yml`'s `format: pdf:`/`format: epub:` blocks (xelatex,
+  natbib, `keep-tex`, `documentclass: book`); moved the title-page logo
+  LaTeX (`titling` package + Fanshawe logo pretitle) into `preamble.tex`
+  alongside the existing `booktabs` include, referenced via
+  `include-in-header`. Installed TinyTeX locally (`quarto install tinytex`)
+  since PDF was never renderable before.
+  **Found and fixed 5 systemic kableExtra/LaTeX bugs that were latent in
+  the original bookdown project** (PDF was never actually tested there
+  either — CI only ever built `gitbook`) — see the reusable "kableExtra/
+  LaTeX gotchas" section at the top of this file for the generic pattern +
+  fix for each, useful for other bookdown→Quarto conversions:
+  hardcoded `kable(format = "html")` (148 occurrences / 10 chapters),
+  `full_width = TRUE` causing LaTeX table-width overflow (223 occurrences /
+  17 chapters), CSS percentage `column_spec(width = "N%")` (121 occurrences
+  / 7 chapters), unescaped `&` in table captions (5 occurrences / 2
+  chapters), and one non-standard color name (`"steelblue"`) in a
+  `column_spec()` call. All fixes are format-aware (`knitr::is_html_output()`
+  / `knitr::is_latex_output()`) so HTML appearance is byte-for-byte
+  unchanged — only the PDF/LaTeX code path is affected. Final verification:
+  full `quarto render` (all three formats together) succeeded — 18 HTML
+  pages, `docs/ENGR-3027-Process-Engineering.pdf` (2.3 MB), `docs/
+  ENGR-3027-Process-Engineering.epub` (5.4 MB), zero errors.
 - **Phase 3: done.** All 17 chapter files renamed `NN-Name.Rmd` →
   `NN-Name.qmd` via `git mv` (content untouched — Quarto's knitr engine
   already handled `.Rmd` identically, confirmed in Phases 1–2). Converted

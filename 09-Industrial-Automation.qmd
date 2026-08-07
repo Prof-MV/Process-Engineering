@@ -84,8 +84,8 @@ industry_apps <- data.frame(
 )
 
 kable(industry_apps, caption = "Automation Applications by Industry") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL) %>%
   pack_rows("Automotive", 1, 3, background = "#ebf5fb") %>%
   pack_rows("Food & Beverage", 4, 6, background = "#eafaf1") %>%
   pack_rows("Aerospace/Defense", 7, 9, background = "#fef9e7")
@@ -168,8 +168,8 @@ types_table <- data.frame(
 
 kable(types_table, col.names = c("", "Fixed Automation", "Programmable Automation", "Flexible Automation"),
       caption = "Comparison of Automation Types") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   column_spec(2, background = "#fadbd8") %>%
   column_spec(3, background = "#fcf3cf") %>%
   column_spec(4, background = "#d5f5e3")
@@ -307,8 +307,8 @@ plc_parts <- data.frame(
 )
 
 kable(plc_parts, caption = "PLC Hardware Components") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### The PLC Scan Cycle
@@ -417,8 +417,8 @@ languages <- data.frame(
 
 kable(languages, col.names = c("Language", "Type", "Description", "Best For"),
       caption = "IEC 61131-3 PLC Programming Languages") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL) %>%
   row_spec(1, background = "#e8f6f3") %>%
   row_spec(2, background = "#ebf5fb")
 ```
@@ -602,8 +602,8 @@ sensor_details <- data.frame(
 )
 
 kable(sensor_details, caption = "Common Industrial Sensor Specifications") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Sensor Wiring: PNP vs NPN
@@ -711,8 +711,8 @@ actuators <- data.frame(
 )
 
 kable(actuators, caption = "Industrial Actuator Types and Applications") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL) %>%
   pack_rows("Electric", 1, 4, background = "#fef9e7") %>%
   pack_rows("Pneumatic", 5, 6, background = "#e8f6f3") %>%
   pack_rows("Hydraulic", 7, 8, background = "#fdedec")
@@ -853,8 +853,8 @@ vfd_benefits <- data.frame(
 
 kable(vfd_benefits, col.names = c("Benefit", "Description", "Typical Impact"),
       caption = "Variable Frequency Drive Benefits") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ### Servo Systems
@@ -936,8 +936,8 @@ servo_vfd <- data.frame(
 
 kable(servo_vfd, col.names = c("Characteristic", "VFD + Induction Motor", "Servo System"),
       caption = "VFD vs. Servo System Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "22%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "22%" else NULL) %>%
   column_spec(2, background = "#ebf5fb") %>%
   column_spec(3, background = "#e8f8f5")
 ```
@@ -1039,8 +1039,8 @@ protocols <- data.frame(
 )
 
 kable(protocols, caption = "Common Industrial Communication Protocols") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "14%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "14%" else NULL) %>%
   row_spec(c(1, 2, 4), background = "#e8f6f3")
 ```
 
@@ -1179,8 +1179,8 @@ hmi_practices <- data.frame(
 
 kable(hmi_practices, col.names = c("Principle", "Best Practice", "Avoid"),
       caption = "HMI Design Best Practices") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   column_spec(3, background = "#fadbd8")
 ```
 
@@ -1207,8 +1207,8 @@ scada_components <- data.frame(
 )
 
 kable(scada_components, caption = "SCADA System Components") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "22%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "22%" else NULL)
 ```
 
 ---
@@ -1312,7 +1312,7 @@ sil_table <- data.frame(
 kable(sil_table, col.names = c("SIL Level", "PFD (avg)", "Risk Reduction Factor",
                                "Risk Level", "Example Application"),
       caption = "Safety Integrity Levels (IEC 61508)") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE) %>%
   row_spec(3, background = "#fcf3cf")
 ```
@@ -1385,8 +1385,8 @@ iiot_layers <- data.frame(
 )
 
 kable(iiot_layers, caption = "IIoT Architecture Layers") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Predictive Maintenance Example

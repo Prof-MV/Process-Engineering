@@ -97,8 +97,8 @@ ai_impact <- data.frame(
 
 kable(ai_impact, col.names = c("Industry", "Common AI Applications", "Potential Speedup", "Success Rate", "Human Oversight Needed"),
       caption = "AI Impact Across Engineering Industries") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL) %>%
   column_spec(5, color = ifelse(ai_impact$Human_Oversight == "Critical", "red",
                                  ifelse(ai_impact$Human_Oversight == "High", "orange", "green")))
 ```
@@ -204,11 +204,11 @@ motor_prompts <- data.frame(
 
 kable(motor_prompts, col.names = c("Quality Level", "Prompt", "Expected AI Response"),
       caption = "Motor Selection Prompt Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "10%",
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
               color = c("red", "orange", "green")) %>%
-  column_spec(2, width = "45%") %>%
-  column_spec(3, width = "45%")
+  column_spec(2, width = if (knitr::is_html_output()) "45%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "45%" else NULL)
 ```
 
 ### Example 2: Troubleshooting a PLC System
@@ -234,11 +234,11 @@ plc_prompts <- data.frame(
 
 kable(plc_prompts, col.names = c("Quality Level", "Prompt", "Why This Works (or Doesn't)"),
       caption = "PLC Troubleshooting Prompt Comparison") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "10%",
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
               color = c("red", "orange", "green")) %>%
-  column_spec(2, width = "50%") %>%
-  column_spec(3, width = "40%")
+  column_spec(2, width = if (knitr::is_html_output()) "50%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "40%" else NULL)
 ```
 
 ### Example 3: Safety Analysis
@@ -264,11 +264,11 @@ safety_prompts <- data.frame(
 
 kable(safety_prompts, col.names = c("Quality Level", "Prompt", "Risk Assessment"),
       caption = "Safety Analysis Prompt Comparison - Critical Application") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "10%",
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
               color = c("red", "orange", "green")) %>%
-  column_spec(2, width = "50%") %>%
-  column_spec(3, width = "40%")
+  column_spec(2, width = if (knitr::is_html_output()) "50%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "40%" else NULL)
 ```
 
 > **Warning**: For safety-critical applications, AI should NEVER be the final authority. Always validate AI-generated safety analyses with certified professionals and applicable standards.
@@ -349,8 +349,8 @@ pump_missing <- data.frame(
 
 kable(pump_missing, col.names = c("Missing Element", "Why It's Important"),
       caption = "Analysis: What's Missing from This Prompt?") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "30%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "30%" else NULL)
 ```
 
 **Your Task**: Rewrite this prompt to include all necessary information for a food processing application pumping tomato paste at 80°C.
@@ -375,10 +375,10 @@ rate_these <- data.frame(
 
 kable(rate_these, col.names = c("#", "Prompt", "Your Rating (B/M/G)", "Justification"),
       caption = "Exercise: Rate These Prompts") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(2, width = "50%") %>%
-  column_spec(3, width = "15%") %>%
-  column_spec(4, width = "25%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "50%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "15%" else NULL) %>%
+  column_spec(4, width = if (knitr::is_html_output()) "25%" else NULL)
 ```
 
 ---
@@ -586,10 +586,10 @@ chat_uses <- data.frame(
 
 kable(chat_uses, col.names = c("Use Case", "Description", "Example Prompt"),
       caption = "Common Engineering Use Cases for Chat Interfaces") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
-  column_spec(2, width = "35%") %>%
-  column_spec(3, width = "47%", monospace = TRUE)
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "35%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "47%" else NULL, monospace = TRUE)
 ```
 
 **Best Practices for Chat Interfaces:**
@@ -630,8 +630,8 @@ notebooklm_data <- data.frame(
 
 kable(notebooklm_data, col.names = c("Feature", "Description", "Engineering Application"),
       caption = "NotebookLM Features for Engineering Work") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 **Example NotebookLM Workflow:**
@@ -674,8 +674,8 @@ claude_code_data <- data.frame(
 
 kable(claude_code_data, col.names = c("Capability", "Description", "Example"),
       caption = "Claude Code Capabilities for Technical Work") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 **Engineering Applications:**
@@ -725,8 +725,8 @@ extension_uses <- data.frame(
 
 kable(extension_uses, col.names = c("Use Case", "How It Helps", "Example"),
       caption = "Browser Extension Use Cases") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 **Best Practices:**
@@ -771,9 +771,9 @@ decision_data <- data.frame(
 
 kable(decision_data, col.names = c("Situation", "Best Tool", "Why"),
       caption = "Tool Selection Quick Reference") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, width = "35%") %>%
-  column_spec(2, bold = TRUE, width = "20%", color = "#2980b9")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, width = if (knitr::is_html_output()) "35%" else NULL) %>%
+  column_spec(2, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL, color = "#2980b9")
 ```
 
 ---
@@ -920,8 +920,8 @@ beginner <- data.frame(
 
 kable(beginner, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
       caption = "Beginner Practice Topics") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "30%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "30%" else NULL)
 ```
 
 ### Intermediate Level
@@ -945,8 +945,8 @@ intermediate <- data.frame(
 
 kable(intermediate, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
       caption = "Intermediate Practice Topics") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "30%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "30%" else NULL)
 ```
 
 ### Advanced Level
@@ -970,8 +970,8 @@ advanced <- data.frame(
 
 kable(advanced, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
       caption = "Advanced Practice Topics") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "30%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "30%" else NULL)
 ```
 
 ---
@@ -1007,8 +1007,8 @@ red_flags <- data.frame(
 
 kable(red_flags, col.names = c("Red Flag", "Example", "Your Response"),
       caption = "Red Flags in AI-Generated Engineering Content") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%", color = "red")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL, color = "red")
 ```
 
 ### Verification Checklist
@@ -1038,7 +1038,7 @@ verification <- data.frame(
 
 kable(verification, col.names = c("Category", "Verification Item", "Verified"),
       caption = "AI Output Verification Checklist") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE) %>%
   pack_rows("Calculations", 1, 3) %>%
   pack_rows("Standards Compliance", 4, 5) %>%
@@ -1093,8 +1093,8 @@ limitations <- data.frame(
 
 kable(limitations, col.names = c("Limitation", "Description", "Example"),
       caption = "Tasks Requiring Human Engineering Judgment") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%", color = "#e74c3c")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL, color = "#e74c3c")
 ```
 
 <details>
@@ -1152,8 +1152,8 @@ ethics <- data.frame(
 
 kable(ethics, col.names = c("Industry", "Key Ethical/Legal Concern", "Guidance"),
       caption = "Industry-Specific AI Ethics Considerations") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 <details>

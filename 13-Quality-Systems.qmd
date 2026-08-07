@@ -83,8 +83,8 @@ evolution <- data.frame(
 
 kable(evolution, col.names = c("Era", "Approach", "Focus", "Key Figures/Standards"),
       caption = "Evolution of Quality Management") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "12%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL) %>%
   row_spec(6, background = "#d5f5e3")
 ```
 
@@ -273,9 +273,9 @@ risk_table <- data.frame(
 )
 
 kable(risk_table, caption = "Risk-Based Thinking in ISO 9001:2015") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "10%") %>%
-  column_spec(2, width = "25%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "25%" else NULL)
 ```
 
 <details><summary>**Understanding Risk-Based Thinking**</summary>
@@ -352,8 +352,8 @@ iatf_requirements <- data.frame(
 
 kable(iatf_requirements, col.names = c("Requirement Area", "ISO 9001", "IATF 16949 Addition"),
       caption = "IATF 16949 Additional Requirements Beyond ISO 9001") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   column_spec(2, background = "#fadbd8") %>%
   column_spec(3, background = "#d5f5e3")
 ```
@@ -483,8 +483,8 @@ ppap_elements <- data.frame(
 )
 
 kable(ppap_elements, caption = "PPAP 18 Elements Required for Submission") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "30%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "30%" else NULL)
 ```
 
 **PPAP Submission Levels:**
@@ -549,9 +549,9 @@ fmea_example <- data.frame(
 )
 
 kable(fmea_example, caption = "Process FMEA Structure and Example") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%") %>%
-  column_spec(3, width = "30%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "30%" else NULL)
 ```
 
 **Action Priority Based on RPN:**
@@ -766,8 +766,8 @@ as9100_req <- data.frame(
 )
 
 kable(as9100_req, caption = "AS9100D Key Additional Requirements") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "25%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "25%" else NULL)
 ```
 
 ### ISO 22000:2018 (Food Safety)
@@ -798,8 +798,8 @@ iso22000_elements <- data.frame(
 )
 
 kable(iso22000_elements, caption = "ISO 22000 Food Safety Management Elements") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "22%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "22%" else NULL)
 ```
 
 ---
@@ -886,8 +886,8 @@ doc_control <- data.frame(
 )
 
 kable(doc_control, caption = "Document Control Requirements (ISO 9001 Clause 7.5)") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ### Documented Information Required by ISO 9001:2015
@@ -921,8 +921,8 @@ mandatory <- data.frame(
 )
 
 kable(mandatory, caption = "Documented Information Required by ISO 9001:2015") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "25%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "25%" else NULL) %>%
   pack_rows("Documents (shall be maintained)", 1, 7, background = "#ebf5fb") %>%
   pack_rows("Records (shall be retained)", 8, 17, background = "#eafaf1")
 ```
@@ -995,8 +995,8 @@ checklist <- data.frame(
 )
 
 kable(checklist, caption = "Sample Audit Checklist: Clause 7.1.5 Monitoring and Measuring Resources") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "8%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "8%" else NULL)
 ```
 
 ### Types of Audit Findings
@@ -1027,8 +1027,8 @@ findings <- data.frame(
 
 kable(findings, col.names = c("Finding Type", "Definition", "Example", "Action Required"),
       caption = "Types of Audit Findings") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
   row_spec(1, background = "#f8d7da") %>%
   row_spec(2, background = "#fff3cd") %>%
   row_spec(3, background = "#d1ecf1") %>%
@@ -1060,8 +1060,8 @@ auditor_skills <- data.frame(
 )
 
 kable(auditor_skills, caption = "Internal Auditor Competency Requirements") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ---
@@ -1147,9 +1147,9 @@ capa_sources <- data.frame(
 )
 
 kable(capa_sources, caption = "Common CAPA Initiation Sources") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%") %>%
-  column_spec(3, width = "12%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "12%" else NULL)
 ```
 
 #### Step 2: Evaluation
@@ -1223,8 +1223,8 @@ investigation <- data.frame(
 
 kable(investigation, col.names = c("Data Type", "Examples", "Collection Method"),
       caption = "Data Collection for CAPA Investigation") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 #### Step 4: Root Cause Analysis
@@ -1302,8 +1302,8 @@ action_types <- data.frame(
 )
 
 kable(action_types, caption = "Types of CAPA Actions") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 **SMART Action Planning:**
@@ -1380,8 +1380,8 @@ verification <- data.frame(
 )
 
 kable(verification, caption = "CAPA Effectiveness Verification Methods") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 #### Step 8: Closure
@@ -1505,8 +1505,8 @@ review_inputs <- data.frame(
 
 kable(review_inputs, col.names = c("Required Input", "Details to Review", "Typical Data Sources"),
       caption = "Management Review Inputs (ISO 9001 Clause 9.3.2)") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ### Management Review Outputs
@@ -1528,8 +1528,8 @@ review_outputs <- data.frame(
 
 kable(review_outputs, col.names = c("Required Output", "ISO Requirement", "Examples"),
       caption = "Management Review Outputs (ISO 9001 Clause 9.3.3)") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ### Sample Management Review Dashboard
@@ -1643,8 +1643,8 @@ methods <- data.frame(
 )
 
 kable(methods, caption = "Continuous Improvement Methodologies") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ### Key Performance Indicators (KPIs)
@@ -1677,8 +1677,8 @@ kpis <- data.frame(
 )
 
 kable(kpis, caption = "Common Quality Management KPIs") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "10%") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL) %>%
   pack_rows("Quality Metrics", 1, 4, background = "#ebf5fb") %>%
   pack_rows("Delivery Metrics", 5, 7, background = "#eafaf1") %>%
   pack_rows("Cost Metrics", 8, 10, background = "#fef9e7") %>%
@@ -1841,8 +1841,8 @@ tool_links <- data.frame(
 
 kable(tool_links, col.names = c("Quality Tool", "ISO 9001 Clause", "Purpose", "Output Feeds Into"),
       caption = "Quality Tools and QMS Integration") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
 ```
 
 ---
@@ -1908,8 +1908,8 @@ audit_types <- data.frame(
 
 kable(audit_types, col.names = c("Audit Type", "Purpose", "Focus Areas", "Duration"),
       caption = "Third-Party Certification Audit Types") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "18%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
 ```
 
 ---

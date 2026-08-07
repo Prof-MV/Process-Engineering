@@ -293,7 +293,7 @@ libraries_data <- tibble(
 kable(libraries_data,
       caption = "Key AnyLogic libraries for manufacturing simulation",
       align = c("l", "l", "l")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE)
 ```
 
@@ -644,10 +644,10 @@ strategies <- tibble(
 kable(strategies,
       caption = "Warehouse picking strategies",
       align = c("l", "l", "l")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "15%") %>%
-  column_spec(2, width = "45%") %>%
-  column_spec(3, width = "40%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "45%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "40%" else NULL)
 ```
 
 ### Simulating Picker Movement
@@ -778,8 +778,8 @@ mfg_examples <- tibble(
 kable(mfg_examples,
       caption = "Key manufacturing example models in AnyLogic",
       align = c("l", "l", "l")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ### Warehouse and Logistics Examples
@@ -812,8 +812,8 @@ wh_examples <- tibble(
 kable(wh_examples,
       caption = "Key warehouse example models in AnyLogic",
       align = c("l", "l", "l")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
-  column_spec(1, bold = TRUE, width = "20%")
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
 ```
 
 ::: {.callout-activity}
