@@ -53,6 +53,19 @@ it now.
 
 ## Status
 
+- **Phase 3: done.** All 17 chapter files renamed `NN-Name.Rmd` →
+  `NN-Name.qmd` via `git mv` (content untouched — Quarto's knitr engine
+  already handled `.Rmd` identically, confirmed in Phases 1–2). Converted
+  the two bookdown `\@ref()` cross-references in `16-AnyLogic-Simulation.qmd`
+  to native Quarto crossref syntax: the takt-time equation moved from a
+  LaTeX `equation` environment with `(\#eq:takt-17)` to
+  `$$ ... $$ {#eq-takt-time}`, referenced as `@eq-takt-time`; the AMR figure
+  reference (previously broken — missing the bookdown colon) became
+  `@fig-amr-simulation`, reusing the chunk label which was already
+  Quarto-shaped. Verified in rendered HTML: both resolve correctly
+  ("Equation 16.1" and "Figure 16.9", each properly linked). Confirmed no
+  `\@ref()` or `(\#...)` bookdown crossref syntax remains anywhere in the
+  repo. Full book render clean (18/18, zero errors) after all changes.
 - **Phase 2: done.** `index.Rmd` → `index.qmd`: YAML front matter removed
   (now lives entirely in `_quarto.yml`'s `book:` block, which already had it
   from Phase 1), body content copied verbatim. Confirmed all 18 real chapter
