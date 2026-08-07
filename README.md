@@ -1,15 +1,23 @@
-Welcome! 
+# ENGR-3027 Process Engineering
 
-This is a minimal example of a book based on R Markdown and **bookdown** (https://github.com/rstudio/bookdown). 
+Lecture notes for ENGR-3027 Process Engineering, built as a [Quarto](https://quarto.org) book.
 
-This template provides a skeleton file structure that you can edit to create your book. 
+Published at <https://prof-mv.github.io/Process-Engineering/> (HTML, PDF, and EPUB).
 
-The contents inside the .Rmd files provide some pointers to help you get started, but feel free to also delete the content in each file and start fresh.
+## Building locally
 
-Additional resources:
+```sh
+quarto render
+```
 
-The **bookdown** book: https://bookdown.org/yihui/bookdown/
+Requires [Quarto](https://quarto.org/docs/get-started/), R with the packages listed in `R/required_packages.R` (auto-installed on first render), and [TinyTeX](https://quarto.org/docs/output-formats/pdf-basics.html#installation) for PDF output (`quarto install tinytex`).
 
-The **bookdown** package reference site: https://pkgs.rstudio.com/bookdown
+## Structure
 
-**test link** (https://github.com/Prof-MV/ENGR-3027/blob/master/_book/index.html)
+- `index.qmd`, `NN-Chapter-Name.qmd` — chapter source files, in `_quarto.yml`'s `book: chapters:` order
+- `_quarto.yml` — book metadata and format settings (HTML/PDF/EPUB)
+- `images/` — figures and diagrams referenced by chapters
+- `R/` — shared helper functions (`helpers.R`) and package setup (`required_packages.R`)
+- `.github/workflows/publish.yml` — CI: renders the book and deploys `docs/` to the `gh-pages` branch on every push to `master`
+
+See `MIGRATION_PLAN.md` for the history of this project's conversion from bookdown to Quarto, including a list of kableExtra/LaTeX compatibility issues worth checking for in similar conversions.

@@ -127,6 +127,33 @@ it now.
 
 ## Status
 
+- **Phase 6: done — migration complete.** Final QA pass:
+  - Full local render of all 3 formats, clean (18 HTML pages, PDF, EPUB,
+    zero errors — only the same harmless "non-tbl label" crossref notices
+    and the bibtex "no citations" note seen throughout, both expected/
+    pre-existing, not migration regressions).
+  - Confirmed none of the dropped scratch files
+    (`chaptersuggestion.txt`, `ergonomics.txt`, `pfmea.txt`, the two
+    "Teaching with AI" `.md` duplicates, `introduction.Rmd/.tex`) are
+    tracked in the new repo.
+  - Confirmed the 18 tracked `.qmd` files (`index` + 17 chapters) match
+    `_quarto.yml`'s `chapters:` list exactly, same order as the original.
+  - Confirmed no chapter content references the old `Prof-MV/ENGR-3027`
+    repo name, and the only two static image references in the whole
+    project (`Fanshawe.png` logo, cover image) resolve correctly — every
+    other figure in the book is generated programmatically via ggplot2,
+    so there was no broader risk of broken static image paths.
+  - Removed `_bookdown.yml` and `_output.yml` (left in place since Phase 1
+    on purpose, until `_quarto.yml` fully covered their content, which
+    happened in Phase 4 — now redundant).
+  - Rewrote `README.md` (was 100% unedited bookdown template boilerplate
+    pointing at the old repo) to actually describe this project.
+  - Renamed `ENGR-3027 Lecture Book.Rproj` → `Process-Engineering.Rproj`
+    and dropped its bookdown-era `BuildType: Website` line (RStudio
+    auto-detects Quarto projects via `_quarto.yml` regardless).
+  - The book is live at <https://prof-mv.github.io/Process-Engineering/>
+    (HTML/PDF/EPUB), built and deployed automatically via
+    `.github/workflows/publish.yml` on every push to `master`.
 - **Phase 5: done.** New `.github/workflows/publish.yml` replaces the old
   bookdown workflow (`main.yaml`, renamed away — it had been silently
   failing on every push since Phase 2 once `index.Rmd` stopped existing;
