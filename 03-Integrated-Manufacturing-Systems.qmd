@@ -183,25 +183,25 @@ ggplot(transport_viz, aes(x = x, y = y)) +
   # Continuous
   annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 2.7, ymax = 3.3, fill = "#3498DB", alpha = 0.2) +
   annotate("text", x = 0.3, y = 3, label = "Continuous", angle = 90, fontface = "bold") +
-  geom_segment(aes(x = 0.5, xend = 5.5, y = 3, yend = 3), color = "#3498DB", linewidth = 2) +
+  annotate("segment", x = 0.5, xend = 5.5, y = 3, yend = 3, color = "#3498DB", linewidth = 2) +
   annotate("text", x = 3, y = 3.2, label = "v = constant", fontface = "italic", size = 3 * diagram_text_scale) +
   # Synchronous
   annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 1.7, ymax = 2.3, fill = "#E74C3C", alpha = 0.2) +
   annotate("text", x = 0.3, y = 2, label = "Synchronous", angle = 90, fontface = "bold") +
-  geom_segment(aes(x = 0.7, xend = 1.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
-  geom_segment(aes(x = 1.7, xend = 2.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
-  geom_segment(aes(x = 2.7, xend = 3.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
-  geom_segment(aes(x = 3.7, xend = 4.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
-  geom_segment(aes(x = 4.7, xend = 5.3, y = 2, yend = 2), color = "#E74C3C", linewidth = 2) +
+  annotate("segment", x = 0.7, xend = 1.3, y = 2, yend = 2, color = "#E74C3C", linewidth = 2) +
+  annotate("segment", x = 1.7, xend = 2.3, y = 2, yend = 2, color = "#E74C3C", linewidth = 2) +
+  annotate("segment", x = 2.7, xend = 3.3, y = 2, yend = 2, color = "#E74C3C", linewidth = 2) +
+  annotate("segment", x = 3.7, xend = 4.3, y = 2, yend = 2, color = "#E74C3C", linewidth = 2) +
+  annotate("segment", x = 4.7, xend = 5.3, y = 2, yend = 2, color = "#E74C3C", linewidth = 2) +
   annotate("text", x = 3, y = 2.2, label = "All move together", fontface = "italic", size = 3 * diagram_text_scale) +
   # Asynchronous
   annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 0.7, ymax = 1.3, fill = "#27AE60", alpha = 0.2) +
   annotate("text", x = 0.3, y = 1, label = "Asynchronous", angle = 90, fontface = "bold") +
-  geom_segment(aes(x = 0.7, xend = 1.1, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
-  geom_segment(aes(x = 1.9, xend = 2.5, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
-  geom_segment(aes(x = 2.7, xend = 3.1, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
-  geom_segment(aes(x = 4.0, xend = 4.4, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
-  geom_segment(aes(x = 4.8, xend = 5.3, y = 1, yend = 1), color = "#27AE60", linewidth = 2) +
+  annotate("segment", x = 0.7, xend = 1.1, y = 1, yend = 1, color = "#27AE60", linewidth = 2) +
+  annotate("segment", x = 1.9, xend = 2.5, y = 1, yend = 1, color = "#27AE60", linewidth = 2) +
+  annotate("segment", x = 2.7, xend = 3.1, y = 1, yend = 1, color = "#27AE60", linewidth = 2) +
+  annotate("segment", x = 4.0, xend = 4.4, y = 1, yend = 1, color = "#27AE60", linewidth = 2) +
+  annotate("segment", x = 4.8, xend = 5.3, y = 1, yend = 1, color = "#27AE60", linewidth = 2) +
   annotate("text", x = 3, y = 1.2, label = "Independent movement + buffers", fontface = "italic", size = 3 * diagram_text_scale) +
   # Station markers
   geom_point(data = data.frame(x = rep(1:5, 3), y = rep(c(3, 2, 1), each = 5)),
@@ -245,18 +245,18 @@ cycle_long <- cycle_data %>%
 
 ggplot(cycle_data) +
   # Manual
-  geom_tile(aes(x = 50, y = 3), width = 100, height = 0.5, fill = "#F39C12") +
+  annotate("tile", x = 50, y = 3, width = 100, height = 0.5, fill = "#F39C12") +
   annotate("text", x = 50, y = 3, label = "100% Operator Control", color = "white", fontface = "bold") +
   annotate("text", x = -10, y = 3, label = "Manual", fontface = "bold", hjust = 1) +
   # Semi-automated
-  geom_tile(aes(x = 20, y = 2), width = 40, height = 0.5, fill = "#F39C12") +
-  geom_tile(aes(x = 70, y = 2), width = 60, height = 0.5, fill = "#3498DB") +
+  annotate("tile", x = 20, y = 2, width = 40, height = 0.5, fill = "#F39C12") +
+  annotate("tile", x = 70, y = 2, width = 60, height = 0.5, fill = "#3498DB") +
   annotate("text", x = 20, y = 2, label = "Load/Unload", color = "white", size = 3 * diagram_text_scale) +
   annotate("text", x = 70, y = 2, label = "Auto Cycle", color = "white", size = 3 * diagram_text_scale) +
   annotate("text", x = -10, y = 2, label = "Semi-Auto", fontface = "bold", hjust = 1) +
   # Fully automated
-  geom_tile(aes(x = 2.5, y = 1), width = 5, height = 0.5, fill = "#F39C12") +
-  geom_tile(aes(x = 52.5, y = 1), width = 95, height = 0.5, fill = "#3498DB") +
+  annotate("tile", x = 2.5, y = 1, width = 5, height = 0.5, fill = "#F39C12") +
+  annotate("tile", x = 52.5, y = 1, width = 95, height = 0.5, fill = "#3498DB") +
   annotate("text", x = 52.5, y = 1, label = "Automated Operation (Unattended)", color = "white", size = 3 * diagram_text_scale) +
   annotate("text", x = -10, y = 1, label = "Fully Auto", fontface = "bold", hjust = 1) +
   # Legend
@@ -856,10 +856,10 @@ ggplot(fms_data, aes(x = x, y = y)) +
   geom_tile(aes(fill = color), width = 1.2, height = 0.8, color = "black") +
   geom_text(aes(label = Component), size = 3 * diagram_text_scale, fontface = "bold") +
   # Connections to central computer
-  geom_segment(aes(x = 4, xend = 2.5, y = 2.4, yend = 2.3), linetype = "dotted") +
-  geom_segment(aes(x = 4, xend = 4, y = 2.4, yend = 2.6), linetype = "dotted") +
-  geom_segment(aes(x = 4, xend = 5.5, y = 2.4, yend = 2.3), linetype = "dotted") +
-  geom_segment(aes(x = 4, xend = 4, y = 1.6, yend = 1.4), linetype = "dotted") +
+  annotate("segment", x = 4, xend = 2.5, y = 2.4, yend = 2.3, linetype = "dotted") +
+  annotate("segment", x = 4, xend = 4, y = 2.4, yend = 2.6, linetype = "dotted") +
+  annotate("segment", x = 4, xend = 5.5, y = 2.4, yend = 2.3, linetype = "dotted") +
+  annotate("segment", x = 4, xend = 4, y = 1.6, yend = 1.4, linetype = "dotted") +
   annotate("text", x = 5, y = 2.5, label = "Network\nConnections", size = 2.5 * diagram_text_scale, fontface = "italic") +
   scale_fill_identity() +
   labs(title = "Flexible Manufacturing System (FMS) Layout",

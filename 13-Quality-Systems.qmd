@@ -433,9 +433,9 @@ ggplot(apqp_phases, aes(x = x, y = 1)) +
   geom_text(aes(label = phase), color = "white", fontface = "bold", size = 10 * diagram_text_scale) +
   geom_text(aes(label = name, y = 2.2), fontface = "bold", size = 6 * diagram_text_scale, lineheight = 0.85) +
   geom_text(aes(label = activities, y = -0.2), size = 5 * diagram_text_scale, lineheight = 0.85, color = "gray30") +
-  geom_segment(aes(x = 0.6, xend = 5.4, y = 1, yend = 1),
-               arrow = arrow(length = unit(0.3, "cm"), ends = "last"),
-               size = 1.2, color = "#2c3e50") +
+  annotate("segment", x = 0.6, xend = 5.4, y = 1, yend = 1,
+           arrow = arrow(length = unit(0.3, "cm"), ends = "last"),
+           linewidth = 1.2, color = "#2c3e50") +
   coord_cartesian(xlim = c(0, 6), ylim = c(-1.2, 3)) +
   labs(title = "APQP Five Phases",
        subtitle = "Structured product development from concept to launch") +
@@ -1880,7 +1880,7 @@ cert_steps <- data.frame(
 )
 
 ggplot(cert_steps, aes(x = x, y = 1)) +
-  geom_segment(aes(x = 1, xend = 8, y = 1, yend = 1), color = "gray70", linewidth = 2) +
+  annotate("segment", x = 1, xend = 8, y = 1, yend = 1, color = "gray70", linewidth = 2) +
   geom_point(size = 12, color = "#3498db") +
   geom_text(aes(label = step), color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   geom_text(aes(label = name, y = 1.4), size = 3 * diagram_text_scale, fontface = "bold", angle = 45, hjust = 0) +

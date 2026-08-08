@@ -578,8 +578,8 @@ subcauses <- data.frame(
 
 ggplot() +
   # Main spine
-  geom_segment(data = spine, aes(x = x[1], y = y[1], xend = x[2], yend = y[2]),
-               linewidth = 2, color = "gray30") +
+  annotate("segment", x = spine$x[1], y = spine$y[1], xend = spine$x[2], yend = spine$y[2],
+           linewidth = 2, color = "gray30") +
   # Problem box
   geom_label(data = problem, aes(x = x, y = y, label = label),
              fill = "#e74c3c", color = "white", fontface = "bold",

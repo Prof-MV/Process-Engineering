@@ -415,9 +415,9 @@ scenarios <- rbind(scenario1, scenario2, scenario3)
 
 ggplot(scenarios, aes(x = x, y = y)) +
   geom_point(color = "steelblue", size = 2, alpha = 0.7) +
-  geom_point(aes(x = 0, y = 0), color = "red", size = 4, shape = 3, stroke = 2) +
-  geom_circle(aes(x0 = 0, y0 = 0, r = 0.05), inherit.aes = FALSE,
-              color = "red", linetype = "dashed") +
+  annotate("point", x = 0, y = 0, color = "red", size = 4, shape = 3, stroke = 2) +
+  annotate("circle", x0 = 0, y0 = 0, r = 0.05,
+           color = "red", linetype = "dashed") +
   facet_wrap(~Scenario, ncol = 3) +
   coord_fixed(xlim = c(-0.25, 0.25), ylim = c(-0.25, 0.25)) +
   labs(title = "Repeatability vs. Accuracy in Robot Positioning",
