@@ -8,7 +8,7 @@
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>3&nbsp; Integrated Manufacturing Systems – ENGR-3027 Process Engineering</title>
+<title>3&nbsp; Integrated Manufacturing Systems – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,41 +26,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -414,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example\n\n# Given production data\nproduction_time_min <- 480   # Total time equipment ran\nunits_produced <- 60         # Good units produced\n\n# MCT Calculation\nMCT <- production_time_min / units_produced\ncat(\"Manufacturing Cycle Time (MCT):\", MCT, \"minutes per unit\\n\\n\")\n\n# MCE Calculation requires understanding of value-added time\n# Typical breakdown of production time:\nvalue_added_time <- 3.5      # Actual processing time (minutes)\ninspection_time <- 0.5       # Quality checks\nwait_time <- 2.5             # Queuing between operations\nmove_time <- 1.5             # Transport between stations\n\ntotal_time_per_unit <- value_added_time + inspection_time + wait_time + move_time\ncat(\"Time breakdown per unit:\\n\")\ncat(\"  Value-added (processing):\", value_added_time, \"min\\n\")\ncat(\"  Inspection:\", inspection_time, \"min\\n\")\ncat(\"  Waiting:\", wait_time, \"min\\n\")\ncat(\"  Moving:\", move_time, \"min\\n\")\ncat(\"  Total:\", total_time_per_unit, \"min\\n\\n\")\n\n# MCE Calculation\nMCE <- (value_added_time / total_time_per_unit) * 100\ncat(\"Manufacturing Cycle Efficiency (MCE):\", round(MCE, 1), \"%\\n\")\ncat(\"\\nInterpretation: Only\", round(MCE, 1), \"% of time adds value.\\n\")\ncat(\"Opportunity:\", round(100 - MCE, 1), \"% of time is waste that could be reduced.\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"mct-mce","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Line Balancing Example: Tablet Computer Assembly\n\n# Task data\ntasks <- data.frame(\n  Task = c(\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\"),\n  Description = c(\"Install battery\", \"Mount display\", \"Connect cables\",\n                  \"Install motherboard\", \"Add memory\", \"Install camera\",\n                  \"Attach case back\", \"Final test\"),\n  Time_sec = c(30, 45, 20, 55, 15, 25, 35, 40),\n  Predecessors = c(\"-\", \"A\", \"A\", \"B,C\", \"D\", \"D\", \"E,F\", \"G\")\n)\n\n# Display task data\ncat(\"Assembly Tasks:\\n\")\nprint(tasks[, c(\"Task\", \"Description\", \"Time_sec\", \"Predecessors\")])\n\n# Calculate metrics\ntotal_work_content <- sum(tasks$Time_sec)\ncat(\"\\nTotal Work Content:\", total_work_content, \"seconds\\n\")\n\n# Production requirements\ndesired_output <- 45  # units per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate cycle time\ncycle_time <- available_time / desired_output\ncat(\"\\nStep 1 - Cycle Time:\")\ncat(\"\\n  Required output:\", desired_output, \"units/hour\")\ncat(\"\\n  Cycle time = 3600 /\", desired_output, \"=\", cycle_time, \"seconds\\n\")\n\n# Step 2: Calculate theoretical minimum stations\nTM <- total_work_content / cycle_time\ncat(\"\\nStep 2 - Theoretical Minimum Stations:\")\ncat(\"\\n  TM =\", total_work_content, \"/\", cycle_time, \"=\", round(TM, 2))\ncat(\"\\n  Minimum stations required:\", ceiling(TM), \"\\n\")\n\n# Step 3: Assign tasks to stations (using largest task time rule)\ncat(\"\\nStep 3 - Station Assignments (respecting precedence):\\n\")\ncat(\"  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s... EXCEEDS\\n\")\ncat(\"  Let's try: A (30s) + C (20s) = 50s [30s idle]\\n\")\ncat(\"  Station 2: B (45s) + E (15s) = 60s... wait, E needs D\\n\")\ncat(\"  Station 2: B (45s) + D (55s) = 100s > 80s... EXCEEDS\\n\")\ncat(\"  Station 2: B (45s) = 45s [35s idle]\\n\")\ncat(\"  Station 3: D (55s) = 55s [25s idle]\\n\")\ncat(\"  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]\\n\")\ncat(\"  Station 5: H (40s) = 40s [40s idle]\\n\")\n\nn_stations <- 5\nefficiency <- (total_work_content / (n_stations * cycle_time)) * 100\nbalance_delay <- 100 - efficiency\n\ncat(\"\\nStep 4 - Results:\")\ncat(\"\\n  Number of stations:\", n_stations)\ncat(\"\\n  Line efficiency:\", round(efficiency, 1), \"%\")\ncat(\"\\n  Balance delay (idle time):\", round(balance_delay, 1), \"%\")\ncat(\"\\n\\n  This is poor balance - consider redesigning tasks or adding parallel stations.\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Automated Line Performance Analysis\n\n# Line parameters\nideal_cycle_time <- 1.0    # minutes per part (ideal)\nn_stations <- 10           # Number of stations\n\n# Scenario comparison\nscenarios <- data.frame(\n  Scenario = c(\"World Class\", \"Good\", \"Average\", \"Poor\"),\n  Failure_Prob = c(0.005, 0.02, 0.05, 0.10),  # Per station per cycle\n  Repair_Time = c(2, 5, 10, 15)  # Minutes average\n)\n\n# Calculate line performance for each scenario\ncat(\"Automated Line Performance Analysis\\n\")\ncat(\"===================================\\n\")\ncat(\"Ideal cycle time:\", ideal_cycle_time, \"min/part\\n\")\ncat(\"Number of stations:\", n_stations, \"\\n\")\ncat(\"Ideal production rate:\", 60/ideal_cycle_time, \"parts/hour\\n\\n\")\n\nfor(i in 1:nrow(scenarios)) {\n  p <- scenarios$Failure_Prob[i]\n  T <- scenarios$Repair_Time[i]\n\n  # Line failure probability (any station)\n  p_line <- 1 - (1 - p)^n_stations\n\n  # Actual cycle time\n  Tp <- ideal_cycle_time + p_line * T\n\n  # Actual production rate\n  Rp <- 60 / Tp\n\n  # Efficiency\n  efficiency <- (ideal_cycle_time / Tp) * 100\n\n  cat(sprintf(\"%s Performance:\\n\", scenarios$Scenario[i]))\n  cat(sprintf(\"  Station failure prob: %.1f%%\\n\", p * 100))\n  cat(sprintf(\"  Line failure prob: %.1f%%\\n\", p_line * 100))\n  cat(sprintf(\"  Average repair time: %d min\\n\", T))\n  cat(sprintf(\"  Actual cycle time: %.2f min\\n\", Tp))\n  cat(sprintf(\"  Actual production: %.1f parts/hour\\n\", Rp))\n  cat(sprintf(\"  Line efficiency: %.1f%%\\n\\n\", efficiency))\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"downtime-analysis","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Takt Time Calculation Example\n# Automotive assembly plant\n\n# Given data\nshift_length_min <- 480      # 8 hours = 480 minutes\nbreaks_min <- 30             # Two 15-minute breaks\nplanned_downtime_min <- 20   # Changeover, meetings\ncustomer_demand <- 60        # Cars per shift\n\n# Calculate available time\navailable_time <- shift_length_min - breaks_min - planned_downtime_min\ncat(\"Available Production Time:\", available_time, \"minutes per shift\\n\")\n\n# Calculate Takt Time\ntakt_time <- available_time / customer_demand\ncat(\"Takt Time:\", round(takt_time, 2), \"minutes per car\\n\")\ncat(\"         =\", round(takt_time * 60, 1), \"seconds per car\\n\\n\")\n\n# Compare to actual cycle time\nactual_cycle_time <- 7.5  # minutes (current performance)\ncat(\"Actual Cycle Time:\", actual_cycle_time, \"minutes per car\\n\")\n\nif (actual_cycle_time <= takt_time) {\n  cat(\"Status: MEETING DEMAND - Cycle time is within takt time\\n\")\n  cat(\"Capacity margin:\", round((1 - actual_cycle_time/takt_time) * 100, 1), \"%\\n\")\n} else {\n  cat(\"Status: CANNOT MEET DEMAND - Cycle time exceeds takt time\\n\")\n  cat(\"Shortfall:\", round((actual_cycle_time/takt_time - 1) * 100, 1), \"% over capacity\\n\")\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"takt-vs-cycle","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example\n\n# Given production data\nproduction_time_min <- 480   # Total time equipment ran\nunits_produced <- 60         # Good units produced\n\n# MCT Calculation\nMCT <- production_time_min / units_produced\ncat(\"Manufacturing Cycle Time (MCT):\", MCT, \"minutes per unit\\n\\n\")\n\n# MCE Calculation requires understanding of value-added time\n# Typical breakdown of production time:\nvalue_added_time <- 3.5      # Actual processing time (minutes)\ninspection_time <- 0.5       # Quality checks\nwait_time <- 2.5             # Queuing between operations\nmove_time <- 1.5             # Transport between stations\n\ntotal_time_per_unit <- value_added_time + inspection_time + wait_time + move_time\ncat(\"Time breakdown per unit:\\n\")\ncat(\"  Value-added (processing):\", value_added_time, \"min\\n\")\ncat(\"  Inspection:\", inspection_time, \"min\\n\")\ncat(\"  Waiting:\", wait_time, \"min\\n\")\ncat(\"  Moving:\", move_time, \"min\\n\")\ncat(\"  Total:\", total_time_per_unit, \"min\\n\\n\")\n\n# MCE Calculation\nMCE <- (value_added_time / total_time_per_unit) * 100\ncat(\"Manufacturing Cycle Efficiency (MCE):\", round(MCE, 1), \"%\\n\")\ncat(\"\\nInterpretation: Only\", round(MCE, 1), \"% of time adds value.\\n\")\ncat(\"Opportunity:\", round(100 - MCE, 1), \"% of time is waste that could be reduced.\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"mct-mce","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Line Balancing Example: Tablet Computer Assembly\n\n# Task data\ntasks <- data.frame(\n  Task = c(\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\"),\n  Description = c(\"Install battery\", \"Mount display\", \"Connect cables\",\n                  \"Install motherboard\", \"Add memory\", \"Install camera\",\n                  \"Attach case back\", \"Final test\"),\n  Time_sec = c(30, 45, 20, 55, 15, 25, 35, 40),\n  Predecessors = c(\"-\", \"A\", \"A\", \"B,C\", \"D\", \"D\", \"E,F\", \"G\")\n)\n\n# Display task data\ncat(\"Assembly Tasks:\\n\")\nprint(tasks[, c(\"Task\", \"Description\", \"Time_sec\", \"Predecessors\")])\n\n# Calculate metrics\ntotal_work_content <- sum(tasks$Time_sec)\ncat(\"\\nTotal Work Content:\", total_work_content, \"seconds\\n\")\n\n# Production requirements\ndesired_output <- 45  # units per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate cycle time\ncycle_time <- available_time / desired_output\ncat(\"\\nStep 1 - Cycle Time:\")\ncat(\"\\n  Required output:\", desired_output, \"units/hour\")\ncat(\"\\n  Cycle time = 3600 /\", desired_output, \"=\", cycle_time, \"seconds\\n\")\n\n# Step 2: Calculate theoretical minimum stations\nTM <- total_work_content / cycle_time\ncat(\"\\nStep 2 - Theoretical Minimum Stations:\")\ncat(\"\\n  TM =\", total_work_content, \"/\", cycle_time, \"=\", round(TM, 2))\ncat(\"\\n  Minimum stations required:\", ceiling(TM), \"\\n\")\n\n# Step 3: Assign tasks to stations (using largest task time rule)\ncat(\"\\nStep 3 - Station Assignments (respecting precedence):\\n\")\ncat(\"  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s... EXCEEDS\\n\")\ncat(\"  Let's try: A (30s) + C (20s) = 50s [30s idle]\\n\")\ncat(\"  Station 2: B (45s) + E (15s) = 60s... wait, E needs D\\n\")\ncat(\"  Station 2: B (45s) + D (55s) = 100s > 80s... EXCEEDS\\n\")\ncat(\"  Station 2: B (45s) = 45s [35s idle]\\n\")\ncat(\"  Station 3: D (55s) = 55s [25s idle]\\n\")\ncat(\"  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]\\n\")\ncat(\"  Station 5: H (40s) = 40s [40s idle]\\n\")\n\nn_stations <- 5\nefficiency <- (total_work_content / (n_stations * cycle_time)) * 100\nbalance_delay <- 100 - efficiency\n\ncat(\"\\nStep 4 - Results:\")\ncat(\"\\n  Number of stations:\", n_stations)\ncat(\"\\n  Line efficiency:\", round(efficiency, 1), \"%\")\ncat(\"\\n  Balance delay (idle time):\", round(balance_delay, 1), \"%\")\ncat(\"\\n\\n  This is poor balance - consider redesigning tasks or adding parallel stations.\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Automated Line Performance Analysis\n\n# Line parameters\nideal_cycle_time <- 1.0    # minutes per part (ideal)\nn_stations <- 10           # Number of stations\n\n# Scenario comparison\nscenarios <- data.frame(\n  Scenario = c(\"World Class\", \"Good\", \"Average\", \"Poor\"),\n  Failure_Prob = c(0.005, 0.02, 0.05, 0.10),  # Per station per cycle\n  Repair_Time = c(2, 5, 10, 15)  # Minutes average\n)\n\n# Calculate line performance for each scenario\ncat(\"Automated Line Performance Analysis\\n\")\ncat(\"===================================\\n\")\ncat(\"Ideal cycle time:\", ideal_cycle_time, \"min/part\\n\")\ncat(\"Number of stations:\", n_stations, \"\\n\")\ncat(\"Ideal production rate:\", 60/ideal_cycle_time, \"parts/hour\\n\\n\")\n\nfor(i in 1:nrow(scenarios)) {\n  p <- scenarios$Failure_Prob[i]\n  T <- scenarios$Repair_Time[i]\n\n  # Line failure probability (any station)\n  p_line <- 1 - (1 - p)^n_stations\n\n  # Actual cycle time\n  Tp <- ideal_cycle_time + p_line * T\n\n  # Actual production rate\n  Rp <- 60 / Tp\n\n  # Efficiency\n  efficiency <- (ideal_cycle_time / Tp) * 100\n\n  cat(sprintf(\"%s Performance:\\n\", scenarios$Scenario[i]))\n  cat(sprintf(\"  Station failure prob: %.1f%%\\n\", p * 100))\n  cat(sprintf(\"  Line failure prob: %.1f%%\\n\", p_line * 100))\n  cat(sprintf(\"  Average repair time: %d min\\n\", T))\n  cat(sprintf(\"  Actual cycle time: %.2f min\\n\", Tp))\n  cat(sprintf(\"  Actual production: %.1f parts/hour\\n\", Rp))\n  cat(sprintf(\"  Line efficiency: %.1f%%\\n\\n\", efficiency))\n}","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"downtime-analysis","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1725,7 +1690,7 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ENGR-3027 Process Engineering</a> 
+      <a href="./">Process Engineering</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -2549,47 +2514,9 @@ What causes blocking and starving in production lines?
 </div>
 <section id="takt-time-vs.-cycle-time" class="level3" data-number="3.4.1">
 <h3 data-number="3.4.1" class="anchored" data-anchor-id="takt-time-vs.-cycle-time"><span class="header-section-number">3.4.1</span> Takt Time vs.&nbsp;Cycle Time</h3>
-<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> examples further on in this chapter for yourself.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Takt Time Calculation Example</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Automotive assembly plant</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Given data</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>shift_length_min <span class="ot">&lt;-</span> <span class="dv">480</span>      <span class="co"># 8 hours = 480 minutes</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>breaks_min <span class="ot">&lt;-</span> <span class="dv">30</span>             <span class="co"># Two 15-minute breaks</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>planned_downtime_min <span class="ot">&lt;-</span> <span class="dv">20</span>   <span class="co"># Changeover, meetings</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>customer_demand <span class="ot">&lt;-</span> <span class="dv">60</span>        <span class="co"># Cars per shift</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate available time</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>available_time <span class="ot">&lt;-</span> shift_length_min <span class="sc">-</span> breaks_min <span class="sc">-</span> planned_downtime_min</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Available Production Time:"</span>, available_time, <span class="st">"minutes per shift</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Takt Time</span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>takt_time <span class="ot">&lt;-</span> available_time <span class="sc">/</span> customer_demand</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Takt Time:"</span>, <span class="fu">round</span>(takt_time, <span class="dv">2</span>), <span class="st">"minutes per car</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"         ="</span>, <span class="fu">round</span>(takt_time <span class="sc">*</span> <span class="dv">60</span>, <span class="dv">1</span>), <span class="st">"seconds per car</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare to actual cycle time</span></span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>actual_cycle_time <span class="ot">&lt;-</span> <span class="fl">7.5</span>  <span class="co"># minutes (current performance)</span></span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Actual Cycle Time:"</span>, actual_cycle_time, <span class="st">"minutes per car</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (actual_cycle_time <span class="sc">&lt;=</span> takt_time) {</span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Status: MEETING DEMAND - Cycle time is within takt time</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Capacity margin:"</span>, <span class="fu">round</span>((<span class="dv">1</span> <span class="sc">-</span> actual_cycle_time<span class="sc">/</span>takt_time) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Status: CANNOT MEET DEMAND - Cycle time exceeds takt time</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Shortfall:"</span>, <span class="fu">round</span>((actual_cycle_time<span class="sc">/</span>takt_time <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"% over capacity</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Available Production Time: 430 minutes per shift
-Takt Time: 7.17 minutes per car
-         = 430 seconds per car
-
-Actual Cycle Time: 7.5 minutes per car
-Status: CANNOT MEET DEMAND - Cycle time exceeds takt time
-Shortfall: 4.7 % over capacity</code></pre>
-</div>
-</div>
+<p>Live cell — try different demand, shift length, or downtime figures.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <details>
 <summary>
 Discussion: What happens when cycle time exceeds takt time?
@@ -2628,7 +2555,7 @@ Discussion: What happens when cycle time exceeds takt time?
 <section id="manufacturing-cycle-time-and-efficiency" class="level3" data-number="3.4.2">
 <h3 data-number="3.4.2" class="anchored" data-anchor-id="manufacturing-cycle-time-and-efficiency"><span class="header-section-number">3.4.2</span> Manufacturing Cycle Time and Efficiency</h3>
 <p>This one is live — edit the time breakdown and re-run it.</p>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -2658,7 +2585,7 @@ Discussion: What happens when cycle time exceeds takt time?
 <section id="line-balancing-example-electronics-assembly" class="level3" data-number="3.5.2">
 <h3 data-number="3.5.2" class="anchored" data-anchor-id="line-balancing-example-electronics-assembly"><span class="header-section-number">3.5.2</span> Line Balancing Example: Electronics Assembly</h3>
 <p>Live cell — try different task times or a different desired output rate.</p>
-<div id="qwebr-insertion-location-2"></div>
+<div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -2692,7 +2619,7 @@ Try It: Can you find a better balance?
 <p><strong>Actual Production Rate:</strong> <span class="math display">\[R_p = \frac{60}{T_p} = \frac{60}{T_c + pT}\]</span></p>
 <p>Where: - <span class="math inline">\(T_c\)</span> = Ideal cycle time (minutes) - <span class="math inline">\(p\)</span> = Probability of station failure per cycle - <span class="math inline">\(T\)</span> = Average downtime per failure (minutes)</p>
 <p>Live cell — try adding a scenario or changing the number of stations.</p>
-<div id="qwebr-insertion-location-3"></div>
+<div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">

@@ -8,7 +8,7 @@
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>15&nbsp; Troubleshooting and Root Cause Analysis – ENGR-3027 Process Engineering</title>
+<title>15&nbsp; Troubleshooting and Root Cause Analysis – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Pareto analysis interpretation\ndefects <- data.frame(\n  Defect = c(\"Surface Scratch\", \"Dimensional Error\", \"Burrs\",\n             \"Missing Feature\", \"Wrong Material\", \"Contamination\",\n             \"Color Mismatch\", \"Packaging Damage\"),\n  Count = c(145, 98, 67, 34, 28, 21, 15, 12)\n)\n\ndefects <- defects[order(-defects$Count),]\ndefects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100\n\n# Identify the \"vital few\" (those that contribute to 80%)\nvital_few <- defects[defects$Cumulative_Pct <= 80 |\n                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]\n\ncat(\"Total defects:\", sum(defects$Count), \"\\n\")\ncat(\"\\nVital Few (contributing to ~80% of defects):\\n\")\nprint(vital_few[, c(\"Defect\", \"Count\", \"Cumulative_Pct\")])\ncat(\"\\nFocusing on these\", nrow(vital_few), \"defect types addresses\",\n    round(max(vital_few$Cumulative_Pct), 1), \"% of all defects\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-interpretation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Create and analyze the data\ndefects <- data.frame(\n  Type = c(\"Burrs\", \"Dimensional\", \"Scratches\", \"Surface Dents\",\n           \"Wrinkles\", \"Splits/Cracks\", \"Missing Features\"),\n  Count = c(156, 112, 89, 67, 45, 28, 18)\n)\n\n# Sort by count descending\ndefects <- defects[order(-defects$Count),]\n\n# Calculate percentages\ndefects$Percent <- defects$Count / sum(defects$Count) * 100\ndefects$Cumulative <- cumsum(defects$Percent)\n\n# Display results\nprint(defects)\n\n# Identify vital few\nvital_few <- defects$Type[defects$Cumulative <= 80 |\n                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]\ncat(\"\\nVital Few (contributing to ~80%):\", paste(vital_few, collapse = \", \"))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-practice","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Example: Calculate top event probability\n# Basic event probabilities (annual failure rates)\nP_breaker_trip <- 0.02\nP_motor_fail <- 0.01\nP_impeller_worn <- 0.03\nP_impeller_break <- 0.005\nP_shaft_seize <- 0.008\nP_tank_empty <- 0.05\nP_valve_closed <- 0.01\nP_line_blocked <- 0.02\n\n# Impeller failure (OR gate)\nP_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)\ncat(\"P(Impeller failure):\", round(P_impeller_fail, 4), \"\\n\")\n\n# Mechanical failure (OR gate)\nP_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)\ncat(\"P(Mechanical failure):\", round(P_mechanical, 4), \"\\n\")\n\n# No fluid available (OR gate)\nP_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)\ncat(\"P(No fluid available):\", round(P_no_fluid, 4), \"\\n\")\n\n# Top event: Pump fails (OR gate)\nP_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)\ncat(\"P(Pump fails to deliver flow):\", round(P_top, 4), \"\\n\")\ncat(\"This represents a\", round(P_top * 100, 1), \"% annual probability of failure\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"fta-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Pareto analysis interpretation\ndefects <- data.frame(\n  Defect = c(\"Surface Scratch\", \"Dimensional Error\", \"Burrs\",\n             \"Missing Feature\", \"Wrong Material\", \"Contamination\",\n             \"Color Mismatch\", \"Packaging Damage\"),\n  Count = c(145, 98, 67, 34, 28, 21, 15, 12)\n)\n\ndefects <- defects[order(-defects$Count),]\ndefects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100\n\n# Identify the \"vital few\" (those that contribute to 80%)\nvital_few <- defects[defects$Cumulative_Pct <= 80 |\n                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]\n\ncat(\"Total defects:\", sum(defects$Count), \"\\n\")\ncat(\"\\nVital Few (contributing to ~80% of defects):\\n\")\nprint(vital_few[, c(\"Defect\", \"Count\", \"Cumulative_Pct\")])\ncat(\"\\nFocusing on these\", nrow(vital_few), \"defect types addresses\",\n    round(max(vital_few$Cumulative_Pct), 1), \"% of all defects\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-interpretation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Create and analyze the data\ndefects <- data.frame(\n  Type = c(\"Burrs\", \"Dimensional\", \"Scratches\", \"Surface Dents\",\n           \"Wrinkles\", \"Splits/Cracks\", \"Missing Features\"),\n  Count = c(156, 112, 89, 67, 45, 28, 18)\n)\n\n# Sort by count descending\ndefects <- defects[order(-defects$Count),]\n\n# Calculate percentages\ndefects$Percent <- defects$Count / sum(defects$Count) * 100\ndefects$Cumulative <- cumsum(defects$Percent)\n\n# Display results\nprint(defects)\n\n# Identify vital few\nvital_few <- defects$Type[defects$Cumulative <= 80 |\n                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]\ncat(\"\\nVital Few (contributing to ~80%):\", paste(vital_few, collapse = \", \"))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-practice","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1696,7 +1696,7 @@ globalThis.qwebrExecuteCode = async function (
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ENGR-3027 Process Engineering</a> 
+      <a href="./">Process Engineering</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -2805,43 +2805,9 @@ The irony is that reactive troubleshooting actually costs more time in the long 
 <p>FTA allows quantitative risk analysis by calculating the probability of the top event:</p>
 <p><strong>OR Gate:</strong> P(output) = 1 - [(1 - P<sub>A</sub>) × (1 - P<sub>B</sub>) × …] <em>Simplified:</em> P(output) ≈ P<sub>A</sub> + P<sub>B</sub> (when probabilities are small)</p>
 <p><strong>AND Gate:</strong> P(output) = P<sub>A</sub> × P<sub>B</sub> × …</p>
-<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> examples further on in this chapter for yourself.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Calculate top event probability</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic event probabilities (annual failure rates)</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>P_breaker_trip <span class="ot">&lt;-</span> <span class="fl">0.02</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>P_motor_fail <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>P_impeller_worn <span class="ot">&lt;-</span> <span class="fl">0.03</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>P_impeller_break <span class="ot">&lt;-</span> <span class="fl">0.005</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>P_shaft_seize <span class="ot">&lt;-</span> <span class="fl">0.008</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>P_tank_empty <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>P_valve_closed <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>P_line_blocked <span class="ot">&lt;-</span> <span class="fl">0.02</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Impeller failure (OR gate)</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>P_impeller_fail <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_impeller_worn) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_impeller_break)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(Impeller failure):"</span>, <span class="fu">round</span>(P_impeller_fail, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Mechanical failure (OR gate)</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>P_mechanical <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_motor_fail) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_impeller_fail) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_shaft_seize)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(Mechanical failure):"</span>, <span class="fu">round</span>(P_mechanical, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># No fluid available (OR gate)</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>P_no_fluid <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_tank_empty) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_valve_closed) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_line_blocked)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(No fluid available):"</span>, <span class="fu">round</span>(P_no_fluid, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Top event: Pump fails (OR gate)</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>P_top <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> P_breaker_trip) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_mechanical) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P_no_fluid)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"P(Pump fails to deliver flow):"</span>, <span class="fu">round</span>(P_top, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"This represents a"</span>, <span class="fu">round</span>(P_top <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"% annual probability of failure"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>P(Impeller failure): 0.0349 
-P(Mechanical failure): 0.0521 
-P(No fluid available): 0.0783 
-P(Pump fails to deliver flow): 0.1438 
-This represents a 14.4 % annual probability of failure</code></pre>
-</div>
-</div>
+<p>Live cell — try different basic-event probabilities.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <hr>
 </section>
 </section>
@@ -2863,7 +2829,7 @@ This represents a 14.4 % annual probability of failure</code></pre>
 <section id="interpreting-pareto-analysis" class="level3" data-number="15.8.2">
 <h3 data-number="15.8.2" class="anchored" data-anchor-id="interpreting-pareto-analysis"><span class="header-section-number">15.8.2</span> Interpreting Pareto Analysis</h3>
 <p>Live cell — try different defect counts.</p>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="stratified-pareto-analysis" class="level3" data-number="15.8.3">
@@ -3244,14 +3210,14 @@ This represents a 14.4 % annual probability of failure</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate improvement</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>before_avg <span class="ot">&lt;-</span> <span class="fu">mean</span>(defect_rate[<span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>])</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>after_avg <span class="ot">&lt;-</span> <span class="fu">mean</span>(defect_rate[<span class="dv">15</span><span class="sc">:</span><span class="dv">30</span>])</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>improvement <span class="ot">&lt;-</span> (before_avg <span class="sc">-</span> after_avg) <span class="sc">/</span> before_avg <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Before corrective action: "</span>, <span class="fu">round</span>(before_avg, <span class="dv">2</span>), <span class="st">"% defect rate</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"After corrective action:  "</span>, <span class="fu">round</span>(after_avg, <span class="dv">2</span>), <span class="st">"% defect rate</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Improvement:              "</span>, <span class="fu">round</span>(improvement, <span class="dv">1</span>), <span class="st">"% reduction</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate improvement</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>before_avg <span class="ot">&lt;-</span> <span class="fu">mean</span>(defect_rate[<span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>after_avg <span class="ot">&lt;-</span> <span class="fu">mean</span>(defect_rate[<span class="dv">15</span><span class="sc">:</span><span class="dv">30</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>improvement <span class="ot">&lt;-</span> (before_avg <span class="sc">-</span> after_avg) <span class="sc">/</span> before_avg <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Before corrective action: "</span>, <span class="fu">round</span>(before_avg, <span class="dv">2</span>), <span class="st">"% defect rate</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"After corrective action:  "</span>, <span class="fu">round</span>(after_avg, <span class="dv">2</span>), <span class="st">"% defect rate</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Improvement:              "</span>, <span class="fu">round</span>(improvement, <span class="dv">1</span>), <span class="st">"% reduction</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Before corrective action:  5.03 % defect rate
 After corrective action:   1.33 % defect rate
@@ -3748,7 +3714,7 @@ Fixing the root cause (implementing tool life tracking) prevents the problem fro
 </tbody>
 </table>
 <p><strong>Answer:</strong> (live — try your own defect counts)</p>
-<div id="qwebr-insertion-location-2"></div>
+<div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 The <strong>vital few</strong> are Burrs, Dimensional errors, and Scratches - addressing these three defect types would address approximately 69% of all defects. Adding Surface Dents would bring the total to 82%.
 </details>

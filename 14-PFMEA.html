@@ -8,7 +8,7 @@
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>14&nbsp; Process Failure Mode and Effects Analysis (PFMEA) – ENGR-3027 Process Engineering</title>
+<title>14&nbsp; Process Failure Mode and Effects Analysis (PFMEA) – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,41 +26,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -414,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Improvement Analysis for Short Shot (Highest RPN = 210)\n\ncat(\"=== CURRENT STATE ===\\n\")\nS_current <- 7  # Severity (cannot change - inherent to failure)\nO_current <- 5  # Occurrence\nD_current <- 6  # Detection\nRPN_current <- S_current * O_current * D_current\ncat(\"Current RPN:\", RPN_current, \"(S=7, O=5, D=6)\\n\\n\")\n\ncat(\"=== IMPROVEMENT OPTIONS ===\\n\\n\")\n\n# Option 1: Improve Detection\ncat(\"Option 1: Add automatic shot weight monitoring\\n\")\nD_option1 <- 2  # Automated detection\nRPN_option1 <- S_current * O_current * D_option1\ncat(\"New RPN:\", RPN_option1, \"(S=7, O=5, D=2)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option1/RPN_current)*100), \"%\\n\\n\")\n\n# Option 2: Improve Occurrence (Prevention)\ncat(\"Option 2: Add screw position monitoring with feedback control\\n\")\nO_option2 <- 2  # Much lower occurrence\nRPN_option2 <- S_current * O_option2 * D_current\ncat(\"New RPN:\", RPN_option2, \"(S=7, O=2, D=6)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option2/RPN_current)*100), \"%\\n\\n\")\n\n# Option 3: Both improvements\ncat(\"Option 3: Both improvements combined\\n\")\nRPN_option3 <- S_current * O_option2 * D_option1\ncat(\"New RPN:\", RPN_option3, \"(S=7, O=2, D=2)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option3/RPN_current)*100), \"%\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Before improvements\nS_before <- 9\nO_before <- 4\nD_before <- 5\nRPN_before <- S_before * O_before * D_before\ncat(\"Before RPN:\", RPN_before, \"\\n\")\n\n# After improvements\nS_after <- 9    # Severity unchanged (inherent)\nO_after <- 2    # Reduced through fixture improvements\nD_after <- 2    # Reduced through 100% gauging\nRPN_after <- S_after * O_after * D_after\ncat(\"After RPN:\", RPN_after, \"\\n\")\ncat(\"Reduction:\", round((1 - RPN_after/RPN_before)*100), \"%\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"case-study-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Example RPN Calculations\n\n# Failure Mode 1: Short shot\nS1 <- 7    # Severity: Product inoperable (assembly)\nO1 <- 5    # Occurrence: Occasional\nD1 <- 6    # Detection: Moderate (visual inspection)\n\nRPN1 <- S1 * O1 * D1\ncat(\"Short shot RPN:\", RPN1, \"\\n\")\n\n# Failure Mode 2: Flash\nS2 <- 4    # Severity: Appearance issue\nO2 <- 6    # Occurrence: Regular\nD2 <- 3    # Detection: High (easy to see)\n\nRPN2 <- S2 * O2 * D2\ncat(\"Flash RPN:\", RPN2, \"\\n\")\n\n# Failure Mode 3: Contamination\nS3 <- 9    # Severity: Safety concern (medical device)\nO3 <- 3    # Occurrence: Low\nD3 <- 7    # Detection: Low (internal contamination)\n\nRPN3 <- S3 * O3 * D3\ncat(\"Contamination RPN:\", RPN3, \"\\n\")\n\n# Comparison\ncat(\"\\n--- Priority Order by RPN ---\\n\")\ncat(\"1. Short shot (RPN =\", RPN1, \")\\n\")\ncat(\"2. Contamination (RPN =\", RPN3, \")\\n\")\ncat(\"3. Flash (RPN =\", RPN2, \")\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Improvement Analysis for Short Shot (Highest RPN = 210)\n\ncat(\"=== CURRENT STATE ===\\n\")\nS_current <- 7  # Severity (cannot change - inherent to failure)\nO_current <- 5  # Occurrence\nD_current <- 6  # Detection\nRPN_current <- S_current * O_current * D_current\ncat(\"Current RPN:\", RPN_current, \"(S=7, O=5, D=6)\\n\\n\")\n\ncat(\"=== IMPROVEMENT OPTIONS ===\\n\\n\")\n\n# Option 1: Improve Detection\ncat(\"Option 1: Add automatic shot weight monitoring\\n\")\nD_option1 <- 2  # Automated detection\nRPN_option1 <- S_current * O_current * D_option1\ncat(\"New RPN:\", RPN_option1, \"(S=7, O=5, D=2)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option1/RPN_current)*100), \"%\\n\\n\")\n\n# Option 2: Improve Occurrence (Prevention)\ncat(\"Option 2: Add screw position monitoring with feedback control\\n\")\nO_option2 <- 2  # Much lower occurrence\nRPN_option2 <- S_current * O_option2 * D_current\ncat(\"New RPN:\", RPN_option2, \"(S=7, O=2, D=6)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option2/RPN_current)*100), \"%\\n\\n\")\n\n# Option 3: Both improvements\ncat(\"Option 3: Both improvements combined\\n\")\nRPN_option3 <- S_current * O_option2 * D_option1\ncat(\"New RPN:\", RPN_option3, \"(S=7, O=2, D=2)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option3/RPN_current)*100), \"%\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Before improvements\nS_before <- 9\nO_before <- 4\nD_before <- 5\nRPN_before <- S_before * O_before * D_before\ncat(\"Before RPN:\", RPN_before, \"\\n\")\n\n# After improvements\nS_after <- 9    # Severity unchanged (inherent)\nO_after <- 2    # Reduced through fixture improvements\nD_after <- 2    # Reduced through 100% gauging\nRPN_after <- S_after * O_after * D_after\ncat(\"After RPN:\", RPN_after, \"\\n\")\ncat(\"Reduction:\", round((1 - RPN_after/RPN_before)*100), \"%\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"case-study-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1725,7 +1690,7 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ENGR-3027 Process Engineering</a> 
+      <a href="./">Process Engineering</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -3135,50 +3100,9 @@ Question: Why are detection ratings often harder to improve?
 <h3 data-number="14.4.9" class="anchored" data-anchor-id="step-9-calculating-rpn-and-prioritization"><span class="header-section-number">14.4.9</span> Step 9: Calculating RPN and Prioritization</h3>
 <p>The <strong>Risk Priority Number (RPN)</strong> combines all three ratings:</p>
 <p><span class="math display">\[\text{RPN} = \text{Severity (S)} \times \text{Occurrence (O)} \times \text{Detection (D)}\]</span></p>
-<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> examples further on in this chapter for yourself.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example RPN Calculations</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Failure Mode 1: Short shot</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">&lt;-</span> <span class="dv">7</span>    <span class="co"># Severity: Product inoperable (assembly)</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>O1 <span class="ot">&lt;-</span> <span class="dv">5</span>    <span class="co"># Occurrence: Occasional</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>D1 <span class="ot">&lt;-</span> <span class="dv">6</span>    <span class="co"># Detection: Moderate (visual inspection)</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>RPN1 <span class="ot">&lt;-</span> S1 <span class="sc">*</span> O1 <span class="sc">*</span> D1</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Short shot RPN:"</span>, RPN1, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Failure Mode 2: Flash</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="dv">4</span>    <span class="co"># Severity: Appearance issue</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>O2 <span class="ot">&lt;-</span> <span class="dv">6</span>    <span class="co"># Occurrence: Regular</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>D2 <span class="ot">&lt;-</span> <span class="dv">3</span>    <span class="co"># Detection: High (easy to see)</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>RPN2 <span class="ot">&lt;-</span> S2 <span class="sc">*</span> O2 <span class="sc">*</span> D2</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Flash RPN:"</span>, RPN2, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Failure Mode 3: Contamination</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> <span class="dv">9</span>    <span class="co"># Severity: Safety concern (medical device)</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>O3 <span class="ot">&lt;-</span> <span class="dv">3</span>    <span class="co"># Occurrence: Low</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>D3 <span class="ot">&lt;-</span> <span class="dv">7</span>    <span class="co"># Detection: Low (internal contamination)</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>RPN3 <span class="ot">&lt;-</span> S3 <span class="sc">*</span> O3 <span class="sc">*</span> D3</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Contamination RPN:"</span>, RPN3, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparison</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Priority Order by RPN ---</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1. Short shot (RPN ="</span>, RPN1, <span class="st">")</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"2. Contamination (RPN ="</span>, RPN3, <span class="st">")</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"3. Flash (RPN ="</span>, RPN2, <span class="st">")</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Short shot RPN: 210 
-Flash RPN: 72 
-Contamination RPN: 189 
-
---- Priority Order by RPN ---
-1. Short shot (RPN = 210 )
-2. Contamination (RPN = 189 )
-3. Flash (RPN = 72 )</code></pre>
-</div>
-</div>
+<p>Live cell — try different Severity, Occurrence, and Detection ratings.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <p><strong>RPN Action Thresholds (Traditional):</strong></p>
 <div class="cell">
 <div class="cell-output-display">
@@ -3502,7 +3426,7 @@ Interactive Exercise: Calculate RPN
 </div>
 </div>
 <p>Live cell — try different S/O/D ratings for each improvement option.</p>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -4059,7 +3983,7 @@ Interactive Exercise: Create a PFMEA
 <li><strong>Enhanced fixture design:</strong> Carbide wear surfaces (O: 4 → 2)</li>
 </ol>
 <p>Live cell — try different before/after ratings.</p>
-<div id="qwebr-insertion-location-2"></div>
+<div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="results" class="level3" data-number="14.9.4">

@@ -8,7 +8,7 @@
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>2&nbsp; Process and Design – ENGR-3027 Process Engineering</title>
+<title>2&nbsp; Process and Design – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,41 +26,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -414,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# DFA Analysis Example: Simple Assembly\n# Calculate assembly efficiency using Boothroyd-Dewhurst method\n\n# Assembly data (simplified)\nparts <- data.frame(\n  Part = c(\"Base\", \"PCB\", \"Cover\", \"Screw 1\", \"Screw 2\", \"Screw 3\", \"Screw 4\", \"Label\"),\n  Handling_Time = c(2.5, 3.0, 2.5, 3.5, 3.5, 3.5, 3.5, 4.0),  # seconds\n  Insertion_Time = c(3.0, 4.0, 3.5, 6.0, 6.0, 6.0, 6.0, 2.0),  # seconds\n  Theoretically_Necessary = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)\n)\n\n# Calculations\ntotal_parts <- nrow(parts)\ntotal_time <- sum(parts$Handling_Time + parts$Insertion_Time)\nmin_parts <- sum(parts$Theoretically_Necessary)\nideal_time <- min_parts * 3  # 3 seconds is theoretical minimum per part\n\nefficiency <- (ideal_time / total_time) * 100\n\ncat(\"DFA Analysis Results:\\n\")\ncat(\"=====================\\n\")\ncat(sprintf(\"Total parts: %d\\n\", total_parts))\ncat(sprintf(\"Theoretically minimum parts: %d\\n\", min_parts))\ncat(sprintf(\"Total assembly time: %.1f seconds\\n\", total_time))\ncat(sprintf(\"Ideal assembly time: %.1f seconds\\n\", ideal_time))\ncat(sprintf(\"Design Efficiency: %.1f%%\\n\", efficiency))\ncat(\"\\nOpportunity: Combine 4 screws into snap-fit design\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"dfa-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Fixed Automation Economic Analysis\n# When does fixed automation make sense?\n\n# Example: Automotive transfer line for cylinder heads\nfixed_automation_cost <- 5000000  # Initial equipment cost\nannual_production <- 500000       # Parts per year\nfixed_cost_per_part <- 2.50       # Operating cost per part\nequipment_life_years <- 10\n\n# Calculate total cost per part including amortization\nannual_equipment_cost <- fixed_automation_cost / equipment_life_years\ntotal_annual_cost <- annual_equipment_cost + (fixed_cost_per_part * annual_production)\ncost_per_part <- total_annual_cost / annual_production\n\ncat(\"Fixed Automation Analysis:\\n\")\ncat(\"==========================\\n\")\ncat(sprintf(\"Equipment cost: $%s\\n\", format(fixed_automation_cost, big.mark=\",\")))\ncat(sprintf(\"Annual production: %s parts\\n\", format(annual_production, big.mark=\",\")))\ncat(sprintf(\"Operating cost per part: $%.2f\\n\", fixed_cost_per_part))\ncat(sprintf(\"Amortized equipment cost per part: $%.2f\\n\", annual_equipment_cost/annual_production))\ncat(sprintf(\"Total cost per part: $%.2f\\n\", cost_per_part))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"fixed-automation-economics","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# DFA Analysis Example: Simple Assembly\n# Calculate assembly efficiency using Boothroyd-Dewhurst method\n\n# Assembly data (simplified)\nparts <- data.frame(\n  Part = c(\"Base\", \"PCB\", \"Cover\", \"Screw 1\", \"Screw 2\", \"Screw 3\", \"Screw 4\", \"Label\"),\n  Handling_Time = c(2.5, 3.0, 2.5, 3.5, 3.5, 3.5, 3.5, 4.0),  # seconds\n  Insertion_Time = c(3.0, 4.0, 3.5, 6.0, 6.0, 6.0, 6.0, 2.0),  # seconds\n  Theoretically_Necessary = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)\n)\n\n# Calculations\ntotal_parts <- nrow(parts)\ntotal_time <- sum(parts$Handling_Time + parts$Insertion_Time)\nmin_parts <- sum(parts$Theoretically_Necessary)\nideal_time <- min_parts * 3  # 3 seconds is theoretical minimum per part\n\nefficiency <- (ideal_time / total_time) * 100\n\ncat(\"DFA Analysis Results:\\n\")\ncat(\"=====================\\n\")\ncat(sprintf(\"Total parts: %d\\n\", total_parts))\ncat(sprintf(\"Theoretically minimum parts: %d\\n\", min_parts))\ncat(sprintf(\"Total assembly time: %.1f seconds\\n\", total_time))\ncat(sprintf(\"Ideal assembly time: %.1f seconds\\n\", ideal_time))\ncat(sprintf(\"Design Efficiency: %.1f%%\\n\", efficiency))\ncat(\"\\nOpportunity: Combine 4 screws into snap-fit design\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"dfa-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1696,7 +1661,7 @@ globalThis.qwebrExecuteCode = async function (
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ENGR-3027 Process Engineering</a> 
+      <a href="./">Process Engineering</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -2227,39 +2192,9 @@ What is the role of a process engineer?
 <p><strong>Fixed automation</strong> (also called “hard automation”) uses specialized equipment designed for a specific product. The sequence of operations is determined by the equipment configuration and cannot be easily changed.</p>
 <p><strong>Characteristics:</strong> - Very high production rates (thousands per hour) - Low per-unit cost at high volumes - High initial capital investment - Inflexible - dedicated to one product</p>
 <p><strong>Examples:</strong> - Automotive transfer lines for engine blocks - Beverage bottling lines - Chemical processing plants - Paper manufacturing</p>
-<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> example further on in this chapter for yourself.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fixed Automation Economic Analysis</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># When does fixed automation make sense?</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Automotive transfer line for cylinder heads</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>fixed_automation_cost <span class="ot">&lt;-</span> <span class="dv">5000000</span>  <span class="co"># Initial equipment cost</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>annual_production <span class="ot">&lt;-</span> <span class="dv">500000</span>       <span class="co"># Parts per year</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fixed_cost_per_part <span class="ot">&lt;-</span> <span class="fl">2.50</span>       <span class="co"># Operating cost per part</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>equipment_life_years <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate total cost per part including amortization</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>annual_equipment_cost <span class="ot">&lt;-</span> fixed_automation_cost <span class="sc">/</span> equipment_life_years</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>total_annual_cost <span class="ot">&lt;-</span> annual_equipment_cost <span class="sc">+</span> (fixed_cost_per_part <span class="sc">*</span> annual_production)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>cost_per_part <span class="ot">&lt;-</span> total_annual_cost <span class="sc">/</span> annual_production</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Fixed Automation Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"==========================</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Equipment cost: $%s</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">format</span>(fixed_automation_cost, <span class="at">big.mark=</span><span class="st">","</span>)))</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Annual production: %s parts</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">format</span>(annual_production, <span class="at">big.mark=</span><span class="st">","</span>)))</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Operating cost per part: $%.2f</span><span class="sc">\n</span><span class="st">"</span>, fixed_cost_per_part))</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Amortized equipment cost per part: $%.2f</span><span class="sc">\n</span><span class="st">"</span>, annual_equipment_cost<span class="sc">/</span>annual_production))</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Total cost per part: $%.2f</span><span class="sc">\n</span><span class="st">"</span>, cost_per_part))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fixed Automation Analysis:
-==========================
-Equipment cost: $5e+06
-Annual production: 5e+05 parts
-Operating cost per part: $2.50
-Amortized equipment cost per part: $1.00
-Total cost per part: $3.50</code></pre>
-</div>
-</div>
+<p>Live cell — try different equipment costs, production volumes, or operating costs.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="programmable-automation" class="level3" data-number="2.3.2">
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="programmable-automation"><span class="header-section-number">2.3.2</span> Programmable Automation</h3>
@@ -2821,7 +2756,7 @@ Quick Quiz: Decode these instrument tags
 <h3 data-number="2.6.2" class="anchored" data-anchor-id="dfa-analysis"><span class="header-section-number">2.6.2</span> DFA Analysis</h3>
 <p>DFA systematically evaluates assembly operations to identify improvement opportunities.</p>
 <p>This one is live — try changing the part list or handling/insertion times and re-running.</p>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <details>
 <summary>

@@ -8,7 +8,7 @@
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>9&nbsp; Industrial Automation Fundamentals – ENGR-3027 Process Engineering</title>
+<title>9&nbsp; Industrial Automation Fundamentals – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# VFD Speed and Torque Calculations\n\n# Motor nameplate data\nmotor_hp <- 10\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\nslip_rpm <- (120 * rated_frequency / poles) - rated_rpm\n\n# Synchronous speed at rated frequency\nsync_speed_60 <- 120 * rated_frequency / poles\ncat(\"Motor Data:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_rpm/sync_speed_60*100, 1), \"%)\\n\\n\")\n\n# Calculate speed at different frequencies\nfrequencies <- c(15, 30, 45, 60, 75)\nspeeds <- sapply(frequencies, function(f) {\n  sync <- 120 * f / poles\n  sync - slip_rpm  # Assuming constant slip (approximation)\n})\n\ncat(\"Speed vs Frequency (V/Hz mode):\\n\")\ncat(\"─────────────────────────────\\n\")\nfor(i in seq_along(frequencies)) {\n  cat(sprintf(\"%2d Hz: %4d RPM\\n\", frequencies[i], speeds[i]))\n}\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"\\nV/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\")\ncat(\"At 30Hz, voltage should be:\", 30 * vhz_ratio, \"V\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"vfd-calculations","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Motor parameters\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\n\n# Calculate synchronous speed and slip at rated conditions\nsync_speed_60 <- 120 * rated_frequency / poles\nslip_rpm <- sync_speed_60 - rated_rpm\nslip_percent <- (slip_rpm / sync_speed_60) * 100\n\ncat(\"Motor Analysis:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_percent, 1), \"%)\\n\\n\")\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"V/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\\n\")\n\n# Calculate at 30Hz\nfreq_30 <- 30\nsync_30 <- 120 * freq_30 / poles\nspeed_30 <- sync_30 - slip_rpm  # Assuming constant slip in RPM\nvoltage_30 <- freq_30 * vhz_ratio\n\ncat(\"At 30Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_30, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_30, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_30, \"V\\n\\n\")\n\n# Calculate at 45Hz\nfreq_45 <- 45\nsync_45 <- 120 * freq_45 / poles\nspeed_45 <- sync_45 - slip_rpm\nvoltage_45 <- freq_45 * vhz_ratio\n\ncat(\"At 45Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_45, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_45, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_45, \"V\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q4-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Scan Time Calculation Example\ninput_scan_time <- 1.2    # ms\nprogram_execution <- 15.5  # ms (depends on program size)\noutput_update <- 1.0       # ms\nhousekeeping <- 2.3        # ms\n\ntotal_scan_time <- input_scan_time + program_execution + output_update + housekeeping\n\ncat(\"PLC Scan Time Calculation:\\n\")\ncat(\"─────────────────────────────\\n\")\ncat(\"Input Scan:       \", input_scan_time, \"ms\\n\")\ncat(\"Program Execution:\", program_execution, \"ms\\n\")\ncat(\"Output Update:    \", output_update, \"ms\\n\")\ncat(\"Housekeeping:     \", housekeeping, \"ms\\n\")\ncat(\"─────────────────────────────\\n\")\ncat(\"Total Scan Time:  \", total_scan_time, \"ms\\n\")\ncat(\"\\nScans per second: \", round(1000/total_scan_time, 0), \"\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"scan-time-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# VFD Speed and Torque Calculations\n\n# Motor nameplate data\nmotor_hp <- 10\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\nslip_rpm <- (120 * rated_frequency / poles) - rated_rpm\n\n# Synchronous speed at rated frequency\nsync_speed_60 <- 120 * rated_frequency / poles\ncat(\"Motor Data:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_rpm/sync_speed_60*100, 1), \"%)\\n\\n\")\n\n# Calculate speed at different frequencies\nfrequencies <- c(15, 30, 45, 60, 75)\nspeeds <- sapply(frequencies, function(f) {\n  sync <- 120 * f / poles\n  sync - slip_rpm  # Assuming constant slip (approximation)\n})\n\ncat(\"Speed vs Frequency (V/Hz mode):\\n\")\ncat(\"─────────────────────────────\\n\")\nfor(i in seq_along(frequencies)) {\n  cat(sprintf(\"%2d Hz: %4d RPM\\n\", frequencies[i], speeds[i]))\n}\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"\\nV/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\")\ncat(\"At 30Hz, voltage should be:\", 30 * vhz_ratio, \"V\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"vfd-calculations","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Motor parameters\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\n\n# Calculate synchronous speed and slip at rated conditions\nsync_speed_60 <- 120 * rated_frequency / poles\nslip_rpm <- sync_speed_60 - rated_rpm\nslip_percent <- (slip_rpm / sync_speed_60) * 100\n\ncat(\"Motor Analysis:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_percent, 1), \"%)\\n\\n\")\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"V/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\\n\")\n\n# Calculate at 30Hz\nfreq_30 <- 30\nsync_30 <- 120 * freq_30 / poles\nspeed_30 <- sync_30 - slip_rpm  # Assuming constant slip in RPM\nvoltage_30 <- freq_30 * vhz_ratio\n\ncat(\"At 30Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_30, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_30, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_30, \"V\\n\\n\")\n\n# Calculate at 45Hz\nfreq_45 <- 45\nsync_45 <- 120 * freq_45 / poles\nspeed_45 <- sync_45 - slip_rpm\nvoltage_45 <- freq_45 * vhz_ratio\n\ncat(\"At 45Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_45, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_45, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_45, \"V\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q4-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1696,7 +1696,7 @@ globalThis.qwebrExecuteCode = async function (
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ENGR-3027 Process Engineering</a> 
+      <a href="./">Process Engineering</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -2499,38 +2499,9 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </div>
-<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> examples further on in this chapter for yourself.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scan Time Calculation Example</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>input_scan_time <span class="ot">&lt;-</span> <span class="fl">1.2</span>    <span class="co"># ms</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>program_execution <span class="ot">&lt;-</span> <span class="fl">15.5</span>  <span class="co"># ms (depends on program size)</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>output_update <span class="ot">&lt;-</span> <span class="fl">1.0</span>       <span class="co"># ms</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>housekeeping <span class="ot">&lt;-</span> <span class="fl">2.3</span>        <span class="co"># ms</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>total_scan_time <span class="ot">&lt;-</span> input_scan_time <span class="sc">+</span> program_execution <span class="sc">+</span> output_update <span class="sc">+</span> housekeeping</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"PLC Scan Time Calculation:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Input Scan:       "</span>, input_scan_time, <span class="st">"ms</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Program Execution:"</span>, program_execution, <span class="st">"ms</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Output Update:    "</span>, output_update, <span class="st">"ms</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Housekeeping:     "</span>, housekeeping, <span class="st">"ms</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total Scan Time:  "</span>, total_scan_time, <span class="st">"ms</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Scans per second: "</span>, <span class="fu">round</span>(<span class="dv">1000</span><span class="sc">/</span>total_scan_time, <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>PLC Scan Time Calculation:
-─────────────────────────────
-Input Scan:        1.2 ms
-Program Execution: 15.5 ms
-Output Update:     1 ms
-Housekeeping:      2.3 ms
-─────────────────────────────
-Total Scan Time:   20 ms
-
-Scans per second:  50 </code></pre>
-</div>
-</div>
+<p>Live cell — try different scan time components.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="plc-programming-languages-iec-61131-3" class="level3" data-number="9.4.4">
 <h3 data-number="9.4.4" class="anchored" data-anchor-id="plc-programming-languages-iec-61131-3"><span class="header-section-number">9.4.4</span> PLC Programming Languages (IEC 61131-3)</h3>
@@ -2800,7 +2771,7 @@ Scans per second:  50 </code></pre>
 </div>
 </div>
 <p>Live cell — try different frequencies or motor parameters.</p>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="vfd-benefits" class="level3" data-number="9.6.3">
@@ -3265,39 +3236,39 @@ Scans per second:  50 </code></pre>
 <section id="predictive-maintenance-example" class="level3" data-number="9.10.3">
 <h3 data-number="9.10.3" class="anchored" data-anchor-id="predictive-maintenance-example"><span class="header-section-number">9.10.3</span> Predictive Maintenance Example</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating predictive maintenance with vibration data</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 30 days of vibration readings</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>baseline_vibration <span class="ot">&lt;-</span> <span class="fl">2.5</span>  <span class="co"># mm/s RMS (normal)</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate gradual bearing degradation</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>vibration <span class="ot">&lt;-</span> baseline_vibration <span class="sc">+</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.05</span> <span class="sc">*</span> days <span class="sc">+</span>           <span class="co"># Gradual increase</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">exp</span>((days <span class="sc">-</span> <span class="dv">25</span>)<span class="sc">/</span><span class="dv">5</span>) <span class="sc">*</span> (days <span class="sc">&gt;</span> <span class="dv">20</span>) <span class="sc">+</span>  <span class="co"># Accelerating failure</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">0</span>, <span class="fl">0.2</span>)       <span class="co"># Normal variation</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Alert thresholds</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>warning_threshold <span class="ot">&lt;-</span> <span class="fl">4.0</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>alarm_threshold <span class="ot">&lt;-</span> <span class="fl">6.0</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Find when thresholds crossed</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>warning_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> warning_threshold))</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>alarm_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> alarm_threshold))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating predictive maintenance with vibration data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 30 days of vibration readings</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>baseline_vibration <span class="ot">&lt;-</span> <span class="fl">2.5</span>  <span class="co"># mm/s RMS (normal)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate gradual bearing degradation</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>vibration <span class="ot">&lt;-</span> baseline_vibration <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.05</span> <span class="sc">*</span> days <span class="sc">+</span>           <span class="co"># Gradual increase</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">exp</span>((days <span class="sc">-</span> <span class="dv">25</span>)<span class="sc">/</span><span class="dv">5</span>) <span class="sc">*</span> (days <span class="sc">&gt;</span> <span class="dv">20</span>) <span class="sc">+</span>  <span class="co"># Accelerating failure</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">0</span>, <span class="fl">0.2</span>)       <span class="co"># Normal variation</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Alert thresholds</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>warning_threshold <span class="ot">&lt;-</span> <span class="fl">4.0</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>alarm_threshold <span class="ot">&lt;-</span> <span class="fl">6.0</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Find when thresholds crossed</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>warning_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> warning_threshold))</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>alarm_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> alarm_threshold))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in min(which(vibration &gt; alarm_threshold)): no non-missing arguments to
 min; returning Inf</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Predictive Maintenance Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Baseline vibration:"</span>, baseline_vibration, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning threshold:"</span>, warning_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm threshold:"</span>, alarm_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning triggered on day:"</span>, warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm triggered on day:"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Days of warning before alarm:"</span>, alarm_day <span class="sc">-</span> warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Recommendation: Schedule bearing replacement before day"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Predictive Maintenance Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Baseline vibration:"</span>, baseline_vibration, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning threshold:"</span>, warning_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm threshold:"</span>, alarm_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning triggered on day:"</span>, warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm triggered on day:"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Days of warning before alarm:"</span>, alarm_day <span class="sc">-</span> warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Recommendation: Schedule bearing replacement before day"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Predictive Maintenance Analysis:
 ─────────────────────────────────
@@ -3495,7 +3466,7 @@ Recommendation: Schedule bearing replacement before day Inf </code></pre>
 <strong>Question 4</strong>: A VFD is controlling a 10 HP, 4-pole motor rated at 1750 RPM and 460V at 60Hz. Calculate the motor speed at 30Hz and 45Hz. What voltage should the VFD supply at these frequencies?
 </summary>
 <p><strong>Answer:</strong> (live — change the numbers to check your own version)</p>
-<div id="qwebr-insertion-location-2"></div>
+<div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <strong>Note:</strong> The calculation assumes constant slip in RPM, which is an approximation. Actual slip varies somewhat with load and frequency. The V/Hz ratio is maintained constant to provide constant torque capability below base speed.
 </details>

@@ -8,7 +8,7 @@
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>11&nbsp; Measurement Systems Analysis – ENGR-3027 Process Engineering</title>
+<title>11&nbsp; Measurement Systems Analysis – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Linearity calculation\nreference <- c(10, 25, 40, 55, 70)\navg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)\n\n# Fit linear regression\nmodel <- lm(avg_bias ~ reference)\n\n# Calculate linearity\nslope <- coef(model)[2]\nrange_used <- max(reference) - min(reference)\nlinearity <- abs(slope) * range_used\n\ncat(\"Regression equation: Bias =\", round(coef(model)[1], 4), \"+\",\n    round(slope, 5), \"× Reference\\n\")\ncat(\"Linearity (slope × range):\", round(linearity, 4), \"mm\\n\")\ncat(\"As % of tolerance (±0.10):\", round(linearity / 0.10 * 100, 1), \"%\\n\")\n\n# R-squared\ncat(\"R² =\", round(summary(model)$r.squared, 3),\n    \"- indicates\", ifelse(summary(model)$r.squared > 0.7, \"significant\", \"minor\"),\n    \"linearity issue\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"linearity-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Stability monitoring with control chart\nreference <- 25.000\nmeasurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,\n                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)\ndays <- 1:15\n\n# Calculate control limits (based on historical sigma)\nhistorical_sigma <- 0.010\nx_bar <- mean(measurements[1:5])  # Baseline from first 5 days\nUCL <- x_bar + 3 * historical_sigma\nLCL <- x_bar - 3 * historical_sigma\n\ncat(\"Baseline Average:\", round(x_bar, 4), \"\\n\")\ncat(\"UCL:\", round(UCL, 4), \"\\n\")\ncat(\"LCL:\", round(LCL, 4), \"\\n\")\n\n# Check for out-of-control\nout_of_control <- which(measurements > UCL | measurements < LCL)\nif(length(out_of_control) > 0) {\n  cat(\"\\nOut-of-control points on days:\", out_of_control, \"\\n\")\n  cat(\"Drift detected - recalibration recommended\\n\")\n} else {\n  cat(\"\\nNo out-of-control points - measurement system stable\\n\")\n}","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"stability-control-chart","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Range Method Gauge R&R Calculation\n# Two operators, five parts, two trials each\n\n# Data: Measurements by each operator (2 trials per part)\noperator_a <- matrix(c(\n  0.85, 0.87,  # Part 1\n  0.92, 0.91,  # Part 2\n  0.78, 0.80,  # Part 3\n  0.95, 0.96,  # Part 4\n  0.88, 0.85   # Part 5\n), ncol = 2, byrow = TRUE)\n\noperator_b <- matrix(c(\n  0.86, 0.88,  # Part 1\n  0.93, 0.92,  # Part 2\n  0.80, 0.79,  # Part 3\n  0.94, 0.97,  # Part 4\n  0.87, 0.88   # Part 5\n), ncol = 2, byrow = TRUE)\n\n# Step 1: Calculate ranges for each part-operator combination\nrange_a <- apply(operator_a, 1, function(x) max(x) - min(x))\nrange_b <- apply(operator_b, 1, function(x) max(x) - min(x))\n\n# Step 2: Average range\nR_bar <- mean(c(range_a, range_b))\n\n# Step 3: Calculate Repeatability (EV)\n# d2 for 2 trials = 1.128\nd2_trials <- 1.128\nEV <- R_bar / d2_trials\n\n# Step 4: Calculate part averages by operator\navg_a <- rowMeans(operator_a)\navg_b <- rowMeans(operator_b)\n\n# Step 5: Range of operator averages\nX_diff <- abs(mean(avg_a) - mean(avg_b))\n\n# d2 for 2 operators = 1.128\nd2_operators <- 1.128\nn_parts <- 5\nn_trials <- 2\n\n# Step 6: Reproducibility (AV)\nAV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))\nAV <- sqrt(max(0, AV_squared))\n\n# Step 7: Gauge R&R\nGRR <- sqrt(EV^2 + AV^2)\n\n# Step 8: Express as % of tolerance\ntolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total\n\ncat(\"=== Range Method Gauge R&R Results ===\\n\\n\")\ncat(\"Average Range (R-bar):\", round(R_bar, 4), \"\\n\")\ncat(\"Repeatability (EV):\", round(EV, 4), \"\\n\")\ncat(\"Reproducibility (AV):\", round(AV, 4), \"\\n\")\ncat(\"Gauge R&R (GRR):\", round(GRR, 4), \"\\n\\n\")\ncat(\"%EV (of tolerance):\", round(EV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%AV (of tolerance):\", round(AV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%GRR (of tolerance):\", round(GRR / tolerance * 100 * 5.15, 1), \"%\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"range-method","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Resolution adequacy check\ntolerance <- 0.100  # mm total tolerance\nprocess_6sigma <- 0.080  # 6 sigma of process\ngauge_resolution <- 0.010  # mm (smallest increment)\n\n# Check against tolerance\nratio_tolerance <- tolerance / gauge_resolution\n# Check against process\nratio_process <- process_6sigma / gauge_resolution\n\ncat(\"=== Resolution Adequacy Check ===\\n\\n\")\ncat(\"Tolerance:\", tolerance, \"mm\\n\")\ncat(\"Process 6σ:\", process_6sigma, \"mm\\n\")\ncat(\"Gauge Resolution:\", gauge_resolution, \"mm\\n\\n\")\n\ncat(\"Tolerance / Resolution:\", ratio_tolerance, \":1\")\nif(ratio_tolerance >= 10) cat(\" - ADEQUATE\\n\") else cat(\" - INADEQUATE\\n\")\n\ncat(\"Process 6σ / Resolution:\", ratio_process, \":1\")\nif(ratio_process >= 10) cat(\" - ADEQUATE\\n\") else cat(\" - INADEQUATE\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"resolution-check","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# True process parameters\ntrue_mean <- 100\ntrue_sigma <- 2.0\nUSL <- 106\nLSL <- 94\ntolerance <- USL - LSL\n\n# True capability\ntrue_Cp <- tolerance / (6 * true_sigma)\ntrue_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)\n\ncat(\"=== True Process Capability ===\\n\")\ncat(\"True σ:\", true_sigma, \"\\n\")\ncat(\"True Cp:\", round(true_Cp, 2), \"\\n\")\ncat(\"True Cpk:\", round(true_Cpk, 2), \"\\n\\n\")\n\n# With good measurement system (10% GRR)\ngrr_good <- 0.10 * tolerance / 5.15\nobserved_sigma_good <- sqrt(true_sigma^2 + grr_good^2)\nobserved_Cp_good <- tolerance / (6 * observed_sigma_good)\nobserved_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)\n\ncat(\"=== With Good MSA (10% GRR) ===\\n\")\ncat(\"Observed σ:\", round(observed_sigma_good, 3), \"\\n\")\ncat(\"Observed Cp:\", round(observed_Cp_good, 2), \"\\n\")\ncat(\"Observed Cpk:\", round(observed_Cpk_good, 2), \"\\n\\n\")\n\n# With poor measurement system (50% GRR)\ngrr_poor <- 0.50 * tolerance / 5.15\nobserved_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)\nobserved_Cp_poor <- tolerance / (6 * observed_sigma_poor)\nobserved_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)\n\ncat(\"=== With Poor MSA (50% GRR) ===\\n\")\ncat(\"Observed σ:\", round(observed_sigma_poor, 3), \"\\n\")\ncat(\"Observed Cp:\", round(observed_Cp_poor, 2), \"\\n\")\ncat(\"Observed Cpk:\", round(observed_Cpk_poor, 2), \"\\n\\n\")\n\ncat(\"Poor MSA makes a capable process (Cpk=1.0) appear incapable (Cpk=\",\n    round(observed_Cpk_poor, 2), \")\\n\")","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"msa-capability-effect","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"reference <- 25.000\ntolerance_total <- 0.100  # ±0.050 = 0.100 total\nmeasurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,\n                  25.009, 25.013, 25.010, 25.012, 25.011)\n\n# Calculate bias\nmean_measured <- mean(measurements)\nbias <- mean_measured - reference\n\ncat(\"Reference value:\", reference, \"mm\\n\")\ncat(\"Mean measured:\", round(mean_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\\n\")\n\n# Express as % of tolerance\nbias_pct <- abs(bias) / tolerance_total * 100\ncat(\"Bias as % of tolerance:\", round(bias_pct, 1), \"%\\n\")\n\n# T-test for significance\nt_result <- t.test(measurements, mu = reference)\ncat(\"T-test p-value:\", round(t_result$p.value, 6), \"\\n\\n\")\n\n# Acceptability\ncat(\"Acceptability Assessment:\\n\")\nif(bias_pct < 10) {\n  cat(\"- Bias < 10% of tolerance: ACCEPTABLE\\n\")\n} else if(bias_pct < 25) {\n  cat(\"- Bias 10-25% of tolerance: MARGINAL\\n\")\n} else {\n  cat(\"- Bias > 25% of tolerance: UNACCEPTABLE\\n\")\n}\n\nif(t_result$p.value < 0.05) {\n  cat(\"- Bias is statistically significant (p < 0.05)\\n\")\n  cat(\"- Consider recalibration or technique adjustment\\n\")\n}","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q3-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values from ANOVA table\nMS_part <- 0.03167\nMS_operator <- 0.00125\nMS_interaction <- 0.00050\nMS_error <- 0.00030\n\nn_parts <- 10\nn_operators <- 3\nn_trials <- 3\n\n# Variance components\nvar_repeatability <- MS_error\ncat(\"Var(Repeatability) =\", var_repeatability, \"\\n\")\n\nvar_interaction <- max(0, (MS_interaction - MS_error) / n_trials)\ncat(\"Var(Interaction) =\", round(var_interaction, 6), \"\\n\")\n\nvar_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))\ncat(\"Var(Operator) =\", round(var_operator, 6), \"\\n\")\n\nvar_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))\ncat(\"Var(Part) =\", round(var_part, 6), \"\\n\\n\")\n\n# Reproducibility = Operator + Interaction\nvar_reproducibility <- var_operator + var_interaction\ncat(\"Var(Reproducibility) =\", round(var_reproducibility, 6), \"\\n\")\n\n# Total Gauge R&R\nvar_GRR <- var_repeatability + var_reproducibility\ncat(\"Var(GRR) =\", round(var_GRR, 6), \"\\n\")\n\n# Total variation\nvar_total <- var_part + var_GRR\ncat(\"Var(Total) =\", round(var_total, 6), \"\\n\\n\")\n\n# Calculate %GRR (of total variation)\nsigma_GRR <- sqrt(var_GRR)\nsigma_total <- sqrt(var_total)\npct_GRR <- (sigma_GRR / sigma_total) * 100\n\ncat(\"%GRR (of Total Variation) =\", round(pct_GRR, 1), \"%\\n\\n\")\n\n# ndc\nsigma_part <- sqrt(var_part)\nndc <- 1.41 * (sigma_part / sigma_GRR)\ncat(\"ndc =\", round(ndc, 1), \"\\n\\n\")\n\nif(pct_GRR < 10) {\n  cat(\"Assessment: ACCEPTABLE (< 10%)\\n\")\n} else if(pct_GRR < 30) {\n  cat(\"Assessment: MARGINAL (10-30%)\\n\")\n} else {\n  cat(\"Assessment: UNACCEPTABLE (> 30%)\\n\")\n}","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q7-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Bias study calculation\nreference_value <- 50.000  # Certified reference standard\nmeasurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,\n                  50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07)\n\n# Calculate bias\naverage_measured <- mean(measurements)\nbias <- average_measured - reference_value\n\ncat(\"Reference Value:\", reference_value, \"mm\\n\")\ncat(\"Average Measured:\", round(average_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\")\ncat(\"Bias as % of Tolerance (±0.10):\", round(abs(bias) / 0.10 * 100, 1), \"%\\n\")\n\n# Statistical test for significance\nt_test <- t.test(measurements, mu = reference_value)\ncat(\"\\nt-test p-value:\", round(t_test$p.value, 4))\nif(t_test$p.value < 0.05) {\n  cat(\" - Bias is statistically significant\\n\")\n} else {\n  cat(\" - Bias is not statistically significant\\n\")\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"bias-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Linearity calculation\nreference <- c(10, 25, 40, 55, 70)\navg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)\n\n# Fit linear regression\nmodel <- lm(avg_bias ~ reference)\n\n# Calculate linearity\nslope <- coef(model)[2]\nrange_used <- max(reference) - min(reference)\nlinearity <- abs(slope) * range_used\n\ncat(\"Regression equation: Bias =\", round(coef(model)[1], 4), \"+\",\n    round(slope, 5), \"× Reference\\n\")\ncat(\"Linearity (slope × range):\", round(linearity, 4), \"mm\\n\")\ncat(\"As % of tolerance (±0.10):\", round(linearity / 0.10 * 100, 1), \"%\\n\")\n\n# R-squared\ncat(\"R² =\", round(summary(model)$r.squared, 3),\n    \"- indicates\", ifelse(summary(model)$r.squared > 0.7, \"significant\", \"minor\"),\n    \"linearity issue\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"linearity-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Stability monitoring with control chart\nreference <- 25.000\nmeasurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,\n                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)\ndays <- 1:15\n\n# Calculate control limits (based on historical sigma)\nhistorical_sigma <- 0.010\nx_bar <- mean(measurements[1:5])  # Baseline from first 5 days\nUCL <- x_bar + 3 * historical_sigma\nLCL <- x_bar - 3 * historical_sigma\n\ncat(\"Baseline Average:\", round(x_bar, 4), \"\\n\")\ncat(\"UCL:\", round(UCL, 4), \"\\n\")\ncat(\"LCL:\", round(LCL, 4), \"\\n\")\n\n# Check for out-of-control\nout_of_control <- which(measurements > UCL | measurements < LCL)\nif(length(out_of_control) > 0) {\n  cat(\"\\nOut-of-control points on days:\", out_of_control, \"\\n\")\n  cat(\"Drift detected - recalibration recommended\\n\")\n} else {\n  cat(\"\\nNo out-of-control points - measurement system stable\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"stability-control-chart","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Range Method Gauge R&R Calculation\n# Two operators, five parts, two trials each\n\n# Data: Measurements by each operator (2 trials per part)\noperator_a <- matrix(c(\n  0.85, 0.87,  # Part 1\n  0.92, 0.91,  # Part 2\n  0.78, 0.80,  # Part 3\n  0.95, 0.96,  # Part 4\n  0.88, 0.85   # Part 5\n), ncol = 2, byrow = TRUE)\n\noperator_b <- matrix(c(\n  0.86, 0.88,  # Part 1\n  0.93, 0.92,  # Part 2\n  0.80, 0.79,  # Part 3\n  0.94, 0.97,  # Part 4\n  0.87, 0.88   # Part 5\n), ncol = 2, byrow = TRUE)\n\n# Step 1: Calculate ranges for each part-operator combination\nrange_a <- apply(operator_a, 1, function(x) max(x) - min(x))\nrange_b <- apply(operator_b, 1, function(x) max(x) - min(x))\n\n# Step 2: Average range\nR_bar <- mean(c(range_a, range_b))\n\n# Step 3: Calculate Repeatability (EV)\n# d2 for 2 trials = 1.128\nd2_trials <- 1.128\nEV <- R_bar / d2_trials\n\n# Step 4: Calculate part averages by operator\navg_a <- rowMeans(operator_a)\navg_b <- rowMeans(operator_b)\n\n# Step 5: Range of operator averages\nX_diff <- abs(mean(avg_a) - mean(avg_b))\n\n# d2 for 2 operators = 1.128\nd2_operators <- 1.128\nn_parts <- 5\nn_trials <- 2\n\n# Step 6: Reproducibility (AV)\nAV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))\nAV <- sqrt(max(0, AV_squared))\n\n# Step 7: Gauge R&R\nGRR <- sqrt(EV^2 + AV^2)\n\n# Step 8: Express as % of tolerance\ntolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total\n\ncat(\"=== Range Method Gauge R&R Results ===\\n\\n\")\ncat(\"Average Range (R-bar):\", round(R_bar, 4), \"\\n\")\ncat(\"Repeatability (EV):\", round(EV, 4), \"\\n\")\ncat(\"Reproducibility (AV):\", round(AV, 4), \"\\n\")\ncat(\"Gauge R&R (GRR):\", round(GRR, 4), \"\\n\\n\")\ncat(\"%EV (of tolerance):\", round(EV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%AV (of tolerance):\", round(AV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%GRR (of tolerance):\", round(GRR / tolerance * 100 * 5.15, 1), \"%\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"range-method","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Resolution adequacy check\ntolerance <- 0.100  # mm total tolerance\nprocess_6sigma <- 0.080  # 6 sigma of process\ngauge_resolution <- 0.010  # mm (smallest increment)\n\n# Check against tolerance\nratio_tolerance <- tolerance / gauge_resolution\n# Check against process\nratio_process <- process_6sigma / gauge_resolution\n\ncat(\"=== Resolution Adequacy Check ===\\n\\n\")\ncat(\"Tolerance:\", tolerance, \"mm\\n\")\ncat(\"Process 6σ:\", process_6sigma, \"mm\\n\")\ncat(\"Gauge Resolution:\", gauge_resolution, \"mm\\n\\n\")\n\ncat(\"Tolerance / Resolution:\", ratio_tolerance, \":1\")\nif(ratio_tolerance >= 10) cat(\" - ADEQUATE\\n\") else cat(\" - INADEQUATE\\n\")\n\ncat(\"Process 6σ / Resolution:\", ratio_process, \":1\")\nif(ratio_process >= 10) cat(\" - ADEQUATE\\n\") else cat(\" - INADEQUATE\\n\")","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"resolution-check","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# True process parameters\ntrue_mean <- 100\ntrue_sigma <- 2.0\nUSL <- 106\nLSL <- 94\ntolerance <- USL - LSL\n\n# True capability\ntrue_Cp <- tolerance / (6 * true_sigma)\ntrue_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)\n\ncat(\"=== True Process Capability ===\\n\")\ncat(\"True σ:\", true_sigma, \"\\n\")\ncat(\"True Cp:\", round(true_Cp, 2), \"\\n\")\ncat(\"True Cpk:\", round(true_Cpk, 2), \"\\n\\n\")\n\n# With good measurement system (10% GRR)\ngrr_good <- 0.10 * tolerance / 5.15\nobserved_sigma_good <- sqrt(true_sigma^2 + grr_good^2)\nobserved_Cp_good <- tolerance / (6 * observed_sigma_good)\nobserved_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)\n\ncat(\"=== With Good MSA (10% GRR) ===\\n\")\ncat(\"Observed σ:\", round(observed_sigma_good, 3), \"\\n\")\ncat(\"Observed Cp:\", round(observed_Cp_good, 2), \"\\n\")\ncat(\"Observed Cpk:\", round(observed_Cpk_good, 2), \"\\n\\n\")\n\n# With poor measurement system (50% GRR)\ngrr_poor <- 0.50 * tolerance / 5.15\nobserved_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)\nobserved_Cp_poor <- tolerance / (6 * observed_sigma_poor)\nobserved_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)\n\ncat(\"=== With Poor MSA (50% GRR) ===\\n\")\ncat(\"Observed σ:\", round(observed_sigma_poor, 3), \"\\n\")\ncat(\"Observed Cp:\", round(observed_Cp_poor, 2), \"\\n\")\ncat(\"Observed Cpk:\", round(observed_Cpk_poor, 2), \"\\n\\n\")\n\ncat(\"Poor MSA makes a capable process (Cpk=1.0) appear incapable (Cpk=\",\n    round(observed_Cpk_poor, 2), \")\\n\")","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"msa-capability-effect","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"reference <- 25.000\ntolerance_total <- 0.100  # ±0.050 = 0.100 total\nmeasurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,\n                  25.009, 25.013, 25.010, 25.012, 25.011)\n\n# Calculate bias\nmean_measured <- mean(measurements)\nbias <- mean_measured - reference\n\ncat(\"Reference value:\", reference, \"mm\\n\")\ncat(\"Mean measured:\", round(mean_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\\n\")\n\n# Express as % of tolerance\nbias_pct <- abs(bias) / tolerance_total * 100\ncat(\"Bias as % of tolerance:\", round(bias_pct, 1), \"%\\n\")\n\n# T-test for significance\nt_result <- t.test(measurements, mu = reference)\ncat(\"T-test p-value:\", round(t_result$p.value, 6), \"\\n\\n\")\n\n# Acceptability\ncat(\"Acceptability Assessment:\\n\")\nif(bias_pct < 10) {\n  cat(\"- Bias < 10% of tolerance: ACCEPTABLE\\n\")\n} else if(bias_pct < 25) {\n  cat(\"- Bias 10-25% of tolerance: MARGINAL\\n\")\n} else {\n  cat(\"- Bias > 25% of tolerance: UNACCEPTABLE\\n\")\n}\n\nif(t_result$p.value < 0.05) {\n  cat(\"- Bias is statistically significant (p < 0.05)\\n\")\n  cat(\"- Consider recalibration or technique adjustment\\n\")\n}","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q3-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values from ANOVA table\nMS_part <- 0.03167\nMS_operator <- 0.00125\nMS_interaction <- 0.00050\nMS_error <- 0.00030\n\nn_parts <- 10\nn_operators <- 3\nn_trials <- 3\n\n# Variance components\nvar_repeatability <- MS_error\ncat(\"Var(Repeatability) =\", var_repeatability, \"\\n\")\n\nvar_interaction <- max(0, (MS_interaction - MS_error) / n_trials)\ncat(\"Var(Interaction) =\", round(var_interaction, 6), \"\\n\")\n\nvar_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))\ncat(\"Var(Operator) =\", round(var_operator, 6), \"\\n\")\n\nvar_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))\ncat(\"Var(Part) =\", round(var_part, 6), \"\\n\\n\")\n\n# Reproducibility = Operator + Interaction\nvar_reproducibility <- var_operator + var_interaction\ncat(\"Var(Reproducibility) =\", round(var_reproducibility, 6), \"\\n\")\n\n# Total Gauge R&R\nvar_GRR <- var_repeatability + var_reproducibility\ncat(\"Var(GRR) =\", round(var_GRR, 6), \"\\n\")\n\n# Total variation\nvar_total <- var_part + var_GRR\ncat(\"Var(Total) =\", round(var_total, 6), \"\\n\\n\")\n\n# Calculate %GRR (of total variation)\nsigma_GRR <- sqrt(var_GRR)\nsigma_total <- sqrt(var_total)\npct_GRR <- (sigma_GRR / sigma_total) * 100\n\ncat(\"%GRR (of Total Variation) =\", round(pct_GRR, 1), \"%\\n\\n\")\n\n# ndc\nsigma_part <- sqrt(var_part)\nndc <- 1.41 * (sigma_part / sigma_GRR)\ncat(\"ndc =\", round(ndc, 1), \"\\n\\n\")\n\nif(pct_GRR < 10) {\n  cat(\"Assessment: ACCEPTABLE (< 10%)\\n\")\n} else if(pct_GRR < 30) {\n  cat(\"Assessment: MARGINAL (10-30%)\\n\")\n} else {\n  cat(\"Assessment: UNACCEPTABLE (> 30%)\\n\")\n}","id":8,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q7-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1725,7 +1725,7 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">ENGR-3027 Process Engineering</a> 
+      <a href="./">Process Engineering</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -2393,39 +2393,9 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </div>
-<p>This worked example is fixed as a reference — read through it once, then try the <em>editable</em> examples further on in this chapter for yourself.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias study calculation</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>reference_value <span class="ot">&lt;-</span> <span class="fl">50.000</span>  <span class="co"># Certified reference standard</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>measurements <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">50.08</span>, <span class="fl">50.07</span>, <span class="fl">50.09</span>, <span class="fl">50.08</span>, <span class="fl">50.06</span>, <span class="fl">50.10</span>, <span class="fl">50.07</span>, <span class="fl">50.08</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">50.09</span>, <span class="fl">50.08</span>, <span class="fl">50.07</span>, <span class="fl">50.11</span>, <span class="fl">50.08</span>, <span class="fl">50.09</span>, <span class="fl">50.07</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate bias</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>average_measured <span class="ot">&lt;-</span> <span class="fu">mean</span>(measurements)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>bias <span class="ot">&lt;-</span> average_measured <span class="sc">-</span> reference_value</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Reference Value:"</span>, reference_value, <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Average Measured:"</span>, <span class="fu">round</span>(average_measured, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Bias:"</span>, <span class="fu">round</span>(bias, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Bias as % of Tolerance (±0.10):"</span>, <span class="fu">round</span>(<span class="fu">abs</span>(bias) <span class="sc">/</span> <span class="fl">0.10</span> <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistical test for significance</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>t_test <span class="ot">&lt;-</span> <span class="fu">t.test</span>(measurements, <span class="at">mu =</span> reference_value)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">t-test p-value:"</span>, <span class="fu">round</span>(t_test<span class="sc">$</span>p.value, <span class="dv">4</span>))</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(t_test<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>) {</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">" - Bias is statistically significant</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">" - Bias is not statistically significant</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Reference Value: 50 mm
-Average Measured: 50.0813 mm
-Bias: 0.0813 mm
-Bias as % of Tolerance (±0.10): 81.3 %
-
-t-test p-value: 0 - Bias is statistically significant</code></pre>
-</div>
-</div>
+<p>Live cell — try different reference and measured values.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="linearity" class="level3" data-number="11.4.2">
 <h3 data-number="11.4.2" class="anchored" data-anchor-id="linearity"><span class="header-section-number">11.4.2</span> Linearity</h3>
@@ -2443,7 +2413,7 @@ t-test p-value: 0 - Bias is statistically significant</code></pre>
 </div>
 </div>
 <p>Live cell — try a different set of reference points and biases.</p>
-<div id="qwebr-insertion-location-1"></div>
+<div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="stability" class="level3" data-number="11.4.3">
@@ -2465,7 +2435,7 @@ t-test p-value: 0 - Bias is statistically significant</code></pre>
 <section id="stability-control-chart" class="level3" data-number="11.4.4">
 <h3 data-number="11.4.4" class="anchored" data-anchor-id="stability-control-chart"><span class="header-section-number">11.4.4</span> Stability Control Chart</h3>
 <p>For ongoing stability monitoring, use a control chart. Live cell — try different measurements or a different historical sigma.</p>
-<div id="qwebr-insertion-location-2"></div>
+<div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <hr>
 </section>
@@ -2573,7 +2543,7 @@ t-test p-value: 0 - Bias is statistically significant</code></pre>
 <h3 data-number="11.5.3" class="anchored" data-anchor-id="range-method-short-form"><span class="header-section-number">11.5.3</span> Range Method (Short Form)</h3>
 <p>The Range Method is a quick approximation useful for initial screening.</p>
 <p>Live cell — try different measurement data for the two operators.</p>
-<div id="qwebr-insertion-location-3"></div>
+<div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="anova-method-full-study" class="level3" data-number="11.5.4">
@@ -2648,45 +2618,45 @@ t-test p-value: 0 - Bias is statistically significant</code></pre>
 <p>A large F-value indicates that the factor (Part, Operator, or their interaction) contributes meaningfully to the observed variation. The p-value tells us the probability of seeing such an F-value if the factor had no real effect.</p>
 <p>From the ANOVA table’s Mean Squares, we extract <strong>variance components</strong> (<span class="math inline">\(\sigma^2\)</span>) for each source, then combine them to calculate the standard metrics: %EV (repeatability), %AV (reproducibility), %GRR, and the number of distinct categories (ndc).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Full Gauge R&amp;R using ANOVA method</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 10 parts, 3 operators, 3 trials</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate realistic GRR data</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>n_parts <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>n_operators <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Part true values (most of the variation)</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>part_effects <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_parts, <span class="dv">0</span>, <span class="fl">0.05</span>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Operator effects (some variation)</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>operator_effects <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.008</span>, <span class="fl">0.003</span>, <span class="fl">0.005</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dataset</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>grr_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Part =</span> <span class="dv">1</span><span class="sc">:</span>n_parts,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Operator =</span> <span class="fu">paste0</span>(<span class="st">"Op"</span>, <span class="dv">1</span><span class="sc">:</span>n_operators),</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Trial =</span> <span class="dv">1</span><span class="sc">:</span>n_trials</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Add measurements</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>grr_data<span class="sc">$</span>Measurement <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="sc">+</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  part_effects[grr_data<span class="sc">$</span>Part] <span class="sc">+</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  operator_effects[<span class="fu">as.numeric</span>(<span class="fu">factor</span>(grr_data<span class="sc">$</span>Operator))] <span class="sc">+</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="fu">nrow</span>(grr_data), <span class="dv">0</span>, <span class="fl">0.006</span>)  <span class="co"># Repeatability error</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to factors</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>grr_data<span class="sc">$</span>Part <span class="ot">&lt;-</span> <span class="fu">factor</span>(grr_data<span class="sc">$</span>Part)</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>grr_data<span class="sc">$</span>Operator <span class="ot">&lt;-</span> <span class="fu">factor</span>(grr_data<span class="sc">$</span>Operator)</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit ANOVA model</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>anova_model <span class="ot">&lt;-</span> <span class="fu">aov</span>(Measurement <span class="sc">~</span> Part <span class="sc">+</span> Operator <span class="sc">+</span> Part<span class="sc">:</span>Operator, <span class="at">data =</span> grr_data)</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract variance components</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>anova_table <span class="ot">&lt;-</span> <span class="fu">anova</span>(anova_model)</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Full Gauge R&amp;R using ANOVA method</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 10 parts, 3 operators, 3 trials</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate realistic GRR data</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>n_parts <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>n_operators <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Part true values (most of the variation)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>part_effects <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_parts, <span class="dv">0</span>, <span class="fl">0.05</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Operator effects (some variation)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>operator_effects <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.008</span>, <span class="fl">0.003</span>, <span class="fl">0.005</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dataset</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>grr_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Part =</span> <span class="dv">1</span><span class="sc">:</span>n_parts,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Operator =</span> <span class="fu">paste0</span>(<span class="st">"Op"</span>, <span class="dv">1</span><span class="sc">:</span>n_operators),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Trial =</span> <span class="dv">1</span><span class="sc">:</span>n_trials</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Add measurements</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>grr_data<span class="sc">$</span>Measurement <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  part_effects[grr_data<span class="sc">$</span>Part] <span class="sc">+</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  operator_effects[<span class="fu">as.numeric</span>(<span class="fu">factor</span>(grr_data<span class="sc">$</span>Operator))] <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="fu">nrow</span>(grr_data), <span class="dv">0</span>, <span class="fl">0.006</span>)  <span class="co"># Repeatability error</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to factors</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>grr_data<span class="sc">$</span>Part <span class="ot">&lt;-</span> <span class="fu">factor</span>(grr_data<span class="sc">$</span>Part)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>grr_data<span class="sc">$</span>Operator <span class="ot">&lt;-</span> <span class="fu">factor</span>(grr_data<span class="sc">$</span>Operator)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit ANOVA model</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>anova_model <span class="ot">&lt;-</span> <span class="fu">aov</span>(Measurement <span class="sc">~</span> Part <span class="sc">+</span> Operator <span class="sc">+</span> Part<span class="sc">:</span>Operator, <span class="at">data =</span> grr_data)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract variance components</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>anova_table <span class="ot">&lt;-</span> <span class="fu">anova</span>(anova_model)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anova_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -2701,65 +2671,65 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract Mean Squares from ANOVA</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>MS_part <span class="ot">&lt;-</span> anova_table[<span class="st">"Part"</span>, <span class="st">"Mean Sq"</span>]</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>MS_operator <span class="ot">&lt;-</span> anova_table[<span class="st">"Operator"</span>, <span class="st">"Mean Sq"</span>]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>MS_interaction <span class="ot">&lt;-</span> anova_table[<span class="st">"Part:Operator"</span>, <span class="st">"Mean Sq"</span>]</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>MS_error <span class="ot">&lt;-</span> anova_table[<span class="st">"Residuals"</span>, <span class="st">"Mean Sq"</span>]</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate variance components</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>n_p <span class="ot">&lt;-</span> <span class="dv">10</span>  <span class="co"># number of parts</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>n_o <span class="ot">&lt;-</span> <span class="dv">3</span>   <span class="co"># number of operators</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>n_r <span class="ot">&lt;-</span> <span class="dv">3</span>   <span class="co"># number of trials</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeatability variance</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>var_repeatability <span class="ot">&lt;-</span> MS_error</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Interaction variance</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>var_interaction <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, (MS_interaction <span class="sc">-</span> MS_error) <span class="sc">/</span> n_r)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Operator variance</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>var_operator <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, (MS_operator <span class="sc">-</span> MS_interaction) <span class="sc">/</span> (n_p <span class="sc">*</span> n_r))</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Part variance</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>var_part <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, (MS_part <span class="sc">-</span> MS_interaction) <span class="sc">/</span> (n_o <span class="sc">*</span> n_r))</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproducibility = Operator + Interaction</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>var_reproducibility <span class="ot">&lt;-</span> var_operator <span class="sc">+</span> var_interaction</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Total Gauge R&amp;R</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>var_GRR <span class="ot">&lt;-</span> var_repeatability <span class="sc">+</span> var_reproducibility</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Total variation</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>var_total <span class="ot">&lt;-</span> var_part <span class="sc">+</span> var_GRR</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to standard deviations</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>sigma_repeatability <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_repeatability)</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>sigma_reproducibility <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_reproducibility)</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>sigma_GRR <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_GRR)</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>sigma_part <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_part)</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>sigma_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_total)</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate study variation (5.15 sigma for 99% of distribution)</span></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>SV_repeatability <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_repeatability</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>SV_reproducibility <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_reproducibility</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>SV_GRR <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_GRR</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>SV_part <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_part</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>SV_total <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_total</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== ANOVA Gauge R&amp;R Results ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Variance Components:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Repeatability:"</span>, <span class="fu">round</span>(var_repeatability, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Reproducibility:"</span>, <span class="fu">round</span>(var_reproducibility, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Part-to-Part:"</span>, <span class="fu">round</span>(var_part, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total:"</span>, <span class="fu">round</span>(var_total, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Study Variation (5.15σ):</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Repeatability:"</span>, <span class="fu">round</span>(SV_repeatability, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Reproducibility:"</span>, <span class="fu">round</span>(SV_reproducibility, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Gauge R&amp;R:"</span>, <span class="fu">round</span>(SV_GRR, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Part-to-Part:"</span>, <span class="fu">round</span>(SV_part, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total:"</span>, <span class="fu">round</span>(SV_total, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract Mean Squares from ANOVA</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>MS_part <span class="ot">&lt;-</span> anova_table[<span class="st">"Part"</span>, <span class="st">"Mean Sq"</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>MS_operator <span class="ot">&lt;-</span> anova_table[<span class="st">"Operator"</span>, <span class="st">"Mean Sq"</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>MS_interaction <span class="ot">&lt;-</span> anova_table[<span class="st">"Part:Operator"</span>, <span class="st">"Mean Sq"</span>]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>MS_error <span class="ot">&lt;-</span> anova_table[<span class="st">"Residuals"</span>, <span class="st">"Mean Sq"</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate variance components</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>n_p <span class="ot">&lt;-</span> <span class="dv">10</span>  <span class="co"># number of parts</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>n_o <span class="ot">&lt;-</span> <span class="dv">3</span>   <span class="co"># number of operators</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>n_r <span class="ot">&lt;-</span> <span class="dv">3</span>   <span class="co"># number of trials</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeatability variance</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>var_repeatability <span class="ot">&lt;-</span> MS_error</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Interaction variance</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>var_interaction <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, (MS_interaction <span class="sc">-</span> MS_error) <span class="sc">/</span> n_r)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Operator variance</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>var_operator <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, (MS_operator <span class="sc">-</span> MS_interaction) <span class="sc">/</span> (n_p <span class="sc">*</span> n_r))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Part variance</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>var_part <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, (MS_part <span class="sc">-</span> MS_interaction) <span class="sc">/</span> (n_o <span class="sc">*</span> n_r))</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproducibility = Operator + Interaction</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>var_reproducibility <span class="ot">&lt;-</span> var_operator <span class="sc">+</span> var_interaction</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Total Gauge R&amp;R</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>var_GRR <span class="ot">&lt;-</span> var_repeatability <span class="sc">+</span> var_reproducibility</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Total variation</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>var_total <span class="ot">&lt;-</span> var_part <span class="sc">+</span> var_GRR</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to standard deviations</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>sigma_repeatability <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_repeatability)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>sigma_reproducibility <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_reproducibility)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>sigma_GRR <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_GRR)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>sigma_part <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_part)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>sigma_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(var_total)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate study variation (5.15 sigma for 99% of distribution)</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>SV_repeatability <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_repeatability</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>SV_reproducibility <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_reproducibility</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>SV_GRR <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_GRR</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>SV_part <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_part</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>SV_total <span class="ot">&lt;-</span> <span class="fl">5.15</span> <span class="sc">*</span> sigma_total</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== ANOVA Gauge R&amp;R Results ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Variance Components:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Repeatability:"</span>, <span class="fu">round</span>(var_repeatability, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Reproducibility:"</span>, <span class="fu">round</span>(var_reproducibility, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Part-to-Part:"</span>, <span class="fu">round</span>(var_part, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total:"</span>, <span class="fu">round</span>(var_total, <span class="dv">8</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Study Variation (5.15σ):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Repeatability:"</span>, <span class="fu">round</span>(SV_repeatability, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Reproducibility:"</span>, <span class="fu">round</span>(SV_reproducibility, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Gauge R&amp;R:"</span>, <span class="fu">round</span>(SV_GRR, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Part-to-Part:"</span>, <span class="fu">round</span>(SV_part, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Total:"</span>, <span class="fu">round</span>(SV_total, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 === ANOVA Gauge R&amp;R Results ===
@@ -2783,41 +2753,41 @@ Study Variation (5.15σ):
 <section id="calculating-grr-and-acceptance-criteria" class="level3" data-number="11.5.5">
 <h3 data-number="11.5.5" class="anchored" data-anchor-id="calculating-grr-and-acceptance-criteria"><span class="header-section-number">11.5.5</span> Calculating %GRR and Acceptance Criteria</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate %GRR using both methods</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tolerance <span class="ot">&lt;-</span> <span class="fl">0.30</span>  <span class="co"># Total tolerance</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: % of Tolerance (%GRR_Tolerance)</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>pct_GRR_tol <span class="ot">&lt;-</span> (SV_GRR <span class="sc">/</span> tolerance) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 2: % of Total Variation (%GRR_TV)</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>pct_GRR_tv <span class="ot">&lt;-</span> (sigma_GRR <span class="sc">/</span> sigma_total) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of Distinct Categories (ndc)</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>ndc <span class="ot">&lt;-</span> <span class="fl">1.41</span> <span class="sc">*</span> (sigma_part <span class="sc">/</span> sigma_GRR)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== Gauge R&amp;R Acceptance Criteria ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"%GRR (of Tolerance):"</span>, <span class="fu">round</span>(pct_GRR_tol, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"%GRR (of Total Variation):"</span>, <span class="fu">round</span>(pct_GRR_tv, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Number of Distinct Categories (ndc):"</span>, <span class="fu">round</span>(ndc, <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Acceptance criteria</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIAG Acceptance Guidelines:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(pct_GRR_tol <span class="sc">&lt;</span> <span class="dv">10</span>) {</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"%GRR &lt; 10%: ACCEPTABLE - Measurement system is acceptable</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(pct_GRR_tol <span class="sc">&lt;</span> <span class="dv">30</span>) {</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"%GRR 10-30%: MARGINAL - May be acceptable based on application</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"%GRR &gt; 30%: UNACCEPTABLE - Measurement system needs improvement</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(ndc <span class="sc">&gt;=</span> <span class="dv">5</span>) {</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"ndc ≥ 5: ACCEPTABLE - Adequate discrimination</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(ndc <span class="sc">&gt;=</span> <span class="dv">2</span>) {</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"ndc 2-4: MARGINAL - Limited discrimination ability</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"ndc &lt; 2: UNACCEPTABLE - Cannot distinguish between parts</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate %GRR using both methods</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tolerance <span class="ot">&lt;-</span> <span class="fl">0.30</span>  <span class="co"># Total tolerance</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: % of Tolerance (%GRR_Tolerance)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>pct_GRR_tol <span class="ot">&lt;-</span> (SV_GRR <span class="sc">/</span> tolerance) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 2: % of Total Variation (%GRR_TV)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>pct_GRR_tv <span class="ot">&lt;-</span> (sigma_GRR <span class="sc">/</span> sigma_total) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of Distinct Categories (ndc)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>ndc <span class="ot">&lt;-</span> <span class="fl">1.41</span> <span class="sc">*</span> (sigma_part <span class="sc">/</span> sigma_GRR)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== Gauge R&amp;R Acceptance Criteria ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"%GRR (of Tolerance):"</span>, <span class="fu">round</span>(pct_GRR_tol, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"%GRR (of Total Variation):"</span>, <span class="fu">round</span>(pct_GRR_tv, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Number of Distinct Categories (ndc):"</span>, <span class="fu">round</span>(ndc, <span class="dv">1</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Acceptance criteria</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIAG Acceptance Guidelines:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(pct_GRR_tol <span class="sc">&lt;</span> <span class="dv">10</span>) {</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"%GRR &lt; 10%: ACCEPTABLE - Measurement system is acceptable</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(pct_GRR_tol <span class="sc">&lt;</span> <span class="dv">30</span>) {</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"%GRR 10-30%: MARGINAL - May be acceptable based on application</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"%GRR &gt; 30%: UNACCEPTABLE - Measurement system needs improvement</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(ndc <span class="sc">&gt;=</span> <span class="dv">5</span>) {</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"ndc ≥ 5: ACCEPTABLE - Adequate discrimination</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(ndc <span class="sc">&gt;=</span> <span class="dv">2</span>) {</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"ndc 2-4: MARGINAL - Limited discrimination ability</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"ndc &lt; 2: UNACCEPTABLE - Cannot distinguish between parts</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>=== Gauge R&amp;R Acceptance Criteria ===
 
@@ -3004,64 +2974,64 @@ ndc ≥ 5: ACCEPTABLE - Adequate discrimination</code></pre>
 <section id="attribute-agreement-study-example" class="level3" data-number="11.6.2">
 <h3 data-number="11.6.2" class="anchored" data-anchor-id="attribute-agreement-study-example"><span class="header-section-number">11.6.2</span> Attribute Agreement Study Example</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Attribute Agreement Analysis</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 operators inspect 30 samples, 2 trials each</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference standard (known good/bad) available</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">30</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>n_operators <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference classification (10 bad, 20 good)</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>reference <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Reject"</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"Accept"</span>, <span class="dv">20</span>))</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate operator decisions (some disagreement)</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>simulate_decision <span class="ot">&lt;-</span> <span class="cf">function</span>(ref, accuracy) {</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(ref, <span class="cf">function</span>(r) {</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> accuracy) r <span class="cf">else</span> <span class="fu">ifelse</span>(r <span class="sc">==</span> <span class="st">"Accept"</span>, <span class="st">"Reject"</span>, <span class="st">"Accept"</span>)</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Operators with different accuracy levels</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>op1_t1 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.92</span>)</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>op1_t2 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.92</span>)</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>op2_t1 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.88</span>)</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>op2_t2 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.88</span>)</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>op3_t1 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.95</span>)</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>op3_t2 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.95</span>)</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate agreement metrics</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Within-operator agreement (repeatability)</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>within_op1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> op1_t2)</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>within_op2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op2_t1 <span class="sc">==</span> op2_t2)</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>within_op3 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op3_t1 <span class="sc">==</span> op3_t2)</span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Each operator vs. reference</span></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>op1_vs_ref <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> reference <span class="sc">&amp;</span> op1_t2 <span class="sc">==</span> reference)</span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>op2_vs_ref <span class="ot">&lt;-</span> <span class="fu">mean</span>(op2_t1 <span class="sc">==</span> reference <span class="sc">&amp;</span> op2_t2 <span class="sc">==</span> reference)</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>op3_vs_ref <span class="ot">&lt;-</span> <span class="fu">mean</span>(op3_t1 <span class="sc">==</span> reference <span class="sc">&amp;</span> op3_t2 <span class="sc">==</span> reference)</span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. All operators agree (both trials)</span></span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>all_agree_t1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> op2_t1 <span class="sc">&amp;</span> op2_t1 <span class="sc">==</span> op3_t1)</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>all_agree_both <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> op1_t2 <span class="sc">&amp;</span> op1_t1 <span class="sc">==</span> op2_t1 <span class="sc">&amp;</span> op2_t1 <span class="sc">==</span> op2_t2 <span class="sc">&amp;</span></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>                        op2_t1 <span class="sc">==</span> op3_t1 <span class="sc">&amp;</span> op3_t1 <span class="sc">==</span> op3_t2)</span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== Attribute Agreement Analysis ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Within-Operator Agreement (Repeatability):</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 1:"</span>, <span class="fu">round</span>(within_op1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 2:"</span>, <span class="fu">round</span>(within_op2 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 3:"</span>, <span class="fu">round</span>(within_op3 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Each Operator vs. Reference (both trials correct):</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 1:"</span>, <span class="fu">round</span>(op1_vs_ref <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 2:"</span>, <span class="fu">round</span>(op2_vs_ref <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 3:"</span>, <span class="fu">round</span>(op3_vs_ref <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"All Operators Agreement:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  All agree (one trial):"</span>, <span class="fu">round</span>(all_agree_t1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  All agree (both trials):"</span>, <span class="fu">round</span>(all_agree_both <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Attribute Agreement Analysis</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 operators inspect 30 samples, 2 trials each</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference standard (known good/bad) available</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>n_operators <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>n_trials <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference classification (10 bad, 20 good)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>reference <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Reject"</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"Accept"</span>, <span class="dv">20</span>))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate operator decisions (some disagreement)</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>simulate_decision <span class="ot">&lt;-</span> <span class="cf">function</span>(ref, accuracy) {</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(ref, <span class="cf">function</span>(r) {</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> accuracy) r <span class="cf">else</span> <span class="fu">ifelse</span>(r <span class="sc">==</span> <span class="st">"Accept"</span>, <span class="st">"Reject"</span>, <span class="st">"Accept"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Operators with different accuracy levels</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>op1_t1 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.92</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>op1_t2 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.92</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>op2_t1 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.88</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>op2_t2 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.88</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>op3_t1 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.95</span>)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>op3_t2 <span class="ot">&lt;-</span> <span class="fu">simulate_decision</span>(reference, <span class="fl">0.95</span>)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate agreement metrics</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Within-operator agreement (repeatability)</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>within_op1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> op1_t2)</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>within_op2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op2_t1 <span class="sc">==</span> op2_t2)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>within_op3 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op3_t1 <span class="sc">==</span> op3_t2)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Each operator vs. reference</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>op1_vs_ref <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> reference <span class="sc">&amp;</span> op1_t2 <span class="sc">==</span> reference)</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>op2_vs_ref <span class="ot">&lt;-</span> <span class="fu">mean</span>(op2_t1 <span class="sc">==</span> reference <span class="sc">&amp;</span> op2_t2 <span class="sc">==</span> reference)</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>op3_vs_ref <span class="ot">&lt;-</span> <span class="fu">mean</span>(op3_t1 <span class="sc">==</span> reference <span class="sc">&amp;</span> op3_t2 <span class="sc">==</span> reference)</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. All operators agree (both trials)</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>all_agree_t1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> op2_t1 <span class="sc">&amp;</span> op2_t1 <span class="sc">==</span> op3_t1)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>all_agree_both <span class="ot">&lt;-</span> <span class="fu">mean</span>(op1_t1 <span class="sc">==</span> op1_t2 <span class="sc">&amp;</span> op1_t1 <span class="sc">==</span> op2_t1 <span class="sc">&amp;</span> op2_t1 <span class="sc">==</span> op2_t2 <span class="sc">&amp;</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                        op2_t1 <span class="sc">==</span> op3_t1 <span class="sc">&amp;</span> op3_t1 <span class="sc">==</span> op3_t2)</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== Attribute Agreement Analysis ===</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Within-Operator Agreement (Repeatability):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 1:"</span>, <span class="fu">round</span>(within_op1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 2:"</span>, <span class="fu">round</span>(within_op2 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 3:"</span>, <span class="fu">round</span>(within_op3 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Each Operator vs. Reference (both trials correct):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 1:"</span>, <span class="fu">round</span>(op1_vs_ref <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 2:"</span>, <span class="fu">round</span>(op2_vs_ref <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Operator 3:"</span>, <span class="fu">round</span>(op3_vs_ref <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"All Operators Agreement:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  All agree (one trial):"</span>, <span class="fu">round</span>(all_agree_t1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  All agree (both trials):"</span>, <span class="fu">round</span>(all_agree_both <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>=== Attribute Agreement Analysis ===
 
@@ -3084,41 +3054,41 @@ All Operators Agreement:
 <section id="calculating-kappa" class="level3" data-number="11.6.3">
 <h3 data-number="11.6.3" class="anchored" data-anchor-id="calculating-kappa"><span class="header-section-number">11.6.3</span> Calculating Kappa</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Kappa for Operator 1 vs Reference</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create confusion matrix for trial 1</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">factor</span>(reference, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Accept"</span>, <span class="st">"Reject"</span>))</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>predicted <span class="ot">&lt;-</span> <span class="fu">factor</span>(op1_t1, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Accept"</span>, <span class="st">"Reject"</span>))</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>confusion <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Predicted =</span> predicted, <span class="at">Actual =</span> actual)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(confusion)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate proportions</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">sum</span>(confusion)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>p_o <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(confusion)) <span class="sc">/</span> n  <span class="co"># Observed agreement</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected agreement by chance</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>p_accept <span class="ot">&lt;-</span> <span class="fu">sum</span>(confusion[<span class="dv">1</span>,]) <span class="sc">/</span> n <span class="sc">*</span> <span class="fu">sum</span>(confusion[,<span class="dv">1</span>]) <span class="sc">/</span> n</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>p_reject <span class="ot">&lt;-</span> <span class="fu">sum</span>(confusion[<span class="dv">2</span>,]) <span class="sc">/</span> n <span class="sc">*</span> <span class="fu">sum</span>(confusion[,<span class="dv">2</span>]) <span class="sc">/</span> n</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>p_e <span class="ot">&lt;-</span> p_accept <span class="sc">+</span> p_reject</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Kappa</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>kappa <span class="ot">&lt;-</span> (p_o <span class="sc">-</span> p_e) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p_e)</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Kappa Calculation (Operator 1 vs Reference):</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Observed agreement (Po):"</span>, <span class="fu">round</span>(p_o, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Expected agreement (Pe):"</span>, <span class="fu">round</span>(p_e, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Kappa:"</span>, <span class="fu">round</span>(kappa, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(kappa <span class="sc">&gt;=</span> <span class="fl">0.81</span>) {</span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Almost perfect agreement</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(kappa <span class="sc">&gt;=</span> <span class="fl">0.61</span>) {</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Substantial agreement</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(kappa <span class="sc">&gt;=</span> <span class="fl">0.41</span>) {</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Moderate agreement</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Fair or less agreement - needs improvement</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Kappa for Operator 1 vs Reference</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create confusion matrix for trial 1</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">factor</span>(reference, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Accept"</span>, <span class="st">"Reject"</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>predicted <span class="ot">&lt;-</span> <span class="fu">factor</span>(op1_t1, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Accept"</span>, <span class="st">"Reject"</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>confusion <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Predicted =</span> predicted, <span class="at">Actual =</span> actual)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(confusion)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate proportions</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">sum</span>(confusion)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>p_o <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">diag</span>(confusion)) <span class="sc">/</span> n  <span class="co"># Observed agreement</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected agreement by chance</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>p_accept <span class="ot">&lt;-</span> <span class="fu">sum</span>(confusion[<span class="dv">1</span>,]) <span class="sc">/</span> n <span class="sc">*</span> <span class="fu">sum</span>(confusion[,<span class="dv">1</span>]) <span class="sc">/</span> n</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>p_reject <span class="ot">&lt;-</span> <span class="fu">sum</span>(confusion[<span class="dv">2</span>,]) <span class="sc">/</span> n <span class="sc">*</span> <span class="fu">sum</span>(confusion[,<span class="dv">2</span>]) <span class="sc">/</span> n</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>p_e <span class="ot">&lt;-</span> p_accept <span class="sc">+</span> p_reject</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Kappa</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>kappa <span class="ot">&lt;-</span> (p_o <span class="sc">-</span> p_e) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p_e)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Kappa Calculation (Operator 1 vs Reference):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Observed agreement (Po):"</span>, <span class="fu">round</span>(p_o, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Expected agreement (Pe):"</span>, <span class="fu">round</span>(p_e, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Kappa:"</span>, <span class="fu">round</span>(kappa, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(kappa <span class="sc">&gt;=</span> <span class="fl">0.81</span>) {</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Almost perfect agreement</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(kappa <span class="sc">&gt;=</span> <span class="fl">0.61</span>) {</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Substantial agreement</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(kappa <span class="sc">&gt;=</span> <span class="fl">0.41</span>) {</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Moderate agreement</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Interpretation: Fair or less agreement - needs improvement</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         Actual
 Predicted Accept Reject
@@ -3185,7 +3155,7 @@ Interpretation: Substantial agreement</code></pre>
 <p>The <strong>Rule of Ten</strong> states that measurement resolution should be at least 1/10 of: - The tolerance, OR - The process variation (6σ)</p>
 <p>Whichever is smaller.</p>
 <p>Live cell — try different tolerance, process spread, or gauge resolution values.</p>
-<div id="qwebr-insertion-location-4"></div>
+<div id="qwebr-insertion-location-5"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
 <section id="resolution-impact-on-gauge-rr" class="level3" data-number="11.7.2">
@@ -3279,7 +3249,7 @@ Interpretation: Substantial agreement</code></pre>
 <section id="effect-on-capability-studies" class="level3" data-number="11.9.2">
 <h3 data-number="11.9.2" class="anchored" data-anchor-id="effect-on-capability-studies"><span class="header-section-number">11.9.2</span> Effect on Capability Studies</h3>
 <p>Live cell — try different tolerance/sigma values or GRR percentages.</p>
-<div id="qwebr-insertion-location-5"></div>
+<div id="qwebr-insertion-location-6"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <hr>
 </section>
@@ -3460,7 +3430,7 @@ Interpretation: Substantial agreement</code></pre>
 </summary>
 <p><strong>Answer:</strong></p>
 <p>Live cell — check your own version by changing the numbers.</p>
-<div id="qwebr-insertion-location-6"></div>
+<div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 The bias of 0.0115 mm (11.5% of tolerance) is <strong>marginally acceptable</strong> and statistically significant. Recalibration should be considered.
 </details>
@@ -3602,7 +3572,7 @@ Required resolution ≤ 0.008 mm</code></pre>
 <p>Study design: 10 parts, 3 operators, 3 trials</p>
 <p><strong>Answer:</strong></p>
 <p>Live cell — check your own version by changing the ANOVA table values.</p>
-<div id="qwebr-insertion-location-7"></div>
+<div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </details>
 <details>
