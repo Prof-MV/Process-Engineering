@@ -79,8 +79,8 @@ ggplot(measurement_data, aes(x = Measurement, fill = System)) +
        x = "Measured Value (mm)", y = "Count") +
   theme_minimal() +
   theme(legend.position = "none",
-        plot.title = element_text(face = "bold", size = 14),
-        strip.text = element_text(face = "bold", size = 11))
+        plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+        strip.text = element_text(face = "bold", size = 11 * diagram_text_scale))
 ```
 
 ### The Cost of Poor Measurement
@@ -157,7 +157,7 @@ ggplot() +
                color = "gray50", linewidth = 1) +
   geom_label(data = components,
              aes(x = x, y = y, label = label, fill = factor(level)),
-             size = 4.5, fontface = "bold", color = "white",
+             size = 4.5 * diagram_text_scale, fontface = "bold", color = "white",
              label.padding = unit(0.4, "lines")) +
   scale_fill_manual(values = c("1" = "#2c3e50", "2" = "#3498db",
                                "3" = "#27ae60", "4" = "#e74c3c"),
@@ -166,8 +166,8 @@ ggplot() +
   labs(title = "Components of Measurement System Variation",
        subtitle = "Total variation = Part variation + Measurement system variation") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, size = 11))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale))
 ```
 
 ### Accuracy vs. Precision
@@ -216,8 +216,8 @@ ggplot(scenarios, aes(x = x, y = y)) +
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
-    strip.text = element_text(face = "bold", size = 10),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    strip.text = element_text(face = "bold", size = 10 * diagram_text_scale),
     axis.text = element_blank(),
     panel.grid = element_blank()
   )
@@ -283,12 +283,13 @@ ggplot(bias_data, aes(x = measurement, y = value)) +
        subtitle = "25 repeated measurements of a certified reference block",
        x = "Measurement Number", y = "Measured Value (mm)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
 ```
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different reference and measured values.
 
-```{r bias-calculation, echo=TRUE}
+```{webr-r}
+#| label: bias-calculation
 # Bias study calculation
 reference_value <- 50.000  # Certified reference standard
 measurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,
@@ -345,12 +346,12 @@ ggplot(linearity_data, aes(x = Reference, y = Bias)) +
            label = paste0("Slope = ", round(coef(linearity_model)[2], 5),
                          "\nLinearity = ", round(abs(coef(linearity_model)[2]) *
                                                    diff(range(reference_points)), 4), " mm"),
-           hjust = 0, size = 4, fontface = "bold") +
+           hjust = 0, size = 4 * diagram_text_scale, fontface = "bold") +
   labs(title = "Linearity Study Results",
        subtitle = "Bias plotted against reference value across operating range",
        x = "Reference Value (mm)", y = "Bias (mm)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
 ```
 
 Live cell — try a different set of reference points and biases.
@@ -411,7 +412,7 @@ ggplot(stability_data, aes(x = Day, y = Bias)) +
        subtitle = "Tracking bias over 30 days to detect drift",
        x = "Day", y = "Bias from Reference (mm)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ### Stability Control Chart
@@ -490,7 +491,7 @@ ggplot(rr_data, aes(x = Trial, y = Measurement, color = Operator, shape = Operat
        x = "Trial Number", y = "Measurement (mm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom"
   ) +
   annotate("segment", x = 0.5, xend = 5.5, y = 10.02, yend = 10.02,
@@ -1160,7 +1161,7 @@ ggplot(resolution_data, aes(x = Value)) +
        x = "Measured Value (mm)", y = "Count") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     strip.text = element_text(face = "bold")
   )
 ```
@@ -1192,7 +1193,7 @@ ggplot(error_sources, aes(x = Category, y = 1, fill = Impact)) + # Added y = 1
   geom_col() + # Changed from geom_bar to geom_col
   geom_text(aes(label = Source), 
             position = position_stack(vjust = 0.5), 
-            size = 3, color = "white") +
+            size = 3 * diagram_text_scale, color = "white") +
   scale_fill_manual(values = c("Bias" = "#e74c3c",
                                "Repeatability" = "#3498db",
                                "Reproducibility" = "#27ae60",
@@ -1205,7 +1206,7 @@ ggplot(error_sources, aes(x = Category, y = 1, fill = Impact)) + # Added y = 1
        x = "", y = "Number of Error Sources") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom"
   )
 ```
@@ -1297,8 +1298,8 @@ ggplot(chart_data, aes(x = Sample, y = Value)) +
        x = "Sample Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
-    strip.text = element_text(face = "bold", size = 11)
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    strip.text = element_text(face = "bold", size = 11 * diagram_text_scale)
   )
 ```
 
@@ -1378,9 +1379,9 @@ steps <- data.frame(
 
 ggplot(steps, aes(x = x, y = y)) +
   geom_tile(aes(fill = step), width = 0.9, height = 0.8, color = "white", linewidth = 1) +
-  geom_text(aes(label = name), fontface = "bold", size = 3.5, color = "white",
+  geom_text(aes(label = name), fontface = "bold", size = 3.5 * diagram_text_scale, color = "white",
             vjust = -0.3) +
-  geom_text(aes(label = description), size = 2.8, color = "white",
+  geom_text(aes(label = description), size = 2.8 * diagram_text_scale, color = "white",
             vjust = 1.2) +
   scale_fill_gradient(low = "#3498db", high = "#2c3e50", guide = "none") +
   # Add arrows between columns
@@ -1391,7 +1392,7 @@ ggplot(steps, aes(x = x, y = y)) +
        subtitle = "Steps for conducting a complete MSA study") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```

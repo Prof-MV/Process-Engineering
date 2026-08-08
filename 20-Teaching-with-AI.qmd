@@ -60,7 +60,7 @@ ggplot(paradox_data, aes(x = factor(Skill_Level, levels = c("Low", "Medium", "Hi
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom"
   )
 ```
@@ -162,8 +162,8 @@ rules <- data.frame(
 
 ggplot(rules, aes(x = x, y = y)) +
   geom_tile(aes(fill = Rule), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
-  geom_text(aes(label = Rule), fontface = "bold", vjust = -1.5, size = 7, color = "white") +
-  geom_text(aes(label = Description), vjust = 1, size = 5, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = Rule), fontface = "bold", vjust = -1.5, size = 7 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Description), vjust = 1, size = 5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12",
                                "#9b59b6", "#1abc9c", "#34495e"), guide = "none") +
   scale_x_continuous(limits = c(0.4, 4.6)) +
@@ -173,8 +173,8 @@ ggplot(rules, aes(x = x, y = y)) +
   ) +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 14)
+    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 14 * diagram_text_scale)
   )
 ```
 
@@ -309,11 +309,11 @@ anatomy <- data.frame(
 
 ggplot(anatomy, aes(y = y_pos)) +
   geom_tile(aes(x = 1, fill = Component), width = 0.7, height = 0.8) +
-  geom_text(aes(x = 1, label = Component), fontface = "bold", size = 7, color = "white") +
+  geom_text(aes(x = 1, label = Component), fontface = "bold", size = 7 * diagram_text_scale, color = "white") +
   geom_label(aes(x = 2.2, label = stringr::str_wrap(Example, 50)),
-             hjust = 0, size = 5, fill = "#f8f9fa", linewidth = 0) +
+             hjust = 0, size = 5 * diagram_text_scale, fill = "#f8f9fa", linewidth = 0) +
   geom_text(aes(x = 4.2, label = stringr::str_wrap(Purpose, 30)),
-            hjust = 0, size = 5, color = "#2c3e50") +
+            hjust = 0, size = 5 * diagram_text_scale, color = "#2c3e50") +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12",
                                "#9b59b6", "#1abc9c", "#34495e"), guide = "none") +
   scale_x_continuous(limits = c(0.5, 5.5)) +
@@ -321,8 +321,8 @@ ggplot(anatomy, aes(y = y_pos)) +
        subtitle = "Each component serves a specific purpose in guiding AI response quality") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 14)
+    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 14 * diagram_text_scale)
   )
 ```
 
@@ -411,9 +411,9 @@ steps_data <- data.frame(
 
 ggplot(steps_data, aes(x = x, y = y)) +
   geom_tile(aes(fill = Step), width = 0.95, height = 0.9, color = "white", linewidth = 3) +
-  geom_text(aes(label = Step), fontface = "bold", vjust = -1.8, size = 5, color = "white") +
-  geom_text(aes(label = Description), vjust = 0.8, size = 4, color = "white", lineheight = 0.9) +
-  geom_text(aes(label = paste0("→ ", Key_Action)), vjust = 3.5, size = 3.5, color = "yellow", fontface = "italic") +
+  geom_text(aes(label = Step), fontface = "bold", vjust = -1.8, size = 5 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Description), vjust = 0.8, size = 4 * diagram_text_scale, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = paste0("→ ", Key_Action)), vjust = 3.5, size = 3.5 * diagram_text_scale, color = "yellow", fontface = "italic") +
   # Add arrows between steps
   annotate("segment", x = 1.55, xend = 1.95, y = 1, yend = 1,
            arrow = arrow(length = unit(0.3, "cm")), color = "#2c3e50", size = 1.5) +
@@ -429,8 +429,8 @@ ggplot(steps_data, aes(x = x, y = y)) +
   ) +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 14)
+    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 14 * diagram_text_scale)
   )
 ```
 
@@ -539,9 +539,9 @@ tools_data <- data.frame(
 
 ggplot(tools_data, aes(x = x, y = y)) +
   geom_tile(aes(fill = Tool), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
-  geom_text(aes(label = Tool), fontface = "bold", vjust = -2.2, size = 4, color = "white") +
-  geom_text(aes(label = Best_For), vjust = 0.3, size = 3.5, color = "white", lineheight = 0.85) +
-  geom_text(aes(label = Strengths), vjust = 3, size = 3, color = "lightyellow", lineheight = 0.85, fontface = "italic") +
+  geom_text(aes(label = Tool), fontface = "bold", vjust = -2.2, size = 4 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Best_For), vjust = 0.3, size = 3.5 * diagram_text_scale, color = "white", lineheight = 0.85) +
+  geom_text(aes(label = Strengths), vjust = 3, size = 3 * diagram_text_scale, color = "lightyellow", lineheight = 0.85, fontface = "italic") +
   scale_fill_manual(values = c("#2980b9", "#27ae60", "#8e44ad", "#c0392b"), guide = "none") +
   scale_x_continuous(limits = c(0.4, 4.6)) +
   labs(
@@ -550,8 +550,8 @@ ggplot(tools_data, aes(x = x, y = y)) +
   ) +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12)
+    plot.title = element_text(face = "bold", size = 16 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
   )
 ```
 
@@ -805,8 +805,8 @@ cycle_data <- data.frame(
 
 ggplot(cycle_data, aes(x = x, y = y)) +
   geom_tile(aes(fill = Step), width = 0.9, height = 0.8, color = "white", linewidth = 2) +
-  geom_text(aes(label = Step), fontface = "bold", vjust = -1, size = 3.2, color = "white") +
-  geom_text(aes(label = Description), vjust = 1.5, size = 2.8, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = Step), fontface = "bold", vjust = -1, size = 3.2 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Description), vjust = 1.5, size = 2.8 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Add arrows between steps
   annotate("segment", x = 1.5, xend = 1.9, y = 1, yend = 1,
            arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", size = 1) +
@@ -824,8 +824,8 @@ ggplot(cycle_data, aes(x = x, y = y)) +
        subtitle = "Professional engineers rarely get perfect results from a single prompt") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 11)
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale)
   )
 ```
 
@@ -1241,14 +1241,14 @@ summary_data <- data.frame(
 
 ggplot(summary_data, aes(x = x, y = y)) +
   geom_tile(aes(fill = Principle), width = 0.9, height = 0.85, color = "white", linewidth = 2) +
-  geom_text(aes(label = Principle), fontface = "bold", vjust = -1.2, size = 4, color = "white") +
-  geom_text(aes(label = Key_Point), vjust = 1.2, size = 3, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = Principle), fontface = "bold", vjust = -1.2, size = 4 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Key_Point), vjust = 1.2, size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   scale_fill_manual(values = c("#3498db", "#27ae60", "#f39c12", "#e74c3c", "#9b59b6"), guide = "none") +
   labs(title = "Five Principles for Effective AI Collaboration in Engineering",
        subtitle = "Master these concepts to leverage AI as a powerful professional tool") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```

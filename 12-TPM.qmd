@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Total Productive Maintenance (TPM)
 
 ```{r setup-10, include=FALSE}
@@ -39,24 +49,24 @@ By the end of this chapter, you will be able to:
 ggplot() +
   # Total
   annotate("rect", xmin = 0, xmax = 3, ymin = 0, ymax = 3, fill = "#3498DB", alpha = 0.8) +
-  annotate("text", x = 1.5, y = 2.5, label = "TOTAL", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 1.5, y = 2.5, label = "TOTAL", fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
   annotate("text", x = 1.5, y = 1.5, label = "Everyone\nparticipates\n\nAll departments\nAll levels",
-           size = 4, color = "white", lineheight = 0.9) +
+           size = 4 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Productive
   annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
-  annotate("text", x = 5, y = 2.5, label = "PRODUCTIVE", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 5, y = 2.5, label = "PRODUCTIVE", fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
   annotate("text", x = 5, y = 1.5, label = "Maximize\neffectiveness\n\nZero losses\nZero defects",
-           size = 4, color = "white", lineheight = 0.9) +
+           size = 4 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Maintenance
   annotate("rect", xmin = 7, xmax = 10, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 8.5, y = 2.5, label = "MAINTENANCE", fontface = "bold", size = 6, color = "white") +
+  annotate("text", x = 8.5, y = 2.5, label = "MAINTENANCE", fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
   annotate("text", x = 8.5, y = 1.5, label = "Equipment\ncare\n\nPrevent failures\nExtend life",
-           size = 4, color = "white", lineheight = 0.9) +
+           size = 4 * diagram_text_scale, color = "white", lineheight = 0.9) +
   theme_void() +
   labs(title = "Total Productive Maintenance: Breaking Down the Name",
        subtitle = "A company-wide approach to equipment effectiveness") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ### History of TPM
@@ -103,14 +113,14 @@ goals <- data.frame(
 
 ggplot(goals, aes(x = x, y = 1)) +
   geom_point(size = 30, color = "#E74C3C") +
-  geom_text(aes(label = goal), y = 1, color = "white", fontface = "bold", size = 4, lineheight = 0.9) +
-  geom_text(aes(label = impact), y = 0.3, color = "#2C3E50", size = 4.5, lineheight = 0.9) +
+  geom_text(aes(label = goal), y = 1, color = "white", fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.9) +
+  geom_text(aes(label = impact), y = 0.3, color = "#2C3E50", size = 4.5 * diagram_text_scale, lineheight = 0.9) +
   annotate("segment", x = 0.3, xend = 3.7, y = 0.6, yend = 0.6,
            arrow = arrow(length = unit(0.2, "cm"), ends = "both"), color = "#27AE60", linewidth = 1.5) +
-  annotate("text", x = 2, y = 0.5, label = "= Maximum OEE", color = "#27AE60", fontface = "bold", size = 4) +
+  annotate("text", x = 2, y = 0.5, label = "= Maximum OEE", color = "#27AE60", fontface = "bold", size = 4 * diagram_text_scale) +
   theme_void() +
   labs(title = "TPM Zero Targets") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(0, 1.5)
 ```
 
@@ -173,48 +183,48 @@ ggplot() +
   # Foundation
   annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 1, fill = "#2C3E50", color = "black") +
   annotate("text", x = 5, y = 0.5, label = "FOUNDATION: 5S (Sort, Set in Order, Shine, Standardize, Sustain)",
-           color = "white", fontface = "bold", size = 4.5) +
+           color = "white", fontface = "bold", size = 4.5 * diagram_text_scale) +
   # Roof
   annotate("polygon", x = c(-0.5, 5, 10.5), y = c(5.2, 6.5, 5.2), fill = "#C0392B", color = "black") +
   annotate("text", x = 5, y = 5.7, label = "ZERO LOSSES: Zero Breakdowns • Zero Defects • Zero Accidents",
-           color = "white", fontface = "bold", size = 4.5) +
+           color = "white", fontface = "bold", size = 4.5 * diagram_text_scale) +
 
   # Pillar 1
   annotate("rect", xmin = 0.2, xmax = 1.1, ymin = 1.2, ymax = 5, fill = "#E74C3C", color = "black") +
   annotate("text", x = 0.65, y = 3.1, label = "Autonomous\nMaintenance", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 2
   annotate("rect", xmin = 1.4, xmax = 2.3, ymin = 1.2, ymax = 5, fill = "#E67E22", color = "black") +
   annotate("text", x = 1.85, y = 3.1, label = "Planned\nMaintenance", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 3
   annotate("rect", xmin = 2.6, xmax = 3.5, ymin = 1.2, ymax = 5, fill = "#F1C40F", color = "black") +
   annotate("text", x = 3.05, y = 3.1, label = "Quality\nMaintenance", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 4
   annotate("rect", xmin = 3.8, xmax = 4.7, ymin = 1.2, ymax = 5, fill = "#27AE60", color = "black") +
   annotate("text", x = 4.25, y = 3.1, label = "Focused\nImprovement", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 5
   annotate("rect", xmin = 5, xmax = 5.9, ymin = 1.2, ymax = 5, fill = "#3498DB", color = "black") +
   annotate("text", x = 5.45, y = 3.1, label = "Early Equip.\nManagement", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 6
   annotate("rect", xmin = 6.2, xmax = 7.1, ymin = 1.2, ymax = 5, fill = "#9B59B6", color = "black") +
   annotate("text", x = 6.65, y = 3.1, label = "Training &\nEducation", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 7
   annotate("rect", xmin = 7.4, xmax = 8.3, ymin = 1.2, ymax = 5, fill = "#1ABC9C", color = "black") +
   annotate("text", x = 7.85, y = 3.1, label = "Safety, Health\nEnvironment", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
   # Pillar 8
   annotate("rect", xmin = 8.6, xmax = 9.5, ymin = 1.2, ymax = 5, fill = "#34495E", color = "black") +
   annotate("text", x = 9.05, y = 3.1, label = "TPM in\nOffice", color = "white",
-           fontface = "bold", size = 3.5, lineheight = 0.9, angle = 90) +
+           fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9, angle = 90) +
 
   theme_void() +
   labs(title = "The House of TPM: Eight Pillars Built on 5S Foundation") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(-0.5, 7)
 ```
 
@@ -263,32 +273,32 @@ ggplot() +
   # Main formula box
   annotate("rect", xmin = 2, xmax = 8, ymin = 4.5, ymax = 5.5, fill = "#2C3E50", color = "black") +
   annotate("text", x = 5, y = 5, label = "OEE = Availability × Performance × Quality",
-           color = "white", fontface = "bold", size = 6) +
+           color = "white", fontface = "bold", size = 6 * diagram_text_scale) +
 
   # Three components
   # Availability
   annotate("rect", xmin = 0.5, xmax = 3, ymin = 2, ymax = 4, fill = "#3498DB", color = "black") +
-  annotate("text", x = 1.75, y = 3.6, label = "AVAILABILITY", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 1.75, y = 3.6, label = "AVAILABILITY", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
   annotate("text", x = 1.75, y = 3, label = "Run Time\n÷\nPlanned Production Time",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 1.75, y = 1.5, label = "Downtime\nLosses", color = "#3498DB",
-           fontface = "bold", size = 4, lineheight = 0.9) +
+           fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Performance
   annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 2, ymax = 4, fill = "#27AE60", color = "black") +
-  annotate("text", x = 5, y = 3.6, label = "PERFORMANCE", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 5, y = 3.6, label = "PERFORMANCE", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
   annotate("text", x = 5, y = 3, label = "Ideal Cycle Time × Total Count\n÷\nRun Time",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 5, y = 1.5, label = "Speed\nLosses", color = "#27AE60",
-           fontface = "bold", size = 4, lineheight = 0.9) +
+           fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Quality
   annotate("rect", xmin = 7, xmax = 9.5, ymin = 2, ymax = 4, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 8.25, y = 3.6, label = "QUALITY", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 8.25, y = 3.6, label = "QUALITY", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
   annotate("text", x = 8.25, y = 3, label = "Good Count\n÷\nTotal Count",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 8.25, y = 1.5, label = "Quality\nLosses", color = "#E74C3C",
-           fontface = "bold", size = 4, lineheight = 0.9) +
+           fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Arrows
   annotate("segment", x = 1.75, xend = 1.75, y = 4, yend = 4.5,
@@ -300,7 +310,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "OEE: The TPM Scorecard") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale)) +
   ylim(1, 6)
 ```
 
@@ -334,7 +344,10 @@ oee_formulas %>%
 
 ### OEE Calculation Example
 
-```{r oee-calculation, echo=TRUE}
+Live cell — try different downtime, production, or defect numbers.
+
+```{webr-r}
+#| label: oee-calculation
 # OEE Calculation Example: Injection Molding Machine
 
 cat("=== SHIFT DATA ===\n")
@@ -427,8 +440,8 @@ ggplot(waterfall, aes(x = category)) +
        x = "", y = "Minutes") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale),
     legend.position = "none",
     axis.text.x = element_text(angle = 30, hjust = 1)
   )
@@ -506,39 +519,39 @@ ggplot() +
   # Availability losses (red)
   annotate("rect", xmin = 0, xmax = 3.2, ymin = 4, ymax = 6.5, fill = "#3498DB", alpha = 0.2) +
   annotate("text", x = 1.6, y = 6.2, label = "AVAILABILITY LOSSES", fontface = "bold",
-           color = "#3498DB", size = 4) +
+           color = "#3498DB", size = 4 * diagram_text_scale) +
   annotate("rect", xmin = 0.2, xmax = 1.4, ymin = 4.2, ymax = 5.8, fill = "#3498DB", color = "black") +
-  annotate("text", x = 0.8, y = 5.4, label = "1", fontface = "bold", color = "white", size = 5) +
-  annotate("text", x = 0.8, y = 5, label = "Equipment\nFailure", color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 0.8, y = 5.4, label = "1", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  annotate("text", x = 0.8, y = 5, label = "Equipment\nFailure", color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   annotate("rect", xmin = 1.6, xmax = 3, ymin = 4.2, ymax = 5.8, fill = "#3498DB", color = "black") +
-  annotate("text", x = 2.3, y = 5.4, label = "2", fontface = "bold", color = "white", size = 5) +
-  annotate("text", x = 2.3, y = 5, label = "Setup &\nAdjustment", color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 2.3, y = 5.4, label = "2", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  annotate("text", x = 2.3, y = 5, label = "Setup &\nAdjustment", color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Performance losses (green)
   annotate("rect", xmin = 3.4, xmax = 6.6, ymin = 4, ymax = 6.5, fill = "#27AE60", alpha = 0.2) +
   annotate("text", x = 5, y = 6.2, label = "PERFORMANCE LOSSES", fontface = "bold",
-           color = "#27AE60", size = 4) +
+           color = "#27AE60", size = 4 * diagram_text_scale) +
   annotate("rect", xmin = 3.6, xmax = 4.8, ymin = 4.2, ymax = 5.8, fill = "#27AE60", color = "black") +
-  annotate("text", x = 4.2, y = 5.4, label = "3", fontface = "bold", color = "white", size = 5) +
-  annotate("text", x = 4.2, y = 5, label = "Idling &\nMinor Stops", color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 4.2, y = 5.4, label = "3", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  annotate("text", x = 4.2, y = 5, label = "Idling &\nMinor Stops", color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   annotate("rect", xmin = 5, xmax = 6.4, ymin = 4.2, ymax = 5.8, fill = "#27AE60", color = "black") +
-  annotate("text", x = 5.7, y = 5.4, label = "4", fontface = "bold", color = "white", size = 5) +
-  annotate("text", x = 5.7, y = 5, label = "Reduced\nSpeed", color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 5.7, y = 5.4, label = "4", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  annotate("text", x = 5.7, y = 5, label = "Reduced\nSpeed", color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Quality losses (orange)
   annotate("rect", xmin = 6.8, xmax = 10, ymin = 4, ymax = 6.5, fill = "#E74C3C", alpha = 0.2) +
   annotate("text", x = 8.4, y = 6.2, label = "QUALITY LOSSES", fontface = "bold",
-           color = "#E74C3C", size = 4) +
+           color = "#E74C3C", size = 4 * diagram_text_scale) +
   annotate("rect", xmin = 7, xmax = 8.2, ymin = 4.2, ymax = 5.8, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 7.6, y = 5.4, label = "5", fontface = "bold", color = "white", size = 5) +
-  annotate("text", x = 7.6, y = 5, label = "Process\nDefects", color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 7.6, y = 5.4, label = "5", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  annotate("text", x = 7.6, y = 5, label = "Process\nDefects", color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   annotate("rect", xmin = 8.4, xmax = 9.8, ymin = 4.2, ymax = 5.8, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 9.1, y = 5.4, label = "6", fontface = "bold", color = "white", size = 5) +
-  annotate("text", x = 9.1, y = 5, label = "Startup\nRejects", color = "white", size = 4, lineheight = 0.9) +
+  annotate("text", x = 9.1, y = 5.4, label = "6", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  annotate("text", x = 9.1, y = 5, label = "Startup\nRejects", color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   theme_void() +
   labs(title = "The Six Big Losses: Targets for TPM Improvement") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale)) +
   ylim(3.5, 7)
 ```
 
@@ -594,8 +607,8 @@ ggplot(losses_data, aes(x = reorder(loss, -percentage), y = percentage, fill = c
        x = "", y = "Time Loss (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     legend.position = "bottom",
     axis.text.x = element_text(angle = 30, hjust = 1)
   )
@@ -621,17 +634,17 @@ steps <- data.frame(
 
 ggplot(steps, aes(x = 1, y = y)) +
   geom_tile(width = 2, height = 0.8, fill = "#E74C3C", color = "white", linewidth = 2) +
-  geom_text(aes(x = 0.2, label = step), fontface = "bold", color = "white", size = 5.5) +
-  geom_text(aes(x = 1.2, label = name), fontface = "bold", color = "white", size = 4.5) +
-  geom_text(aes(x = 2.8, label = description), hjust = 0, color = "#2C3E50", size = 4.5) +
+  geom_text(aes(x = 0.2, label = step), fontface = "bold", color = "white", size = 5.5 * diagram_text_scale) +
+  geom_text(aes(x = 1.2, label = name), fontface = "bold", color = "white", size = 4.5 * diagram_text_scale) +
+  geom_text(aes(x = 2.8, label = description), hjust = 0, color = "#2C3E50", size = 4.5 * diagram_text_scale) +
   # Arrow between boxes and descriptions
   annotate("segment", x = 2.55, xend = 2.4, y = 0.5, yend = 7.5,
            arrow = arrow(length = unit(0.3, "cm"), ends = "first"), color = "#27AE60", linewidth = 2) +
   annotate("text", x = 2.4, y = 4, label = "Progress", angle = 270, fontface = "bold",
-           color = "#27AE60", size = 4) +
+           color = "#27AE60", size = 4 * diagram_text_scale) +
   theme_void() +
   labs(title = "Seven Steps of Autonomous Maintenance") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   xlim(-0.5, 5.5)
 ```
 
@@ -674,22 +687,22 @@ During autonomous maintenance activities, operators identify abnormalities using
 ggplot() +
   # Yellow tag
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 0, ymax = 3, fill = "#F1C40F", color = "black") +
-  annotate("text", x = 1.5, y = 2.5, label = "YELLOW TAG", fontface = "bold", color = "black", size = 5) +
+  annotate("text", x = 1.5, y = 2.5, label = "YELLOW TAG", fontface = "bold", color = "black", size = 5 * diagram_text_scale) +
   annotate("text", x = 1.5, y = 1.5, label = "Safety\nHazard\n\nImmediate attention",
-           color = "black", size = 4, lineheight = 0.9) +
+           color = "black", size = 4 * diagram_text_scale, lineheight = 0.9) +
   # Red tag
   annotate("rect", xmin = 3.5, xmax = 5.5, ymin = 0, ymax = 3, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 4.5, y = 2.5, label = "RED TAG", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 4.5, y = 2.5, label = "RED TAG", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   annotate("text", x = 4.5, y = 1.5, label = "Maintenance\nRequired\n\nOperator cannot fix",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   # Blue tag
   annotate("rect", xmin = 6.5, xmax = 8.5, ymin = 0, ymax = 3, fill = "#3498DB", color = "black") +
-  annotate("text", x = 7.5, y = 2.5, label = "BLUE TAG", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 7.5, y = 2.5, label = "BLUE TAG", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   annotate("text", x = 7.5, y = 1.5, label = "Operator\nAction\n\nOperator can fix",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   theme_void() +
   labs(title = "AM Tag System: Identifying and Tracking Abnormalities") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ### Example: AM Cleaning and Inspection Checklist
@@ -729,31 +742,31 @@ checklist %>%
 ggplot() +
   # Reactive
   annotate("rect", xmin = 0, xmax = 2.3, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 1.15, y = 2.5, label = "REACTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 1.15, y = 2.5, label = "REACTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   annotate("text", x = 1.15, y = 1.5, label = "Breakdown\nMaintenance\n\nFix when broken",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   # Preventive
   annotate("rect", xmin = 2.6, xmax = 4.9, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.8) +
-  annotate("text", x = 3.75, y = 2.5, label = "PREVENTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 3.75, y = 2.5, label = "PREVENTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   annotate("text", x = 3.75, y = 1.5, label = "Time-Based\nMaintenance\n\nScheduled intervals",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   # Predictive
   annotate("rect", xmin = 5.2, xmax = 7.5, ymin = 0, ymax = 3, fill = "#3498DB", alpha = 0.8) +
-  annotate("text", x = 6.35, y = 2.5, label = "PREDICTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 6.35, y = 2.5, label = "PREDICTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   annotate("text", x = 6.35, y = 1.5, label = "Condition-Based\nMaintenance\n\nMonitor & predict",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   # Proactive
   annotate("rect", xmin = 7.8, xmax = 10.1, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
-  annotate("text", x = 8.95, y = 2.5, label = "PROACTIVE", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = 8.95, y = 2.5, label = "PROACTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   annotate("text", x = 8.95, y = 1.5, label = "Root Cause\nElimination\n\nPrevent recurrence",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   # Arrow
   annotate("segment", x = 0.5, xend = 9.5, y = -0.5, yend = -0.5,
            arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", linewidth = 1.5) +
   annotate("text", x = 5, y = -0.8, label = "Increasing Maturity →", fontface = "bold") +
   theme_void() +
   labs(title = "Evolution of Maintenance Strategy") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale)) +
   ylim(-1.2, 3.5)
 ```
 
@@ -833,46 +846,46 @@ ggplot(pf_data, aes(x = x, y = y)) +
   geom_line(linewidth = 2.5, color = "#2C3E50") +
   # Zone labels
   annotate("text", x = 1, y = 45, label = "Design for\nReliability", fontface = "bold",
-           color = "#1E8449", size = 3.5, lineheight = 0.9) +
+           color = "#1E8449", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 3.5, y = 35, label = "Condition Based\nMaintenance", fontface = "bold",
-           color = "#B7950B", size = 3.5, lineheight = 0.9) +
+           color = "#B7950B", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 6.2, y = 25, label = "Planned\nPreventative\nMaintenance", fontface = "bold",
-           color = "#CA6F1E", size = 3.5, lineheight = 0.85) +
+           color = "#CA6F1E", size = 3.5 * diagram_text_scale, lineheight = 0.85) +
   annotate("text", x = 8.8, y = 18, label = "Reactive /\nRun-To-Failure", fontface = "bold",
-           color = "#922B21", size = 3.5, lineheight = 0.9) +
+           color = "#922B21", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   # P point
   annotate("point", x = p_x, y = pf_data$y[which.min(abs(pf_data$x - p_x))], size = 4, color = "#2C3E50") +
-  annotate("text", x = p_x, y = 100, label = "P", fontface = "bold", color = "#2C3E50", size = 6) +
+  annotate("text", x = p_x, y = 100, label = "P", fontface = "bold", color = "#2C3E50", size = 6 * diagram_text_scale) +
   annotate("text", x = p_x, y = 96, label = "oint of failure\ndetection", hjust = 0,
-           color = "#2C3E50", size = 3, lineheight = 0.9) +
+           color = "#2C3E50", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # F point
   annotate("point", x = f_x, y = pf_data$y[which.min(abs(pf_data$x - f_x))], size = 4, color = "#C0392B") +
-  annotate("text", x = f_x, y = 100, label = "F", fontface = "bold", color = "#C0392B", size = 6) +
+  annotate("text", x = f_x, y = 100, label = "F", fontface = "bold", color = "#C0392B", size = 6 * diagram_text_scale) +
   annotate("text", x = f_x, y = 96, label = "unctional failure", hjust = 0,
-           color = "#C0392B", size = 3, lineheight = 0.9) +
+           color = "#C0392B", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Detection methods along curve (angled text)
   annotate("text", x = 0.3, y = 100, label = "Installation", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 4.2, y = 100, label = "Ultrasound", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 4.8, y = 100, label = "Vibration Analysis", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 5.5, y = 100, label = "Oil Analysis", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 6.2, y = 100, label = "Thermography", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 7.8, y = 100, label = "Audible Noise", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 8.8, y = 100, label = "Hot to touch", angle = 55, hjust = 0,
-           color = "#2C3E50", size = 3, fontface = "italic") +
+           color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   # Failed! label
   annotate("text", x = 9.7, y = 35, label = "Failed!", fontface = "bold",
-           color = "#C0392B", size = 6) +
+           color = "#C0392B", size = 6 * diagram_text_scale) +
   # P-F interval bracket at bottom
   annotate("segment", x = p_x, xend = f_x, y = -5, yend = -5,
            arrow = arrow(length = unit(0.15, "cm"), ends = "both"), color = "#2C3E50", linewidth = 1) +
   annotate("text", x = (p_x + f_x)/2, y = -10, label = "P to F Interval", fontface = "bold",
-           color = "#2C3E50", size = 4) +
+           color = "#2C3E50", size = 4 * diagram_text_scale) +
   # Axis settings
   scale_y_continuous(limits = c(-15, 115), expand = c(0, 0)) +
   scale_x_continuous(limits = c(-0.5, 10.5), expand = c(0, 0)) +
@@ -880,7 +893,7 @@ ggplot(pf_data, aes(x = x, y = y)) +
   theme_minimal() +
   theme(
     plot.title = element_blank(),
-    axis.title = element_text(face = "bold", size = 11),
+    axis.title = element_text(face = "bold", size = 11 * diagram_text_scale),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.grid = element_blank()
@@ -926,24 +939,24 @@ ggplot(pf_data, aes(x = x, y = y)) +
 ggplot() +
   # Steps
   annotate("rect", xmin = 0, xmax = 1.8, ymin = 1, ymax = 2.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 0.9, y = 2.1, label = "1. SELECT", fontface = "bold", color = "white", size = 3.5) +
-  annotate("text", x = 0.9, y = 1.5, label = "Identify\nbiggest loss", color = "white", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 0.9, y = 2.1, label = "1. SELECT", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 0.9, y = 1.5, label = "Identify\nbiggest loss", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 2, xmax = 3.8, ymin = 1, ymax = 2.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 2.9, y = 2.1, label = "2. ANALYZE", fontface = "bold", color = "white", size = 3.5) +
-  annotate("text", x = 2.9, y = 1.5, label = "Root cause\nanalysis", color = "white", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 2.9, y = 2.1, label = "2. ANALYZE", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 2.9, y = 1.5, label = "Root cause\nanalysis", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 4, xmax = 5.8, ymin = 1, ymax = 2.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 4.9, y = 2.1, label = "3. DEVELOP", fontface = "bold", color = "white", size = 3.5) +
-  annotate("text", x = 4.9, y = 1.5, label = "Counter-\nmeasures", color = "white", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 4.9, y = 2.1, label = "3. DEVELOP", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 4.9, y = 1.5, label = "Counter-\nmeasures", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 6, xmax = 7.8, ymin = 1, ymax = 2.5, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 6.9, y = 2.1, label = "4. IMPLEMENT", fontface = "bold", color = "white", size = 3.5) +
-  annotate("text", x = 6.9, y = 1.5, label = "Execute\nplan", color = "white", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 6.9, y = 2.1, label = "4. IMPLEMENT", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 6.9, y = 1.5, label = "Execute\nplan", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 8, xmax = 9.8, ymin = 1, ymax = 2.5, fill = "#9B59B6", color = "black") +
-  annotate("text", x = 8.9, y = 2.1, label = "5. SUSTAIN", fontface = "bold", color = "white", size = 3.5) +
-  annotate("text", x = 8.9, y = 1.5, label = "Standardize\n& share", color = "white", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 8.9, y = 2.1, label = "5. SUSTAIN", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 8.9, y = 1.5, label = "Standardize\n& share", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   # Arrows
   annotate("segment", x = 1.8, xend = 2, y = 1.75, yend = 1.75,
@@ -957,7 +970,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "Focused Improvement (Kobetsu Kaizen) Process") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(0.5, 3)
 ```
 
@@ -1112,16 +1125,16 @@ Effective loss elimination requires systematic tools that help teams identify pr
 ggplot() +
   # Step boxes
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 1, ymax = 2.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 1.5, y = 2.1, label = "Step 1", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 1.5, y = 1.5, label = "Separate\nInternal & External", color = "white", size = 3, lineheight = 0.9) +
+  annotate("text", x = 1.5, y = 2.1, label = "Step 1", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 1.5, y = 1.5, label = "Separate\nInternal & External", color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 3, xmax = 5, ymin = 1, ymax = 2.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 4, y = 2.1, label = "Step 2", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 4, y = 1.5, label = "Convert\nInternal to External", color = "white", size = 3, lineheight = 0.9) +
+  annotate("text", x = 4, y = 2.1, label = "Step 2", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 4, y = 1.5, label = "Convert\nInternal to External", color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 5.5, xmax = 7.5, ymin = 1, ymax = 2.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 6.5, y = 2.1, label = "Step 3", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 6.5, y = 1.5, label = "Streamline\nAll Elements", color = "white", size = 3, lineheight = 0.9) +
+  annotate("text", x = 6.5, y = 2.1, label = "Step 3", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 6.5, y = 1.5, label = "Streamline\nAll Elements", color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Arrows
   annotate("segment", x = 2.5, xend = 3, y = 1.75, yend = 1.75,
@@ -1131,7 +1144,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "SMED: Reducing Changeover Time") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(0.5, 3)
 ```
 
@@ -1355,7 +1368,7 @@ case_data <- data.frame(
 ggplot(case_data, aes(x = component, y = value, fill = period)) +
   geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
   geom_text(aes(label = paste0(value, "%")), position = position_dodge(width = 0.7),
-            vjust = -0.5, size = 3.5) +
+            vjust = -0.5, size = 3.5 * diagram_text_scale) +
   scale_fill_manual(values = c("Before TPM" = "#E74C3C", "After TPM" = "#27AE60")) +
   geom_hline(yintercept = 85, linetype = "dashed", color = "#F39C12", linewidth = 1) +
   annotate("text", x = 4.5, y = 87, label = "World Class", color = "#F39C12", fontface = "bold") +
@@ -1363,7 +1376,7 @@ ggplot(case_data, aes(x = component, y = value, fill = period)) +
        x = "", y = "Percentage (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom"
   ) +
   ylim(0, 105)

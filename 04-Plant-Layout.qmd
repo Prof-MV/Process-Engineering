@@ -81,7 +81,7 @@ layout_viz <- data.frame(
 
 ggplot(layout_viz, aes(x = Volume, y = Variety, label = Layout)) +
   geom_point(aes(size = Size, color = Layout), alpha = 0.7) +
-  geom_text(vjust = -1.5, fontface = "bold", size = 4) +
+  geom_text(vjust = -1.5, fontface = "bold", size = 4 * diagram_text_scale) +
   scale_x_continuous(limits = c(0, 5), breaks = 1:4,
                      labels = c("Very Low", "Low", "Medium", "High")) +
   scale_y_continuous(limits = c(0, 5), breaks = 1:4,
@@ -92,9 +92,9 @@ ggplot(layout_viz, aes(x = Volume, y = Variety, label = Layout)) +
        title = "Facility Layout Selection Guide") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14 * diagram_text_scale, face = "bold"),
+    axis.title = element_text(size = 12 * diagram_text_scale, face = "bold"),
+    axis.text = element_text(size = 10 * diagram_text_scale),
     panel.grid.minor = element_blank()
   ) +
   annotate("segment", x = 0.5, xend = 4.5, y = 0.5, yend = 4.5,
@@ -136,7 +136,7 @@ ggplot() +
   geom_tile(data = departments, aes(x = x, y = y, fill = color),
             width = 0.8, height = 0.6, alpha = 0.8, color = "black") +
   geom_text(data = departments, aes(x = x, y = y, label = name),
-            fontface = "bold", size = 3.5) +
+            fontface = "bold", size = 3.5 * diagram_text_scale) +
   # Flow paths
   geom_path(data = flow_A, aes(x = x, y = y + 0.05),
             color = "#E74C3C", size = 1.2, arrow = arrow(length = unit(0.2, "cm")),
@@ -148,8 +148,8 @@ ggplot() +
   labs(title = "Process Layout: Machine Shop Example",
        subtitle = "Different products follow different paths through the facility") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   annotate("text", x = 6.5, y = 4, label = "Product A", color = "#E74C3C", fontface = "bold") +
   annotate("text", x = 6.5, y = 3.7, label = "Product B", color = "#F39C12", fontface = "bold") +
   coord_fixed(ratio = 1)
@@ -218,15 +218,15 @@ stations <- data.frame(
 
 ggplot(stations, aes(x = x, y = y)) +
   geom_tile(fill = "#3498DB", width = 0.7, height = 0.5, color = "black") +
-  geom_text(aes(label = name), color = "white", fontface = "bold", size = 3) +
+  geom_text(aes(label = name), color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   geom_segment(aes(x = x + 0.4, xend = x + 0.6, y = y, yend = y),
                data = stations[1:5,],
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1.5) +
   labs(title = "Product Layout: Automotive Assembly Line",
        subtitle = "All products follow the same sequential path") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(0.3, 6.7)
 ```
 
@@ -289,7 +289,7 @@ ggplot(cell_data, aes(x = x, y = y)) +
            fill = "#2ECC71", alpha = 0.2) +
   # Machines
   geom_tile(aes(fill = cell_color), width = 0.6, height = 0.4, color = "black") +
-  geom_text(aes(label = machine), size = 3, fontface = "bold") +
+  geom_text(aes(label = machine), size = 3 * diagram_text_scale, fontface = "bold") +
   # Flow arrows within cells
   geom_segment(data = cell_data[c(1:3, 5:7, 9:11),],
                aes(x = x + 0.35, xend = x + 0.65, y = y, yend = y),
@@ -302,8 +302,8 @@ ggplot(cell_data, aes(x = x, y = y)) +
   labs(title = "Cellular Layout: Group Technology",
        subtitle = "Parts grouped into families, each processed in dedicated cells") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-0.5, 5)
 ```
 
@@ -415,7 +415,7 @@ layout_B <- data.frame(
 
 p1 <- ggplot(layout_A, aes(x = x, y = y)) +
   geom_tile(fill = "#3498DB", width = 0.8, height = 0.4, color = "black") +
-  geom_text(aes(label = dept), color = "white", size = 3, fontface = "bold") +
+  geom_text(aes(label = dept), color = "white", size = 3 * diagram_text_scale, fontface = "bold") +
   labs(title = "Layout A: Linear") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
@@ -423,7 +423,7 @@ p1 <- ggplot(layout_A, aes(x = x, y = y)) +
 
 p2 <- ggplot(layout_B, aes(x = x, y = y)) +
   geom_tile(fill = "#E74C3C", width = 0.8, height = 0.4, color = "black") +
-  geom_text(aes(label = dept), color = "white", size = 3, fontface = "bold") +
+  geom_text(aes(label = dept), color = "white", size = 3 * diagram_text_scale, fontface = "bold") +
   labs(title = "Layout B: Compact") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
@@ -432,9 +432,10 @@ p2 <- ggplot(layout_B, aes(x = x, y = y)) +
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different from-to volumes or layout distances.
 
-```{r load-distance-calc, echo=TRUE}
+```{webr-r}
+#| label: load-distance-calc
 # Calculate Load-Distance scores for both layouts
 # From-To data: Receiving->Machining=100, Machining->Assembly=200,
 #               Assembly->Painting=100, Painting->Shipping=150
@@ -541,12 +542,12 @@ ggplot() +
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
   geom_point(data = nodes, aes(x = x, y = y), size = 18, color = "#3498DB") +
   geom_text(data = nodes, aes(x = x, y = y, label = paste0(task, "\n", time, "s")),
-            color = "white", fontface = "bold", size = 3.5) +
+            color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
   theme_void() +
   labs(title = "Precedence Diagram: Pizza Assembly",
        subtitle = "Arrows show required sequence of operations") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(0.5, 5.5) + ylim(0.5, 2.5)
 ```
 
@@ -643,8 +644,8 @@ ggplot(warehouse, aes(x = x, y = y)) +
   labs(title = "Warehouse Layout: ABC Storage Strategy",
        subtitle = "High-frequency items placed closest to the dock") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   coord_fixed(ratio = 0.8)
 ```
 
@@ -738,29 +739,29 @@ decisions <- data.frame(
 
 ggplot(decisions, aes(x = x, y = y)) +
   geom_tile(aes(fill = fill), width = 1.3, height = 0.7, color = "black") +
-  geom_text(aes(label = label), size = 2.8, fontface = "bold") +
+  geom_text(aes(label = label), size = 2.8 * diagram_text_scale, fontface = "bold") +
   # Arrows
   annotate("segment", x = 1.65, xend = 1.85, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm"))) +
   annotate("segment", x = 2.5, xend = 2.5, y = 1.65, yend = 1.15,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 2.7, y = 1.4, label = "No", size = 3) +
+  annotate("text", x = 2.7, y = 1.4, label = "No", size = 3 * diagram_text_scale) +
   annotate("segment", x = 3.15, xend = 3.35, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 3.25, y = 2.15, label = "Yes", size = 3) +
+  annotate("text", x = 3.25, y = 2.15, label = "Yes", size = 3 * diagram_text_scale) +
   annotate("segment", x = 4, xend = 4, y = 1.65, yend = 1.15,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 4.2, y = 1.4, label = "Variety", size = 3) +
+  annotate("text", x = 4.2, y = 1.4, label = "Variety", size = 3 * diagram_text_scale) +
   annotate("segment", x = 4.65, xend = 4.85, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 4.75, y = 2.15, label = "Volume", size = 3) +
+  annotate("text", x = 4.75, y = 2.15, label = "Volume", size = 3 * diagram_text_scale) +
   annotate("segment", x = 4, xend = 4, y = 2.35, yend = 2.85,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 4.2, y = 2.6, label = "Medium", size = 3) +
+  annotate("text", x = 4.2, y = 2.6, label = "Medium", size = 3 * diagram_text_scale) +
   scale_fill_identity() +
   theme_void() +
   labs(title = "Layout Selection Decision Guide") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ### Key Takeaways
@@ -811,7 +812,7 @@ ggplot() +
   # Zones
   geom_tile(data = food_zones, aes(x = x, y = y, fill = fill, width = width, height = height),
             color = "black") +
-  geom_text(data = food_zones, aes(x = x, y = y, label = zone), size = 3, fontface = "bold") +
+  geom_text(data = food_zones, aes(x = x, y = y, label = zone), size = 3 * diagram_text_scale, fontface = "bold") +
   # Flow
   geom_curve(data = flow_data, aes(x = x + 0.6, y = y, xend = xend - 0.6, yend = yend),
              arrow = arrow(length = unit(0.15, "cm")), curvature = 0.1, color = "#2C3E50") +
@@ -819,8 +820,8 @@ ggplot() +
   labs(title = "Food Processing Plant Layout",
        subtitle = "One-way flow from raw materials to finished goods prevents cross-contamination") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 **Key Design Principles for Food Processing:**
@@ -879,7 +880,7 @@ aero_areas <- data.frame(
 
 ggplot(aero_areas, aes(x = x, y = y)) +
   geom_tile(aes(fill = fill), width = 0.9, height = 0.7, color = "black") +
-  geom_text(aes(label = area), size = 3, fontface = "bold") +
+  geom_text(aes(label = area), size = 3 * diagram_text_scale, fontface = "bold") +
   # Main flow arrows
   annotate("segment", x = 1.5, xend = 1.6, y = 2, yend = 2,
            arrow = arrow(length = unit(0.15, "cm"))) +
@@ -903,8 +904,8 @@ ggplot(aero_areas, aes(x = x, y = y)) +
   labs(title = "Aerospace Manufacturing Facility Layout",
        subtitle = "Hybrid layout: Process (fabrication) → Fixed-Position (final assembly)") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(0.3, 8.7) + ylim(0.5, 3.5)
 ```
 
@@ -966,7 +967,7 @@ ggplot(cells, aes(x = x, y = y)) +
            fill = "#2ECC71", alpha = 0.2) +
   # Machines
   geom_tile(aes(fill = fill), width = 0.7, height = 0.6, color = "black") +
-  geom_text(aes(label = machine), size = 2.5, fontface = "bold") +
+  geom_text(aes(label = machine), size = 2.5 * diagram_text_scale, fontface = "bold") +
   # Flow arrows
   geom_segment(data = data.frame(x = c(1.4, 2.4), y = c(3, 3), xend = c(1.6, 2.6), yend = c(3, 3)),
                aes(x = x, y = y, xend = xend, yend = yend),
@@ -990,8 +991,8 @@ ggplot(cells, aes(x = x, y = y)) +
   labs(title = "Automotive Supplier Facility Layout",
        subtitle = "Cellular manufacturing feeding a common assembly line") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 **JIT Delivery Requirements:**
@@ -1181,18 +1182,18 @@ ggplot() +
   annotate("point", x = 0, y = -0.5, size = 15, color = "#3498DB") +
   annotate("text", x = 0, y = -0.5, label = "Worker", fontface = "bold", color = "white") +
   # Zone labels
-  annotate("text", x = 0, y = 0.4, label = "Primary Zone\n(Frequent tasks)", fontface = "bold", size = 3.5) +
-  annotate("text", x = 0, y = 1.0, label = "Secondary Zone\n(Regular tasks)", size = 3) +
-  annotate("text", x = 0, y = 1.55, label = "Tertiary Zone\n(Occasional)", size = 3, color = "#7F8C8D") +
+  annotate("text", x = 0, y = 0.4, label = "Primary Zone\n(Frequent tasks)", fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 0, y = 1.0, label = "Secondary Zone\n(Regular tasks)", size = 3 * diagram_text_scale) +
+  annotate("text", x = 0, y = 1.55, label = "Tertiary Zone\n(Occasional)", size = 3 * diagram_text_scale, color = "#7F8C8D") +
   # Dimensions
   annotate("segment", x = -0.8, xend = 0.8, y = -0.1, yend = -0.1,
            arrow = arrow(ends = "both", length = unit(0.1, "cm"))) +
-  annotate("text", x = 0, y = -0.2, label = "~16 in", size = 2.5) +
+  annotate("text", x = 0, y = -0.2, label = "~16 in", size = 2.5 * diagram_text_scale) +
   labs(title = "Ergonomic Work Zones",
        subtitle = "Arrange tools and materials based on frequency of use") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   coord_fixed()
 ```
 
@@ -1251,20 +1252,20 @@ i4_elements <- data.frame(
 
 ggplot(i4_elements, aes(x = x, y = y)) +
   geom_tile(aes(fill = fill), width = 0.9, height = 0.8, color = "black") +
-  geom_text(aes(label = element), y = 2.1, size = 3, fontface = "bold") +
+  geom_text(aes(label = element), y = 2.1, size = 3 * diagram_text_scale, fontface = "bold") +
   scale_fill_identity() +
   # Descriptions below
-  annotate("text", x = 1, y = 1.2, label = "Floor markings,\ncharging stations,\ntraffic management", size = 2.5, lineheight = 0.9) +
-  annotate("text", x = 2, y = 1.2, label = "Network infrastructure\nfor IoT sensors,\nreal-time data", size = 2.5, lineheight = 0.9) +
-  annotate("text", x = 3, y = 1.2, label = "Local processing\nnear machines,\nlow latency", size = 2.5, lineheight = 0.9) +
-  annotate("text", x = 4, y = 1.2, label = "Virtual replica\nof physical plant,\nlive updates", size = 2.5, lineheight = 0.9) +
-  annotate("text", x = 5, y = 1.2, label = "Safety zones,\nhuman-robot\ncollaboration", size = 2.5, lineheight = 0.9) +
-  annotate("text", x = 6, y = 1.2, label = "Training, maintenance\nguidance, remote\nassistance", size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 1, y = 1.2, label = "Floor markings,\ncharging stations,\ntraffic management", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 2, y = 1.2, label = "Network infrastructure\nfor IoT sensors,\nreal-time data", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 3, y = 1.2, label = "Local processing\nnear machines,\nlow latency", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 4, y = 1.2, label = "Virtual replica\nof physical plant,\nlive updates", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 5, y = 1.2, label = "Safety zones,\nhuman-robot\ncollaboration", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 6, y = 1.2, label = "Training, maintenance\nguidance, remote\nassistance", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   labs(title = "Industry 4.0 Plant Layout Considerations",
        subtitle = "New infrastructure requirements for smart manufacturing") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(0.5, 3)
 ```
 
@@ -1356,12 +1357,12 @@ benefits <- data.frame(
 
 ggplot(benefits, aes(x = x, y = y)) +
   geom_col(aes(fill = fill), width = 0.7, color = "black") +
-  geom_text(aes(label = benefit, y = y + 0.3), fontface = "bold", size = 3.5) +
+  geom_text(aes(label = benefit, y = y + 0.3), fontface = "bold", size = 3.5 * diagram_text_scale) +
   scale_fill_identity() +
   labs(title = "Why Simulate Before Building?",
        y = "Relative Impact") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
         axis.text.x = element_blank(),
         axis.title.x = element_blank(),
         panel.grid.major.x = element_blank())

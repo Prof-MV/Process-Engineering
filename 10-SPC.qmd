@@ -42,24 +42,24 @@ By the end of this chapter, you will be able to:
 ggplot() +
   # Without SPC
   annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 2, y = 2.5, label = "WITHOUT SPC", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 2, y = 2.5, label = "WITHOUT SPC", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
   annotate("text", x = 2, y = 1.5,
            label = "• Inspect after production\n• Find defects too late\n• React to problems\n• High scrap/rework costs",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # With SPC
   annotate("rect", xmin = 5, xmax = 9, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
-  annotate("text", x = 7, y = 2.5, label = "WITH SPC", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 7, y = 2.5, label = "WITH SPC", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
   annotate("text", x = 7, y = 1.5,
            label = "• Monitor during production\n• Detect shifts early\n• Prevent defects\n• Lower costs, higher quality",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Arrow
   annotate("segment", x = 4.2, xend = 4.8, y = 1.5, yend = 1.5,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 2, color = "#2C3E50") +
   theme_void() +
   labs(title = "The Shift from Inspection to Prevention",
        subtitle = "SPC enables real-time process monitoring and early intervention") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ### Brief History of SPC
@@ -100,7 +100,7 @@ benefits <- data.frame(
 
 ggplot(benefits, aes(x = reorder(benefit, improvement), y = improvement)) +
   geom_bar(stat = "identity", fill = "#3498DB", color = "black", width = 0.7) +
-  geom_text(aes(label = paste0(improvement, "%")), hjust = -0.2, fontface = "bold", size = 4) +
+  geom_text(aes(label = paste0(improvement, "%")), hjust = -0.2, fontface = "bold", size = 4 * diagram_text_scale) +
   coord_flip() +
   scale_y_continuous(limits = c(0, 85)) +
   labs(title = "Typical Improvements from SPC Implementation",
@@ -108,8 +108,8 @@ ggplot(benefits, aes(x = reorder(benefit, improvement), y = improvement)) +
        x = "", y = "Improvement (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -141,16 +141,16 @@ ggplot(df, aes(x = sample, y = value)) +
   geom_hline(yintercept = 50, linetype = "dashed", color = "#27AE60", linewidth = 1) +
   geom_hline(yintercept = c(44, 56), linetype = "dotted", color = "#E74C3C", linewidth = 1) +
   facet_wrap(~type, ncol = 1) +
-  annotate("text", x = 52, y = 56.5, label = "UCL", color = "#E74C3C", size = 3) +
-  annotate("text", x = 52, y = 43.5, label = "LCL", color = "#E74C3C", size = 3) +
+  annotate("text", x = 52, y = 56.5, label = "UCL", color = "#E74C3C", size = 3 * diagram_text_scale) +
+  annotate("text", x = 52, y = 43.5, label = "LCL", color = "#E74C3C", size = 3 * diagram_text_scale) +
   labs(title = "Common Cause vs. Special Cause Variation",
        subtitle = "Notice the shift starting at sample 36 in the bottom chart",
        x = "Sample Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
-    strip.text = element_text(face = "bold", size = 11)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    strip.text = element_text(face = "bold", size = 11 * diagram_text_scale)
   )
 ```
 
@@ -192,23 +192,23 @@ Understanding variation prevents two costly mistakes:
 ggplot() +
   # Mistake 1
   annotate("rect", xmin = 0, xmax = 4.5, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 2.25, y = 2.6, label = "MISTAKE #1", fontface = "bold", size = 4, color = "white") +
-  annotate("text", x = 2.25, y = 2.2, label = "Over-adjustment", size = 3.5, color = "white", fontface = "italic") +
+  annotate("text", x = 2.25, y = 2.6, label = "MISTAKE #1", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
+  annotate("text", x = 2.25, y = 2.2, label = "Over-adjustment", size = 3.5 * diagram_text_scale, color = "white", fontface = "italic") +
   annotate("text", x = 2.25, y = 1.3,
            label = "Treating COMMON cause\nas if it were SPECIAL\n\nResult: Tampering\nIncreased variation!",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Mistake 2
   annotate("rect", xmin = 5.5, xmax = 10, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.8) +
-  annotate("text", x = 7.75, y = 2.6, label = "MISTAKE #2", fontface = "bold", size = 4, color = "white") +
-  annotate("text", x = 7.75, y = 2.2, label = "Under-reaction", size = 3.5, color = "white", fontface = "italic") +
+  annotate("text", x = 7.75, y = 2.6, label = "MISTAKE #2", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
+  annotate("text", x = 7.75, y = 2.2, label = "Under-reaction", size = 3.5 * diagram_text_scale, color = "white", fontface = "italic") +
   annotate("text", x = 7.75, y = 1.3,
            label = "Treating SPECIAL cause\nas if it were COMMON\n\nResult: Missing signals\nDefects produced!",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   theme_void() +
   labs(title = "Two Mistakes That Waste Resources and Reduce Quality",
        subtitle = "Control charts help us avoid both mistakes") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 <details>
@@ -268,8 +268,8 @@ ggplot(combined, aes(x = x, y = y)) +
        x = "Sample Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    strip.text = element_text(face = "bold", size = 11)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    strip.text = element_text(face = "bold", size = 11 * diagram_text_scale)
   )
 ```
 
@@ -315,17 +315,17 @@ ggplot(data, aes(x = subgroup, y = value)) +
   annotate("text", x = 26, y = mean_val + 2*sd(data$value[-18]), label = "+2σ", hjust = 0, color = "#F39C12") +
   annotate("text", x = 26, y = mean_val - 2*sd(data$value[-18]), label = "-2σ", hjust = 0, color = "#F39C12") +
   # Zone labels
-  annotate("text", x = 0, y = mean_val + 2.5*sd(data$value[-18]), label = "Zone A", hjust = 1, size = 3) +
-  annotate("text", x = 0, y = mean_val + 1.5*sd(data$value[-18]), label = "Zone B", hjust = 1, size = 3) +
-  annotate("text", x = 0, y = mean_val + 0.5*sd(data$value[-18]), label = "Zone C", hjust = 1, size = 3) +
+  annotate("text", x = 0, y = mean_val + 2.5*sd(data$value[-18]), label = "Zone A", hjust = 1, size = 3 * diagram_text_scale) +
+  annotate("text", x = 0, y = mean_val + 1.5*sd(data$value[-18]), label = "Zone B", hjust = 1, size = 3 * diagram_text_scale) +
+  annotate("text", x = 0, y = mean_val + 0.5*sd(data$value[-18]), label = "Zone C", hjust = 1, size = 3 * diagram_text_scale) +
   scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
   labs(title = "Control Chart Structure",
        subtitle = "Control limits set at ±3σ from the center line",
        x = "Subgroup Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
   ) +
   xlim(-1, 29)
 ```
@@ -377,19 +377,19 @@ ggplot(df, aes(x = x, y = y)) +
   geom_area(data = subset(df, x >= -1 & x <= 1), fill = "#F39C12", alpha = 0.5) +
   geom_vline(xintercept = c(-3, 3), linetype = "dashed", color = "#E74C3C", linewidth = 1) +
   geom_vline(xintercept = 0, color = "#27AE60", linewidth = 1) +
-  annotate("text", x = 0, y = 0.2, label = "68.27%\n(±1σ)", size = 3, fontface = "bold") +
-  annotate("text", x = 1.5, y = 0.1, label = "95.45%\n(±2σ)", size = 3) +
-  annotate("text", x = 2.5, y = 0.03, label = "99.73%\n(±3σ)", size = 3) +
-  annotate("text", x = 3.5, y = 0.01, label = "0.135%", size = 2.5, color = "#E74C3C") +
-  annotate("text", x = -3.5, y = 0.01, label = "0.135%", size = 2.5, color = "#E74C3C") +
+  annotate("text", x = 0, y = 0.2, label = "68.27%\n(±1σ)", size = 3 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 1.5, y = 0.1, label = "95.45%\n(±2σ)", size = 3 * diagram_text_scale) +
+  annotate("text", x = 2.5, y = 0.03, label = "99.73%\n(±3σ)", size = 3 * diagram_text_scale) +
+  annotate("text", x = 3.5, y = 0.01, label = "0.135%", size = 2.5 * diagram_text_scale, color = "#E74C3C") +
+  annotate("text", x = -3.5, y = 0.01, label = "0.135%", size = 2.5 * diagram_text_scale, color = "#E74C3C") +
   scale_x_continuous(breaks = -4:4, labels = c("-4σ", "-3σ", "-2σ", "-1σ", "μ", "+1σ", "+2σ", "+3σ", "+4σ")) +
   labs(title = "The Normal Distribution and Control Limits",
        subtitle = "99.73% of data falls within ±3σ when process is in control",
        x = "Standard Deviations from Mean", y = "Probability Density") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
   )
 ```
 
@@ -401,57 +401,57 @@ The type of control chart depends on the **type of data** being collected:
 ggplot() +
   # Start
   annotate("rect", xmin = 4, xmax = 6, ymin = 6.5, ymax = 7.5, fill = "#2C3E50", color = "black") +
-  annotate("text", x = 5, y = 7, label = "What type\nof data?", color = "white", fontface = "bold", size = 3.5, lineheight = 0.9) +
+  annotate("text", x = 5, y = 7, label = "What type\nof data?", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   # Variable branch
   annotate("segment", x = 4, xend = 2, y = 6.5, yend = 5.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 2.8, y = 6.2, label = "Variable\n(measured)", size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 2.8, y = 6.2, label = "Variable\n(measured)", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 1, xmax = 3, ymin = 4.5, ymax = 5.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 2, y = 5, label = "Sample\nsize?", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 2, y = 5, label = "Sample\nsize?", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Variable - n=1
   annotate("segment", x = 1, xend = 0.5, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 0.5, y = 4.2, label = "n=1", size = 2.5) +
+  annotate("text", x = 0.5, y = 4.2, label = "n=1", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = -0.5, xmax = 1.5, ymin = 2.5, ymax = 3.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 0.5, y = 3, label = "I-MR\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 0.5, y = 3, label = "I-MR\nChart", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Variable - n=2-9
   annotate("segment", x = 2, xend = 2, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 2.4, y = 4, label = "n=2-9", size = 2.5) +
+  annotate("text", x = 2.4, y = 4, label = "n=2-9", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = 1, xmax = 3, ymin = 2.5, ymax = 3.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 2, y = 3, label = "X-bar/R\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 2, y = 3, label = "X-bar/R\nChart", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Variable - n≥10
   annotate("segment", x = 3, xend = 3.5, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 3.5, y = 4.2, label = "n≥10", size = 2.5) +
+  annotate("text", x = 3.5, y = 4.2, label = "n≥10", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 2.5, ymax = 3.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 3.5, y = 3, label = "X-bar/S\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 3.5, y = 3, label = "X-bar/S\nChart", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Attribute branch
   annotate("segment", x = 6, xend = 8, y = 6.5, yend = 5.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 7.2, y = 6.2, label = "Attribute\n(counted)", size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 7.2, y = 6.2, label = "Attribute\n(counted)", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 7, xmax = 9, ymin = 4.5, ymax = 5.5, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 8, y = 5, label = "Defectives or\nDefects?", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 8, y = 5, label = "Defectives or\nDefects?", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Defectives
   annotate("segment", x = 7, xend = 6, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 6.3, y = 4.2, label = "Defectives\n(bad units)", size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 6.3, y = 4.2, label = "Defectives\n(bad units)", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 5, xmax = 7, ymin = 2.5, ymax = 3.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 6, y = 3, label = "p or np\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 6, y = 3, label = "p or np\nChart", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Defects
   annotate("segment", x = 9, xend = 10, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 9.7, y = 4.2, label = "Defects\n(count per unit)", size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 9.7, y = 4.2, label = "Defects\n(count per unit)", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 9, xmax = 11, ymin = 2.5, ymax = 3.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 10, y = 3, label = "c or u\nChart", color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+  annotate("text", x = 10, y = 3, label = "c or u\nChart", color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   theme_void() +
   labs(title = "Selecting the Right Control Chart") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   xlim(-1, 12) + ylim(2, 8)
 ```
 
@@ -598,9 +598,9 @@ p1 <- ggplot(plot_data, aes(x = subgroup, y = xbar)) +
   geom_hline(yintercept = X_double_bar, color = "#27AE60", linewidth = 1) +
   geom_hline(yintercept = c(UCL_xbar, LCL_xbar), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
   scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
-  annotate("text", x = 26, y = UCL_xbar, label = paste("UCL =", round(UCL_xbar, 3)), hjust = 0, size = 3) +
-  annotate("text", x = 26, y = X_double_bar, label = paste("CL =", round(X_double_bar, 3)), hjust = 0, size = 3) +
-  annotate("text", x = 26, y = LCL_xbar, label = paste("LCL =", round(LCL_xbar, 3)), hjust = 0, size = 3) +
+  annotate("text", x = 26, y = UCL_xbar, label = paste("UCL =", round(UCL_xbar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = X_double_bar, label = paste("CL =", round(X_double_bar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = LCL_xbar, label = paste("LCL =", round(LCL_xbar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
   labs(title = "X-bar Chart (Process Average)", x = "", y = "X-bar (mm)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
@@ -613,9 +613,9 @@ p2 <- ggplot(plot_data, aes(x = subgroup, y = R)) +
   geom_hline(yintercept = R_bar, color = "#27AE60", linewidth = 1) +
   geom_hline(yintercept = c(UCL_R, LCL_R), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
   scale_color_manual(values = c("FALSE" = "#F39C12", "TRUE" = "#E74C3C"), guide = "none") +
-  annotate("text", x = 26, y = UCL_R, label = paste("UCL =", round(UCL_R, 3)), hjust = 0, size = 3) +
-  annotate("text", x = 26, y = R_bar, label = paste("CL =", round(R_bar, 3)), hjust = 0, size = 3) +
-  annotate("text", x = 26, y = LCL_R, label = "LCL = 0", hjust = 0, size = 3) +
+  annotate("text", x = 26, y = UCL_R, label = paste("UCL =", round(UCL_R, 3)), hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = R_bar, label = paste("CL =", round(R_bar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = LCL_R, label = "LCL = 0", hjust = 0, size = 3 * diagram_text_scale) +
   labs(title = "R Chart (Process Spread)", x = "Subgroup Number", y = "Range (mm)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
@@ -768,8 +768,8 @@ ggplot(p_data, aes(x = day)) +
        x = "Day", y = "Proportion Defective") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
   )
 ```
 
@@ -808,7 +808,7 @@ ggplot(c_data, aes(x = sample, y = defects)) +
   labs(title = "c Chart: Defects per Car Body",
        x = "Sample Number", y = "Number of Defects") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   xlim(0, 29)
 ```
 
@@ -909,7 +909,7 @@ ggplot(rules_data, aes(x = x, y = y)) +
        x = "Sample Number", y = "Standardized Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     strip.text = element_text(face = "bold")
   )
 ```
@@ -988,7 +988,7 @@ ggplot(data.frame(x, y), aes(x, y)) +
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     axis.text = element_blank(),
     axis.ticks = element_blank()
   )
@@ -1047,8 +1047,8 @@ ggplot(df, aes(x = x, y = y)) +
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     strip.text = element_text(face = "bold"),
     axis.text = element_blank()
   )
@@ -1160,19 +1160,19 @@ ggplot() +
   # Step boxes
   annotate("rect", xmin = 0, xmax = 2, ymin = 4, ymax = 5, fill = "#E74C3C", color = "black") +
   annotate("text", x = 1, y = 4.5, label = "1. STOP\nMark the point", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 4, ymax = 5, fill = "#F39C12", color = "black") +
   annotate("text", x = 3.5, y = 4.5, label = "2. INVESTIGATE\nFind the cause", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 5, xmax = 7, ymin = 4, ymax = 5, fill = "#3498DB", color = "black") +
   annotate("text", x = 6, y = 4.5, label = "3. CORRECT\nEliminate cause", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 4, ymax = 5, fill = "#27AE60", color = "black") +
   annotate("text", x = 8.5, y = 4.5, label = "4. DOCUMENT\nRecord actions", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Arrows
   annotate("segment", x = 2, xend = 2.5, y = 4.5, yend = 4.5,
@@ -1184,17 +1184,17 @@ ggplot() +
 
   # Details below
   annotate("text", x = 1, y = 3.5, label = "• Circle the point\n• Note the time\n• Quarantine product",
-           size = 2.5, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 3.5, y = 3.5, label = "• Check 5 Ms\n• Review recent changes\n• Ask operators",
-           size = 2.5, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 6, y = 3.5, label = "• Fix the problem\n• Verify correction\n• Restart process",
-           size = 2.5, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   annotate("text", x = 8.5, y = 3.5, label = "• Update log\n• File in PFMEA\n• Share lessons",
-           size = 2.5, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   theme_void() +
   labs(title = "Out-of-Control Response Procedure") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(2.5, 5.5)
 ```
 

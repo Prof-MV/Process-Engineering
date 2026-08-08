@@ -47,24 +47,24 @@ ggplot() +
   # Physical domain
 
   annotate("point", x = 1, y = 2, size = 45, color = "#3498DB", alpha = 0.6) +
-  annotate("text", x = 1, y = 2.3, label = "PHYSICAL", fontface = "bold", size = 5, color = "#2C3E50") +
-  annotate("text", x = 1, y = 1.7, label = "Anatomy\nPhysiology\nBiomechanics", size = 3, lineheight = 0.9) +
+  annotate("text", x = 1, y = 2.3, label = "PHYSICAL", fontface = "bold", size = 5 * diagram_text_scale, color = "#2C3E50") +
+  annotate("text", x = 1, y = 1.7, label = "Anatomy\nPhysiology\nBiomechanics", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Cognitive domain
   annotate("point", x = 3, y = 2, size = 45, color = "#E74C3C", alpha = 0.6) +
-  annotate("text", x = 3, y = 2.3, label = "COGNITIVE", fontface = "bold", size = 5, color = "#2C3E50") +
-  annotate("text", x = 3, y = 1.7, label = "Mental processes\nPerception\nDecision making", size = 3, lineheight = 0.9) +
+  annotate("text", x = 3, y = 2.3, label = "COGNITIVE", fontface = "bold", size = 5 * diagram_text_scale, color = "#2C3E50") +
+  annotate("text", x = 3, y = 1.7, label = "Mental processes\nPerception\nDecision making", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Organizational domain
   annotate("point", x = 2, y = 0.5, size = 45, color = "#27AE60", alpha = 0.6) +
-  annotate("text", x = 2, y = 0.8, label = "ORGANIZATIONAL", fontface = "bold", size = 5, color = "#2C3E50") +
-  annotate("text", x = 2, y = 0.2, label = "Work systems\nTeamwork\nScheduling", size = 3, lineheight = 0.9) +
+  annotate("text", x = 2, y = 0.8, label = "ORGANIZATIONAL", fontface = "bold", size = 5 * diagram_text_scale, color = "#2C3E50") +
+  annotate("text", x = 2, y = 0.2, label = "Work systems\nTeamwork\nScheduling", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Center - Human
   annotate("point", x = 2, y = 1.5, size = 20, color = "#F39C12") +
-  annotate("text", x = 2, y = 1.5, label = "HUMAN", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = 2, y = 1.5, label = "HUMAN", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
   theme_void() +
   labs(title = "The Three Domains of Ergonomics",
        subtitle = "Ergonomics considers the whole human experience at work") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-0.5, 4.5) + ylim(-0.8, 3.5)
 ```
 
@@ -101,7 +101,7 @@ benefits <- data.frame(
 
 ggplot(benefits, aes(x = reorder(category, improvement), y = improvement, fill = category)) +
   geom_bar(stat = "identity", color = "black", width = 0.7) +
-  geom_text(aes(label = paste0(improvement, "%")), hjust = -0.2, fontface = "bold", size = 4) +
+  geom_text(aes(label = paste0(improvement, "%")), hjust = -0.2, fontface = "bold", size = 4 * diagram_text_scale) +
   coord_flip() +
   scale_fill_manual(values = c("Injury Reduction" = "#E74C3C", "Productivity" = "#3498DB",
                                "Quality" = "#27AE60", "Turnover" = "#F39C12",
@@ -112,8 +112,8 @@ ggplot(benefits, aes(x = reorder(category, improvement), y = improvement, fill =
        x = "", y = "Improvement (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     legend.position = "none",
     panel.grid.minor = element_blank()
   )
@@ -175,7 +175,7 @@ risk_factors <- data.frame(
 ggplot(risk_factors, aes(x = x, y = risk_level, fill = factor)) +
   geom_bar(stat = "identity", color = "black", width = 0.8) +
   geom_text(aes(label = factor, y = risk_level/2), color = "white",
-            fontface = "bold", size = 3.5, lineheight = 0.8) +
+            fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.8) +
   scale_fill_manual(values = c("Awkward\nPostures" = "#E74C3C", "Repetition" = "#C0392B",
                                "Force" = "#F39C12", "Static\nPositions" = "#E67E22",
                                "Contact\nStress" = "#3498DB", "Vibration" = "#2980B9",
@@ -187,8 +187,8 @@ ggplot(risk_factors, aes(x = x, y = risk_level, fill = factor)) +
        x = "Risk Factor Number", y = "Risk Level") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     legend.position = "none",
     panel.grid.minor = element_blank()
   )
@@ -243,24 +243,24 @@ risk_detail %>%
 ggplot() +
   # Green zone - Neutral
   annotate("rect", xmin = 0, xmax = 3, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.7) +
-  annotate("text", x = 1.5, y = 2.5, label = "GREEN ZONE", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 1.5, y = 2.5, label = "GREEN ZONE", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
   annotate("text", x = 1.5, y = 1.5, label = "Neutral Posture\n\nJoints at midpoint\nBalanced muscle load\nMinimal stress",
-           size = 3.5, color = "white", lineheight = 0.9) +
+           size = 3.5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Yellow zone - Moderate
   annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.7) +
-  annotate("text", x = 5, y = 2.5, label = "YELLOW ZONE", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 5, y = 2.5, label = "YELLOW ZONE", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
   annotate("text", x = 5, y = 1.5, label = "Moderate Deviation\n\nJoints partially flexed\nSome muscle strain\nAcceptable briefly",
-           size = 3.5, color = "white", lineheight = 0.9) +
+           size = 3.5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Red zone - Extreme
   annotate("rect", xmin = 7, xmax = 10, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.7) +
-  annotate("text", x = 8.5, y = 2.5, label = "RED ZONE", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 8.5, y = 2.5, label = "RED ZONE", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
   annotate("text", x = 8.5, y = 1.5, label = "Extreme Posture\n\nJoints at end range\nHigh muscle strain\nAvoid if possible",
-           size = 3.5, color = "white", lineheight = 0.9) +
+           size = 3.5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   theme_void() +
   labs(title = "Posture Risk Zones: Traffic Light System",
        subtitle = "Design workstations to keep workers in the green zone") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ```{r neutral-postures, echo=FALSE}
@@ -332,14 +332,14 @@ force_data <- data.frame(
 
 ggplot(force_data, aes(x = reorder(factor, impact), y = impact)) +
   geom_bar(stat = "identity", fill = "#F39C12", color = "black", width = 0.7) +
-  geom_text(aes(label = example), hjust = -0.1, size = 3) +
+  geom_text(aes(label = example), hjust = -0.1, size = 3 * diagram_text_scale) +
   coord_flip() +
   scale_y_continuous(limits = c(0, 7)) +
   labs(title = "Factors That Increase Force Requirements",
        x = "", y = "Relative Impact") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -433,8 +433,8 @@ ggplot() +
   theme_void() +
   labs(title = "Common MSDs in Manufacturing",
        subtitle = "Red dots indicate high-risk body regions") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-1, 11) + ylim(0, 10)
 ```
 
@@ -486,8 +486,8 @@ cycle_data <- data.frame(
 ggplot(cycle_data, aes(x = x, y = severity)) +
   geom_line(linewidth = 2, color = "#2C3E50") +
   geom_point(aes(color = stage), size = 15) +
-  geom_text(aes(label = stage), color = "white", fontface = "bold", size = 3) +
-  geom_text(aes(y = severity - 0.8, label = recovery), size = 3, fontface = "italic") +
+  geom_text(aes(label = stage), color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
+  geom_text(aes(y = severity - 0.8, label = recovery), size = 3 * diagram_text_scale, fontface = "italic") +
   scale_color_manual(values = c("Exposure" = "#27AE60", "Fatigue" = "#2ECC71",
                                 "Discomfort" = "#F39C12", "Pain" = "#E67E22",
                                 "Injury" = "#E74C3C", "Disability" = "#8E44AD")) +
@@ -499,8 +499,8 @@ ggplot(cycle_data, aes(x = x, y = severity)) +
        x = "Progression", y = "Severity") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     legend.position = "none",
     axis.text.x = element_blank(),
     panel.grid = element_blank()
@@ -548,18 +548,18 @@ prevention <- data.frame(
 
 ggplot(prevention, aes(x = 0, y = y)) +
   geom_tile(aes(width = width, height = 0.8, fill = level), color = "white", linewidth = 2) +
-  geom_text(aes(label = level), fontface = "bold", color = "white", size = 5) +
-  geom_text(aes(x = 3.5, label = description), hjust = 0, size = 3.5, lineheight = 0.9) +
+  geom_text(aes(label = level), fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
+  geom_text(aes(x = 3.5, label = description), hjust = 0, size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   scale_fill_manual(values = c("Engineering Controls" = "#27AE60",
                                "Administrative Controls" = "#F39C12",
                                "Work Practice Controls" = "#3498DB")) +
   annotate("segment", x = -3, xend = -3, y = 0.5, yend = 3.5,
            arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", size = 1.5) +
   annotate("text", x = -3.5, y = 2, label = "More\nEffective",
-           angle = 90, fontface = "bold", size = 4) +
+           angle = 90, fontface = "bold", size = 4 * diagram_text_scale) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   labs(title = "MSD Prevention: Hierarchy of Controls") +
   xlim(-4.5, 7)
 ```
@@ -605,37 +605,37 @@ ggplot() +
   # Step boxes
   # Step 1
   annotate("rect", xmin = 0, xmax = 2, ymin = 3, ymax = 5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 1, y = 4.5, label = "1. PLAN", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 1, y = 4.5, label = "1. PLAN", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
   annotate("text", x = 1, y = 3.8, label = "Test weight\nClear path\nGet help if needed",
-           color = "white", size = 2.5, lineheight = 0.9) +
+           color = "white", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   # Step 2
   annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 3, ymax = 5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 3.5, y = 4.5, label = "2. POSITION", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 3.5, y = 4.5, label = "2. POSITION", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
   annotate("text", x = 3.5, y = 3.8, label = "Feet shoulder-width\nClose to load\nBend knees",
-           color = "white", size = 2.5, lineheight = 0.9) +
+           color = "white", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   # Step 3
   annotate("rect", xmin = 5, xmax = 7, ymin = 3, ymax = 5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 6, y = 4.5, label = "3. GRIP", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 6, y = 4.5, label = "3. GRIP", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
   annotate("text", x = 6, y = 3.8, label = "Firm grip\nUse handles\nHold close",
-           color = "white", size = 2.5, lineheight = 0.9) +
+           color = "white", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   # Step 4
   annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 3, ymax = 5, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 8.5, y = 4.5, label = "4. LIFT", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = 8.5, y = 4.5, label = "4. LIFT", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
   annotate("text", x = 8.5, y = 3.8, label = "Straighten legs\nKeep back straight\nDon't twist",
-           color = "white", size = 2.5, lineheight = 0.9) +
+           color = "white", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
   # DO section
   annotate("rect", xmin = 0.5, xmax = 4.5, ymin = 0.5, ymax = 2.5, fill = "#D5F5E3", color = "#27AE60") +
-  annotate("text", x = 2.5, y = 2.2, label = "DO:", fontface = "bold", color = "#27AE60", size = 4) +
+  annotate("text", x = 2.5, y = 2.2, label = "DO:", fontface = "bold", color = "#27AE60", size = 4 * diagram_text_scale) +
   annotate("text", x = 2.5, y = 1.3, label = "• Lift with legs\n• Keep load close\n• Pivot feet to turn\n• Ask for help",
-           size = 3, lineheight = 0.9, hjust = 0.5) +
+           size = 3 * diagram_text_scale, lineheight = 0.9, hjust = 0.5) +
   # DON'T section
   annotate("rect", xmin = 5, xmax = 9, ymin = 0.5, ymax = 2.5, fill = "#FADBD8", color = "#E74C3C") +
-  annotate("text", x = 7, y = 2.2, label = "DON'T:", fontface = "bold", color = "#E74C3C", size = 4) +
+  annotate("text", x = 7, y = 2.2, label = "DON'T:", fontface = "bold", color = "#E74C3C", size = 4 * diagram_text_scale) +
   annotate("text", x = 7, y = 1.3, label = "• Lift with back\n• Reach and lift\n• Twist while lifting\n• Jerk the load",
-           size = 3, lineheight = 0.9, hjust = 0.5) +
+           size = 3 * diagram_text_scale, lineheight = 0.9, hjust = 0.5) +
   theme_void() +
   labs(title = "The Four Steps of Safe Lifting") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ```{=html}
@@ -668,13 +668,13 @@ principles <- data.frame(
 
 ggplot(principles, aes(x = x, y = y)) +
   geom_tile(width = 0.9, height = 0.8, fill = "#3498DB", color = "white", linewidth = 2) +
-  geom_text(aes(label = principle), color = "white", fontface = "bold", size = 3.5,
+  geom_text(aes(label = principle), color = "white", fontface = "bold", size = 3.5 * diagram_text_scale,
             lineheight = 0.9) +
   theme_void() +
   labs(title = "Eight Core Ergonomic Design Principles",
        subtitle = "Apply these principles to every workstation design") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(0.3, 2.7)
 ```
 
@@ -726,25 +726,25 @@ ggplot() +
   geom_vline(xintercept = 186.5, linetype = "dashed", color = "#27AE60", linewidth = 1) +
   # Labels
   annotate("text", x = 153.5, y = 0.035, label = "5th\npercentile",
-           size = 3, color = "#E74C3C", vjust = 0) +
+           size = 3 * diagram_text_scale, color = "#E74C3C", vjust = 0) +
   annotate("text", x = 170, y = 0.042, label = "50th\npercentile",
-           size = 3, color = "#F39C12", vjust = 0) +
+           size = 3 * diagram_text_scale, color = "#F39C12", vjust = 0) +
   annotate("text", x = 186.5, y = 0.035, label = "95th\npercentile",
-           size = 3, color = "#27AE60", vjust = 0) +
+           size = 3 * diagram_text_scale, color = "#27AE60", vjust = 0) +
   # Design range
   annotate("segment", x = 153.5, xend = 186.5, y = -0.002, yend = -0.002,
            arrow = arrow(length = unit(0.2, "cm"), ends = "both"),
            color = "#9B59B6", size = 1.5) +
   annotate("text", x = 170, y = -0.005, label = "Design Range (90% of population)",
-           color = "#9B59B6", fontface = "bold", size = 3.5) +
+           color = "#9B59B6", fontface = "bold", size = 3.5 * diagram_text_scale) +
   scale_x_continuous(breaks = seq(140, 200, 10)) +
   labs(title = "Anthropometric Distribution: Stature Example",
        subtitle = "Design should accommodate 5th to 95th percentile",
        x = "Height (cm)", y = "Probability Density") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
   )
 ```
 
@@ -797,14 +797,14 @@ ggplot() +
   annotate("rect", xmin = 2.7, xmax = 3.3, ymin = 70, ymax = 85,
            fill = "#F39C12", alpha = 0.7) +
   # Labels
-  annotate("text", x = 1, y = 115, label = "Precision\n100-110cm", size = 3, lineheight = 0.9) +
-  annotate("text", x = 2, y = 100, label = "Light Assembly\n85-95cm", size = 3, lineheight = 0.9) +
-  annotate("text", x = 3, y = 90, label = "Heavy Work\n70-85cm", size = 3, lineheight = 0.9) +
+  annotate("text", x = 1, y = 115, label = "Precision\n100-110cm", size = 3 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 2, y = 100, label = "Light Assembly\n85-95cm", size = 3 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 3, y = 90, label = "Heavy Work\n70-85cm", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Reference line - elbow height
   annotate("segment", x = 0.5, xend = 3.5, y = 105, yend = 105,
            linetype = "dashed", color = "#E74C3C", size = 1) +
   annotate("text", x = 3.7, y = 105, label = "Elbow Height\n(standing)",
-           hjust = 0, size = 3, color = "#E74C3C") +
+           hjust = 0, size = 3 * diagram_text_scale, color = "#E74C3C") +
   scale_y_continuous(breaks = seq(60, 120, 10), limits = c(60, 120)) +
   scale_x_continuous(breaks = 1:3, labels = c("Precision", "Light Assembly", "Heavy Work")) +
   labs(title = "Optimal Standing Work Surface Heights by Task Type",
@@ -812,8 +812,8 @@ ggplot() +
        x = "Task Type", y = "Height (cm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -886,38 +886,38 @@ tools %>%
 ggplot() +
   # Group A box
   annotate("rect", xmin = 0, xmax = 4, ymin = 4, ymax = 7, fill = "#3498DB", color = "black") +
-  annotate("text", x = 2, y = 6.5, label = "GROUP A", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 2, y = 6.5, label = "GROUP A", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
   annotate("text", x = 2, y = 5.5, label = "Trunk Score (1-5)\nNeck Score (1-3)\nLegs Score (1-4)",
-           size = 3.5, color = "white", lineheight = 0.9) +
+           size = 3.5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Group B box
   annotate("rect", xmin = 5, xmax = 9, ymin = 4, ymax = 7, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 7, y = 6.5, label = "GROUP B", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 7, y = 6.5, label = "GROUP B", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
   annotate("text", x = 7, y = 5.5, label = "Upper Arm Score (1-6)\nLower Arm Score (1-2)\nWrist Score (1-3)",
-           size = 3.5, color = "white", lineheight = 0.9) +
+           size = 3.5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Score A
   annotate("rect", xmin = 1, xmax = 3, ymin = 2.5, ymax = 3.5, fill = "#2980B9", color = "black") +
-  annotate("text", x = 2, y = 3, label = "Score A\n+ Load/Force", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 2, y = 3, label = "Score A\n+ Load/Force", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Score B
   annotate("rect", xmin = 6, xmax = 8, ymin = 2.5, ymax = 3.5, fill = "#C0392B", color = "black") +
-  annotate("text", x = 7, y = 3, label = "Score B\n+ Coupling", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 7, y = 3, label = "Score B\n+ Coupling", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Arrows down
   annotate("segment", x = 2, xend = 2, y = 4, yend = 3.5, arrow = arrow(length = unit(0.2, "cm"))) +
   annotate("segment", x = 7, xend = 7, y = 4, yend = 3.5, arrow = arrow(length = unit(0.2, "cm"))) +
   # Score C
   annotate("rect", xmin = 3, xmax = 6, ymin = 1, ymax = 2, fill = "#27AE60", color = "black") +
-  annotate("text", x = 4.5, y = 1.5, label = "Score C\n+ Activity", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 4.5, y = 1.5, label = "Score C\n+ Activity", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Arrows to C
   annotate("segment", x = 2, xend = 3.5, y = 2.5, yend = 2, arrow = arrow(length = unit(0.2, "cm"))) +
   annotate("segment", x = 7, xend = 5.5, y = 2.5, yend = 2, arrow = arrow(length = unit(0.2, "cm"))) +
   # Final Score
   annotate("rect", xmin = 3, xmax = 6, ymin = -0.5, ymax = 0.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 4.5, y = 0, label = "REBA SCORE\n(1-15)", fontface = "bold", size = 4, color = "white", lineheight = 0.9) +
+  annotate("text", x = 4.5, y = 0, label = "REBA SCORE\n(1-15)", fontface = "bold", size = 4 * diagram_text_scale, color = "white", lineheight = 0.9) +
   annotate("segment", x = 4.5, xend = 4.5, y = 1, yend = 0.5, arrow = arrow(length = unit(0.2, "cm"))) +
   theme_void() +
   labs(title = "REBA Assessment Structure",
        subtitle = "Combines posture scores with load, coupling, and activity factors") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ### REBA Scoring Tables
@@ -1310,38 +1310,39 @@ ggplot() +
   annotate("segment", x = 5.5, xend = 7, y = 5.5, yend = 4, color = "#D4AC0D", size = 3) +
   # Bin (low position)
   annotate("rect", xmin = 1, xmax = 3.5, ymin = 0.5, ymax = 2.5, fill = "#85C1E9", color = "black") +
-  annotate("text", x = 2.25, y = 1.5, label = "BIN\n(Low)", fontface = "bold", size = 3) +
+  annotate("text", x = 2.25, y = 1.5, label = "BIN\n(Low)", fontface = "bold", size = 3 * diagram_text_scale) +
   # Conveyor (higher position)
   annotate("rect", xmin = 6.5, xmax = 9.5, ymin = 3, ymax = 4.5, fill = "#ABEBC6", color = "black") +
-  annotate("text", x = 8, y = 3.75, label = "CONVEYOR", fontface = "bold", size = 3) +
+  annotate("text", x = 8, y = 3.75, label = "CONVEYOR", fontface = "bold", size = 3 * diagram_text_scale) +
   # Annotations
   annotate("segment", x = 5, xend = 5, y = 6.5, yend = 7.5,
            arrow = arrow(length = unit(0.15, "cm"), ends = "both"), color = "#E74C3C") +
-  annotate("text", x = 5.8, y = 7, label = "Neck: 25°\nflexion", size = 2.5, color = "#E74C3C", hjust = 0) +
+  annotate("text", x = 5.8, y = 7, label = "Neck: 25°\nflexion", size = 2.5 * diagram_text_scale, color = "#E74C3C", hjust = 0) +
   annotate("curve", x = 5, y = 4, xend = 4.5, yend = 2.5, curvature = -0.3,
            arrow = arrow(length = unit(0.15, "cm")), color = "#E74C3C") +
-  annotate("text", x = 3.5, y = 3, label = "Trunk: 40°\nflexion", size = 2.5, color = "#E74C3C") +
-  annotate("text", x = 2, y = 4.5, label = "Upper arm:\n50° flexion", size = 2.5, color = "#3498DB") +
+  annotate("text", x = 3.5, y = 3, label = "Trunk: 40°\nflexion", size = 2.5 * diagram_text_scale, color = "#E74C3C") +
+  annotate("text", x = 2, y = 4.5, label = "Upper arm:\n50° flexion", size = 2.5 * diagram_text_scale, color = "#3498DB") +
   # Title and info boxes
   annotate("rect", xmin = 0.5, xmax = 4, ymin = 5.5, ymax = 8, fill = "#FADBD8", alpha = 0.8) +
-  annotate("text", x = 2.25, y = 7.5, label = "GROUP A (Blue)", fontface = "bold", size = 3) +
-  annotate("text", x = 2.25, y = 6.5, label = "Trunk + Neck + Legs", size = 2.5) +
+  annotate("text", x = 2.25, y = 7.5, label = "GROUP A (Blue)", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 2.25, y = 6.5, label = "Trunk + Neck + Legs", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = 6, xmax = 9.5, ymin = 5.5, ymax = 8, fill = "#D6EAF8", alpha = 0.8) +
-  annotate("text", x = 7.75, y = 7.5, label = "GROUP B (Red)", fontface = "bold", size = 3) +
-  annotate("text", x = 7.75, y = 6.5, label = "Arms + Wrist", size = 2.5) +
+  annotate("text", x = 7.75, y = 7.5, label = "GROUP B (Red)", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 7.75, y = 6.5, label = "Arms + Wrist", size = 2.5 * diagram_text_scale) +
   theme_void() +
   labs(title = "REBA Assessment: Packaging Station Worker",
        subtitle = "Worker reaches into low bin and transfers items to conveyor") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(0, 10) + ylim(0, 8.5)
 ```
 
 #### Step-by-Step Assessment
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different posture, load, or coupling scores.
 
-```{r reba-step-by-step, echo=TRUE}
+```{webr-r}
+#| label: reba-step-by-step
 # =============================================================
 # REBA Assessment: Packaging Station Worker
 # =============================================================
@@ -1748,20 +1749,20 @@ Artificial intelligence is revolutionizing ergonomic assessment by enabling **re
 ggplot() +
   # Input
   annotate("rect", xmin = 0, xmax = 2, ymin = 1, ymax = 3, fill = "#3498DB", color = "black") +
-  annotate("text", x = 1, y = 2.5, label = "INPUT", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 1, y = 1.7, label = "Video/\nWearables", color = "white", size = 3) +
+  annotate("text", x = 1, y = 2.5, label = "INPUT", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 1, y = 1.7, label = "Video/\nWearables", color = "white", size = 3 * diagram_text_scale) +
   # Processing
   annotate("rect", xmin = 3, xmax = 5, ymin = 1, ymax = 3, fill = "#9B59B6", color = "black") +
-  annotate("text", x = 4, y = 2.5, label = "AI PROCESSING", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 4, y = 1.7, label = "Pose\nEstimation", color = "white", size = 3) +
+  annotate("text", x = 4, y = 2.5, label = "AI PROCESSING", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 4, y = 1.7, label = "Pose\nEstimation", color = "white", size = 3 * diagram_text_scale) +
   # Analysis
   annotate("rect", xmin = 6, xmax = 8, ymin = 1, ymax = 3, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 7, y = 2.5, label = "ANALYSIS", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 7, y = 1.7, label = "REBA/RULA\nScoring", color = "white", size = 3) +
+  annotate("text", x = 7, y = 2.5, label = "ANALYSIS", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 7, y = 1.7, label = "REBA/RULA\nScoring", color = "white", size = 3 * diagram_text_scale) +
   # Output
   annotate("rect", xmin = 9, xmax = 11, ymin = 1, ymax = 3, fill = "#27AE60", color = "black") +
-  annotate("text", x = 10, y = 2.5, label = "OUTPUT", fontface = "bold", color = "white", size = 4) +
-  annotate("text", x = 10, y = 1.7, label = "Risk Report\nAlerts", color = "white", size = 3) +
+  annotate("text", x = 10, y = 2.5, label = "OUTPUT", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
+  annotate("text", x = 10, y = 1.7, label = "Risk Report\nAlerts", color = "white", size = 3 * diagram_text_scale) +
   # Arrows
   annotate("segment", x = 2, xend = 3, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm")), size = 1) +
@@ -1772,8 +1773,8 @@ ggplot() +
   theme_void() +
   labs(title = "AI-Powered Ergonomic Assessment Pipeline",
        subtitle = "From video input to automated risk assessment") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ```{r ai-tools-table, echo=FALSE}
@@ -1825,7 +1826,7 @@ comparison_long <- comparison %>%
 ggplot(comparison_long, aes(x = metric, y = value, fill = method)) +
   geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
   geom_text(aes(label = paste0(value, ifelse(metric %in% c("Consistency", "Real-time Feedback"), "%", ""))),
-            position = position_dodge(width = 0.7), vjust = -0.5, size = 3) +
+            position = position_dodge(width = 0.7), vjust = -0.5, size = 3 * diagram_text_scale) +
   scale_fill_manual(values = c("traditional" = "#E74C3C", "ai" = "#27AE60"),
                     labels = c("AI-Powered", "Traditional"),
                     name = "Method") +
@@ -1833,7 +1834,7 @@ ggplot(comparison_long, aes(x = metric, y = value, fill = method)) +
        x = "", y = "Value (scale varies by metric)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     axis.text.x = element_text(angle = 20, hjust = 1),
     legend.position = "bottom"
   )
@@ -1864,38 +1865,38 @@ Industrial automation inherently involves the mechanization of processes traditi
 ggplot() +
   # Central automation system
   annotate("rect", xmin = 3, xmax = 7, ymin = 2, ymax = 5, fill = "#95A5A6", color = "black") +
-  annotate("text", x = 5, y = 3.5, label = "AUTOMATED\nSYSTEM", fontface = "bold", size = 5) +
+  annotate("text", x = 5, y = 3.5, label = "AUTOMATED\nSYSTEM", fontface = "bold", size = 5 * diagram_text_scale) +
   # Interaction points
   # Loading/Unloading
   annotate("rect", xmin = 0, xmax = 2.5, ymin = 4, ymax = 5.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 1.25, y = 4.75, label = "Loading/\nUnloading", size = 3, color = "white") +
+  annotate("text", x = 1.25, y = 4.75, label = "Loading/\nUnloading", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 2.5, xend = 3, y = 4.75, yend = 4,
            arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
   # HMI
   annotate("rect", xmin = 0, xmax = 2.5, ymin = 2, ymax = 3.5, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 1.25, y = 2.75, label = "HMI\nOperation", size = 3, color = "white") +
+  annotate("text", x = 1.25, y = 2.75, label = "HMI\nOperation", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 2.5, xend = 3, y = 2.75, yend = 3.5,
            arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
   # Maintenance
   annotate("rect", xmin = 7.5, xmax = 10, ymin = 4, ymax = 5.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 8.75, y = 4.75, label = "Maintenance\nAccess", size = 3, color = "white") +
+  annotate("text", x = 8.75, y = 4.75, label = "Maintenance\nAccess", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 7.5, xend = 7, y = 4.75, yend = 4,
            arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
   # Quality Check
   annotate("rect", xmin = 7.5, xmax = 10, ymin = 2, ymax = 3.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 8.75, y = 2.75, label = "Quality\nInspection", size = 3, color = "white") +
+  annotate("text", x = 8.75, y = 2.75, label = "Quality\nInspection", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 7.5, xend = 7, y = 2.75, yend = 3.5,
            arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
   # Supervision
   annotate("rect", xmin = 3.5, xmax = 6.5, ymin = 5.5, ymax = 7, fill = "#9B59B6", color = "black") +
-  annotate("text", x = 5, y = 6.25, label = "Supervision/\nMonitoring", size = 3, color = "white") +
+  annotate("text", x = 5, y = 6.25, label = "Supervision/\nMonitoring", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 5, xend = 5, y = 5.5, yend = 5,
            arrow = arrow(length = unit(0.15, "cm")), color = "#2C3E50") +
   theme_void() +
   labs(title = "Human-Automation Interaction Points",
        subtitle = "Each interaction point requires ergonomic design consideration") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ```{r automation-ergo, echo=FALSE}
@@ -2074,7 +2075,7 @@ ggplot(results_long, aes(x = metric, y = change)) +
   geom_bar(stat = "identity", fill = ifelse(results_long$change < 0, "#27AE60", "#3498DB"),
            color = "black", width = 0.7) +
   geom_text(aes(label = paste0(ifelse(change > 0, "+", ""), round(change), "%")),
-            vjust = ifelse(results_long$change < 0, 1.5, -0.5), fontface = "bold", size = 4) +
+            vjust = ifelse(results_long$change < 0, 1.5, -0.5), fontface = "bold", size = 4 * diagram_text_scale) +
   geom_hline(yintercept = 0, color = "black", linewidth = 1) +
   scale_y_continuous(limits = c(-90, 30)) +
   labs(title = "Impact of Ergonomic Interventions",
@@ -2082,8 +2083,8 @@ ggplot(results_long, aes(x = metric, y = change)) +
        x = "", y = "Change (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     axis.text.x = element_text(angle = 20, hjust = 1)
   )
 ```

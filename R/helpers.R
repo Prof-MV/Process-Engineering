@@ -16,6 +16,36 @@ inject_jquery <- function() {
   }
 }
 
+#' Central control for chart/diagram text sizing
+#'
+#' Figures are authored wide (fig.width ~9-12in) but displayed in a much
+#' narrower book column, so text baked into the image (ggplot2's default
+#' base_size = 11) ends up visually tiny once the browser scales the image
+#' down to fit. Bump this ONE number to make all chart text larger or
+#' smaller across the whole book at once, instead of hand-editing every
+#' chunk. Every geom_text()/geom_label()/annotate("text", ...)/element_text()
+#' call in the book's .qmd files multiplies its size by this value.
+#' @export
+diagram_text_scale <- 1.4
+
+#' theme_minimal()/theme_void() wrappers with a larger default base_size
+#'
+#' Shadow ggplot2's versions so every existing bare theme_minimal()/
+#' theme_void() call in the book picks up diagram_text_scale automatically,
+#' without needing base_size passed explicitly at each call site.
+theme_minimal <- function(base_size = 11 * diagram_text_scale, ...) {
+  ggplot2::theme_minimal(base_size = base_size, ...)
+}
+theme_void <- function(base_size = 11 * diagram_text_scale, ...) {
+  ggplot2::theme_void(base_size = base_size, ...)
+}
+
+# Also scale the default size of geom_text()/annotate("text", ...) layers
+# that don't pass their own explicit `size =` (ggplot2's own default is
+# 3.88). Layers that DO pass an explicit size (as `size = N * diagram_text_scale`)
+# are unaffected by this and controlled directly by their own literal.
+ggplot2::update_geom_defaults("text", list(size = 3.88 * diagram_text_scale))
+
 #' Embed a YouTube video with conditional output
 #'
 #' In HTML output, displays a responsive iframe embed.

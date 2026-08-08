@@ -56,7 +56,7 @@ industry_data$Total_Cost <- industry_data$Cost_Per_Hour * industry_data$Avg_Down
 ggplot(industry_data, aes(x = reorder(Industry, Cost_Per_Hour), y = Cost_Per_Hour)) +
   geom_bar(stat = "identity", fill = "steelblue", width = 0.7) +
   geom_text(aes(label = paste0("$", format(Cost_Per_Hour, big.mark = ","))),
-            hjust = -0.1, size = 4) +
+            hjust = -0.1, size = 4 * diagram_text_scale) +
   coord_flip() +
   scale_y_continuous(labels = scales::dollar_format(), limits = c(0, 60000)) +
   labs(title = "Average Cost of Unplanned Downtime by Industry",
@@ -65,8 +65,8 @@ ggplot(industry_data, aes(x = reorder(Industry, Cost_Per_Hour), y = Cost_Per_Hou
        y = "Cost per Hour (USD)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    axis.text = element_text(size = 11)
+    plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
+    axis.text = element_text(size = 11 * diagram_text_scale)
   )
 ```
 
@@ -135,14 +135,14 @@ ggplot(steps, aes(x = x, y = y)) +
                data = steps[1:5,]) +
   geom_point(size = 25, color = c("#e74c3c", "#3498db", "#2ecc71",
                                    "#f39c12", "#9b59b6", "#1abc9c")) +
-  geom_text(aes(label = step), color = "white", size = 8, fontface = "bold") +
-  geom_text(aes(label = name, y = y + 0.25), size = 4, fontface = "bold") +
-  geom_text(aes(label = description, y = y - 0.25), size = 3) +
+  geom_text(aes(label = step), color = "white", size = 8 * diagram_text_scale, fontface = "bold") +
+  geom_text(aes(label = name, y = y + 0.25), size = 4 * diagram_text_scale, fontface = "bold") +
+  geom_text(aes(label = description, y = y - 0.25), size = 3 * diagram_text_scale) +
   scale_x_continuous(limits = c(0.5, 6.8)) +
   scale_y_continuous(limits = c(0.5, 1.5)) +
   labs(title = "Systematic Troubleshooting Process") +
   theme_void() +
-  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+  theme(plot.title = element_text(size = 16 * diagram_text_scale, face = "bold", hjust = 0.5))
 ```
 
 ### Step 1: Define the Problem
@@ -256,8 +256,8 @@ ggplot(timeline_data, aes(x = date, y = 0)) +
   geom_segment(aes(xend = date, yend = y), color = "gray70") +
   geom_point(aes(y = y, color = type), size = 8) +
   geom_text(aes(y = y, label = event), vjust = ifelse(timeline_data$y > 0, -1, 2),
-            size = 3) +
-  geom_text(aes(label = format(date, "%b %d")), vjust = 2, size = 2.5) +
+            size = 3 * diagram_text_scale) +
+  geom_text(aes(label = format(date, "%b %d")), vjust = 2, size = 2.5 * diagram_text_scale) +
   scale_color_manual(values = c("Change" = "steelblue", "Problem" = "red")) +
   scale_y_continuous(limits = c(-2, 2)) +
   labs(title = "Change Timeline Analysis",
@@ -269,7 +269,7 @@ ggplot(timeline_data, aes(x = date, y = 0)) +
     axis.ticks.y = element_blank(),
     panel.grid = element_blank(),
     legend.position = "bottom",
-    plot.title = element_text(face = "bold", size = 14)
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale)
   )
 ```
 
@@ -304,22 +304,22 @@ levels <- data.frame(
 
 ggplot(levels, aes(x = 0, y = y)) +
   geom_tile(aes(width = width, height = 0.8, fill = color), color = "white", linewidth = 2) +
-  geom_text(aes(label = level), fontface = "bold", size = 5, color = "white") +
-  geom_text(aes(label = description, y = y - 0.25), size = 3, color = "white") +
+  geom_text(aes(label = level), fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = description, y = y - 0.25), size = 3 * diagram_text_scale, color = "white") +
   scale_fill_identity() +
   annotate("text", x = 4, y = 4, label = "Example: Motor is overheating",
-           hjust = 0, size = 3.5, fontface = "italic") +
+           hjust = 0, size = 3.5 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 4, y = 3, label = "Example: Bearing is worn",
-           hjust = 0, size = 3.5, fontface = "italic") +
+           hjust = 0, size = 3.5 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 4, y = 2, label = "Example: Lubrication inadequate",
-           hjust = 0, size = 3.5, fontface = "italic") +
+           hjust = 0, size = 3.5 * diagram_text_scale, fontface = "italic") +
   annotate("text", x = 4, y = 1, label = "Example: No PM schedule exists",
-           hjust = 0, size = 3.5, fontface = "italic") +
+           hjust = 0, size = 3.5 * diagram_text_scale, fontface = "italic") +
   coord_cartesian(xlim = c(-4, 7)) +
   labs(title = "Causation Hierarchy",
        subtitle = "Dig deeper to find the root cause - don't stop at symptoms") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -380,8 +380,8 @@ whys <- data.frame(
 
 ggplot(whys, aes(x = 1, y = y)) +
   geom_tile(aes(fill = level), width = 5, height = 0.8, color = "white", linewidth = 1) +
-  geom_text(aes(x = -0.8, label = question), hjust = 1, fontface = "bold", size = 4) +
-  geom_text(aes(label = answer), hjust = 0.5, size = 3.5,
+  geom_text(aes(x = -0.8, label = question), hjust = 1, fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(label = answer), hjust = 0.5, size = 3.5 * diagram_text_scale,
             color = ifelse(whys$level == 6, "white", "black")) +
   geom_segment(aes(x = 0.5, xend = 0.5, y = y - 0.4, yend = y - 0.6),
                arrow = arrow(length = unit(0.2, "cm")),
@@ -391,8 +391,8 @@ ggplot(whys, aes(x = 1, y = y)) +
   labs(title = "5 Whys Analysis: Production Line Stoppage",
        subtitle = "Each 'Why?' digs deeper toward the root cause") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, size = 11))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale))
 ```
 
 ### 5 Whys Template
@@ -455,17 +455,17 @@ ggplot() +
   geom_segment(data = edges, aes(x = from_x, y = from_y, xend = to_x, yend = to_y),
                arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
   geom_label(data = nodes, aes(x = x, y = y, label = label, fill = branch),
-             size = 3, label.padding = unit(0.3, "lines")) +
+             size = 3 * diagram_text_scale, label.padding = unit(0.3, "lines")) +
   scale_fill_manual(values = c("Main" = "#e74c3c", "A" = "#3498db", "B" = "#27ae60"),
                     guide = "none") +
   annotate("text", x = -3, y = 0.3, label = "Root Cause A:\nMissing parameter documentation",
-           fontface = "bold", size = 3.5, color = "#3498db") +
+           fontface = "bold", size = 3.5 * diagram_text_scale, color = "#3498db") +
   annotate("text", x = 2, y = 0.3, label = "Root Cause B:\nSchedule pressure affecting quality",
-           fontface = "bold", size = 3.5, color = "#27ae60") +
+           fontface = "bold", size = 3.5 * diagram_text_scale, color = "#27ae60") +
   labs(title = "Branching 5 Whys Analysis",
        subtitle = "When multiple causes exist, analyze each branch separately") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -521,14 +521,14 @@ categories <- data.frame(
 
 ggplot(categories, aes(x = x, y = 1)) +
   geom_tile(aes(fill = category), width = 0.9, height = 1.5, color = "white", linewidth = 2) +
-  geom_text(aes(label = category), y = 1.3, fontface = "bold", size = 4, color = "white") +
-  geom_text(aes(label = examples), y = 0.7, size = 2.8, color = "white") +
+  geom_text(aes(label = category), y = 1.3, fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = examples), y = 0.7, size = 2.8 * diagram_text_scale, color = "white") +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
   labs(title = "The 6M Categories for Cause Analysis",
        subtitle = "Standard categories for organizing potential causes in manufacturing") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -583,16 +583,16 @@ ggplot() +
   # Problem box
   geom_label(data = problem, aes(x = x, y = y, label = label),
              fill = "#e74c3c", color = "white", fontface = "bold",
-             size = 5, label.padding = unit(0.5, "lines")) +
+             size = 5 * diagram_text_scale, label.padding = unit(0.5, "lines")) +
   # Category bones
   geom_segment(data = bones, aes(x = x_start, y = y_start, xend = x_end, yend = y_end),
                linewidth = 1.5, color = "steelblue") +
   # Category labels
   geom_label(data = bones, aes(x = x_start, y = y_start, label = category),
-             fill = "steelblue", color = "white", fontface = "bold", size = 4) +
+             fill = "steelblue", color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   # Sub-cause labels
   geom_text(data = subcauses, aes(x = x, y = y, label = label),
-            size = 3, hjust = 0) +
+            size = 3 * diagram_text_scale, hjust = 0) +
   # Sub-cause lines
   geom_segment(data = subcauses,
                aes(x = x - 0.05, y = y,
@@ -603,7 +603,7 @@ ggplot() +
   labs(title = "Fishbone Diagram: Parts Have Surface Scratches",
        subtitle = "Brainstorming potential causes organized by 6M categories") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, margin = margin(b = 20)))
 ```
 
@@ -728,31 +728,31 @@ ggplot() +
   geom_point(aes(x = c(7, 3, 7, 11, 7), y = c(9, 6, 6, 6, 3)),
              shape = 25, size = 8, fill = "yellow", color = "black") +
   annotate("text", x = c(7, 3, 7, 11, 7), y = c(9, 6, 6, 6, 3),
-           label = "OR", size = 2, fontface = "bold") +
+           label = "OR", size = 2 * diagram_text_scale, fontface = "bold") +
   # Intermediate events (rectangles)
   geom_tile(data = fta_nodes[fta_nodes$type == "intermediate",],
             aes(x = x, y = y), width = 2.3, height = 1.2,
             fill = "#3498db", color = "black") +
   geom_text(data = fta_nodes[fta_nodes$type == "intermediate",],
             aes(x = x, y = y, label = label),
-            color = "white", size = 2.8, fontface = "bold") +
+            color = "white", size = 2.8 * diagram_text_scale, fontface = "bold") +
   # Basic events (circles)
   geom_point(data = fta_nodes[fta_nodes$type == "basic",],
              aes(x = x, y = y), size = 15, color = "black", fill = "#27ae60", shape = 21) +
   geom_text(data = fta_nodes[fta_nodes$type == "basic",],
             aes(x = x, y = y, label = label),
-            color = "white", size = 2.5) +
+            color = "white", size = 2.5 * diagram_text_scale) +
   # Top event styling
   geom_tile(aes(x = 7, y = 10), width = 2.5, height = 1.3,
             fill = "#e74c3c", color = "black", linewidth = 1.5) +
   geom_text(aes(x = 7, y = 10, label = "Pump fails to\ndeliver flow"),
-            color = "white", size = 3.5, fontface = "bold") +
+            color = "white", size = 3.5 * diagram_text_scale, fontface = "bold") +
   scale_y_continuous(limits = c(0, 11)) +
   scale_x_continuous(limits = c(0, 14)) +
   labs(title = "Fault Tree Analysis: Pump Fails to Deliver Flow",
        subtitle = "OR gates mean any single path can cause the top event") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -765,9 +765,10 @@ FTA allows quantitative risk analysis by calculating the probability of the top 
 
 **AND Gate:** P(output) = P~A~ × P~B~ × ...
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different basic-event probabilities.
 
-```{r fta-calculation, echo=TRUE}
+```{webr-r}
+#| label: fta-calculation
 # Example: Calculate top event probability
 # Basic event probabilities (annual failure rates)
 P_breaker_trip <- 0.02
@@ -828,14 +829,14 @@ ggplot(defects, aes(x = Defect_Type)) +
             color = "#e74c3c", linewidth = 1.2) +
   geom_point(aes(y = Cum_Percent * max(Count) / 100),
              color = "#e74c3c", size = 3) +
-  geom_text(aes(y = Count, label = Count), vjust = -0.5, size = 3.5) +
+  geom_text(aes(y = Count, label = Count), vjust = -0.5, size = 3.5 * diagram_text_scale) +
   geom_text(aes(y = Cum_Percent * max(Count) / 100,
                 label = paste0(round(Cum_Percent, 0), "%")),
-            vjust = -1, hjust = -0.2, size = 3, color = "#e74c3c") +
+            vjust = -1, hjust = -0.2, size = 3 * diagram_text_scale, color = "#e74c3c") +
   geom_hline(yintercept = 80 * max(defects$Count) / 100,
              linetype = "dashed", color = "gray50") +
   annotate("text", x = 7.5, y = 80 * max(defects$Count) / 100 + 5,
-           label = "80% line", size = 3.5, color = "gray40") +
+           label = "80% line", size = 3.5 * diagram_text_scale, color = "gray40") +
   scale_y_continuous(
     name = "Defect Count",
     sec.axis = sec_axis(~. * 100 / max(defects$Count), name = "Cumulative %")
@@ -846,7 +847,7 @@ ggplot(defects, aes(x = Defect_Type)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     axis.title.y.right = element_text(color = "#e74c3c")
   )
 ```
@@ -902,7 +903,7 @@ ggplot(scratch_causes, aes(x = Cause)) +
             color = "#e74c3c", linewidth = 1.2) +
   geom_point(aes(y = Cum_Pct * max(Count) / 100),
              color = "#e74c3c", size = 3) +
-  geom_text(aes(y = Count, label = Count), vjust = -0.5, size = 4) +
+  geom_text(aes(y = Count, label = Count), vjust = -0.5, size = 4 * diagram_text_scale) +
   geom_hline(yintercept = 80 * max(scratch_causes$Count) / 100,
              linetype = "dashed", color = "gray50") +
   scale_y_continuous(
@@ -915,7 +916,7 @@ ggplot(scratch_causes, aes(x = Cause)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.title = element_text(face = "bold", size = 14)
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale)
   )
 ```
 
@@ -1020,15 +1021,15 @@ d8_steps <- data.frame(
 
 ggplot(d8_steps, aes(x = 1, y = y)) +
   geom_tile(aes(fill = y), width = 6, height = 0.85, color = "white", linewidth = 1) +
-  geom_text(aes(x = -1.5, label = D), fontface = "bold", size = 6, color = "steelblue") +
-  geom_text(aes(x = -0.5, label = Name), fontface = "bold", size = 4, hjust = 0) +
-  geom_text(aes(x = 1.3, label = Description), size = 3.2, hjust = 0) +
+  geom_text(aes(x = -1.5, label = D), fontface = "bold", size = 6 * diagram_text_scale, color = "steelblue") +
+  geom_text(aes(x = -0.5, label = Name), fontface = "bold", size = 4 * diagram_text_scale, hjust = 0) +
+  geom_text(aes(x = 1.3, label = Description), size = 3.2 * diagram_text_scale, hjust = 0) +
   scale_fill_gradient(low = "#27ae60", high = "#3498db", guide = "none") +
   coord_cartesian(xlim = c(-2, 5)) +
   labs(title = "The 8D Problem-Solving Methodology",
        subtitle = "A structured approach for complex problems requiring cross-functional teams") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -1136,8 +1137,8 @@ ca_types <- data.frame(
 
 ggplot(ca_types, aes(x = reorder(type, reliability), y = reliability)) +
   geom_bar(stat = "identity", aes(fill = color), width = 0.7) +
-  geom_text(aes(label = paste0(reliability, "%")), hjust = -0.2, size = 4) +
-  geom_text(aes(y = 5, label = example), hjust = 0, size = 3, color = "white") +
+  geom_text(aes(label = paste0(reliability, "%")), hjust = -0.2, size = 4 * diagram_text_scale) +
+  geom_text(aes(y = 5, label = example), hjust = 0, size = 3 * diagram_text_scale, color = "white") +
   scale_fill_identity() +
   coord_flip() +
   scale_y_continuous(limits = c(0, 110)) +
@@ -1146,8 +1147,8 @@ ggplot(ca_types, aes(x = reorder(type, reliability), y = reliability)) +
        x = "", y = "Reliability (% effective in preventing recurrence)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.y = element_text(size = 11)
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    axis.text.y = element_text(size = 11 * diagram_text_scale)
   )
 ```
 
@@ -1253,24 +1254,24 @@ ggplot(effectiveness_data, aes(x = Date, y = Defect_Rate)) +
              color = "red", linewidth = 1) +
   annotate("text", x = ca_date, y = max(defect_rate) * 0.95,
            label = "Corrective Action\nImplemented", hjust = -0.1,
-           fontface = "bold", color = "red", size = 3.5) +
+           fontface = "bold", color = "red", size = 3.5 * diagram_text_scale) +
   geom_hline(yintercept = mean(defect_rate[1:14]), linetype = "dashed",
              color = "orange", alpha = 0.7) +
   annotate("text", x = min(dates), y = mean(defect_rate[1:14]) + 0.3,
            label = paste0("Before avg: ", round(mean(defect_rate[1:14]), 1), "%"),
-           hjust = 0, size = 3, color = "orange") +
+           hjust = 0, size = 3 * diagram_text_scale, color = "orange") +
   geom_hline(yintercept = mean(defect_rate[15:30]), linetype = "dashed",
              color = "darkgreen", alpha = 0.7) +
   annotate("text", x = max(dates), y = mean(defect_rate[15:30]) + 0.3,
            label = paste0("After avg: ", round(mean(defect_rate[15:30]), 1), "%"),
-           hjust = 1, size = 3, color = "darkgreen") +
+           hjust = 1, size = 3 * diagram_text_scale, color = "darkgreen") +
   scale_color_manual(values = c("Before CA" = "orange", "After CA" = "darkgreen")) +
   labs(title = "Corrective Action Effectiveness Monitoring",
        subtitle = "Defect rate tracked before and after implementation",
        x = "", y = "Defect Rate (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom"
   )
 ```

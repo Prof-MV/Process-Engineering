@@ -60,7 +60,7 @@ benefits <- data.frame(
 
 ggplot(benefits, aes(x = reorder(Category, Impact), y = Impact, fill = Category)) +
   geom_bar(stat = "identity", width = 0.7) +
-  geom_text(aes(label = Benefit), hjust = -0.1, size = 3.5, fontface = "bold") +
+  geom_text(aes(label = Benefit), hjust = -0.1, size = 3.5 * diagram_text_scale, fontface = "bold") +
   coord_flip() +
   scale_fill_manual(values = c("#3498db", "#27ae60", "#e74c3c",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
@@ -70,8 +70,8 @@ ggplot(benefits, aes(x = reorder(Category, Impact), y = Impact, fill = Category)
        x = "", y = "Relative Impact Score") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.y = element_text(size = 11, face = "bold")
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    axis.text.y = element_text(size = 11 * diagram_text_scale, face = "bold")
   )
 ```
 
@@ -128,7 +128,7 @@ auto_long <- auto_types %>%
 ggplot(auto_long, aes(x = Type, y = Value, fill = Metric)) +
   geom_bar(stat = "identity", position = "dodge", width = 0.7) +
   geom_text(aes(label = Value), position = position_dodge(width = 0.7),
-            vjust = -0.5, size = 3) +
+            vjust = -0.5, size = 3 * diagram_text_scale) +
   scale_fill_manual(values = c("#3498db", "#27ae60", "#e74c3c"),
                     labels = c("Flexibility", "Initial Investment", "Production Volume")) +
   labs(title = "Comparison of Automation Types",
@@ -136,9 +136,9 @@ ggplot(auto_long, aes(x = Type, y = Value, fill = Metric)) +
        x = "", y = "Relative Score (0-100)", fill = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom",
-    axis.text.x = element_text(size = 11, face = "bold")
+    axis.text.x = element_text(size = 11 * diagram_text_scale, face = "bold")
   )
 ```
 
@@ -208,17 +208,17 @@ pyramid_levels <- data.frame(
 
 ggplot(pyramid_levels, aes(x = 0, y = y)) +
   geom_tile(aes(width = width, height = 0.8, fill = color), color = "white", linewidth = 2) +
-  geom_text(aes(x = -2.5, label = level), fontface = "bold", hjust = 1, size = 4) +
-  geom_text(aes(label = name), fontface = "bold", size = 4.5, color = "white") +
-  geom_text(aes(label = description, y = y - 0.25), size = 3, color = "white") +
+  geom_text(aes(x = -2.5, label = level), fontface = "bold", hjust = 1, size = 4 * diagram_text_scale) +
+  geom_text(aes(label = name), fontface = "bold", size = 4.5 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = description, y = y - 0.25), size = 3 * diagram_text_scale, color = "white") +
   scale_fill_identity() +
   coord_cartesian(xlim = c(-4, 4)) +
   labs(title = "The Automation Pyramid (ISA-95)",
        subtitle = "Hierarchical levels of industrial automation and control") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 11)
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale)
   )
 ```
 
@@ -251,19 +251,19 @@ ggplot() +
   annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 4,
            fill = "#34495e", color = "black", size = 1.5) +
   annotate("text", x = 5, y = 3.5, label = "PLC",
-           color = "white", fontface = "bold", size = 8) +
+           color = "white", fontface = "bold", size = 8 * diagram_text_scale) +
   annotate("text", x = 5, y = 2.8, label = "Programmable Logic Controller",
-           color = "white", size = 3.5) +
+           color = "white", size = 3.5 * diagram_text_scale) +
   annotate("text", x = 5, y = 2.2, label = "• Scan Inputs\n• Execute Program\n• Update Outputs",
-           color = "#3498db", size = 3, lineheight = 0.9) +
+           color = "#3498db", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Inputs
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 1.5, ymax = 3.5,
            fill = "#27ae60", color = "black") +
   annotate("text", x = 1.5, y = 3.2, label = "INPUTS",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 1.5, y = 2.5, label = "• Switches\n• Sensors\n• Push buttons\n• Encoders",
-           color = "white", size = 2.8, lineheight = 0.9) +
+           color = "white", size = 2.8 * diagram_text_scale, lineheight = 0.9) +
   annotate("segment", x = 2.5, xend = 3, y = 2.5, yend = 2.5,
            arrow = arrow(length = unit(0.3, "cm")), size = 1.5, color = "#27ae60") +
 
@@ -271,9 +271,9 @@ ggplot() +
   annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 1.5, ymax = 3.5,
            fill = "#e74c3c", color = "black") +
   annotate("text", x = 8.5, y = 3.2, label = "OUTPUTS",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 8.5, y = 2.5, label = "• Motors\n• Valves\n• Lights\n• Alarms",
-           color = "white", size = 2.8, lineheight = 0.9) +
+           color = "white", size = 2.8 * diagram_text_scale, lineheight = 0.9) +
   annotate("segment", x = 7, xend = 7.5, y = 2.5, yend = 2.5,
            arrow = arrow(length = unit(0.3, "cm")), size = 1.5, color = "#e74c3c") +
 
@@ -281,7 +281,7 @@ ggplot() +
   annotate("rect", xmin = 4, xmax = 6, ymin = 4.5, ymax = 5.5,
            fill = "#9b59b6", color = "black") +
   annotate("text", x = 5, y = 5, label = "Programming\n(Ladder, FBD, ST)",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
   annotate("segment", x = 5, xend = 5, y = 4.5, yend = 4,
            arrow = arrow(length = unit(0.3, "cm")), size = 1, color = "#9b59b6") +
 
@@ -290,7 +290,7 @@ ggplot() +
        subtitle = "Reads inputs, executes logic, controls outputs") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -364,30 +364,31 @@ ggplot() +
   # Step boxes
   geom_label(data = scan_steps, aes(x = x, y = y, label = name),
              fill = c("#3498db", "#27ae60", "#e74c3c", "#f39c12"),
-             color = "white", fontface = "bold", size = 5,
+             color = "white", fontface = "bold", size = 5 * diagram_text_scale,
              label.padding = unit(0.4, "lines")) +
 
   # Center label
   annotate("text", x = 2, y = 2, label = "SCAN\nCYCLE\n(~10-50ms)",
-           fontface = "bold", size = 5.5, lineheight = 0.9) +
+           fontface = "bold", size = 5.5 * diagram_text_scale, lineheight = 0.9) +
 
   # Time annotations — placed below each step box
   annotate("text", x = c(2, 4, 2, 0), y = c(3.55, 1.55, -0.45, 1.55),
-           label = scan_steps$time, size = 4.5, color = "gray40") +
+           label = scan_steps$time, size = 4.5 * diagram_text_scale, color = "gray40") +
 
   coord_cartesian(xlim = c(-1, 5), ylim = c(-1, 5)) +
   labs(title = "PLC Scan Cycle",
        subtitle = "Continuous loop executing at predictable intervals") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 13)
+    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 13 * diagram_text_scale)
   )
 ```
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different scan time components.
 
-```{r scan-time-calc, echo=TRUE}
+```{webr-r}
+#| label: scan-time-calc
 # Scan Time Calculation Example
 input_scan_time <- 1.2    # ms
 program_execution <- 15.5  # ms (depends on program size)
@@ -445,8 +446,8 @@ ggplot() +
   # Power rails
   annotate("segment", x = 0.5, xend = 0.5, y = 0.5, yend = 4.5, size = 2, color = "brown") +
   annotate("segment", x = 9.5, xend = 9.5, y = 0.5, yend = 4.5, size = 2, color = "brown") +
-  annotate("text", x = 0.5, y = 4.8, label = "L1\n(Hot)", size = 3, fontface = "bold") +
-  annotate("text", x = 9.5, y = 4.8, label = "L2\n(Neutral)", size = 3, fontface = "bold") +
+  annotate("text", x = 0.5, y = 4.8, label = "L1\n(Hot)", size = 3 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 9.5, y = 4.8, label = "L2\n(Neutral)", size = 3 * diagram_text_scale, fontface = "bold") +
 
   # Rung 1: Start/Stop circuit with seal-in
   annotate("segment", x = 0.5, xend = 1.5, y = 4, yend = 4, size = 1) +
@@ -454,27 +455,27 @@ ggplot() +
   annotate("segment", x = 1.5, xend = 1.8, y = 4, yend = 4, size = 1) +
   annotate("segment", x = 1.8, xend = 2.2, y = 4.15, yend = 3.85, size = 1.5, color = "#e74c3c") +
   annotate("segment", x = 2.2, xend = 2.5, y = 4, yend = 4, size = 1) +
-  annotate("text", x = 2, y = 4.4, label = "STOP", size = 2.5) +
+  annotate("text", x = 2, y = 4.4, label = "STOP", size = 2.5 * diagram_text_scale) +
   # Start button (NO)
   annotate("segment", x = 2.5, xend = 3.5, y = 4, yend = 4, size = 1) +
   annotate("segment", x = 3.5, xend = 3.8, y = 4, yend = 4, size = 1) +
   annotate("segment", x = 3.8, xend = 4.2, y = 4.15, yend = 4.15, size = 1.5, color = "#27ae60") +
   annotate("segment", x = 4.2, xend = 4.5, y = 4, yend = 4, size = 1) +
-  annotate("text", x = 4, y = 4.4, label = "START", size = 2.5) +
+  annotate("text", x = 4, y = 4.4, label = "START", size = 2.5 * diagram_text_scale) +
   # Branch for seal-in contact
   annotate("segment", x = 2.5, xend = 2.5, y = 4, yend = 3.3, size = 1) +
   annotate("segment", x = 2.5, xend = 3.5, y = 3.3, yend = 3.3, size = 1) +
   annotate("segment", x = 3.5, xend = 3.8, y = 3.3, yend = 3.3, size = 1) +
   annotate("segment", x = 3.8, xend = 4.2, y = 3.45, yend = 3.15, size = 1.5, color = "#3498db") +
   annotate("segment", x = 4.2, xend = 4.5, y = 3.3, yend = 3.3, size = 1) +
-  annotate("text", x = 4, y = 3.7, label = "MOTOR", size = 2.5) +
+  annotate("text", x = 4, y = 3.7, label = "MOTOR", size = 2.5 * diagram_text_scale) +
   annotate("segment", x = 4.5, xend = 4.5, y = 4, yend = 3.3, size = 1) +
   # Continue to output
   annotate("segment", x = 4.5, xend = 8, y = 4, yend = 4, size = 1) +
   # Output coil (Motor)
   annotate("point", x = 8.5, y = 4, size = 15, shape = 21, fill = "white", color = "#3498db", stroke = 2) +
-  annotate("text", x = 8.5, y = 4, label = "M", size = 4, fontface = "bold", color = "#3498db") +
-  annotate("text", x = 8.5, y = 4.4, label = "MOTOR", size = 2.5) +
+  annotate("text", x = 8.5, y = 4, label = "M", size = 4 * diagram_text_scale, fontface = "bold", color = "#3498db") +
+  annotate("text", x = 8.5, y = 4.4, label = "MOTOR", size = 2.5 * diagram_text_scale) +
   annotate("segment", x = 9, xend = 9.5, y = 4, yend = 4, size = 1) +
 
   # Rung 2: Motor running indicator
@@ -482,32 +483,32 @@ ggplot() +
   annotate("segment", x = 3.5, xend = 3.8, y = 2, yend = 2, size = 1) +
   annotate("segment", x = 3.8, xend = 4.2, y = 2.15, yend = 1.85, size = 1.5, color = "#3498db") +
   annotate("segment", x = 4.2, xend = 8, y = 2, yend = 2, size = 1) +
-  annotate("text", x = 4, y = 2.4, label = "MOTOR", size = 2.5) +
+  annotate("text", x = 4, y = 2.4, label = "MOTOR", size = 2.5 * diagram_text_scale) +
   annotate("point", x = 8.5, y = 2, size = 15, shape = 21, fill = "white", color = "#27ae60", stroke = 2) +
-  annotate("text", x = 8.5, y = 2, label = "L", size = 4, fontface = "bold", color = "#27ae60") +
-  annotate("text", x = 8.5, y = 2.4, label = "RUN LIGHT", size = 2.5) +
+  annotate("text", x = 8.5, y = 2, label = "L", size = 4 * diagram_text_scale, fontface = "bold", color = "#27ae60") +
+  annotate("text", x = 8.5, y = 2.4, label = "RUN LIGHT", size = 2.5 * diagram_text_scale) +
   annotate("segment", x = 9, xend = 9.5, y = 2, yend = 2, size = 1) +
 
   # Rung labels
-  annotate("text", x = 0.2, y = 4, label = "1", fontface = "bold", size = 4) +
-  annotate("text", x = 0.2, y = 2, label = "2", fontface = "bold", size = 4) +
+  annotate("text", x = 0.2, y = 4, label = "1", fontface = "bold", size = 4 * diagram_text_scale) +
+  annotate("text", x = 0.2, y = 2, label = "2", fontface = "bold", size = 4 * diagram_text_scale) +
 
   # Legend
   annotate("rect", xmin = 0.5, xmax = 4, ymin = 0.3, ymax = 1.3, fill = "#f8f9fa", color = "gray") +
-  annotate("text", x = 0.7, y = 1.1, label = "Legend:", hjust = 0, fontface = "bold", size = 3) +
+  annotate("text", x = 0.7, y = 1.1, label = "Legend:", hjust = 0, fontface = "bold", size = 3 * diagram_text_scale) +
   annotate("segment", x = 0.7, xend = 1.1, y = 0.8, yend = 0.5, size = 1, color = "#27ae60") +
-  annotate("text", x = 1.3, y = 0.65, label = "NO Contact", hjust = 0, size = 2.5) +
+  annotate("text", x = 1.3, y = 0.65, label = "NO Contact", hjust = 0, size = 2.5 * diagram_text_scale) +
   annotate("segment", x = 2.2, xend = 2.6, y = 0.8, yend = 0.5, size = 1, color = "#e74c3c") +
   annotate("segment", x = 2.2, xend = 2.6, y = 0.65, yend = 0.65, size = 0.5, color = "#e74c3c") +
-  annotate("text", x = 2.8, y = 0.65, label = "NC Contact", hjust = 0, size = 2.5) +
+  annotate("text", x = 2.8, y = 0.65, label = "NC Contact", hjust = 0, size = 2.5 * diagram_text_scale) +
 
   coord_cartesian(xlim = c(0, 10), ylim = c(0, 5.2)) +
   labs(title = "Ladder Logic Example: Motor Start/Stop Circuit with Seal-In",
        subtitle = "Classic 3-wire control circuit implemented in PLC ladder logic") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 12, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 10)
+    plot.title = element_text(face = "bold", size = 12 * diagram_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
   )
 ```
 
@@ -568,7 +569,7 @@ ggplot(sensors, aes(x = Category, y = 1, fill = Category)) + # Added y = 1 here
   geom_text(aes(label = Type), 
             position = position_stack(vjust = 0.5),
             color = "white", 
-            size = 4.5, 
+            size = 4.5 * diagram_text_scale, 
             fontface = "bold") +
   scale_fill_manual(values = c("Discrete (On/Off)" = "#3498db", 
                                "Analog (Variable)" = "#27ae60", 
@@ -580,8 +581,8 @@ ggplot(sensors, aes(x = Category, y = 1, fill = Category)) + # Added y = 1 here
        x = "", y = "Count") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.y = element_text(size = 11, face = "bold"),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    axis.text.y = element_text(size = 11 * diagram_text_scale, face = "bold"),
     panel.grid.major.y = element_blank() # Cleans up the look for flipped charts
   )
 ```
@@ -629,7 +630,7 @@ ggplot() +
   annotate("rect", xmin = 0.5, xmax = 4.5, ymin = 0.5, ymax = 4.5,
            fill = "#ebf5fb", color = "#3498db", size = 1) +
   annotate("text", x = 2.5, y = 4.2, label = "PNP (Sourcing)",
-           fontface = "bold", size = 5, color = "#3498db") +
+           fontface = "bold", size = 5 * diagram_text_scale, color = "#3498db") +
 
   # PNP sensor symbol
   annotate("rect", xmin = 1.5, xmax = 3.5, ymin = 2, ymax = 3.5,
@@ -637,21 +638,21 @@ ggplot() +
   annotate("text", x = 2.5, y = 2.75, label = "Sensor", color = "white", fontface = "bold") +
   # +V connection
   annotate("segment", x = 2, xend = 2, y = 3.5, yend = 4, color = "red", size = 1) +
-  annotate("text", x = 2, y = 4.1, label = "+24V", size = 3, color = "red") +
+  annotate("text", x = 2, y = 4.1, label = "+24V", size = 3 * diagram_text_scale, color = "red") +
   # 0V connection
   annotate("segment", x = 3, xend = 3, y = 2, yend = 1.5, color = "blue", size = 1) +
-  annotate("text", x = 3, y = 1.3, label = "0V", size = 3, color = "blue") +
+  annotate("text", x = 3, y = 1.3, label = "0V", size = 3 * diagram_text_scale, color = "blue") +
   # Output to PLC (sources current)
   annotate("segment", x = 3.5, xend = 4.2, y = 2.75, yend = 2.75, color = "brown", size = 1) +
-  annotate("text", x = 4.3, y = 2.75, label = "→ PLC Input", hjust = 0, size = 3) +
+  annotate("text", x = 4.3, y = 2.75, label = "→ PLC Input", hjust = 0, size = 3 * diagram_text_scale) +
   annotate("text", x = 2.5, y = 1, label = "Current flows FROM sensor\nPLC input sinks to 0V",
-           size = 2.8, lineheight = 0.9) +
+           size = 2.8 * diagram_text_scale, lineheight = 0.9) +
 
   # NPN (Sinking)
   annotate("rect", xmin = 5.5, xmax = 9.5, ymin = 0.5, ymax = 4.5,
            fill = "#eafaf1", color = "#27ae60", size = 1) +
   annotate("text", x = 7.5, y = 4.2, label = "NPN (Sinking)",
-           fontface = "bold", size = 5, color = "#27ae60") +
+           fontface = "bold", size = 5 * diagram_text_scale, color = "#27ae60") +
 
   # NPN sensor symbol
   annotate("rect", xmin = 6.5, xmax = 8.5, ymin = 2, ymax = 3.5,
@@ -659,22 +660,22 @@ ggplot() +
   annotate("text", x = 7.5, y = 2.75, label = "Sensor", color = "white", fontface = "bold") +
   # +V connection
   annotate("segment", x = 7, xend = 7, y = 3.5, yend = 4, color = "red", size = 1) +
-  annotate("text", x = 7, y = 4.1, label = "+24V", size = 3, color = "red") +
+  annotate("text", x = 7, y = 4.1, label = "+24V", size = 3 * diagram_text_scale, color = "red") +
   # 0V connection
   annotate("segment", x = 8, xend = 8, y = 2, yend = 1.5, color = "blue", size = 1) +
-  annotate("text", x = 8, y = 1.3, label = "0V", size = 3, color = "blue") +
+  annotate("text", x = 8, y = 1.3, label = "0V", size = 3 * diagram_text_scale, color = "blue") +
   # Output to PLC (sinks current)
   annotate("segment", x = 8.5, xend = 9.2, y = 2.75, yend = 2.75, color = "brown", size = 1) +
-  annotate("text", x = 9.3, y = 2.75, label = "→ PLC Input", hjust = 0, size = 3) +
+  annotate("text", x = 9.3, y = 2.75, label = "→ PLC Input", hjust = 0, size = 3 * diagram_text_scale) +
   annotate("text", x = 7.5, y = 1, label = "Current flows TO sensor\nPLC input sources from +V",
-           size = 2.8, lineheight = 0.9) +
+           size = 2.8 * diagram_text_scale, lineheight = 0.9) +
 
   coord_cartesian(xlim = c(0, 10.5), ylim = c(0.3, 4.8)) +
   labs(title = "PNP vs NPN Sensor Output Configuration",
        subtitle = "PNP common in North America/Europe; NPN common in Asia") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -743,40 +744,40 @@ ggplot() +
   annotate("rect", xmin = 0.5, xmax = 2, ymin = 2, ymax = 3.5,
            fill = "#e74c3c", color = "black") +
   annotate("text", x = 1.25, y = 2.75, label = "AC Input\n(60Hz Fixed)",
-           color = "white", fontface = "bold", size = 3, lineheight = 0.9) +
+           color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # VFD sections
   # Rectifier
   annotate("rect", xmin = 2.5, xmax = 4, ymin = 2, ymax = 3.5,
            fill = "#3498db", color = "black") +
   annotate("text", x = 3.25, y = 3.2, label = "Rectifier",
-           fontface = "bold", size = 3.5, color = "white") +
+           fontface = "bold", size = 3.5 * diagram_text_scale, color = "white") +
   annotate("text", x = 3.25, y = 2.5, label = "AC → DC",
-           size = 3, color = "white") +
+           size = 3 * diagram_text_scale, color = "white") +
 
   # DC Bus
   annotate("rect", xmin = 4.3, xmax = 5.8, ymin = 2, ymax = 3.5,
            fill = "#f39c12", color = "black") +
   annotate("text", x = 5.05, y = 3.2, label = "DC Bus",
-           fontface = "bold", size = 3.5, color = "white") +
+           fontface = "bold", size = 3.5 * diagram_text_scale, color = "white") +
   annotate("text", x = 5.05, y = 2.5, label = "Filter &\nCapacitors",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   # Inverter
   annotate("rect", xmin = 6.1, xmax = 7.6, ymin = 2, ymax = 3.5,
            fill = "#27ae60", color = "black") +
   annotate("text", x = 6.85, y = 3.2, label = "Inverter",
-           fontface = "bold", size = 3.5, color = "white") +
+           fontface = "bold", size = 3.5 * diagram_text_scale, color = "white") +
   annotate("text", x = 6.85, y = 2.5, label = "DC → AC\n(PWM)",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   # Motor
   annotate("point", x = 9, y = 2.75, size = 25, shape = 21,
            fill = "#9b59b6", color = "black", stroke = 1.5) +
   annotate("text", x = 9, y = 2.75, label = "M",
-           fontface = "bold", size = 6, color = "white") +
+           fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
   annotate("text", x = 9, y = 1.8, label = "AC Motor\n(Variable Speed)",
-           size = 3, lineheight = 0.9) +
+           size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Arrows
   annotate("segment", x = 2, xend = 2.5, y = 2.75, yend = 2.75,
@@ -792,20 +793,20 @@ ggplot() +
   annotate("rect", xmin = 4.5, xmax = 6.5, ymin = 4, ymax = 4.8,
            fill = "#34495e", color = "black") +
   annotate("text", x = 5.5, y = 4.4, label = "Control: Speed Reference, Start/Stop",
-           color = "white", size = 2.8) +
+           color = "white", size = 2.8 * diagram_text_scale) +
   annotate("segment", x = 5.5, xend = 5.5, y = 4, yend = 3.5,
            arrow = arrow(length = unit(0.2, "cm")), size = 1, linetype = "dashed") +
 
   # Output annotation
   annotate("text", x = 5, y = 1.3, label = "VFD",
-           fontface = "bold", size = 6, color = "gray30") +
+           fontface = "bold", size = 6 * diagram_text_scale, color = "gray30") +
 
   coord_cartesian(xlim = c(0, 10), ylim = c(1, 5)) +
   labs(title = "Variable Frequency Drive (VFD) Block Diagram",
        subtitle = "Converts fixed frequency AC to variable frequency AC for motor speed control") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -883,40 +884,40 @@ ggplot() +
   annotate("rect", xmin = 0.5, xmax = 2, ymin = 2, ymax = 3.5,
            fill = "#34495e", color = "black") +
   annotate("text", x = 1.25, y = 2.75, label = "Motion\nController",
-           color = "white", fontface = "bold", size = 3.5, lineheight = 0.9) +
+           color = "white", fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
 
   # Servo Drive
   annotate("rect", xmin = 3, xmax = 5, ymin = 2, ymax = 3.5,
            fill = "#3498db", color = "black") +
   annotate("text", x = 4, y = 2.75, label = "Servo\nDrive",
-           color = "white", fontface = "bold", size = 4, lineheight = 0.9) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Servo Motor
   annotate("point", x = 7, y = 2.75, size = 22, shape = 21,
            fill = "#27ae60", color = "black", stroke = 1.5) +
   annotate("text", x = 7, y = 2.75, label = "SM",
-           fontface = "bold", size = 5, color = "white") +
-  annotate("text", x = 7, y = 2, label = "Servo Motor", size = 3) +
+           fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
+  annotate("text", x = 7, y = 2, label = "Servo Motor", size = 3 * diagram_text_scale) +
 
   # Encoder (feedback)
   annotate("rect", xmin = 8, xmax = 9, ymin = 2.3, ymax = 3.2,
            fill = "#e74c3c", color = "black") +
   annotate("text", x = 8.5, y = 2.75, label = "ENC",
-           color = "white", fontface = "bold", size = 3) +
+           color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
 
   # Load
   annotate("rect", xmin = 9.5, xmax = 10.5, ymin = 2.3, ymax = 3.2,
            fill = "#95a5a6", color = "black") +
   annotate("text", x = 10, y = 2.75, label = "Load",
-           fontface = "bold", size = 3.5) +
+           fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   # Forward connections
   annotate("segment", x = 2, xend = 3, y = 2.75, yend = 2.75,
            arrow = arrow(length = unit(0.2, "cm")), size = 1) +
-  annotate("text", x = 2.5, y = 3, label = "Command", size = 2.5) +
+  annotate("text", x = 2.5, y = 3, label = "Command", size = 2.5 * diagram_text_scale) +
   annotate("segment", x = 5, xend = 6.3, y = 2.75, yend = 2.75,
            arrow = arrow(length = unit(0.2, "cm")), size = 1.2, color = "#e67e22") +
-  annotate("text", x = 5.6, y = 3, label = "Power", size = 2.5, color = "#e67e22") +
+  annotate("text", x = 5.6, y = 3, label = "Power", size = 2.5 * diagram_text_scale, color = "#e67e22") +
   annotate("segment", x = 7.7, xend = 8, y = 2.75, yend = 2.75, size = 1) +
   annotate("segment", x = 9, xend = 9.5, y = 2.75, yend = 2.75,
            arrow = arrow(length = unit(0.2, "cm")), size = 1) +
@@ -927,14 +928,14 @@ ggplot() +
   annotate("segment", x = 4, xend = 4, y = 1.5, yend = 2,
            arrow = arrow(length = unit(0.2, "cm")), size = 1, color = "#e74c3c") +
   annotate("text", x = 6, y = 1.3, label = "Position/Velocity Feedback",
-           size = 3, color = "#e74c3c") +
+           size = 3 * diagram_text_scale, color = "#e74c3c") +
 
   coord_cartesian(xlim = c(0, 11), ylim = c(1, 4)) +
   labs(title = "Servo System: Closed-Loop Motion Control",
        subtitle = "Precise positioning through continuous feedback") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -973,46 +974,46 @@ ggplot() +
   # Enterprise level
   annotate("rect", xmin = 1, xmax = 9, ymin = 7, ymax = 8, fill = "#2c3e50", color = "black") +
   annotate("text", x = 5, y = 7.5, label = "Enterprise Network (IT): ERP, MES, Business Systems",
-           color = "white", fontface = "bold", size = 3.5) +
+           color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   # Plant backbone
   annotate("rect", xmin = 1, xmax = 9, ymin = 5.5, ymax = 6.5, fill = "#8e44ad", color = "black") +
   annotate("text", x = 5, y = 6, label = "Plant Network: Ethernet/IP, PROFINET (100Mbps-1Gbps)",
-           color = "white", fontface = "bold", size = 3.5) +
+           color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   # Control level devices
   annotate("rect", xmin = 1.5, xmax = 3, ymin = 4, ymax = 5, fill = "#3498db", color = "black") +
-  annotate("text", x = 2.25, y = 4.5, label = "PLC", color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 2.25, y = 4.5, label = "PLC", color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
 
   annotate("rect", xmin = 4, xmax = 6, ymin = 4, ymax = 5, fill = "#3498db", color = "black") +
-  annotate("text", x = 5, y = 4.5, label = "HMI/SCADA", color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 5, y = 4.5, label = "HMI/SCADA", color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
 
   annotate("rect", xmin = 7, xmax = 8.5, ymin = 4, ymax = 5, fill = "#3498db", color = "black") +
   annotate("text", x = 7.75, y = 4.5, label = "Robot\nController", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Device level bus
   annotate("rect", xmin = 1, xmax = 9, ymin = 2.5, ymax = 3.3, fill = "#27ae60", color = "black") +
   annotate("text", x = 5, y = 2.9, label = "Device Network: DeviceNet, PROFIBUS, IO-Link, AS-i",
-           color = "white", fontface = "bold", size = 3.5) +
+           color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   # Field devices
   annotate("rect", xmin = 1.2, xmax = 2.2, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
-  annotate("text", x = 1.7, y = 1.5, label = "VFD", color = "white", fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.7, y = 1.5, label = "VFD", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   annotate("rect", xmin = 2.8, xmax = 3.8, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
-  annotate("text", x = 3.3, y = 1.5, label = "I/O", color = "white", fontface = "bold", size = 3.5) +
+  annotate("text", x = 3.3, y = 1.5, label = "I/O", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   annotate("rect", xmin = 4.4, xmax = 5.4, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
-  annotate("text", x = 4.9, y = 1.5, label = "Sensors", color = "white", fontface = "bold", size = 3) +
+  annotate("text", x = 4.9, y = 1.5, label = "Sensors", color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
 
   annotate("rect", xmin = 6, xmax = 7, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
   annotate("text", x = 6.5, y = 1.5, label = "Valve\nBank", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 7.6, xmax = 8.6, ymin = 1, ymax = 2, fill = "#f39c12", color = "black") +
   annotate("text", x = 8.1, y = 1.5, label = "Safety\nI/O", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Vertical connections
   annotate("segment", x = 5, xend = 5, y = 7, yend = 6.5, size = 1) +
@@ -1033,7 +1034,7 @@ ggplot() +
        subtitle = "Hierarchical network structure from enterprise to field level") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -1107,40 +1108,40 @@ ggplot() +
   # Header bar
   annotate("rect", xmin = 1, xmax = 9, ymin = 6.2, ymax = 7, fill = "#3498db") +
   annotate("text", x = 5, y = 6.6, label = "PRODUCTION LINE 1 - OVERVIEW",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
 
   # Navigation buttons
   annotate("rect", xmin = 1.2, xmax = 2.2, ymin = 5.5, ymax = 6, fill = "#27ae60") +
-  annotate("text", x = 1.7, y = 5.75, label = "Overview", color = "white", size = 2.5) +
+  annotate("text", x = 1.7, y = 5.75, label = "Overview", color = "white", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = 2.4, xmax = 3.4, ymin = 5.5, ymax = 6, fill = "#95a5a6") +
-  annotate("text", x = 2.9, y = 5.75, label = "Alarms", color = "white", size = 2.5) +
+  annotate("text", x = 2.9, y = 5.75, label = "Alarms", color = "white", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = 3.6, xmax = 4.6, ymin = 5.5, ymax = 6, fill = "#95a5a6") +
-  annotate("text", x = 4.1, y = 5.75, label = "Trends", color = "white", size = 2.5) +
+  annotate("text", x = 4.1, y = 5.75, label = "Trends", color = "white", size = 2.5 * diagram_text_scale) +
   annotate("rect", xmin = 4.8, xmax = 5.8, ymin = 5.5, ymax = 6, fill = "#95a5a6") +
-  annotate("text", x = 5.3, y = 5.75, label = "Settings", color = "white", size = 2.5) +
+  annotate("text", x = 5.3, y = 5.75, label = "Settings", color = "white", size = 2.5 * diagram_text_scale) +
 
   # Process graphic - Tank
   annotate("rect", xmin = 1.5, xmax = 3, ymin = 2.5, ymax = 5, fill = "#bdc3c7", color = "black") +
   annotate("rect", xmin = 1.6, xmax = 2.9, ymin = 2.6, ymax = 4.2, fill = "#3498db", alpha = 0.7) +
-  annotate("text", x = 2.25, y = 4.7, label = "TANK 1", fontface = "bold", size = 3) +
-  annotate("text", x = 2.25, y = 3.4, label = "75%", color = "white", fontface = "bold", size = 4) +
+  annotate("text", x = 2.25, y = 4.7, label = "TANK 1", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 2.25, y = 3.4, label = "75%", color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
 
   # Pump symbol
   annotate("point", x = 4, y = 3, size = 12, shape = 21, fill = "#27ae60", color = "black") +
-  annotate("text", x = 4, y = 3, label = "P1", fontface = "bold", size = 3) +
-  annotate("text", x = 4, y = 2.4, label = "RUNNING", color = "#27ae60", size = 2.5) +
+  annotate("text", x = 4, y = 3, label = "P1", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 4, y = 2.4, label = "RUNNING", color = "#27ae60", size = 2.5 * diagram_text_scale) +
 
   # Flow indicator
   annotate("rect", xmin = 5.2, xmax = 6.5, ymin = 2.7, ymax = 3.6, fill = "white", color = "black") +
-  annotate("text", x = 5.85, y = 3.35, label = "FLOW", size = 2.5) +
-  annotate("text", x = 5.85, y = 3, label = "125.5", fontface = "bold", size = 4, color = "#2c3e50") +
-  annotate("text", x = 5.85, y = 2.75, label = "GPM", size = 2.5) +
+  annotate("text", x = 5.85, y = 3.35, label = "FLOW", size = 2.5 * diagram_text_scale) +
+  annotate("text", x = 5.85, y = 3, label = "125.5", fontface = "bold", size = 4 * diagram_text_scale, color = "#2c3e50") +
+  annotate("text", x = 5.85, y = 2.75, label = "GPM", size = 2.5 * diagram_text_scale) +
 
   # Temperature indicator
   annotate("rect", xmin = 7, xmax = 8.3, ymin = 2.7, ymax = 3.6, fill = "white", color = "black") +
-  annotate("text", x = 7.65, y = 3.35, label = "TEMP", size = 2.5) +
-  annotate("text", x = 7.65, y = 3, label = "185.2", fontface = "bold", size = 4, color = "#e74c3c") +
-  annotate("text", x = 7.65, y = 2.75, label = "°F", size = 2.5) +
+  annotate("text", x = 7.65, y = 3.35, label = "TEMP", size = 2.5 * diagram_text_scale) +
+  annotate("text", x = 7.65, y = 3, label = "185.2", fontface = "bold", size = 4 * diagram_text_scale, color = "#e74c3c") +
+  annotate("text", x = 7.65, y = 2.75, label = "°F", size = 2.5 * diagram_text_scale) +
 
   # Pipes
   annotate("segment", x = 3, xend = 3.5, y = 3, yend = 3, size = 3, color = "#3498db") +
@@ -1150,23 +1151,23 @@ ggplot() +
   # Status bar
   annotate("rect", xmin = 1, xmax = 9, ymin = 1, ymax = 1.8, fill = "#2c3e50") +
   annotate("text", x = 1.5, y = 1.4, label = "Status: AUTO", color = "#27ae60",
-           hjust = 0, size = 3, fontface = "bold") +
+           hjust = 0, size = 3 * diagram_text_scale, fontface = "bold") +
   annotate("text", x = 4.5, y = 1.4, label = "Active Alarms: 0", color = "#27ae60",
-           hjust = 0, size = 3) +
-  annotate("text", x = 7.5, y = 1.4, label = "14:35:22", color = "white", size = 3) +
+           hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 7.5, y = 1.4, label = "14:35:22", color = "white", size = 3 * diagram_text_scale) +
 
   # Control buttons
   annotate("rect", xmin = 7, xmax = 8.5, ymin = 4.5, ymax = 5.2, fill = "#27ae60", color = "black") +
-  annotate("text", x = 7.75, y = 4.85, label = "START", color = "white", fontface = "bold", size = 3) +
+  annotate("text", x = 7.75, y = 4.85, label = "START", color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   annotate("rect", xmin = 7, xmax = 8.5, ymin = 3.8, ymax = 4.4, fill = "#e74c3c", color = "black") +
-  annotate("text", x = 7.75, y = 4.1, label = "STOP", color = "white", fontface = "bold", size = 3) +
+  annotate("text", x = 7.75, y = 4.1, label = "STOP", color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
 
   coord_cartesian(xlim = c(0.5, 9.5), ylim = c(0.5, 7.5)) +
   labs(title = "HMI Screen Example",
        subtitle = "Typical operator interface showing process status and controls") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -1241,35 +1242,35 @@ Safety is paramount in automated systems. Safety systems protect personnel and e
 ggplot() +
   # Safety PLC
   annotate("rect", xmin = 4, xmax = 6, ymin = 3, ymax = 5, fill = "#f1c40f", color = "black", size = 1.5) +
-  annotate("text", x = 5, y = 4.5, label = "SAFETY", fontface = "bold", size = 4) +
-  annotate("text", x = 5, y = 4, label = "PLC", fontface = "bold", size = 4) +
-  annotate("text", x = 5, y = 3.4, label = "(SIL 3 / PLe)", size = 3) +
+  annotate("text", x = 5, y = 4.5, label = "SAFETY", fontface = "bold", size = 4 * diagram_text_scale) +
+  annotate("text", x = 5, y = 4, label = "PLC", fontface = "bold", size = 4 * diagram_text_scale) +
+  annotate("text", x = 5, y = 3.4, label = "(SIL 3 / PLe)", size = 3 * diagram_text_scale) +
 
   # Safety inputs
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 4.5, ymax = 5.5, fill = "#e74c3c", color = "black") +
-  annotate("text", x = 1.5, y = 5, label = "E-Stop", color = "white", fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.5, y = 5, label = "E-Stop", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 3.3, ymax = 4.3, fill = "#e74c3c", color = "black") +
-  annotate("text", x = 1.5, y = 3.8, label = "Light Curtain", color = "white", fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.5, y = 3.8, label = "Light Curtain", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 2.1, ymax = 3.1, fill = "#e74c3c", color = "black") +
-  annotate("text", x = 1.5, y = 2.6, label = "Safety Gate", color = "white", fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.5, y = 2.6, label = "Safety Gate", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 0.9, ymax = 1.9, fill = "#e74c3c", color = "black") +
-  annotate("text", x = 1.5, y = 1.4, label = "Two-Hand Ctrl", color = "white", fontface = "bold", size = 3.5) +
+  annotate("text", x = 1.5, y = 1.4, label = "Two-Hand Ctrl", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
 
   # Safety outputs
   annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 4.5, ymax = 5.5, fill = "#27ae60", color = "black") +
   annotate("text", x = 8.5, y = 5, label = "Safety Relay\n(Motor)", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 3.3, ymax = 4.3, fill = "#27ae60", color = "black") +
   annotate("text", x = 8.5, y = 3.8, label = "Safety Valve\n(Pneumatic)", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 2.1, ymax = 3.1, fill = "#27ae60", color = "black") +
   annotate("text", x = 8.5, y = 2.6, label = "Safe Torque Off\n(Drive)", color = "white",
-           fontface = "bold", size = 3, lineheight = 0.9) +
+           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Connections
   annotate("segment", x = 2.5, xend = 4, y = 5, yend = 4.5, size = 1,
@@ -1290,18 +1291,18 @@ ggplot() +
 
   # Standard PLC communication
   annotate("rect", xmin = 4, xmax = 6, ymin = 0.5, ymax = 2, fill = "#3498db", color = "black") +
-  annotate("text", x = 5, y = 1.5, label = "Standard", fontface = "bold", size = 3.5, color = "white") +
-  annotate("text", x = 5, y = 1, label = "PLC", fontface = "bold", size = 3.5, color = "white") +
+  annotate("text", x = 5, y = 1.5, label = "Standard", fontface = "bold", size = 3.5 * diagram_text_scale, color = "white") +
+  annotate("text", x = 5, y = 1, label = "PLC", fontface = "bold", size = 3.5 * diagram_text_scale, color = "white") +
   annotate("segment", x = 5, xend = 5, y = 2, yend = 3, size = 1, linetype = "dashed",
            arrow = arrow(length = unit(0.15, "cm"), ends = "both")) +
-  annotate("text", x = 5.7, y = 2.5, label = "Status\nExchange", size = 2.5, lineheight = 0.9) +
+  annotate("text", x = 5.7, y = 2.5, label = "Status\nExchange", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   coord_cartesian(xlim = c(0, 10), ylim = c(0, 6)) +
   labs(title = "Safety System Architecture",
        subtitle = "Dedicated safety controller with safety-rated inputs and outputs") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -1364,15 +1365,15 @@ i4_tech <- data.frame(
 
 ggplot(i4_tech, aes(x = x, y = y)) +
   geom_tile(aes(fill = Technology), width = 0.9, height = 0.8, color = "white", linewidth = 1.5) +
-  geom_text(aes(label = Technology), fontface = "bold", size = 3.5, color = "white", vjust = -0.5) +
-  geom_text(aes(label = Description), size = 2.8, color = "white", vjust = 1.5, lineheight = 0.9) +
+  geom_text(aes(label = Technology), fontface = "bold", size = 3.5 * diagram_text_scale, color = "white", vjust = -0.5) +
+  geom_text(aes(label = Description), size = 2.8 * diagram_text_scale, color = "white", vjust = 1.5, lineheight = 0.9) +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12",
                                "#9b59b6", "#1abc9c", "#e67e22", "#34495e"), guide = "none") +
   labs(title = "Industry 4.0 Key Technologies",
        subtitle = "Technologies enabling the smart factory") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -1460,12 +1461,12 @@ ggplot(vib_data, aes(x = Day, y = Vibration)) +
   annotate("rect", xmin = warning_day, xmax = alarm_day, ymin = 0, ymax = 8,
            fill = "orange", alpha = 0.1) +
   annotate("text", x = (warning_day + alarm_day)/2, y = 7.5,
-           label = "Maintenance\nWindow", fontface = "bold", size = 3) +
+           label = "Maintenance\nWindow", fontface = "bold", size = 3 * diagram_text_scale) +
   labs(title = "Predictive Maintenance: Bearing Vibration Monitoring",
        subtitle = "IIoT-enabled condition monitoring detects degradation before failure",
        x = "Day", y = "Vibration (mm/s RMS)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ---

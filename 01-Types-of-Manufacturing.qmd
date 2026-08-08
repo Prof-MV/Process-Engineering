@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Types of Manufacturing Processes
 
 ```{r setup-01, include=FALSE}
@@ -39,14 +49,14 @@ process_categories <- data.frame(
 
 ggplot(process_categories, aes(x = x_pos, y = 1)) +
   geom_tile(aes(fill = Category), width = 0.9, height = 0.6, color = "white", linewidth = 2) +
-  geom_text(aes(label = Category), color = "white", fontface = "bold", size = 4) +
+  geom_text(aes(label = Category), color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   scale_fill_manual(values = c("#E74C3C", "#3498DB", "#2ECC71", "#9B59B6", "#F39C12", "#1ABC9C", "#34495E")) +
   labs(title = "Seven Main Categories of Manufacturing Processes",
        subtitle = "Each category contains multiple specific processes for different applications") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-    plot.subtitle = element_text(hjust = 0.5, size = 11),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale),
     legend.position = "none"
   )
 ```
@@ -96,7 +106,7 @@ selection_data <- data.frame(
 
 ggplot(selection_data, aes(x = Volume, y = Complexity, color = Category)) +
   geom_point(size = 6, alpha = 0.8) +
-  geom_text(aes(label = Process), vjust = -1, size = 3, fontface = "bold") +
+  geom_text(aes(label = Process), vjust = -1, size = 3 * diagram_text_scale, fontface = "bold") +
   scale_x_continuous(limits = c(0, 6), breaks = 1:5,
                      labels = c("Prototype\n(1-10)", "Low\n(10-1K)", "Medium\n(1K-10K)",
                                "High\n(10K-100K)", "Mass\n(100K+)")) +
@@ -109,8 +119,8 @@ ggplot(selection_data, aes(x = Volume, y = Complexity, color = Category)) +
        subtitle = "Choose processes based on volume requirements and part complexity") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 11),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale),
     axis.title = element_text(face = "bold"),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
@@ -325,7 +335,10 @@ embed_youtube("RMjtmsr3CqA", "Injection Molding Process")
 
 **Examples:** Automotive dashboards, phone cases, medical devices, food containers, toys
 
-```{r injection-molding-cost, echo=TRUE}
+Live cell — try different volumes, mold cost, or cycle time.
+
+```{webr-r}
+#| label: injection-molding-cost
 # Injection Molding Cost Analysis Example
 # Comparing costs at different production volumes
 
@@ -427,13 +440,13 @@ force_data <- data.frame(
 
 ggplot(force_data, aes(x = x, y = 1)) +
   geom_tile(aes(fill = Type), width = 0.8, height = 0.5, color = "black") +
-  geom_text(aes(label = Type), y = 1.1, fontface = "bold", size = 4) +
-  geom_text(aes(label = Process), y = 0.9, size = 3, color = "gray30") +
+  geom_text(aes(label = Type), y = 1.1, fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(label = Process), y = 0.9, size = 3 * diagram_text_scale, color = "gray30") +
   scale_fill_manual(values = c("#E74C3C", "#F39C12", "#3498DB", "#2ECC71")) +
   labs(title = "Forming Process Classification by Primary Force Type") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     legend.position = "none"
   )
 ```

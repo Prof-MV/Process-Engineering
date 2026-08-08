@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Machine Guarding and Functional Safety
 ```{r setup-06, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
@@ -54,23 +64,23 @@ ggplot(hierarchy_data, aes(x = 0, y = y)) +
   # Pyramid levels
   geom_tile(aes(width = width, height = 0.9, fill = level), color = "white", linewidth = 2) +
   # Level names
-  geom_text(aes(label = level), fontface = "bold", color = "white", size = 5) +
+  geom_text(aes(label = level), fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
   # Descriptions on the right
-  geom_text(aes(x = 3.5, label = description), hjust = 0, size = 3.5, color = "#2C3E50") +
+  geom_text(aes(x = 3.5, label = description), hjust = 0, size = 3.5 * diagram_text_scale, color = "#2C3E50") +
   # Effectiveness arrow
   annotate("segment", x = -4, xend = -4, y = 0.5, yend = 5.5,
            arrow = arrow(length = unit(0.4, "cm"), ends = "last"),
            color = "#2C3E50", size = 1.5) +
   annotate("text", x = -4.5, y = 3, label = "More\nEffective",
-           angle = 90, vjust = 0, fontface = "bold", size = 4) +
+           angle = 90, vjust = 0, fontface = "bold", size = 4 * diagram_text_scale) +
   scale_fill_manual(values = c("Elimination" = "#27AE60", "Substitution" = "#2ECC71",
                                "Engineering Controls" = "#3498DB",
                                "Administrative Controls" = "#F39C12",
                                "PPE" = "#E74C3C")) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   labs(title = "The Hierarchy of Controls",
        subtitle = "Always start at the top and work down") +
   xlim(-5.5, 7)
@@ -157,9 +167,9 @@ ggplot(guard_long, aes(x = type, y = value, fill = metric)) +
        x = "Guard Type", y = "Rating") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
-    axis.text.x = element_text(angle = 20, hjust = 1, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    axis.text.x = element_text(angle = 20, hjust = 1, size = 10 * diagram_text_scale),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
   )
@@ -198,35 +208,35 @@ ggplot() +
   annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 4,
            fill = "#95A5A6", color = "black", size = 1) +
   annotate("text", x = 5, y = 2.5, label = "MACHINE\n(Hazard Zone)",
-           fontface = "bold", size = 4) +
+           fontface = "bold", size = 4 * diagram_text_scale) +
   # Guard door - closed position
   annotate("rect", xmin = 2.8, xmax = 3, ymin = 1.5, ymax = 3.5,
            fill = "#F39C12", color = "black", size = 1) +
-  annotate("text", x = 1.8, y = 2.5, label = "Guard\nDoor", size = 3) +
+  annotate("text", x = 1.8, y = 2.5, label = "Guard\nDoor", size = 3 * diagram_text_scale) +
   # Interlock switch
   annotate("point", x = 2.9, y = 3.3, size = 4, color = "#E74C3C") +
-  annotate("text", x = 2.2, y = 3.5, label = "Interlock\nSwitch", size = 2.5) +
+  annotate("text", x = 2.2, y = 3.5, label = "Interlock\nSwitch", size = 2.5 * diagram_text_scale) +
   # Safety controller
   annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 0.5, ymax = 1.5,
            fill = "#2ECC71", color = "black") +
-  annotate("text", x = 1, y = 1, label = "Safety\nPLC", size = 3, fontface = "bold") +
+  annotate("text", x = 1, y = 1, label = "Safety\nPLC", size = 3 * diagram_text_scale, fontface = "bold") +
   # Connection lines
   annotate("segment", x = 2.9, xend = 1.5, y = 3.3, yend = 1.5,
            linetype = "dashed", color = "#E74C3C", size = 1) +
   annotate("segment", x = 1.5, xend = 3, y = 1, yend = 1,
            arrow = arrow(length = unit(0.2, "cm")), color = "#2ECC71", size = 1) +
   # Labels
-  annotate("text", x = 2.25, y = 0.7, label = "Stop Signal", size = 3, color = "#2ECC71") +
+  annotate("text", x = 2.25, y = 0.7, label = "Stop Signal", size = 3 * diagram_text_scale, color = "#2ECC71") +
   # Status indicators
   annotate("rect", xmin = 8, xmax = 10, ymin = 3, ymax = 4, fill = "#D5F5E3", color = "black") +
-  annotate("text", x = 9, y = 3.5, label = "Door Closed\n= Machine Runs", size = 3) +
+  annotate("text", x = 9, y = 3.5, label = "Door Closed\n= Machine Runs", size = 3 * diagram_text_scale) +
   annotate("rect", xmin = 8, xmax = 10, ymin = 1.5, ymax = 2.5, fill = "#FADBD8", color = "black") +
-  annotate("text", x = 9, y = 2, label = "Door Open\n= Machine Stops", size = 3) +
+  annotate("text", x = 9, y = 2, label = "Door Open\n= Machine Stops", size = 3 * diagram_text_scale) +
   theme_void() +
   labs(title = "Interlocked Guard System",
        subtitle = "Opening the guard door breaks the safety circuit") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ### Stop Categories
@@ -269,9 +279,9 @@ loto_steps <- data.frame(
 ggplot(loto_steps, aes(x = x, y = 1)) +
   # Step circles
   geom_point(size = 18, color = "#3498DB") +
-  geom_text(aes(label = step), color = "white", fontface = "bold", size = 6) +
+  geom_text(aes(label = step), color = "white", fontface = "bold", size = 6 * diagram_text_scale) +
   # Action labels
-  geom_text(aes(y = 0.5, label = action), size = 3, lineheight = 0.8) +
+  geom_text(aes(y = 0.5, label = action), size = 3 * diagram_text_scale, lineheight = 0.8) +
   # Arrows
   geom_segment(data = loto_steps[1:4,],
                aes(x = x + 0.4, xend = x + 0.6, y = 1, yend = 1),
@@ -281,12 +291,12 @@ ggplot(loto_steps, aes(x = x, y = 1)) +
            curvature = -0.3, arrow = arrow(length = unit(0.2, "cm")),
            color = "#27AE60", size = 1, linetype = "dashed") +
   annotate("text", x = 3, y = 1.85, label = "To restart: Reverse sequence",
-           color = "#27AE60", fontface = "italic", size = 3) +
+           color = "#27AE60", fontface = "italic", size = 3 * diagram_text_scale) +
   theme_void() +
   labs(title = "Trapped Key System: Ensuring Safe Access",
        subtitle = "Machine cannot restart until key is returned") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(0, 2.2)
 ```
 
@@ -344,8 +354,8 @@ ggplot(sensing_long, aes(x = device, y = value, fill = metric)) +
        x = "Device Type", y = "Rating") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    axis.text.x = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    axis.text.x = element_text(size = 10 * diagram_text_scale),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
   )
@@ -360,11 +370,11 @@ ggplot() +
   # Transmitter
   annotate("rect", xmin = 0, xmax = 0.5, ymin = 0, ymax = 5,
            fill = "#3498DB", color = "black") +
-  annotate("text", x = 0.25, y = 5.3, label = "Transmitter\n(TX)", size = 3, fontface = "bold") +
+  annotate("text", x = 0.25, y = 5.3, label = "Transmitter\n(TX)", size = 3 * diagram_text_scale, fontface = "bold") +
   # Receiver
   annotate("rect", xmin = 4.5, xmax = 5, ymin = 0, ymax = 5,
            fill = "#E74C3C", color = "black") +
-  annotate("text", x = 4.75, y = 5.3, label = "Receiver\n(RX)", size = 3, fontface = "bold") +
+  annotate("text", x = 4.75, y = 5.3, label = "Receiver\n(RX)", size = 3 * diagram_text_scale, fontface = "bold") +
   # Beam lines
   annotate("segment", x = rep(0.5, 10), xend = rep(4.5, 10),
            y = seq(0.25, 4.75, 0.5), yend = seq(0.25, 4.75, 0.5),
@@ -372,31 +382,31 @@ ggplot() +
   # Machine/hazard behind
   annotate("rect", xmin = 5.5, xmax = 8, ymin = 0.5, ymax = 4.5,
            fill = "#95A5A6", color = "black") +
-  annotate("text", x = 6.75, y = 2.5, label = "HAZARD\nZONE", fontface = "bold", size = 4) +
+  annotate("text", x = 6.75, y = 2.5, label = "HAZARD\nZONE", fontface = "bold", size = 4 * diagram_text_scale) +
   # Hand breaking beam
   annotate("point", x = 2.5, y = 2.5, size = 15, color = "#E67E22") +
-  annotate("text", x = 2.5, y = 2.5, label = "Hand", size = 3, color = "white") +
+  annotate("text", x = 2.5, y = 2.5, label = "Hand", size = 3 * diagram_text_scale, color = "white") +
   # Broken beam indication
   annotate("segment", x = 0.5, xend = 2.2, y = 2.5, yend = 2.5,
            color = "#E74C3C", size = 1.5) +
   annotate("text", x = 1.35, y = 2.8, label = "Beam\nBroken!", color = "#E74C3C",
-           size = 3, fontface = "bold") +
+           size = 3 * diagram_text_scale, fontface = "bold") +
   # Safety controller
   annotate("rect", xmin = 6, xmax = 7.5, ymin = -1.2, ymax = -0.3,
            fill = "#2ECC71", color = "black") +
-  annotate("text", x = 6.75, y = -0.75, label = "Safety\nController", size = 3) +
+  annotate("text", x = 6.75, y = -0.75, label = "Safety\nController", size = 3 * diagram_text_scale) +
   # Connections
   annotate("segment", x = 4.75, xend = 6.75, y = 0, yend = -0.3,
            linetype = "dashed", color = "#2C3E50") +
   # Resolution indicator
   annotate("segment", x = -0.5, xend = -0.5, y = 0.25, yend = 0.75,
            arrow = arrow(length = unit(0.1, "cm"), ends = "both"), color = "#2C3E50") +
-  annotate("text", x = -1, y = 0.5, label = "Resolution\n(14mm typical)", size = 2.5) +
+  annotate("text", x = -1, y = 0.5, label = "Resolution\n(14mm typical)", size = 2.5 * diagram_text_scale) +
   theme_void() +
   labs(title = "Light Curtain: Detection Through Beam Interruption",
        subtitle = "Any object larger than the resolution will trigger a stop") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-1.5, 8.5) + ylim(-1.5, 6)
 ```
 
@@ -448,20 +458,20 @@ ggplot() +
            fill = "#E74C3C", alpha = 0.4) +
   # Scanner unit
   annotate("point", x = 0, y = 0, size = 8, color = "#2C3E50") +
-  annotate("text", x = 0, y = -0.5, label = "Scanner", fontface = "bold", size = 3) +
+  annotate("text", x = 0, y = -0.5, label = "Scanner", fontface = "bold", size = 3 * diagram_text_scale) +
   # Zone labels
   annotate("text", x = 2.5, y = 2.5, label = "WARNING ZONE\n(Machine slows/alarms)",
-           color = "#F39C12", fontface = "bold", size = 3.5) +
+           color = "#F39C12", fontface = "bold", size = 3.5 * diagram_text_scale) +
   annotate("text", x = 1.2, y = 1.2, label = "SAFETY ZONE\n(Machine stops)",
-           color = "#E74C3C", fontface = "bold", size = 3.5) +
+           color = "#E74C3C", fontface = "bold", size = 3.5 * diagram_text_scale) +
   # Machine
   annotate("rect", xmin = -2, xmax = 0, ymin = -2, ymax = 0,
            fill = "#95A5A6", color = "black") +
-  annotate("text", x = -1, y = -1, label = "Machine", fontface = "bold", size = 4, color = "white") +
+  annotate("text", x = -1, y = -1, label = "Machine", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
   # Person approaching
   annotate("point", x = 2.5, y = 0.5, size = 10, color = "#3498DB") +
-  annotate("text", x = 2.5, y = 0.5, label = "O", size = 5, color = "white") +
-  annotate("text", x = 2.5, y = -0.2, label = "Worker", size = 3) +
+  annotate("text", x = 2.5, y = 0.5, label = "O", size = 5 * diagram_text_scale, color = "white") +
+  annotate("text", x = 2.5, y = -0.2, label = "Worker", size = 3 * diagram_text_scale) +
   # Scan lines
   annotate("segment", x = 0, xend = 2.5, y = 0, yend = 2.5,
            linetype = "dotted", color = "#2C3E50", alpha = 0.5) +
@@ -473,8 +483,8 @@ ggplot() +
   coord_fixed() +
   labs(title = "Laser Area Scanner: Programmable Safety Zones",
        subtitle = "270° scanning field with configurable warning and safety zones") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-3, 4) + ylim(-2.5, 4)
 ```
 
@@ -510,19 +520,19 @@ ggplot() +
   annotate("rect", xmin = 0, xmax = 8, ymin = 0, ymax = 0.3,
            fill = "#7F8C8D", color = "black") +
   annotate("text", x = 4, y = 0.15, label = "Bottom plate (conductive)",
-           size = 3, color = "white") +
+           size = 3 * diagram_text_scale, color = "white") +
   annotate("rect", xmin = 0, xmax = 8, ymin = 0.3, ymax = 0.5,
            fill = "#2ECC71", color = "black") +
   annotate("text", x = 4, y = 0.4, label = "Spacer layer (normally open)",
-           size = 3, color = "white") +
+           size = 3 * diagram_text_scale, color = "white") +
   annotate("rect", xmin = 0, xmax = 8, ymin = 0.5, ymax = 0.8,
            fill = "#7F8C8D", color = "black") +
   annotate("text", x = 4, y = 0.65, label = "Top plate (conductive)",
-           size = 3, color = "white") +
+           size = 3 * diagram_text_scale, color = "white") +
   annotate("rect", xmin = 0, xmax = 8, ymin = 0.8, ymax = 1,
            fill = "#34495E", color = "black") +
   annotate("text", x = 4, y = 0.9, label = "Protective cover (rubber)",
-           size = 3, color = "white") +
+           size = 3 * diagram_text_scale, color = "white") +
   # Person standing
   annotate("point", x = 6, y = 1.5, size = 12, color = "#3498DB") +
   annotate("segment", x = 6, xend = 6, y = 1.3, yend = 1.0,
@@ -530,18 +540,18 @@ ggplot() +
   # Compression
   annotate("segment", x = 5.5, xend = 6.5, y = 1.1, yend = 1.1,
            arrow = arrow(length = unit(0.15, "cm"), ends = "both"), color = "#E74C3C") +
-  annotate("text", x = 6, y = 1.2, label = "Pressure", size = 3, color = "#E74C3C") +
+  annotate("text", x = 6, y = 1.2, label = "Pressure", size = 3 * diagram_text_scale, color = "#E74C3C") +
   # Connection to controller
   annotate("rect", xmin = -1.5, xmax = -0.5, ymin = 0.2, ymax = 0.6,
            fill = "#2ECC71", color = "black") +
-  annotate("text", x = -1, y = 0.4, label = "Safety\nRelay", size = 2.5) +
+  annotate("text", x = -1, y = 0.4, label = "Safety\nRelay", size = 2.5 * diagram_text_scale) +
   annotate("segment", x = 0, xend = -0.5, y = 0.4, yend = 0.4,
            linetype = "dashed", color = "#2C3E50") +
   theme_void() +
   labs(title = "Pressure-Sensitive Safety Mat",
        subtitle = "When stepped on, conductive plates make contact and complete the circuit") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(-0.3, 2)
 ```
 
@@ -582,13 +592,13 @@ ggplot() +
   # Buttons
   annotate("point", x = 3, y = 1, size = 15, color = "#E74C3C") +
   annotate("point", x = 5, y = 1, size = 15, color = "#E74C3C") +
-  annotate("text", x = 3, y = 1, label = "L", color = "white", fontface = "bold", size = 5) +
-  annotate("text", x = 5, y = 1, label = "R", color = "white", fontface = "bold", size = 5) +
+  annotate("text", x = 3, y = 1, label = "L", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 5, y = 1, label = "R", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
   # Hands
   annotate("point", x = 3, y = 2.5, size = 12, color = "#E67E22") +
   annotate("point", x = 5, y = 2.5, size = 12, color = "#E67E22") +
-  annotate("text", x = 3, y = 2.5, label = "L", size = 4, color = "white") +
-  annotate("text", x = 5, y = 2.5, label = "R", size = 4, color = "white") +
+  annotate("text", x = 3, y = 2.5, label = "L", size = 4 * diagram_text_scale, color = "white") +
+  annotate("text", x = 5, y = 2.5, label = "R", size = 4 * diagram_text_scale, color = "white") +
   # Arrows showing press
   annotate("segment", x = 3, xend = 3, y = 2.2, yend = 1.5,
            arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
@@ -597,24 +607,24 @@ ggplot() +
   # Machine
   annotate("rect", xmin = 1, xmax = 7, ymin = -2.5, ymax = -0.5,
            fill = "#95A5A6", color = "black") +
-  annotate("text", x = 4, y = -1.5, label = "PRESS", fontface = "bold", size = 5) +
+  annotate("text", x = 4, y = -1.5, label = "PRESS", fontface = "bold", size = 5 * diagram_text_scale) +
   # Time requirement
   annotate("rect", xmin = 0, xmax = 2.5, ymin = 2.5, ymax = 4,
            fill = "#D5F5E3", color = "#27AE60") +
   annotate("text", x = 1.25, y = 3.25,
            label = "Both buttons\npressed within\n0.5 seconds",
-           size = 3, lineheight = 0.9) +
+           size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Safety note
   annotate("rect", xmin = 5.5, xmax = 8, ymin = 2.5, ymax = 4,
            fill = "#FADBD8", color = "#E74C3C") +
   annotate("text", x = 6.75, y = 3.25,
            label = "Anti-tie-down\nprevents\nbypassing",
-           size = 3, lineheight = 0.9) +
+           size = 3 * diagram_text_scale, lineheight = 0.9) +
   theme_void() +
   labs(title = "Two-Hand Control: Both Hands Must Be on Buttons",
        subtitle = "Ensures operator's hands are away from the danger zone during machine cycle") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(-3, 4.5)
 ```
 
@@ -652,29 +662,29 @@ ggplot() +
   annotate("rect", xmin = 0, xmax = 2.5, ymin = 0, ymax = 3,
            fill = "#FADBD8", color = "#E74C3C", size = 1) +
   annotate("text", x = 1.25, y = 2.5, label = "Position 1\nRELEASED",
-           fontface = "bold", size = 3.5) +
+           fontface = "bold", size = 3.5 * diagram_text_scale) +
   annotate("text", x = 1.25, y = 1.5, label = "Robot\nSTOPS",
-           size = 4, color = "#E74C3C", fontface = "bold") +
+           size = 4 * diagram_text_scale, color = "#E74C3C", fontface = "bold") +
   annotate("text", x = 1.25, y = 0.5, label = "Panic response:\nlet go = stop",
-           size = 2.5, fontface = "italic") +
+           size = 2.5 * diagram_text_scale, fontface = "italic") +
   # Position 2 - Middle
   annotate("rect", xmin = 3, xmax = 5.5, ymin = 0, ymax = 3,
            fill = "#D5F5E3", color = "#27AE60", size = 1) +
   annotate("text", x = 4.25, y = 2.5, label = "Position 2\nMIDDLE",
-           fontface = "bold", size = 3.5) +
+           fontface = "bold", size = 3.5 * diagram_text_scale) +
   annotate("text", x = 4.25, y = 1.5, label = "Robot\nENABLED",
-           size = 4, color = "#27AE60", fontface = "bold") +
+           size = 4 * diagram_text_scale, color = "#27AE60", fontface = "bold") +
   annotate("text", x = 4.25, y = 0.5, label = "Active hold:\ncontrolled operation",
-           size = 2.5, fontface = "italic") +
+           size = 2.5 * diagram_text_scale, fontface = "italic") +
   # Position 3 - Fully pressed
   annotate("rect", xmin = 6, xmax = 8.5, ymin = 0, ymax = 3,
            fill = "#FADBD8", color = "#E74C3C", size = 1) +
   annotate("text", x = 7.25, y = 2.5, label = "Position 3\nFULLY PRESSED",
-           fontface = "bold", size = 3.5) +
+           fontface = "bold", size = 3.5 * diagram_text_scale) +
   annotate("text", x = 7.25, y = 1.5, label = "Robot\nSTOPS",
-           size = 4, color = "#E74C3C", fontface = "bold") +
+           size = 4 * diagram_text_scale, color = "#E74C3C", fontface = "bold") +
   annotate("text", x = 7.25, y = 0.5, label = "Startle response:\nsqueeze = stop",
-           size = 2.5, fontface = "italic") +
+           size = 2.5 * diagram_text_scale, fontface = "italic") +
   # Arrows
   annotate("segment", x = 2.5, xend = 3, y = 1.5, yend = 1.5,
            arrow = arrow(length = unit(0.15, "cm"), ends = "both"), size = 1) +
@@ -683,8 +693,8 @@ ggplot() +
   theme_void() +
   labs(title = "Three-Position Enable Switch",
        subtitle = "Only the middle position allows robot motion") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(-0.5, 3.5)
 ```
 
@@ -712,40 +722,40 @@ ggplot() +
   annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 5,
            fill = "#ECF0F1", color = "black") +
   annotate("text", x = 2, y = 5.3, label = "TRADITIONAL ROBOT",
-           fontface = "bold", size = 4) +
+           fontface = "bold", size = 4 * diagram_text_scale) +
   # Cage
   annotate("rect", xmin = 0.3, xmax = 3.7, ymin = 0.3, ymax = 4.7,
            fill = NA, color = "#E74C3C", size = 1.5, linetype = "dashed") +
-  annotate("text", x = 2, y = 4.3, label = "Safety Cage", color = "#E74C3C", size = 3) +
+  annotate("text", x = 2, y = 4.3, label = "Safety Cage", color = "#E74C3C", size = 3 * diagram_text_scale) +
   # Robot
   annotate("point", x = 2, y = 2, size = 20, color = "#3498DB") +
-  annotate("text", x = 2, y = 2, label = "Robot", color = "white", size = 3) +
+  annotate("text", x = 2, y = 2, label = "Robot", color = "white", size = 3 * diagram_text_scale) +
   # Worker outside
   annotate("point", x = 0, y = 2.5, size = 10, color = "#27AE60") +
-  annotate("text", x = -0.5, y = 2.5, label = "Worker\n(Outside)", size = 2.5) +
+  annotate("text", x = -0.5, y = 2.5, label = "Worker\n(Outside)", size = 2.5 * diagram_text_scale) +
 
   # Collaborative Robot
   annotate("rect", xmin = 5.5, xmax = 9.5, ymin = 0, ymax = 5,
            fill = "#D5F5E3", color = "black") +
   annotate("text", x = 7.5, y = 5.3, label = "COLLABORATIVE ROBOT",
-           fontface = "bold", size = 4) +
+           fontface = "bold", size = 4 * diagram_text_scale) +
   # No cage - open workspace
   # Robot
   annotate("point", x = 7.5, y = 2.5, size = 20, color = "#2ECC71") +
-  annotate("text", x = 7.5, y = 2.5, label = "Cobot", color = "white", size = 3) +
+  annotate("text", x = 7.5, y = 2.5, label = "Cobot", color = "white", size = 3 * diagram_text_scale) +
   # Worker beside robot
   annotate("point", x = 6.3, y = 2.5, size = 10, color = "#3498DB") +
-  annotate("text", x = 5.8, y = 2.5, label = "Worker\n(Beside)", size = 2.5) +
+  annotate("text", x = 5.8, y = 2.5, label = "Worker\n(Beside)", size = 2.5 * diagram_text_scale) +
   # Force sensors indication
   annotate("segment", x = 7.5, xend = 6.5, y = 2.5, yend = 2.5,
            arrow = arrow(length = unit(0.1, "cm"), ends = "both"),
            color = "#F39C12", size = 1.5) +
-  annotate("text", x = 7, y = 3, label = "Force\nLimited", size = 2.5, color = "#F39C12") +
+  annotate("text", x = 7, y = 3, label = "Force\nLimited", size = 2.5 * diagram_text_scale, color = "#F39C12") +
   theme_void() +
   labs(title = "Traditional vs. Collaborative Robots",
        subtitle = "Cobots enable human-robot collaboration without physical barriers") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-1, 10)
 ```
 
@@ -859,41 +869,41 @@ ggplot() +
   # Light curtain
   annotate("rect", xmin = 0, xmax = 0.3, ymin = 0, ymax = 4,
            fill = "#F39C12", color = "black") +
-  annotate("text", x = 0.15, y = 4.3, label = "Light\nCurtain", size = 3) +
+  annotate("text", x = 0.15, y = 4.3, label = "Light\nCurtain", size = 3 * diagram_text_scale) +
   # Machine/hazard
   annotate("rect", xmin = 5.5, xmax = 8, ymin = 0.5, ymax = 3.5,
            fill = "#E74C3C", color = "black") +
   annotate("text", x = 6.75, y = 2, label = "HAZARD\nZONE",
-           fontface = "bold", size = 4, color = "white") +
+           fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
   # Safety distance arrow
   annotate("segment", x = 0.3, xend = 5.5, y = -0.5, yend = -0.5,
            arrow = arrow(length = unit(0.2, "cm"), ends = "both"),
            color = "#3498DB", size = 1.5) +
   annotate("text", x = 2.9, y = -1, label = "S = Safety Distance",
-           fontface = "bold", size = 4, color = "#3498DB") +
+           fontface = "bold", size = 4 * diagram_text_scale, color = "#3498DB") +
   # C - penetration depth
   annotate("segment", x = -0.5, xend = 0.3, y = 2, yend = 2,
            arrow = arrow(length = unit(0.15, "cm"), ends = "both"),
            color = "#9B59B6", size = 1) +
   annotate("text", x = -0.1, y = 2.5, label = "C",
-           fontface = "bold", size = 4, color = "#9B59B6") +
+           fontface = "bold", size = 4 * diagram_text_scale, color = "#9B59B6") +
   # Human approach
   annotate("point", x = -1.5, y = 2, size = 15, color = "#27AE60") +
-  annotate("text", x = -1.5, y = 2, label = "O", size = 5, color = "white") +
+  annotate("text", x = -1.5, y = 2, label = "O", size = 5 * diagram_text_scale, color = "white") +
   annotate("segment", x = -1, xend = 0, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm")), color = "#27AE60", size = 1) +
   annotate("text", x = -0.5, y = 1.5, label = "K (approach\nspeed)",
-           size = 3, color = "#27AE60") +
+           size = 3 * diagram_text_scale, color = "#27AE60") +
   # Formula box
   annotate("rect", xmin = 2, xmax = 5, ymin = 4.2, ymax = 5.2,
            fill = "#D6EAF8", color = "#3498DB") +
   annotate("text", x = 3.5, y = 4.7, label = "S = (K × T) + C",
-           fontface = "bold", size = 5) +
+           fontface = "bold", size = 5 * diagram_text_scale) +
   theme_void() +
   labs(title = "Safety Distance: Ensuring Time to Stop",
        subtitle = "The device must be far enough that the machine stops before the person reaches the hazard") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-2.5, 8.5) + ylim(-1.5, 5.5)
 ```
 
@@ -939,7 +949,10 @@ c_values %>%
 
 ### Example Calculation
 
-```{r safety-calc-example, echo=TRUE}
+Live cell — try different approach speed, response time, or resolution values.
+
+```{webr-r}
+#| label: safety-calc-example
 # Given parameters
 K <- 2000        # Approach speed (mm/s) - fast hand approach
 T_device <- 0.020  # Light curtain response time (20 ms = 0.020 s)
@@ -1001,7 +1014,7 @@ ggplot() +
            fill = "#F1C40F", color = "black", size = 2) +
   annotate("point", x = 5, y = 3, size = 40, color = "#E74C3C") +
   annotate("text", x = 5, y = 3, label = "STOP",
-           fontface = "bold", size = 6, color = "white") +
+           fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
   # Requirements callouts
   # Red mushroom head
   annotate("segment", x = 5.8, xend = 8, y = 3.5, yend = 4.5, color = "#2C3E50") +
@@ -1022,8 +1035,8 @@ ggplot() +
   theme_void() +
   labs(title = "Emergency Stop Button Design Requirements",
        subtitle = "IEC 60204-1 / NFPA 79 Standards") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ```{r estop-requirements, echo=FALSE}
@@ -1057,7 +1070,7 @@ ggplot() +
   # Conveyor representation
   annotate("rect", xmin = 0, xmax = 10, ymin = 0.8, ymax = 1.2,
            fill = "#95A5A6", color = "black") +
-  annotate("text", x = 5, y = 1, label = "CONVEYOR", size = 3, color = "white") +
+  annotate("text", x = 5, y = 1, label = "CONVEYOR", size = 3 * diagram_text_scale, color = "white") +
   # Pull cord
   annotate("segment", x = 0.5, xend = 9.5, y = 2, yend = 2,
            color = "#E74C3C", size = 2) +
@@ -1069,15 +1082,15 @@ ggplot() +
   # Pull indication
   annotate("segment", x = 5, xend = 5, y = 2, yend = 2.8,
            arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
-  annotate("text", x = 5, y = 3.1, label = "Pull from\nanywhere", size = 3) +
+  annotate("text", x = 5, y = 3.1, label = "Pull from\nanywhere", size = 3 * diagram_text_scale) +
   # Worker positions
   annotate("point", x = c(2, 5, 8), y = rep(0.3, 3), size = 8, color = "#3498DB") +
-  annotate("text", x = c(2, 5, 8), y = rep(-0.2, 3), label = "Worker", size = 2.5) +
+  annotate("text", x = c(2, 5, 8), y = rep(-0.2, 3), label = "Worker", size = 2.5 * diagram_text_scale) +
   theme_void() +
   labs(title = "E-Stop Pull Cord: Full-Length Coverage",
        subtitle = "Worker can trigger emergency stop from any position along the conveyor") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   ylim(-0.5, 3.5)
 ```
 
@@ -1164,11 +1177,11 @@ rel_data <- data.frame(
 
 ggplot(rel_data, aes(x = x, y = sil)) +
   geom_bar(stat = "identity", fill = rel_data$color, color = "black", width = 0.8) +
-  geom_text(aes(label = pl), vjust = -0.5, fontface = "bold", size = 4) +
+  geom_text(aes(label = pl), vjust = -0.5, fontface = "bold", size = 4 * diagram_text_scale) +
   geom_hline(yintercept = c(1, 2, 3), linetype = "dashed", color = "#7F8C8D") +
-  annotate("text", x = 5.5, y = 1, label = "SIL 1", hjust = 0, size = 3) +
-  annotate("text", x = 5.5, y = 2, label = "SIL 2", hjust = 0, size = 3) +
-  annotate("text", x = 5.5, y = 3, label = "SIL 3", hjust = 0, size = 3) +
+  annotate("text", x = 5.5, y = 1, label = "SIL 1", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 5.5, y = 2, label = "SIL 2", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 5.5, y = 3, label = "SIL 3", hjust = 0, size = 3 * diagram_text_scale) +
   scale_y_continuous(breaks = 0:3, limits = c(0, 3.5)) +
   scale_x_continuous(breaks = 1:5, labels = rel_data$pl) +
   labs(title = "Performance Level to SIL Equivalence",
@@ -1176,7 +1189,7 @@ ggplot(rel_data, aes(x = x, y = sil)) +
        y = "Approximate SIL Equivalent") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -1216,7 +1229,7 @@ ggplot(steps, aes(x = 3, y = y)) +
   # Step boxes
   geom_tile(width = 4, height = 0.8, fill = "#3498DB", color = "black") +
   geom_text(aes(label = paste0("Step ", step, ": ", label)),
-            color = "white", fontface = "bold", size = 4, lineheight = 0.8) +
+            color = "white", fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.8) +
   # Arrows
   geom_segment(data = steps[1:4,], aes(x = 3, xend = 3, y = y - 0.5, yend = y - 0.9),
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
@@ -1225,23 +1238,23 @@ ggplot(steps, aes(x = 3, y = y)) +
            curvature = 0.3, arrow = arrow(length = unit(0.2, "cm")),
            color = "#E74C3C", size = 1) +
   annotate("text", x = 6.2, y = 3, label = "Iterate until\nrisk is\nacceptable",
-           size = 3, color = "#E74C3C", hjust = 0, lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "#E74C3C", hjust = 0, lineheight = 0.9) +
   # Side descriptions
   annotate("text", x = 0.3, y = 5, label = "Machine function,\noperator tasks,\nenvironment",
-           size = 2.5, hjust = 1, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
   annotate("text", x = 0.3, y = 4, label = "All hazards\nthroughout\nlifecycle",
-           size = 2.5, hjust = 1, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
   annotate("text", x = 0.3, y = 3, label = "Severity ×\nProbability ×\nExposure",
-           size = 2.5, hjust = 1, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
   annotate("text", x = 0.3, y = 2, label = "Is risk\nacceptable?",
-           size = 2.5, hjust = 1, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
   annotate("text", x = 0.3, y = 1, label = "Apply hierarchy\nof controls",
-           size = 2.5, hjust = 1, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
   theme_void() +
   labs(title = "Risk Assessment Process",
        subtitle = "Systematic approach to identifying and reducing machine hazards") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(-0.5, 7)
 ```
 
@@ -1265,7 +1278,7 @@ risk_matrix$RiskNum <- c(1,1,2,2, 1,2,2,3, 2,2,3,3, 2,3,3,4)
 
 ggplot(risk_matrix, aes(x = Probability, y = Severity, fill = Risk)) +
   geom_tile(color = "white", linewidth = 1.5) +
-  geom_text(aes(label = Risk), fontface = "bold", size = 4) +
+  geom_text(aes(label = Risk), fontface = "bold", size = 4 * diagram_text_scale) +
   scale_fill_manual(values = c("Low" = "#27AE60", "Medium" = "#F39C12",
                                "High" = "#E74C3C", "Critical" = "#8E44AD")) +
   scale_x_discrete(limits = c("Remote", "Unlikely", "Possible", "Probable"),
@@ -1276,9 +1289,9 @@ ggplot(risk_matrix, aes(x = Probability, y = Severity, fill = Risk)) +
        y = "Severity of Harm") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     legend.position = "bottom",
-    axis.text = element_text(size = 10, face = "bold"),
+    axis.text = element_text(size = 10 * diagram_text_scale, face = "bold"),
     panel.grid = element_blank()
   )
 ```

@@ -49,24 +49,24 @@ ggplot() +
   # Traditional approach
   annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
   annotate("text", x = 2, y = 2.5, label = "REACTIVE APPROACH", fontface = "bold",
-           size = 4, color = "white") +
+           size = 4 * diagram_text_scale, color = "white") +
   annotate("text", x = 2, y = 1.5, label = "Detect → Fix → Repeat\n\nFind defects after\nthey occur",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # PFMEA approach
   annotate("rect", xmin = 5, xmax = 9, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
   annotate("text", x = 7, y = 2.5, label = "PFMEA APPROACH", fontface = "bold",
-           size = 4, color = "white") +
+           size = 4 * diagram_text_scale, color = "white") +
   annotate("text", x = 7, y = 1.5, label = "Predict → Prevent → Verify\n\nAnticipate failures\nbefore they occur",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Arrow
   annotate("segment", x = 4.2, xend = 4.8, y = 1.5, yend = 1.5,
            arrow = arrow(length = unit(0.3, "cm")), size = 2, color = "#2C3E50") +
-  annotate("text", x = 4.5, y = 2.2, label = "Shift from", size = 3) +
+  annotate("text", x = 4.5, y = 2.2, label = "Shift from", size = 3 * diagram_text_scale) +
   theme_void() +
   labs(title = "The PFMEA Mindset: Prevention Over Detection",
        subtitle = "Moving from finding defects to preventing them") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
 ```
 
 ### Brief History of FMEA
@@ -106,25 +106,25 @@ Two main types of FMEA are used in product development:
 ggplot() +
   # DFMEA box
   annotate("rect", xmin = 0, xmax = 4.5, ymin = 0, ymax = 5, fill = "#3498DB", alpha = 0.8) +
-  annotate("text", x = 2.25, y = 4.5, label = "DFMEA", fontface = "bold", size = 6, color = "white") +
-  annotate("text", x = 2.25, y = 4, label = "(Design FMEA)", size = 4, color = "white") +
+  annotate("text", x = 2.25, y = 4.5, label = "DFMEA", fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
+  annotate("text", x = 2.25, y = 4, label = "(Design FMEA)", size = 4 * diagram_text_scale, color = "white") +
   annotate("text", x = 2.25, y = 2.5,
            label = "Focus: Product Design\n\nAsks: 'What can go wrong\nwith the design?'\n\nOwner: Design Engineer\n\nTiming: During design phase",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # PFMEA box
   annotate("rect", xmin = 5.5, xmax = 10, ymin = 0, ymax = 5, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 7.75, y = 4.5, label = "PFMEA", fontface = "bold", size = 6, color = "white") +
-  annotate("text", x = 7.75, y = 4, label = "(Process FMEA)", size = 4, color = "white") +
+  annotate("text", x = 7.75, y = 4.5, label = "PFMEA", fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
+  annotate("text", x = 7.75, y = 4, label = "(Process FMEA)", size = 4 * diagram_text_scale, color = "white") +
   annotate("text", x = 7.75, y = 2.5,
            label = "Focus: Manufacturing Process\n\nAsks: 'What can go wrong\nduring production?'\n\nOwner: Process Engineer\n\nTiming: Before production starts",
-           size = 3, color = "white", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   # Connecting element
   annotate("segment", x = 4.5, xend = 5.5, y = 2.5, yend = 2.5,
            arrow = arrow(length = unit(0.2, "cm"), ends = "both"), size = 1.5, color = "#2C3E50") +
-  annotate("text", x = 5, y = 3, label = "Linked", size = 3, fontface = "italic") +
+  annotate("text", x = 5, y = 3, label = "Linked", size = 3 * diagram_text_scale, fontface = "italic") +
   theme_void() +
   labs(title = "Two Types of FMEA in Product Development") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ```{r dfmea-pfmea-table, echo=FALSE}
@@ -193,8 +193,8 @@ ggplot(benefits, aes(x = reorder(benefit, impact), y = impact, fill = category))
        x = "", y = "Improvement (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
   )
@@ -249,19 +249,19 @@ team <- data.frame(
 
 ggplot(team, aes(x = x, y = y)) +
   geom_tile(width = 0.9, height = 0.8, fill = "#3498DB", color = "white", linewidth = 2) +
-  geom_text(aes(label = role), color = "white", fontface = "bold", size = 3.5,
+  geom_text(aes(label = role), color = "white", fontface = "bold", size = 3.5 * diagram_text_scale,
             vjust = -0.3, lineheight = 0.8) +
-  geom_text(aes(label = contribution), color = "white", size = 2.5,
+  geom_text(aes(label = contribution), color = "white", size = 2.5 * diagram_text_scale,
             vjust = 1.5, lineheight = 0.8) +
   # Facilitator in center
   annotate("point", x = 2, y = 1.5, size = 25, color = "#E74C3C") +
   annotate("text", x = 2, y = 1.5, label = "PFMEA\nFacilitator",
-           color = "white", fontface = "bold", size = 3.5, lineheight = 0.9) +
+           color = "white", fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   theme_void() +
   labs(title = "PFMEA Team Composition",
        subtitle = "Each member brings unique knowledge and perspective") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
   xlim(0.3, 3.7) + ylim(0.3, 2.7)
 ```
 
@@ -370,7 +370,7 @@ steps <- data.frame(
 ggplot(steps, aes(x = x, y = y)) +
   geom_tile(aes(fill = phase), width = 0.9, height = 0.8, color = "white", linewidth = 2) +
   geom_text(aes(label = paste0(step, ". ", name)), color = "white",
-            fontface = "bold", size = 3, lineheight = 0.9) +
+            fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
   scale_fill_manual(values = c("Plan" = "#3498DB", "Analyze" = "#F39C12",
                                "Prioritize" = "#E74C3C", "Improve" = "#27AE60")) +
   # Arrows showing flow
@@ -381,8 +381,8 @@ ggplot(steps, aes(x = x, y = y)) +
   theme_void() +
   labs(title = "The 10-Step PFMEA Process",
        subtitle = "A systematic approach to process risk analysis") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-        plot.subtitle = element_text(hjust = 0.5, size = 10),
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
         legend.position = "bottom") +
   xlim(0.3, 3.7) + ylim(1.3, 5.7)
 ```
@@ -425,19 +425,19 @@ Create a detailed process flow diagram and identify the function of each step.
 ggplot() +
   # Process steps
   annotate("rect", xmin = 0, xmax = 1.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 0.75, y = 1, label = "1. Load\nMaterial", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 0.75, y = 1, label = "1. Load\nMaterial", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   annotate("rect", xmin = 2, xmax = 3.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 2.75, y = 1, label = "2. Heat &\nPlasticize", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 2.75, y = 1, label = "2. Heat &\nPlasticize", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   annotate("rect", xmin = 4, xmax = 5.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 4.75, y = 1, label = "3. Inject\ninto Mold", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 4.75, y = 1, label = "3. Inject\ninto Mold", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   annotate("rect", xmin = 6, xmax = 7.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 6.75, y = 1, label = "4. Cool &\nSolidify", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 6.75, y = 1, label = "4. Cool &\nSolidify", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   annotate("rect", xmin = 8, xmax = 9.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 8.75, y = 1, label = "5. Eject\nPart", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 8.75, y = 1, label = "5. Eject\nPart", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
 
   # Arrows
   annotate("segment", x = 1.5, xend = 2, y = 1, yend = 1,
@@ -451,19 +451,19 @@ ggplot() +
 
   # Functions below
   annotate("text", x = 0.75, y = 0.2, label = "Function: Supply\ncorrect material",
-           size = 2.5, fontface = "italic", lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
   annotate("text", x = 2.75, y = 0.2, label = "Function: Melt\nto spec temp",
-           size = 2.5, fontface = "italic", lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
   annotate("text", x = 4.75, y = 0.2, label = "Function: Fill\nmold completely",
-           size = 2.5, fontface = "italic", lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
   annotate("text", x = 6.75, y = 0.2, label = "Function: Solidify\nwithout defects",
-           size = 2.5, fontface = "italic", lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
   annotate("text", x = 8.75, y = 0.2, label = "Function: Remove\nwithout damage",
-           size = 2.5, fontface = "italic", lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
 
   theme_void() +
   labs(title = "Process Flow Diagram with Functions") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(-0.3, 2)
 ```
 
@@ -614,41 +614,41 @@ ggplot() +
   # Effect
   annotate("rect", xmin = 9, xmax = 10.5, ymin = 2.5, ymax = 3.5, fill = "#E74C3C") +
   annotate("text", x = 9.75, y = 3, label = "SHORT\nSHOT", fontface = "bold",
-           color = "white", size = 4, lineheight = 0.9) +
+           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
 
   # Machine branch
   annotate("segment", x = 2, xend = 2, y = 3, yend = 5, color = "#3498DB", linewidth = 1.5) +
   annotate("text", x = 2, y = 5.2, label = "MACHINE", fontface = "bold", color = "#3498DB") +
   annotate("text", x = 1.2, y = 4.5, label = "• Worn screw\n• Clogged nozzle\n• Low pressure",
-           size = 2.5, hjust = 0, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
 
   # Material branch
   annotate("segment", x = 4, xend = 4, y = 3, yend = 5, color = "#27AE60", linewidth = 1.5) +
   annotate("text", x = 4, y = 5.2, label = "MATERIAL", fontface = "bold", color = "#27AE60") +
   annotate("text", x = 3.2, y = 4.5, label = "• High viscosity\n• Contamination\n• Moisture",
-           size = 2.5, hjust = 0, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
 
   # Method branch
   annotate("segment", x = 6, xend = 6, y = 3, yend = 5, color = "#F39C12", linewidth = 1.5) +
   annotate("text", x = 6, y = 5.2, label = "METHOD", fontface = "bold", color = "#F39C12") +
   annotate("text", x = 5.2, y = 4.5, label = "• Wrong parameters\n• Short shot size\n• Low speed",
-           size = 2.5, hjust = 0, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
 
   # Mold branch
   annotate("segment", x = 3, xend = 3, y = 3, yend = 1, color = "#9B59B6", linewidth = 1.5) +
   annotate("text", x = 3, y = 0.8, label = "MOLD", fontface = "bold", color = "#9B59B6") +
   annotate("text", x = 2.2, y = 1.5, label = "• Blocked vents\n• Cold spots\n• Gate too small",
-           size = 2.5, hjust = 0, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
 
   # Man branch
   annotate("segment", x = 6, xend = 6, y = 3, yend = 1, color = "#E74C3C", linewidth = 1.5) +
   annotate("text", x = 6, y = 0.8, label = "MAN", fontface = "bold", color = "#E74C3C") +
   annotate("text", x = 5.2, y = 1.5, label = "• Setup error\n• Wrong program\n• Inadequate training",
-           size = 2.5, hjust = 0, lineheight = 0.9) +
+           size = 2.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
 
   theme_void() +
   labs(title = "Fishbone (Ishikawa) Diagram: Identifying Causes") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   ylim(0.3, 5.7)
 ```
 
@@ -786,9 +786,10 @@ The **Risk Priority Number (RPN)** combines all three ratings:
 
 $$\text{RPN} = \text{Severity (S)} \times \text{Occurrence (O)} \times \text{Detection (D)}$$
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different Severity, Occurrence, and Detection ratings.
 
-```{r rpn-calculation, echo=TRUE}
+```{webr-r}
+#| label: rpn-calculation
 # Example RPN Calculations
 
 # Failure Mode 1: Short shot
@@ -890,16 +891,16 @@ ggplot(examples, aes(x = case)) +
   geom_bar(aes(y = S, fill = "Severity"), stat = "identity", position = position_dodge(width = 0.8), width = 0.25) +
   geom_bar(aes(y = O, fill = "Occurrence"), stat = "identity", position = position_dodge(width = 0.8), width = 0.25) +
   geom_bar(aes(y = D, fill = "Detection"), stat = "identity", position = position_dodge(width = 0.8), width = 0.25) +
-  geom_text(aes(y = 11, label = paste0("RPN = ", RPN)), fontface = "bold", size = 4) +
-  geom_text(aes(y = -1, label = issue), size = 3, lineheight = 0.9) +
+  geom_text(aes(y = 11, label = paste0("RPN = ", RPN)), fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(y = -1, label = issue), size = 3 * diagram_text_scale, lineheight = 0.9) +
   scale_fill_manual(values = c("Severity" = "#E74C3C", "Occurrence" = "#F39C12", "Detection" = "#3498DB")) +
   labs(title = "Same RPN (40) — Very Different Risk Profiles!",
        subtitle = "Case A is a safety hazard but has the same RPN as minor Case C",
        x = "", y = "Rating Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    plot.subtitle = element_text(hjust = 0.5, size = 10, color = "#E74C3C"),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale, color = "#E74C3C"),
     legend.position = "bottom"
   ) +
   ylim(-2, 12)
@@ -1048,7 +1049,7 @@ improvement_data <- data.frame(
 
 ggplot(improvement_data, aes(x = option, y = RPN, fill = option)) +
   geom_bar(stat = "identity", color = "black", width = 0.6) +
-  geom_text(aes(label = RPN), vjust = -0.5, fontface = "bold", size = 5) +
+  geom_text(aes(label = RPN), vjust = -0.5, fontface = "bold", size = 5 * diagram_text_scale) +
   geom_hline(yintercept = 100, linetype = "dashed", color = "#E74C3C", linewidth = 1) +
   annotate("text", x = 4.5, y = 110, label = "Action threshold", hjust = 0, color = "#E74C3C") +
   scale_fill_manual(values = c("Current" = "#E74C3C", "Option 1:\nDetection" = "#F39C12",
@@ -1057,9 +1058,9 @@ ggplot(improvement_data, aes(x = option, y = RPN, fill = option)) +
        x = "", y = "Risk Priority Number (RPN)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     legend.position = "none",
-    axis.text.x = element_text(size = 10)
+    axis.text.x = element_text(size = 10 * diagram_text_scale)
   ) +
   ylim(0, 250)
 ```
@@ -1184,36 +1185,36 @@ PFMEA doesn't exist in isolation — it connects to other quality tools and syst
 ggplot() +
   # Central PFMEA
   annotate("point", x = 5, y = 3, size = 30, color = "#E74C3C") +
-  annotate("text", x = 5, y = 3, label = "PFMEA", fontface = "bold", size = 5, color = "white") +
+  annotate("text", x = 5, y = 3, label = "PFMEA", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
 
   # Connected tools
   # Process Flow
   annotate("point", x = 2, y = 5, size = 18, color = "#3498DB") +
-  annotate("text", x = 2, y = 5, label = "Process\nFlow", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 2, y = 5, label = "Process\nFlow", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   annotate("segment", x = 2.8, xend = 4.2, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 3.2, y = 4.3, label = "Input", size = 2.5, color = "#3498DB") +
+  annotate("text", x = 3.2, y = 4.3, label = "Input", size = 2.5 * diagram_text_scale, color = "#3498DB") +
 
   # Control Plan
   annotate("point", x = 8, y = 5, size = 18, color = "#27AE60") +
-  annotate("text", x = 8, y = 5, label = "Control\nPlan", size = 3, color = "white", lineheight = 0.9) +
+  annotate("text", x = 8, y = 5, label = "Control\nPlan", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
   annotate("segment", x = 5.8, xend = 7.2, y = 3.5, yend = 4.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 6.8, y = 4.3, label = "Output", size = 2.5, color = "#27AE60") +
+  annotate("text", x = 6.8, y = 4.3, label = "Output", size = 2.5 * diagram_text_scale, color = "#27AE60") +
 
   # SPC
   annotate("point", x = 8, y = 1, size = 18, color = "#F39C12") +
-  annotate("text", x = 8, y = 1, label = "SPC", size = 3, color = "white") +
+  annotate("text", x = 8, y = 1, label = "SPC", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 5.8, xend = 7.2, y = 2.5, yend = 1.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 6.8, y = 1.7, label = "Monitoring", size = 2.5, color = "#F39C12") +
+  annotate("text", x = 6.8, y = 1.7, label = "Monitoring", size = 2.5 * diagram_text_scale, color = "#F39C12") +
 
   # DFMEA
   annotate("point", x = 2, y = 1, size = 18, color = "#9B59B6") +
-  annotate("text", x = 2, y = 1, label = "DFMEA", size = 3, color = "white") +
+  annotate("text", x = 2, y = 1, label = "DFMEA", size = 3 * diagram_text_scale, color = "white") +
   annotate("segment", x = 2.8, xend = 4.2, y = 1.5, yend = 2.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 3.2, y = 1.7, label = "Link", size = 2.5, color = "#9B59B6") +
+  annotate("text", x = 3.2, y = 1.7, label = "Link", size = 2.5 * diagram_text_scale, color = "#9B59B6") +
 
   theme_void() +
   labs(title = "PFMEA Integration with Quality System") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   xlim(0.5, 9.5) + ylim(0, 6)
 ```
 

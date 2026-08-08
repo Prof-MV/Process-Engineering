@@ -86,7 +86,7 @@ ggplot(automation_long, aes(x = Metric, y = Score, fill = Type)) +
        x = "", y = "Rating") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     plot.subtitle = element_text(hjust = 0.5),
     axis.text.x = element_text(angle = 20, hjust = 1),
     legend.position = "bottom"
@@ -109,9 +109,10 @@ ggplot(automation_long, aes(x = Metric, y = Score, fill = Type)) +
 - Chemical processing plants
 - Paper manufacturing
 
-This worked example is fixed as a reference — read through it once, then try the *editable* example further on in this chapter for yourself.
+Live cell — try different equipment costs, production volumes, or operating costs.
 
-```{r fixed-automation-economics, echo=TRUE}
+```{webr-r}
+#| label: fixed-automation-economics
 # Fixed Automation Economic Analysis
 # When does fixed automation make sense?
 
@@ -301,22 +302,22 @@ ggplot() +
   geom_tile(data = phases, aes(x = x, y = 1, fill = color),
             width = 0.9, height = 0.5, color = "white", size = 1) +
   geom_text(data = phases, aes(x = x, y = 1, label = Phase),
-            color = "white", fontface = "bold", size = 3) +
+            color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   # Gate markers
   geom_point(data = gates, aes(x = x, y = 1), shape = 18, size = 6, color = "#C0392B") +
   geom_text(data = gates, aes(x = x, y = 0.6, label = Gate),
-            fontface = "bold", size = 4, color = "#C0392B") +
+            fontface = "bold", size = 4 * diagram_text_scale, color = "#C0392B") +
   geom_text(data = gates, aes(x = x, y = 0.3, label = label),
-            size = 2.5, color = "#7F8C8D") +
+            size = 2.5 * diagram_text_scale, color = "#7F8C8D") +
   # Cost accumulation curve concept
   annotate("text", x = 4.5, y = 1.6,
            label = "Stage-Gate Process: Each gate requires approval before proceeding",
-           fontface = "italic", size = 4) +
+           fontface = "italic", size = 4 * diagram_text_scale) +
   scale_fill_identity() +
   labs(title = "Project Development Phases with Stage-Gate Reviews") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)
   ) +
   ylim(-0.1, 2)
 ```
@@ -554,15 +555,15 @@ symbols <- data.frame(
 
 ggplot(symbols, aes(x = x, y = y)) +
   geom_tile(aes(fill = Category), width = 0.9, height = 0.6, color = "black", alpha = 0.3) +
-  geom_text(aes(label = Name), y = symbols$y + 0.15, fontface = "bold", size = 3) +
-  geom_text(aes(label = Symbol_Code), y = symbols$y - 0.1, size = 3.5,
+  geom_text(aes(label = Name), y = symbols$y + 0.15, fontface = "bold", size = 3 * diagram_text_scale) +
+  geom_text(aes(label = Symbol_Code), y = symbols$y - 0.1, size = 3.5 * diagram_text_scale,
             family = "mono", color = "#2C3E50") +
   scale_fill_manual(values = c("#3498DB", "#E74C3C", "#27AE60")) +
   labs(title = "Common P&ID Symbol Categories",
        subtitle = "Standard symbols per ISA-5.1") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     plot.subtitle = element_text(hjust = 0.5),
     legend.position = "bottom"
   )
@@ -911,16 +912,16 @@ ggplot(timeline) +
   geom_segment(aes(x = Start, xend = Start + Duration, y = y, yend = y),
                size = 10, color = "#3498DB", lineend = "round") +
   geom_text(aes(x = Start + Duration/2, y = y, label = Phase),
-            color = "white", fontface = "bold", size = 3) +
+            color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   geom_text(aes(x = Start + Duration/2, y = y - 0.4,
                 label = paste0("M", Start, "-M", Start + Duration)),
-            size = 2.5, color = "#7F8C8D") +
+            size = 2.5 * diagram_text_scale, color = "#7F8C8D") +
   scale_x_continuous(breaks = seq(0, 30, 6), labels = paste0("Month ", seq(0, 30, 6))) +
   labs(title = "Automotive Paint Line Project: 30-Month Timeline",
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
     axis.text.y = element_blank(),
     panel.grid.major.y = element_blank(),
     panel.grid.minor = element_blank()

@@ -59,7 +59,7 @@ benefits <- data.frame(
 
 ggplot(benefits, aes(x = reorder(Benefit, Impact), y = Impact, fill = Benefit)) +
   geom_bar(stat = "identity", width = 0.7) +
-  geom_text(aes(label = Description), hjust = -0.05, size = 3) +
+  geom_text(aes(label = Description), hjust = -0.05, size = 3 * diagram_text_scale) +
   coord_flip() +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
@@ -69,8 +69,8 @@ ggplot(benefits, aes(x = reorder(Benefit, Impact), y = Impact, fill = Benefit)) 
        x = "", y = "Impact Score") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.y = element_text(size = 11, face = "bold")
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    axis.text.y = element_text(size = 11 * diagram_text_scale, face = "bold")
   )
 ```
 
@@ -86,14 +86,14 @@ market_data <- data.frame(
 
 ggplot(market_data, aes(x = Year, y = Installations)) +
   geom_bar(stat = "identity", fill = "#3498db", width = 0.7) +
-  geom_text(aes(label = paste0(Installations, "K")), vjust = -0.5, size = 4) +
+  geom_text(aes(label = paste0(Installations, "K")), vjust = -0.5, size = 4 * diagram_text_scale) +
   geom_smooth(method = "lm", se = FALSE, color = "#e74c3c", linetype = "dashed") +
   scale_y_continuous(limits = c(0, 700)) +
   labs(title = "Global Industrial Robot Installations",
        subtitle = "Annual installations in thousands of units (IFR data)",
        x = "Year", y = "Units Installed (thousands)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14))
+  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
 ```
 
 ### Industries Using Robots
@@ -154,9 +154,9 @@ robot_types <- data.frame(
 
 ggplot(robot_types, aes(x = x, y = y)) +
   geom_tile(aes(fill = Type), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
-  geom_text(aes(label = Type), fontface = "bold", vjust = -2, size = 4, color = "white") +
-  geom_text(aes(label = Characteristics), vjust = 0, size = 2.8, color = "white", lineheight = 0.85) +
-  geom_text(aes(label = Applications), vjust = 3.5, size = 2.5, color = "white",
+  geom_text(aes(label = Type), fontface = "bold", vjust = -2, size = 4 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Characteristics), vjust = 0, size = 2.8 * diagram_text_scale, color = "white", lineheight = 0.85) +
+  geom_text(aes(label = Applications), vjust = 3.5, size = 2.5 * diagram_text_scale, color = "white",
             fontface = "italic", lineheight = 0.85) +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
@@ -164,7 +164,7 @@ ggplot(robot_types, aes(x = x, y = y)) +
        subtitle = "Different types optimized for specific applications") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -213,11 +213,11 @@ ggplot() +
   annotate("point", x = 5, y = 2.2, size = 5, color = "#9b59b6") +
 
   # Axis labels
-  annotate("text", x = 0.5, y = 0, label = "J1\n(Base)", size = 3, fontface = "bold") +
-  annotate("text", x = 0.5, y = 1.5, label = "J2\n(Shoulder)", size = 3, fontface = "bold") +
-  annotate("text", x = 2.5, y = 3, label = "J3\n(Elbow)", size = 3, fontface = "bold") +
-  annotate("text", x = 4, y = 1.4, label = "J4\n(Wrist 1)", size = 3, fontface = "bold") +
-  annotate("text", x = 5.5, y = 2.2, label = "J5, J6\n(Wrist 2,3)", size = 3, fontface = "bold") +
+  annotate("text", x = 0.5, y = 0, label = "J1\n(Base)", size = 3 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 0.5, y = 1.5, label = "J2\n(Shoulder)", size = 3 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 2.5, y = 3, label = "J3\n(Elbow)", size = 3 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 4, y = 1.4, label = "J4\n(Wrist 1)", size = 3 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 5.5, y = 2.2, label = "J5, J6\n(Wrist 2,3)", size = 3 * diagram_text_scale, fontface = "bold") +
 
   # Motion arrows
   annotate("curve", x = 0.7, xend = 1.3, y = 0.3, yend = 0.3,
@@ -228,20 +228,20 @@ ggplot() +
   # Legend
   annotate("rect", xmin = 6, xmax = 9, ymin = 0, ymax = 3, fill = "#f8f9fa", color = "gray") +
   annotate("text", x = 6.2, y = 2.7, label = "6-Axis Robot Joints:", hjust = 0,
-           fontface = "bold", size = 3.5) +
-  annotate("text", x = 6.2, y = 2.3, label = "J1: Base rotation", hjust = 0, size = 3) +
-  annotate("text", x = 6.2, y = 2.0, label = "J2: Shoulder pivot", hjust = 0, size = 3) +
-  annotate("text", x = 6.2, y = 1.7, label = "J3: Elbow pivot", hjust = 0, size = 3) +
-  annotate("text", x = 6.2, y = 1.4, label = "J4: Wrist rotation", hjust = 0, size = 3) +
-  annotate("text", x = 6.2, y = 1.1, label = "J5: Wrist bend", hjust = 0, size = 3) +
-  annotate("text", x = 6.2, y = 0.8, label = "J6: Tool rotation", hjust = 0, size = 3) +
+           fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 6.2, y = 2.3, label = "J1: Base rotation", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 6.2, y = 2.0, label = "J2: Shoulder pivot", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 6.2, y = 1.7, label = "J3: Elbow pivot", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 6.2, y = 1.4, label = "J4: Wrist rotation", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 6.2, y = 1.1, label = "J5: Wrist bend", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 6.2, y = 0.8, label = "J6: Tool rotation", hjust = 0, size = 3 * diagram_text_scale) +
 
   coord_cartesian(xlim = c(0, 9.5), ylim = c(-0.5, 3.5)) +
   labs(title = "6-Axis Articulated Robot - Joint Nomenclature",
        subtitle = "Each joint provides one degree of freedom") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -325,15 +325,15 @@ ggplot() +
   # Annotations
   annotate("segment", x = 0, xend = 1800, y = 0, yend = 0,
            arrow = arrow(ends = "both", length = unit(0.2, "cm")), color = "black") +
-  annotate("text", x = 900, y = 100, label = "Max Reach: 1800mm", size = 3.5) +
+  annotate("text", x = 900, y = 100, label = "Max Reach: 1800mm", size = 3.5 * diagram_text_scale) +
   annotate("segment", x = 0, xend = 400, y = 300, yend = 300,
            arrow = arrow(ends = "both", length = unit(0.15, "cm")), color = "#e74c3c") +
   annotate("text", x = 200, y = 450, label = "Dead Zone\n(Min Reach: 400mm)",
-           size = 3, color = "#e74c3c", lineheight = 0.9) +
+           size = 3 * diagram_text_scale, color = "#e74c3c", lineheight = 0.9) +
   # Work area example
   annotate("rect", xmin = 800, xmax = 1400, ymin = -300, ymax = 300,
            fill = "#27ae60", alpha = 0.4, color = "#27ae60") +
-  annotate("text", x = 1100, y = 0, label = "Typical\nWork Area", size = 3,
+  annotate("text", x = 1100, y = 0, label = "Typical\nWork Area", size = 3 * diagram_text_scale,
            color = "#27ae60", fontface = "bold", lineheight = 0.9) +
   coord_fixed(xlim = c(-2200, 2200), ylim = c(-2200, 2200)) +
   labs(title = "Robot Work Envelope (Top View)",
@@ -341,16 +341,17 @@ ggplot() +
        x = "X Position (mm)", y = "Y Position (mm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
 
 ### Payload Considerations
 
-This worked example is fixed as a reference — read through it once, then try the *editable* examples further on in this chapter for yourself.
+Live cell — try different payload, safety factor, or robot capacity values.
 
-```{r payload-calc, echo=TRUE}
+```{webr-r}
+#| label: payload-calc
 # Payload Calculation Example
 robot_max_payload <- 10  # kg
 gripper_weight <- 2.5    # kg
@@ -424,7 +425,7 @@ ggplot(scenarios, aes(x = x, y = y)) +
        x = "X Error (mm)", y = "Y Error (mm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     strip.text = element_text(face = "bold")
   )
 ```
@@ -461,49 +462,49 @@ ggplot() +
   annotate("rect", xmin = 0.5, xmax = 3, ymin = 4, ymax = 7,
            fill = "#3498db", color = "black") +
   annotate("text", x = 1.75, y = 6.5, label = "MANIPULATOR",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 1.75, y = 5.5, label = "• Mechanical arm\n• Motors & drives\n• Encoders\n• Brakes",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # End Effector
   annotate("rect", xmin = 3.5, xmax = 6, ymin = 5.5, ymax = 7,
            fill = "#27ae60", color = "black") +
   annotate("text", x = 4.75, y = 6.7, label = "END EFFECTOR",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 4.75, y = 6, label = "Gripper, welding torch,\nspray gun, tool",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Controller
   annotate("rect", xmin = 0.5, xmax = 3, ymin = 1, ymax = 3.5,
            fill = "#e74c3c", color = "black") +
   annotate("text", x = 1.75, y = 3.2, label = "CONTROLLER",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 1.75, y = 2.2, label = "• CPU & memory\n• Motion control\n• I/O modules\n• Safety circuits",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Teach Pendant
   annotate("rect", xmin = 3.5, xmax = 6, ymin = 1, ymax = 3,
            fill = "#f39c12", color = "black") +
   annotate("text", x = 4.75, y = 2.7, label = "TEACH PENDANT",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 4.75, y = 1.8, label = "• Manual control\n• Programming\n• E-stop",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # External systems
   annotate("rect", xmin = 7, xmax = 10, ymin = 4.5, ymax = 6.5,
            fill = "#9b59b6", color = "black") +
   annotate("text", x = 8.5, y = 6.2, label = "EXTERNAL SYSTEMS",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 8.5, y = 5.3, label = "• PLC integration\n• Vision system\n• Force sensor",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Safety system
   annotate("rect", xmin = 7, xmax = 10, ymin = 1.5, ymax = 4,
            fill = "#1abc9c", color = "black") +
   annotate("text", x = 8.5, y = 3.7, label = "SAFETY SYSTEM",
-           color = "white", fontface = "bold", size = 4) +
+           color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   annotate("text", x = 8.5, y = 2.5, label = "• Light curtains\n• Safety mats\n• Interlocked gates\n• E-stops",
-           color = "white", size = 3, lineheight = 0.9) +
+           color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Connections
   annotate("segment", x = 3, xend = 3.5, y = 6.25, yend = 6.25,
@@ -522,7 +523,7 @@ ggplot() +
        subtitle = "Integrated system of manipulator, controller, teach pendant, and peripherals") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -626,7 +627,7 @@ ggplot() +
   annotate("point", x = 1, y = 1, size = 6, color = "#34495e") +
   annotate("text", x = 2.7, y = 1, label = "X", color = "red", fontface = "bold") +
   annotate("text", x = 1, y = 2.7, label = "Y", color = "green", fontface = "bold") +
-  annotate("text", x = 1, y = 0.5, label = "World/Base Frame\n(Fixed)", size = 3,
+  annotate("text", x = 1, y = 0.5, label = "World/Base Frame\n(Fixed)", size = 3 * diagram_text_scale,
            lineheight = 0.9, fontface = "bold") +
 
   # Tool coordinate system
@@ -637,7 +638,7 @@ ggplot() +
   annotate("point", x = 6, y = 4.5, size = 6, color = "#9b59b6") +
   annotate("text", x = 7.4, y = 5, label = "X", color = "red", fontface = "bold") +
   annotate("text", x = 5.3, y = 5.9, label = "Y", color = "green", fontface = "bold") +
-  annotate("text", x = 6, y = 3.8, label = "Tool Frame\n(Moves with robot)", size = 3,
+  annotate("text", x = 6, y = 3.8, label = "Tool Frame\n(Moves with robot)", size = 3 * diagram_text_scale,
            lineheight = 0.9, fontface = "bold") +
 
   # User/Work object frame
@@ -648,7 +649,7 @@ ggplot() +
   annotate("segment", x = 7.5, xend = 7.5, y = 1, yend = 2.5,
            arrow = arrow(length = unit(0.2, "cm")), color = "green", size = 1.2) +
   annotate("text", x = 8.75, y = 0.5, label = "User/Work Object Frame\n(On fixture or part)",
-           size = 3, lineheight = 0.9, fontface = "bold") +
+           size = 3 * diagram_text_scale, lineheight = 0.9, fontface = "bold") +
 
   # Robot arm (simplified)
   annotate("segment", x = 1, xend = 3, y = 1, yend = 3, size = 4, color = "#3498db") +
@@ -659,17 +660,17 @@ ggplot() +
   annotate("rect", xmin = 0, xmax = 4.5, ymin = 5.5, ymax = 7.5,
            fill = "#ecf0f1", color = "gray") +
   annotate("text", x = 0.2, y = 7.2, label = "Coordinate Types:", hjust = 0,
-           fontface = "bold", size = 4) +
-  annotate("text", x = 0.2, y = 6.7, label = "• Joint: J1, J2, J3, J4, J5, J6 (degrees)", hjust = 0, size = 3) +
-  annotate("text", x = 0.2, y = 6.3, label = "• Cartesian: X, Y, Z, Rx, Ry, Rz (mm, degrees)", hjust = 0, size = 3) +
-  annotate("text", x = 0.2, y = 5.9, label = "• Tool: Relative to end effector", hjust = 0, size = 3) +
+           fontface = "bold", size = 4 * diagram_text_scale) +
+  annotate("text", x = 0.2, y = 6.7, label = "• Joint: J1, J2, J3, J4, J5, J6 (degrees)", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 0.2, y = 6.3, label = "• Cartesian: X, Y, Z, Rx, Ry, Rz (mm, degrees)", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 0.2, y = 5.9, label = "• Tool: Relative to end effector", hjust = 0, size = 3 * diagram_text_scale) +
 
   coord_cartesian(xlim = c(-0.5, 10.5), ylim = c(0, 8)) +
   labs(title = "Robot Coordinate Systems",
        subtitle = "Different reference frames for programming and motion") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -747,7 +748,7 @@ ggplot(paths, aes(x = x, y = y, color = Type)) +
        x = "X Position", y = "Y Position") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     legend.position = "none",
     strip.text = element_text(face = "bold")
   )
@@ -777,9 +778,9 @@ auto_apps <- data.frame(
 
 ggplot(auto_apps, aes(x = x, y = y)) +
   geom_tile(aes(fill = Application), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
-  geom_text(aes(label = Application), fontface = "bold", size = 4, color = "white", vjust = -1.5) +
-  geom_text(aes(label = paste0("Robot: ", Robot_Type)), size = 2.5, color = "white", vjust = 0) +
-  geom_text(aes(label = Key_Metrics), size = 2.5, color = "white",
+  geom_text(aes(label = Application), fontface = "bold", size = 4 * diagram_text_scale, color = "white", vjust = -1.5) +
+  geom_text(aes(label = paste0("Robot: ", Robot_Type)), size = 2.5 * diagram_text_scale, color = "white", vjust = 0) +
+  geom_text(aes(label = Key_Metrics), size = 2.5 * diagram_text_scale, color = "white",
             fontface = "italic", vjust = 2) +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
@@ -787,7 +788,7 @@ ggplot(auto_apps, aes(x = x, y = y)) +
        subtitle = "Common applications in automotive manufacturing") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -933,14 +934,14 @@ ggplot() +
   # Robot
   annotate("point", x = 5, y = 3.5, size = 15, color = "#3498db") +
   annotate("text", x = 5, y = 3.5, label = "Robot", color = "white",
-           fontface = "bold", size = 3) +
+           fontface = "bold", size = 3 * diagram_text_scale) +
 
   # Physical barrier (fence)
   annotate("segment", x = 2, xend = 2, y = 1, yend = 6, color = "#e74c3c", size = 3) +
   annotate("segment", x = 8, xend = 8, y = 1, yend = 3, color = "#e74c3c", size = 3) +
   annotate("segment", x = 8, xend = 8, y = 4.5, yend = 6, color = "#e74c3c", size = 3) +
   annotate("text", x = 1.5, y = 3.5, label = "Safety\nFence",
-           color = "#e74c3c", fontface = "bold", size = 3, lineheight = 0.9) +
+           color = "#e74c3c", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Light curtain
   annotate("segment", x = 8, xend = 8, y = 3, yend = 4.5,
@@ -950,25 +951,25 @@ ggplot() +
   annotate("rect", xmin = 7.8, xmax = 8.2, ymin = 4.2, ymax = 4.5,
            fill = "#f39c12", color = "black") +
   annotate("text", x = 9, y = 3.75, label = "Light\nCurtain",
-           color = "#f39c12", fontface = "bold", size = 3, lineheight = 0.9) +
+           color = "#f39c12", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
   # Interlocked gate
   annotate("rect", xmin = 4, xmax = 6, ymin = 0.8, ymax = 1.2,
            fill = "#27ae60", color = "black") +
   annotate("text", x = 5, y = 0.5, label = "Interlocked Gate",
-           color = "#27ae60", fontface = "bold", size = 3) +
+           color = "#27ae60", fontface = "bold", size = 3 * diagram_text_scale) +
 
   # Safety mat
   annotate("rect", xmin = 2.5, xmax = 4, ymin = 1.5, ymax = 2.5,
            fill = "#9b59b6", alpha = 0.5, color = "#9b59b6") +
   annotate("text", x = 3.25, y = 2, label = "Safety\nMat",
-           color = "#9b59b6", fontface = "bold", size = 2.5, lineheight = 0.9) +
+           color = "#9b59b6", fontface = "bold", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   # E-stop
   annotate("point", x = 1.5, y = 5.5, size = 8, color = "red") +
   annotate("text", x = 1.5, y = 5.5, label = "E", color = "white",
-           fontface = "bold", size = 3) +
-  annotate("text", x = 1.5, y = 5, label = "E-Stop", size = 2.5) +
+           fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 1.5, y = 5, label = "E-Stop", size = 2.5 * diagram_text_scale) +
 
   # Scanner (area scanner)
   annotate("point", x = 7, y = 2, size = 6, color = "#1abc9c") +
@@ -977,33 +978,33 @@ ggplot() +
   annotate("curve", x = 7, xend = 8.5, y = 2, yend = 2.5,
            curvature = -0.3, color = "#1abc9c", linetype = "dashed") +
   annotate("text", x = 7, y = 1.3, label = "Area\nScanner",
-           color = "#1abc9c", fontface = "bold", size = 2.5, lineheight = 0.9) +
+           color = "#1abc9c", fontface = "bold", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
 
   # Legend
   annotate("rect", xmin = 9.5, xmax = 13, ymin = 1, ymax = 6,
            fill = "#f8f9fa", color = "gray") +
   annotate("text", x = 9.7, y = 5.7, label = "Safeguarding Devices:",
-           hjust = 0, fontface = "bold", size = 3.5) +
+           hjust = 0, fontface = "bold", size = 3.5 * diagram_text_scale) +
   annotate("segment", x = 9.7, xend = 10.2, y = 5.3, yend = 5.3, color = "#e74c3c", size = 2) +
-  annotate("text", x = 10.4, y = 5.3, label = "Physical Barrier", hjust = 0, size = 2.8) +
+  annotate("text", x = 10.4, y = 5.3, label = "Physical Barrier", hjust = 0, size = 2.8 * diagram_text_scale) +
   annotate("segment", x = 9.7, xend = 10.2, y = 4.9, yend = 4.9,
            color = "#f39c12", size = 2, linetype = "dotted") +
-  annotate("text", x = 10.4, y = 4.9, label = "Light Curtain", hjust = 0, size = 2.8) +
+  annotate("text", x = 10.4, y = 4.9, label = "Light Curtain", hjust = 0, size = 2.8 * diagram_text_scale) +
   annotate("rect", xmin = 9.7, xmax = 10.2, ymin = 4.4, ymax = 4.6, fill = "#27ae60") +
-  annotate("text", x = 10.4, y = 4.5, label = "Interlocked Gate", hjust = 0, size = 2.8) +
+  annotate("text", x = 10.4, y = 4.5, label = "Interlocked Gate", hjust = 0, size = 2.8 * diagram_text_scale) +
   annotate("rect", xmin = 9.7, xmax = 10.2, ymin = 4, ymax = 4.2, fill = "#9b59b6", alpha = 0.5) +
-  annotate("text", x = 10.4, y = 4.1, label = "Safety Mat", hjust = 0, size = 2.8) +
+  annotate("text", x = 10.4, y = 4.1, label = "Safety Mat", hjust = 0, size = 2.8 * diagram_text_scale) +
   annotate("point", x = 9.95, y = 3.7, size = 4, color = "#1abc9c") +
-  annotate("text", x = 10.4, y = 3.7, label = "Area Scanner", hjust = 0, size = 2.8) +
+  annotate("text", x = 10.4, y = 3.7, label = "Area Scanner", hjust = 0, size = 2.8 * diagram_text_scale) +
   annotate("point", x = 9.95, y = 3.3, size = 4, color = "red") +
-  annotate("text", x = 10.4, y = 3.3, label = "E-Stop", hjust = 0, size = 2.8) +
+  annotate("text", x = 10.4, y = 3.3, label = "E-Stop", hjust = 0, size = 2.8 * diagram_text_scale) +
 
   coord_cartesian(xlim = c(0.5, 13.5), ylim = c(0, 6.5)) +
   labs(title = "Robot Cell Safeguarding Methods",
        subtitle = "Multiple layers of protection for personnel safety") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
