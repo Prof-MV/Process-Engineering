@@ -303,7 +303,7 @@ molding_data <- data.frame(
 ggplot(molding_data, aes(x = reorder(Process, -Typical), y = Typical)) +
   geom_bar(stat = "identity", fill = "#3498DB", width = 0.6) +
   geom_errorbar(aes(ymin = Min_Volume, ymax = Max_Volume), width = 0.2, color = "#2C3E50") +
-  scale_y_log10(labels = scales::comma) +
+  scale_y_log10(labels = scales::label_comma(big.mark = " ")) +
   labs(title = "Economical Production Volumes for Molding Processes",
        subtitle = "Error bars show typical volume range",
        x = "", y = "Annual Production Volume (log scale)") +
@@ -366,7 +366,7 @@ cat("Injection Molding Cost Breakdown:\n")
 cat("================================\n")
 for(i in 1:nrow(cost_analysis)) {
   cat(sprintf("At %s parts: $%.2f per part (Tooling: $%.2f, Material: $%.2f, Processing: $%.2f)\n",
-              format(cost_analysis$Volume[i], big.mark=","),
+              format(cost_analysis$Volume[i], big.mark = " "),
               cost_analysis$Total_Per_Part[i],
               cost_analysis$Mold_Per_Part[i],
               cost_analysis$Material[i],

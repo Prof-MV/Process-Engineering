@@ -55,10 +55,10 @@ industry_data$Total_Cost <- industry_data$Cost_Per_Hour * industry_data$Avg_Down
 
 ggplot(industry_data, aes(x = reorder(Industry, Cost_Per_Hour), y = Cost_Per_Hour)) +
   geom_bar(stat = "identity", fill = "steelblue", width = 0.7) +
-  geom_text(aes(label = paste0("$", format(Cost_Per_Hour, big.mark = ","))),
+  geom_text(aes(label = paste0("$", format(Cost_Per_Hour, big.mark = " "))),
             hjust = -0.1, size = 4 * diagram_text_scale) +
   coord_flip() +
-  scale_y_continuous(labels = scales::dollar_format(), limits = c(0, 60000)) +
+  scale_y_continuous(labels = scales::dollar_format(big.mark = " "), limits = c(0, 60000)) +
   labs(title = "Average Cost of Unplanned Downtime by Industry",
        subtitle = "Per hour of production stoppage",
        x = "",

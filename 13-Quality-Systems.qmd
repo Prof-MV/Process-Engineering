@@ -1723,16 +1723,16 @@ cat("Cost of Quality Analysis:\n")
 cat("─────────────────────────────\n")
 print(coq_data[, c("Category", "Cost", "Percent_of_COQ")])
 cat("─────────────────────────────\n")
-cat("Total Cost of Quality: $", format(total_coq, big.mark = ","), "\n")
+cat("Total Cost of Quality: $", format(total_coq, big.mark = " "), "\n")
 cat("COQ as % of Revenue:", round(total_coq/revenue*100, 1), "%\n\n")
 
 # Analysis
 conformance <- coq_data$Cost[1] + coq_data$Cost[2]
 nonconformance <- coq_data$Cost[3] + coq_data$Cost[4]
 
-cat("Conformance Costs (Prevention + Appraisal): $", format(conformance, big.mark = ","),
+cat("Conformance Costs (Prevention + Appraisal): $", format(conformance, big.mark = " "),
     "(", round(conformance/total_coq*100, 1), "%)\n")
-cat("Nonconformance Costs (Failures): $", format(nonconformance, big.mark = ","),
+cat("Nonconformance Costs (Failures): $", format(nonconformance, big.mark = " "),
     "(", round(nonconformance/total_coq*100, 1), "%)\n")
 cat("\nRecommendation: Increase prevention spending to reduce failure costs\n")
 ```
@@ -1746,13 +1746,13 @@ ggplot(coq_data, aes(x = Category, y = Cost/1000, fill = Category)) +
   geom_text(aes(label = paste0("$", Cost/1000, "K\n(", Percent_of_COQ, "%)")),
             vjust = -0.2, size = 3.5 * diagram_text_scale) +
   scale_fill_manual(values = c("#27ae60", "#3498db", "#f39c12", "#e74c3c"), guide = "none") +
-  scale_y_continuous(limits = c(0, 220), labels = scales::dollar_format(suffix = "K")) +
+  scale_y_continuous(limits = c(0, 220), labels = scales::dollar_format(suffix = "K", big.mark = " ")) +
   annotate("rect", xmin = 0.5, xmax = 2.5, ymin = -10, ymax = -5, fill = "#27ae60", alpha = 0.3) +
   annotate("text", x = 1.5, y = -7.5, label = "Conformance Costs", size = 3 * diagram_text_scale) +
   annotate("rect", xmin = 2.5, xmax = 4.5, ymin = -10, ymax = -5, fill = "#e74c3c", alpha = 0.3) +
   annotate("text", x = 3.5, y = -7.5, label = "Nonconformance Costs", size = 3 * diagram_text_scale) +
   labs(title = "Cost of Quality Analysis",
-       subtitle = paste0("Total COQ: $", format(total_coq, big.mark = ","),
+       subtitle = paste0("Total COQ: $", format(total_coq, big.mark = " "),
                         " (", round(total_coq/revenue*100, 1), "% of revenue)"),
        x = "", y = "Cost") +
   theme_minimal() +
@@ -2195,24 +2195,24 @@ revenue <- 8000000
 
 cat("Cost of Quality Breakdown:\n")
 cat("─────────────────────────────\n")
-cat("Prevention:       $", format(prevention, big.mark = ","),
+cat("Prevention:       $", format(prevention, big.mark = " "),
     "(", round(prevention/total_coq*100, 1), "%)\n")
-cat("Appraisal:        $", format(appraisal, big.mark = ","),
+cat("Appraisal:        $", format(appraisal, big.mark = " "),
     "(", round(appraisal/total_coq*100, 1), "%)\n")
-cat("Internal Failure: $", format(internal_failure, big.mark = ","),
+cat("Internal Failure: $", format(internal_failure, big.mark = " "),
     "(", round(internal_failure/total_coq*100, 1), "%)\n")
-cat("External Failure: $", format(external_failure, big.mark = ","),
+cat("External Failure: $", format(external_failure, big.mark = " "),
     "(", round(external_failure/total_coq*100, 1), "%)\n")
 cat("─────────────────────────────\n")
-cat("Total COQ:        $", format(total_coq, big.mark = ","), "\n")
+cat("Total COQ:        $", format(total_coq, big.mark = " "), "\n")
 cat("COQ % of Revenue:", round(total_coq/revenue*100, 1), "%\n\n")
 
 conformance <- prevention + appraisal
 nonconformance <- internal_failure + external_failure
 
-cat("Conformance Costs:    $", format(conformance, big.mark = ","),
+cat("Conformance Costs:    $", format(conformance, big.mark = " "),
     "(", round(conformance/total_coq*100, 1), "%)\n")
-cat("Nonconformance Costs: $", format(nonconformance, big.mark = ","),
+cat("Nonconformance Costs: $", format(nonconformance, big.mark = " "),
     "(", round(nonconformance/total_coq*100, 1), "%)\n")
 ```
 
