@@ -85,3 +85,82 @@ pre code {
 .answer .math.display {
   color: #1a531b;
 }
+
+/*--- LAB CHAPTER: colour-coded "part" banners -------------------------------
+   Every lab sub-chapter in 30-Labs.qmd is split into the same fixed parts so
+   students always know which part of the lab they are looking at. Each part is
+   wrapped in a fenced div, e.g.  ::: {.lab-prep} ... :::  , which draws a
+   coloured left bar plus an uppercase banner label. The colour is the cue:
+   orange = do this before the lab, blue = what to bring, purple = the steps,
+   green = what to hand in, red/dashed = instructor-only.
+   (In PDF/EPUB the banner label is not rendered, so each part also carries a
+   normal ### heading — the div only adds the visual banner in HTML.)          */
+.lab-overview,
+.lab-outcomes,
+.lab-prep,
+.lab-materials,
+.lab-procedure,
+.lab-deliverables,
+.lab-rubric,
+.lab-instructor,
+.lab-shop {
+  padding: 1em 1.25em;
+  margin: 1.25em 0;
+  border-left: 6px solid #999;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.lab-overview::before,
+.lab-outcomes::before,
+.lab-prep::before,
+.lab-materials::before,
+.lab-procedure::before,
+.lab-deliverables::before,
+.lab-rubric::before,
+.lab-instructor::before,
+.lab-shop::before {
+  display: block;
+  font-weight: bold;
+  font-size: 0.75em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 0.6em;
+}
+
+.lab-overview { border-left-color: #2c3e50; }
+.lab-overview::before { content: "Overview"; color: #2c3e50; }
+
+.lab-outcomes { border-left-color: #16a085; background-color: #eefaf6; }
+.lab-outcomes::before { content: "Learning outcomes"; color: #128066; }
+
+.lab-prep { border-left-color: #e67e22; background-color: #fdf3ea; }
+.lab-prep::before { content: "Prep work — do this before you arrive"; color: #ca6510; }
+
+.lab-materials { border-left-color: #2980b9; background-color: #edf4fb; }
+.lab-materials::before { content: "Materials & equipment — what to bring"; color: #2471a3; }
+
+.lab-procedure { border-left-color: #8e44ad; background-color: #f6eefb; }
+.lab-procedure::before { content: "Procedure — what you do in the lab"; color: #7d3c98; }
+
+.lab-deliverables { border-left-color: #27ae60; background-color: #eef8f1; }
+.lab-deliverables::before { content: "Deliverables & submission"; color: #1e8a4c; }
+
+.lab-rubric { border-left-color: #34495e; background-color: #f2f4f6; }
+.lab-rubric::before { content: "Rubric — how your mark is calculated"; color: #34495e; }
+
+.lab-instructor {
+  border: 1px dashed #c0392b;
+  border-left: 6px solid #c0392b;
+  background-color: #fdf0ef;
+}
+.lab-instructor::before {
+  content: "Instructor notes — marking & prep (not required reading for students)";
+  color: #a93226;
+}
+
+.lab-shop { border-left-color: #7f8c8d; background-color: #f4f4f4; }
+.lab-shop::before {
+  content: "Teacher prep — room, equipment, software & shopping list";
+  color: #616a6b;
+}
