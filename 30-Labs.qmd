@@ -37,42 +37,65 @@ its own colour so you always know which part of the lab you are reading:
 | Red, dashed | **Instructor notes** | Marking guidance and prep — not required reading for students |
 
 ::: {.callout-important}
-## Lab structure for this revision
+## Lab structure
 
-The lab set has been rebuilt around a single course-long workplace narrative —
-**Précitech Components**, a Tier-1 automotive supplier — and a machine-learning
-module that occupies the last weeks of the term:
+The lab set is built around a single course-long workplace narrative —
+**Précitech Components**, a Tier-1 automotive supplier — with a six-week
+machine-learning module in the middle of the term. **The term is 14 weeks and
+there are 14 labs: the lab number is the week number.**
 
-| Lab | Title | Approx. week | Basis |
-|----|----|----|----|
-| 1 | Logic Thinking for Robot Control — LightBot & Rocksi | 2 | `Lab-2 -Introduction to Programming.docx`, `Process Engineering Lab#2 Programming Logic.pdf` |
-| 2 | Engineering Design Process Documentation | 3–4 | Précitech shaft-kit **case study** (this chapter) + FOL templates (BOM, Gantt, HSE) |
-| 3 | Manufacturing Facility Design & Simulation (AnyLogic) | 4–5 | Same Précitech case study, simulated; `ENGR-3027- Lab-4-Supllemental Material.pdf` |
-| 4 | Ergonomics in Automated Manufacturing (REBA & Inseer) | 6 | `ENGR-3027 -Lab 6 - Ergonomics.docx`, `REBA-worksheet.pdf` |
-| 5 | Machine Learning — Week 1: AI literacy & prompt engineering | 8 | Chapter @sec-chap-ml, Week 1 |
-| 6 | Machine Learning — Week 2: Manufacturing data & SPC | 9 | Chapter @sec-chap-ml, Week 2 |
-| 7 | Machine Learning — Week 3: the C-MAPSS dataset | 10 | Chapter @sec-chap-ml, Week 3 |
-| 8 | Machine Learning — Week 4: building the model | 11 | Chapter @sec-chap-ml, Week 4 |
-| 9 | Machine Learning — Week 5: deploying the app | 12 | Chapter @sec-chap-ml, Week 5 |
-| 10 | Machine Learning — Week 6: capstone presentations | 13 | Chapter @sec-chap-ml, Week 6 |
+| # | Week | Lab | Prereq. chapters |
+|---|---|---|---|
+| 1 | 1 | Logic Thinking for Robot Control — LightBot & Rocksi | — |
+| 2 | 2 | Engineering Design Process Documentation | 2, 4 |
+| 3 | 3 | Manufacturing Facility Design & Simulation (AnyLogic) | 4, 16 |
+| 4 | 4 | Lean: Value Stream Mapping, Takt and Pull | 3, 5 |
+| 5 | 5 | Ergonomics in Automated Manufacturing (REBA & Inseer) | 7 |
+| 6 | 6 | SPC and Gauge R&R — the Virtual Caliper | 10, 11 |
+| 7 | 7 | Machine Learning Week 1 — AI literacy & prompt engineering | 20 |
+| 8 | 8 | Machine Learning Week 2 — Manufacturing data & SPC | 21 |
+| 9 | 9 | Machine Learning Week 3 — the C-MAPSS dataset | 21 |
+| 10 | 10 | Machine Learning Week 4 — building the model | 21 |
+| 11 | 11 | Machine Learning Week 5 — deploying the app | 21 |
+| 12 | 12 | Machine Learning Week 6 — capstone presentations | 21 |
+| 13 | 13 | TPM/OEE, Root Cause and a New Dataset | 12, 15, 21 |
+| 14 | 14 | Robotic Work-Cell Design — RoboDK for Web *(take-home, released wk 11)* | 3, 6, 8 |
 
-**Removed in this revision:** the popsicle-stick bridge lab, the lean paper-cutting
-simulation, and the automation/functional-safety lab series (old Labs 7–12). The
-old handouts for those still exist in the `LabInstructions/` folder and can be
-reinstated if the course plan changes; the older **instrumentation-trainer**
-stream (B1033 benches) is summarised in
-[Appendix: instrumentation-trainer lab stream].
+**Why the labs sit where they do:**
+
+- **Lab 6 (SPC and Gauge R&R by hand) precedes Lab 8 (SPC in Python) by two
+  weeks.** That is deliberately the arc Chapter @sec-chap-ml is built on: *do it
+  yourself first, then direct an LLM to do it.*
+- **Lab 7 (ML Week 1) sits in midterm week on purpose.** The midterm is written
+  during *lecture* time, so the week-7 lab period runs as normal. ML Week 1 is
+  the right lab for that slot — individual, browser-only, no dataset, no prep
+  beyond a login: the lightest lab in the set.
+- **Lab 13 follows the capstone** because it reuses the whole ML pipeline on an
+  unseen, differently-shaped dataset — which only works once students have the
+  skill.
+- **Lab 14 is the take-home**, released in week 11 and due at the end of week 14,
+  reusing the course plan's existing take-home precedent. RoboDK for Web needs no
+  install, so it genuinely works from home, and it bookends Lab 1: toy logic in
+  week 1, a real industrial arm in week 14.
+
+**Not in the current set:** the popsicle-stick bridge lab, the lean paper-cutting
+simulation, and the automation/functional-safety lab series. The old handouts
+still exist in the `LabInstructions/` folder and can be reinstated if the course
+plan changes; the older **instrumentation-trainer** stream (B1033 benches) is
+summarised in [Appendix: instrumentation-trainer lab stream].
 
 Labs are due at the end of the scheduled lab period; the late penalty is 25 % per
-lab session. Marks may be deducted for incomplete prelab work, missing safety
-training, not bringing required materials, not cleaning your station, or
-unprofessional conduct in the lab room. Week counts above are approximate — follow
-the current course plan on FOL.
+lab session. **Lab 14 is the exception — it is a take-home, released in week 11
+and due at the end of week 14, with a short screen recording.** Marks may be
+deducted for incomplete prelab work, missing safety training, not bringing
+required materials, not cleaning your station, or unprofessional conduct in the
+lab room. The schedule in `index.qmd` is the current plan; follow FOL if it
+diverges.
 :::
 
 ---
 
-## Lab 1 — Logic Thinking for Robot Control: LightBot & Rocksi
+## Lab 1 — Logic Thinking for Robot Control: LightBot & Rocksi {#sec-lab-logic}
 
 ::: {.lab-overview}
 An introduction to programming logic — sequencing, loops and conditionals — and
@@ -80,6 +103,9 @@ to robot teach-pendant operation, using two free browser simulators:
 **LightBot** (a puzzle game that teaches sequence/loop/conditional thinking) and
 **Rocksi** (a teach-pendant simulator for the Sawyer robot). The focus is on
 *optimising* the number of programming steps.
+
+**AI use:** not permitted — the outcome *is* your own logic. Lab 14 returns to a
+real 6-axis arm in RoboDK for Web.
 :::
 
 ### Learning outcomes
@@ -190,7 +216,7 @@ line totals the same tasks to 10. Use the table above.)*
 
 ---
 
-## Lab 2 — Engineering Design Process Documentation
+## Lab 2 — Engineering Design Process Documentation {#sec-lab-design-doc}
 
 ::: {.lab-overview}
 You produce the engineering-documentation package that a real project needs to
@@ -198,9 +224,11 @@ move a design into production — specification sheets, a bill of materials, a t
 list / process flow, a project schedule and Gantt chart, a production-facility
 layout drawing, and a health-safety-environment (HSE) risk assessment — for the
 **Précitech Components shaft-kit assembly cell** described in the case study
-below. The same cell is simulated in [Lab 3](#lab-3-manufacturing-facility-design-simulation-anylogic),
-so the documents you build here feed directly into the next lab. Tools: Microsoft
-Visio/Word, Project and Excel.
+below. The same cell is simulated in [Lab 3](#sec-lab-anylogic), so the documents
+you build here feed directly into the next lab. Tools: Microsoft Visio/Word,
+Project and Excel.
+
+**AI use:** not permitted for any part of the report.
 :::
 
 ::: {.callout-note}
@@ -230,7 +258,7 @@ the shipping dock.
 Plant manager **Sophie Tran** has asked your team to produce the engineering
 documentation package for this cell **before it is built**.
 
-*This is the same plant used in the machine-learning labs (Labs 5–10), which build
+*This is the same plant used in the machine-learning labs (Labs 7–12), which build
 a predictive-maintenance proof of concept for Précitech's CNC turning cells.*
 :::
 
@@ -362,7 +390,7 @@ the term.)*
 
 ---
 
-## Lab 3 — Manufacturing Facility Design & Simulation (AnyLogic)
+## Lab 3 — Manufacturing Facility Design & Simulation (AnyLogic) {#sec-lab-anylogic}
 
 ::: {.lab-overview}
 You turn the Précitech kitting-cell layout from Lab 2 into an electronic drawing,
@@ -370,6 +398,8 @@ then use **AnyLogic Personal Learning Edition** to run a discrete-event
 simulation of the cell's order-fulfilment behaviour. By changing order and
 replenishment parameters and reading the statistics screens, you see how
 component-stock policy drives waiting time, picking (kitting) time and throughput.
+
+**AI use:** not permitted for any part of the report.
 :::
 
 ### Learning outcomes
@@ -487,13 +517,164 @@ required, confirm the split — likely drawing 4, analysis 1.5 × 4.)*
 
 ---
 
-## Lab 4 — Ergonomics in Automated Manufacturing (REBA & Inseer)
+## Lab 4 — Lean: Value Stream Mapping, Takt and Pull {#sec-lab-lean-vsm}
+
+::: {.lab-overview}
+You map the Précitech shaft line as it runs today, size it against customer
+demand, and redesign the flow. Working in **draw.io** (browser) you build a
+current-state **value stream map**; in **Google Sheets** you compute **takt
+time**, an operator balance chart and **process cycle efficiency**; and on
+**AnyLogic Cloud** (browser, free public tier) you compare push, pull and a
+kanban-capped supermarket. You finish with a future-state map carrying one SMED
+and one pull improvement. Everything runs in a browser — nothing to install.
+
+**AI use:** permitted with disclosure, but **not** for the map itself or the
+takt / PCE calculations — those must be your own work. Name any tool you used and
+what for.
+:::
+
+### Learning outcomes
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Draw a current-state value stream map from a station data table, with a
+  material-flow line, an information-flow line and a lead-time ladder.
+- Compute takt time from customer demand and compare it against station cycle
+  times on an operator balance chart to find the bottleneck.
+- Classify observed waste against the seven wastes and compute process cycle
+  efficiency (value-added time ÷ lead time).
+- Explain how push, pull and a kanban-capped supermarket differ in WIP and lead
+  time, using simulation output as evidence.
+- Propose a future state and justify the projected lead-time reduction.
+:::
+
+### Prep work
+
+::: {.lab-prep}
+- Read Chapter 5 (Lean) on takt time, the seven wastes, pull systems, kanban and
+  SMED, and the Chapter 3 material on line balancing.
+- Create a free **draw.io** document (app.diagrams.net — "Device" storage is
+  fine, no account needed) and skim the built-in *Value Stream* shape library.
+- Confirm **AnyLogic Cloud** (cloud.anylogic.com) loads and that you can run a
+  public model and edit its input parameters in the browser.
+- Download `vsm_station_data.csv` from FOL — the station table for the Précitech
+  shaft line (cycle time, changeover, uptime, WIP, batch size per station).
+- Form teams of 2–3.
+:::
+
+### Materials & equipment
+
+::: {.lab-materials}
+- Computer with internet access; one per team is enough, one per student is better
+- **draw.io** (browser) — current- and future-state maps
+- **Google Sheets** (browser) — takt, balance chart, PCE
+- **AnyLogic Cloud** (browser, free public tier) — push/pull model
+- `vsm_station_data.csv` from FOL
+- The [Précitech case study](#sec-precitech-case) — demand is 250 kits/day on one
+  8-hour shift
+:::
+
+### Procedure
+
+::: {.lab-procedure}
+Run the setup step first: open `vsm_station_data.csv` in Google Sheets and read
+the column headings so you know what each station contributes.
+
+**Task 1 — Current-state value stream map (30 min).** In draw.io, map the shaft
+line end to end: CNC turn → deburr → wash → inspect → the Lab 2 kitting cell →
+shipping. For each process box record cycle time (C/T), changeover time (C/O),
+uptime and batch size from the supplied table; put an inventory triangle with the
+WIP count between each pair of boxes; add the supplier and customer, the
+production-control box, and the information-flow arrows (forecast, daily order,
+schedule). Draw the lead-time ladder along the bottom — processing time on the
+lower step, inventory wait time (WIP ÷ daily demand) on the upper step — and total
+it to a **production lead time** and a **value-added time**. *(3 marks)*
+
+**Task 2 — Takt and the balance chart (20 min).** In Sheets, compute takt time
+= available shift time ÷ customer demand for the 250 kits/day target (state your
+planned/unplanned downtime assumption). Build an operator balance chart — one bar
+per station, station C/T on the y-axis, a horizontal takt line across all bars.
+Name the bottleneck station and say by how much it exceeds takt. *(2 marks)*
+
+**Task 3 — Waste and process cycle efficiency (25 min).** Walk the map and
+classify every wait, move and rework against the **seven wastes** (transport,
+inventory, motion, waiting, overproduction, overprocessing, defects) — at least
+one concrete example per waste that is present. Compute process cycle efficiency
+= value-added time ÷ production lead time from your Task 1 ladder, and state
+whether the line is "lean" by the usual 25 % rule of thumb. *(2 marks)*
+
+**Task 4 — Push vs pull on AnyLogic Cloud (25 min).** Open the supplied
+push/pull model on AnyLogic Cloud. Run it three ways, changing only the control
+policy: (a) **push** — every station runs whenever it has parts; (b) **pull** —
+downstream withdrawal triggers upstream; (c) **kanban-capped supermarket** — a
+fixed WIP cap between the bottleneck and its predecessor. For each run record
+average WIP and average lead time from the model output, in a small Sheets table.
+*(2 marks)*
+
+**Task 5 — Future-state map (20 min).** In draw.io, redraw the line with **one
+SMED change** (halve the changeover at one station and justify the halving) and
+**one pull change** (a supermarket or FIFO lane where you had push). Recompute
+the lead-time ladder and state the projected lead-time reduction and which of the
+seven wastes each change attacks. *(1 mark)*
+:::
+
+### Deliverables & submission
+
+::: {.lab-deliverables}
+One team report (PDF) containing: the current-state VSM (draw.io export), the
+takt calculation and operator balance chart, the seven-wastes table and the PCE
+calculation, the push/pull/supermarket results table with a two-sentence
+interpretation, and the future-state VSM with its justification. If you used an
+AI tool for anything permitted, add a one-line disclosure. Submit on FOL by the
+end of the lab period.
+:::
+
+### Rubric
+
+::: {.lab-rubric}
+**10 marks total.**
+
+| Deliverable | Marks |
+|---|---|
+| Current-state VSM — process boxes with C/T, C/O, uptime, batch; WIP triangles; information flow; lead-time ladder totalled | 3 |
+| Takt calculation correct (demand, shift time, downtime stated); operator balance chart vs takt; bottleneck named with the gap quantified | 2 |
+| Seven-wastes classification with a concrete example each; PCE computed correctly from the ladder and interpreted | 2 |
+| Push / pull / supermarket runs completed; WIP and lead time recorded for all three; interpretation consistent with the numbers | 2 |
+| Future-state VSM with one SMED and one pull change; projected lead-time reduction justified against the ladder | 1 |
+:::
+
+### Instructor notes
+
+::: {.lab-instructor}
+- **Prep:** generate `vsm_station_data.csv` with `Rscript R/make_lab_data.R` and
+  stage it on FOL. Publish the answer key from the same script — expected takt,
+  bottleneck station, PCE and the push-vs-pull WIP/lead-time ordering.
+- Build or fork the AnyLogic Cloud push/pull model once and confirm the input
+  parameters students need (control policy, WIP cap) are exposed on the public
+  run screen. Test it through the college firewall the day before.
+- Confirm draw.io and cloud.anylogic.com are reachable on the lab network; both
+  are on the Lab 4 / 13 firewall-check list in [Teacher preparation].
+- **Marking:** the map and the takt/PCE arithmetic must be the students' own (AI
+  not permitted for those). Check the lead-time ladder actually totals to the
+  numbers they quote — a ladder that does not add up is the most common error.
+- This is the takt reference for **Lab 14** — students compare the RoboDK cycle
+  time against the takt they compute here, so make sure the takt value is right.
+:::
+
+---
+
+## Lab 5 — Ergonomics in Automated Manufacturing (REBA & Inseer) {#sec-lab-ergonomics}
 
 ::: {.lab-overview}
 You assess three workplace tasks for musculoskeletal risk two ways: manually with
 the **REBA (Rapid Entire Body Assessment)** worksheet, and automatically with
 **Inseer**, an AI video-based ergonomic-assessment tool. You then compare the two
 methods.
+
+**AI use:** permitted with disclosure. Note that Inseer is itself an AI tool and
+is **required** for this lab — that is a lab instrument, not a generative AI
+writing your report.
 :::
 
 ### Learning outcomes
@@ -560,16 +741,15 @@ FOL by the end of the lab period.
 ### Rubric
 
 ::: {.lab-rubric}
-`TODO — no numeric rubric in the folder.` Suggested split (confirm before the
-term):
+**10 marks total.**
 
-| Element | Marks |
+| Criterion | Marks |
 |---|---|
-| Procedure documented | 1 |
-| REBA analysis — correct scoring & interpretation | 4 |
-| Inseer report generated & included | 2 |
-| Comparison / observations — manual vs. automated | 2 |
-| Conclusion | 1 |
+| Procedure followed; all three assigned tasks assessed | 1 |
+| REBA scoring — correct Table A/B/C lookups, coupling and activity adjustments, final score and risk band for each of the three tasks | 4 |
+| Inseer report — assessment run, output correctly read and quoted | 2 |
+| Manual vs automated comparison — quantified, references the Chapter 7 risk factors | 2 |
+| Conclusion and recommended controls, ordered by the hierarchy of controls | 1 |
 :::
 
 ### Instructor notes
@@ -588,24 +768,391 @@ term):
 
 ---
 
-## Machine-learning module: Labs 5 to 10 {#sec-chap-ml-lab}
+## Lab 6 — SPC and Gauge R&R: the Virtual Caliper {#sec-lab-spc-rr}
 
-Labs 5–10 are the laboratory component of Chapter @sec-chap-ml. Each week has
-two hours of classroom theory (Chapter @sec-chap-ml) followed by a two-hour lab.
-The six sessions build on each other: by the end of Lab 9 you will have a working
-predictive-maintenance web application at a public URL, and Lab 10 is the live
-demo of it.
+::: {.lab-overview}
+Before you ask an LLM to do statistical process control in Python (that is
+Lab 8), you do it yourself, by hand, as the measurement system. This lab runs
+entirely inside this page: **webR cells** render a **virtual vernier caliper** at
+a hidden, seeded true value, you read the scale and type the value, and the
+readings you produce carry *genuine human reading error against known ground
+truth* — so bias, linearity, repeatability and reproducibility are all
+computable, which a paper Gauge R&R cannot do. You then build an X̄/R chart and
+compute Cpk against the Précitech shaft spec of Ø 25.000 ± 0.050 mm.
 
-| Lab | Week | Focus | What you submit |
-|:--|:--|:--|:--|
-| 5 | 1 | AI literacy: prompt engineering, hallucination hunting, Python code generation | `prompts.md` + `spc_starter.py` |
-| 6 | 2 | Manufacturing data: cleaning, SPC, Cpk on real plant data | Completed `week2_lab.ipynb` |
-| 7 | 3 | Capstone kickoff: understanding the C-MAPSS dataset | Notebook with sensor plots and reflection |
-| 8 | 4 | Capstone build: feature engineering, model training, evaluation | Notebook + `rul_model.pkl` + `feature_cols.pkl` |
-| 9 | 5 | Capstone deploy: Streamlit app on the public internet | Public URL submitted via FOL |
-| 10 | 6 | Capstone presentations: live demo to the class | Presentation (no file submission) |
+**AI use:** not permitted for the readings or the calculations — *you* are the
+measurement system being studied. You may use an LLM to check your written
+reflection only, with disclosure.
+:::
 
-**Tools used across Labs 5–10:**
+### Learning outcomes
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Read a vernier scale to its resolution and record a blinded, randomised
+  measurement set.
+- Run a range-method Gauge R&R: compute EV, AV, GRR, PV, TV, %GRR and the number
+  of distinct categories (ndc), and judge gauge acceptability.
+- Estimate gauge bias and linearity against certified reference values.
+- Build an X̄/R control chart, apply the Western Electric rules, and compute Cpk
+  against a two-sided specification.
+- Explain how an inadequate measurement system distorts a capability index.
+:::
+
+### Prep work
+
+::: {.lab-prep}
+- Read Chapter 10 (SPC — X̄/R charts, the Western Electric rules, Cpk) and
+  Chapter 11 (MSA — bias, linearity, repeatability, reproducibility, the range
+  method, ndc).
+- Skim the worked webR cells in Chapter 11: `bias-calculation` and `range-method`
+  — you reuse that method here.
+- Nothing to install and no account to create. This lab needs **no external
+  service** — if the book page loads, the lab works.
+- Form groups of **exactly 3**. Each group member is one of the three operators
+  in the Gauge R&R study.
+:::
+
+### Materials & equipment
+
+::: {.lab-materials}
+- One computer per group with this book page open (a second screen helps — one
+  person reads the caliper, one records)
+- The webR cells in this section (the caliper, the Gauge R&R calculator, the
+  X̄/R + Cpk cell)
+- A spreadsheet or paper grid to hold 90 readings (10 parts × 3 operators ×
+  3 trials) before you type them into the calculator cell
+- The [Précitech case study](#sec-precitech-case): shaft blanks, AISI 4140,
+  Ø 25.000 ± 0.050 mm
+:::
+
+### Procedure
+
+::: {.lab-procedure}
+> **webR runs top to bottom on one shared page environment.** Run the **setup
+> cell first** and leave it run; every later cell depends on the objects it
+> creates. If a later cell errors with "object not found", re-run the setup cell.
+> Base R graphics only — do not add `library(ggplot2)`; it is slow and fragile in
+> webR and not needed here.
+
+**Task 1 — Calibrate your eye (10 min).** Run the setup cell. Then run the demo
+cell three times with `demo = 1`, `2`, `3`; each prints the correct reading after
+you have written your own. The caliper resolution is **0.05 mm**: read the last
+main-scale mark the vernier zero has passed, then find the vernier mark that best
+lines up with a main-scale mark and add that many hundredths. Zoom the browser if
+the coincidence is hard to see.
+
+**Task 2 — The measurement run (35 min). *(2 marks)*** Each operator reads
+**all 10 parts, 3 trials each**, using `draw_caliper(part, trial)`. Read blind —
+do not look at another operator's numbers, and do not look at your own previous
+trial. Work through the parts in the randomised order the setup cell prints for
+you, a different order per operator. Record all 90 readings in your grid.
+
+**Task 3 — Range-method Gauge R&R (20 min). *(3 marks)*** Type your 90 readings
+into the `lab6-grr` cell (10 parts × 3 operators × 3 trials) and run it. It reports
+EV, AV, GRR, PV, TV, **%GRR** and **ndc** by the AIAG average-and-range method —
+the same method as Chapter 11's `range-method` cell, extended to 3 operators and
+3 trials. Record every output.
+
+**Task 4 — Bias and linearity (15 min). *(1 mark)*** Run the `lab6-bias` cell. It
+compares each operator's mean reading of each part against that part's certified
+reference value (printed by the setup cell), reports overall bias, and fits
+bias vs. size to get linearity. State the bias in mm and whether it changes
+across the size range.
+
+**Task 5 — X̄/R chart and Cpk (25 min). *(3 marks)*** Run the `lab6-spc` cell. It
+generates a **seeded 25-subgroup** production dataset (5 shafts per subgroup)
+against Ø 25.000 ± 0.050 mm — the same for every group — draws the X̄ and R
+charts, and computes Cpk. On the printed chart: list every subgroup that breaks a
+**Western Electric rule** (one point beyond 3σ; 2 of 3 beyond 2σ; 4 of 5 beyond
+1σ; 8 in a row on one side) and name the rule. Report Cpk and say whether the
+process clears the automotive Tier-1 bar of 1.33.
+
+**Task 6 — Reflection (15 min). *(1 mark)*** Answer in a few sentences: (1) Is
+your gauge acceptable? Use the AIAG bands — %GRR < 10 % acceptable, 10–30 %
+marginal, > 30 % unacceptable; ndc ≥ 5 required. (2) Your %GRR came from a study
+on parts spanning the process range. If the measurement system contributes the
+%GRR you found, what does that do to the Cpk you computed in Task 5 — is the true
+capability better or worse than the number? (3) Would you release shafts to the
+customer on this gauge?
+:::
+
+```{webr-r}
+#| label: lab6-setup
+# ── Lab 6 setup — RUN THIS FIRST ──────────────────────────────────────────────
+# Defines the virtual caliper and the hidden true values. No third-party
+# packages: base R graphics only.
+
+set.seed(3027)
+
+# Certified reference value of each of the 10 study parts (what a CMM reports),
+# chosen to span the process range around the Ø 25.000 mm nominal.
+caliper_ref <- round(sort(runif(10, 24.90, 25.10)), 3)
+
+# The caliper under study has a small, slightly size-dependent bias (mm).
+caliper_bias <- 0.03 + 0.05 * (caliper_ref - 25.00)
+
+# What the caliper *shows* for a given part and trial: reference + gauge bias +
+# a small amount of mechanism/technique slop. Seeded per (part, trial) so the
+# same call always draws the same scene.
+caliper_shown <- function(part, trial) {
+  set.seed(1000L * part + trial)
+  caliper_ref[part] + caliper_bias[part] + rnorm(1, 0, 0.015)
+}
+
+# Draw a zoomed vernier caliper (resolution 0.05 mm) at the shown value.
+draw_caliper <- function(part, trial) {
+  stopifnot(part >= 1, part <= 10, trial >= 1, trial <= 3)
+  shown <- caliper_shown(part, trial)
+  lo <- floor(shown) - 4
+  hi <- lo + 24
+  op <- par(mar = c(1, 1, 3, 1)); on.exit(par(op))
+  plot(NA, xlim = c(lo, hi), ylim = c(3.5, 9), axes = FALSE, xlab = "", ylab = "",
+       main = sprintf("draw_caliper(part = %d, trial = %d)", part, trial))
+  # fixed main scale (mm), ticks every 1 mm, labels every 5 mm
+  for (m in lo:hi) {
+    big <- (m %% 5 == 0)
+    lines(c(m, m), c(7, if (big) 6.1 else 6.6), lwd = if (big) 2 else 1)
+    if (big) text(m, 7.5, labels = m, cex = 0.9)
+  }
+  lines(c(lo, hi), c(7, 7), lwd = 2)
+  text(lo, 8.6, "main scale — millimetres", pos = 4, cex = 0.9, font = 3)
+  # sliding vernier: 20 divisions spanning 19 mm  ->  each 0.95 mm, resolution 0.05
+  v0 <- shown
+  for (k in 0:20) {
+    xk <- v0 + k * 0.95
+    big <- (k %% 5 == 0)
+    lines(c(xk, xk), c(5.9, if (big) 5.0 else 5.5), lwd = if (big) 2 else 1)
+    if (big) text(xk, 4.7, labels = sprintf("%.2f", k * 0.05), cex = 0.8)
+  }
+  lines(c(v0, v0 + 19), c(5.9, 5.9), lwd = 2)
+  polygon(c(v0 - 0.22, v0 + 0.22, v0), c(6.0, 6.0, 6.5), col = "black")
+  text(v0, 4.2, "vernier 0", cex = 0.8, font = 3)
+  invisible(NULL)
+}
+
+# Randomised part order, one per operator (A, B, C).
+operator_order <- lapply(1:3, function(i) { set.seed(70 + i); sample(1:10) })
+names(operator_order) <- c("A", "B", "C")
+
+cat("Setup complete.\n\n")
+cat("Randomised part order:\n")
+for (nm in names(operator_order))
+  cat("  Operator", nm, ":", paste(operator_order[[nm]], collapse = " "), "\n")
+cat("\nUse draw_caliper(part, trial) with part 1..10 and trial 1..3.\n")
+```
+
+```{webr-r}
+#| label: lab6-demo
+# Practice reads — set demo to 1, 2 or 3, run, write your reading, then check.
+demo <- 1
+
+practice_parts <- c(2, 6, 9)
+p <- practice_parts[demo]
+draw_caliper(part = p, trial = 1)
+cat("Write your reading (mm) before running the next line.\n")
+cat("Correct reading to 0.05 mm:",
+    format(round(caliper_shown(p, 1) / 0.05) * 0.05, nsmall = 2), "mm\n")
+```
+
+```{webr-r}
+#| label: lab6-grr
+# ── Range-method Gauge R&R — 10 parts, 3 operators, 3 trials ───────────────────
+# Replace the numbers below with YOUR 90 readings. Each operator matrix is
+# 10 rows (parts 1..10) x 3 columns (trials 1..3).
+
+op_A <- matrix(c(
+#  trial1  trial2  trial3
+   25.00,  25.05,  25.00,   # part 1
+   24.95,  24.95,  25.00,   # part 2
+   24.90,  24.95,  24.90,   # part 3
+   25.10,  25.05,  25.10,   # part 4
+   24.85,  24.90,  24.85,   # part 5
+   25.20,  25.15,  25.20,   # part 6
+   24.80,  24.85,  24.80,   # part 7
+   25.15,  25.15,  25.10,   # part 8
+   24.75,  24.80,  24.80,   # part 9
+   25.25,  25.20,  25.25    # part 10
+), ncol = 3, byrow = TRUE)
+
+op_B <- op_A + 0.01   # <-- replace with Operator B's real readings
+op_C <- op_A - 0.01   # <-- replace with Operator C's real readings
+
+trials    <- 3
+operators <- 3
+parts     <- 10
+
+# AIAG average-and-range constants
+K1 <- 0.5908                 # trials = 3   (repeatability)
+K2 <- 0.5231                 # operators = 3 (reproducibility)
+K3 <- 0.3146                 # parts = 10   (part variation)
+
+ops <- list(A = op_A, B = op_B, C = op_C)
+
+# Repeatability (EV): mean within-operator, within-part range
+part_op_range <- sapply(ops, function(M) apply(M, 1, function(x) max(x) - min(x)))
+Rbar <- mean(part_op_range)
+EV   <- Rbar * K1
+
+# Reproducibility (AV): range of the operator grand means, corrected for EV
+op_means <- sapply(ops, mean)
+Xdiff    <- max(op_means) - min(op_means)
+AV       <- sqrt(max(0, (Xdiff * K2)^2 - (EV^2 / (parts * trials))))
+
+# Gauge R&R
+GRR <- sqrt(EV^2 + AV^2)
+
+# Part variation (PV): range of the part averages across all operators & trials
+part_means <- rowMeans(sapply(ops, function(M) rowMeans(M)))
+Rp <- max(part_means) - min(part_means)
+PV <- Rp * K3
+
+TV   <- sqrt(GRR^2 + PV^2)
+pGRR <- 100 * GRR / TV
+ndc  <- floor(1.41 * PV / GRR)
+
+cat(sprintf("EV  (repeatability)   = %.4f mm\n", EV))
+cat(sprintf("AV  (reproducibility) = %.4f mm\n", AV))
+cat(sprintf("GRR                   = %.4f mm\n", GRR))
+cat(sprintf("PV  (part variation)  = %.4f mm\n", PV))
+cat(sprintf("TV  (total variation) = %.4f mm\n", TV))
+cat(sprintf("%%GRR                  = %.1f %%\n", pGRR))
+cat(sprintf("ndc                   = %d\n", ndc))
+cat("\nAIAG: %GRR < 10 acceptable | 10-30 marginal | > 30 unacceptable; ndc >= 5.\n")
+```
+
+```{webr-r}
+#| label: lab6-bias
+# ── Bias and linearity vs certified reference values ──────────────────────────
+# Uses op_A / op_B / op_C from the lab6-grr cell and caliper_ref from the setup cell.
+
+ops <- list(A = op_A, B = op_B, C = op_C)
+obs_part_mean <- rowMeans(sapply(ops, function(M) rowMeans(M)))   # 10 part means
+bias_by_part  <- obs_part_mean - caliper_ref
+
+cat("Part | reference | observed mean | bias (mm)\n")
+for (i in 1:10)
+  cat(sprintf("%4d | %9.3f | %13.3f | %+7.3f\n",
+              i, caliper_ref[i], obs_part_mean[i], bias_by_part[i]))
+
+cat(sprintf("\nOverall bias = %+.4f mm\n", mean(bias_by_part)))
+
+lin <- lm(bias_by_part ~ caliper_ref)
+slope <- coef(lin)[2]
+cat(sprintf("Linearity slope = %+.4f mm of bias per mm of size\n", slope))
+cat(sprintf("Linearity over the %.2f mm study range = %.4f mm\n",
+            diff(range(caliper_ref)), abs(slope) * diff(range(caliper_ref))))
+```
+
+```{webr-r}
+#| label: lab6-spc
+# ── X-bar / R chart and Cpk — seeded 25-subgroup production dataset ────────────
+# Ø 25.000 +/- 0.050 mm. Same data for every group.
+
+set.seed(250)
+n_sub <- 25; n <- 5
+USL <- 25.050; LSL <- 24.950; nominal <- 25.000
+
+mu_series <- rep(25.002, n_sub)
+mu_series[12:16] <- mu_series[12:16] + 0.030   # a real special-cause shift
+x <- t(sapply(mu_series, function(m) rnorm(n, m, 0.011)))
+
+xbar <- rowMeans(x)
+R    <- apply(x, 1, function(v) max(v) - min(v))
+xbarbar <- mean(xbar); Rbar <- mean(R)
+
+A2 <- 0.577; D3 <- 0; D4 <- 2.114; d2 <- 2.326   # n = 5
+UCL_x <- xbarbar + A2 * Rbar; LCL_x <- xbarbar - A2 * Rbar
+UCL_R <- D4 * Rbar;           LCL_R <- D3 * Rbar
+
+par(mfrow = c(2, 1), mar = c(4, 4, 2, 1))
+plot(xbar, type = "b", pch = 19, ylim = range(xbar, UCL_x, LCL_x),
+     xlab = "Subgroup", ylab = "X-bar (mm)", main = "X-bar chart")
+abline(h = c(UCL_x, xbarbar, LCL_x), lty = c(2, 1, 2), col = c("red", "black", "red"))
+plot(R, type = "b", pch = 19, ylim = range(0, R, UCL_R),
+     xlab = "Subgroup", ylab = "R (mm)", main = "R chart")
+abline(h = c(UCL_R, Rbar, LCL_R), lty = c(2, 1, 2), col = c("red", "black", "red"))
+par(mfrow = c(1, 1))
+
+sigma_hat <- Rbar / d2
+Cp  <- (USL - LSL) / (6 * sigma_hat)
+Cpk <- min(USL - xbarbar, xbarbar - LSL) / (3 * sigma_hat)
+
+cat(sprintf("X-bar-bar = %.4f mm   R-bar = %.4f mm   sigma_hat = %.4f mm\n",
+            xbarbar, Rbar, sigma_hat))
+cat(sprintf("X-bar control limits: [%.4f, %.4f]\n", LCL_x, UCL_x))
+cat(sprintf("Cp = %.2f   Cpk = %.2f   (automotive Tier-1 target: Cpk >= 1.33)\n", Cp, Cpk))
+cat("\nBeyond-3-sigma subgroups:",
+    paste(which(xbar > UCL_x | xbar < LCL_x), collapse = " "), "\n")
+cat("Apply the remaining Western Electric rules by eye on the chart above.\n")
+```
+
+### Deliverables & submission
+
+::: {.lab-deliverables}
+One group submission (PDF or notebook export) containing: the 90-reading grid;
+the Gauge R&R cell output with EV, AV, GRR, PV, TV, %GRR and ndc; the bias and
+linearity output; the X̄/R chart with the Western Electric rule breaks listed and
+named, and the Cpk; and the Task 6 reflection. Submit on FOL by the end of the
+lab period.
+:::
+
+### Rubric
+
+::: {.lab-rubric}
+**10 marks total.**
+
+| Deliverable | Marks |
+|---|---|
+| Task 2 — 90 readings, blinded and in the randomised order, all 10 parts × 3 trials per operator | 2 |
+| Task 3 — Gauge R&R computed: EV, AV, GRR, PV, TV, %GRR and ndc all reported and internally consistent | 3 |
+| Task 4 — bias in mm and a linearity statement against the reference values | 1 |
+| Task 5 — X̄/R chart read correctly, every Western Electric rule break listed and named, Cpk reported and compared to 1.33 | 3 |
+| Task 6 — acceptability judged against the %GRR and ndc bands; effect of gauge error on Cpk reasoned through; release decision stated | 1 |
+:::
+
+### Instructor notes
+
+::: {.lab-instructor}
+- **Prep:** none beyond opening the rendered page and checking the webR cells
+  load. This lab has **no external dependency** — no site, no account, no
+  dataset file — which is deliberate: it removes the single-point-of-failure risk
+  the browser labs otherwise carry (see Lab 1's notes).
+- Run `Rscript R/make_lab_data.R` to print the Lab 6 answer key: the
+  `caliper_ref` values, the expected overall bias (≈ +0.03 mm), and the expected
+  %GRR / ndc / Cpk ranges. The caliper and SPC data are generated inside the
+  webR cells, so there is no file to stage.
+- Groups must be **exactly 3** — the study needs three operators. An absent
+  member means the group runs 2 operators and notes it; do not let a group of 4
+  double up.
+- **Marking:** the readings must show real spread between trials and operators —
+  a grid where every operator recorded identical values was not read blind.
+  Check that %GRR and ndc are consistent with the EV/AV/PV they reported.
+- This lab is the "do it yourself first" half of the arc into Lab 8 (SPC in
+  Python, directed by an LLM). Point that forward explicitly.
+:::
+
+---
+
+## Machine-learning module: Labs 7 to 12 {#sec-chap-ml-lab}
+
+Labs 7–12 are the laboratory component of Chapter @sec-chap-ml, running in course
+weeks 7 to 12. Each week has two hours of classroom theory (Chapter
+@sec-chap-ml) followed by a two-hour lab. The six sessions build on each other:
+by the end of Lab 11 you will have a working predictive-maintenance web
+application at a public URL, and Lab 12 is the live demo of it.
+
+| Lab | Course week | Module week | Focus | What you submit |
+|:--|:--|:--|:--|:--|
+| 7 | 7 | 1 | AI literacy: prompt engineering, hallucination hunting, Python code generation | `prompts.md` + `spc_starter.py` |
+| 8 | 8 | 2 | Manufacturing data: cleaning, SPC, Cpk on real plant data | Completed `week2_lab.ipynb` |
+| 9 | 9 | 3 | Capstone kickoff: understanding the C-MAPSS dataset | Notebook with sensor plots and reflection |
+| 10 | 10 | 4 | Capstone build: feature engineering, model training, evaluation | Notebook + `rul_model.pkl` + `feature_cols.pkl` |
+| 11 | 11 | 5 | Capstone deploy: Streamlit app on the public internet | Public URL submitted via FOL |
+| 12 | 12 | 6 | Capstone presentations: live demo to the class | Presentation (no file submission) |
+
+**Tools used across Labs 7–12:**
 
 - **Google Colab** (colab.research.google.com) — free, no local installation required
 - **Claude.ai or ChatGPT** (free tier) — for the Week 1–2 exercises
@@ -646,13 +1193,17 @@ and user interface well enough for the plant manager to decide on next steps.
 
 ---
 
-## Lab 5 — Machine Learning, Week 1: AI Literacy and Prompt Engineering
+## Lab 7 — Machine Learning, Week 1: AI Literacy and Prompt Engineering {#sec-lab-ml-w1}
 
 ::: {.lab-overview}
-The first lab of the machine-learning module. You compare how an LLM responds to
-poorly vs. well-structured prompts, deliberately trigger and document a
-hallucination, and use an LLM to generate the Python code you will build on in
-Lab 6. Set in the Précitech narrative above.
+The first lab of the machine-learning module, in course week 7 (the midterm is
+written in lecture time that week, so this lab period runs as normal). You compare
+how an LLM responds to poorly vs. well-structured prompts, deliberately trigger
+and document a hallucination, and use an LLM to generate the Python code you will
+build on in Lab 8. Set in the Précitech narrative above.
+
+**AI use:** required — you are assessed on directing an LLM well, not on writing
+Python.
 :::
 
 ### Learning outcomes
@@ -733,7 +1284,7 @@ with title and axis labels; prints the mean and standard deviation of
 missing values. Constrain the prompt: pandas + matplotlib only; a comment above
 each logical block; runnable in Google Colab with no local paths; standard Colab
 libraries only. **Read every line and make sure you can explain it** — the
-instructor will ask in Lab 6. Save it as `spc_starter.py`.
+instructor will ask in Lab 8. Save it as `spc_starter.py`.
 :::
 
 ### Deliverables & submission
@@ -749,14 +1300,14 @@ Submit via FOL by end of session:
 ### Rubric
 
 ::: {.lab-rubric}
-`TODO — confirm the mark split with the course plan.` Suggested (10 marks):
+**10 marks total.**
 
-| Element | Marks |
+| Criterion | Marks |
 |---|---|
-| Exercise 1 — five R-C-T-C-F rewrites with reflections | 3 |
-| Exercise 2 — three audience-specific prompts + comparison | 2 |
-| Exercise 3 — hallucination caught, documented and verified | 3 |
-| Exercise 4 — `spc_starter.py` meets all five requirements; student can explain it | 2 |
+| `prompts.md` — five prompts rewritten with all five R-C-T-C-F elements present | 3 |
+| FMEA summarised at three audiences — audience-appropriate and technically accurate | 2 |
+| Hallucination hunt — a fabrication documented, **with evidence of how it was verified** | 3 |
+| `spc_starter.py` runs, is commented, and the student can explain it on request | 2 |
 :::
 
 ### Instructor notes
@@ -765,24 +1316,27 @@ Submit via FOL by end of session:
 - **Prep:** confirm Claude.ai / ChatGPT and colab.research.google.com are
   reachable on the lab network. Post the FMEA table (Chapter @sec-chap-ml, Week 1)
   and a blank `prompts.md` on FOL.
-- No dataset needed this week; `spc_data.csv` is staged for Lab 6.
+- No dataset needed this week; `spc_data.csv` is staged for Lab 8.
 - **Marking:** Exercise 3 is the point of the week — require genuine verification
   (a screenshot of the empty ASTM search, a Google Scholar "no results"), not just
   "I think this is made up".
-- **Course weight:** the machine-learning module is six labs; decide how the
-  module maps onto the course's per-lab weighting and whether the capstone
-  (Labs 7–10) is weighted more heavily. See the capstone rubric in Lab 10.
+- The capstone (Labs 9–12) is assessed together against the capstone rubric in
+  Lab 12; weights live in FOL and the instructor handbook, not here.
 :::
 
 ---
 
-## Lab 6 — Machine Learning, Week 2: Manufacturing Data and SPC
+## Lab 8 — Machine Learning, Week 2: Manufacturing Data and SPC {#sec-lab-ml-w2}
 
 ::: {.lab-overview}
-You run your Lab 5 Python on real (messy) plant data — 90 days of production from
+You run your Lab 7 Python on real (messy) plant data — 90 days of production from
 Précitech CNC Cell 3, with intentional data-quality problems embedded — find and
 document each problem without silently deleting data, then build an X-bar control
-chart and compute Cpk.
+chart and compute Cpk. This is the SPC you did by hand in Lab 6, now directed
+through an LLM.
+
+**AI use:** required — you direct an LLM to write the Python and must be able to
+explain every line.
 :::
 
 ### Learning outcomes
@@ -799,7 +1353,7 @@ chart and compute Cpk.
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 2** (where plant data comes from; why
   industrial data is messy; statistical process control; where SPC fails).
-- Have your `spc_starter.py` from Lab 5 ready.
+- Have your `spc_starter.py` from Lab 7 ready.
 - Open [Google Colab](https://colab.research.google.com) and check you can upload
   files.
 :::
@@ -810,7 +1364,7 @@ chart and compute Cpk.
 - Computer with internet access; Google Colab
 - `spc_data.csv` (90 days of CNC Cell 3 data, with embedded problems) — from FOL
 - `week2_lab.ipynb` — pre-structured lab notebook, from FOL
-- Your `spc_starter.py` from Lab 5
+- Your `spc_starter.py` from Lab 7
 :::
 
 ### Procedure
@@ -883,14 +1437,15 @@ session.
 ### Rubric
 
 ::: {.lab-rubric}
-`TODO — confirm the mark split with the course plan.` Suggested (10 marks):
+**10 marks total.**
 
-| Element | Marks |
+| Criterion | Marks |
 |---|---|
-| Task 1 — starter code run, behaviour described | 1 |
-| Task 2 — all five data issues found; quality log complete; special cause kept | 4 |
-| Task 3 — correct X-bar chart (right control-limit formula); Cpk ≈ 1.1–1.2 | 3 |
-| Task 4 — reflection answers | 2 |
+| Week 1 code runs against the real dataset | 1 |
+| All five data-quality issues found; `quality_log` complete (row_index, column, original, corrected, reason, action); the days 43–47 special cause correctly **kept, not deleted** | 4 |
+| X-bar chart with correct control limits — `sigma / sqrt(n)`, **not** the std of daily means | 3 |
+| Cpk against USL 25.050 / LSL 24.950, in the expected 1.1–1.2 range and interpreted | 1 |
+| Reflection | 1 |
 :::
 
 ### Instructor notes
@@ -900,20 +1455,23 @@ session.
   embedded problems (row indices, correct fixes) for marking.
 - The most common error is using the standard deviation of the daily means for the
   control limits instead of `sigma_individual / sqrt(n)` — check this explicitly.
-- Follow up on a `spc_starter.py` line from Lab 5: ask a student to explain it.
+- Follow up on a `spc_starter.py` line from Lab 7: ask a student to explain it.
 - **Marking:** deduct for silent row deletion even if the final chart looks right —
   the traceable quality log is the learning objective.
 :::
 
 ---
 
-## Lab 7 — Machine Learning, Week 3: The C-MAPSS Dataset
+## Lab 9 — Machine Learning, Week 3: The C-MAPSS Dataset {#sec-lab-ml-w3}
 
 ::: {.lab-overview}
 The capstone kickoff. You load NASA's C-MAPSS turbofan run-to-failure data,
 compute the supervised-learning label (Remaining Useful Life, RUL) from the raw
 records, and identify which of the 21 sensors actually carry predictive
 information.
+
+**AI use:** required — you direct an LLM to write the Python and must be able to
+explain every line.
 :::
 
 ### Learning outcomes
@@ -1001,8 +1559,8 @@ submit via FOL by end of session.
 ### Rubric
 
 ::: {.lab-rubric}
-Weeks 3–6 (Labs 7–10) are assessed together against the **capstone rubric in
-Lab 10**. For this session the instructor confirms progress: data loaded and
+Weeks 3–6 (Labs 9–12) are assessed together against the **capstone rubric in
+Lab 12**. For this session the instructor confirms progress: data loaded and
 labelled, sensor plot produced, constant sensors identified, correlations
 computed, reflection answered.
 :::
@@ -1014,19 +1572,22 @@ computed, reflection answered.
   (host the dataset yourself so it does not depend on Kaggle sign-in during the
   lab). Confirm Colab is reachable.
 - The "sawtooth" reflection question (Task 5.1) sets up the engine-wise split in
-  Lab 8 — make sure students actually answer it.
+  Lab 10 — make sure students actually answer it.
 - **Marking:** rolled into the capstone rubric; here just verify the notebook runs
   end to end and the reflection is attempted.
 :::
 
 ---
 
-## Lab 8 — Machine Learning, Week 4: Building the Predictive-Maintenance Model
+## Lab 10 — Machine Learning, Week 4: Building the Predictive-Maintenance Model {#sec-lab-ml-w4}
 
 ::: {.lab-overview}
 The capstone build. You engineer rolling-window features per engine, perform a
 correct engine-wise train/validation split, train a Random Forest to predict RUL,
 evaluate it against a naive baseline, and save the model for deployment.
+
+**AI use:** required — you direct an LLM to write the Python and must be able to
+explain every line.
 :::
 
 ### Learning outcomes
@@ -1044,7 +1605,7 @@ evaluate it against a naive baseline, and save the model for deployment.
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 4** (feature engineering for time-series;
   Random Forest internals; evaluation done right).
-- Have your `predictive_maintenance.ipynb` from Lab 7 with the data loaded, RUL
+- Have your `predictive_maintenance.ipynb` from Lab 9 with the data loaded, RUL
   computed, and the useful-sensor list established.
 :::
 
@@ -1052,7 +1613,7 @@ evaluate it against a naive baseline, and save the model for deployment.
 
 ::: {.lab-materials}
 - Computer with internet access; Google Colab
-- Your `predictive_maintenance.ipynb` from Lab 7 (continue in the same notebook)
+- Your `predictive_maintenance.ipynb` from Lab 9 (continue in the same notebook)
 - Python packages available in a standard Colab environment (`pandas`, `numpy`,
   `scikit-learn`, `matplotlib`, `joblib`)
 :::
@@ -1109,7 +1670,7 @@ joblib.dump(feature_cols, "feature_cols.pkl")
 ```
 
 Download both from the Colab file browser; you need them in your GitHub repo for
-Lab 9.
+Lab 11.
 :::
 
 ### Deliverables & submission
@@ -1123,7 +1684,7 @@ confirmed already in your GitHub repo).
 ### Rubric
 
 ::: {.lab-rubric}
-Assessed against the **capstone rubric in Lab 10** (Working Predictive Model, 30
+Assessed against the **capstone rubric in Lab 12** (Working Predictive Model, 30
 points; Code Quality, 20 points). The single biggest scoring risk is using
 scikit-learn's `train_test_split` instead of a manual engine-wise split — the
 symptom is an RMSE of 5–8 cycles. If that happened, fix it: understanding and
@@ -1133,7 +1694,7 @@ correcting the mistake matters more than a misleading score.
 ### Instructor notes
 
 ::: {.lab-instructor}
-- **Prep:** none beyond Lab 7 — same notebook, same data. Have a reference
+- **Prep:** none beyond Lab 9 — same notebook, same data. Have a reference
   solution notebook with the expected RMSE (~21 cycles) and feature-importance
   chart.
 - **The teaching moment:** circulate during Task 5 and look for RMSE < 10 — that is
@@ -1144,12 +1705,17 @@ correcting the mistake matters more than a misleading score.
 
 ---
 
-## Lab 9 — Machine Learning, Week 5: Deploying the App
+## Lab 11 — Machine Learning, Week 5: Deploying the App {#sec-lab-ml-w5}
 
 ::: {.lab-overview}
 You wrap the trained model in a Streamlit web application, push it to GitHub, and
 deploy it to Streamlit Community Cloud so it is live at a public URL — the
-proof-of-concept deliverable for Sophie Tran.
+proof-of-concept deliverable for Sophie Tran. **Lab 14 (the take-home RoboDK
+work cell) is released this week** — read its brief now so you can plan the
+build.
+
+**AI use:** required — you direct an LLM to write the Python and must be able to
+explain every line.
 :::
 
 ### Learning outcomes
@@ -1169,7 +1735,7 @@ proof-of-concept deliverable for Sophie Tran.
 - Create a free **GitHub** account and a new **public** repo named `rul-predictor`.
 - Create a **Streamlit Community Cloud** account at
   [share.streamlit.io](https://share.streamlit.io) using your GitHub login.
-- Have `rul_model.pkl` and `feature_cols.pkl` from Lab 8 on your machine.
+- Have `rul_model.pkl` and `feature_cols.pkl` from Lab 10 on your machine.
 :::
 
 ### Materials & equipment
@@ -1179,7 +1745,7 @@ proof-of-concept deliverable for Sophie Tran.
 - GitHub account + `rul-predictor` public repo
 - Streamlit Community Cloud account
 - `streamlit_app.py` starter template (with `TODO` markers), from FOL
-- `rul_model.pkl`, `feature_cols.pkl` from Lab 8
+- `rul_model.pkl`, `feature_cols.pkl` from Lab 10
 - A sample one-engine CSV (`sample_engine.csv`) — last 30 cycles of engine #1
 :::
 
@@ -1192,7 +1758,7 @@ features, CSV upload, colour-coded RUL display (red < 30, orange < 60, green ≥
 cycles), a sensor-trend plot, and an "About this model" expander. Complete the
 `TODO`s: add your name and course to the caption; build `sample_engine.csv` and
 wire up the "Use sample data" button; fill in the "About this model" expander
-(your name, your actual Lab 8 RMSE, one Précitech-specific limitation). Run with
+(your name, your actual Lab 10 RMSE, one Précitech-specific limitation). Run with
 `streamlit run streamlit_app.py` (or in Colab via `pyngrok` for a temporary
 public URL) and test a CSV upload.
 
@@ -1230,7 +1796,7 @@ prediction; and the public `rul-predictor` GitHub repository URL.
 ### Rubric
 
 ::: {.lab-rubric}
-Assessed against the **capstone rubric in Lab 10** (Streamlit Application, 25
+Assessed against the **capstone rubric in Lab 12** (Streamlit Application, 25
 points; Documentation & Honest Disclosure, 15 points).
 :::
 
@@ -1249,12 +1815,15 @@ points; Documentation & Honest Disclosure, 15 points).
 
 ---
 
-## Lab 10 — Machine Learning, Week 6: Capstone Presentations
+## Lab 12 — Machine Learning, Week 6: Capstone Presentations {#sec-lab-ml-capstone}
 
 ::: {.lab-overview}
 Each student demos their deployed predictive-maintenance app live to the class and
 defends one technical decision — the "present to plant leadership" step of the
-Précitech assignment. This session carries the capstone rubric for Labs 7–10.
+Précitech assignment. This session carries the capstone rubric for Labs 9–12.
+
+**AI use:** required across the module — but the presentation and defence must be
+your own.
 :::
 
 ### Learning outcomes
@@ -1281,7 +1850,7 @@ Précitech assignment. This session carries the capstone rubric for Labs 7–10.
 ::: {.lab-materials}
 - Computer + projector/display; internet access
 - Your deployed Streamlit app (public URL) and `sample_engine.csv`
-- Your Lab 8 notebook (for the RMSE / feature-importance figures if asked)
+- Your Lab 10 notebook (for the RMSE / feature-importance figures if asked)
 :::
 
 ### Procedure
@@ -1315,16 +1884,15 @@ not.
 
 ::: {.lab-deliverables}
 The live presentation. No file submission — but your app URL and GitHub repo
-(submitted in Lab 9) must still be live and working at presentation time.
+(submitted in Lab 11) must still be live and working at presentation time.
 :::
 
 ### Rubric
 
 ::: {.lab-rubric}
-**Capstone evaluation rubric — Labs 7–10.** In the source module the capstone is
-worth 40 % of the course grade; **confirm the weighting for this course** (the
-machine-learning module is six labs — decide how the 100 points below map onto the
-course's per-lab weighting).
+**Capstone evaluation rubric — Labs 9–12.** The 100 points below are the marking
+scheme for the four capstone sessions together; how they map onto the course
+grade is maintained in FOL and the instructor handbook, not here.
 
 **Working predictive model (30 points)**
 
@@ -1346,7 +1914,7 @@ course's per-lab weighting).
 
 ::: {.callout-warning}
 **LLM policy:** using LLMs to help write, debug and understand code is permitted
-and encouraged. But if in the Lab 10 presentation you cannot explain a
+and encouraged. But if in the Lab 12 presentation you cannot explain a
 non-trivial code block you submitted, up to 20 points may be deducted across all
 categories. You may use any tool to help you write code; you are responsible for
 understanding every line you submit.
@@ -1395,12 +1963,302 @@ understanding every line you submit.
 - **Prep:** build the presentation schedule; test the projector with a couple of
   student URLs beforehand; have your own reference app ready to show if a
   student's deployment is down.
-- **Stretch goals** (Chapter @sec-chap-ml lab section) — XGBoost comparison,
-  varying window size, SHAP values, FD002 generalisation, prediction intervals,
-  an alerting feature — are optional and can earn bonus / replace a weaker
-  component at your discretion.
-- **Course weight:** decide and publish how the six machine-learning labs and this
-  100-point capstone map onto the course grade before the module starts.
+- **Stretch goals** continue in [Lab 13](#sec-lab-tpm-rca), which reuses this
+  pipeline on the AI4I 2020 dataset. Genuinely optional extras a strong student
+  can take on for bonus or to replace a weaker component: XGBoost comparison,
+  SHAP values, FD002 generalisation, and prediction intervals.
+- Weighting for the module and the 100-point capstone is maintained in FOL and
+  the instructor handbook; publish it before the module starts.
+:::
+
+---
+
+## Lab 13 — TPM/OEE, Root Cause and a New Dataset {#sec-lab-tpm-rca}
+
+::: {.lab-overview}
+You bring the whole term together on one problem: a Précitech CNC turning cell
+that is not making its numbers. You compute **OEE** from a shift log and split the
+losses into the **Six Big Losses**; you Pareto the failure modes; you run a
+**5-Why and Ishikawa** root-cause analysis; and then you **direct an LLM** to
+build a failure classifier on a *new* dataset — the **AI4I 2020 Predictive
+Maintenance Dataset** from the UCI repository (CC BY 4.0, 10 000 rows, 5 labelled
+failure modes). This is *classification* on a differently-shaped dataset, so the
+C-MAPSS recipe from the capstone does not carry over — the point is to show you
+can transfer the skill, not copy the code. Tools: **Google Sheets**,
+**draw.io**, **Google Colab**.
+
+**AI use:** required for the classifier task; permitted with disclosure
+elsewhere. As in the ML module, you must be able to explain every line.
+:::
+
+### Learning outcomes
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Compute OEE (availability × performance × quality) from a shift log and
+  attribute the losses to the Six Big Losses.
+- Build a Pareto chart of failure modes and identify the vital few.
+- Run a 5-Why and an Ishikawa (fishbone) analysis using measured process data as
+  evidence.
+- Direct an LLM to build and evaluate a classifier on an unfamiliar,
+  class-imbalanced dataset, and choose metrics that survive the imbalance.
+- Write the D4 (root cause) and D5 (corrective action) sections of an 8D report,
+  tying model evidence back to the fishbone.
+:::
+
+### Prep work
+
+::: {.lab-prep}
+- Read Chapter 12 (TPM, OEE, the Six Big Losses) and Chapter 15 (troubleshooting,
+  5-Why, Ishikawa, the 8D report).
+- Skim your capstone notebook from Labs 9–12 — you reuse the *workflow* (load,
+  explore, split, train, evaluate) but not the code.
+- Open the [AI4I 2020 dataset page](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset)
+  and confirm you can download the CSV in the browser. Columns: air temperature,
+  process temperature, rotational speed, torque, tool wear, a machine-failure
+  flag, and five failure-mode flags — **TWF** (tool wear), **HDF** (heat
+  dissipation), **PWF** (power), **OSF** (overstrain), **RNF** (random).
+- Download `precitech_shift_log.csv` from FOL (one week of shift records for the
+  CNC cell: planned time, downtime events, ideal cycle time, count, scrap).
+- Form teams of 2–3.
+:::
+
+### Materials & equipment
+
+::: {.lab-materials}
+- Computer with internet access
+- **Google Sheets** — OEE calculation and the Pareto chart
+- **draw.io** — the Ishikawa diagram
+- **Google Colab** — the classifier
+- `precitech_shift_log.csv` from FOL
+- **AI4I 2020** CSV, downloaded in-browser from UCI
+- Chapter 12 OEE definitions and Chapter 15 8D template
+:::
+
+### Procedure
+
+::: {.lab-procedure}
+**Task 1 — OEE and the Six Big Losses (25 min). *(2 marks)*** From
+`precitech_shift_log.csv`, compute availability (run time ÷ planned production
+time), performance (ideal cycle time × total count ÷ run time) and quality (good
+count ÷ total count), then OEE = the product. Take each downtime and loss entry
+in the log and assign it to one of the Six Big Losses (breakdowns, setup &
+adjustment, small stops, reduced speed, startup rejects, production rejects).
+State which Big Loss is costing the most OEE points.
+
+**Task 2 — Pareto the failure modes (20 min). *(1 mark)*** In the AI4I data,
+count how many rows carry each of TWF, HDF, PWF, OSF and RNF. Build a Pareto
+chart in Sheets (bars descending, cumulative line). Identify the vital few
+failure modes that account for most of the failures, and note where RNF sits and
+why that matters.
+
+**Task 3 — 5-Why and Ishikawa (25 min). *(2 marks)*** Take the top failure mode
+from Task 2. Run a 5-Why chain and draw an Ishikawa diagram in draw.io with the
+six standard bones (machine, method, material, measurement, man, environment).
+Use the **measured feature columns as evidence** on the bones — for example,
+compare tool wear, torque, rotational speed and the air-vs-process temperature
+gap for the failing rows against the healthy rows, and put the numbers on the
+diagram.
+
+**Task 4 — Direct an LLM to build a failure classifier (35 min). *(4 marks)***
+In Colab, prompt an LLM to build a classifier that predicts the machine-failure
+flag from the five process features. You are transferring the capstone workflow,
+not its code — this is tabular classification, not time-series RUL regression.
+Report a **confusion matrix** and **precision and recall** for the failure class.
+The failure rate in AI4I 2020 is about **3.4 %**, so **accuracy is a useless
+metric here** — a model that predicts "no failure" every time scores ~96.6 %
+accuracy and catches nothing. State explicitly which class-imbalance trap you
+hit and how you detected it. **That is the lesson of this task.**
+
+**Task 5 — 8D D4/D5 (15 min). *(1 mark)*** Write the "D4 — root cause" and
+"D5 — permanent corrective action" sections of an 8D report for the top failure
+mode. Tie the model's feature importances back to specific bones on your Task 3
+fishbone, and propose a corrective action that a TPM programme could actually
+carry out (an autonomous-maintenance check, a setup standard, a condition limit).
+:::
+
+### Deliverables & submission
+
+::: {.lab-deliverables}
+One team report (PDF) with: the OEE calculation and Six-Big-Losses attribution;
+the failure-mode Pareto chart; the 5-Why chain and the Ishikawa diagram
+(draw.io export) with the feature evidence on it; the Colab notebook link with
+the confusion matrix, precision/recall and the class-imbalance write-up; and the
+D4/D5 sections. Add an AI-use disclosure line. Submit on FOL by the end of the
+lab period.
+:::
+
+### Rubric
+
+::: {.lab-rubric}
+**10 marks total.**
+
+| Deliverable | Marks |
+|---|---|
+| OEE computed correctly (availability, performance, quality shown separately); every log entry attributed to a Big Loss; largest loss named | 2 |
+| Failure-mode Pareto chart correct (descending bars, cumulative line); vital few identified; RNF discussed | 1 |
+| 5-Why chain plus a six-bone Ishikawa diagram with measured feature evidence on the bones | 2 |
+| Classifier built via LLM direction; confusion matrix and precision/recall reported; class-imbalance trap identified and explained; accuracy correctly rejected as the metric | 4 |
+| D4/D5 sections tie feature importances to the fishbone and propose a TPM-executable corrective action | 1 |
+:::
+
+### Instructor notes
+
+::: {.lab-instructor}
+- **Prep:** generate `precitech_shift_log.csv` with `Rscript R/make_lab_data.R`
+  and stage it on FOL; publish the expected OEE and Pareto order from the answer
+  key the script prints. Host a copy of the AI4I 2020 CSV on FOL as a fallback in
+  case UCI is unreachable from the lab.
+- Confirm `archive.ics.uci.edu`, draw.io and Colab are reachable on the lab
+  network the day before (firewall-check list in [Teacher preparation]).
+- **Marking:** Task 4 is the point of the lab. A team that reports high accuracy
+  and stops has missed it — full marks require them to have *noticed* the
+  imbalance and switched to precision/recall (or a resampling / class-weight
+  fix). Reused C-MAPSS code that does not fit tabular data is a red flag that the
+  transfer did not happen.
+- This lab is the destination for the capstone stretch goals — see
+  [Lab 12](#sec-lab-ml-capstone) instructor notes.
+:::
+
+---
+
+## Lab 14 — Robotic Work-Cell Design in RoboDK for Web {#sec-lab-robodk}
+
+::: {.lab-overview}
+A **take-home** lab: released in week 11, due at the end of week 14, done
+individually, with a short screen recording as part of the submission. You design
+and program the Précitech kitting cell's pick-and-place robot in **RoboDK for
+Web** — a free, no-install, in-browser robot simulator with 600+ real arms. It
+bookends Lab 1: toy logic in week 1, a real 6-axis industrial arm in week 14. You
+close the loop on the course by checking the robot's cycle time against the
+**takt time you computed in Lab 4**.
+
+**AI use:** permitted with disclosure. The station layout, the program and the
+cycle times must be your own work.
+:::
+
+### Learning outcomes
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Jog a 6-axis robot in joint, linear and tool coordinates and recognise
+  singularities and joint-limit stops.
+- Lay out a work cell and verify that every pick and place point lies inside the
+  robot's reach envelope.
+- Program a pick-and-place cycle with targets and gripper I/O and read the
+  simulated cycle time.
+- Compare a simulated cycle time against a required takt time and optimise the
+  program to close the gap.
+- Compute a minimum safeguarding distance from robot stopping performance and
+  select an appropriate safeguard.
+:::
+
+### Prep work
+
+::: {.lab-prep}
+- Read Chapter 8 (industrial robotics — coordinate systems, the work envelope,
+  singularities) and Chapter 6 (machine guarding — the minimum-distance /
+  safeguarding-distance formula and the safeguard hierarchy).
+- Have your **Lab 4** takt calculation to hand — you need the takt time for
+  250 kits/day.
+- Open [RoboDK for Web](https://web.robodk.com/simulation) and confirm it loads
+  and runs a sample station in your browser. No account or licence key is
+  required.
+- Confirm your screen-recording tool works (the same tool the course plan's
+  take-home lab uses).
+:::
+
+### Materials & equipment
+
+::: {.lab-materials}
+- Personal computer with internet access and a browser (this is a take-home lab —
+  no lab PC required)
+- [RoboDK for Web](https://web.robodk.com/simulation) — no install, no licence
+  key
+- A screen-recording tool
+- Your Lab 4 takt time; the [Précitech case study](#sec-precitech-case) (250
+  kits/day, one 8-hour shift)
+:::
+
+### Procedure
+
+::: {.lab-procedure}
+**Task 1 — Jog and observe (20 min). *(1 mark)*** Load a 6-axis arm from the
+RoboDK library (any mid-size industrial arm; state which). Jog it in **joint**,
+**linear** and **tool** coordinates. Drive it toward a wrist singularity and
+toward a joint limit and record what the simulator does in each case. Relate this
+back to the teach-pendant work in [Lab 1](#sec-lab-logic) and to the Chapter 8
+coordinate systems.
+
+**Task 2 — Build the kitting cell (30 min). *(2 marks)*** Assemble the Précitech
+kitting cell around the robot: an infeed conveyor delivering shaft blanks, a
+bearing-press station, and a tray to be filled. Place a pick point and every
+place point. Check that **every pick and place point is inside the reach
+envelope**; record the one reach limit that forces you to move a station, and
+show the before/after positions.
+
+**Task 3 — Program the pick-and-place (30 min). *(3 marks)*** Create targets and
+a program that picks a blank from the conveyor, moves it to the press, then
+places the finished part in the tray, with gripper open/close on digital output.
+Run it. Record the **simulated cycle time** for one part.
+
+**Task 4 — Cycle time vs takt (25 min). *(3 marks)*** Take the **takt time from
+Lab 4** for 250 kits/day. Does one robot at your Task 3 cycle time meet takt?
+Then optimise — reorder targets, raise joint speeds within limits, shorten
+approach and retract moves — and record the improved cycle time. State by how
+much you beat or missed takt, and what a real cell would do if one robot could
+not keep up.
+
+**Task 5 — Safeguarding distance (15 min). *(1 mark)*** Using the Chapter 6
+minimum-distance formula, compute the minimum guarding distance from an assumed
+robot-plus-sensor stopping time (state your assumption). State which Chapter 6
+safeguard you would specify for this cell (fixed guard, interlocked gate,
+light curtain, area scanner, two-hand control) and why.
+:::
+
+### Deliverables & submission
+
+::: {.lab-deliverables}
+Submit on FOL by the end of week 14: a report (PDF) covering all five tasks with
+the reach-envelope evidence, the cycle-time and takt comparison, and the
+safeguarding calculation; **the RoboDK station file**; and a **screen recording
+(3–5 min)** showing the program running and you talking through one design
+decision. Add an AI-use disclosure line.
+:::
+
+### Rubric
+
+::: {.lab-rubric}
+**10 marks total.**
+
+| Deliverable | Marks |
+|---|---|
+| Jogging in joint / linear / tool coordinates demonstrated; singularity and joint-limit behaviour recorded | 1 |
+| Kitting cell built; every pick/place point verified inside the reach envelope; the binding reach limit and the layout change recorded | 2 |
+| Working pick-and-place program with targets and gripper I/O; runs in the simulator; cycle time reported | 3 |
+| Cycle time compared against the Lab 4 takt; one round of optimisation with the improved time and the gap quantified | 3 |
+| Minimum safeguarding distance computed from a stated stopping time; a specific Chapter 6 safeguard chosen and justified | 1 |
+:::
+
+### Instructor notes
+
+::: {.lab-instructor}
+- **Release in week 11** alongside Lab 11, so students have the full three weeks;
+  it is due at the end of week 14. This mirrors the course plan's existing
+  take-home lab pattern (released three weeks out, video submission).
+- **Prep:** the day before release, run through Tasks 1–3 in RoboDK for Web
+  yourself on the college network — confirm `web.robodk.com` is reachable, the
+  library loads, and a station can be saved and re-loaded. Have a reference
+  station file and an expected cycle-time range (from the answer key in
+  `R/make_lab_data.R` output) ready for marking.
+- No lab room is needed — this is done from home — but reserve 15 minutes in the
+  week-11 lab to demo the tool and walk through the brief.
+- **Marking:** the takt comparison in Task 4 only works if the student's Lab 4
+  takt was correct; if it was not, mark Task 4 on the *method* against a takt you
+  supply. Watch for cycle times that are physically implausible (joint speeds
+  cranked past limits) — that is where the "your own work" line is tested.
 :::
 
 ---
@@ -1414,20 +2272,31 @@ checklist, and a room-booking checklist. Items marked **[confirm]** are not
 stated in the source handouts.
 :::
 
+> The full term-prep material — quickstart, term grid, grade-item checklist,
+> paste-ready Course Plan notes, the AI-use policy, answer keys, all 14 rubrics
+> and the per-lab failure modes — lives in the **instructor handbook**
+> (`instructor/instructor-guide.qmd`, renders to `instructor/instructor-guide.pdf`
+> for FOL). The matrix below is the quick per-lab view; the handbook is the
+> authoritative version.
+
 ### Per-lab prep matrix
 
-| Lab | Room | Equipment (reusable) | Software / online | Consumables & printing |
+| Lab (week) | Room | Equipment (reusable) | Software / online | Consumables & printing |
 |----|----|----|----|----|
-| 1 — LightBot & Rocksi | Computer lab, 1 PC/student **[confirm]** | PCs/tablets with internet | **LightBot** (browser), **Rocksi** (browser); prelab YouTube `9oAFmTlMqzg` | Print worksheet (optional) |
-| 2 — Design documentation | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates: BOM `.xlsx`, Gantt `.mpp`, HSE `.docx` |
-| 3 — Facility design & AnyLogic | Computer lab **[confirm]** | PCs (check AnyLogic PLE model-size limit) | **AnyLogic Personal Learning Edition**, Microsoft Visio/Project/Excel; AnyLogic order-fulfilment demo model **[confirm which]** + prelab video | None |
-| 4 — Ergonomics | Computer lab with internet **[confirm]** | PCs | **Inseer** web tool (class accounts/login — arrange early); browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
-| 5 — ML Wk1: AI literacy | Computer lab, 1 PC/student | PCs with internet | **Claude.ai** or **ChatGPT** (free tier); Google Colab | None; post FMEA table + blank `prompts.md` on FOL |
-| 6 — ML Wk2: data & SPC | Computer lab | PCs with internet | **Google Colab**; Python (pandas, numpy, matplotlib) | None; stage `spc_data.csv` + `week2_lab.ipynb` on FOL |
-| 7 — ML Wk3: C-MAPSS | Computer lab | PCs with internet | **Google Colab**; scikit-learn stack | None; stage `train_FD001.txt` + `predictive_maintenance.ipynb` on FOL |
-| 8 — ML Wk4: model build | Computer lab | PCs with internet | **Google Colab**; scikit-learn, joblib | None; have a reference solution notebook (expected RMSE ≈ 21) |
-| 9 — ML Wk5: deploy | Computer lab | PCs with internet | **GitHub** + **Streamlit Community Cloud** accounts; Google Colab | None; stage `streamlit_app.py` + tested `requirements.txt` on FOL |
-| 10 — ML Wk6: presentations | Room with projector/display + internet **[confirm]** | Projector; PCs | Student public Streamlit URLs | None; presentation schedule |
+| 1 (wk 1) — LightBot & Rocksi | Computer lab, 1 PC/student **[confirm]** | PCs/tablets with internet | **LightBot** (browser), **Rocksi** (browser); prelab YouTube `9oAFmTlMqzg` | Print worksheet (optional) |
+| 2 (wk 2) — Design documentation | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates: BOM `.xlsx`, Gantt `.mpp`, HSE `.docx` |
+| 3 (wk 3) — Facility design & AnyLogic | Computer lab **[confirm]** | PCs (check AnyLogic PLE model-size limit) | **AnyLogic Personal Learning Edition**, Microsoft Visio/Project/Excel; AnyLogic order-fulfilment demo model **[confirm which]** + prelab video | None |
+| 4 (wk 4) — Lean VSM | Computer lab with internet | PCs | **draw.io** (browser), **Google Sheets**, **AnyLogic Cloud** (free public tier) — all browser, no install | None; generate + stage `vsm_station_data.csv` (run `Rscript R/make_lab_data.R`); build/fork the AnyLogic Cloud push–pull model and expose its input parameters |
+| 5 (wk 5) — Ergonomics | Computer lab with internet **[confirm]** | PCs | **Inseer** web tool (class accounts/login — arrange early); browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
+| 6 (wk 6) — SPC & Gauge R&R | Computer lab, 1 PC/group of 3 | PCs with internet (to load the book page) | **This book's webR cells only — no external site, no account, no dataset.** Just confirm the rendered `30-Labs.html` page and its webR cells load | None; print the Lab 6 answer key from `Rscript R/make_lab_data.R` for marking |
+| 7 (wk 7) — ML Wk1: AI literacy | Computer lab, 1 PC/student | PCs with internet | **Claude.ai** or **ChatGPT** (free tier); Google Colab | None; post FMEA table + blank `prompts.md` on FOL. Midterm is in lecture time this week — the lab runs as normal |
+| 8 (wk 8) — ML Wk2: data & SPC | Computer lab | PCs with internet | **Google Colab**; Python (pandas, numpy, matplotlib) | None; stage `spc_data.csv` + `week2_lab.ipynb` on FOL |
+| 9 (wk 9) — ML Wk3: C-MAPSS | Computer lab | PCs with internet | **Google Colab**; scikit-learn stack | None; stage `train_FD001.txt` + `predictive_maintenance.ipynb` on FOL |
+| 10 (wk 10) — ML Wk4: model build | Computer lab | PCs with internet | **Google Colab**; scikit-learn, joblib | None; have a reference solution notebook (expected RMSE ≈ 21) |
+| 11 (wk 11) — ML Wk5: deploy | Computer lab | PCs with internet | **GitHub** + **Streamlit Community Cloud** accounts; Google Colab | None; stage `streamlit_app.py` + tested `requirements.txt` on FOL. **Release Lab 14 this week** |
+| 12 (wk 12) — ML Wk6: presentations | Room with projector/display + internet **[confirm]** | Projector; PCs | Student public Streamlit URLs | None; presentation schedule |
+| 13 (wk 13) — TPM/OEE & RCA | Computer lab with internet | PCs | **Google Sheets**, **draw.io**, **Google Colab**; **AI4I 2020** CSV from `archive.ics.uci.edu` | None; generate + stage `precitech_shift_log.csv` (run `Rscript R/make_lab_data.R`); host an AI4I 2020 copy on FOL as a fallback |
+| 14 (wk 14) — RoboDK work cell *(take-home)* | **None — done from home.** Reserve 15 min in the wk-11 lab to demo the tool | Student's own computer | **RoboDK for Web** (`web.robodk.com/simulation`) — no install, no licence key; a screen-recording tool | None; provide a reference station file and an expected cycle-time range |
 
 ### Consolidated shopping list (buy / restock each term)
 
@@ -1438,14 +2307,15 @@ chapter (git history) or the original handouts.
 
 **Printing (per term)**
 
-- [ ] Lab 4 REBA worksheets + REBA cheat sheet (one per student)
+- [ ] Lab 5 REBA worksheets + REBA cheat sheet (one per student)
 - [ ] Lab 2 Précitech case-study handout + document templates
 - [ ] Lab 1 worksheet (optional)
-- [ ] Lab 5 FMEA table (from Chapter @sec-chap-ml, Week 1)
+- [ ] Lab 7 FMEA table (from Chapter @sec-chap-ml, Week 1)
+- [ ] Lab 6 answer key (caliper reference values, expected %GRR / ndc / Cpk) — for marking only
 
 **Reusable — check stock**
 
-- [ ] Projector / display for Lab 10 presentations
+- [ ] Projector / display for Lab 12 presentations
 
 ### Software, licences & accounts — set up before the term
 
@@ -1454,32 +2324,47 @@ chapter (git history) or the original handouts.
 - [ ] **Microsoft Project** and **Microsoft Visio** licences live on Lab 2 / Lab 3
   PCs (most likely gap in a standard Office image)
 - [ ] **Microsoft Excel / Word** available on Lab 2 / Lab 3 PCs
-- [ ] **Inseer** class accounts / login created and tested (Lab 4) — confirm seat
+- [ ] **Inseer** class accounts / login created and tested (Lab 5) — confirm seat
   count and upload workflow
 - [ ] **LightBot** and **Rocksi** confirmed reachable through the lab
   network/firewall (Lab 1); offline fallback prepared
+- [ ] **draw.io** (`app.diagrams.net`) reachable on the lab network (Labs 4, 13)
+- [ ] **AnyLogic Cloud** (`cloud.anylogic.com`) reachable, and the push–pull
+  model published with editable input parameters (Lab 4)
+- [ ] **Google Sheets** reachable (Labs 4, 13)
+- [ ] **UCI ML Repository** (`archive.ics.uci.edu`) reachable for the AI4I 2020
+  download, with a FOL fallback copy staged (Lab 13)
+- [ ] **RoboDK for Web** (`web.robodk.com/simulation`) reachable; run Tasks 1–3
+  through the college firewall before releasing Lab 14
+- [ ] **Lab 6 needs no external service** — only confirm the rendered book page
+  and its webR cells load in the lab browsers
 - [ ] **Google Colab** (`colab.research.google.com`) reachable on the lab network
-  (Labs 5–9)
-- [ ] **Claude.ai** / **ChatGPT** reachable on the lab network (Labs 5–6)
+  (Labs 8–11, 13)
+- [ ] **Claude.ai** / **ChatGPT** reachable on the lab network (Labs 7–8, 13)
 - [ ] **GitHub** (`github.com`) and **Streamlit Community Cloud**
-  (`share.streamlit.io`) reachable (Lab 9); students create accounts as prep
+  (`share.streamlit.io`) reachable (Lab 11); students create accounts as prep
 - [ ] FOL templates re-uploaded: BOM `.xlsx`, Gantt `.mpp`, HSE `.docx` (Lab 2)
-- [ ] Datasets / notebooks staged on FOL: `spc_data.csv`, `week2_lab.ipynb`
-  (Lab 6); `train_FD001.txt`, `predictive_maintenance.ipynb` (Lab 7);
-  `streamlit_app.py`, `requirements.txt` (Lab 9)
-- [ ] Task clips / photo sets staged on FOL for Lab 4 (Lifting Boxes, Workstation,
+- [ ] Lab data generated and staged on FOL — run `Rscript R/make_lab_data.R`:
+  `vsm_station_data.csv` (Lab 4), `precitech_shift_log.csv` (Lab 13); notebooks
+  and datasets `spc_data.csv` + `week2_lab.ipynb` (Lab 8), `train_FD001.txt` +
+  `predictive_maintenance.ipynb` (Lab 9), `streamlit_app.py` + `requirements.txt`
+  (Lab 11)
+- [ ] Task clips / photo sets staged on FOL for Lab 5 (Lifting Boxes, Workstation,
   Cleaning)
-- [ ] Prelab video links checked for Labs 1, 3, 4
-- [ ] **Course-weight decision** published: how the six machine-learning labs and
-  the 100-point capstone (Lab 10) map onto the course grade
+- [ ] Prelab video links checked for Labs 1, 3, 5
+- [ ] Grade items verified in FOL against the instructor handbook's grade-item
+  checklist (34 items, 6 categories; `Lab-13` and `Lab-14` added; take-home
+  availability window on `Lab-14`)
 
 ### Room bookings
 
 - [ ] **Computer lab** with internet + full Microsoft Office + Project + Visio +
-  AnyLogic PLE — Labs 1–9 (Labs 2–3 need Project/Visio; Labs 5–9 need only a
+  AnyLogic PLE — Labs 1–13 (Labs 2–3 need Project/Visio; Labs 4, 6–13 need only a
   browser and internet)
-- [ ] **Room with a projector/display** for Lab 10 capstone presentations
+- [ ] **Room with a projector/display** for Lab 12 capstone presentations
   **[confirm — the computer lab may suffice]**
+- [ ] **No room for Lab 14** — it is a take-home lab; only the 15-minute demo
+  slot in the week-11 lab is needed
 
 ### Appendix: instrumentation-trainer lab stream
 

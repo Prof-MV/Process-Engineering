@@ -1,0 +1,466 @@
+---
+title: "ENGR-3027 Process Engineering — Instructor Handbook"
+subtitle: "Term prep, grade items, answer keys and fallbacks for the 14-lab set"
+author: "Prepared for the next instructor of ENGR-3027 (EMN)"
+date: today
+---
+
+# Quickstart — first time teaching this course
+
+You are teaching **ENGR-3027 Process Engineering** for the Fanshawe College EMN
+program: second-year electromechanical / mechanical engineering technology
+students heading into automotive, food and defence. The course doubles as a
+Quarto book (this repo) that students read as lecture notes.
+
+**The shape of the term (14 weeks):**
+
+- **14 labs, one per week. The lab number is the week number.** Labs 1–12 are
+  mandatory to pass; Labs 13–14 are graded but not mandatory.
+- **Week 7 is midterm week.** The midterm is written in *lecture* time, so the
+  week-7 lab period runs as normal — Lab 7 (ML Week 1) is scheduled there
+  deliberately because it is the lightest lab in the set.
+- **Labs 7–12 are a six-week machine-learning module** (2 h theory + 2 h lab per
+  week), paired with Chapter 21.
+- **Lab 14 is take-home**: released in week 11 (alongside Lab 11), due at the end
+  of week 14, with a short screen recording.
+- **Week 14** also holds the final test (lecture time) and a make-up lab slot.
+
+**Hard constraint on all labs:** browser-only. No robots, no PLCs, no lab
+hardware, no software installs beyond what is already on the lab image
+(Microsoft Office / Project / Visio for Labs 2–3, AnyLogic PLE for Lab 3).
+Everything else runs in a browser on the free tier.
+
+**What is committed vs. not:**
+
+- Committed: the book (`*.qmd`), `R/make_lab_data.R`, this handbook.
+- Not committed (stage on FOL each term): all lab datasets, all notebooks, all
+  templates. `R/make_lab_data.R` regenerates the two seeded CSVs.
+- Grade weights live in **FOL only**. The student book carries policy and a
+  schedule, never weight numbers. This handbook carries a grade-*item* checklist
+  (no weights) so FOL can be verified.
+
+**Before week 1, in order:**
+
+1. Read this whole document.
+2. Run `Rscript R/make_lab_data.R` and stage the two CSVs on FOL (§7).
+3. Walk the software / firewall checklist (§10) from the *college network*.
+4. Verify the FOL grade book against the grade-item checklist (§3).
+5. Confirm the term grid (§2) against what the program actually timetables — the
+   chapter→week mapping is a reconstruction, not the college's own sequence.
+
+---
+
+# Term grid
+
+Every lab's prerequisite chapter is taught in the same week or earlier. This grid
+is inferred from the 25F course plan (7 units) mapped onto the book's 18
+chapters — **confirm it against the real timetable before publishing to
+students.**
+
+| Wk | Lecture | Lab |
+|----|---------|-----|
+| 1 | Ch 1 Types of Manufacturing | Lab 1 — LightBot & Rocksi |
+| 2 | Ch 2 Process & Design · Ch 8 Industrial Robotics | Lab 2 — Design Documentation |
+| 3 | Ch 4 Plant Layout · Ch 16 AnyLogic Simulation | Lab 3 — Facility Design & Simulation |
+| 4 | Ch 3 Integrated Mfg Systems · Ch 5 Lean | Lab 4 — Lean VSM, Takt and Pull |
+| 5 | Ch 7 Ergonomics · Ch 6 Guarding & Safety pt 1 | Lab 5 — Ergonomics |
+| 6 | Ch 10 SPC · Ch 11 MSA | Lab 6 — SPC & Gauge R&R (virtual caliper) |
+| 7 | **Midterm Test** (lecture time) · Ch 20 Working with AI | Lab 7 — ML Week 1 |
+| 8 | Ch 21 Weeks 1–2 | Lab 8 — ML Week 2 |
+| 9 | Ch 21 Week 3 · Ch 12 TPM | Lab 9 — ML Week 3 |
+| 10 | Ch 21 Week 4 · Ch 15 Troubleshooting & RCA | Lab 10 — ML Week 4 |
+| 11 | Ch 21 Week 5 · Ch 6 Safety pt 2 · Ch 9 Automation | Lab 11 — ML Week 5 · **release Lab 14** |
+| 12 | Ch 21 Week 6 · Ch 13 Quality Systems | Lab 12 — ML Capstone presentations |
+| 13 | Ch 14 PFMEA | Lab 13 — TPM/OEE & RCA |
+| 14 | **Final Test** · review | Lab 14 — RoboDK work cell **due** |
+
+The `_quarto.yml` chapter order matches the lecture column. The numeric filename
+prefixes (`01-`, `02-`, …) are historical and no longer indicate order — do not
+rename the files.
+
+---
+
+# Grade-item checklist
+
+**Deliberately no weights** — this verifies the right *items* exist in FOL with
+the right names and categories. Weights are Brightspace's alone.
+
+| # | Grade item | Category | Type | Due |
+|---|-----------|----------|------|-----|
+| 1–14 | `Lab-1` … `Lab-14` | Lab-Tutorial | Numeric, submission | End of lab period, weeks 1–14 |
+| 15–20 | `Assignment-1` … `Assignment-6` | Assignments | Numeric, quiz | Friday 23:59 of assigned week |
+| 21–26 | `Lab Quiz-1` … `Lab Quiz-6` | Lab Pop-up Quizzes | Numeric, quiz | Random, 10-min login window |
+| 27–32 | `Lecture Quiz-1` … `Lecture Quiz-6` | Lecture Pop-up Quizzes | Numeric, quiz | Random |
+| 33 | `Mid Term Test` | Midterm Test | Numeric, quiz | Week 7 |
+| 34 | `Final Test` | Final Test | Numeric, quiz | Week 14 |
+
+**34 items in 6 categories.** Compared with a 12-lab FOL setup, the only change
+is two new lab items: **`Lab-13`** and **`Lab-14`**. `Lab-14` is the take-home —
+released week 11, due end of week 14 — so it needs a different availability
+window from the other 13 lab items.
+
+---
+
+# Course Plan notes (paste-ready)
+
+`LabInstructions/ENGR-3027-25F_CP.docx` is gitignored and is not rendered from
+this repo. These blocks are paste-ready for whoever maintains the official course
+plan. Note 1's pop-quiz figures are already self-consistent — only the lab count
+and per-lab weight change from the 12-lab version.
+
+## NOTE 1: ASSESSMENTS
+
+> There are 12 pop quizzes worth 0.5 % each: 6 at the end of lectures and 6 at
+> the start of labs. Lab quizzes have a 10-minute login window starting at the
+> beginning of the lab period. You must be in attendance at the lecture or lab
+> to earn credit for the quiz.
+>
+> | Component | Detail | Weight |
+> |----------|--------|--------|
+> | Lab activities | 14 labs, ~2.86 % each | 40 % |
+> | Assignments | 6 assignments, 2 % each | 12 % |
+> | Lecture pop quizzes | 6 × 0.5 % | 3 % |
+> | Lab pop quizzes | 6 × 0.5 % | 3 % |
+> | Midterm test (week 7) | — | 17 % |
+> | Final test (week 14) | — | 25 % |
+> | **Total** | | **100 %** |
+
+## NOTE 2: LABS
+
+> **Labs 1 through 12 are mandatory to pass the course.**
+> **Lab 14 is a take-home lab, released in week 11 and due at the end of week 14;
+> it requires a short screen recording.** All other labs are due at the end of
+> the scheduled lab period; the late penalty is 25 % per lab session. Lab marks
+> may be deducted for not completing assigned safety training or reading, not
+> completing prelab material before class, not being prepared with required
+> materials, not cleaning your station, or unprofessional conduct.
+
+---
+
+# AI-use policy
+
+Mirrored from the student book (`index.qmd`, "Use of generative AI"). Fanshawe
+policy A136 permits generative AI only with prior instructor consent; the table
+below **is** that consent, per assessment. If an assessment is not listed, treat
+it as **not permitted**. Where AI is permitted or required, the student must be
+able to explain every line submitted; where permitted with disclosure, they add
+a one-line note naming the tool and use.
+
+| Assessment | AI use | Why |
+|-----------|--------|-----|
+| Lab 1 — LightBot & Rocksi | Not permitted | The outcome *is* their own logic |
+| Lab 2 — Design Documentation | Not permitted | Already stated in the lab |
+| Lab 3 — AnyLogic Simulation | Not permitted | Already stated in the lab |
+| Lab 4 — Lean VSM | Permitted with disclosure | Not for the map or the takt/PCE calculations |
+| Lab 5 — Ergonomics | Permitted with disclosure | Inseer is a required AI lab instrument, not a generative AI writing the report |
+| Lab 6 — SPC & Gauge R&R | Not permitted for readings/calculations; permitted to check the written reflection | The student is the measurement system being studied |
+| Labs 7–12 — ML module | Required | Assessed on directing an LLM well, not on writing Python |
+| Lab 13 — TPM/OEE & RCA | Required for the classifier task; permitted with disclosure elsewhere | Same skill, unfamiliar dataset |
+| Lab 14 — RoboDK work cell | Permitted with disclosure | The station, program and cycle times must be their own |
+| Assignments 1–6 | Permitted with disclosure | — |
+| Pop quizzes, midterm, final | Not permitted | Closed-book, in-person |
+
+Each lab's `.lab-overview` in the book restates its own AI status so a student
+reading one lab does not have to go back to `index.qmd`. Keep the two in sync.
+
+---
+
+# Per-lab prep matrix (all 14 labs)
+
+Extends the `.lab-shop` matrix in `30-Labs.qmd` ("Teacher preparation"). Items
+marked **[confirm]** are not stated in the source handouts.
+
+| Lab (week) | Room | Software / online | Data & printing | Group size |
+|-----------|------|-------------------|-----------------|------------|
+| 1 (1) LightBot & Rocksi | Computer lab, 1 PC/student **[confirm]** | LightBot (browser), Rocksi (browser); prelab YouTube `9oAFmTlMqzg` | Worksheet (optional print) | Individual |
+| 2 (2) Design documentation | Computer lab, full Office **[confirm]** | MS Word/Visio, Project, Excel | Précitech case study handout; FOL templates BOM `.xlsx`, Gantt `.mpp`, HSE `.docx` | 2–3 |
+| 3 (3) Facility design & AnyLogic | Computer lab **[confirm]** | AnyLogic PLE + MS Visio/Project/Excel; order-fulfilment demo model **[confirm which]** + prelab video | — | 2–3 |
+| 4 (4) Lean VSM | Computer lab + internet | draw.io, Google Sheets, AnyLogic Cloud (free public tier) — all browser | `vsm_station_data.csv` from `R/make_lab_data.R`; AnyLogic Cloud push–pull model published with editable parameters | 2–3 |
+| 5 (5) Ergonomics | Computer lab + internet **[confirm]** | Inseer web tool (class accounts — arrange early); REBA videos | Print REBA worksheet + cheat sheet per student; task clips (Lifting Boxes, Workstation, Cleaning) on FOL | 3–4 |
+| 6 (6) SPC & Gauge R&R | Computer lab, 1 PC/group | **This book's webR cells only** — no external site, no account, no dataset | Print the Lab 6 answer key for marking | **Exactly 3** |
+| 7 (7) ML Wk1: AI literacy | Computer lab, 1 PC/student | Claude.ai or ChatGPT (free tier); Google Colab | FMEA table + blank `prompts.md` on FOL. Midterm is in lecture time — lab runs as normal | Individual |
+| 8 (8) ML Wk2: data & SPC | Computer lab + internet | Google Colab; pandas/numpy/matplotlib | `spc_data.csv` + `week2_lab.ipynb` on FOL; keep a key of the embedded problems | Individual |
+| 9 (9) ML Wk3: C-MAPSS | Computer lab + internet | Google Colab; scikit-learn stack | `train_FD001.txt` + `predictive_maintenance.ipynb` on FOL (host the data yourself) | Individual |
+| 10 (10) ML Wk4: model build | Computer lab + internet | Google Colab; scikit-learn, joblib | Reference solution notebook, expected RMSE ≈ 21 | Individual |
+| 11 (11) ML Wk5: deploy | Computer lab + internet | GitHub + Streamlit Community Cloud accounts; Google Colab | `streamlit_app.py` + tested `requirements.txt` on FOL. **Release Lab 14 this week.** | Individual |
+| 12 (12) ML Wk6: presentations | Room with projector + internet **[confirm]** | Student public Streamlit URLs | Presentation schedule | Individual |
+| 13 (13) TPM/OEE & RCA | Computer lab + internet | Google Sheets, draw.io, Google Colab; AI4I 2020 CSV from `archive.ics.uci.edu` | `precitech_shift_log.csv` from `R/make_lab_data.R`; host an AI4I 2020 copy on FOL as fallback | 2–3 |
+| 14 (14) RoboDK work cell | **None — take-home.** 15-min demo in the week-11 lab | RoboDK for Web (`web.robodk.com/simulation`) — no install, no key; a screen recorder | Reference station file; expected cycle-time range | Individual |
+
+---
+
+# Data generation
+
+Run once per term, from the repo root:
+
+```
+Rscript R/make_lab_data.R
+```
+
+It is base-R only, fully `set.seed()`-ed, and:
+
+**Writes to `./lab_data/`** (gitignored — never commit; stage on FOL):
+
+| File | Lab | Contents | FOL folder |
+|------|-----|----------|-----------|
+| `vsm_station_data.csv` | 4 | 5 stations × (cycle time, changeover, uptime, WIP, batch size, value-added flag) | Lab 4 materials |
+| `precitech_shift_log.csv` | 13 | 5 days × (planned time, breakdown/setup/small-stop minutes, ideal cycle time, counts, scrap) | Lab 13 materials |
+
+**Prints** the answer keys reproduced in §8. Re-running the script produces
+byte-identical CSVs and identical keys, so a key printed once stays valid for
+every term until the generator is changed.
+
+The Lab 6 caliper data and the Lab 6 SPC dataset are generated **inside the webR
+cells** in `30-Labs.qmd`, not written to a file — the script reproduces their
+seeding so you have the ground truth for marking.
+
+The AI4I 2020 dataset (Lab 13) is **not** generated — students download it from
+UCI in the browser. Host a copy on FOL as a firewall fallback.
+
+---
+
+# Answer keys
+
+Regenerate any time with `Rscript R/make_lab_data.R`. Values below are from the
+committed generator.
+
+## Lab 4 — Lean VSM
+
+| Quantity | Value |
+|----------|-------|
+| Available time / shift | 26 400 s (7.33 h; 8 h − two 20-min breaks) |
+| **Takt time** | **105.6 s/kit** (250 kits/day) |
+| **Bottleneck** | **CNC turn** — C/T 120 s, the only station above takt |
+| Stations with spare capacity | Deburr (74 s), Wash (40 s), Inspect (58 s), Kitting (96 s) |
+| Value-added time | 216 s (CNC turn + Kitting) |
+| Production lead time | ≈ 97 540 s ≈ 27.1 h (Little's law on total WIP 930 units) |
+| **Process cycle efficiency** | **≈ 0.22 %** (VA time ÷ lead time) — typical for batch flow |
+
+A future state that halves the CNC-turn changeover and replaces one push link
+with a supermarket should cut WIP and lead time materially; accept any
+defensible ladder that recomputes consistently.
+
+## Lab 6 — Virtual caliper
+
+Seed `set.seed(3027)`; `caliper_ref <- round(sort(runif(10, 24.90, 25.10)), 3)`;
+`caliper_bias <- 0.03 + 0.05*(caliper_ref - 25.00)`.
+
+| Part | Certified reference (mm) | Gauge bias at that size (mm) |
+|------|--------------------------|-----------------------------|
+| 1 | 24.932 | +0.0266 |
+| 2 | 24.948 | +0.0274 |
+| 3 | 24.963 | +0.0282 |
+| 4 | 24.972 | +0.0286 |
+| 5 | 25.022 | +0.0311 |
+| 6 | 25.029 | +0.0314 |
+| 7 | 25.035 | +0.0318 |
+| 8 | 25.049 | +0.0324 |
+| 9 | 25.058 | +0.0329 |
+| 10 | 25.070 | +0.0335 |
+
+- **Mean gauge bias ≈ +0.030 mm**, rising slightly with size (that is the
+  linearity signal — slope ≈ +0.05 mm bias per mm of size, ≈ 0.007 mm over the
+  study range).
+- **Gauge R&R (indicative):** with modest reading error the simulator gives
+  %GRR ≈ 23 %, ndc ≈ 6. Expect student results in the **20–35 % (marginal)**
+  band with **ndc ≈ 4–6**; sloppier reading pushes %GRR past 30 % and ndc below
+  5. The 0.05 mm resolution against a ±0.05 mm tolerance is the reason the gauge
+  is at best marginal — that is the Task 6 lesson.
+- **Seeded X̄/R + Cpk dataset** (`set.seed(250)`, 25 subgroups × 5):
+  X̄̄ ≈ 25.0082, R̄ ≈ 0.0255, σ̂ ≈ 0.0110 mm; X̄ limits ≈ [24.9935, 25.0229];
+  **Cp ≈ 1.52, Cpk ≈ 1.27** (below the 1.33 Tier-1 bar). Subgroups **12–16** are
+  beyond 3σ — a seeded special-cause shift. Students should also flag the
+  run-of-8 and 2-of-3 patterns entering and leaving that excursion.
+
+## Lab 13 — TPM/OEE & RCA
+
+From `precitech_shift_log.csv` (`set.seed(1213)`, 5 days):
+
+| Quantity | Value |
+|----------|-------|
+| Availability | ≈ 83.2 % |
+| Performance | ≈ 94.2 % |
+| Quality | ≈ 95.9 % |
+| **Weekly OEE** | **≈ 75.1 %** |
+| **Dominant Big Loss** | **Breakdowns** (≈ 177 min), then Setup & adjustment (≈ 124 min), then Reduced speed (≈ 107 min) |
+
+**AI4I 2020 failure-mode Pareto** (known dataset, ≈ 339 machine failures in
+10 000 rows): HDF ≈ OSF ≈ PWF (the vital few) **>** TWF **>** RNF. RNF is
+injected noise — it must be excluded from corrective action. Failure rate
+≈ **3.4 %**, so **accuracy is a useless metric**; require precision/recall (and a
+class-weight or resampling fix). A team that reports 96 %+ accuracy and stops has
+missed the entire point of the lab.
+
+## Lab 14 — RoboDK work cell
+
+| Quantity | Value |
+|----------|-------|
+| Takt time (from Lab 4) | 105.6 s/kit |
+| Expected first working cycle time | ≈ 12–22 s (default joint speeds, generous approaches) |
+| Expected after optimisation | ≈ 7–14 s (reordered targets, faster joints, short approach/retract) |
+
+One robot meets takt with large margin; the assessed skill is the optimisation
+*method* and the guarding-distance calculation, not a capacity shortfall. Flag
+cycle times that are physically implausible (joint speeds cranked past limits).
+
+---
+
+# Rubric quick reference (all 14 labs)
+
+Each lab is out of the marks shown; the machine-learning capstone (Labs 9–12)
+also carries a 100-point rubric reproduced at the end.
+
+**Lab 1 — Logic thinking (10)**: Sequencing 1 · Loops 2 · Conditionals 2 ·
+Challenge (Level 15, optimised) 2 · Rocksi basic moves 1 · Rocksi sequence 1 ·
+Rocksi I/O 1. *Award loop/conditional marks for explanation, not just level
+completion.*
+
+**Lab 2 — Design documentation (5)**: Specification sheet(s) 1 · BOM for one kit
+1 · Task list / process-flow chart 1 · Project schedule + Gantt 1 · Facility
+layout + HSE risk assessment 1. *Look for traceability — every document describes
+the same cell and kit.*
+
+**Lab 3 — Facility design & AnyLogic (10)**: Facility drawing 4 · Run 1 analysis
+2 · Run 2 analysis 2 · Run 3 analysis 2 · Run 4 analysis 2 (confirm the split;
+handout implies drawing 4 + analysis 1.5 × 4). *Analysis must cite the specific
+statistic that moved and the case-study consequence.*
+
+**Lab 4 — Lean VSM (10)**: Current-state VSM (boxes with C/T, C/O, uptime, batch;
+WIP triangles; information flow; totalled lead-time ladder) 3 · Takt + operator
+balance chart + bottleneck named with the gap quantified 2 · Seven-wastes
+classification + PCE computed and interpreted 2 · Push / pull / supermarket runs
+with WIP and lead time recorded, interpretation consistent with the numbers 2 ·
+Future-state VSM with one SMED + one pull change, reduction justified against the
+ladder 1. *AI not permitted for the map or the takt/PCE arithmetic. Check the
+ladder actually totals to the quoted numbers.*
+
+**Lab 5 — Ergonomics (10)**: Procedure followed, all three tasks assessed 1 ·
+REBA scoring — correct Table A/B/C lookups, coupling and activity adjustments,
+final score and risk band for each of the three tasks 4 · Inseer report run,
+output correctly read and quoted 2 · Manual vs automated comparison — quantified,
+references the Chapter 7 risk factors 2 · Conclusion + controls ordered by the
+hierarchy of controls 1.
+
+**Lab 6 — SPC & Gauge R&R (10)**: 90 readings, blinded and in the randomised
+order, all 10 parts × 3 trials per operator 2 · Gauge R&R — EV, AV, GRR, PV, TV,
+%GRR and ndc all reported and internally consistent 3 · Bias in mm + a linearity
+statement vs the reference values 1 · X̄/R chart read correctly, every Western
+Electric rule break listed and named, Cpk reported and compared to 1.33 3 ·
+Reflection — acceptability judged against the %GRR and ndc bands, effect of gauge
+error on Cpk reasoned through, release decision stated 1. *AI not permitted for
+readings or calculations. Identical values across operators/trials means the
+study was not read blind.*
+
+**Lab 7 — ML Week 1 (10)**: `prompts.md` — five prompts rewritten with all five
+R-C-T-C-F elements present 3 · FMEA summarised at three audiences —
+audience-appropriate and technically accurate 2 · Hallucination hunt — a
+fabrication documented, with evidence of how it was verified 3 · `spc_starter.py`
+runs, is commented, and the student can explain it on request 2. *Exercise 3
+needs genuine verification evidence (empty ASTM search, "no results" screenshot),
+not "I think this is made up".*
+
+**Lab 8 — ML Week 2 (10)**: Week 1 code runs against the real dataset 1 · All
+five data-quality issues found; `quality_log` complete (row_index, column,
+original, corrected, reason, action); the days 43–47 special cause correctly
+**kept, not deleted** 4 · X̄ chart with correct control limits — `sigma /
+sqrt(n)`, not the std of daily means 3 · Cpk against USL 25.050 / LSL 24.950, in
+the expected 1.1–1.2 range and interpreted 1 · Reflection 1. *Deduct for silent
+row deletion even if the final chart is right.*
+
+**Lab 9 — ML Week 3 (progress check; rolled into the capstone rubric)**: data
+loaded and labelled, 7×3 sensor plot produced, constant sensors identified,
+correlations computed, reflection answered.
+
+**Lab 10 — ML Week 4 (capstone rubric — Working Predictive Model 30, Code
+Quality 20)**: biggest scoring risk is `train_test_split` instead of a manual
+engine-wise split — symptom is RMSE 5–8 cycles. Make students diagnose it via the
+Task 3 assert.
+
+**Lab 11 — ML Week 5 (capstone rubric — Streamlit Application 25, Documentation &
+Honest Disclosure 15)**: deliverable is a public URL that loads and predicts.
+
+**Lab 12 — ML Week 6 (capstone rubric — Week 6 Presentation 10; carries the full
+100-point capstone rubric for Labs 9–12)** — see the table at the end.
+
+**Lab 13 — TPM/OEE & RCA (10)**: OEE computed correctly (availability,
+performance, quality shown separately); every log entry attributed to a Big Loss;
+largest loss named 2 · Failure-mode Pareto correct (descending bars, cumulative
+line); vital few identified; RNF discussed 1 · 5-Why chain + six-bone Ishikawa
+with measured feature evidence on the bones 2 · Classifier built via LLM
+direction; confusion matrix + precision/recall reported; class-imbalance trap
+identified and explained; accuracy correctly rejected 4 · D4/D5 tie feature
+importances to the fishbone and propose a TPM-executable corrective action 1.
+
+**Lab 14 — RoboDK work cell (10)**: jogging in joint/linear/tool coordinates,
+singularity and joint-limit behaviour recorded 1 · kitting cell built, every
+pick/place verified inside the reach envelope, the binding reach limit and layout
+change recorded 2 · working pick-and-place program with targets and gripper I/O,
+runs, cycle time reported 3 · cycle time compared against the Lab 4 takt, one
+round of optimisation with improved time and gap quantified 3 · minimum
+safeguarding distance computed from a stated stopping time, a specific Chapter 6
+safeguard chosen and justified 1. *If the student's Lab 4 takt was wrong, mark
+Task 4 on method against a takt you supply.*
+
+## Machine-learning capstone rubric — Labs 9–12 (100 points)
+
+| Category | Points | 27–30 / top band |
+|----------|:------:|------------------|
+| Working predictive model | 30 | Validation RMSE ≤ 22 cycles; beats naive ≥ 2×; engine-wise split verified with assert; RUL clipped at 125 |
+| Code quality | 20 | Clean, commented; rolling features grouped by engine; random seed set; `feature_cols` saved with the model |
+| Streamlit application | 25 | Public URL loads; handles CSV upload; RUL colour-coded; sensor-trend plot; bad input handled gracefully |
+| Documentation & honest disclosure | 15 | "About this model" states data source and limits; actual validation RMSE; ≥ 2 explicit "not suitable for" statements; sample input provided |
+| Week 6 presentation | 10 | Live demo works; one technical decision explained clearly; handles 2–3 questions; one specific limitation stated |
+
+LLM policy for the capstone: using LLMs to write, debug and understand code is
+required and encouraged, but a student who cannot explain a non-trivial submitted
+block in the Lab 12 presentation loses up to 20 points across all categories.
+
+---
+
+# Known failure modes and fallbacks
+
+Extends the pattern in Lab 1's instructor notes: every browser lab depends on a
+third-party site that could be blocked or down on the day.
+
+| Lab | Most likely failure | Fallback |
+|-----|--------------------|----------|
+| 1 | LightBot or Rocksi blocked by the firewall / site down | Screenshot walk-through slides; mark from the worksheet answers |
+| 2 | Microsoft Project or Visio missing from the Office image | Draw the Gantt / GA in Excel or Word; do not penalise tool choice |
+| 3 | AnyLogic PLE install missing or the demo model over the size limit | Instructor runs the model on the projector; students analyse the shared screenshots |
+| 4 | AnyLogic Cloud model won't run public, or draw.io blocked | Supply pre-run push/pull/supermarket numbers; students still do the VSM on paper and the takt/PCE in Sheets |
+| 5 | Inseer seats not provisioned or clips won't upload | Instructor runs one Inseer assessment on the projector; students compare against their own REBA scores |
+| 6 | webR cells slow to load or a student's browser blocks them | **No external dependency** — worst case is a slow first load; have the answer key so a group that runs out of time can still complete the analysis from a partial reading set. Never add `library(ggplot2)` to fix a rendering issue |
+| 7 | Claude.ai / ChatGPT / Colab blocked | Any free LLM the college allows; the exercise is prompt structure, not a specific model |
+| 8 | `spc_data.csv` not staged, or Colab upload fails | Have the CSV on a USB / shared drive; students can also run locally if Python is present |
+| 9 | UCI/Kaggle sign-in wall during the lab | Host `train_FD001.txt` on FOL yourself — do not rely on Kaggle at lab time |
+| 10 | RMSE < 10 cycles (row-wise split data leak) | This is the teaching moment, not a failure — make the student find it via the Task 3 assert |
+| 11 | Streamlit deploy fails: model > 50 MB or `requirements.txt` conflict | Retrain with `n_estimators=50`; use the pinned versions in the lab text; `pyngrok` from Colab for a temporary URL |
+| 12 | A student's deployment is down at presentation time | Instructor's reference app on the projector; the student still defends their technical decision and limitations |
+| 13 | `archive.ics.uci.edu` unreachable; or team reuses C-MAPSS code that doesn't fit tabular data | FOL fallback copy of AI4I 2020; the C-MAPSS-code red flag means mark down the "transfer" criterion |
+| 14 | `web.robodk.com` blocked at home for a student; station file won't reload | Extended deadline (it is already a 3-week take-home); accept a screen recording made on any machine where it does load |
+
+**General:** walk the §10 checklist from the college network the day before each
+lab, and keep this table updated with whatever actually broke this term.
+
+---
+
+# Software & accounts checklist — test from the college network
+
+Test each URL **the day before** the lab that needs it.
+
+- [ ] LightBot; Rocksi — Lab 1 (offline fallback prepared)
+- [ ] AnyLogic PLE installed + demo model runs under the size limit — Lab 3
+- [ ] MS Project + Visio licences live on the lab image — Labs 2, 3
+- [ ] `app.diagrams.net` (draw.io) — Labs 4, 13
+- [ ] `cloud.anylogic.com` + the push–pull model published with editable input parameters — Lab 4
+- [ ] Google Sheets — Labs 4, 13
+- [ ] Inseer class accounts created and a test assessment run — Lab 5
+- [ ] Rendered `30-Labs.html` + its webR cells load in the lab browser — Lab 6 (no other service needed)
+- [ ] `claude.ai` / `chat.openai.com` — Labs 7, 8, 13
+- [ ] `colab.research.google.com` — Labs 8–11, 13
+- [ ] `archive.ics.uci.edu` (AI4I 2020) + FOL fallback copy staged — Lab 13
+- [ ] `github.com` + `share.streamlit.io` — Lab 11 (students create accounts as prep)
+- [ ] `web.robodk.com/simulation` — run Tasks 1–3 before releasing Lab 14
+- [ ] Prelab YouTube links resolve — Labs 1, 3, 5
+- [ ] `Rscript R/make_lab_data.R` run; `vsm_station_data.csv` and `precitech_shift_log.csv` staged on FOL
+- [ ] FOL grade book matches the §3 checklist (34 items, 6 categories; `Lab-13`, `Lab-14` added; take-home window on `Lab-14`)

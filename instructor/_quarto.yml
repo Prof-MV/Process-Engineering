@@ -1,0 +1,30 @@
+# Standalone Quarto project for the ENGR-3027 instructor handbook.
+#
+# This is deliberately a SEPARATE project (project.type: default, not book) so
+# that `quarto render` at the repo root never picks it up — a book project only
+# renders files listed in book.chapters, and a subdirectory carrying its own
+# _quarto.yml is isolated regardless.
+#
+# Build it with:   quarto render instructor
+# Output:          instructor/instructor-guide.pdf   (upload this to FOL)
+#
+# It does not reuse ../preamble.tex because that file injects the book's cover
+# image into the title page via a relative path that only resolves from the repo
+# root. The handbook needs only booktabs + longtable for the wide tables.
+
+project:
+  type: default
+
+format:
+  pdf:
+    pdf-engine: xelatex
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    documentclass: scrreprt
+    geometry:
+      - margin=1in
+    include-in-header:
+      text: |
+        \usepackage{booktabs}
+        \usepackage{longtable}
