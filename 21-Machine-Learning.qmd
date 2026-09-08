@@ -27,7 +27,11 @@ This chapter runs over six weeks — twelve hours of classroom theory paired wit
 
 The technical path moves from wide to narrow: Week 1 surveys the entire AI landscape and teaches you to use the tools you already have access to (large language models) wisely. Week 2 grounds you in the messy reality of plant data and refreshes your statistical process control. Weeks 3 through 5 build and deploy a machine-learning model for predicting when a turbofan engine will fail — the same class of problem that GE Aviation, Pratt & Whitney, and every major Tier-1 automotive supplier runs on their production lines. Week 6 steps back to examine ethics, the broader landscape, and where this field is heading.
 
-The companion lab handout (@sec-chap-ml-lab) provides the step-by-step exercises, Python code, and deliverable instructions for each week.
+The companion lab handout (@sec-chap-ml-lab) provides the step-by-step exercises, AI-assisted Python workflows, and deliverable instructions for each week.
+
+::: {.callout-tip}
+**A Note on Python in This Course:** You are not expected to already know Python, and this course does not teach it as a separate subject. Instead, you will direct an LLM to write, explain, and debug the code for you — increasingly how manufacturing engineers work in industry. Your job is to specify precisely what the code needs to do (the R-C-T-C-F pattern from Week 1 is built for exactly this), read what the AI produces well enough to catch its mistakes, and ask it to explain any line you don't follow. This is the central skill the course is built around: using AI to (1) automate routine work you already understand, and (2) produce work that is genuinely above your current skill level — punching above your weight — while you stay accountable for whether the result is actually correct.
+:::
 
 ::: {.callout-think}
 **Before You Start:** Think about the last time a machine at your co-op, at home, or on a plant tour broke down unexpectedly. How much warning was there? What would have been different if you had known two weeks in advance that it was going to fail?
@@ -367,7 +371,7 @@ Work through these in your own words before the Week 2 lecture. If you find your
 |---|---|---|
 | 2.1 | Name the five levels of the ISA-95 plant data hierarchy and identify which system type belongs at each level | Self-check Q1 |
 | 2.2 | Identify and categorize common data quality problems in an industrial dataset | Lab Week 2 Task 2 |
-| 2.3 | Construct an X-bar control chart in Python and interpret whether a process is in statistical control | Lab Week 2 Task 3 |
+| 2.3 | Direct an LLM to construct an X-bar control chart in Python and interpret whether a process is in statistical control | Lab Week 2 Task 3 |
 | 2.4 | Calculate Cpk and explain its meaning to a non-engineer | Self-check Q3 |
 | 2.5 | Articulate four limitations of SPC and explain how machine learning addresses them | Self-check Q4–Q5 |
 
@@ -1120,11 +1124,11 @@ Specialized loss functions can encode this asymmetry (the original C-MAPSS compe
 
 |  | By the end of this week, you will be able to… | Assessment |
 |---|---|---|
-| 4.1 | Implement per-engine rolling-window features in Python using `groupby().transform()` | Lab Week 4 Task 1 |
+| 4.1 | Direct an LLM to implement per-engine rolling-window features in Python (`groupby().transform()`), and verify the result is correct | Lab Week 4 Task 1 |
 | 4.2 | Justify the choice of window size and the effect of different rolling statistics on model performance | Self-check Q2 |
-| 4.3 | Build a complete Random Forest pipeline: features → split → train → evaluate → compare to baseline | Lab Week 4 Tasks 3–5 |
+| 4.3 | Direct an LLM to build a complete Random Forest pipeline (features → split → train → evaluate → compare to baseline), checking each stage as it goes | Lab Week 4 Tasks 3–5 |
 | 4.4 | Interpret a feature importance chart and explain what it says about which sensors matter | Lab Week 4 Task 6 |
-| 4.5 | Save a trained scikit-learn model to disk for later deployment | Lab Week 4 Task 7 |
+| 4.5 | Direct an LLM to save a trained scikit-learn model to disk for later deployment | Lab Week 4 Task 7 |
 
 ::: {.callout-think}
 **Before You Read:** In Week 3 you identified which C-MAPSS sensors are most correlated with RUL. Does the *current value* of a sensor fully describe where an engine is in its degradation trajectory — or do you need to know the *history* of that value as well? Why?
@@ -1184,7 +1188,7 @@ ggplot(df_signal, aes(x = cycle)) +
 
 #### The `groupby().transform()` Pattern {#ml-w4-groupby}
 
-The most important implementation detail for any time-series feature engineering in pandas:
+When you ask an LLM to write your rolling-feature code, this is the single most important thing to check in what it hands back — and exactly the kind of subtle, easy-to-miss error you are training yourself to catch (Learning Objective 1.5):
 
 ```python
  CORRECT: window resets at each new engine boundary
@@ -1199,11 +1203,13 @@ df["sensor_11_rolling_mean"] = df["sensor_11"].rolling(5).mean()
 
 The wrong version treats the entire dataset as one continuous time series. At the boundary between engine #1 and engine #2 in the file, the last 4 rows of engine #1's history bleed into engine #2's first few rolling features. This is a subtle bug — your model will still train and produce predictions, but the features are contaminated, and your RMSE will be slightly worse than it should be. Worse, in a production deployment on a new engine, the contamination disappears, and the model behaves differently than it did during validation.
 
+If you are not sure which version an LLM just gave you, ask it directly: "does this rolling window reset at each engine boundary — walk me through what happens at the boundary between unit_number 1 and unit_number 2." A good answer explains the mechanism; a hallucinated one will just reassure you it's fine.
+
 ***
 
 ### Random Forest Internals {#ml-w4-rf-internals}
 
-Now that you are about to train one, you need to know what is happening inside the `RandomForestRegressor` call.
+Now that you are about to direct an LLM to train one, you need to know what is happening inside the `RandomForestRegressor` call — otherwise you cannot judge whether its code, or its explanation of the results, is right.
 
 #### Growing a Single Tree {#ml-w4-tree-internals}
 
@@ -1259,6 +1265,8 @@ For the C-MAPSS model you build in Week 4, a common pattern is that predictions 
 
 #### Comparing to the Naive Baseline {#ml-w4-baseline}
 
+Ask your LLM to add this comparison to your pipeline — this is the kind of code you should be able to read and explain back, even if you did not type it yourself:
+
 ```python
  Naive baseline: predict the training set mean for every engine
 y_naive = np.full_like(y_val, fill_value=y_train.mean(), dtype=float)
@@ -1303,7 +1311,7 @@ Target: **at least 2× better than the naive baseline.** If you are not hitting 
 | 5.2 | Describe why a Jupyter notebook is not a production deployment | Self-check Q2 |
 | 5.3 | Design a user-facing dashboard appropriate for an operator, a maintenance planner, and a plant manager | Self-check Q3 |
 | 5.4 | Explain three mechanisms by which a deployed ML model degrades over time | Self-check Q4 |
-| 5.5 | Deploy a machine learning model as a public web application using Streamlit and GitHub | Lab Week 5 |
+| 5.5 | Direct an LLM to deploy a machine learning model as a public web application using Streamlit and GitHub | Lab Week 5 |
 
 ::: {.callout-think}
 **Before You Read:** Your Random Forest model works perfectly in your notebook. A plant manager asks you to "put it on the shop floor." What does that actually mean? Who will use it, on what device, and what happens when the model is wrong?
@@ -1604,4 +1612,4 @@ Across six weeks, three themes have recurred:
 
 2. **Data is the bottleneck, not the algorithm.** You spent more time in Week 2 cleaning 90 days of CNC data than you spent in Week 4 training the model. This ratio is typical of real industrial work. The engineers who understand the data — its provenance, its failure modes, its physical meaning — are the engineers who build systems that work in production.
 
-3. **AI tools augment engineer judgment; they do not replace it.** An LLM that drafts your SOP still needs you to check it. A predictive maintenance model that says "15 cycles remaining" still needs a maintenance planner who understands what 15 cycles means in terms of the production schedule, the available technicians, and the cost of being wrong. The value of this course is not in the Python code — it is in the engineering judgment about when to trust the output and when to push back.
+3. **AI tools augment engineer judgment; they do not replace it.** An LLM that drafts your SOP still needs you to check it. A predictive maintenance model that says "15 cycles remaining" still needs a maintenance planner who understands what 15 cycles means in terms of the production schedule, the available technicians, and the cost of being wrong. You were never expected to become a Python programmer in six weeks — you were expected to learn to direct an LLM to write, explain, and debug code on your behalf, so you could automate the routine parts of this project and produce a working predictive-maintenance system that would otherwise have been well above your current level. The value of this course is not in the Python code — it is in the engineering judgment about when to trust the AI-generated output and when to push back.
