@@ -402,7 +402,20 @@ window.Quarto = {
 <h2 data-number="18.1" class="anchored" data-anchor-id="ml-overview"><span class="header-section-number">18.1</span> Chapter Overview</h2>
 <p>This chapter runs over six weeks — twelve hours of classroom theory paired with twelve hours of hands-on laboratory work (see <a href="30-Labs.html#sec-chap-ml-lab" class="quarto-xref"><span>Section 19.6</span></a>). By the end of the six weeks you will have built, trained, and publicly deployed a predictive-maintenance web application using real industrial sensor data. That app will be on your résumé.</p>
 <p>The technical path moves from wide to narrow: Week 1 surveys the entire AI landscape and teaches you to use the tools you already have access to (large language models) wisely. Week 2 grounds you in the messy reality of plant data and refreshes your statistical process control. Weeks 3 through 5 build and deploy a machine-learning model for predicting when a turbofan engine will fail — the same class of problem that GE Aviation, Pratt &amp; Whitney, and every major Tier-1 automotive supplier runs on their production lines. Week 6 steps back to examine ethics, the broader landscape, and where this field is heading.</p>
-<p>The companion lab handout (<a href="30-Labs.html#sec-chap-ml-lab" class="quarto-xref"><span>Section 19.6</span></a>) provides the step-by-step exercises, Python code, and deliverable instructions for each week.</p>
+<p>The companion lab handout (<a href="30-Labs.html#sec-chap-ml-lab" class="quarto-xref"><span>Section 19.6</span></a>) provides the step-by-step exercises, AI-assisted Python workflows, and deliverable instructions for each week.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>A Note on Python in This Course:</strong> You are not expected to already know Python, and this course does not teach it as a separate subject. Instead, you will direct an LLM to write, explain, and debug the code for you — increasingly how manufacturing engineers work in industry. Your job is to specify precisely what the code needs to do (the R-C-T-C-F pattern from Week 1 is built for exactly this), read what the AI produces well enough to catch its mistakes, and ask it to explain any line you don’t follow. This is the central skill the course is built around: using AI to (1) automate routine work you already understand, and (2) produce work that is genuinely above your current skill level — punching above your weight — while you stay accountable for whether the result is actually correct.</p>
+</div>
+</div>
 <div class="callout-think">
 <p><strong>Before You Start:</strong> Think about the last time a machine at your co-op, at home, or on a plant tour broke down unexpectedly. How much warning was there? What would have been different if you had known two weeks in advance that it was going to fail?</p>
 </div>
@@ -936,7 +949,7 @@ Warning
 </tr>
 <tr class="odd">
 <td>2.3</td>
-<td>Construct an X-bar control chart in Python and interpret whether a process is in statistical control</td>
+<td>Direct an LLM to construct an X-bar control chart in Python and interpret whether a process is in statistical control</td>
 <td>Lab Week 2 Task 3</td>
 </tr>
 <tr class="even">
@@ -1899,7 +1912,7 @@ Figure&nbsp;18.7: Correct engine-wise train/validation split. Entire engine hist
 <tbody>
 <tr class="odd">
 <td>4.1</td>
-<td>Implement per-engine rolling-window features in Python using <code>groupby().transform()</code></td>
+<td>Direct an LLM to implement per-engine rolling-window features in Python (<code>groupby().transform()</code>), and verify the result is correct</td>
 <td>Lab Week 4 Task 1</td>
 </tr>
 <tr class="even">
@@ -1909,7 +1922,7 @@ Figure&nbsp;18.7: Correct engine-wise train/validation split. Entire engine hist
 </tr>
 <tr class="odd">
 <td>4.3</td>
-<td>Build a complete Random Forest pipeline: features → split → train → evaluate → compare to baseline</td>
+<td>Direct an LLM to build a complete Random Forest pipeline (features → split → train → evaluate → compare to baseline), checking each stage as it goes</td>
 <td>Lab Week 4 Tasks 3–5</td>
 </tr>
 <tr class="even">
@@ -1919,7 +1932,7 @@ Figure&nbsp;18.7: Correct engine-wise train/validation split. Entire engine hist
 </tr>
 <tr class="odd">
 <td>4.5</td>
-<td>Save a trained scikit-learn model to disk for later deployment</td>
+<td>Direct an LLM to save a trained scikit-learn model to disk for later deployment</td>
 <td>Lab Week 4 Task 7</td>
 </tr>
 </tbody>
@@ -1995,7 +2008,7 @@ Figure&nbsp;18.8: Effect of a rolling mean (window = 5) on a simulated degrading
 </section>
 <section id="ml-w4-groupby" class="level4" data-number="18.5.2.2">
 <h4 data-number="18.5.2.2" class="anchored" data-anchor-id="ml-w4-groupby"><span class="header-section-number">18.5.2.2</span> The <code>groupby().transform()</code> Pattern</h4>
-<p>The most important implementation detail for any time-series feature engineering in pandas:</p>
+<p>When you ask an LLM to write your rolling-feature code, this is the single most important thing to check in what it hands back — and exactly the kind of subtle, easy-to-miss error you are training yourself to catch (Learning Objective 1.5):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a> CORRECT: window resets at each new engine boundary</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"sensor_11_rolling_mean"</span>] <span class="op">=</span> (</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"unit_number"</span>)[<span class="st">"sensor_11"</span>]</span>
@@ -2005,12 +2018,13 @@ Figure&nbsp;18.8: Effect of a rolling mean (window = 5) on a simulated degrading
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a> WRONG: window bleeds across engine boundaries</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"sensor_11_rolling_mean"</span>] <span class="op">=</span> df[<span class="st">"sensor_11"</span>].rolling(<span class="dv">5</span>).mean()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The wrong version treats the entire dataset as one continuous time series. At the boundary between engine #1 and engine #2 in the file, the last 4 rows of engine #1’s history bleed into engine #2’s first few rolling features. This is a subtle bug — your model will still train and produce predictions, but the features are contaminated, and your RMSE will be slightly worse than it should be. Worse, in a production deployment on a new engine, the contamination disappears, and the model behaves differently than it did during validation.</p>
+<p>If you are not sure which version an LLM just gave you, ask it directly: “does this rolling window reset at each engine boundary — walk me through what happens at the boundary between unit_number 1 and unit_number 2.” A good answer explains the mechanism; a hallucinated one will just reassure you it’s fine.</p>
 <hr>
 </section>
 </section>
 <section id="ml-w4-rf-internals" class="level3" data-number="18.5.3">
 <h3 data-number="18.5.3" class="anchored" data-anchor-id="ml-w4-rf-internals"><span class="header-section-number">18.5.3</span> Random Forest Internals</h3>
-<p>Now that you are about to train one, you need to know what is happening inside the <code>RandomForestRegressor</code> call.</p>
+<p>Now that you are about to direct an LLM to train one, you need to know what is happening inside the <code>RandomForestRegressor</code> call — otherwise you cannot judge whether its code, or its explanation of the results, is right.</p>
 <section id="ml-w4-tree-internals" class="level4" data-number="18.5.3.1">
 <h4 data-number="18.5.3.1" class="anchored" data-anchor-id="ml-w4-tree-internals"><span class="header-section-number">18.5.3.1</span> Growing a Single Tree</h4>
 <p>A decision tree is grown by the following process:</p>
@@ -2103,6 +2117,7 @@ Figure&nbsp;18.8: Effect of a rolling mean (window = 5) on a simulated degrading
 </section>
 <section id="ml-w4-baseline" class="level4" data-number="18.5.4.2">
 <h4 data-number="18.5.4.2" class="anchored" data-anchor-id="ml-w4-baseline"><span class="header-section-number">18.5.4.2</span> Comparing to the Naive Baseline</h4>
+<p>Ask your LLM to add this comparison to your pipeline — this is the kind of code you should be able to read and explain back, even if you did not type it yourself:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> Naive baseline: predict the training <span class="bu">set</span> mean <span class="cf">for</span> every engine</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y_naive <span class="op">=</span> np.full_like(y_val, fill_value<span class="op">=</span>y_train.mean(), dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>naive_rmse <span class="op">=</span> np.sqrt(mean_squared_error(y_val, y_naive))</span>
@@ -2178,7 +2193,7 @@ Figure&nbsp;18.8: Effect of a rolling mean (window = 5) on a simulated degrading
 </tr>
 <tr class="odd">
 <td>5.5</td>
-<td>Deploy a machine learning model as a public web application using Streamlit and GitHub</td>
+<td>Direct an LLM to deploy a machine learning model as a public web application using Streamlit and GitHub</td>
 <td>Lab Week 5</td>
 </tr>
 </tbody>
@@ -2618,7 +2633,7 @@ Warning
 <ol type="1">
 <li><p><strong>Use the simplest tool that solves your problem.</strong> An LLM that hallucinates ASTM standards is the wrong tool for verifying a specification. A Random Forest that you can interrogate with feature importance is often better than a neural network you cannot explain, even if the neural network is slightly more accurate.</p></li>
 <li><p><strong>Data is the bottleneck, not the algorithm.</strong> You spent more time in Week 2 cleaning 90 days of CNC data than you spent in Week 4 training the model. This ratio is typical of real industrial work. The engineers who understand the data — its provenance, its failure modes, its physical meaning — are the engineers who build systems that work in production.</p></li>
-<li><p><strong>AI tools augment engineer judgment; they do not replace it.</strong> An LLM that drafts your SOP still needs you to check it. A predictive maintenance model that says “15 cycles remaining” still needs a maintenance planner who understands what 15 cycles means in terms of the production schedule, the available technicians, and the cost of being wrong. The value of this course is not in the Python code — it is in the engineering judgment about when to trust the output and when to push back.</p></li>
+<li><p><strong>AI tools augment engineer judgment; they do not replace it.</strong> An LLM that drafts your SOP still needs you to check it. A predictive maintenance model that says “15 cycles remaining” still needs a maintenance planner who understands what 15 cycles means in terms of the production schedule, the available technicians, and the cost of being wrong. You were never expected to become a Python programmer in six weeks — you were expected to learn to direct an LLM to write, explain, and debug code on your behalf, so you could automate the routine parts of this project and produce a working predictive-maintenance system that would otherwise have been well above your current level. The value of this course is not in the Python code — it is in the engineering judgment about when to trust the AI-generated output and when to push back.</p></li>
 </ol>
 
 
