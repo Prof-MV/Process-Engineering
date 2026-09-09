@@ -20,6 +20,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Drop flaky preinstalled apt sources
+        # The runner ships third-party apt lists (Google Chrome, etc.) that
+        # this build never needs. They intermittently serve a mismatched
+        # Packages index ("Hash Sum mismatch"), which makes the apt-get
+        # update inside setup-r fail the whole job. Remove them first.
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list \
+                     /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get update || true
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
