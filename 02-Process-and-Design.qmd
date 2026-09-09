@@ -129,8 +129,8 @@ cost_per_part <- total_annual_cost / annual_production
 
 cat("Fixed Automation Analysis:\n")
 cat("==========================\n")
-cat(sprintf("Equipment cost: $%s\n", format(fixed_automation_cost, big.mark = " ")))
-cat(sprintf("Annual production: %s parts\n", format(annual_production, big.mark = " ")))
+cat(sprintf("Equipment cost: $%s\n", format(fixed_automation_cost, big.mark = " ", scientific = FALSE)))
+cat(sprintf("Annual production: %s parts\n", format(annual_production, big.mark = " ", scientific = FALSE)))
 cat(sprintf("Operating cost per part: $%.2f\n", fixed_cost_per_part))
 cat(sprintf("Amortized equipment cost per part: $%.2f\n", annual_equipment_cost/annual_production))
 cat(sprintf("Total cost per part: $%.2f\n", cost_per_part))
@@ -300,7 +300,7 @@ gates <- data.frame(
 ggplot() +
   # Phase bars
   geom_tile(data = phases, aes(x = x, y = 1, fill = color),
-            width = 0.9, height = 0.5, color = "white", size = 1) +
+            width = 0.9, height = 0.5, color = "white", linewidth = 1) +
   geom_text(data = phases, aes(x = x, y = 1, label = Phase),
             color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   # Gate markers
@@ -749,12 +749,11 @@ cat("\nOpportunity: Combine 4 screws into snap-fit design\n")
 **HAZOP** (Hazard and Operability Study) is a systematic method to identify hazards and operability problems in process plants.
 
 ```{r hazop-study, echo=FALSE, results='asis'}
-  embed_youtube("6AqtX8oCpKI&t", "HAZOP Study Overview")
+  embed_youtube("6AqtX8oCpKI", "What is a HAZOP? A Crash Course")
 ```
 
-
 ```{r hazop-study-overview, echo=FALSE, results='asis'}
-  embed_youtube("ukn0RRt0ReA&list=PLeTiXOrLeXhI5IZKv3GeOUMOYpz5mG36S", "HAZOP Study Overview")
+  embed_youtube("ukn0RRt0ReA", "Key P&ID Details for HAZOPs")
 ```
 
 ### HAZOP Methodology
@@ -910,7 +909,7 @@ timeline <- data.frame(
 
 ggplot(timeline) +
   geom_segment(aes(x = Start, xend = Start + Duration, y = y, yend = y),
-               size = 10, color = "#3498DB", lineend = "round") +
+               linewidth = 10, color = "#3498DB", lineend = "round") +
   geom_text(aes(x = Start + Duration/2, y = y, label = Phase),
             color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   geom_text(aes(x = Start + Duration/2, y = y - 0.4,
