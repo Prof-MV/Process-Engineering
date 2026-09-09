@@ -106,7 +106,11 @@ selection_data <- data.frame(
 
 ggplot(selection_data, aes(x = Volume, y = Complexity, color = Category)) +
   geom_point(size = 6, alpha = 0.8) +
-  geom_text(aes(label = Process), vjust = -1, size = 3 * diagram_text_scale, fontface = "bold") +
+  ggrepel::geom_text_repel(aes(label = Process),
+                           size = 3 * diagram_text_scale, fontface = "bold",
+                           seed = 42, box.padding = 0.6, point.padding = 0.4,
+                           min.segment.length = 0, segment.color = "grey60",
+                           max.overlaps = Inf, show.legend = FALSE) +
   scale_x_continuous(limits = c(0, 6), breaks = 1:5,
                      labels = c("Prototype\n(1-10)", "Low\n(10-1K)", "Medium\n(1K-10K)",
                                "High\n(10K-100K)", "Mass\n(100K+)")) +
