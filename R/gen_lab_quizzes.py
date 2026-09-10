@@ -45,7 +45,9 @@ def write_lab(n, lab_title, note_lines, questions):
             w.writerow(["NewQuestion", "WR"])
             w.writerow(["ID", "%s-L%02d-%02d" % (CC, n, i)])
             w.writerow(["Title", q["title"]])
-            w.writerow(["QuestionText", q["text"]])
+            # 3rd column "HTML" tells the D2L importer to render the body as
+            # HTML instead of printing the tags literally.
+            w.writerow(["QuestionText", q["text"], "HTML"])
             w.writerow(["Points", q["points"]])
             w.writerow(["Difficulty", q["difficulty"]])
             w.writerow(["InitialText", q["initial"]])
