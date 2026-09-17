@@ -358,19 +358,20 @@ gripper_weight <- 2.5    # kg
 part_weight <- 5.0       # kg
 safety_factor <- 1.2     # 20% safety margin
 
-total_load <- gripper_weight + part_weight
-required_capacity <- total_load * safety_factor
-available_capacity <- robot_max_payload - gripper_weight
+total_load <- gripper_weight + part_weight          # what the robot actually carries
+required_capacity <- total_load * safety_factor      # total load, with margin applied
+remaining_margin <- robot_max_payload - total_load   # headroom before the safety factor
 
 cat("Payload Analysis:\n")
 cat("─────────────────────────────\n")
 cat("Robot maximum payload:", robot_max_payload, "kg\n")
 cat("Gripper weight:", gripper_weight, "kg\n")
 cat("Part weight:", part_weight, "kg\n")
-cat("Total load:", total_load, "kg\n")
+cat("Total load (gripper + part):", total_load, "kg\n")
+cat("Remaining margin:", remaining_margin, "kg (",
+    round(100 * remaining_margin / robot_max_payload), "%)\n")
 cat("With safety factor (", safety_factor, "x):", required_capacity, "kg\n")
 cat("─────────────────────────────\n")
-cat("Available capacity for part:", available_capacity, "kg\n")
 
 if(required_capacity <= robot_max_payload) {
   cat("Result: ACCEPTABLE - Robot can handle this load\n")
