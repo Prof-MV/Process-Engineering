@@ -209,7 +209,12 @@ CNC turning cells.
 
 **One shaft kit contains:** 1 machined shaft blank, 2 tapered roller bearings, 1
 retaining ring, 1 lip seal, 1 dowel pin, 1 desiccant sachet — placed in a moulded
-tray inside a labelled carton.
+tray inside a labelled carton. The exact part numbers, quantities and shaft
+dimensions are on the assembly drawing
+([410-2365, Rev B](labs/handouts/lab02-410-2365-shaft-kit-assembly-RevB.pdf)) and
+shaft detail drawing
+([205-5478, Rev B](labs/handouts/lab02-205-5478-shaft-RevB.pdf)) — you need both
+for Lab 2.
 
 **Target output:** 250 kits/day on one 8-hour shift.
 
@@ -242,6 +247,9 @@ After this lab you should be able to:
 - Draft a production-facility layout drawing showing product in/out, stations,
   storage, and material and people flow, and mark starvation / blockage risk
   points.
+- Compare a highly automated (turntable) cell against a manual U-cell and
+  justify a configuration choice for a given volume, timeline and labour
+  situation.
 - Complete an HSE risk assessment for a manual assembly cell.
 :::
 
@@ -250,6 +258,13 @@ After this lab you should be able to:
 ::: {.lab-prep}
 - Read the **case study** above and Unit 2 content on the basics of process
   engineering and design.
+- Review the assembly drawing
+  ([410-2365, Rev B](labs/handouts/lab02-410-2365-shaft-kit-assembly-RevB.pdf))
+  and the shaft detail drawing
+  ([205-5478, Rev B](labs/handouts/lab02-205-5478-shaft-RevB.pdf)) — you need
+  the part numbers, quantities, materials and key dimensions from these for
+  your spec sheet and BOM. Purchased components are sourced from
+  **McMaster-Carr**.
 - Skim the [Design Documentation supplement](labs/handouts/lab02-design-documentation-supplement.pdf)
   for the document templates and the detail-design / engineering process-flow
   diagram (ignore the popsicle-bridge framing — the document types are the same).
@@ -263,8 +278,13 @@ After this lab you should be able to:
   [**Visio**](https://www.microsoft.com/microsoft-365/visio/flowchart-software),
   [**Microsoft Project**](https://www.microsoft.com/microsoft-365/project/project-management-software),
   [**Microsoft Excel**](https://www.microsoft.com/microsoft-365/excel)
+- Assembly drawing [410-2365, Rev B](labs/handouts/lab02-410-2365-shaft-kit-assembly-RevB.pdf)
+  and shaft drawing [205-5478, Rev B](labs/handouts/lab02-205-5478-shaft-RevB.pdf)
+  — the part numbers, quantities and dimensions you need
 - Templates from FOL:
-  - `Bill_of_Materials_Template_for_Excel.xlsx`
+  - `Bill_of_Materials_Template_for_Excel.xlsx` — pre-filled with the kit's
+    part numbers, descriptions and quantities from the assembly drawing; you
+    fill in unit, source and supplier
   - `Gantt_chart_template.xlsx` — open it in Microsoft Project (File > Open)
     and use Project's Import Wizard to turn it into a schedule, then
     Save As `.mpp`; the template's "Read me first" sheet walks you through it
@@ -275,13 +295,51 @@ After this lab you should be able to:
   assessment
 :::
 
+::: {.callout-note title="The automation decision"}
+## The automation decision {#sec-lab2-automation-decision}
+
+Précitech's plant manager has not committed to a cell configuration yet — that
+choice is yours to make and defend as part of your facility layout. Two
+realistic options are on the table for a 250-kit/day, single-shift cell:
+
+**Option A — highly automated: rotary turntable, 6–7 stations.** An indexing
+turntable carries the shaft through fixed stations (press bearing 1, press
+bearing 2, fit retaining ring, fit seal, insert dowel pin + desiccant, inspect,
+place in tray / close carton), with **one operator** at a single load/unload
+station. Everything else is tooled and sensored.
+
+**Option B — manual U-cell.** A standard U-shaped layout (Chapter 4) with **one
+operator per station**, parts and trays moving between stations on roller
+conveyors — matching the *manual* kitting cell Précitech originally scoped.
+
+| | Option A — automated turntable | Option B — manual U-cell |
+|---|---|---|
+| Capital cost | High — custom turntable + tooled/sensored stations | Low — conveyor + hand tools/fixtures |
+| Time to stand up | Long — design, build and debug before day 1 | Short — matches the "before it is built" schedule pressure |
+| Labour | 1 operator/shift | Up to 6–7 operators/shift |
+| Cycle-time consistency | High — paced by the index, not by people | Lower — depends on operator skill and fatigue |
+| Flexibility to rebalance | Low — station count and index time are fixed | High — move people, cross-train, absorb absences |
+| Changeover to a kit variant | Retool multiple stations at once | Operators adapt; fixtures swap faster |
+| Failure mode | Single point of failure — one jammed station stops the whole cell | A blocked station can sometimes be buffered around |
+| Ergonomic risk | Concentrated at one manual station | Spread across every station ([Lab 5](#sec-lab-ergonomics)) |
+| Maintenance skill needed | PLC/servo/automation technicians (Chapter 9) | Standard mechanical/tooling upkeep |
+
+Neither option is "correct." Your facility-layout task in the FOL quiz asks you
+to pick one, sketch it, and justify the choice with at least two pros and two
+cons — from the table above or your own reasoning — tied to Précitech's actual
+volume, timeline and labour situation.
+:::
+
 ::: {.callout-note title="Instructions & submission"}
 Work through the **Lab 2 FOL quiz** during the lab period. It takes you through
-all five phases — specification sheets and BOM, task list / process flow, project
-schedule and Gantt chart, facility layout drawing, and HSE risk assessment — asks
-you to describe each one, and collects the electronic files. Keep your layout
-drawing: you refine and reuse it in [Lab 3](#sec-lab-anylogic). AI tools may not
-be used for any part of this lab.
+all five phases — specification sheet and BOM (with a prepared checklist to work
+from), task list / process flow, project schedule and Gantt chart, facility
+layout drawing (including the automation decision above), and HSE risk
+assessment — asks you to describe each one, and collects the electronic files.
+The task-list and Gantt-chart examples in the quiz are **starting points only**
+— part of the mark is finding and adding the steps they're missing. Keep your
+layout drawing: you refine and reuse it in [Lab 3](#sec-lab-anylogic). AI tools
+may not be used for any part of this lab.
 :::
 
 ---

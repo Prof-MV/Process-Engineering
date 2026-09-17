@@ -80,9 +80,13 @@ def make_bom():
     ws["A1"] = "Bill of Materials -- Precitech shaft-kit assembly cell (one kit)"
     ws["A1"].font = Font(bold=True, size=13)
     ws.merge_cells("A1:H1")
-    ws["A2"] = ("Fill in every column for each line item. Source = In-house "
-               "(machined at Precitech) or Purchased. Add rows for packaging "
-               "as needed; delete the example values before you submit.")
+    ws["A2"] = ("Part numbers, descriptions and quantities are pre-filled from "
+               "assembly drawing 410-2365 Rev B (and the shaft drawing "
+               "205-5478 Rev B). Fill in Unit, Source and Supplier for every "
+               "row, including the tray and carton (research a real "
+               "packaging supplier for those two -- they are not on the "
+               "assembly drawing). Source = In-house (machined at Precitech) "
+               "or Purchased.")
     ws["A2"].font = NOTE_FONT
     ws.merge_cells("A2:H2")
     ws.row_dimensions[2].height = 30
@@ -97,29 +101,34 @@ def make_bom():
     style_header_row(ws, hdr_row, len(headers))
     autosize(ws, [8, 30, 22, 12, 10, 20, 20, 30])
 
-    # Scaffold rows: the known kit contents + packaging, from the case study.
-    # Qty is pre-filled (it is fixed by the kit definition); everything else
-    # is left for the student to research and fill in.
+    # Scaffold rows: item 1-6 part numbers/descriptions/qty come straight off
+    # assembly drawing 410-2365 Rev B; items 7-8 (packaging) are the two part
+    # numbers assigned outside the drawing. Source/Supplier are pre-filled
+    # for the six drawing items (per the drawing + "purchased components are
+    # from McMaster-Carr") and left blank for the two packaging items, which
+    # is genuine student research.
     kit_items = [
-        ("Machined shaft blank", 1, "ea"),
-        ("Tapered roller bearing", 2, "ea"),
-        ("Retaining ring", 1, "ea"),
-        ("Lip seal", 1, "ea"),
-        ("Dowel pin", 1, "ea"),
-        ("Desiccant sachet", 1, "ea"),
-        ("Moulded tray", 1, "ea"),
-        ("Labelled carton", 1, "ea"),
+        # part_number, description, qty, unit, source, supplier
+        ("205-5478",   "Shaft (ANSI 4140)",                               1, "ea", "In-house",  ""),
+        ("1199N14",    "Spring-Loaded Rotary Shaft Seal with Wiper Lip",  1, "ea", "Purchased", "McMaster-Carr"),
+        ("6677K88",    "Tapered-Roller Bearing with Steel Ring",         2, "ea", "Purchased", "McMaster-Carr"),
+        ("91595A179",  "Dowel Pin",                                       1, "ea", "Purchased", "McMaster-Carr"),
+        ("98541A440",  "External Retaining Ring",                        1, "ea", "Purchased", "McMaster-Carr"),
+        ("1523T76",    "Desiccant Sachet",                                1, "ea", "Purchased", "McMaster-Carr"),
+        ("910-1473",   "Moulded Tray",                                    1, "ea", "",          ""),
+        ("911-4358",   "Labelled Carton",                                 1, "ea", "",          ""),
     ]
     r = hdr_row + 1
-    for i, (desc, qty, unit) in enumerate(kit_items, start=1):
+    for i, (pn, desc, qty, unit, source, supplier) in enumerate(kit_items, start=1):
         ws.cell(row=r, column=1, value=i)
         ws.cell(row=r, column=2, value=desc)
+        ws.cell(row=r, column=3, value=pn)
         ws.cell(row=r, column=4, value=qty)
         ws.cell(row=r, column=5, value=unit)
-        r += 1
-    # A couple of blank spares for anything the student's spec sheet adds.
-    for i in range(len(kit_items) + 1, len(kit_items) + 3):
-        ws.cell(row=r, column=1, value=i)
+        ws.cell(row=r, column=6, value=source)
+        ws.cell(row=r, column=7, value=supplier)
+        if not source:
+            ws.cell(row=r, column=8, value="Research a real packaging supplier")
         r += 1
 
     dv = DataValidation(type="list", formula1='"In-house,Purchased"', allow_blank=True)

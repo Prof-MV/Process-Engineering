@@ -50,7 +50,10 @@ def write_lab(n, lab_title, note_lines, questions):
             w.writerow(["QuestionText", q["text"], "HTML"])
             w.writerow(["Points", q["points"]])
             w.writerow(["Difficulty", q["difficulty"]])
-            w.writerow(["InitialText", q["initial"]])
+            # Same HTML flag as QuestionText -- several labs now pre-fill
+            # InitialText with real formatting (tables, bold labels), not
+            # just a plain sentence.
+            w.writerow(["InitialText", q["initial"], "HTML"])
             if q["answerkey"]:
                 w.writerow(["AnswerKey", q["answerkey"]])
             w.writerow([])
@@ -157,74 +160,206 @@ write_lab(1, "Logic Thinking for Robot Control: Rocksi",
  ])
 
 # ----------------------------------------------------------------------------- 2
+L2_BOM_ROWS = [
+    # item, part_number, description, qty, source
+    (1, "205-5478",  "Shaft (ANSI 4140)",                              1, "In-house"),
+    (2, "1199N14",   "Spring-Loaded Rotary Shaft Seal with Wiper Lip", 1, "Purchased -- McMaster-Carr"),
+    (3, "6677K88",   "Tapered-Roller Bearing with Steel Ring",         2, "Purchased -- McMaster-Carr"),
+    (4, "91595A179", "Dowel Pin",                                      1, "Purchased -- McMaster-Carr"),
+    (5, "98541A440", "External Retaining Ring",                        1, "Purchased -- McMaster-Carr"),
+    (6, "1523T76",   "Desiccant Sachet",                                1, "Purchased -- McMaster-Carr"),
+    (7, "910-1473",  "Moulded Tray",                                    1, "? -- research a packaging supplier"),
+    (8, "911-4358",  "Labelled Carton",                                 1, "? -- research a packaging supplier"),
+]
+
+def _bom_table(cols):
+    """cols: list of column headers; pulls the matching fields from L2_BOM_ROWS."""
+    field_idx = {"Item": 0, "Part Number": 1, "Description": 2, "Qty": 3, "Source": 4}
+    head = "<tr>" + "".join("<th>%s</th>" % c for c in cols) + "</tr>"
+    body = ""
+    for row in L2_BOM_ROWS:
+        body += "<tr>" + "".join("<td>%s</td>" % row[field_idx[c]] for c in cols) + "</tr>"
+    return ("<table border=\"1\" cellpadding=\"4\" cellspacing=\"0\">" + head + body
+            + "</table>")
+
+L2_SPEC_INITIAL = (
+    "<p><b>SHAFT REPLACEMENT KIT -- SPECIFICATION SHEET</b> "
+    "(edit every field below; delete this instruction line)</p>"
+    "<p><b>Customer:</b> [state]<br>"
+    "<b>Kit part number:</b> 410-2365, Rev B<br>"
+    "<b>Kit description:</b> Shaft Replacement Kit</p>"
+    "<p><b>Kit contents</b> (from assembly drawing 410-2365, Rev B):</p>"
+    + _bom_table(["Item", "Part Number", "Description", "Qty", "Source"]) +
+    "<p><b>Key dimensions and tolerances</b> (from shaft drawing 205-5478, Rev B):<br>"
+    "- Overall shaft length: 100.00 +/-0.15 mm<br>"
+    "- Shaft diameter: dia 25.00 +/-0.05 mm<br>"
+    "- Cross hole: dia 4.20 +/-0.15 mm, countersink 1.00 x 90 deg, located "
+    "6.50 +/-0.15 mm from one end<br>"
+    "- Material: ANSI 4140 steel<br>"
+    "- Dimensioning standard: ASME Y14.5</p>"
+    "<p><b>Assembly requirements</b> (carry these into the spec sheet as process "
+    "requirements, not just drawing notes):<br>"
+    "- Bearing push-on force: between 200 N and 300 N<br>"
+    "- Dowel pin inserted symmetric in the shaft<br>"
+    "- Parts clean and free of oil before assembly</p>"
+    "<p><b>Packaging and marking:</b> [describe -- tray + carton, what the carton "
+    "label must show]</p>"
+    "<p><b>Applicable standards:</b> [state]</p>"
+    "<p><b>Target cycle time -- work this out yourself:</b><br>"
+    "1. Precitech's target is 250 kits/day on one 8-hour shift. State your "
+    "paid-break / planned-downtime assumption, then compute the <b>bare</b> "
+    "cycle time = available seconds per shift / 250 -- what the cell would need "
+    "if it never stopped.<br>"
+    "2. That number has zero margin. Real cells lose time to washroom breaks, "
+    "material shortages at the storage rack, and equipment breakdowns. State a "
+    "total loss allowance for those three (a % or a minutes/shift figure) and "
+    "justify it, then compute your <b>design target</b> cycle time -- faster "
+    "than the bare number by that margin, so the cell still hits 250 kits/day "
+    "despite the losses.<br>"
+    "3. Bare cycle time: [value] s/kit. Design target cycle time (with margin): "
+    "[value] s/kit.</p>"
+)
+
+L2_BOM_INITIAL = (
+    "<p>Confirm/complete this list, then transfer it into "
+    "<b>Bill_of_Materials_Template_for_Excel.xlsx</b> (already pre-filled with "
+    "these part numbers, descriptions and quantities):</p>"
+    + _bom_table(["Item", "Part Number", "Description", "Qty", "Source"]) +
+    "<p>Fill in <b>Unit</b> and <b>Supplier</b> for every row in the Excel file. "
+    "For the tray and carton, McMaster-Carr does not sell custom moulded trays "
+    "or printed cartons -- research and name a real packaging supplier.</p>"
+)
+
 write_lab(2, "Engineering Design Process Documentation",
  ["Case study: Precitech Components shaft-kit assembly & packing cell "
   "(see the Labs chapter, Lab 2). It is the single source of requirements.",
+  "Drawings on FOL / in the Labs chapter: assembly drawing 410-2365 Rev B and "
+  "shaft drawing 205-5478 Rev B. Purchased components are from McMaster-Carr.",
   "Tools: Microsoft Word/Visio, Microsoft Project, Microsoft Excel.",
-  "Templates on FOL: Bill_of_Materials_Template_for_Excel.xlsx, Gantt_chart.mpp, "
-  "HSE risk-assessment Word template.",
+  "Templates on FOL: Bill_of_Materials_Template_for_Excel.xlsx (pre-filled with "
+  "the real part numbers), Gantt_chart_template.xlsx, HSE risk-assessment Word "
+  "template.",
+  "Read 'The automation decision' in the Lab 2 chapter before the facility-"
+  "layout question -- you choose and justify a cell configuration there.",
+  "The task-list and Gantt-chart example chains given in this quiz are "
+  "starting points only and are missing steps -- finding and adding what's "
+  "missing is part of the mark.",
   "Keep your layout drawing -- you reuse it in Lab 3.",
   "AI use: not permitted for any part of this lab."],
  [DECL,
-  q("Phase 1 - Specification sheets (2 marks)",
-    "<p>Write a <b>specification sheet for the shaft kit</b> (customer, part "
-    "number, kit contents, key dimensions and tolerances, packaging, marking, "
-    "applicable standards) and a <b>specification sheet for at least one bought-in "
-    "component</b> (e.g. the tapered roller bearing).</p>"
-    "<p><b>Describe what you put in each field and where the value came from</b> "
-    "(the case study, a standard, an assumption you state). Attach both spec "
-    "sheets (PDF or DOCX).</p>",
-    2, 3, "Summary of each spec sheet and the source of each key value.",
-    "Kit spec: contents, dia 25.000 +/-0.050 mm, carton/tray, marking, standards. Component spec present. Traceable to the case study."),
-  q("Phase 1 - Bill of materials (2 marks)",
-    "<p>Fill in the Excel BOM template for <b>one complete kit</b>: every item, "
-    "quantity, unit, and source (machined in-house vs. purchased).</p>"
-    "<p><b>Describe how you built the BOM</b> and list the line items. Attach the "
-    "completed .xlsx.</p>",
-    2, 3, "BOM line items listed; .xlsx attached.",
-    "All 7 kit items with correct quantities; in-house vs purchased marked; template format kept."),
+  q("Phase 1 - Specification sheet + cycle time (2.5 marks)",
+    "<p>Complete the <b>specification sheet</b> pre-filled in the answer box "
+    "below -- it already has the kit contents, part numbers and key dimensions "
+    "from the assembly drawings. You fill in the customer, packaging/marking, "
+    "applicable standards, and (the substantial part) <b>work out the target "
+    "cycle time</b> with a realistic safety margin.</p>"
+    "<p>Also write a short <b>specification sheet for one bought-in "
+    "component</b> (e.g. the tapered roller bearing, 6677K88): part number, "
+    "dimensions/spec, material, applicable standard, source.</p>"
+    "<p>Attach both as a PDF or DOCX (retype/paste the completed content into "
+    "your own document).</p>",
+    2.5, 4, L2_SPEC_INITIAL,
+    "All 8 kit items match drawing 410-2365 (part numbers, qty, source incl. "
+    "McMaster-Carr); key dimensions from 205-5478 correct (100.00+/-0.15 mm, "
+    "dia 25.00+/-0.05 mm, hole dia 4.20+/-0.15 mm at 6.50+/-0.15 mm, ANSI 4140); "
+    "assembly notes carried over (200-300 N press force, symmetric dowel, "
+    "clean/oil-free); bare cycle time = shift-available-seconds / 250, correctly "
+    "computed with a stated break assumption; design target cycle time is "
+    "FASTER than the bare figure by a justified, reasonable loss allowance "
+    "(roughly 5-20% is typical -- judge the reasoning, not a single right "
+    "number); component spec sheet present and consistent."),
+  q("Phase 1 - Bill of materials (1.5 marks)",
+    "<p>Open the Excel BOM template and complete it for <b>one complete "
+    "kit</b> using the pre-filled list in the answer box below.</p>"
+    "<p><b>Describe what you found for the tray/carton supplier</b> and "
+    "confirm the rest matches. Attach the completed .xlsx.</p>",
+    1.5, 3, L2_BOM_INITIAL,
+    "All 8 kit items present with correct part numbers and quantities; "
+    "Unit and Supplier filled for every row; a real (non-McMaster-Carr) "
+    "packaging supplier named for the tray and carton with a one-line reason."),
   q("Phase 2 - Task list / process flow (2 marks)",
-    "<p>Build a <b>chronological task list</b> for producing one kit (receive "
-    "blanks -&gt; store components -&gt; pick components for one kit -&gt; press "
-    "bearings -&gt; fit retaining ring and seal -&gt; inspect -&gt; place in tray "
-    "-&gt; close and label carton -&gt; stage for dock). Add a <b>duration</b> "
-    "column. Use the task-numbering scheme (Task 1 -&gt; Sub-task 11 -&gt; "
-    "Sub-sub-task 121 ...) from the supplement. Draw the flow as a chart in Visio "
-    "or Word.</p>"
-    "<p><b>Describe your task list and the numbering you used.</b> Attach the "
-    "task list and the flow chart.</p>",
-    2, 3, "Task list with durations + numbering; flow chart attached.",
-    "Chronological, matches the process outline, durations present, numbering scheme applied, chart matches the list."),
-  q("Phase 3 - Project schedule & Gantt chart (2 marks)",
-    "<p>Open the example .mpp file. Enter the tasks and durations for "
+    "<p>Build a <b>chronological task list</b> for producing one kit. To get "
+    "you started: receive blanks -&gt; store components -&gt; pick components "
+    "for one kit -&gt; press bearings -&gt; fit retaining ring and seal -&gt; "
+    "inspect -&gt; place in tray -&gt; close and label carton -&gt; stage for "
+    "dock.</p>"
+    "<p><b>That chain is a starting point only -- it is missing steps.</b> "
+    "Cross-check it against the BOM (8 items, not 6) and the assembly notes on "
+    "drawing 410-2365 (bearing press-on force, dowel pin symmetric, parts clean "
+    "and oil-free) and add every task it is missing -- for example: where does "
+    "the dowel pin actually get inserted? the desiccant sachet? is there an "
+    "incoming-inspection step for the purchased components? a cleaning/"
+    "degreasing step? Add a <b>duration</b> column for every task, including the "
+    "ones you added. Use the task-numbering scheme (Task 1 -&gt; Sub-task 11 "
+    "-&gt; Sub-sub-task 121 ...) from the supplement. Draw the flow as a chart "
+    "in Visio or Word.</p>"
+    "<p><b>List every step you added and why the starting chain was missing "
+    "it.</b> Attach the task list and the flow chart.</p>",
+    2, 4, "The steps you added beyond the starting chain, and why each is needed.",
+    "Starting chain expanded with at least the dowel-pin insertion and desiccant "
+    "placement, plus one more defensible addition (e.g. incoming inspection or "
+    "degreasing) -- reasoning given for each; durations present for every task; "
+    "numbering scheme applied; chart matches the list."),
+  q("Phase 3 - Project schedule & Gantt chart (1.5 marks)",
+    "<p>Open Gantt_chart_template.xlsx -- it already has six starter tasks for "
     "<b>standing up the cell</b> (procure racking and fixtures, install bearing "
-    "press, set up inspection station, write the SOP, train operators, run a pilot "
-    "batch) and generate a schedule and Gantt chart.</p>"
-    "<p><b>Describe the tasks, durations and any dependencies you set.</b> Attach "
-    "the .mpp file (and a PDF/image of the Gantt chart).</p>",
-    2, 3, "Task/duration/dependency list; .mpp + Gantt attached.",
-    "Cell-standup tasks (not kit-production tasks); durations and links sensible; Gantt generated."),
-  q("Phase 4 & 5 - Facility layout drawing + HSE risk assessment (2 marks)",
-    "<p><b>Layout:</b> from the task list, allocate space for each activity and "
-    "draw a General Arrangement of the kitting cell. Show product in (blanks) and "
-    "product out (kits), component storage rack, assembly station(s), bearing "
-    "press, inspection station, packing bench, staging area, and the raw-material, "
-    "finished-goods, waste and people-movement flows. <b>Mark where material "
-    "starvation and material blockage could occur.</b></p>"
-    "<p><b>HSE:</b> identify at least <b>five</b> health-and-safety risks in the "
-    "cell (e.g. manual handling of the blank trolley, pinch points at the bearing "
-    "press, sharp edges on retaining rings, repetitive assembly motion, the carton "
+    "press, set up inspection station, write the SOP, train operators, run a "
+    "pilot batch).</p>"
+    "<p><b>That list is a starting point only, and it is missing tasks -- which "
+    "ones depends on the cell configuration you choose in the facility-layout "
+    "question.</b> An automated-turntable cell needs tasks a manual U-cell "
+    "doesn't, and vice versa (for example: turntable/tooling design and "
+    "procurement plus station debug and guarding for the automated option; "
+    "conveyor and fixture build plus operator cross-training for the manual "
+    "option). Add every task your chosen configuration actually needs before it "
+    "can run a pilot batch, with durations and dependencies. Then use Project's "
+    "Import Wizard to turn the whole thing into a schedule and Gantt chart (see "
+    "the template's 'Read me first' sheet).</p>"
+    "<p><b>List every task you added beyond the starter six, and why your "
+    "chosen configuration needs it.</b> Attach the .mpp file (and a PDF/image "
+    "of the Gantt chart).</p>",
+    1.5, 4, "Tasks added beyond the starter six, and why your configuration needs each.",
+    "Starter six tasks kept; at least 2-3 configuration-specific tasks added and "
+    "clearly tied to the Option A/B choice from the layout question; durations "
+    "and dependencies sensible; Gantt generated from Project (not hand-drawn)."),
+  q("Phase 4 - Facility layout + the automation decision (1.5 marks)",
+    "<p><b>Configuration decision:</b> read 'The automation decision' in the "
+    "Lab 2 chapter -- Option A (automated turntable, 6-7 stations, one "
+    "load/unload operator) vs. Option B (manual U-cell, one operator per "
+    "station). <b>State which configuration you are designing</b> and justify "
+    "it with <b>at least two pros and two cons</b> from the comparison table "
+    "(or your own reasoning), tied to Precitech's actual volume (250 kits/day), "
+    "timeline ('before it is built') and labour situation.</p>"
+    "<p><b>Layout:</b> from your (now complete) task list, allocate space for "
+    "each activity and draw a General Arrangement of the kitting cell "
+    "<b>matching the configuration you chose</b>. Show product in (blanks) and "
+    "product out (kits), component storage rack, every station your "
+    "configuration needs, and the raw-material, finished-goods, waste and "
+    "people-movement flows. <b>Mark where material starvation and material "
+    "blockage could occur.</b></p>"
+    "<p><b>Describe your configuration choice with its pros/cons, and your "
+    "layout decisions.</b> Attach the layout drawing.</p>",
+    1.5, 4, "Configuration choice + >=2 pros/cons; layout decisions.",
+    "Configuration explicitly chosen (A or B) with >=2 pros and >=2 cons "
+    "specific to Precitech's numbers, not generic; layout matches the chosen "
+    "configuration (turntable + 1 station for A, ~6-7 stations for B) and the "
+    "expanded Phase 2 task list; starvation/blockage points marked."),
+  q("Phase 5 - HSE risk assessment (1 mark)",
+    "<p>Identify at least <b>five</b> health-and-safety risks in the cell (e.g. "
+    "manual handling of the blank trolley, pinch points at the bearing press, "
+    "sharp edges on retaining rings, repetitive assembly motion, the carton "
     "knife) and document each in the risk-assessment template (hazard, who is "
     "harmed and how, current controls, further action, owner, deadline, done).</p>"
-    "<p><b>Describe your layout decisions and list your five risks.</b> Attach the "
-    "layout drawing and the completed risk-assessment document.</p>",
-    2, 4, "Layout decisions + the 5 risks; drawing + risk assessment attached.",
-    "Layout has all stations/flows and the starvation/blockage marks; >=5 realistic risks fully filled in the template."),
+    "<p><b>List your five risks.</b> Attach the completed risk-assessment "
+    "document.</p>",
+    1, 3, "Your five risks, briefly.",
+    ">=5 realistic risks fully filled in the template, including the hierarchy "
+    "of controls in the 'further action' column."),
   UPLOAD(["Shaft-kit spec sheet + component spec sheet",
           "Bill of materials (.xlsx)",
-          "Task list + process-flow chart",
-          "Project schedule (.mpp) + Gantt chart image",
-          "Facility layout drawing (keep a copy - reused in Lab 3)",
+          "Task list + process-flow chart (with the steps you added)",
+          "Project schedule (.mpp) + Gantt chart image (with the tasks you added)",
+          "Facility layout drawing, labelled with your configuration choice (keep a copy - reused in Lab 3)",
           "Completed HSE risk assessment"]),
  ])
 
