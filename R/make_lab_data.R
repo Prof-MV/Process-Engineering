@@ -7,12 +7,15 @@
 # commit them; the repo convention is that all lab data lives on FOL):
 #
 #   vsm_station_data.csv     — Lab 4  (Lean VSM) station table
+#   spc_data.csv              — Lab 8  (ML Wk2) 90-day CNC Cell 3 data, with
+#                                five embedded data-quality problems
 #   precitech_shift_log.csv  — Lab 13 (TPM/OEE) one-week shift log
 #
 # Prints answer keys for marking (these are NOT written to the student book):
 #
 #   Lab 4  — takt time, bottleneck station, process cycle efficiency
 #   Lab 6  — caliper reference values, indicative %GRR / ndc, seeded Cpk
+#   Lab 8  — row indices of the five embedded problems in spc_data.csv
 #   Lab 13 — expected weekly OEE, dominant Big Loss, AI4I 2020 Pareto order
 #   Lab 14 — expected simulated cycle-time range vs takt
 #
@@ -158,6 +161,94 @@ cat(sprintf("  Beyond-3-sigma subgroups: %s  (special-cause shift seeded at 12-1
             paste(ooc, collapse = " ")))
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Lab 8 — spc_data.csv: 90 days of CNC Cell 3 production, five embedded
+# data-quality problems for students to find and log (never silently delete).
+# Columns: timestamp, operator, part_id, diameter_mm, surface_roughness_um,
+# cycle_time_sec, tool_age_cycles. Same spec as Lab 6: Ø 25.000 +/- 0.050 mm.
+# ─────────────────────────────────────────────────────────────────────────────
+set.seed(802)
+
+n_days       <- 90
+parts_per_day <- 5
+missing_days  <- c(31, 32)                     # two-day network outage
+shift_start   <- as.POSIXct("2025-08-01 07:15:00", tz = "UTC")
+
+rows <- list()
+tool_age <- 0
+row_i <- 0
+inches_block_rows <- integer(0)                # filled in below
+neg_cycle_row     <- NA_integer_
+bad_diam_row      <- NA_integer_
+
+for (d in 1:n_days) {
+  if (d %in% missing_days) next               # network outage — no data logged
+
+  # tool change roughly every 15 production days -> resets tool_age_cycles
+  if (d %% 15 == 1) tool_age <- 0
+
+  # special-cause cluster, days 43-47: a genuine tool-wear-driven mean shift.
+  # Students must find this and KEEP it (it is real, not a data error).
+  mu_shift <- if (d >= 43 && d <= 47) 0.030 else 0
+
+  op <- sample(c("Op-A", "Op-B", "Op-C"), 1)
+
+  for (p in 1:parts_per_day) {
+    row_i <- row_i + 1
+    tool_age <- tool_age + sample(4:9, 1)
+
+    diam <- round(rnorm(1, 25.000 + mu_shift, 0.011), 4)
+    rough <- round(rnorm(1, 1.6, 0.18), 3)                 # micrometres (Ra)
+    cyc   <- round(45 + 0.01 * tool_age + rnorm(1, 0, 2.5), 2)
+    ts    <- shift_start + (d - 1) * 24 * 3600 +
+               (p - 1) * (8 * 3600 / parts_per_day)
+
+    rows[[row_i]] <- data.frame(
+      timestamp = format(ts, "%Y-%m-%d %H:%M:%S"),
+      operator = op, part_id = row_i,
+      diameter_mm = diam, surface_roughness_um = rough,
+      cycle_time_sec = cyc, tool_age_cycles = tool_age,
+      stringsAsFactors = FALSE
+    )
+  }
+}
+
+spc <- do.call(rbind, rows)
+n_rows <- nrow(spc)
+
+# --- embed the four deliberate errors (special-cause cluster is already in) --
+# 1) one impossible diameter: missing decimal point (25.006 -> 250.06)
+bad_diam_row <- sample(which(spc$part_id %% 5 == 0), 1)
+true_diam <- spc$diameter_mm[bad_diam_row]
+spc$diameter_mm[bad_diam_row] <- true_diam * 10
+
+# 2) a contiguous block of rows with roughness recorded in inches, not um
+inches_block_rows <- seq(151, 175)             # 25 rows (days ~31-35 of data)
+spc$surface_roughness_um[inches_block_rows] <-
+  round(spc$surface_roughness_um[inches_block_rows] / 25400, 8)
+
+# 3) one negative cycle time (sensor glitch)
+neg_cycle_row <- sample(setdiff(seq_len(n_rows), c(bad_diam_row, inches_block_rows)), 1)
+spc$cycle_time_sec[neg_cycle_row] <- -abs(spc$cycle_time_sec[neg_cycle_row])
+
+write.csv(spc, file.path(out_dir, "spc_data.csv"), row.names = FALSE)
+
+rule("LAB 8 — spc_data.csv answer key (row numbers are 1-indexed data rows,\n excluding the header)")
+cat(sprintf("Rows written: %d  (%d days x %d parts/day; missing days: %s)\n",
+            n_rows, n_days - length(missing_days), parts_per_day,
+            paste(missing_days, collapse = ", ")))
+cat("1) Missing days (timestamp gap, do NOT interpolate): days",
+    paste(missing_days, collapse = " & "), "of the 90-day calendar\n")
+cat(sprintf("2) Impossible diameter (decimal-point error): row %d  (true value %.4f mm, stored as %.2f mm)\n",
+            bad_diam_row, true_diam, spc$diameter_mm[bad_diam_row]))
+cat(sprintf("3) Roughness in inches, not micrometres (x 25400 to fix): rows %d-%d\n",
+            min(inches_block_rows), max(inches_block_rows)))
+cat(sprintf("4) Negative cycle time (flag + remove): row %d  (%.2f s)\n",
+            neg_cycle_row, spc$cycle_time_sec[neg_cycle_row]))
+cat("5) Real special-cause cluster (KEEP, do not delete): days 43-47",
+    "(diameter mean shifted +0.030 mm)\n")
+cat("Wrote ", file.path(out_dir, "spc_data.csv"), "\n", sep = "")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Lab 13 — Précitech shift log + OEE answer key
 # ─────────────────────────────────────────────────────────────────────────────
 set.seed(1213)
@@ -235,4 +326,4 @@ cat("is the optimisation method and the guarding-distance calculation, not a\n")
 cat("capacity shortfall.\n")
 
 rule("DONE")
-cat("Stage the two CSVs from ./lab_data/ on FOL. Do not commit them.\n")
+cat("Stage the three CSVs from ./lab_data/ on FOL. Do not commit them.\n")

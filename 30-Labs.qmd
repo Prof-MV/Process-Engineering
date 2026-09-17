@@ -265,8 +265,10 @@ After this lab you should be able to:
   [**Microsoft Excel**](https://www.microsoft.com/microsoft-365/excel)
 - Templates from FOL:
   - `Bill_of_Materials_Template_for_Excel.xlsx`
-  - `Gantt_chart.mpp` (Microsoft Project example file)
-  - HSE risk-assessment Word template (`Risk assessment template`)
+  - `Gantt_chart_template.xlsx` — open it in Microsoft Project (File > Open)
+    and use Project's Import Wizard to turn it into a schedule, then
+    Save As `.mpp`; the template's "Read me first" sheet walks you through it
+  - `Risk_Assessment_Template.docx` (HSE risk assessment)
 - The Précitech shaft-kit case study (above) — the single source of requirements
 - The Lab 2 **FOL quiz** — every phase in order, and where you upload your
   spec sheets, BOM `.xlsx`, flow chart, Project `.mpp`, layout drawing and risk
@@ -1339,7 +1341,7 @@ stated in the source handouts.
 | Lab (week) | Room | Equipment (reusable) | Software / online | Consumables & printing |
 |----|----|----|----|----|
 | 1 (wk 1) — Rocksi | Computer lab, 1 PC/student **[confirm]** | PCs with internet | **Rocksi** (browser, no plug-in); prelab YouTube `3THTZFnrxtc` | None (all instructions and submission in the FOL quiz) |
-| 2 (wk 2) — Design documentation | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates: BOM `.xlsx`, Gantt `.mpp`, HSE `.docx` |
+| 2 (wk 2) — Design documentation | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates (run `python R/gen_lab_templates.py`): BOM `.xlsx`, Gantt `.xlsx` (Project-importable), HSE `.docx` |
 | 3 (wk 3) — Facility design & AnyLogic | Computer lab **[confirm]** | PCs (check AnyLogic PLE model-size limit) | **AnyLogic Personal Learning Edition**, Microsoft Visio/Project/Excel; AnyLogic order-fulfilment demo model **[confirm which]** + prelab video | None |
 | 4 (wk 4) — Lean VSM | Computer lab with internet | PCs | **draw.io** (browser), **Google Sheets**, **AnyLogic Cloud** (free public tier) — all browser, no install | None; generate + stage `vsm_station_data.csv` (run `Rscript R/make_lab_data.R`); build/fork the AnyLogic Cloud push–pull model and expose its input parameters |
 | 5 (wk 5) — Ergonomics | Computer lab with internet **[confirm]** | PCs | **Inseer** web tool (class accounts/login — arrange early); browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
@@ -1383,9 +1385,11 @@ are in the instructor handbook.
 ::: {.lab-instructor}
 - **Prep:** verify Microsoft **Project** and **Visio** licences are live on every
   lab PC (the parts most likely to be missing from a standard Office install).
-  Re-upload the three FOL templates each term and check the `.mpp` opens in the
-  installed Project version. Post the case study on FOL as its own one-page
-  handout.
+  Run `python R/gen_lab_templates.py` to (re)generate the three FOL templates
+  into `labs/templates/` and re-upload them each term; confirm the Gantt
+  template's Import Wizard walk-through still matches your Project version, and
+  save a native `.mpp` copy once you've verified it. Post the case study on FOL
+  as its own one-page handout.
 - **Continuity:** this lab and Lab 3 share the Précitech kitting cell. Tell
   students up front that the layout drawing they produce here becomes the model
   they build in Lab 3.
@@ -1627,12 +1631,16 @@ chapter (git history) or the original handouts.
   reachable on the lab network (Labs 7–8, 13)
 - [ ] [**GitHub**](https://github.com/) and [**Streamlit Community Cloud**](https://share.streamlit.io)
   reachable (Lab 11); students create accounts as prep
-- [ ] FOL templates re-uploaded: BOM `.xlsx`, Gantt `.mpp`, HSE `.docx` (Lab 2)
+- [ ] FOL document templates generated and re-uploaded — run
+  `python R/gen_lab_templates.py`: `Bill_of_Materials_Template_for_Excel.xlsx`,
+  `Gantt_chart_template.xlsx`, `Risk_Assessment_Template.docx` (Lab 2);
+  `week2_lab.ipynb` (Lab 8); `predictive_maintenance.ipynb` (Lab 9, reused in
+  10–11); `streamlit_app.py` + `requirements.txt` (Lab 11)
 - [ ] Lab data generated and staged on FOL — run `Rscript R/make_lab_data.R`:
-  `vsm_station_data.csv` (Lab 4), `precitech_shift_log.csv` (Lab 13); notebooks
-  and datasets `spc_data.csv` + `week2_lab.ipynb` (Lab 8), `train_FD001.txt` +
-  `predictive_maintenance.ipynb` (Lab 9), `streamlit_app.py` + `requirements.txt`
-  (Lab 11)
+  `vsm_station_data.csv` (Lab 4), `spc_data.csv` (Lab 8),
+  `precitech_shift_log.csv` (Lab 13)
+- [ ] `train_FD001.txt` — the real NASA C-MAPSS FD001 dataset — hosted on FOL
+  (Lab 9; do not fabricate this one, it is real turbofan sensor data)
 - [ ] Task clips / photo sets staged on FOL for Lab 5 (Lifting Boxes, Workstation,
   Cleaning)
 - [ ] Prelab video links checked for Labs 1, 3, 5
