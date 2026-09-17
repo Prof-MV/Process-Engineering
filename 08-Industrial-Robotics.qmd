@@ -956,17 +956,19 @@ ggplot() +
   annotate("text", x = 9, y = 3.75, label = "Light\nCurtain",
            color = "#f39c12", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
 
-  # Interlocked gate
+  # Interlocked gate -- sits on the fence line (y = 1), label just inside
   annotate("rect", xmin = 4, xmax = 6, ymin = 0.8, ymax = 1.2,
            fill = "#27ae60", color = "black") +
-  annotate("text", x = 5, y = 0.5, label = "Interlocked Gate",
+  annotate("text", x = 5, y = 1.5, label = "Interlocked Gate",
            color = "#27ae60", fontface = "bold", size = 3 * diagram_text_scale) +
 
-  # Safety mat
-  annotate("rect", xmin = 2.5, xmax = 4, ymin = 1.5, ymax = 2.5,
+  # Safety mat -- outside the fence, on the approach to the gate: stepping on
+  # it (before the gate can even be opened) triggers a stop, not a device
+  # sitting inside the hazard zone it is meant to keep people out of.
+  annotate("rect", xmin = 4, xmax = 6, ymin = 0.35, ymax = 0.75,
            fill = "#9b59b6", alpha = 0.5, color = "#9b59b6") +
-  annotate("text", x = 3.25, y = 2, label = "Safety\nMat",
-           color = "#9b59b6", fontface = "bold", size = 2.5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 5, y = 0.15, label = "Safety Mat",
+           color = "#9b59b6", fontface = "bold", size = 2.5 * diagram_text_scale) +
 
   # E-stop
   annotate("point", x = 1.5, y = 5.5, size = 8, color = "red") +
