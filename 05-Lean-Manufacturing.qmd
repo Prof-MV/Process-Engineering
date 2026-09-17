@@ -496,7 +496,7 @@ ggplot(jit_elements, aes(x = x, y = y)) +
   # Arrows connecting elements
   geom_segment(aes(x = x + 0.3, xend = x + 0.7, y = y, yend = y),
                data = jit_elements[1:4,],
-               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1.5) +
+               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1.5) +
   # Circles
   geom_point(size = 20, color = "#3498DB") +
   geom_text(aes(label = element), size = 3 * diagram_text_scale, fontface = "bold", color = "white",
@@ -557,10 +557,10 @@ ggplot(combined, aes(x = x, y = y)) +
   annotate("text", x = 0.3, y = 1, label = "PULL", hjust = 1, fontface = "bold", size = 5 * diagram_text_scale, color = "#2ECC71") +
   # Information flow arrows
   annotate("segment", x = 1, xend = 5, y = 2.5, yend = 2.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#F39C12", size = 1) +
+           arrow = arrow(length = unit(0.2, "cm")), color = "#F39C12", linewidth = 1) +
   annotate("text", x = 3, y = 2.6, label = "Information Flow →", color = "#F39C12", size = 3 * diagram_text_scale) +
   annotate("segment", x = 5, xend = 1, y = 0.5, yend = 0.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#2ECC71", size = 1) +
+           arrow = arrow(length = unit(0.2, "cm")), color = "#2ECC71", linewidth = 1) +
   annotate("text", x = 3, y = 0.4, label = "← Signal/Kanban", color = "#2ECC71", size = 3 * diagram_text_scale) +
   scale_size_continuous(range = c(3, 15), guide = "none") +
   theme_void() +
@@ -601,7 +601,7 @@ push_pull %>%
 ggplot() +
   # Card border
   annotate("rect", xmin = 0, xmax = 7, ymin = 0, ymax = 4,
-           fill = "white", color = "black", size = 2) +
+           fill = "white", color = "black", linewidth = 2) +
   # Header
   annotate("rect", xmin = 0, xmax = 7, ymin = 3.2, ymax = 4,
            fill = "#3498DB", color = "black") +
@@ -656,7 +656,7 @@ ggplot() +
   annotate("text", x = 5, y = 0.2, label = "CYCLE TIMES (Individual Operations)", fontface = "bold") +
   # Takt Time reference line
   annotate("segment", x = 0, xend = 10, y = 3.5, yend = 3.5,
-           linetype = "dashed", color = "#2ECC71", size = 1.5) +
+           linetype = "dashed", color = "#2ECC71", linewidth = 1.5) +
   annotate("text", x = 5, y = 3.7, label = "TAKT TIME (Customer Demand Rate)",
            color = "#2ECC71", fontface = "bold") +
   theme_void() +
@@ -866,13 +866,13 @@ ggplot(pdca) +
   geom_text(aes(x = x, y = y - 0.25, label = description), size = 3 * diagram_text_scale, color = "white", lineheight = 0.8) +
   # Arrows
   annotate("curve", x = 1.5, xend = 1.5, y = 2, yend = -0.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", size = 1) +
+           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
   annotate("curve", x = 1.5, xend = -1.5, y = -2, yend = -1.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", size = 1) +
+           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
   annotate("curve", x = -1.5, xend = -1.5, y = -2, yend = 0.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", size = 1) +
+           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
   annotate("curve", x = -1.5, xend = 1.5, y = 2, yend = 1.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", size = 1) +
+           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
   scale_color_manual(values = c("PLAN" = "#3498DB", "DO" = "#2ECC71",
                                 "CHECK" = "#F39C12", "ACT" = "#E74C3C")) +
   theme_void() +

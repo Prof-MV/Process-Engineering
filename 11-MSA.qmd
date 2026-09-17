@@ -340,7 +340,7 @@ linearity_model <- lm(Bias ~ Reference, data = linearity_data)
 
 ggplot(linearity_data, aes(x = Reference, y = Bias)) +
   geom_point(color = "steelblue", size = 2, alpha = 0.7) +
-  geom_smooth(method = "lm", color = "red", se = TRUE, alpha = 0.2) +
+  geom_smooth(method = "lm", formula = y ~ x, color = "red", se = TRUE, alpha = 0.2) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
   annotate("text", x = 60, y = 0.04,
            label = paste0("Slope = ", round(coef(linearity_model)[2], 5),
@@ -403,7 +403,7 @@ stability_data <- data.frame(
 ggplot(stability_data, aes(x = Day, y = Bias)) +
   geom_point(color = "steelblue", size = 3) +
   geom_line(color = "steelblue", alpha = 0.5) +
-  geom_smooth(method = "lm", color = "red", linetype = "dashed", se = FALSE) +
+  geom_smooth(method = "lm", formula = y ~ x, color = "red", linetype = "dashed", se = FALSE) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
   geom_hline(yintercept = c(-0.05, 0.05), linetype = "dotted", color = "orange") +
   annotate("text", x = 30, y = 0.05, label = "±5% tolerance",

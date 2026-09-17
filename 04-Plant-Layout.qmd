@@ -139,10 +139,10 @@ ggplot() +
             fontface = "bold", size = 3.5 * diagram_text_scale) +
   # Flow paths
   geom_path(data = flow_A, aes(x = x, y = y + 0.05),
-            color = "#E74C3C", size = 1.2, arrow = arrow(length = unit(0.2, "cm")),
+            color = "#E74C3C", linewidth = 1.2, arrow = arrow(length = unit(0.2, "cm")),
             linetype = "solid") +
   geom_path(data = flow_B, aes(x = x, y = y - 0.05),
-            color = "#F39C12", size = 1.2, arrow = arrow(length = unit(0.2, "cm")),
+            color = "#F39C12", linewidth = 1.2, arrow = arrow(length = unit(0.2, "cm")),
             linetype = "dashed") +
   scale_fill_identity() +
   labs(title = "Process Layout: Machine Shop Example",
@@ -221,7 +221,7 @@ ggplot(stations, aes(x = x, y = y)) +
   geom_text(aes(label = name), color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   geom_segment(aes(x = x + 0.4, xend = x + 0.6, y = y, yend = y),
                data = stations[1:5,],
-               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1.5) +
+               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1.5) +
   labs(title = "Product Layout: Automotive Assembly Line",
        subtitle = "All products follow the same sequential path") +
   theme_void() +
@@ -539,7 +539,7 @@ edges <- data.frame(
 
 ggplot() +
   geom_segment(data = edges, aes(x = x + 0.15, y = y, xend = xend - 0.15, yend = yend),
-               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", size = 1) +
+               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1) +
   geom_point(data = nodes, aes(x = x, y = y), size = 18, color = "#3498DB") +
   geom_text(data = nodes, aes(x = x, y = y, label = paste0(task, "\n", time, "s")),
             color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +

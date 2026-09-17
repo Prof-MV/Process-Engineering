@@ -492,7 +492,7 @@ ggplot(cycle_data, aes(x = x, y = severity)) +
                                 "Discomfort" = "#F39C12", "Pain" = "#E67E22",
                                 "Injury" = "#E74C3C", "Disability" = "#8E44AD")) +
   annotate("segment", x = 1, xend = 3, y = 5.5, yend = 5.5,
-           arrow = arrow(length = unit(0.3, "cm"), ends = "both"), color = "#27AE60", size = 1.5) +
+           arrow = arrow(length = unit(0.3, "cm"), ends = "both"), color = "#27AE60", linewidth = 1.5) +
   annotate("text", x = 2, y = 5.8, label = "PREVENTION WINDOW", color = "#27AE60", fontface = "bold") +
   labs(title = "MSD Development: From Exposure to Disability",
        subtitle = "Early intervention is critical - recovery difficulty increases at each stage",
@@ -554,7 +554,7 @@ ggplot(prevention, aes(x = 0, y = y)) +
                                "Administrative Controls" = "#F39C12",
                                "Work Practice Controls" = "#3498DB")) +
   annotate("segment", x = -3, xend = -3, y = 0.5, yend = 3.5,
-           arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", size = 1.5) +
+           arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", linewidth = 1.5) +
   annotate("text", x = -3.5, y = 2, label = "More\nEffective",
            angle = 90, fontface = "bold", size = 4 * diagram_text_scale) +
   theme_void() +
@@ -719,7 +719,7 @@ principles_detail %>%
 ggplot() +
   # Distribution curve
   stat_function(fun = dnorm, args = list(mean = 170, sd = 10),
-                xlim = c(140, 200), size = 2, color = "#3498DB") +
+                xlim = c(140, 200), linewidth = 2, color = "#3498DB") +
   # Percentile lines
   geom_vline(xintercept = 153.5, linetype = "dashed", color = "#E74C3C", linewidth = 1) +
   geom_vline(xintercept = 170, linetype = "dashed", color = "#F39C12", linewidth = 1) +
@@ -734,7 +734,7 @@ ggplot() +
   # Design range
   annotate("segment", x = 153.5, xend = 186.5, y = -0.002, yend = -0.002,
            arrow = arrow(length = unit(0.2, "cm"), ends = "both"),
-           color = "#9B59B6", size = 1.5) +
+           color = "#9B59B6", linewidth = 1.5) +
   annotate("text", x = 170, y = -0.005, label = "Design Range (90% of population)",
            color = "#9B59B6", fontface = "bold", size = 3.5 * diagram_text_scale) +
   scale_x_continuous(breaks = seq(140, 200, 10)) +
@@ -802,7 +802,7 @@ ggplot() +
   annotate("text", x = 3, y = 90, label = "Heavy Work\n70-85cm", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Reference line - elbow height
   annotate("segment", x = 0.5, xend = 3.5, y = 105, yend = 105,
-           linetype = "dashed", color = "#E74C3C", size = 1) +
+           linetype = "dashed", color = "#E74C3C", linewidth = 1) +
   annotate("text", x = 3.7, y = 105, label = "Elbow Height\n(standing)",
            hjust = 0, size = 3 * diagram_text_scale, color = "#E74C3C") +
   scale_y_continuous(breaks = seq(60, 120, 10), limits = c(60, 120)) +
@@ -1306,8 +1306,8 @@ ggplot() +
   annotate("point", x = 5, y = 7, size = 15, color = "#F5CBA7") +
   annotate("point", x = 5, y = 7, size = 12, color = "#F5CBA7") +
   # Arms reaching down
-  annotate("segment", x = 4.5, xend = 3, y = 5.5, yend = 3, color = "#D4AC0D", size = 3) +
-  annotate("segment", x = 5.5, xend = 7, y = 5.5, yend = 4, color = "#D4AC0D", size = 3) +
+  annotate("segment", x = 4.5, xend = 3, y = 5.5, yend = 3, color = "#D4AC0D", linewidth = 3) +
+  annotate("segment", x = 5.5, xend = 7, y = 5.5, yend = 4, color = "#D4AC0D", linewidth = 3) +
   # Bin (low position)
   annotate("rect", xmin = 1, xmax = 3.5, ymin = 0.5, ymax = 2.5, fill = "#85C1E9", color = "black") +
   annotate("text", x = 2.25, y = 1.5, label = "BIN\n(Low)", fontface = "bold", size = 3 * diagram_text_scale) +
@@ -1765,11 +1765,11 @@ ggplot() +
   annotate("text", x = 10, y = 1.7, label = "Risk Report\nAlerts", color = "white", size = 3 * diagram_text_scale) +
   # Arrows
   annotate("segment", x = 2, xend = 3, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+           arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +
   annotate("segment", x = 5, xend = 6, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+           arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +
   annotate("segment", x = 8, xend = 9, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+           arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +
   theme_void() +
   labs(title = "AI-Powered Ergonomic Assessment Pipeline",
        subtitle = "From video input to automated risk assessment") +
