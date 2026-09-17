@@ -1260,10 +1260,6 @@ Interactive Exercise: Identify the Out-of-Control Condition
 <h3 data-number="10.8.1" class="anchored" data-anchor-id="what-is-process-capability"><span class="header-section-number">10.8.1</span> What is Process Capability?</h3>
 <p><strong>Process capability</strong> compares the process performance to the specification limits. It answers: “Can this process consistently produce parts within tolerance?”</p>
 <div class="cell" data-layout-align="center">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-ℹ Please use `linewidth` instead.</code></pre>
-</div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1334,47 +1330,47 @@ Interactive Exercise: Identify the Out-of-Control Condition
 <section id="capability-example-calculation" class="level3" data-number="10.8.4">
 <h3 data-number="10.8.4" class="anchored" data-anchor-id="capability-example-calculation"><span class="header-section-number">10.8.4</span> Capability Example Calculation</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Shaft diameter specification 25.00 ± 0.15 mm</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Process data from 25 subgroups of 5</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>USL <span class="ot">&lt;-</span> <span class="fl">25.15</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>LSL <span class="ot">&lt;-</span> <span class="fl">24.85</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Target <span class="ot">&lt;-</span> <span class="fl">25.00</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Using earlier X-bar/R data</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>X_bar_cap <span class="ot">&lt;-</span> <span class="fu">mean</span>(xbar)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>R_bar_cap <span class="ot">&lt;-</span> <span class="fu">mean</span>(R)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate sigma using R-bar/d2 (d2 = 2.326 for n=5)</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fl">2.326</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>sigma_within <span class="ot">&lt;-</span> R_bar_cap <span class="sc">/</span> d2</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Process Statistics:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Mean (X-bar):"</span>, <span class="fu">round</span>(X_bar_cap, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Sigma (estimated):"</span>, <span class="fu">round</span>(sigma_within, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cp</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>Cp <span class="ot">&lt;-</span> (USL <span class="sc">-</span> LSL) <span class="sc">/</span> (<span class="dv">6</span> <span class="sc">*</span> sigma_within)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cp ="</span>, <span class="fu">round</span>(Cp, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cpk</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>Cpu <span class="ot">&lt;-</span> (USL <span class="sc">-</span> X_bar_cap) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> sigma_within)</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>Cpl <span class="ot">&lt;-</span> (X_bar_cap <span class="sc">-</span> LSL) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> sigma_within)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>Cpk <span class="ot">&lt;-</span> <span class="fu">min</span>(Cpu, Cpl)</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpu ="</span>, <span class="fu">round</span>(Cpu, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpl ="</span>, <span class="fu">round</span>(Cpl, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpk ="</span>, <span class="fu">round</span>(Cpk, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Interpretation:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (Cpk <span class="sc">&gt;=</span> <span class="fl">1.33</span>) {</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is CAPABLE (Cpk &gt;= 1.33)</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (Cpk <span class="sc">&gt;=</span> <span class="fl">1.00</span>) {</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is MARGINALLY CAPABLE (1.00 &lt;= Cpk &lt; 1.33)</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is NOT CAPABLE (Cpk &lt; 1.00)</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Shaft diameter specification 25.00 ± 0.15 mm</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Process data from 25 subgroups of 5</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>USL <span class="ot">&lt;-</span> <span class="fl">25.15</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>LSL <span class="ot">&lt;-</span> <span class="fl">24.85</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Target <span class="ot">&lt;-</span> <span class="fl">25.00</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Using earlier X-bar/R data</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>X_bar_cap <span class="ot">&lt;-</span> <span class="fu">mean</span>(xbar)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>R_bar_cap <span class="ot">&lt;-</span> <span class="fu">mean</span>(R)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate sigma using R-bar/d2 (d2 = 2.326 for n=5)</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fl">2.326</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>sigma_within <span class="ot">&lt;-</span> R_bar_cap <span class="sc">/</span> d2</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Process Statistics:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Mean (X-bar):"</span>, <span class="fu">round</span>(X_bar_cap, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Sigma (estimated):"</span>, <span class="fu">round</span>(sigma_within, <span class="dv">4</span>), <span class="st">"mm</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cp</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>Cp <span class="ot">&lt;-</span> (USL <span class="sc">-</span> LSL) <span class="sc">/</span> (<span class="dv">6</span> <span class="sc">*</span> sigma_within)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cp ="</span>, <span class="fu">round</span>(Cp, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cpk</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>Cpu <span class="ot">&lt;-</span> (USL <span class="sc">-</span> X_bar_cap) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> sigma_within)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>Cpl <span class="ot">&lt;-</span> (X_bar_cap <span class="sc">-</span> LSL) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> sigma_within)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>Cpk <span class="ot">&lt;-</span> <span class="fu">min</span>(Cpu, Cpl)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpu ="</span>, <span class="fu">round</span>(Cpu, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpl ="</span>, <span class="fu">round</span>(Cpl, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cpk ="</span>, <span class="fu">round</span>(Cpk, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretation</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Interpretation:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (Cpk <span class="sc">&gt;=</span> <span class="fl">1.33</span>) {</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is CAPABLE (Cpk &gt;= 1.33)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (Cpk <span class="sc">&gt;=</span> <span class="fl">1.00</span>) {</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is MARGINALLY CAPABLE (1.00 &lt;= Cpk &lt; 1.33)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Process is NOT CAPABLE (Cpk &lt; 1.00)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Process Statistics:
   Mean (X-bar): 25.004 mm

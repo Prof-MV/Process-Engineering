@@ -2423,8 +2423,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <li>Templates from FOL:
 <ul>
 <li><code>Bill_of_Materials_Template_for_Excel.xlsx</code></li>
-<li><code>Gantt_chart.mpp</code> (Microsoft Project example file)</li>
-<li>HSE risk-assessment Word template (<code>Risk assessment template</code>)</li>
+<li><code>Gantt_chart_template.xlsx</code> — open it in Microsoft Project (File &gt; Open) and use Project’s Import Wizard to turn it into a schedule, then Save As <code>.mpp</code>; the template’s “Read me first” sheet walks you through it</li>
+<li><code>Risk_Assessment_Template.docx</code> (HSE risk assessment)</li>
 </ul></li>
 <li>The Précitech shaft-kit case study (above) — the single source of requirements</li>
 <li>The Lab 2 <strong>FOL quiz</strong> — every phase in order, and where you upload your spec sheets, BOM <code>.xlsx</code>, flow chart, Project <code>.mpp</code>, layout drawing and risk assessment</li>
@@ -3262,7 +3262,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <td>Computer lab with full Office <strong>[confirm]</strong></td>
 <td>PCs</td>
 <td><strong>Microsoft Word/Visio</strong>, <strong>Microsoft Project</strong>, <strong>Microsoft Excel</strong></td>
-<td>None; post the Précitech case study + re-upload FOL templates: BOM <code>.xlsx</code>, Gantt <code>.mpp</code>, HSE <code>.docx</code></td>
+<td>None; post the Précitech case study + re-upload FOL templates (run <code>python R/gen_lab_templates.py</code>): BOM <code>.xlsx</code>, Gantt <code>.xlsx</code> (Project-importable), HSE <code>.docx</code></td>
 </tr>
 <tr class="odd">
 <td>3 (wk 3) — Facility design &amp; AnyLogic</td>
@@ -3371,7 +3371,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h4 data-number="19.17.2.2" class="anchored" data-anchor-id="lab-2-engineering-design-process-documentation"><span class="header-section-number">19.17.2.2</span> Lab 2 — Engineering Design Process Documentation</h4>
 <div class="lab-instructor">
 <ul>
-<li><strong>Prep:</strong> verify Microsoft <strong>Project</strong> and <strong>Visio</strong> licences are live on every lab PC (the parts most likely to be missing from a standard Office install). Re-upload the three FOL templates each term and check the <code>.mpp</code> opens in the installed Project version. Post the case study on FOL as its own one-page handout.</li>
+<li><strong>Prep:</strong> verify Microsoft <strong>Project</strong> and <strong>Visio</strong> licences are live on every lab PC (the parts most likely to be missing from a standard Office install). Run <code>python R/gen_lab_templates.py</code> to (re)generate the three FOL templates into <code>labs/templates/</code> and re-upload them each term; confirm the Gantt template’s Import Wizard walk-through still matches your Project version, and save a native <code>.mpp</code> copy once you’ve verified it. Post the case study on FOL as its own one-page handout.</li>
 <li><strong>Continuity:</strong> this lab and Lab 3 share the Précitech kitting cell. Tell students up front that the layout drawing they produce here becomes the model they build in Lab 3.</li>
 <li><strong>Marking:</strong> look for traceability — the spec sheet, BOM, task list, schedule and layout should all describe the <em>same</em> cell and the <em>same</em> kit. Check the starvation / blockage annotations on the layout are present and sensible; they are the link to Lab 3.</li>
 </ul>
@@ -3541,8 +3541,9 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <li><label><input type="checkbox"><a href="https://colab.research.google.com"><strong>Google Colab</strong></a> reachable on the lab network (Labs 8–11, 13)</label></li>
 <li><label><input type="checkbox"><a href="https://claude.ai"><strong>Claude.ai</strong></a> / <a href="https://chat.openai.com"><strong>ChatGPT</strong></a> reachable on the lab network (Labs 7–8, 13)</label></li>
 <li><label><input type="checkbox"><a href="https://github.com/"><strong>GitHub</strong></a> and <a href="https://share.streamlit.io"><strong>Streamlit Community Cloud</strong></a> reachable (Lab 11); students create accounts as prep</label></li>
-<li><label><input type="checkbox">FOL templates re-uploaded: BOM <code>.xlsx</code>, Gantt <code>.mpp</code>, HSE <code>.docx</code> (Lab 2)</label></li>
-<li><label><input type="checkbox">Lab data generated and staged on FOL — run <code>Rscript R/make_lab_data.R</code>: <code>vsm_station_data.csv</code> (Lab 4), <code>precitech_shift_log.csv</code> (Lab 13); notebooks and datasets <code>spc_data.csv</code> + <code>week2_lab.ipynb</code> (Lab 8), <code>train_FD001.txt</code> + <code>predictive_maintenance.ipynb</code> (Lab 9), <code>streamlit_app.py</code> + <code>requirements.txt</code> (Lab 11)</label></li>
+<li><label><input type="checkbox">FOL document templates generated and re-uploaded — run <code>python R/gen_lab_templates.py</code>: <code>Bill_of_Materials_Template_for_Excel.xlsx</code>, <code>Gantt_chart_template.xlsx</code>, <code>Risk_Assessment_Template.docx</code> (Lab 2); <code>week2_lab.ipynb</code> (Lab 8); <code>predictive_maintenance.ipynb</code> (Lab 9, reused in 10–11); <code>streamlit_app.py</code> + <code>requirements.txt</code> (Lab 11)</label></li>
+<li><label><input type="checkbox">Lab data generated and staged on FOL — run <code>Rscript R/make_lab_data.R</code>: <code>vsm_station_data.csv</code> (Lab 4), <code>spc_data.csv</code> (Lab 8), <code>precitech_shift_log.csv</code> (Lab 13)</label></li>
+<li><label><input type="checkbox"><code>train_FD001.txt</code> — the real NASA C-MAPSS FD001 dataset — hosted on FOL (Lab 9; do not fabricate this one, it is real turbofan sensor data)</label></li>
 <li><label><input type="checkbox">Task clips / photo sets staged on FOL for Lab 5 (Lifting Boxes, Workstation, Cleaning)</label></li>
 <li><label><input type="checkbox">Prelab video links checked for Labs 1, 3, 5</label></li>
 <li><label><input type="checkbox">Grade items verified in FOL against the instructor handbook’s grade-item checklist (34 items, 6 categories; <code>Lab-13</code> and <code>Lab-14</code> added; take-home availability window on <code>Lab-14</code>)</label></li>

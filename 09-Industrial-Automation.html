@@ -2437,10 +2437,6 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <section id="what-is-a-plc" class="level3" data-number="16.4.1">
 <h3 data-number="16.4.1" class="anchored" data-anchor-id="what-is-a-plc"><span class="header-section-number">16.4.1</span> What is a PLC?</h3>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-ℹ Please use `linewidth` instead.</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3248,39 +3244,36 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <section id="predictive-maintenance-example" class="level3" data-number="16.10.3">
 <h3 data-number="16.10.3" class="anchored" data-anchor-id="predictive-maintenance-example"><span class="header-section-number">16.10.3</span> Predictive Maintenance Example</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating predictive maintenance with vibration data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 30 days of vibration readings</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>baseline_vibration <span class="ot">&lt;-</span> <span class="fl">2.5</span>  <span class="co"># mm/s RMS (normal)</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate gradual bearing degradation</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>vibration <span class="ot">&lt;-</span> baseline_vibration <span class="sc">+</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.05</span> <span class="sc">*</span> days <span class="sc">+</span>           <span class="co"># Gradual increase</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">exp</span>((days <span class="sc">-</span> <span class="dv">25</span>)<span class="sc">/</span><span class="dv">5</span>) <span class="sc">*</span> (days <span class="sc">&gt;</span> <span class="dv">20</span>) <span class="sc">+</span>  <span class="co"># Accelerating failure</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">0</span>, <span class="fl">0.2</span>)       <span class="co"># Normal variation</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Alert thresholds</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>warning_threshold <span class="ot">&lt;-</span> <span class="fl">4.0</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>alarm_threshold <span class="ot">&lt;-</span> <span class="fl">6.0</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Find when thresholds crossed</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>warning_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> warning_threshold))</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>alarm_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> alarm_threshold))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in min(which(vibration &gt; alarm_threshold)): no non-missing arguments to
-min; returning Inf</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Predictive Maintenance Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Baseline vibration:"</span>, baseline_vibration, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning threshold:"</span>, warning_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm threshold:"</span>, alarm_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning triggered on day:"</span>, warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm triggered on day:"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Days of warning before alarm:"</span>, alarm_day <span class="sc">-</span> warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Recommendation: Schedule bearing replacement before day"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating predictive maintenance with vibration data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 30 days of vibration readings</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>baseline_vibration <span class="ot">&lt;-</span> <span class="fl">2.5</span>  <span class="co"># mm/s RMS (normal)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate gradual bearing degradation</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>vibration <span class="ot">&lt;-</span> baseline_vibration <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.05</span> <span class="sc">*</span> days <span class="sc">+</span>           <span class="co"># Gradual increase</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.9</span> <span class="sc">*</span> <span class="fu">exp</span>((days <span class="sc">-</span> <span class="dv">25</span>)<span class="sc">/</span><span class="dv">5</span>) <span class="sc">*</span> (days <span class="sc">&gt;</span> <span class="dv">20</span>) <span class="sc">+</span>  <span class="co"># Accelerating failure</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">0</span>, <span class="fl">0.2</span>)       <span class="co"># Normal variation</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Alert thresholds</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>warning_threshold <span class="ot">&lt;-</span> <span class="fl">4.0</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>alarm_threshold <span class="ot">&lt;-</span> <span class="fl">6.0</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Find when thresholds crossed</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>warning_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> warning_threshold))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>alarm_day <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="fu">which</span>(vibration <span class="sc">&gt;</span> alarm_threshold))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Predictive Maintenance Analysis:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"─────────────────────────────────</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Baseline vibration:"</span>, baseline_vibration, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning threshold:"</span>, warning_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm threshold:"</span>, alarm_threshold, <span class="st">"mm/s RMS</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Warning triggered on day:"</span>, warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Alarm triggered on day:"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Days of warning before alarm:"</span>, alarm_day <span class="sc">-</span> warning_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Recommendation: Schedule bearing replacement before day"</span>, alarm_day, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Predictive Maintenance Analysis:
 ─────────────────────────────────
@@ -3288,11 +3281,11 @@ Baseline vibration: 2.5 mm/s RMS
 Warning threshold: 4 mm/s RMS
 Alarm threshold: 6 mm/s RMS
 
-Warning triggered on day: 24 
-Alarm triggered on day: Inf 
-Days of warning before alarm: Inf 
+Warning triggered on day: 23 
+Alarm triggered on day: 29 
+Days of warning before alarm: 6 
 
-Recommendation: Schedule bearing replacement before day Inf </code></pre>
+Recommendation: Schedule bearing replacement before day 29 </code></pre>
 </div>
 </div>
 <div class="cell">
