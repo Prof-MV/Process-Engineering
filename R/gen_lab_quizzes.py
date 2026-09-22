@@ -514,14 +514,12 @@ write_lab(4, "Lean: Value Stream Mapping, Takt and Pull",
  ])
 
 # ----------------------------------------------------------------------------- 5
-write_lab(5, "Ergonomics in Automated Manufacturing (REBA & Inseer)",
+write_lab(5, "Ergonomics in Automated Manufacturing (REBA)",
  ["This quiz assigns you ONE of three sample tasks: (1) lifting boxes repeatedly, "
   "(2) computer-workstation setup, (3) floor cleaning with a buffer. Your "
   "assigned task is stated in Question 1.",
-  "Tools: printed REBA Employee Assessment Worksheet + REBA cheat sheet; Inseer "
-  "(web, login required).",
-  "Inseer is a required lab instrument (it is an AI tool). Disclose any other AI "
-  "tool you use."],
+  "Tools: printed REBA Employee Assessment Worksheet + REBA cheat sheet.",
+  "Disclose any AI tool you use; not permitted for the REBA scoring itself."],
  [q("Start-of-lab declaration + your assigned task",
     "<p><b>Read before you begin.</b> This is an individual lab; the work is your "
     "own. Type: your full name and student number; your workstation; and "
@@ -553,34 +551,28 @@ write_lab(5, "Ergonomics in Automated Manufacturing (REBA & Inseer)",
     "completed worksheet</b>.</p>",
     4, 4, "Every sub-score shown; Table A/B/C; coupling + activity; final score + band; worksheet attached.",
     "Trunk/neck/leg and arm/wrist sub-scores correct for the chosen posture; coupling and activity adjustments applied; final score and band consistent."),
-  q("Inseer report (2 marks)",
-    "<p>Run the <b>same task</b> through Inseer. Generate the ergonomic "
-    "risk-assessment report.</p>"
-    "<p><b>Describe how you set the assessment up</b> (what you uploaded / "
-    "selected) and <b>quote the key outputs</b> (overall risk rating, the "
-    "body regions or time segments Inseer flags, any score it reports). Attach the "
-    "Inseer report (PDF or screenshot).</p>",
-    2, 3, "Setup described + Inseer outputs quoted + report attached.",
-    "Assessment actually run; specific Inseer numbers/flags quoted, not paraphrased; report attached."),
-  q("Manual vs automated comparison (2 marks)",
-    "<p>Compare the manual REBA assessment with the Inseer report. <b>Quantify "
-    "the comparison</b> (where do the two agree, where do they differ, by how "
-    "much?). Reference the Chapter 7 risk factors. Give one advantage and one "
-    "limitation of each method.</p>",
-    2, 3, "Quantified agree/disagree + advantages and limitations of each, tied to Ch.7.",
-    "Comparison uses actual numbers from both methods; advantages/limitations are specific, not generic."),
+  q("Sources of error and limitations (4 marks)",
+    "<p>A manual REBA assessment depends on the rater's judgement. <b>Identify at "
+    "least three sources of error or disagreement</b> a REBA score is exposed to "
+    "(e.g. which moment is scored as \"worst\", joint-angle estimation by eye, "
+    "coupling/activity judgement calls, inter-rater variation). Reference the "
+    "Chapter 7 risk factors. Give one advantage and one limitation of the manual "
+    "method, and <b>propose one change to the scoring procedure</b> (e.g. scoring "
+    "from a recorded video, a second independent rater, a standardised checklist) "
+    "that would make the score more repeatable.</p>",
+    4, 3, "At least three specific sources of error/disagreement + one advantage and one limitation, tied to Ch.7 + one proposed improvement.",
+    "Sources of error are specific to REBA scoring, not generic; advantage/limitation are specific, not generic; proposed improvement is plausible and specific."),
   q("Conclusion and recommended controls (1 mark)",
     "<p>In a short paragraph: why does ergonomics matter in an automated "
-    "manufacturing facility, and what did the two tools add? Then <b>list the "
-    "controls you would recommend for this task, ordered by the hierarchy of "
-    "controls</b> (elimination -> substitution -> engineering -> administrative "
-    "-> PPE).</p>",
+    "manufacturing facility, and what did scoring this task teach you? Then "
+    "<b>list the controls you would recommend for this task, ordered by the "
+    "hierarchy of controls</b> (elimination -> substitution -> engineering -> "
+    "administrative -> PPE).</p>",
     1, 3, "Conclusion + controls ordered by the hierarchy of controls.",
     "Controls are specific to the task and correctly ordered by the hierarchy."),
   UPLOAD(["Completed REBA worksheet (photo or scan)",
-          "Inseer report (PDF or screenshot)",
           "Any additional screenshots you refer to",
-          "AI-use disclosure line (Inseer is expected; note any other tool)"]),
+          "AI-use disclosure line (if you used one)"]),
  ])
 
 # ----------------------------------------------------------------------------- 6

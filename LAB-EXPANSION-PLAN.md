@@ -96,7 +96,7 @@ Lab number = week number. New labs in **bold**.
 | 2 | 2 | Engineering Design Process Documentation | 2, 4 | 2 |
 | 3 | 3 | Manufacturing Facility Design & Simulation (AnyLogic) | 4, 16 | 3 |
 | **4** | **4** | **Lean: Value Stream Mapping, Takt and Pull** | **3, 5** | — |
-| 5 | 5 | Ergonomics in Automated Manufacturing (REBA & Inseer) | 7 | 4 |
+| 5 | 5 | Ergonomics in Automated Manufacturing (REBA) | 7 | 4 |
 | **6** | **6** | **SPC and Gauge R&R — the Virtual Caliper** | **10, 11** | — |
 | 7 | 7 | ML Week 1 — AI literacy & prompt engineering | 20 | 5 |
 | 8 | 8 | ML Week 2 — Manufacturing data & SPC | 21 | 6 |
@@ -409,8 +409,7 @@ consistently.
 |---|---|
 | Procedure followed; all three assigned tasks assessed | 1 |
 | REBA scoring — correct Table A/B/C lookups, coupling and activity adjustments, final score and risk band for each of the three tasks | 4 |
-| Inseer report — assessment run, output correctly read and quoted | 2 |
-| Manual vs automated comparison — quantified, references the Ch 7 risk factors | 2 |
+| Sources of error and limitations — at least three specific sources, advantage/limitation and a proposed improvement, references the Ch 7 risk factors | 4 |
 | Conclusion and recommended controls, ordered by the hierarchy of controls | 1 |
 
 **Lab 7 — ML Week 1 (was Lab 5) — 10 marks**
@@ -485,7 +484,7 @@ documented per-assessment policy *is* that prior consent. Replace with:
 | Lab 2 — Design Documentation | **Not permitted** | Already stated in the lab |
 | Lab 3 — AnyLogic Simulation | **Not permitted** | Already stated in the lab |
 | Lab 4 — Lean VSM | Permitted with disclosure | Not for the map or the takt/PCE calculations |
-| Lab 5 — Ergonomics | Permitted with disclosure | **Inseer is itself an AI tool and is required** — that is a lab instrument, not a generative AI writing your report |
+| Lab 5 — Ergonomics | Permitted with disclosure | Not for the REBA scoring itself |
 | Lab 6 — SPC & Gauge R&R | **Not permitted** for readings and calculations; permitted for checking your written reflection | You are the measurement system being studied |
 | Labs 7–12 — ML module | **Required** | You are assessed on directing an LLM well, not on writing Python |
 | Lab 13 — TPM/OEE & RCA | **Required** for the classifier task; permitted with disclosure elsewhere | Same skill, unfamiliar dataset |

@@ -71,7 +71,7 @@ there are 14 labs: the lab number is the week number.**
 | 2 | 2 | Engineering Design Process Documentation | 2, 4 |
 | 3 | 3 | Manufacturing Facility Design & Simulation (AnyLogic) | 4, 16 |
 | 4 | 4 | Lean: Value Stream Mapping, Takt and Pull | 3, 5 |
-| 5 | 5 | Ergonomics in Automated Manufacturing (REBA & Inseer) | 7 |
+| 5 | 5 | Ergonomics in Automated Manufacturing (REBA) | 7 |
 | 6 | 6 | SPC and Gauge R&R — the Virtual Caliper | 10, 11 |
 | 7 | 7 | Machine Learning Week 1 — AI literacy & prompt engineering | 20 |
 | 8 | 8 | Machine Learning Week 2 — Manufacturing data & SPC | 21 |
@@ -482,17 +482,14 @@ you used for the parts where it is permitted.
 
 ---
 
-## Lab 5 — Ergonomics in Automated Manufacturing (REBA & Inseer) {#sec-lab-ergonomics}
+## Lab 5 — Ergonomics in Automated Manufacturing (REBA) {#sec-lab-ergonomics}
 
 ::: {.lab-overview}
-You assess a workplace task for musculoskeletal risk two ways: manually with
-the **REBA (Rapid Entire Body Assessment)** worksheet, and automatically with
-**Inseer**, an AI video-based ergonomic-assessment tool. You then compare the two
-methods. (The FOL quiz assigns you one of three sample tasks.)
+You assess a workplace task for musculoskeletal risk using the
+**REBA (Rapid Entire Body Assessment)** worksheet. (The FOL quiz assigns you
+one of three sample tasks.)
 
-**AI use:** permitted with disclosure. Note that Inseer is itself an AI tool and
-is **required** for this lab — that is a lab instrument, not a generative AI
-writing your report.
+**AI use:** permitted with disclosure, not for the REBA scoring itself.
 :::
 
 ### Learning outcomes
@@ -503,8 +500,8 @@ After this lab you should be able to:
 - Explain why ergonomics matters in an automated manufacturing facility and name
   common ergonomic risks and their effects on workers.
 - Score a task with the REBA worksheet and interpret the result.
-- Generate an ergonomic risk-assessment report with Inseer.
-- Compare manual vs. automated assessment — advantages and limitations of each.
+- Identify the sources of error and limitations of a manual ergonomic
+  assessment.
 :::
 
 ### Prep work
@@ -520,25 +517,21 @@ After this lab you should be able to:
 
 ::: {.lab-materials}
 - [**REBA Employee Assessment Worksheet**](https://ergo-plus.com/wp-content/uploads/REBA.pdf) (printed, one per student)
-- [**Inseer**](https://www.inseer.com/) software tool — web-based; account/login required
 - Computer with internet access
 - Sample tasks from an automated manufacturing facility (videos / photo sets),
   one assigned to you in the FOL quiz:
   - Task 1 — lifting boxes repeatedly
   - Task 2 — computer-workstation setup
   - Task 3 — floor cleaning with a buffer
-- The Lab 5 **FOL quiz** — the intro videos, the assigned task, the REBA and
-  Inseer steps, and where you upload your completed REBA worksheet (scan or
-  photo), the Inseer report and your comparison
+- The Lab 5 **FOL quiz** — the intro videos, the assigned task, the REBA
+  steps, and where you upload your completed REBA worksheet (scan or photo)
 :::
 
 ::: {.callout-note title="Instructions & submission"}
 Work through the **Lab 5 FOL quiz** during the lab period. It plays the intro
-videos, assigns you one of the three sample tasks, walks you through scoring it on
-the REBA worksheet and running the same task through Inseer, and asks you to
-describe your observations and compare the two methods. You upload the completed
-REBA worksheet, the Inseer report and any screenshots in the quiz. Inseer is a
-required lab instrument; disclose any other AI tool you used.
+videos, assigns you one of the three sample tasks, and walks you through
+scoring it on the REBA worksheet. You upload the completed REBA worksheet and
+any screenshots in the quiz. Disclose any AI tool you used.
 :::
 
 ---
@@ -1402,7 +1395,7 @@ stated in the source handouts.
 | 2 (wk 2) — Design documentation | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates (run `python R/gen_lab_templates.py`): BOM `.xlsx`, Gantt `.xlsx` (Project-importable), HSE `.docx` |
 | 3 (wk 3) — Facility design & AnyLogic | Computer lab **[confirm]** | PCs (check AnyLogic PLE model-size limit) | **AnyLogic Personal Learning Edition**, Microsoft Visio/Project/Excel; AnyLogic order-fulfilment demo model **[confirm which]** + prelab video | None |
 | 4 (wk 4) — Lean VSM | Computer lab with internet | PCs | **draw.io** (browser), **Google Sheets**, **AnyLogic Cloud** (free public tier) — all browser, no install | None; generate + stage `vsm_station_data.csv` (run `Rscript R/make_lab_data.R`); build/fork the AnyLogic Cloud push–pull model and expose its input parameters |
-| 5 (wk 5) — Ergonomics | Computer lab with internet **[confirm]** | PCs | **Inseer** web tool (class accounts/login — arrange early); browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
+| 5 (wk 5) — Ergonomics | Computer lab with internet **[confirm]** | PCs | Browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
 | 6 (wk 6) — SPC & Gauge R&R | Computer lab, 1 PC/student | PCs with internet (to load the book page) | **This book's webR cells only — no external site, no account, no dataset.** Just confirm the rendered `30-Labs.html` page and its webR cells load | None; print the Lab 6 answer key from `Rscript R/make_lab_data.R` for marking |
 | 7 (wk 7) — ML Wk1: AI literacy | Computer lab, 1 PC/student | PCs with internet | **Claude.ai** or **ChatGPT** (free tier); Google Colab | None; post FMEA table + blank `prompts.md` on FOL. Midterm is in lecture time this week — the lab runs as normal |
 | 8 (wk 8) — ML Wk2: data & SPC | Computer lab | PCs with internet | **Google Colab**; Python (pandas, numpy, matplotlib) | None; stage `spc_data.csv` + `week2_lab.ipynb` on FOL |
@@ -1490,12 +1483,9 @@ are in the instructor handbook.
   time against the takt they compute here, so make sure the takt value is right.
 :::
 
-#### Lab 5 — Ergonomics in Automated Manufacturing (REBA & Inseer)
+#### Lab 5 — Ergonomics in Automated Manufacturing (REBA)
 
 ::: {.lab-instructor}
-- **Prep:** set up **Inseer** access for the class *well ahead* — confirm the
-  account type, seat count and whether students upload their own clips or use
-  supplied ones. This is the lab's dependency risk.
 - **Print:** REBA worksheets + the REBA cheat sheet, one per student.
 - Stage the three task video/photo sets on FOL (`Lifting Boxes.pdf`,
   `Workstation.pdf`, `Cleaning.pdf` and the matching clips).
@@ -1668,8 +1658,6 @@ chapter (git history) or the original handouts.
   licences live on Lab 2 / Lab 3 PCs (most likely gap in a standard Office image)
 - [ ] [**Microsoft Excel**](https://www.microsoft.com/microsoft-365/excel) /
   [**Word**](https://www.microsoft.com/microsoft-365/word) available on Lab 2 / Lab 3 PCs
-- [ ] [**Inseer**](https://www.inseer.com/) class accounts / login created and
-  tested (Lab 5) — confirm seat count and upload workflow
 - [ ] [**Rocksi**](https://rocksi.net/) confirmed reachable through the lab
   network/firewall (Lab 1); offline fallback prepared. *(LightBot dropped — needs
   a plug-in the college machines do not have.)*
