@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Statistical Process Control (SPC)
 ```{r setup-09, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
@@ -626,6 +636,45 @@ gridExtra::grid.arrange(p1, p2, ncol = 1)
 
 **Interpretation:** Subgroup 18 shows a point above the UCL on the X-bar chart, indicating a special cause. Investigation reveals the cause and corrective action is taken.
 
+Live cell — enter your own subgroup means and ranges (or change `A2`/`D3`/`D4` for a different subgroup size) and see the control limits recalculate.
+
+```{webr-r}
+#| label: xbar-r-live
+# Subgroup averages (X-bar) and ranges (R) for 10 subgroups
+xbar <- c(25.01, 24.99, 25.02, 25.00, 25.03, 25.01, 25.12, 25.02, 24.98, 25.00)
+R    <- c(0.08, 0.11, 0.07, 0.09, 0.10, 0.08, 0.09, 0.12, 0.07, 0.10)
+
+# Control chart constants (n = 5)
+A2 <- 0.577
+D3 <- 0
+D4 <- 2.114
+
+X_double_bar <- mean(xbar)
+R_bar <- mean(R)
+
+UCL_xbar <- X_double_bar + A2 * R_bar
+LCL_xbar <- X_double_bar - A2 * R_bar
+UCL_R <- D4 * R_bar
+LCL_R <- D3 * R_bar
+
+cat("X-bar Chart:\n")
+cat("  UCL =", round(UCL_xbar, 4), "\n")
+cat("  CL  =", round(X_double_bar, 4), "\n")
+cat("  LCL =", round(LCL_xbar, 4), "\n\n")
+
+cat("R Chart:\n")
+cat("  UCL =", round(UCL_R, 4), "\n")
+cat("  CL  =", round(R_bar, 4), "\n")
+cat("  LCL =", round(LCL_R, 4), "\n\n")
+
+out_of_control <- which(xbar > UCL_xbar | xbar < LCL_xbar)
+if (length(out_of_control) > 0) {
+  cat("Out-of-control subgroup(s):", out_of_control, "\n")
+} else {
+  cat("All subgroups within control limits.\n")
+}
+```
+
 ### Control Chart Constants
 
 ```{r constants-table, echo=FALSE}
@@ -708,6 +757,40 @@ gridExtra::grid.arrange(p1, p2, ncol = 1)
 | I Chart | $\bar{X}$ | $\bar{X} + 2.66\bar{MR}$ | $\bar{X} - 2.66\bar{MR}$ |
 | MR Chart | $\bar{MR}$ | $3.267 \times \bar{MR}$ | 0 |
 
+Live cell — enter your own individual measurements and see the I-MR limits and moving ranges recalculate.
+
+```{webr-r}
+#| label: imr-live
+individuals <- c(100.2, 99.8, 100.5, 100.1, 99.6, 100.3, 100.0, 99.9,
+                  100.4, 106.1, 105.8, 106.3)
+
+MR <- c(NA, abs(diff(individuals)))
+
+X_bar <- mean(individuals)
+MR_bar <- mean(MR, na.rm = TRUE)
+
+UCL_I <- X_bar + 2.66 * MR_bar
+LCL_I <- X_bar - 2.66 * MR_bar
+UCL_MR <- 3.267 * MR_bar
+
+cat("I Chart:\n")
+cat("  UCL =", round(UCL_I, 3), "\n")
+cat("  CL  =", round(X_bar, 3), "\n")
+cat("  LCL =", round(LCL_I, 3), "\n\n")
+
+cat("MR Chart:\n")
+cat("  UCL =", round(UCL_MR, 3), "\n")
+cat("  CL  =", round(MR_bar, 3), "\n")
+cat("  LCL = 0\n\n")
+
+out_of_control <- which(individuals > UCL_I | individuals < LCL_I)
+if (length(out_of_control) > 0) {
+  cat("Out-of-control observation(s):", out_of_control, "\n")
+} else {
+  cat("All observations within control limits.\n")
+}
+```
+
 ------------------------------------------------------------------------
 
 ## Attribute Control Charts
@@ -773,6 +856,34 @@ ggplot(p_data, aes(x = day)) +
   )
 ```
 
+Live cell — try different defect counts and sample sizes and see p-bar and the control limits recalculate.
+
+```{webr-r}
+#| label: p-chart-live
+sample_sizes <- c(100, 95, 110, 105, 90, 100, 115, 100, 95, 108)
+defectives   <- c(4, 5, 6, 3, 4, 5, 15, 4, 6, 5)
+
+p <- defectives / sample_sizes
+p_bar <- sum(defectives) / sum(sample_sizes)
+
+cat("p-bar (average proportion defective):", round(p_bar, 4), "\n\n")
+
+UCL_p <- p_bar + 3 * sqrt(p_bar * (1 - p_bar) / sample_sizes)
+LCL_p <- pmax(0, p_bar - 3 * sqrt(p_bar * (1 - p_bar) / sample_sizes))
+
+cat("Day  n     p       UCL      LCL\n")
+for (i in seq_along(p)) {
+  cat(sprintf("%3d  %3d  %.4f  %.4f  %.4f\n", i, sample_sizes[i], p[i], UCL_p[i], LCL_p[i]))
+}
+
+out_of_control <- which(p > UCL_p | p < LCL_p)
+if (length(out_of_control) > 0) {
+  cat("\nOut-of-control day(s):", out_of_control, "\n")
+} else {
+  cat("\nAll days within control limits.\n")
+}
+```
+
 ### c Chart (Count of Defects)
 
 The **c chart** tracks the number of defects when the sample size (area of opportunity) is constant.
@@ -810,6 +921,28 @@ ggplot(c_data, aes(x = sample, y = defects)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
   xlim(0, 29)
+```
+
+Live cell — try different defect counts and see the c chart limits recalculate.
+
+```{webr-r}
+#| label: c-chart-live
+defects <- c(7, 9, 6, 8, 10, 7, 8, 9, 6, 19, 8, 7)
+
+c_bar <- mean(defects)
+UCL_c <- c_bar + 3 * sqrt(c_bar)
+LCL_c <- max(0, c_bar - 3 * sqrt(c_bar))
+
+cat("c-bar (average defects per unit):", round(c_bar, 2), "\n")
+cat("UCL =", round(UCL_c, 2), "\n")
+cat("LCL =", round(LCL_c, 2), "\n\n")
+
+out_of_control <- which(defects > UCL_c | defects < LCL_c)
+if (length(out_of_control) > 0) {
+  cat("Out-of-control sample(s):", out_of_control, "\n")
+} else {
+  cat("All samples within control limits.\n")
+}
 ```
 
 ```{r attribute-formulas, echo=FALSE}
@@ -1091,6 +1224,35 @@ cat("Cpk =", round(Cpk, 2), "\n\n")
 
 # Interpretation
 cat("Interpretation:\n")
+if (Cpk >= 1.33) {
+  cat("Process is CAPABLE (Cpk >= 1.33)\n")
+} else if (Cpk >= 1.00) {
+  cat("Process is MARGINALLY CAPABLE (1.00 <= Cpk < 1.33)\n")
+} else {
+  cat("Process is NOT CAPABLE (Cpk < 1.00)\n")
+}
+```
+
+Live cell — try different specification limits, process mean, and sigma to see how Cp and Cpk respond.
+
+```{webr-r}
+#| label: cp-cpk-live
+USL <- 25.15
+LSL <- 24.85
+X_bar_cap <- 25.03
+sigma_within <- 0.045
+
+Cp <- (USL - LSL) / (6 * sigma_within)
+
+Cpu <- (USL - X_bar_cap) / (3 * sigma_within)
+Cpl <- (X_bar_cap - LSL) / (3 * sigma_within)
+Cpk <- min(Cpu, Cpl)
+
+cat("Cp  =", round(Cp, 2), "\n")
+cat("Cpu =", round(Cpu, 2), "\n")
+cat("Cpl =", round(Cpl, 2), "\n")
+cat("Cpk =", round(Cpk, 2), "\n\n")
+
 if (Cpk >= 1.33) {
   cat("Process is CAPABLE (Cpk >= 1.33)\n")
 } else if (Cpk >= 1.00) {
