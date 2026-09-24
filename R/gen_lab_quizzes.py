@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Generate Brightspace/D2L question-import CSVs for the 14 lab quizzes.
+"""Generate Brightspace/D2L question-import CSVs for the lab quizzes (one per lab, named by lab).
 
 Run:  python R/gen_lab_quizzes.py   (from the repo root, or anywhere)
 
-Writes one file per lab to  quizzes/lab01_quiz.csv .. quizzes/lab14_quiz.csv .
+Writes one file per lab to  quizzes/<lab-slug>_quiz.csv  (e.g. quizzes/logic-rocksi_quiz.csv).
+Labs are identified by name, not number (see 30-Labs.qmd).
 `quizzes/` is gitignored (like R/make_lab_data.R's output) -- the CSVs are staged
 on FOL, not committed; this script is the source of record for them.
 
@@ -26,12 +27,12 @@ def q(title, text, points, difficulty=3, initial="Type your answer here.", answe
     return dict(title=title, text=text, points=points, difficulty=difficulty,
                initial=initial, answerkey=answerkey)
 
-def write_lab(n, lab_title, note_lines, questions):
-    path = os.path.join(OUT, "lab%02d_quiz.csv" % n)
+def write_lab(slug, lab_title, note_lines, questions):
+    path = os.path.join(OUT, "%s_quiz.csv" % slug)
     with io.open(path, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["//Lab %d -- %s" % (n, lab_title)])
-        w.writerow(["//Import these questions into the Lab %d quiz on FOL (Brightspace)." % n])
+        w.writerow(["//%s" % lab_title])
+        w.writerow(["//Import these questions into the '%s' quiz on FOL (Brightspace)." % lab_title])
         w.writerow(["//All questions are Written Response (manual grading)."])
         w.writerow(['//Turn on "Allow attachments" on the questions that ask for a file, '
                     'screenshot or recording (or enable attachments for the whole quiz).'])
@@ -43,7 +44,7 @@ def write_lab(n, lab_title, note_lines, questions):
         for q in questions:
             i += 1
             w.writerow(["NewQuestion", "WR"])
-            w.writerow(["ID", "%s-L%02d-%02d" % (CC, n, i)])
+            w.writerow(["ID", "%s-%s-%02d" % (CC, slug.upper(), i)])
             w.writerow(["Title", q["title"]])
             # 3rd column "HTML" tells the D2L importer to render the body as
             # HTML instead of printing the tags literally.
@@ -80,8 +81,8 @@ def UPLOAD(items):
         "belongs to.</p><ul>" + "".join("<li>%s</li>" % it for it in items) + "</ul>",
         0, 1, "Attach the files. Add a line here listing what you attached.")
 
-# ----------------------------------------------------------------------------- 1
-write_lab(1, "Logic Thinking for Robot Control: Rocksi",
+# ----------------------------------------------------------------------------- logic-rocksi
+write_lab("logic-rocksi", "Logic Thinking for Robot Control: Rocksi",
  ["Simulator: Rocksi (rocksi.net) -- browser, no login, no plug-in. LightBot is "
   "NOT used (it needs a plug-in the college machines do not have); all of the "
   "programming-logic work is done in Rocksi.",
@@ -159,7 +160,7 @@ write_lab(1, "Logic Thinking for Robot Control: Rocksi",
           "Screenshot - Task 4 (running pick-and-place)"]),
  ])
 
-# ----------------------------------------------------------------------------- 2
+# ----------------------------------------------------------------------------- design-documentation
 L2_BOM_ROWS = [
     # item, part_number, description, qty, source
     (1, "205-5478",  "Shaft (ANSI 4140)",                              1, "In-house"),
@@ -230,21 +231,21 @@ L2_BOM_INITIAL = (
     "or printed cartons -- research and name a real packaging supplier.</p>"
 )
 
-write_lab(2, "Engineering Design Process Documentation",
+write_lab("design-documentation", "Engineering Design Process Documentation",
  ["Case study: Precitech Components shaft-kit assembly & packing cell "
-  "(see the Labs chapter, Lab 2). It is the single source of requirements.",
+  "(see the Labs chapter, Engineering Design Process Documentation). It is the single source of requirements.",
   "Drawings on FOL / in the Labs chapter: assembly drawing 410-2365 Rev B and "
   "shaft drawing 205-5478 Rev B. Purchased components are from McMaster-Carr.",
   "Tools: Microsoft Word/Visio, Microsoft Project, Microsoft Excel.",
   "Templates on FOL: Bill_of_Materials_Template_for_Excel.xlsx (pre-filled with "
   "the real part numbers), Gantt_chart_template.xlsx, HSE risk-assessment Word "
   "template.",
-  "Read 'The automation decision' in the Lab 2 chapter before the facility-"
+  "Read 'The automation decision' in the Engineering Design Process Documentation lab in the Labs chapter before the facility-"
   "layout question -- you choose and justify a cell configuration there.",
   "The task-list and Gantt-chart example chains given in this quiz are "
   "starting points only and are missing steps -- finding and adding what's "
   "missing is part of the mark.",
-  "Keep your layout drawing -- you reuse it in Lab 3.",
+  "Keep your layout drawing -- you reuse it in the Facility Design & Simulation lab.",
   "AI use: not permitted for any part of this lab."],
  [DECL,
   q("Phase 1 - Specification sheet + cycle time (2.5 marks)",
@@ -324,7 +325,7 @@ write_lab(2, "Engineering Design Process Documentation",
     "and dependencies sensible; Gantt generated from Project (not hand-drawn)."),
   q("Phase 4 - Facility layout + the automation decision (1.5 marks)",
     "<p><b>Configuration decision:</b> read 'The automation decision' in the "
-    "Lab 2 chapter -- Option A (automated turntable, 6-7 stations, one "
+    "Engineering Design Process Documentation lab -- Option A (automated turntable, 6-7 stations, one "
     "load/unload operator) vs. Option B (manual U-cell, one operator per "
     "station). <b>State which configuration you are designing</b> and justify "
     "it with <b>at least two pros and two cons</b> from the comparison table "
@@ -359,19 +360,19 @@ write_lab(2, "Engineering Design Process Documentation",
           "Bill of materials (.xlsx)",
           "Task list + process-flow chart (with the steps you added)",
           "Project schedule (.mpp) + Gantt chart image (with the tasks you added)",
-          "Facility layout drawing, labelled with your configuration choice (keep a copy - reused in Lab 3)",
+          "Facility layout drawing, labelled with your configuration choice (keep a copy - reused in Facility Design & Simulation)",
           "Completed HSE risk assessment"]),
  ])
 
-# ----------------------------------------------------------------------------- 3
-write_lab(3, "Manufacturing Facility Design & Simulation (AnyLogic)",
+# ----------------------------------------------------------------------------- facility-anylogic
+write_lab("facility-anylogic", "Manufacturing Facility Design & Simulation (AnyLogic)",
  ["Software: AnyLogic Personal Learning Edition (installed) + the order-fulfilment "
-  "/ warehouse demo model staged on FOL. Bring your Lab 2 documents.",
+  "/ warehouse demo model staged on FOL. Bring your Engineering Design Process Documentation documents.",
   "You run FOUR parameter sets, 3 simulated minutes each.",
   "AI use: not permitted for any part of this lab."],
  [DECL,
   q("Phase 1 - Electronic facility drawing (4 marks)",
-    "<p>Recreate your Lab 2 kitting-cell layout <b>electronically</b> (Visio or "
+    "<p>Recreate your Engineering Design Process Documentation kitting-cell layout <b>electronically</b> (Visio or "
     "equivalent). Then work through this checklist and <b>record your finding for "
     "each item</b>:</p><ol>"
     "<li>product in / product out shown?</li>"
@@ -388,7 +389,7 @@ write_lab(3, "Manufacturing Facility Design & Simulation (AnyLogic)",
     "identified?</li></ol>"
     "<p>Attach the electronic drawing. Answer every checklist item in the box.</p>",
     4, 3, "One line per checklist item, plus the drawing attached.",
-    "Drawing is electronic and matches the Lab 2 layout; all 11 checklist items answered; starvation/blockage points identified."),
+    "Drawing is electronic and matches the Design Documentation layout; all 11 checklist items answered; starvation/blockage points identified."),
   q("Phase 2 - AnyLogic Run 1: baseline (1.5 marks)",
     "<p>Start AnyLogic and follow the walk-through. Map the model onto the case "
     "study: orders = daily kit demand; goods = bought-in components in the storage "
@@ -441,8 +442,8 @@ write_lab(3, "Manufacturing Facility Design & Simulation (AnyLogic)",
           "Statistics screenshot - Run 4 (labelled)"]),
  ])
 
-# ----------------------------------------------------------------------------- 4
-write_lab(4, "Lean: Value Stream Mapping, Takt and Pull",
+# ----------------------------------------------------------------------------- lean-vsm
+write_lab("lean-vsm", "Lean: Value Stream Mapping, Takt and Pull",
  ["Everything runs in a browser: draw.io, Google Sheets, AnyLogic Cloud "
   "(free public tier). Nothing to install.",
   "Data: vsm_station_data.csv from FOL (Precitech shaft line). Demand = 250 "
@@ -453,7 +454,7 @@ write_lab(4, "Lean: Value Stream Mapping, Takt and Pull",
   q("Task 1 - Current-state value stream map (3 marks)",
     "<p>Open vsm_station_data.csv in Google Sheets and read the column headings. "
     "In draw.io, map the shaft line end to end: CNC turn -&gt; deburr -&gt; wash "
-    "-&gt; inspect -&gt; the Lab 2 kitting cell -&gt; shipping.</p><ul>"
+    "-&gt; inspect -&gt; the Design Documentation kitting cell -&gt; shipping.</p><ul>"
     "<li>For each process box record cycle time (C/T), changeover time (C/O), "
     "uptime and batch size from the supplied table.</li>"
     "<li>Put an inventory triangle with the WIP count between each pair of boxes.</li>"
@@ -513,8 +514,8 @@ write_lab(4, "Lean: Value Stream Mapping, Takt and Pull",
           "AI-use disclosure line (which tool, what for) if you used one"]),
  ])
 
-# ----------------------------------------------------------------------------- 5
-write_lab(5, "Ergonomics in Automated Manufacturing (REBA)",
+# ----------------------------------------------------------------------------- ergonomics-reba
+write_lab("ergonomics-reba", "Ergonomics in Automated Manufacturing (REBA)",
  ["This quiz assigns you ONE of three sample tasks: (1) lifting boxes repeatedly, "
   "(2) computer-workstation setup, (3) floor cleaning with a buffer. Your "
   "assigned task is stated in Question 1.",
@@ -575,8 +576,8 @@ write_lab(5, "Ergonomics in Automated Manufacturing (REBA)",
           "AI-use disclosure line (if you used one)"]),
  ])
 
-# ----------------------------------------------------------------------------- 6
-write_lab(6, "SPC and Gauge R&R: the Virtual Caliper",
+# ----------------------------------------------------------------------------- virtual-caliper
+write_lab("virtual-caliper", "SPC and Gauge R&R: the Virtual Caliper",
  ["This lab runs inside the Labs chapter web page (webR cells). No external site, "
   "no account, no dataset file.",
   "You run the study SOLO: you play all three operator rounds yourself, in three "
@@ -586,7 +587,7 @@ write_lab(6, "SPC and Gauge R&R: the Virtual Caliper",
   "to check the written reflection only, with disclosure."],
  [DECL,
   q("Task 1 - Calibrate your eye (0 marks, required)",
-    "<p>Open the Lab 6 section of the Labs chapter. Run the <b>setup cell first</b>. "
+    "<p>Open the <i>SPC and Gauge R&amp;R: the Virtual Caliper</i> section of the Labs chapter. Run the <b>setup cell first</b>. "
     "Then run the demo cell three times with demo = 1, 2, 3. Each time, write your "
     "reading to 0.05 mm <i>before</i> revealing the correct value.</p>"
     "<p>Report your three practice readings and the three correct values, and one "
@@ -603,7 +604,7 @@ write_lab(6, "SPC and Gauge R&R: the Virtual Caliper",
     2, 3, "The full 90-reading grid, laid out by round / part / trial.",
     "90 values present; genuine spread between trials and between rounds (identical rounds = not read blind); randomised order followed."),
   q("Task 3 - Range-method Gauge R&R (3 marks)",
-    "<p>Type your 90 readings into the lab6-grr cell (op_A = round 1, op_B = round "
+    "<p>Type your 90 readings into the caliper-grr cell (op_A = round 1, op_B = round "
     "2, op_C = round 3) and run it.</p>"
     "<p><b>Paste every output</b>: EV (repeatability), AV (reproducibility), GRR, "
     "PV (part variation), TV (total variation), <b>%GRR</b> and <b>ndc</b>. State "
@@ -611,7 +612,7 @@ write_lab(6, "SPC and Gauge R&R: the Virtual Caliper",
     3, 3, "All seven outputs pasted; internal-consistency check.",
     "Values pasted from the cell; %GRR = 100*GRR/TV and ndc = floor(1.41*PV/GRR) consistent with the other figures."),
   q("Task 4 - Bias and linearity (1 mark)",
-    "<p>Run the lab6-bias cell. It compares your mean reading of each part against "
+    "<p>Run the caliper-bias cell. It compares your mean reading of each part against "
     "that part's certified reference value, reports overall bias, and fits bias "
     "vs. size for linearity.</p>"
     "<p><b>Paste the output. State the overall bias in mm and whether the bias "
@@ -619,7 +620,7 @@ write_lab(6, "SPC and Gauge R&R: the Virtual Caliper",
     1, 3, "Bias output pasted; bias in mm + linearity statement.",
     "Overall bias reported (expected around +0.03 mm); linearity slope quoted and interpreted."),
   q("Task 5 - X-bar / R chart and Cpk (3 marks)",
-    "<p>Run the lab6-spc cell (a seeded 25-subgroup production dataset, 5 shafts "
+    "<p>Run the caliper-spc cell (a seeded 25-subgroup production dataset, 5 shafts "
     "per subgroup, against dia 25.000 +/- 0.050 mm -- the same for everyone).</p>"
     "<p><b>Attach a screenshot of the X-bar and R charts.</b> Then: (1) list every "
     "subgroup that breaks a <b>Western Electric rule</b> -- one point beyond 3 "
@@ -642,8 +643,8 @@ write_lab(6, "SPC and Gauge R&R: the Virtual Caliper",
           "AI-use disclosure line if you used an LLM to check the reflection"]),
  ])
 
-# ----------------------------------------------------------------------------- 7
-write_lab(7, "Machine Learning Week 1: AI Literacy and Prompt Engineering",
+# ----------------------------------------------------------------------------- ml-week1-ai-literacy
+write_lab("ml-week1-ai-literacy", "Machine Learning Week 1: AI Literacy and Prompt Engineering",
  ["Tools: an LLM chat account (Claude.ai or ChatGPT, free tier) + Google Colab. "
   "No dataset this week.",
   "Create a text file prompts.md at the start; you add to it through the session "
@@ -697,7 +698,7 @@ write_lab(7, "Machine Learning Week 1: AI Literacy and Prompt Engineering",
     "libraries only.</p>"
     "<p>In the box: paste the prompt you used, and for each logical block write "
     "<b>one sentence explaining what it does</b> (the instructor will ask you to "
-    "explain a line in Lab 8). Note any change you made to the generated code. "
+    "explain a line in ML Week 2). Note any change you made to the generated code. "
     "<b>Attach spc_starter.py.</b></p>",
     2, 3, "Prompt + per-block explanation + spc_starter.py attached.",
     "Code meets every requirement and runs; student's per-block explanation shows understanding; file attached."),
@@ -706,11 +707,11 @@ write_lab(7, "Machine Learning Week 1: AI Literacy and Prompt Engineering",
           "Screenshot(s) - hallucination verification (Exercise 3)"]),
  ])
 
-# ----------------------------------------------------------------------------- 8
-write_lab(8, "Machine Learning Week 2: Manufacturing Data and SPC",
+# ----------------------------------------------------------------------------- ml-week2-data-spc
+write_lab("ml-week2-data-spc", "Machine Learning Week 2: Manufacturing Data and SPC",
  ["Tools: Google Colab. Files from FOL: spc_data.csv (90 days of CNC Cell 3 data "
   "with embedded problems) and week2_lab.ipynb (pre-structured). Bring "
-  "spc_starter.py from Lab 7.",
+  "spc_starter.py from ML Week 1.",
   "Never silently delete data -- every change goes in a quality log (ISO 9001 "
   "traceability).",
   "AI use: REQUIRED -- you direct an LLM to write the Python and must be able to "
@@ -767,13 +768,13 @@ write_lab(8, "Machine Learning Week 2: Manufacturing Data and SPC",
     "Notebook runs end to end; all four tasks visible and executed."),
  ])
 
-# ----------------------------------------------------------------------------- 9
-write_lab(9, "Machine Learning Week 3: The C-MAPSS Dataset",
+# ----------------------------------------------------------------------------- ml-week3-cmapss
+write_lab("ml-week3-cmapss", "Machine Learning Week 3: The C-MAPSS Dataset",
  ["Capstone kickoff. Tools: Google Colab. Files from FOL: train_FD001.txt (NASA "
   "C-MAPSS FD001 training set) and predictive_maintenance.ipynb (pre-structured "
   "for Weeks 3-5).",
-  "You keep working in the SAME notebook in Labs 10 and 11.",
-  "Labs 9-12 are marked together against the capstone rubric (in FOL / the "
+  "You keep working in the SAME notebook in ML Weeks 4 and 5.",
+  "ML Weeks 3-6 are marked together against the capstone rubric (in FOL / the "
   "instructor handbook). The points here are for tracking progress.",
   "AI use: REQUIRED -- you must be able to explain every line."],
  [DECL,
@@ -826,9 +827,9 @@ write_lab(9, "Machine Learning Week 3: The C-MAPSS Dataset",
           "7x3 sensor plot for engine #1 (Task 2)"]),
  ])
 
-# ----------------------------------------------------------------------------- 10
-write_lab(10, "Machine Learning Week 4: Building the Predictive-Maintenance Model",
- ["Capstone build. Continue in the SAME predictive_maintenance.ipynb from Lab 9. "
+# ----------------------------------------------------------------------------- ml-week4-model
+write_lab("ml-week4-model", "Machine Learning Week 4: Building the Predictive-Maintenance Model",
+ ["Capstone build. Continue in the SAME predictive_maintenance.ipynb from ML Week 3. "
   "Tools: Google Colab (pandas, numpy, scikit-learn, matplotlib, joblib).",
   "Marked against the capstone rubric (FOL / instructor handbook). Points here "
   "track progress.",
@@ -894,18 +895,18 @@ write_lab(10, "Machine Learning Week 4: Building the Predictive-Maintenance Mode
     "<p><code>joblib.dump(model, 'rul_model.pkl'); joblib.dump(feature_cols, "
     "'feature_cols.pkl')</code></p>"
     "<p>Download both from the Colab file browser. <b>Attach rul_model.pkl and "
-    "feature_cols.pkl</b> to this question (you need them for Lab 11).</p>",
+    "feature_cols.pkl</b> to this question (you need them for ML Week 5).</p>",
     1, 1, "Attach both .pkl files.",
     "Both files attached; feature_cols is the exact training feature list in order."),
  ])
 
-# ----------------------------------------------------------------------------- 11
-write_lab(11, "Machine Learning Week 5: Deploying the App",
+# ----------------------------------------------------------------------------- ml-week5-deploy
+write_lab("ml-week5-deploy", "Machine Learning Week 5: Deploying the App",
  ["Tools: GitHub (public repo 'rul-predictor') + Streamlit Community Cloud + "
   "Google Colab. Create the accounts as PREP, not in the lab.",
   "Files from FOL: streamlit_app.py starter (with TODO markers). Bring "
-  "rul_model.pkl and feature_cols.pkl from Lab 10.",
-  "Lab 14 (take-home RoboDK work cell) is released this week -- read its brief.",
+  "rul_model.pkl and feature_cols.pkl from ML Week 4.",
+  "If the take-home Robotic Work-Cell Design lab is assigned, it is released this week -- read its brief.",
   "AI use: REQUIRED -- you must be able to explain every line."],
  [DECL,
   q("Task 1 - Run the Streamlit app locally (3 marks)",
@@ -916,12 +917,12 @@ write_lab(11, "Machine Learning Week 5: Deploying the App",
     "<p>Complete the <b>TODOs</b>: add your name and course to the caption; build "
     "<b>sample_engine.csv</b> (last 30 cycles of engine #1) and wire up the "
     "'Use sample data' button; fill in the 'About this model' expander (your name, "
-    "your <b>actual Lab 10 RMSE</b>, one Precitech-specific limitation).</p>"
+    "your <b>actual ML Week 4 RMSE</b>, one Precitech-specific limitation).</p>"
     "<p>Run it (streamlit run streamlit_app.py, or Colab + pyngrok). Test a CSV "
     "upload. <b>Describe each TODO you completed</b> and <b>attach a screenshot of "
     "the running app showing a prediction.</b></p>",
     3, 3, "Each TODO described + screenshot of local app with a prediction.",
-    "All TODOs done; the Lab 10 RMSE is the student's real number; sample button works; screenshot shows a colour-coded RUL."),
+    "All TODOs done; the ML Week 4 RMSE is the student's real number; sample button works; screenshot shows a colour-coded RUL."),
   q("Task 2 - Push to GitHub (2 marks)",
     "<p>Put these in the <b>public</b> repo rul-predictor: streamlit_app.py, "
     "rul_model.pkl, feature_cols.pkl, requirements.txt, sample_engine.csv.</p>"
@@ -965,14 +966,14 @@ write_lab(11, "Machine Learning Week 5: Deploying the App",
           "sample_engine.csv"]),
  ])
 
-# ----------------------------------------------------------------------------- 12
-write_lab(12, "Machine Learning Week 6: Capstone Presentation",
+# ----------------------------------------------------------------------------- ml-week6-capstone
+write_lab("ml-week6-capstone", "Machine Learning Week 6: Capstone Presentation",
  ["You demo your deployed predictive-maintenance app LIVE to the class (8-10 min) "
   "and take 3-5 min of questions. No slides required -- the app is the "
   "presentation.",
-  "Your app URL and GitHub repo (submitted in Lab 11) must be live at "
+  "Your app URL and GitHub repo (submitted in ML Week 5) must be live at "
   "presentation time.",
-  "This quiz records the session; it carries the Labs 9-12 capstone rubric "
+  "This quiz records the session; it carries the ML Weeks 3-6 capstone rubric "
   "(held in FOL / the instructor handbook).",
   "AI use: allowed across the module, but the presentation and defence are your "
   "own."],
@@ -1018,8 +1019,8 @@ write_lab(12, "Machine Learning Week 6: Capstone Presentation",
     "Answers are accurate or honestly bounded; no bluffing."),
  ])
 
-# ----------------------------------------------------------------------------- 13
-write_lab(13, "TPM/OEE, Root Cause and a New Dataset",
+# ----------------------------------------------------------------------------- tpm-oee-rca
+write_lab("tpm-oee-rca", "TPM/OEE, Root Cause and a New Dataset",
  ["Tools: Google Sheets, draw.io, Google Colab. Files: precitech_shift_log.csv "
   "from FOL; AI4I 2020 Predictive Maintenance Dataset CSV from UCI "
   "(archive.ics.uci.edu, CC BY 4.0).",
@@ -1092,14 +1093,14 @@ write_lab(13, "TPM/OEE, Root Cause and a New Dataset",
           "AI-use disclosure line"]),
  ])
 
-# ----------------------------------------------------------------------------- 14
-write_lab(14, "Robotic Work-Cell Design in RoboDK for Web (take-home)",
+# ----------------------------------------------------------------------------- robodk-work-cell
+write_lab("robodk-work-cell", "Robotic Work-Cell Design in RoboDK for Web (take-home)",
  ["TAKE-HOME lab: released in week 11, due at the end of week 14, done on your own "
   "computer. Individual work.",
   "Tool: RoboDK for Web (web.robodk.com/simulation) -- no install, no licence "
   "key. Plus a screen-recording tool (Windows Xbox Game Bar Win+G, macOS "
   "Shift+Cmd+5, or OBS Studio).",
-  "You need your Lab 4 takt time for 250 kits/day.",
+  "You need your takt time from the Lean lab for 250 kits/day.",
   "AI use: permitted with disclosure. The station layout, the program and the "
   "cycle times must be your own work."],
  [q("Start-of-lab declaration",
@@ -1114,7 +1115,7 @@ write_lab(14, "Robotic Work-Cell Design in RoboDK for Web (take-home)",
     "coordinates.</p>"
     "<p>Drive it toward a <b>wrist singularity</b> and toward a <b>joint limit</b> "
     "and <b>record what the simulator does in each case</b>. Relate this to the "
-    "block-programming work in Lab 1 and to the Chapter 8 coordinate systems.</p>",
+    "block-programming work in the Logic Thinking (Rocksi) lab and to the Chapter 8 coordinate systems.</p>",
     1, 3, "Arm named + jog in all three frames + singularity and joint-limit behaviour recorded.",
     "Distinguishes the three jog frames; describes the specific simulator behaviour at a singularity and at a joint limit."),
   q("Task 2 - Build the kitting cell (2 marks)",
@@ -1137,15 +1138,15 @@ write_lab(14, "Robotic Work-Cell Design in RoboDK for Web (take-home)",
     3, 4, "Working program + gripper on DO + simulated cycle time + target/program description + screenshot/clip.",
     "Program runs end to end in the simulator; gripper actuated via I/O; a real cycle-time number reported."),
   q("Task 4 - Cycle time vs takt (3 marks)",
-    "<p>Take the <b>takt time from Lab 4</b> for 250 kits/day. <b>Does one robot "
+    "<p>Take the <b>takt time from the Lean lab</b> for 250 kits/day. <b>Does one robot "
     "at your Task 3 cycle time meet takt?</b></p>"
     "<p>Then <b>optimise</b> -- reorder targets, raise joint speeds within limits, "
     "shorten approach and retract moves -- and record the <b>improved cycle "
     "time</b>. State <b>by how much you beat or missed takt</b>, and what a real "
     "cell would do if one robot could not keep up (parallel cells, a second arm, "
     "faster EOAT, etc.).</p>",
-    3, 4, "Lab 4 takt stated + meet/miss before optimisation + optimised cycle time + gap quantified + real-cell mitigation.",
-    "Uses the student's Lab 4 takt; before/after cycle times; optimisation changes are physically plausible (no joint speeds past limits); gap quantified."),
+    3, 4, "Lean-lab takt stated + meet/miss before optimisation + optimised cycle time + gap quantified + real-cell mitigation.",
+    "Uses the student's Lean-lab takt; before/after cycle times; optimisation changes are physically plausible (no joint speeds past limits); gap quantified."),
   q("Task 5 - Safeguarding distance (1 mark)",
     "<p>Using the Chapter 6 minimum-distance / safeguarding-distance formula, "
     "<b>compute the minimum guarding distance</b> from an assumed robot-plus-sensor "
@@ -1163,4 +1164,677 @@ write_lab(14, "Robotic Work-Cell Design in RoboDK for Web (take-home)",
           "AI-use disclosure line"]),
  ])
 
-print("\nAll 14 lab quiz CSVs written to", OUT)
+
+
+# =============================================================================
+# Hands-on labs: metrology, statistical quality control, materials testing and
+# virtual welding.  Source handouts / worksheets: LabInstructions/Quality_Labs,
+# Materials_Labs and Virtural_Welding.  Corrected worksheet copies are in
+# LabInstructions/Quality_Labs/fixed/.  Each quiz totals 10 marks.
+# =============================================================================
+
+def HANDS_DECL(kind="bench"):
+    if kind == "team":
+        who = ("(2) the names and student numbers of the <b>other members of your "
+               "team</b>, and the station / instrument you worked at; ")
+        rule = ("This lab is done in a team, but <b>the write-up is individual</b>: "
+                "your answers, calculations and graphs must be your own.")
+    else:
+        who = ("(2) the name of any <b>partner</b> you worked with (or 'none'), and "
+               "the bench / instrument you worked at; ")
+        rule = ("If you shared measurements with a partner, the calculations, graphs "
+                "and written answers must still be your own.")
+    return q(
+        "Start-of-lab declaration",
+        "<p><b>Read before you begin.</b> Work through the questions below <b>in "
+        "order</b> during the lab period; each one tells you what to measure or "
+        "calculate and asks you to record it and describe what you did. " + rule +
+        "</p><p>In the box, type: (1) your full name and student number; " + who +
+        "(3) confirmation that you have read the safety notes for this lab and that "
+        "the write-up is your own work.</p>",
+        0, 1, "Name, student number, partner/team, bench, and your confirmation.")
+
+def SIM_DECL():
+    return q(
+        "Start-of-lab declaration",
+        "<p><b>Read before you begin.</b> This is an individual lab on the Lincoln "
+        "VRTEX 360+ virtual welding simulator. Work through the questions in "
+        "order. In the box, type: (1) your full name and student number; (2) the "
+        "<b>simulator ID / unit number</b> you used; (3) the <b>username</b> you "
+        "logged in with (student ID + family name + first letter of given name, "
+        "except in the first lab); (4) confirmation that the scores you report are "
+        "your own and come from the simulator.</p>",
+        0, 1, "Name, student number, simulator ID, username, confirmation.")
+
+REPORT = UPLOAD
+
+# ----------------------------------------------------------------------------- instruments
+write_lab("instruments", "Linear and Angular Measuring Instruments",
+ ["Bench lab in the metrology lab. Corrected assignment sheet: "
+  "LabInstructions/Quality_Labs/fixed/Linear and Angular Measurements - fixed.docx.",
+  "Answers to the two least-count problems: caliper 0.1 mm; micrometer 0.02 mm "
+  "without the vernier and 0.004 mm with it.",
+  "AI use: not permitted for the least-count calculations. Any AI used for "
+  "background research must be disclosed."],
+ [HANDS_DECL(),
+  q("Task 1 - Vernier caliper (3 marks)",
+    "<p>Attach a photo of the <b>vernier caliper</b> you are using. Then: "
+    "(a) name the types of caliper you know of; (b) <b>label its main parts</b> "
+    "(jaws, beam, main scale, vernier scale, depth rod, lock screw...); (c) state "
+    "the <b>unit of each scale</b>; (d) write, step by step, <b>how to read it</b>; "
+    "(e) give the <b>formula for its least count</b>.</p>"
+    "<p><b>Problem:</b> on a vernier caliper each division of the main scale is "
+    "1 mm and ten divisions of the vernier scale coincide with nine divisions of "
+    "the main scale. Determine the least count. Show your working.</p>",
+    3, 3, "Parts, units, reading procedure, least-count formula, and the worked problem.",
+    "Least count = 1 mm - 0.9 mm = 0.1 mm (= value of one main-scale division / number of vernier divisions). Parts and units correct."),
+  q("Task 2 - Vernier height gauge (2 marks)",
+    "<p>Attach a photo of the <b>vernier height gauge</b>. Name the types that "
+    "exist, <b>label its main parts</b> (base, beam, vernier slide, scriber...), "
+    "state the <b>unit(s) of its scale(s)</b>, describe <b>how to read it</b> and "
+    "give the <b>formula for its least count</b>.</p>",
+    2, 3, "Types, labelled parts, units, reading procedure, least-count formula.",
+    "Same least-count formula as the caliper; describes zeroing on the surface plate."),
+  q("Task 3 - Vernier micrometer (3 marks)",
+    "<p>Attach a photo of the <b>micrometer</b>. <b>Label its main parts</b> "
+    "(frame, anvil, spindle, sleeve/barrel, thimble, ratchet, lock), state the "
+    "<b>unit of each scale</b>, describe <b>how to read it</b> and give the "
+    "<b>formula for its least count</b>.</p>"
+    "<p><b>Problem:</b> the barrel scale of a vernier micrometer has graduations of "
+    "1 mm. The thimble has 50 equal divisions, and one complete rotation of the "
+    "thimble moves it 1 mm along the barrel. The vernier scale on the barrel has "
+    "five divisions that correspond to six thimble divisions. Calculate the least "
+    "count (a) without the vernier scale and (b) with it. Show your working.</p>",
+    3, 4, "Parts, units, reading procedure, formula, and both least counts.",
+    "(a) 1 mm / 50 = 0.02 mm. (b) 0.02 mm / 5 = 0.004 mm (five vernier divisions = six thimble divisions, so one vernier division is 1.2 thimble divisions)."),
+  q("Task 4 - Gauge blocks (2 marks)",
+    "<p>Slip gauges (gauge blocks) come in <b>rectangular, square and square-with-"
+    "hole</b> shapes and in <b>grades</b>. (a) <b>What does the grade number refer "
+    "to, and what is each grade typically used for?</b> (b) <b>Illustrate</b> (photo "
+    "or sketch) the set you used. (c) <b>How is wringing achieved?</b> Illustrate "
+    "with an example of building a stack of a given size.</p>",
+    2, 3, "Grade meaning and uses; illustration of the set; wringing explained with an example.",
+    "Grade = guaranteed accuracy (calibration / reference / inspection / workshop); wringing = clean, flat, thin oil film/molecular adhesion, slide-and-twist; stack example correct."),
+  REPORT(["Photos of the caliper, height gauge, micrometer and gauge-block set",
+          "Completed assignment sheet (.docx or PDF)"]),
+ ])
+
+# ----------------------------------------------------------------------------- v-groove
+write_lab("v-groove", "Groove Angle Measurement (V-Block)",
+ ["Bench lab in the metrology lab. Uses a V-block, two rollers of different "
+  "diameters, a surface plate, a vernier height gauge and a vernier caliper.",
+  "Answer key: groove angle = 2 x asin[ (d2 - d1) / ( 2(h2 - h1) - (d2 - d1) ) ], "
+  "with d = roller diameter and h = height from the plate to the top of the roller.",
+  "AI use: not permitted -- the measurements and calculations must be your own."],
+ [HANDS_DECL(),
+  q("Task 1 - Roller diameters (1 mark)",
+    "<p>Measure the diameter of each roller with the vernier caliper, <b>at the "
+    "middle of the roller</b>. Record <b>d1</b> (smaller) and <b>d2</b> (larger) "
+    "for each of your four samples in a table, and state the caliper's resolution.</p>",
+    1, 2, "Table of d1, d2 for each sample; caliper resolution stated."),
+  q("Task 2 - Roller heights (2 marks)",
+    "<p>Describe how you <b>set the height gauge to zero on the surface plate</b>. "
+    "Then place the smaller roller in the groove, measure <b>h1</b> (plate to the "
+    "top of the roller), swap to the larger roller and measure <b>h2</b>. Record "
+    "h1 and h2 for every sample.</p><p>State the <b>precautions</b> you took so that "
+    "the roller did not move and the scriber only just touched it.</p>",
+    2, 3, "Zeroing method; table of h1, h2; the precautions taken.",
+    "Zeroed on the plate; scriber just touching; roller not disturbed; readings to the gauge's resolution."),
+  q("Task 3 - Calculate the groove angle (3 marks)",
+    "<p>Write the equation from your sheet and <b>show one complete worked "
+    "calculation</b> (all numbers substituted). Then give the <b>calculated groove "
+    "angle for each of the four samples</b> in a table.</p>",
+    3, 4, "Equation, one full worked calculation, table of four angles.",
+    "angle = 2 asin[(d2-d1)/(2(h2-h1)-(d2-d1))]; units consistent; values plausible for a standard V-block (e.g. about 90 deg)."),
+  q("Task 4 - Repeatability (2 marks)",
+    "<p>Calculate the <b>mean and the range</b> of your four angles. Do your "
+    "repeats agree? Suggest the <b>two largest sources of error</b> in this method "
+    "and how each would show up in the results.</p>",
+    2, 3, "Mean, range, and two sources of error explained.",
+    "Mean and range correct; sources such as roller moved, scriber pressed on the roller, height gauge not zeroed, diameter not measured at mid-length."),
+  q("Task 5 - Why two rollers? (2 marks)",
+    "<p>Why does the method need <b>two rollers of different diameters</b> rather "
+    "than one? What would go wrong if a roller were so large it touched the top "
+    "corners of the block instead of only the sloping sides?</p>",
+    2, 3, "Your explanation.",
+    "Two unknowns (angle and apex height) need two equations; roller must touch only the sloping sides or the geometry no longer holds."),
+  REPORT(["Table of diameters, heights and angles (.xlsx or PDF)",
+          "Photo of your set-up"]),
+ ])
+
+# ----------------------------------------------------------------------------- sine-bar
+write_lab("sine-bar", "Taper Angle Measurement with a Sine Bar",
+ ["Bench lab in the metrology lab. Uses a surface plate, sine bar, dial "
+  "indicator on a stand, gauge blocks and three tapers.",
+  "The sheet takes theta as the taper's HALF-angle: sin(theta) = h / L; whole angle "
+  "= 2 theta. Post the sine-bar length L.",
+  "AI use: not permitted -- the measurements and calculations must be your own."],
+ [HANDS_DECL(),
+  q("Task 1 - The sine principle (2 marks)",
+    "<p>Explain in your own words <b>how a sine bar turns an angle into a length "
+    "measurement</b>: name the right triangle, which side is the bar and which is "
+    "the gauge-block stack, and write sin(theta) = h / L. List the "
+    "<b>requirements</b> for an accurate sine bar (roller diameters, spacing, "
+    "roller axes, top surface).</p>",
+    2, 3, "Triangle described, formula written, four requirements listed.",
+    "Bar = hypotenuse L; stack = opposite side h; requirements: equal roller diameters, precisely known centre distance, parallel roller axes, flat top parallel to the roller axes."),
+  q("Task 2 - Building the stack (2 marks)",
+    "<p>Describe how you <b>wrung the gauge blocks</b> and how you decided which "
+    "blocks to use. Explain how you used the <b>dial indicator</b> to find out "
+    "whether the taper's top surface was parallel to the plate, and how the "
+    "reading told you to add or remove blocks.</p>",
+    2, 3, "Wringing, stack selection, and the dial-indicator procedure.",
+    "Blocks wrung clean; indicator slid along the taper; zero deviation across the length = parallel; deflection direction tells which way to adjust."),
+  q("Task 3 - Measure three tapers (3 marks)",
+    "<p>For each of the three tapers record in a table: the <b>gauge-block height "
+    "h</b>, the <b>sine-bar length L</b>, the <b>half-angle theta = asin(h / L)</b>, "
+    "the <b>whole angle 2 theta</b>, and the <b>comparison with the actual taper "
+    "angle</b>. <b>Show one complete worked calculation.</b></p>",
+    3, 4, "Table for three tapers + a worked calculation.",
+    "h and L in the same units; theta = asin(h/L); 2 theta compared with the stated angle; differences small."),
+  q("Task 4 - Error analysis (2 marks)",
+    "<p>A gauge-block stack is wrong by <b>0.01 mm</b>. Using your L, calculate "
+    "the resulting error in theta for the <b>steepest</b> and the <b>shallowest</b> "
+    "of your tapers. Which is more sensitive, and why does the sine bar lose "
+    "accuracy at large angles?</p>",
+    2, 4, "Two error calculations and the explanation.",
+    "d(theta) = dh / (L cos theta) (radians); error grows with theta because cos theta shrinks."),
+  q("Task 5 - Conclusion (1 mark)",
+    "<p>State which taper agreed best with its stated angle and give one "
+    "practical reason for any disagreement.</p>",
+    1, 2, "Your conclusion."),
+  REPORT(["Completed sine-bar table (.xlsx or PDF)", "Photo of your set-up"]),
+ ])
+
+# ----------------------------------------------------------------------------- calibration
+write_lab("calibration", "Micrometer and Caliper Calibration",
+ ["Bench lab in the metrology lab. The source sheet's check sizes are INCH sizes "
+  "(micrometer 0.106 ... 0.954 in; 6 in or 8 in caliper in ten steps of range/10). "
+  "If your instruments are metric, substitute an equivalent sequence.",
+  "The gauge-block set must carry a serial number / certificate (traceability).",
+  "AI use: not permitted -- the readings and the report must be your own."],
+ [HANDS_DECL(),
+  q("Task 1 - Preparation (1 mark)",
+    "<p>Record the <b>instrument identification</b> for the micrometer and the "
+    "caliper (owner, manufacturer, model, serial number, range, resolution, "
+    "published accuracy) and the <b>standard</b> used (gauge-block set serial "
+    "number). Describe how you <b>cleaned, inspected and stabilised</b> the "
+    "instruments and blocks, and why each step matters.</p>",
+    1, 2, "Both instruments identified; standard identified; cleaning, inspection and thermal soak described.",
+    "Cleaned with methyl alcohol; inspected for damage; allowed to reach ambient temperature; zero set; published accuracy stated."),
+  q("Task 2 - Micrometer calibration (3 marks)",
+    "<p>Set the micrometer to zero, then wring the gauge blocks to each check size "
+    "and record in a table the <b>standard, the reading and the deviation</b> "
+    "(reading - standard). Record the <b>accuracy over the range</b> (the largest "
+    "deviation).</p>",
+    3, 3, "Table of standard, reading, deviation at each size; accuracy over the range.",
+    "Deviation = reading - standard at every size; accuracy over the range = largest magnitude of deviation."),
+  q("Task 3 - Caliper calibration (3 marks)",
+    "<p>Repeat for the caliper at <b>ten equal steps across its range</b> (range "
+    "&divide; 10). Record the table and the accuracy over the range.</p>",
+    3, 3, "Table for ten sizes; accuracy over the range.",
+    "Ten intervals of range/10; deviations correctly signed; accuracy over the range stated."),
+  q("Task 4 - Findings (2 marks)",
+    "<p>Compare each instrument's accuracy with its <b>published accuracy</b>. Is "
+    "it <b>within tolerance</b>? Where is the largest deviation and what might "
+    "cause it? What would you <b>recommend</b> (use, adjust, repair, remove from "
+    "service) and what <b>calibration interval</b> would you suggest?</p>",
+    2, 3, "Pass/fail against published accuracy, cause of the largest deviation, recommendation, interval.",
+    "A real in/out-of-tolerance call with the numbers; a sensible action and interval."),
+  q("Task 5 - Traceability (1 mark)",
+    "<p>In two or three sentences: what does it mean that the gauge blocks are a "
+    "<b>traceable standard</b>, and why does that matter for a customer receiving "
+    "your parts? How does this connect to bias and linearity in a measurement "
+    "systems analysis?</p>",
+    1, 3, "Your explanation."),
+  REPORT(["Micrometer calibration report", "Caliper calibration report"]),
+ ])
+
+# ----------------------------------------------------------------------------- excel-stats
+write_lab("excel-stats", "Statistics with Excel for Quality Control",
+ ["Computer lab with Microsoft Excel (VAR.P, VAR.S, STDEV.P, STDEV.S needed).",
+  "Answer key (processing times, n = 12): mean 6.19, median 6.2, mode 6.2, range 3.7, "
+  "population variance 1.279, sample variance 1.395, population SD 1.131, sample SD 1.181. "
+  "Waiting times (n = 50): mean 30.88, median 30.45, two modes (31.8 and 28.5, three each); "
+  "histogram counts for the ten bins 26.8-38.19: 8, 8, 7, 6, 8, 4, 4, 2, 2, 1 (right-skewed, "
+  "not a clean normal curve).",
+  "AI use: not permitted -- the calculations and graphs must be your own."],
+ [HANDS_DECL(),
+  q("Task 1 - Function warm-up (1 mark)",
+    "<p>Using the statistics worksheet, list the <b>Excel function you used</b> for "
+    "each parameter (average, median, mode, population and sample variance, "
+    "population and sample standard deviation, count, minimum, maximum, range). "
+    "When would you use the <b>sample</b> version instead of the <b>population</b> "
+    "version?</p>",
+    1, 2, "Function list and the sample-vs-population rule.",
+    "AVERAGE, MEDIAN, MODE, VAR.P, VAR.S, STDEV.P, STDEV.S, COUNT, MIN, MAX, MAX-MIN; sample version when the data are a sample of a larger population."),
+  q("Task 2 - Processing times (3 marks)",
+    "<p>For the 12 processing times of hot-rolled steel compute the <b>mean, median "
+    "and mode</b> and <b>interpret the difference between them</b>; then the "
+    "<b>range, both variances and both standard deviations</b> and interpret them. "
+    "Paste your results.</p>",
+    3, 3, "All ten statistics + interpretation.",
+    "Mean 6.19, median 6.2, mode 6.2 (close together, so roughly symmetric); range 3.7; var.p 1.279, var.s 1.395; sd.p 1.131, sd.s 1.181."),
+  q("Task 3 - Scatterplot (2 marks)",
+    "<p>Plot the 20 observations of <b>depth of cut against tool wear</b> as a "
+    "scatterplot with <b>labelled axes and a title</b>. Attach the chart and "
+    "describe the relationship you see (direction, strength, any outlier).</p>",
+    2, 3, "Chart attached; relationship described.",
+    "Both axes labelled with units; positive relationship - tool wear increases with depth of cut."),
+  q("Task 4 - Histogram (3 marks)",
+    "<p>Build a frequency table for the 50 waiting times using the ten cells on the "
+    "worksheet (26.8-27.93 ... 37.06-38.19) and a <b>histogram</b>. Paste the "
+    "table and attach the chart.</p>",
+    3, 3, "Frequency table and histogram attached.",
+    "Counts 8, 8, 7, 6, 8, 4, 4, 2, 2, 1; axes labelled; bars touching."),
+  q("Task 5 - Interpret the waiting times (1 mark)",
+    "<p>(a) What is the <b>mean waiting time</b>? (b) Are the <b>mode and the "
+    "median the same</b>? (c) Does the histogram look like a <b>normal curve</b>? "
+    "Justify from the shape.</p>",
+    1, 3, "Mean, mode vs median, and a shape-based normality judgement.",
+    "Mean 30.88; median 30.45 with two modes (31.8 and 28.5); shape is right-skewed / not clearly normal."),
+  REPORT(["Completed Excel workbook (.xlsx) with the charts"]),
+ ])
+
+# ----------------------------------------------------------------------------- variable-charts
+write_lab("variable-charts", "Variable Control Charts: X-bar, R and S",
+ ["Bench + computer lab. Measure the LENGTH of 100 roller bearings in ten "
+  "subgroups of ten (the bearings are tapered -- do not measure diameter).",
+  "Constants for n = 10: A2 = 0.308, B3 = 0.284, B4 = 1.716, D3 = 0.223, D4 = 1.777. "
+  "Use the corrected worksheet: LabInstructions/Quality_Labs/fixed/Variable "
+  "Control Charts - fixed.xlsx (out-of-control rules aligned with Chapter 10).",
+  "AI use: not permitted -- the measurements, calculations and charts must be your own."],
+ [HANDS_DECL(),
+  q("Task 1 - Collect the data (2 marks)",
+    "<p>State the <b>instrument</b> and its resolution, how you took the "
+    "measurements, and how you formed the <b>ten subgroups of ten</b> (why is "
+    "taking consecutive parts in one subgroup a rational choice?). Paste your "
+    "10 x 10 table of lengths.</p>",
+    2, 3, "Instrument, method, subgrouping rationale, 10 x 10 table.",
+    "100 readings in ten subgroups; consistent units; rational subgrouping explained (variation within a subgroup is short-term)."),
+  q("Task 2 - X-bar chart (2 marks)",
+    "<p>Give the ten <b>subgroup averages</b>, the <b>grand average</b>, the "
+    "<b>average range</b>, and the <b>UCL and LCL</b> from "
+    "UCL/LCL = grand average +/- A2 x average range (A2 = 0.308). Show one worked "
+    "calculation.</p>",
+    2, 3, "Subgroup averages, grand average, R-bar, UCL, LCL, worked calculation.",
+    "Limits = X-double-bar +/- 0.308 x R-bar."),
+  q("Task 3 - R chart (2 marks)",
+    "<p>Give the ten <b>subgroup ranges</b>, the <b>average range</b>, and "
+    "<b>UCL = D4 x R-bar</b> and <b>LCL = D3 x R-bar</b> (D4 = 1.777, D3 = 0.223).</p>",
+    2, 3, "Ranges, R-bar, UCL, LCL.", "UCL = 1.777 R-bar; LCL = 0.223 R-bar."),
+  q("Task 4 - S chart (2 marks)",
+    "<p>Give the ten <b>subgroup standard deviations</b>, the average, and "
+    "<b>UCL = B4 x S-bar</b>, <b>LCL = B3 x S-bar</b> (B4 = 1.716, B3 = 0.284). "
+    "Attach the X-bar, R and S charts.</p>",
+    2, 3, "Standard deviations, S-bar, limits, three charts attached.",
+    "UCL = 1.716 S-bar; LCL = 0.284 S-bar; charts have centre line and limits."),
+  q("Task 5 - Interpret (2 marks)",
+    "<p>Apply the <b>out-of-control rules</b> on the worksheet to each chart. Is "
+    "the process in statistical control? Quote any rule that is violated and the "
+    "subgroups involved. What would you do next, and what does the R (or S) chart "
+    "tell you that the X-bar chart does not?</p>",
+    2, 4, "Rules applied to each chart, in/out-of-control judgement, next action.",
+    "Rules 1-4 (Western Electric) checked; a justified call; R/S chart monitors within-subgroup spread, X-bar monitors the mean."),
+  REPORT(["Completed Excel workbook with the X-bar, R and S charts"]),
+ ])
+
+# ----------------------------------------------------------------------------- attribute-charts
+write_lab("attribute-charts", "Attribute Control Charts: p and np",
+ ["Bench + computer lab. Ten samples of 50 beads; give each student or bench a "
+  "different 'defective' colour so results cannot be copied.",
+  "p limits: p-bar +/- 3 sqrt(p-bar(1 - p-bar)/n); np limits: np-bar +/- 3 "
+  "sqrt(np-bar(1 - p-bar)); a negative LCL is set to 0. Expected 'what next' answer "
+  "for the complementary tool: a Pareto chart.",
+  "AI use: not permitted for the counts, calculations and charts."],
+ [HANDS_DECL(),
+  q("Task 1 - Sampling (1 mark)",
+    "<p>State which colour was <b>defective</b> for your sample, how you drew "
+    "each sample of <b>50 beads</b>, and whether you replaced the beads between "
+    "samples (and why it matters).</p>",
+    1, 2, "Defective colour, sampling method, replacement decision."),
+  q("Task 2 - Counts (1 mark)",
+    "<p>Paste the number defective (np) in each of the <b>ten samples</b>, and the "
+    "proportion defective p = np / 50 for each.</p>",
+    1, 2, "Ten counts and ten proportions."),
+  q("Task 3 - p chart (3 marks)",
+    "<p>Calculate <b>p-bar</b>, then <b>UCL and LCL</b> from "
+    "p-bar +/- 3 sqrt(p-bar(1 - p-bar) / n) with n = 50 (set a negative LCL to "
+    "0). Show one worked calculation and attach the <b>p chart</b>.</p>",
+    3, 3, "p-bar, UCL, LCL, worked calculation, chart attached.",
+    "n = 50 (sample size), not the number of samples; LCL floored at 0."),
+  q("Task 4 - np chart (2 marks)",
+    "<p>Calculate <b>np-bar</b> and the limits "
+    "np-bar +/- 3 sqrt(np-bar(1 - p-bar)). Attach the <b>np chart</b> and say "
+    "whether the process is in control.</p>",
+    2, 3, "np-bar, limits, chart attached, in-control statement.",
+    "Limits consistent with the p chart (np chart limits = n x p chart limits)."),
+  q("Task 5 - Questions (3 marks)",
+    "<p>(1) What <b>variation</b> is the p control chart examining? (2) Is the "
+    "process in <b>statistical control</b>, and what does that mean? (3) What "
+    "should be done <b>next</b> to improve the process? (4) What <b>other "
+    "statistical tool</b> could be used with the p chart, and why?</p>",
+    3, 3, "Four answers.",
+    "Proportion defective between samples; in control = only common-cause variation; next = find and remove the causes of the defectives; Pareto chart of defect types."),
+  REPORT(["Completed Excel workbook with the p and np charts"]),
+ ])
+
+# ----------------------------------------------------------------------------- capability
+write_lab("capability", "Process Capability: Cp, Cpk and Distributions",
+ ["Bench + computer lab. Measure the length of 50 roller bearings with a "
+  "micrometer. Specification on the sheet: USL = 0.5008, LSL = 0.4992 (inches).",
+  "Use the corrected worksheet: LabInstructions/Quality_Labs/fixed/Process Capability - fixed.xlsx. Cp = (USL - LSL) / (6 sigma); "
+  "Cpk = min[(USL - mean)/(3 sigma), (mean - LSL)/(3 sigma)]; capable if >= 1.33. "
+  "Cpk is the index for an off-centre process, not for a non-normal one.",
+  "AI use: not permitted -- the measurements and calculations must be your own."],
+ [HANDS_DECL(),
+  q("Task 1 - Data and distribution (2 marks)",
+    "<p>Paste your <b>50 lengths</b>. Plot them as a bar chart and then as an "
+    "XY scatter plot as instructed on the worksheet, attach the chart, and "
+    "<b>describe the distribution</b> (shape, centre, spread, anything unusual).</p>",
+    2, 3, "50 values, chart attached, distribution described.",
+    "Shape judged from the chart (bell-shaped / skewed / two humps); centre and spread described."),
+  q("Task 2 - Statistics (2 marks)",
+    "<p>Calculate the <b>average of the 50 points</b>, the <b>average range</b> "
+    "(of the subgroups on the sheet), and the <b>standard deviation two ways</b>: "
+    "STDEV.P of all 50 points and average range / d2 (d2 = 2.326). Compare them.</p>",
+    2, 3, "Mean, R-bar, sigma from STDEV.P and from R-bar/d2, and a comparison.",
+    "Both estimates of sigma close if the process is stable; a large gap suggests instability between subgroups."),
+  q("Task 3 - Cp (2 marks)",
+    "<p>Calculate <b>Cp = (USL - LSL) / (6 x sigma)</b> with USL = 0.5008 and "
+    "LSL = 0.4992. State which sigma you used. Is the process capable "
+    "(Cp &gt;= 1.33)?</p>",
+    2, 3, "Cp with the sigma stated and a capable / not-capable decision."),
+  q("Task 4 - Cpk (2 marks)",
+    "<p>Calculate <b>Cpk</b> as the smaller of (USL - mean)/(3 sigma) and "
+    "(mean - LSL)/(3 sigma). Is Cpk smaller than Cp? What does the gap tell you "
+    "about the centring of the process, and what would you adjust?</p>",
+    2, 3, "Cpk, comparison with Cp, centring conclusion.",
+    "Cpk <= Cp; a large gap means the mean is off the middle of the specification - re-centre the process."),
+  q("Task 5 - Capable? And how to run a real study (2 marks)",
+    "<p>State whether the process is capable and what you would do about it. From "
+    "the handout <b>Preparing a Capability Study</b>, name <b>three things a "
+    "quality department must do before running a real study</b>, and explain why "
+    "each matters (for example: stable process, calibrated gauges, parts straight "
+    "from production, sequential numbering, defectives not discarded).</p>",
+    2, 3, "Decision + three preparation steps with reasons.",
+    "Any three of: review history, size the sample, confirm process stable, confirm gauge calibration, quarantine and number parts, do not discard defective parts."),
+  REPORT(["Completed Excel workbook (data, chart, Cp and Cpk)"]),
+ ])
+
+# ----------------------------------------------------------------------------- gauge-rr
+write_lab("gauge-rr", "Repeatability and Reproducibility (Gauge R&R)",
+ ["Team lab (three operators per team, assigned by the instructor); the write-up is "
+  "individual. Use the corrected worksheet: LabInstructions/Quality_Labs/fixed/"
+  "Repeatability and Reproducibility - fixed.xlsx.",
+  "Constants (5.15 sigma convention): EV = 5.15 R-bar / 1.128; AV = sqrt((5.15 "
+  "Xdiff / 1.91)^2 - EV^2/(n r)) for 3 operators (1.41 for 2 operators), n = 5 parts, "
+  "r = 2 trials; Vp = 5.15 Rp / 2.48 (5 parts).",
+  "Part B key: EV = 29.4, AV = 0 (negative under the root), R&R = 29.4, Vp = 82.2, "
+  "Vt = 87.3, %R&R = 34 % (unacceptable, over 30 %).",
+  "AI use: not permitted -- the measurements and calculations must be your own."],
+ [HANDS_DECL("team"),
+  q("Task 1 - Part A data (2 marks)",
+    "<p>Each operator measures the <b>five holes</b> on the part with the caliper, "
+    "<b>twice</b> (trial 1 and trial 2), independently and without seeing the "
+    "others' readings. Paste the 3 x 5 x 2 table of readings with each operator's "
+    "initials, and explain how you kept the operators independent.</p>",
+    2, 3, "Full data table, initials, and the independence measures.",
+    "30 readings; operators blind to each other; holes measured in the same way."),
+  q("Task 2 - Part A: repeatability and reproducibility (3 marks)",
+    "<p>Calculate: the range for each hole and operator; the average range for "
+    "each operator and overall (R-bar); <b>EV = 5.15 x R-bar / 1.128</b>; each "
+    "operator's average reading and <b>Xdiff</b>; and <b>AV</b> from "
+    "sqrt( (5.15 x Xdiff / 1.91)^2 - EV^2 / (n x r) ) with n = 5 holes and r = 2 "
+    "trials (AV = 0 if the value under the root is negative). Show your working.</p>",
+    3, 4, "EV and AV with the working shown.",
+    "Constants as on the corrected sheet: 1.128, 1.91, n x r = 10."),
+  q("Task 3 - Part A: R&R, part and total variation (2 marks)",
+    "<p>Calculate <b>R&amp;R = sqrt(EV^2 + AV^2)</b>, <b>Vp = 5.15 x Rp / 2.48</b> "
+    "(Rp = largest minus smallest average part measurement), "
+    "<b>Vt = sqrt(R&amp;R^2 + Vp^2)</b> and <b>%R&amp;R = 100 x R&amp;R / Vt</b>.</p>",
+    2, 3, "R&R, Vp, Vt, %R&R.",
+    "Vp uses 2.48 (five parts), not 3.18."),
+  q("Task 4 - Part B: the supplied data (2 marks)",
+    "<p>Repeat the calculation on the <b>Part B</b> data (two operators, five "
+    "parts, two trials; for AV use 1.41 in place of 1.91). Report EV, AV, R&amp;R, "
+    "Vp, Vt and %R&amp;R.</p>",
+    2, 4, "All six values for Part B.",
+    "EV = 29.4; AV = 0; R&R = 29.4; Vp = 82.2; Vt = 87.3; %R&R = 34 %."),
+  q("Task 5 - Is the gauge adequate? (1 mark)",
+    "<p>For both parts, judge whether the measurement system is adequate "
+    "(under 10 % acceptable, 10-30 % marginal, over 30 % unacceptable). Which "
+    "component - repeatability or reproducibility - dominates, and what would you "
+    "do to improve it?</p>",
+    1, 3, "Adequacy judgement, dominant component, an improvement action.",
+    "Part B is unacceptable (about 34 %); repeatability dominates; e.g. better gauge/fixture, training, clearer method."),
+  REPORT(["Completed Excel workbook (Part A and Part B)"]),
+ ])
+
+# ----------------------------------------------------------------------------- hardness
+write_lab("hardness", "Hardness Testing: Rockwell and Brinell",
+ ["Materials-testing rotation lab (one of three; the class is split into three "
+  "groups). Team lab; each student submits their own report.",
+  "Safety glasses and safety footwear required. Specimens: annealed, quenched "
+  "(hardened) and normalized steel; Rockwell and Brinell testers.",
+  "AI use: not permitted for the readings and calculations."],
+ [HANDS_DECL("team"),
+  q("Task 1 - Set-up (1 mark)",
+    "<p>For each specimen state the <b>steel type</b>, the <b>Rockwell scale</b> "
+    "you chose, the <b>minor and major loads</b> (kg) and the <b>Brinell "
+    "load</b>. Explain <b>why</b> you chose each scale for each specimen.</p>",
+    1, 3, "Scale and loads for each specimen with reasons.",
+    "Soft (annealed) specimen on B scale; hard (quenched) on C scale; minor load 10 kg; loads consistent with the scale."),
+  q("Task 2 - Rockwell readings (2 marks)",
+    "<p>Paste your Rockwell readings (all observations) and the <b>average</b> for "
+    "each specimen (Table 1 of the report template).</p>",
+    2, 2, "Table 1 with all readings and averages."),
+  q("Task 3 - Brinell readings (2 marks)",
+    "<p>Paste your Brinell results: load, <b>indentation diameter (mm)</b>, "
+    "<b>Brinell number</b> and the <b>equivalent Rockwell number</b> for each "
+    "reading (Table 2 of the template), with the averages.</p>",
+    2, 3, "Table 2 with diameters, Brinell numbers, converted values and averages.",
+    "Brinell number from the diameter chart/formula; conversion to HRB/HRC from a chart."),
+  q("Task 4 - Calculations (2 marks)",
+    "<p>Calculate the <b>% deviation</b> (as defined in the template) for the "
+    "annealed and hardened specimens, and the <b>reproducibility</b> "
+    "(maximum reading minus minimum reading) of each test for each steel. Show "
+    "one worked example.</p>",
+    2, 3, "% deviation and reproducibility for each specimen and test.",
+    "Reproducibility = max - min; worked example shown."),
+  q("Task 5 - Questions (2 marks)",
+    "<p>(a) Describe the <b>annealing</b>, <b>quenching</b> and <b>normalizing</b> "
+    "processes. (b) Which specimen gave the <b>greatest range of results, and "
+    "why</b>? (c) Using an online source: is Rockwell C 51 harder or softer than "
+    "Brinell 500? Is Rockwell B 85 harder or softer than Brinell 165? Cite your "
+    "source.</p>",
+    2, 3, "Three heat treatments described; range explained; two conversions with a source.",
+    "Annealing: heat, slow furnace cool; quenching: rapid cool in water/oil; normalizing: heat, air cool. The annealed (soft, coarse, multi-phase) specimen scatters more. HRC 51 is about HB 500 and HRB 85 is about HB 165 (roughly equal)."),
+  q("Task 6 - Conclusion (1 mark)",
+    "<p>How closely do the Rockwell and Brinell results agree for the three "
+    "specimens? How reproducible was each method? Give reasons.</p>",
+    1, 3, "Your conclusion.",
+    "Agreement stated with numbers; reproducibility compared; reasons (indenter size, scale, surface finish, operator)."),
+  REPORT(["Completed hardness report (Word/PDF) from the FOL template"]),
+ ])
+
+# ----------------------------------------------------------------------------- tensile-microhardness
+write_lab("tensile-microhardness", "Tensile and Microhardness Testing of Case-Hardened Steel",
+ ["Materials-testing rotation lab (one of three). Team lab; each student submits "
+  "their own report. Case-hardened AISI 1566 specimen; Vickers microhardness "
+  "traverse from the surface in 0.5 mm steps to 3.5 mm; tensile specimens.",
+  "The template defines the effective case depth at HRC 50 and the true case depth "
+  "at HRC 40. Safety glasses and safety footwear required; nital etchant and "
+  "alcohol must be kept off skin.",
+  "AI use: not permitted for the readings, calculations and graphs."],
+ [HANDS_DECL("team"),
+  q("Task 1 - Metallography (2 marks)",
+    "<p>Examine the <b>case</b> and the <b>core</b> under the microscope. Attach a "
+    "sketch or photo of each, state the <b>magnification</b>, and explain what "
+    "each sample represents and how the two structures differ.</p>",
+    2, 3, "Case and core sketches with magnification and an explanation.",
+    "Case: hard, fine martensitic structure from carburising and quenching; core: softer, tougher ferrite/pearlite (lower carbon); magnification stated."),
+  q("Task 2 - Microhardness traverse (2 marks)",
+    "<p>Take a Vickers microhardness traverse at <b>0, 0.5, 1.0 ... 3.5 mm</b> from "
+    "the surface. Paste a table of <b>depth, indentation diameter, Vickers number "
+    "and Rockwell number</b>.</p>",
+    2, 3, "Table of eight depths with diameters, HV and HRC.",
+    "Hardness falls with depth toward the core value; conversions from a chart."),
+  q("Task 3 - Graphs and case depths (3 marks)",
+    "<p>Attach the two graphs on the template (Vickers vs depth and Rockwell vs "
+    "depth). State the <b>effective case depth (hardness falls to HRC 50)</b> and "
+    "the <b>true case depth (HRC 40)</b> and show how you read them from the "
+    "graph.</p>",
+    3, 4, "Two graphs, effective and true case depth, reading method shown.",
+    "Depths interpolated from the plotted curve at HRC 50 and HRC 40; units mm."),
+  q("Task 4 - Tensile test (2 marks)",
+    "<p>For each tensile specimen record the original area and gauge length, the "
+    "load at yield and the maximum load, and calculate <b>stress and strain</b> "
+    "(show one full calculation). Using the graph, which material was the most "
+    "<b>brittle</b>, which the most <b>ductile</b> and which had the greatest "
+    "<b>toughness</b> (area under the curve)?</p>",
+    2, 4, "Stress and strain calculated; brittle / ductile / toughest identified from the graph.",
+    "Stress = load / original area; strain = extension / original length; toughness = area under the stress-strain curve."),
+  q("Task 5 - Conclusion (1 mark)",
+    "<p>Briefly describe the experiment, what you learned about case hardening "
+    "and tensile behaviour, and the case depths you found.</p>",
+    1, 2, "Your conclusion."),
+  REPORT(["Completed report (Word/PDF) from the FOL template, with graphs"]),
+ ])
+
+# ----------------------------------------------------------------------------- charpy-dbtt
+write_lab("charpy-dbtt", "Charpy Impact Testing and the Ductile-to-Brittle Transition",
+ ["Materials-testing rotation lab (one of three). Team lab; each student submits "
+  "their own report. NEEDS DRY ICE -- the technician needs two weeks' notice to "
+  "order it for the three-week rotation.",
+  "Notched AISI 1018 hot-rolled and cold-rolled specimens at about -60, -40, -20, 0 C, "
+  "room temperature, 60 and 100 C. Hold several minutes; break within FIVE seconds of "
+  "leaving the bath. Do not handle dry ice bare-handed; keep clear of the pendulum.",
+  "AI use: not permitted for the readings, calculations and graphs."],
+ [HANDS_DECL("team"),
+  q("Task 1 - Safety and set-up (1 mark)",
+    "<p>Describe how you prepared the <b>cold bath</b> (alcohol and dry ice) and the "
+    "<b>hot bath</b>, how long each specimen was held at temperature, and how you "
+    "kept the transfer-to-break time under <b>five seconds</b>. List the "
+    "<b>safety precautions</b> for the dry ice and the pendulum.</p>",
+    1, 3, "Bath preparation, hold time, transfer procedure, safety precautions.",
+    "Insulated gloves for dry ice; not sealed in a container; ventilation; everyone clear of the pendulum before release; notch faces away from the striking edge."),
+  q("Task 2 - Results table (2 marks)",
+    "<p>Paste the table (Table 1 of the report): for each of the seven "
+    "temperatures, the <b>energy absorbed (ft-lb)</b> for the <b>hot-rolled</b> and "
+    "for the <b>cold-rolled</b> steel, and the actual bath temperature.</p>",
+    2, 3, "Complete two-column table for seven temperatures.",
+    "Energy low at low temperature and high at high temperature; values plausible."),
+  q("Task 3 - Graph (2 marks)",
+    "<p>Attach a graph of <b>impact toughness against temperature</b> with both "
+    "steels on the same axes, labelled axes and a legend. Compare its shape with "
+    "the reference graph.</p>",
+    2, 3, "Graph attached with both curves; comparison with the reference graph.",
+    "S-shaped transition curve for each steel."),
+  q("Task 4 - DBTT (2 marks)",
+    "<p>State the <b>ductile-to-brittle transition temperature</b> for each steel "
+    "and <b>how you determined it</b> from the curve. Which steel had the higher "
+    "impact values, and why?</p>",
+    2, 4, "DBTT for each steel, method, and the comparison.",
+    "DBTT read at the mid-point of the transition (or a stated energy); cold-rolled steel typically less tough / higher DBTT than hot-rolled - reason given (grain structure, work hardening)."),
+  q("Task 5 - Fracture surfaces (1 mark)",
+    "<p>Attach a photo or sketch of the <b>two fracture surfaces</b> you examined "
+    "and describe each (fine granular / crystalline versus fibrous with necking).</p>",
+    1, 2, "Two surfaces shown and described.",
+    "Low-temperature: flat, granular (brittle); high-temperature: fibrous with necking (ductile)."),
+  q("Task 6 - Questions and conclusion (2 marks)",
+    "<p>(a) What is the Charpy value a measure of? (b) Which atomic lattice "
+    "structure is susceptible to brittleness at low temperatures? (c) Write a "
+    "short conclusion comparing the two steels' transition ranges.</p>",
+    2, 3, "Two answers and a conclusion.",
+    "Charpy value = energy absorbed in fracture (toughness); body-centred cubic (BCC); conclusion cites the DBTTs."),
+  REPORT(["Completed Charpy report (Word/PDF) from the FOL template, with graph and fracture-surface photos"]),
+ ])
+
+# ----------------------------------------------------------------------------- virtual welding
+def weld_quiz(slug, title, wps_note, parts, key_lines, extra_note=""):
+    """parts: list of (label, passes, hint, bend_test) -> one set-up + one weld/score question each.
+    Marks: set-up 3 in total, weld and score 6 in total, reflection 1 (quiz totals 10)."""
+    n = len(parts)
+    fmt = lambda v: ("%g" % round(v, 2))
+    per_setup, per_weld = 3.0 / n, 6.0 / n
+    qs = [SIM_DECL()]
+    for (label, passes, hint, bend) in parts:
+        pre = ("<p><b>%s</b></p>" % label) if label else ""
+        suffix = (" - " + label) if label else ""
+        qs.append(q(
+            "Set-up from the WPS%s (%s marks)" % (suffix, fmt(per_setup)),
+            pre + "<p>State which <b>WPS</b> you used (identification number or page "
+            "in the WPS booklet). Record the values you took from it and entered on "
+            "the machine: <b>shielding gas and composition, flow rate (cfh and l/min), "
+            "wire feed speed, voltage, polarity</b>, and the WPS's tolerances on wire "
+            "feed speed and voltage. " + hint + "</p>",
+            round(per_setup, 2), 3,
+            "WPS identified; gas, flow, WFS, voltage, polarity, tolerances.", "; ".join(key_lines)))
+        qs.append(q(
+            "Weld and score%s (%s marks)" % (suffix, fmt(per_weld)),
+            pre + "<p>Weld the coupon%s. Record the <b>score for %s</b> and attach a "
+            "<b>screenshot / photo of the scoring screen</b>. Describe <b>what you "
+            "changed between attempts</b> (work angle, travel angle, travel speed, "
+            "contact-tip-to-work distance) and what the monitor screens showed."
+            % ("" if passes == 1 else " with %d passes" % passes,
+               "the pass" if passes == 1 else "each of the %d passes" % passes)
+            + (" Then <b>run the bend test</b>: did you earn a bend-test certificate "
+               "(yes / no / not applicable)?" if bend else "") + "</p>",
+            round(per_weld, 2), 3, "Score(s), scoring screenshot, adjustments, bend-test result."))
+    qs.append(q("Best result and reflection (1 mark)",
+        "<p>Which attempt was your <b>best</b>, and what score did it earn? What "
+        "single change would most improve your next attempt, and why? %s</p>" % extra_note,
+        1, 3, "Best score, the change you would make, and your reasoning."))
+    qs.append(REPORT(["Your saved best weld file from the flash drive",
+                      "Scoring-screen screenshots or photos"]))
+    write_lab(slug, title,
+      ["Virtual-welding lab on the Lincoln VRTEX 360+. " + wps_note,
+       "Students save their best result to a flash drive and upload it here. This "
+       "quiz replaces the source PDF assignment sheet (which had copy-paste slips).",
+       "AI use: not applicable -- the work is hands-on in the simulator."], qs)
+
+weld_quiz("weld-flat-single", "GMAW Flat Surfacing: Single Pass",
+  "WPS 2010114: 1/4 in A36, ER70S-6 0.035 in, 75/25 Ar-CO2 at 25-35 cfh, WFS 250 +/-5 in/min, 18 +/-1 V, DCEP, CTWD 3/8 in, travel 15 in/min, stringer.",
+  [("", 1, "As this is your <b>first</b> lab on the simulator, also answer the start-up questions: "
+    "what does the <b>red</b> button open, what happens to the other coloured buttons, what is the "
+    "<b>orange</b> button for on the login screen, what <b>units</b> options exist, why is the "
+    "<b>green</b> icon inactive on the login screen, what can each saved weld be saved to, and list "
+    "the <b>monitor views</b> available.", True)],
+  ["75/25 argon-CO2", "25-35 cfh (12-16 l/min)", "WFS 250 +/-5 in/min", "18 +/-1 V", "DCEP", "CTWD 3/8 in", "travel 15 in/min"],
+  "Also say what the monitor views showed you.")
+
+weld_quiz("weld-flat-multi", "GMAW Flat Surfacing: Multi-Pass",
+  "1/4 in mild-steel flat plate, GMAW short-circuit (Flat Plate 1/4 in GMAW-S). Use the WPS for flat surfacing (same machine settings as the single-pass lab unless your WPS says otherwise).",
+  [("", 3, "Explain how you <b>placed each pass relative to the previous one</b>.", False)],
+  ["75/25 argon-CO2", "25-35 cfh", "WFS 250 +/-5 in/min", "18 +/-1 V", "DCEP - confirm against the WPS issued"],
+  "Did the score change from pass to pass? Why?")
+
+weld_quiz("weld-groove-single", "GMAW Groove Weld: Single Pass",
+  "WPS 2170114: 3/8 in A36 butt joint, 1G/PA, backing, 1/4 in root opening, 45 deg included groove, ER70S-6 0.035 in, 75/25 Ar-CO2 at 25-35 cfh, WFS 350 +/-5 in/min, 20 +/-1 V, DCEP, CTWD 3/8 in, pass 1 travel 10.9 in/min.",
+  [("", 1, "Also describe the <b>joint</b> (type, position, backing, root opening, groove angle) from the WPS.", False)],
+  ["75/25 argon-CO2", "25-35 cfh (12-16 l/min)", "WFS 350 +/-5 in/min", "20 +/-1 V", "DCEP", "butt joint, 1G/PA, backing, 1/4 in root opening, 45 deg groove"],
+  "Explain how a groove joint differs from surfacing a plate.")
+
+weld_quiz("weld-groove-multi", "GMAW Groove Weld: Multi-Pass",
+  "Same WPS 2170114 as the single-pass groove lab (WFS 350 +/-5 in/min, 20 +/-1 V, DCEP; pass 1 travel 10.9 in/min, pass 2 12.8 in/min). The sheet has room to score up to seven passes.",
+  [("", 7, "Also state the <b>travel speed the WPS gives for each pass listed</b>.", True)],
+  ["75/25 argon-CO2", "25-35 cfh", "WFS 350 +/-5 in/min", "20 +/-1 V", "DCEP", "pass 1 travel 10.9 in/min; pass 2 12.8 in/min"],
+  "Explain what a bend test checks and what a pass or fail tells you about the weld.")
+
+weld_quiz("weld-t-lap", "GMAW T and Lap Welds",
+  "Three WPSs, all fillet position 2F/PB, ER70S-6 0.035 in, 75/25 Ar-CO2: Part A T joint 10 GA, single pass (WFS 250 +/-5, 18 +/-1 V, 15 in/min); Part B lap joint 10 GA, single pass (250 +/-5, 18 +/-1 V, 15 in/min); Part C T joint 1/4 in, three passes (WFS 375 +/-5, 20 +/-1 V, travel 12.5 / 15.0 / 12.2 in/min).",
+  [("Part A - T joint, 10 GA, single pass", 1, "", True),
+   ("Part B - Lap joint, 10 GA, single pass", 1, "", True),
+   ("Part C - T joint, 1/4 in, multi-pass", 3, "", True)],
+  ["75/25 argon-CO2", "25-35 cfh", "Parts A/B: WFS 250 +/-5, 18 +/-1 V; Part C: WFS 375 +/-5, 20 +/-1 V", "DCEP"],
+  "Compare the T and the lap joint: which was harder to score well, and why?")
+
+weld_quiz("weld-vertical-t", "GMAW Vertical T Welds",
+  "Vertical-position T joints. Set-up values come from the two WPSs for the vertical T welds (the WPS pages were not among the supplied files -- check them in the WPS booklet before the term).",
+  [("Part A - T joint, 10 GA, single pass (vertical)", 1, "Also state the <b>direction of travel</b> the WPS specifies (up or down).", True),
+   ("Part B - second vertical T weld", 3, "Also state the <b>direction of travel</b> the WPS specifies.", True)],
+  ["values per the vertical-T WPSs in the booklet"],
+  "Why is vertical welding harder to control than flat welding?")
+
+print("\nAll lab quiz CSVs written to", OUT)

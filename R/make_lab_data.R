@@ -6,18 +6,18 @@
 # Emits (into ./lab_data/, which is gitignored — stage these on FOL, do NOT
 # commit them; the repo convention is that all lab data lives on FOL):
 #
-#   vsm_station_data.csv     — Lab 4  (Lean VSM) station table
-#   spc_data.csv              — Lab 8  (ML Wk2) 90-day CNC Cell 3 data, with
+#   vsm_station_data.csv     — Lean VSM: station table
+#   spc_data.csv              — ML Week 2: 90-day CNC Cell 3 data, with
 #                                five embedded data-quality problems
-#   precitech_shift_log.csv  — Lab 13 (TPM/OEE) one-week shift log
+#   precitech_shift_log.csv  — TPM/OEE: one-week shift log
 #
 # Prints answer keys for marking (these are NOT written to the student book):
 #
-#   Lab 4  — takt time, bottleneck station, process cycle efficiency
-#   Lab 6  — caliper reference values, indicative %GRR / ndc, seeded Cpk
-#   Lab 8  — row indices of the five embedded problems in spc_data.csv
-#   Lab 13 — expected weekly OEE, dominant Big Loss, AI4I 2020 Pareto order
-#   Lab 14 — expected simulated cycle-time range vs takt
+#   Lean VSM — takt time, bottleneck station, process cycle efficiency
+#   Virtual Caliper — caliper reference values, indicative %GRR / ndc, seeded Cpk
+#   ML Week 2 — row indices of the five embedded problems in spc_data.csv
+#   TPM/OEE — expected weekly OEE, dominant Big Loss, AI4I 2020 Pareto order
+#   Robotic Work-Cell Design — expected simulated cycle-time range vs takt
 #
 # Everything is set.seed()-ed so the answer keys stay valid across terms.
 # Base R only — no package dependencies.
@@ -29,7 +29,7 @@ if (!dir.exists(out_dir)) dir.create(out_dir)
 rule <- function(title) cat("\n", strrep("─", 74), "\n", title, "\n",
                             strrep("─", 74), "\n", sep = "")
 
-# Précitech demand basis (shared by Labs 4 and 14)
+# Précitech demand basis (shared by the Lean VSM and Robotic Work-Cell Design labs)
 shift_seconds     <- 8 * 3600          # one 8-hour shift
 break_seconds     <- 2 * 20 * 60       # two 20-minute breaks
 available_seconds <- shift_seconds - break_seconds
@@ -37,7 +37,7 @@ daily_demand      <- 250               # kits/day
 takt_seconds      <- available_seconds / daily_demand
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Lab 4 — Lean VSM station table
+# Lean VSM — Lean VSM station table
 # ─────────────────────────────────────────────────────────────────────────────
 set.seed(3027)
 
@@ -79,7 +79,7 @@ cat("Stations below takt (spare capacity): ",
 cat("Wrote ", file.path(out_dir, "vsm_station_data.csv"), "\n", sep = "")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Lab 6 — Virtual caliper reference values + indicative Gauge R&R + seeded Cpk
+# Virtual Caliper — Virtual caliper reference values + indicative Gauge R&R + seeded Cpk
 #
 # The caliper and the SPC data are generated INSIDE the webR cells in
 # 30-Labs.qmd; this block reproduces that seeding so the instructor has the
@@ -161,10 +161,10 @@ cat(sprintf("  Beyond-3-sigma subgroups: %s  (special-cause shift seeded at 12-1
             paste(ooc, collapse = " ")))
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Lab 8 — spc_data.csv: 90 days of CNC Cell 3 production, five embedded
+# ML Week 2 — spc_data.csv: 90 days of CNC Cell 3 production, five embedded
 # data-quality problems for students to find and log (never silently delete).
 # Columns: timestamp, operator, part_id, diameter_mm, surface_roughness_um,
-# cycle_time_sec, tool_age_cycles. Same spec as Lab 6: Ø 25.000 +/- 0.050 mm.
+# cycle_time_sec, tool_age_cycles. Same spec as the Virtual Caliper lab: Ø 25.000 +/- 0.050 mm.
 # ─────────────────────────────────────────────────────────────────────────────
 set.seed(802)
 
@@ -249,7 +249,7 @@ cat("5) Real special-cause cluster (KEEP, do not delete): days 43-47",
 cat("Wrote ", file.path(out_dir, "spc_data.csv"), "\n", sep = "")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Lab 13 — Précitech shift log + OEE answer key
+# TPM/OEE — Précitech shift log + OEE answer key
 # ─────────────────────────────────────────────────────────────────────────────
 set.seed(1213)
 
@@ -313,10 +313,10 @@ cat("  Failure rate ~ 3.4 %  =>  accuracy is a useless metric; use precision/rec
 cat("Wrote ", file.path(out_dir, "precitech_shift_log.csv"), "\n", sep = "")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Lab 14 — RoboDK work cell: expected cycle time vs takt
+# Robotic Work-Cell Design — RoboDK work cell: expected cycle time vs takt
 # ─────────────────────────────────────────────────────────────────────────────
 rule("LAB 14 — RoboDK work cell answer key")
-cat(sprintf("Takt time (from Lab 4): %.1f s/kit\n", takt_seconds))
+cat(sprintf("Takt time (from the Lean VSM lab): %.1f s/kit\n", takt_seconds))
 cat("Expected simulated single-part cycle time, mid-size 6-axis arm:\n")
 cat("  first working program : ~ 12-22 s   (default joint speeds, generous approaches)\n")
 cat("  after optimisation    : ~ 7-14 s    (reordered targets, faster joints, short approaches)\n")

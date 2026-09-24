@@ -1,5 +1,5 @@
 ---
-toc-depth: 2
+toc-depth: 3
 engine: knitr
 filters:
   - webr
@@ -21,30 +21,63 @@ source("R/required_packages.R")
 inject_jquery()
 ```
 
-This chapter collects the orientation material for every lab in the course — one
-sub-chapter per lab — so you know what each lab is about and how to prepare for
-it. The last section, [Teacher preparation], is a term-planning aid for the
-instructor: it lists the room, equipment, software, a consolidated shopping list
-and the per-lab marking notes for every lab.
+This chapter is a **catalogue of labs**. It holds more labs than any one term can
+deliver: an instructor picks the labs that suit their course, their own
+background and the equipment available. Labs are identified by **name, not by
+number** — no lab depends on where it sits in this chapter. Where labs *do*
+depend on one another, the [catalogue](#sec-labs-catalogue) below and each lab's
+*Prep work* say so.
 
-::: {.callout-important}
-## Where the step-by-step instructions live
+The chapter is organised by **topic**. Each topic is a sub-chapter, and each lab
+is a section within its topic. The last sub-chapter, [Teacher preparation](#sec-labs-teacher),
+is a planning aid for the instructor: which labs must be delivered together, how
+to schedule the materials-testing rotation, and the room, equipment, software and
+shopping lists for every lab.
 
-The **detailed instructions, the tasks, the deliverables and the marking scheme
-for each lab are delivered as a FOL quiz** — one quiz per lab. You complete the
-quiz *during the lab period*: it walks you through each task in order, collects
-your written description of what you did, and is where you upload the files you
-create (Rocksi stations, AnyLogic models, notebooks, model files, screenshots
-and screen recordings). This chapter no longer reproduces the procedure or the
-rubric; open the FOL quiz for your lab and work through it top to bottom.
+## Catalogue of labs {#sec-labs-catalogue .unnumbered}
 
-**All labs are individual.** There is no group or team submission in any lab.
-:::
+| Topic | Lab | Where / tools | Format | Notes |
+|---|---|---|---|---|
+| [Robotics and Programming Logic](#sec-labs-robotics) | [Logic Thinking for Robot Control: Rocksi](#sec-lab-logic) | Browser (Rocksi) | Individual | No install, no login |
+| | [Robotic Work-Cell Design in RoboDK for Web](#sec-lab-robodk) | Browser (RoboDK), screen recorder | Individual, take-home | Uses the takt time from the Lean lab |
+| [Process Design and Simulation](#sec-labs-design) | [Engineering Design Process Documentation](#sec-lab-design-doc) | Office, Project, Visio | Individual | Précitech case study |
+| | [Manufacturing Facility Design & Simulation (AnyLogic)](#sec-lab-anylogic) | AnyLogic PLE, Office | Individual | Builds on the Design Documentation lab |
+| [Lean Manufacturing](#sec-labs-lean) | [Lean: Value Stream Mapping, Takt and Pull](#sec-lab-lean-vsm) | Browser (draw.io, Sheets, AnyLogic Cloud) | Individual | |
+| [Ergonomics](#sec-labs-ergonomics) | [Ergonomics in Automated Manufacturing (REBA)](#sec-lab-ergonomics) | REBA worksheet, task videos | Individual | |
+| [Metrology and Calibration](#sec-labs-metrology) | [Linear and Angular Measuring Instruments](#sec-lab-instruments) | Metrology lab | Instructor's choice | |
+| | [Groove Angle Measurement (V-Block)](#sec-lab-v-groove) | Metrology lab | Instructor's choice | |
+| | [Taper Angle Measurement with a Sine Bar](#sec-lab-sine-bar) | Metrology lab | Instructor's choice | |
+| | [Micrometer and Caliper Calibration](#sec-lab-calibration) | Metrology lab | Instructor's choice | |
+| [Statistical Quality Control and Measurement Systems](#sec-labs-sqc) | [Statistics with Excel for Quality Control](#sec-lab-excel-stats) | Computer, Excel | Individual | |
+| | [Variable Control Charts: X̄, R and S](#sec-lab-variable-charts) | Metrology lab, Excel | Instructor's choice | |
+| | [Attribute Control Charts: p and np](#sec-lab-attribute-charts) | Bench, Excel | Instructor's choice | |
+| | [Process Capability: Cp, Cpk and Distributions](#sec-lab-capability) | Metrology lab, Excel | Instructor's choice | |
+| | [Repeatability and Reproducibility (Gauge R&R)](#sec-lab-grr) | Metrology lab, Excel | Team of three | |
+| | [SPC and Gauge R&R: the Virtual Caliper](#sec-lab-spc-rr) | This page (webR) | Individual | No install |
+| [Materials Testing](#sec-labs-materials) | [Hardness Testing: Rockwell and Brinell](#sec-lab-hardness) | Materials lab | Team, **3-week rotation** | **Deliver all three as a set** |
+| | [Tensile and Microhardness Testing of Case-Hardened Steel](#sec-lab-tensile) | Materials lab | Team, **3-week rotation** | **Deliver all three as a set** |
+| | [Charpy Impact Testing and the Ductile-to-Brittle Transition](#sec-lab-charpy) | Materials lab | Team, **3-week rotation** | **Deliver all three as a set; needs dry ice** |
+| [Virtual Welding](#sec-labs-welding) | [GMAW Flat Surfacing: Single Pass](#sec-lab-weld-flat-single) | VRTEX 360+ simulator | Individual | Start with this one |
+| | [GMAW Flat Surfacing: Multi-Pass](#sec-lab-weld-flat-multi) | VRTEX 360+ simulator | Individual | |
+| | [GMAW Groove Weld: Single Pass](#sec-lab-weld-groove-single) | VRTEX 360+ simulator | Individual | |
+| | [GMAW Groove Weld: Multi-Pass](#sec-lab-weld-groove-multi) | VRTEX 360+ simulator | Individual | |
+| | [GMAW T and Lap Welds](#sec-lab-weld-t-lap) | VRTEX 360+ simulator | Individual | |
+| | [GMAW Vertical T Welds](#sec-lab-weld-vertical-t) | VRTEX 360+ simulator | Individual | |
+| [Machine Learning: Predictive Maintenance](#sec-chap-ml-lab) | [Machine Learning, Week 1: AI Literacy and Prompt Engineering](#sec-lab-ml-w1) | Browser, LLM chat | Individual | **Deliver all six as a set, in order** |
+| | [Machine Learning, Week 2: Manufacturing Data and SPC](#sec-lab-ml-w2) | Google Colab | Individual | **Deliver all six as a set, in order** |
+| | [Machine Learning, Week 3: The C-MAPSS Dataset](#sec-lab-ml-w3) | Google Colab | Individual | **Deliver all six as a set, in order** |
+| | [Machine Learning, Week 4: Building the Predictive-Maintenance Model](#sec-lab-ml-w4) | Google Colab | Individual | **Deliver all six as a set, in order** |
+| | [Machine Learning, Week 5: Deploying the App](#sec-lab-ml-w5) | GitHub, Streamlit Cloud | Individual | **Deliver all six as a set, in order** |
+| | [Machine Learning, Week 6: Capstone Presentations](#sec-lab-ml-capstone) | Projector, deployed app | Individual | **Deliver all six as a set, in order** |
+| [Maintenance and Root-Cause Analysis](#sec-labs-maintenance) | [TPM/OEE, Root Cause and a New Dataset](#sec-lab-tpm-rca) | Browser (Sheets, draw.io), Colab | Individual | Best after the machine-learning set |
 
-## How to use this chapter
+"Instructor's choice" means the source handout does not fix the group size —
+these are bench exercises that work equally well individually or in pairs.
 
-Every lab sub-chapter is broken into the **same fixed parts**, and each part has
-its own colour so you always know which part of the lab you are reading:
+## How to use this chapter {#sec-labs-how-to .unnumbered}
+
+Every lab is broken into the **same fixed parts**, and each part has its own
+colour so you always know which part of the lab you are reading:
 
 | Colour | Part | What it is |
 |---|---|---|
@@ -53,70 +86,78 @@ its own colour so you always know which part of the lab you are reading:
 | Orange | **Prep work** | Readings, videos and set-up to finish *before* the lab period |
 | Blue | **Materials & equipment** | What to bring / what is provided |
 
-The **Procedure, Deliverables & submission** and **Rubric** for each lab are in
-that lab's **FOL quiz**, not here. Marking notes for the instructor are collected
-in [Teacher preparation].
+::: {.callout-important}
+## Where the step-by-step instructions live
+
+The **detailed instructions, the tasks, the deliverables and the marking scheme
+for each lab are delivered on FOL** as a **FOL quiz**
+you complete *during the lab period*: it walks you through each task in order,
+collects your written description of what you did, and is where you upload the
+files you create (Rocksi stations, AnyLogic models, notebooks, model files,
+screenshots and screen recordings). For the hands-on labs — metrology, quality
+control, materials testing and virtual welding — the FOL quiz walks you through
+each task, collects your measurements and answers, and is where you upload the
+**lab worksheet or report template** you filled in. This chapter does not
+reproduce the procedure or the rubric; open the FOL item for your lab and work
+through it top to bottom.
+
+**Unless a lab says otherwise, work is individual.** The labs that run in teams
+(hands-on Gauge R&R and the materials-testing rotation) say so, and even there
+**each student writes and submits their own report**.
+:::
 
 ::: {.callout-important}
-## Lab structure
+## Précitech Components — the running case
 
-The lab set is built around a single course-long workplace narrative —
-**Précitech Components**, a Tier-1 automotive supplier — with a six-week
-machine-learning module in the middle of the term. **The term is 14 weeks and
-there are 14 labs: the lab number is the week number.**
+Many labs are set at **Précitech Components**, a Tier-1 automotive supplier in
+Granby, Québec, whose CNC turning cells make transmission shaft blanks and whose
+new shaft-kit assembly cell you design, simulate, balance, assess and finally
+program a robot for (see the [case study](#sec-precitech-case) in the
+*Engineering Design Process Documentation* lab). The metrology, quality-control,
+materials and welding labs use lab hardware instead and are not tied to the
+narrative.
 
-| # | Week | Lab | Prereq. chapters |
-|---|---|---|---|
-| 1 | 1 | Logic Thinking for Robot Control — Rocksi | — |
-| 2 | 2 | Engineering Design Process Documentation | 2, 4 |
-| 3 | 3 | Manufacturing Facility Design & Simulation (AnyLogic) | 4, 16 |
-| 4 | 4 | Lean: Value Stream Mapping, Takt and Pull | 3, 5 |
-| 5 | 5 | Ergonomics in Automated Manufacturing (REBA) | 7 |
-| 6 | 6 | SPC and Gauge R&R — the Virtual Caliper | 10, 11 |
-| 7 | 7 | Machine Learning Week 1 — AI literacy & prompt engineering | 20 |
-| 8 | 8 | Machine Learning Week 2 — Manufacturing data & SPC | 21 |
-| 9 | 9 | Machine Learning Week 3 — the C-MAPSS dataset | 21 |
-| 10 | 10 | Machine Learning Week 4 — building the model | 21 |
-| 11 | 11 | Machine Learning Week 5 — deploying the app | 21 |
-| 12 | 12 | Machine Learning Week 6 — capstone presentations | 21 |
-| 13 | 13 | TPM/OEE, Root Cause and a New Dataset | 12, 15, 21 |
-| 14 | 14 | Robotic Work-Cell Design — RoboDK for Web *(take-home, released wk 11)* | 3, 6, 8 |
+**How the labs fit together:**
 
-**Why the labs sit where they do:**
-
-- **Lab 6 (SPC and Gauge R&R by hand) precedes Lab 8 (SPC in Python) by two
-  weeks.** That is deliberately the arc Chapter @sec-chap-ml is built on: *do it
-  yourself first, then direct an LLM to do it.*
-- **Lab 7 (ML Week 1) sits in midterm week on purpose.** The midterm is written
-  during *lecture* time, so the week-7 lab period runs as normal. ML Week 1 is
-  the right lab for that slot — individual, browser-only, no dataset, no prep
-  beyond a login: the lightest lab in the set.
-- **Lab 13 follows the capstone** because it reuses the whole ML pipeline on an
-  unseen, differently-shaped dataset — which only works once students have the
-  skill.
-- **Lab 14 is the take-home**, released in week 11 and due at the end of week 14,
-  reusing the course plan's existing take-home precedent. RoboDK for Web needs no
-  install, so it genuinely works from home, and it bookends Lab 1: block-logic
-  puzzles in week 1, a real industrial arm in week 14.
-
-**Not in the current set:** the popsicle-stick bridge lab, the lean paper-cutting
-simulation, and the automation/functional-safety lab series. The old handouts
-still exist in the `LabInstructions/` folder and can be reinstated if the course
-plan changes; the older **instrumentation-trainer** stream (B1033 benches) is
-summarised in [Appendix: instrumentation-trainer lab stream].
-
-Each lab's FOL quiz is due at the end of the scheduled lab period; the late
-penalty is 25 % per lab session. **Lab 14 is the exception — it is a take-home,
-released in week 11 and due at the end of week 14, with a short screen
-recording.** Marks may be deducted for incomplete prelab work, missing safety
-training, not bringing required materials, not cleaning your station, or
-unprofessional conduct in the lab room. The schedule in `index.qmd` is the
-current plan; follow FOL if it diverges.
+- **The Virtual Caliper precedes ML Week 2.** That is deliberately the arc
+  Chapter @sec-chap-ml is built on: *do the SPC yourself first, then direct an
+  LLM to do it.*
+- **Facility Design & Simulation follows Engineering Design Process
+  Documentation** — you turn your own layout drawing into a simulation.
+- **Robotic Work-Cell Design checks its cycle time against the takt time you
+  compute in the Lean lab.** It also bookends *Logic Thinking*: block-logic
+  puzzles at the start of the course, a real industrial arm at the end.
+- **TPM/OEE, Root Cause and a New Dataset follows the machine-learning set**
+  because it reuses the whole ML pipeline on an unseen, differently shaped dataset
+  — which only works once students have the skill.
+- **The metrology labs underpin the quality-control labs** — a control chart or a
+  Gauge R&R study is only as good as the measurement behind it.
 :::
+
+**Not in this catalogue:** the popsicle-stick bridge lab, the lean paper-cutting
+simulation, and the automation/functional-safety lab series. The old handouts
+still exist in the `LabInstructions/` folder and can be reinstated; the older
+**instrumentation-trainer** stream (B1033 benches) is summarised in
+[Appendix: instrumentation-trainer lab stream](#sec-labs-appendix-trainer).
+
+Each lab is due at the end of its scheduled lab period; the late penalty is 25 %
+per lab session. A take-home lab (Robotic Work-Cell Design) is released about
+three weeks before its due date and includes a short screen recording. Marks may
+be deducted for incomplete prelab work, missing safety training, not bringing
+required materials or protective equipment, not cleaning your station, or
+unprofessional conduct in the lab room. The course schedule in `index.qmd` shows
+the plan the current offering follows; follow FOL if it diverges.
 
 ---
 
-## Lab 1 — Logic Thinking for Robot Control: Rocksi {#sec-lab-logic}
+## Robotics and Programming Logic {#sec-labs-robotics}
+
+Two labs that bookend a course: **block-based programming logic** on a
+browser robot simulator, and the design and programming of a work cell for a
+**real 6-axis industrial arm** in RoboDK. Neither needs an install. They pair with
+Chapter 8 (Industrial Robotics).
+
+### Logic Thinking for Robot Control: Rocksi {#sec-lab-logic}
 
 ::: {.lab-overview}
 An introduction to programming logic — **sequencing**, **loops** and
@@ -129,11 +170,11 @@ the focus is on *optimising* the number of blocks.
 *(Earlier versions of this lab also used LightBot; it needs a Flash-era plug-in
 that is not available on college machines, so the whole lab now runs in Rocksi.)*
 
-**AI use:** not permitted — the outcome *is* your own logic. Lab 14 returns to a
+**AI use:** not permitted — the outcome *is* your own logic. The [Robotic Work-Cell Design](#sec-lab-robodk) lab returns to a
 real 6-axis arm in RoboDK for Web.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -147,14 +188,14 @@ After this lab you should be able to:
   and simulate a digital input/output.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read the [Programming Logic handout](labs/handouts/lab01-programming-logic.pdf)
   (importance of programming logic; loops; conditionals; teach pendants).
 - Watch: *Rocksi robot simulator: Meet Sawyer*.
 
-```{r video-lab1, echo=FALSE, results='asis'}
+```{r video-rocksi, echo=FALSE, results='asis'}
 embed_youtube("3THTZFnrxtc", "Rocksi robot simulator: Meet Sawyer")
 ```
 
@@ -162,27 +203,109 @@ embed_youtube("3THTZFnrxtc", "Rocksi robot simulator: Meet Sawyer")
   device. Try dragging one move block onto the workspace and pressing run.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access — **one per student** (all labs are individual)
 - Access to [**Rocksi**](https://rocksi.net/) block-based robot-arm simulator
   (browser, free, no login, no plug-in)
 - The **Snipping Tool** (Windows) for screenshots you will upload
-- The Lab 1 **FOL quiz** — it carries every task, in order, and is where you type
+- The **FOL quiz for this lab** — it carries every task, in order, and is where you type
   your answers and upload your Rocksi program and screenshots
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 1 FOL quiz** during the lab period. It covers sequencing,
+Work through the **FOL quiz for this lab** during the lab period. It covers sequencing,
 loops, conditional/branching logic, a pick-and-place sequence, simulating a
 digital I/O, and an optimisation challenge; for each task you describe what you
 did and attach a screenshot, and at the end you upload your saved Rocksi program.
 :::
 
+### Robotic Work-Cell Design in RoboDK for Web {#sec-lab-robodk}
+
+::: {.lab-overview}
+A **take-home** lab: released about three weeks before it is due, done
+individually, with a short screen recording as part of the submission. You design
+and program the Précitech kitting cell's pick-and-place robot in **RoboDK for
+Web** — a free, no-install, in-browser robot simulator with 600+ real arms. It
+bookends [Logic Thinking](#sec-lab-logic): block-logic puzzles at the start, a real 6-axis
+industrial arm at the end. You
+close the loop on the course by checking the robot's cycle time against the
+**takt time you computed in the [Lean](#sec-lab-lean-vsm) lab**.
+
+**AI use:** permitted with disclosure. The station layout, the program and the
+cycle times must be your own work.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Jog a 6-axis robot in joint, linear and tool coordinates and recognise
+  singularities and joint-limit stops.
+- Lay out a work cell and verify that every pick and place point lies inside the
+  robot's reach envelope.
+- Program a pick-and-place cycle with targets and gripper I/O and read the
+  simulated cycle time.
+- Compare a simulated cycle time against a required takt time and optimise the
+  program to close the gap.
+- Compute a minimum safeguarding distance from robot stopping performance and
+  select an appropriate safeguard.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read Chapter 8 (industrial robotics — coordinate systems, the work envelope,
+  singularities) and Chapter 6 (machine guarding — the minimum-distance /
+  safeguarding-distance formula and the safeguard hierarchy).
+- Have your **takt calculation from the Lean lab** to hand — you need the takt time for
+  250 kits/day.
+- Open [RoboDK for Web](https://web.robodk.com/simulation) and confirm it loads
+  and runs a sample station in your browser. No account or licence key is
+  required.
+- Confirm your screen-recording tool works (the same tool the course plan's
+  take-home lab uses).
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Personal computer with internet access and a browser (this is a take-home lab —
+  no lab PC required)
+- [RoboDK for Web](https://web.robodk.com/simulation) — no install, no licence
+  key
+- A screen-recording tool — the built-in recorder is enough (Windows **Xbox Game
+  Bar**, <kbd>Win</kbd>+<kbd>G</kbd>; macOS **Screenshot**,
+  <kbd>Shift</kbd>+<kbd>Cmd</kbd>+<kbd>5</kbd>) or free [OBS Studio](https://obsproject.com/)
+- Your takt time from the Lean lab; the [Précitech case study](#sec-precitech-case) (250
+  kits/day, one 8-hour shift)
+- The **FOL quiz for this lab** — the five tasks in order, and where you upload the
+  report, the RoboDK station file and the 3–5 min screen recording
+:::
+
+::: {.callout-note title="Instructions & submission"}
+This is a **take-home** lab: released about three weeks before it is due, done
+on your own computer. Work through the **FOL quiz for this lab** — it runs the five
+tasks in order (jog and observe, build the kitting cell, program the
+pick-and-place, cycle time vs the Lean-lab takt, and the safeguarding distance),
+asks you to describe each design decision, and collects your report, the RoboDK
+station file and a 3–5 minute screen recording talking through one decision. The
+layout, the program and the cycle times must be your own work; disclose any AI
+help.
+:::
+
 ---
 
-## Lab 2 — Engineering Design Process Documentation {#sec-lab-design-doc}
+## Process Design and Simulation {#sec-labs-design}
+
+The engineering documentation a new production cell needs before it is built, and
+a discrete-event simulation of that cell — both set at Précitech Components. The
+simulation lab builds on the documentation lab, so deliver them in that order.
+They pair with Chapters 2, 4 and 16.
+
+### Engineering Design Process Documentation {#sec-lab-design-doc}
 
 ::: {.lab-overview}
 You produce the engineering-documentation package that a real project needs to
@@ -190,15 +313,17 @@ move a design into production — specification sheets, a bill of materials, a t
 list / process flow, a project schedule and Gantt chart, a production-facility
 layout drawing, and a health-safety-environment (HSE) risk assessment — for the
 **Précitech Components shaft-kit assembly cell** described in the case study
-below. The same cell is simulated in [Lab 3](#sec-lab-anylogic), so the documents
+below. The same cell is simulated in [Facility Design & Simulation](#sec-lab-anylogic), so the documents
 you build here feed directly into the next lab. Tools: Microsoft Visio/Word,
 Project and Excel.
 
 **AI use:** not permitted for any part of the report.
 :::
 
+[]{#sec-precitech-case}
+
 ::: {.callout-note}
-## Case study — Précitech Components: new shaft-kit assembly & packing cell {#sec-precitech-case}
+## Case study — Précitech Components: new shaft-kit assembly & packing cell
 
 **Précitech Components** is a Tier-1 automotive supplier in Granby, Québec. Its CNC
 turning cells produce transmission **shaft blanks** (AISI 4140 steel, Ø 25.000 mm
@@ -214,7 +339,7 @@ dimensions are on the assembly drawing
 ([410-2365, Rev B](labs/handouts/lab02-410-2365-shaft-kit-assembly-RevB.pdf)) and
 shaft detail drawing
 ([205-5478, Rev B](labs/handouts/lab02-205-5478-shaft-RevB.pdf)) — you need both
-for Lab 2.
+for this lab.
 
 **Target output:** 250 kits/day on one 8-hour shift.
 
@@ -229,11 +354,11 @@ the shipping dock.
 Plant manager **Sophie Tran** has asked you to produce the engineering
 documentation package for this cell **before it is built**.
 
-*This is the same plant used in the machine-learning labs (Labs 7–12), which build
+*This is the same plant used in the machine-learning labs (see [Machine Learning](#sec-chap-ml-lab)), which build
 a predictive-maintenance proof of concept for Précitech's CNC turning cells.*
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -253,7 +378,7 @@ After this lab you should be able to:
 - Complete an HSE risk assessment for a manual assembly cell.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read the **case study** above and Unit 2 content on the basics of process
@@ -271,7 +396,7 @@ After this lab you should be able to:
 - Confirm you can open Microsoft Visio/Word, Project and Excel on a lab PC.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Lab PC with [**Microsoft Word**](https://www.microsoft.com/microsoft-365/word) /
@@ -290,13 +415,12 @@ After this lab you should be able to:
     Save As `.mpp`; the template's "Read me first" sheet walks you through it
   - `Risk_Assessment_Template.docx` (HSE risk assessment)
 - The Précitech shaft-kit case study (above) — the single source of requirements
-- The Lab 2 **FOL quiz** — every phase in order, and where you upload your
+- The **FOL quiz for this lab** — every phase in order, and where you upload your
   spec sheets, BOM `.xlsx`, flow chart, Project `.mpp`, layout drawing and risk
   assessment
 :::
 
 ::: {.callout-note title="The automation decision"}
-## The automation decision {#sec-lab2-automation-decision}
 
 Précitech's plant manager has not committed to a cell configuration yet — that
 choice is yours to make and defend as part of your facility layout. Two
@@ -321,7 +445,7 @@ conveyors — matching the *manual* kitting cell Précitech originally scoped.
 | Flexibility to rebalance | Low — station count and index time are fixed | High — move people, cross-train, absorb absences |
 | Changeover to a kit variant | Retool multiple stations at once | Operators adapt; fixtures swap faster |
 | Failure mode | Single point of failure — one jammed station stops the whole cell | A blocked station can sometimes be buffered around |
-| Ergonomic risk | Concentrated at one manual station | Spread across every station ([Lab 5](#sec-lab-ergonomics)) |
+| Ergonomic risk | Concentrated at one manual station | Spread across every station ([Ergonomics](#sec-lab-ergonomics)) |
 | Maintenance skill needed | PLC/servo/automation technicians (Chapter 9) | Standard mechanical/tooling upkeep |
 
 Neither option is "correct." Your facility-layout task in the FOL quiz asks you
@@ -331,23 +455,21 @@ volume, timeline and labour situation.
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 2 FOL quiz** during the lab period. It takes you through
+Work through the **FOL quiz for this lab** during the lab period. It takes you through
 all five phases — specification sheet and BOM (with a prepared checklist to work
 from), task list / process flow, project schedule and Gantt chart, facility
 layout drawing (including the automation decision above), and HSE risk
 assessment — asks you to describe each one, and collects the electronic files.
 The task-list and Gantt-chart examples in the quiz are **starting points only**
 — part of the mark is finding and adding the steps they're missing. Keep your
-layout drawing: you refine and reuse it in [Lab 3](#sec-lab-anylogic). AI tools
+layout drawing: you refine and reuse it in [Facility Design & Simulation](#sec-lab-anylogic). AI tools
 may not be used for any part of this lab.
 :::
 
----
-
-## Lab 3 — Manufacturing Facility Design & Simulation (AnyLogic) {#sec-lab-anylogic}
+### Manufacturing Facility Design & Simulation (AnyLogic) {#sec-lab-anylogic}
 
 ::: {.lab-overview}
-You turn the Précitech kitting-cell layout from Lab 2 into an electronic drawing,
+You turn the Précitech kitting-cell layout from the [Engineering Design Process Documentation](#sec-lab-design-doc) lab into an electronic drawing,
 then use **AnyLogic Personal Learning Edition** to run a discrete-event
 simulation of the cell's order-fulfilment behaviour. By changing order and
 replenishment parameters and reading the statistics screens, you see how
@@ -356,7 +478,7 @@ component-stock policy drives waiting time, picking (kitting) time and throughpu
 **AI use:** not permitted for any part of the report.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -372,7 +494,7 @@ After this lab you should be able to:
   buffer stock and how often to replenish.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Re-read the [Précitech case study](#sec-precitech-case) and review Unit 3
@@ -382,25 +504,25 @@ After this lab you should be able to:
 - Watch the AnyLogic walk-through video (link on FOL).
 - Install [**AnyLogic Personal Learning Edition**](https://www.anylogic.com/downloads/)
   (free) on your machine *before* the lab and confirm it launches.
-- Bring your Lab 2 layout drawing, spec sheets, schedule, BOM and flow documents.
+- Bring your layout drawing, spec sheets, schedule, BOM and flow documents.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Lab PC with [**AnyLogic Personal Learning Edition**](https://www.anylogic.com/downloads/)
   and **Microsoft Visio/Word/Project/Excel**
 - The AnyLogic order-fulfilment / warehouse demo model referenced in the video —
   *confirm the exact model and stage it on FOL / the lab PCs*
-- Your Lab 2 documents for the Précitech kitting cell
-- The Lab 3 **FOL quiz** — the facility-drawing checklist, the four AnyLogic
+- Your Engineering Design Process Documentation lab documents for the Précitech kitting cell
+- The **FOL quiz for this lab** — the facility-drawing checklist, the four AnyLogic
   parameter sets to run, and where you upload your drawing, your saved AnyLogic
   model and the labelled statistics screenshots
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 3 FOL quiz** during the lab period. Phase 1 walks you
-through recreating the Lab 2 kitting-cell layout electronically against a
+Work through the **FOL quiz for this lab** during the lab period. Phase 1 walks you
+through recreating your Engineering Design Process Documentation kitting-cell layout electronically against a
 checklist; Phase 2 gives you four AnyLogic parameter sets to run, each for three
 simulated minutes, and asks for a labelled Statistics screenshot and a written
 observation/analysis tied to the case study for each. You upload the drawing, the
@@ -410,7 +532,12 @@ any part of this lab.
 
 ---
 
-## Lab 4 — Lean: Value Stream Mapping, Takt and Pull {#sec-lab-lean-vsm}
+## Lean Manufacturing {#sec-labs-lean}
+
+Map, size and redesign a production flow. This lab pairs with Chapters 3 and 5,
+and its takt time is used again in the robot work-cell lab.
+
+### Lean: Value Stream Mapping, Takt and Pull {#sec-lab-lean-vsm}
 
 ::: {.lab-overview}
 You map the Précitech shaft line as it runs today, size it against customer
@@ -426,7 +553,7 @@ takt / PCE calculations — those must be your own work. Name any tool you used 
 what for.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -442,7 +569,7 @@ After this lab you should be able to:
 - Propose a future state and justify the projected lead-time reduction.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter 5 (Lean) on takt time, the seven wastes, pull systems, kanban and
@@ -456,7 +583,7 @@ After this lab you should be able to:
   shaft line (cycle time, changeover, uptime, WIP, batch size per station).
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access — one per student (all labs are individual)
@@ -466,12 +593,12 @@ After this lab you should be able to:
 - `vsm_station_data.csv` from FOL
 - The [Précitech case study](#sec-precitech-case) — demand is 250 kits/day on one
   8-hour shift
-- The Lab 4 **FOL quiz** — the five tasks in order, and where you upload the
+- The **FOL quiz for this lab** — the five tasks in order, and where you upload the
   draw.io exports, the Sheets calculations and the AnyLogic Cloud results
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 4 FOL quiz** during the lab period. It runs the five tasks
+Work through the **FOL quiz for this lab** during the lab period. It runs the five tasks
 in order — current-state VSM, takt and the operator balance chart, the
 seven-wastes classification and PCE, push vs pull vs supermarket on AnyLogic
 Cloud, and the future-state map — asks you to describe and interpret each, and
@@ -482,7 +609,11 @@ you used for the parts where it is permitted.
 
 ---
 
-## Lab 5 — Ergonomics in Automated Manufacturing (REBA) {#sec-lab-ergonomics}
+## Ergonomics {#sec-labs-ergonomics}
+
+Assess a workplace task for musculoskeletal risk. This lab pairs with Chapter 7.
+
+### Ergonomics in Automated Manufacturing (REBA) {#sec-lab-ergonomics}
 
 ::: {.lab-overview}
 You assess a workplace task for musculoskeletal risk using the
@@ -492,7 +623,7 @@ one of three sample tasks.)
 **AI use:** permitted with disclosure, not for the REBA scoring itself.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -504,7 +635,7 @@ After this lab you should be able to:
   assessment.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Review the introduction-to-ergonomics and REBA material (video links in the
@@ -513,7 +644,7 @@ After this lab you should be able to:
   and the [REBA Employee Assessment Worksheet](https://ergo-plus.com/wp-content/uploads/REBA.pdf).
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - [**REBA Employee Assessment Worksheet**](https://ergo-plus.com/wp-content/uploads/REBA.pdf) (printed, one per student)
@@ -523,12 +654,12 @@ After this lab you should be able to:
   - Task 1 — lifting boxes repeatedly
   - Task 2 — computer-workstation setup
   - Task 3 — floor cleaning with a buffer
-- The Lab 5 **FOL quiz** — the intro videos, the assigned task, the REBA
+- The **FOL quiz for this lab** — the intro videos, the assigned task, the REBA
   steps, and where you upload your completed REBA worksheet (scan or photo)
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 5 FOL quiz** during the lab period. It plays the intro
+Work through the **FOL quiz for this lab** during the lab period. It plays the intro
 videos, assigns you one of the three sample tasks, and walks you through
 scoring it on the REBA worksheet. You upload the completed REBA worksheet and
 any screenshots in the quiz. Disclose any AI tool you used.
@@ -536,11 +667,528 @@ any screenshots in the quiz. Disclose any AI tool you used.
 
 ---
 
-## Lab 6 — SPC and Gauge R&R: the Virtual Caliper {#sec-lab-spc-rr}
+## Metrology and Calibration {#sec-labs-metrology}
+
+Dimensional measurement fundamentals: reading precision instruments, measuring
+angles *indirectly* with gauge blocks and rollers, and calibrating an instrument
+against a traceable standard. These hands-on labs sit underneath the SPC and MSA
+chapters — a control chart or a Gauge R&R study is only as good as the
+measurement behind it (Chapter 11). They are independent of each other and can
+be delivered in any order; the instruments lab is the natural first one.
+
+### Linear and Angular Measuring Instruments {#sec-lab-instruments}
+
+::: {.lab-overview}
+Before you can trust a measurement you have to understand the instrument that
+made it. You study three linear instruments — the **vernier caliper**, the
+**vernier height gauge** and the **vernier micrometer** — and one angular
+reference, the **gauge (slip) block**. For each instrument you illustrate it,
+label its parts, state the units of its scale(s), write the procedure for reading
+it and derive the formula for its **least count**; you then work two least-count
+problems and answer three questions on gauge-block grades, sets and wringing.
+
+**AI use:** not permitted for the least-count calculations. Disclose any AI tool
+you used for background research on the instruments.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Identify the main parts of a vernier caliper, a vernier height gauge and a
+  vernier micrometer, and state the unit of each scale.
+- Read each instrument and explain, step by step, how the reading is built up
+  from the main scale and the vernier or thimble scale.
+- Calculate the least count of a vernier caliper and of a vernier micrometer
+  from the way their scales are graduated.
+- Explain what a gauge-block grade means, what each grade is used for, and how
+  blocks are *wrung* together to build a stack.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read the parts of Chapter 11 (MSA) on resolution, accuracy and calibration.
+- Review how a vernier scale works: a sliding scale whose divisions are slightly
+  shorter than the main-scale divisions, so the one line that aligns gives the
+  fraction of a division.
+- Bring a phone or camera — you photograph the instruments on your bench.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Vernier caliper, vernier height gauge and vernier (or digital) micrometer
+- A gauge-block (slip-gauge) set — rectangular, square and square-with-hole
+  blocks if the set has them
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Complete the assignment sheet from FOL: one entry per instrument (illustration,
+labelled parts, scale unit(s), reading procedure, least-count formula), the two
+least-count problems, and the three gauge-block questions. Submit it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Groove Angle Measurement (V-Block) {#sec-lab-v-groove}
+
+::: {.lab-overview}
+You measure the included angle of a V-groove *without* an angle-measuring
+instrument. Two cylindrical rollers of different, precisely known diameters are
+placed in the groove one at a time; with the V-block on a surface plate you
+measure how high the top of each roller sits with a **vernier height gauge**. The
+groove angle then follows from the two roller diameters and the two heights by
+trigonometry. You repeat the whole procedure on four samples.
+
+**AI use:** not permitted — the measurements and calculations must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain the principle of measuring an angle indirectly from two roller
+  diameters and two heights.
+- Set up a vernier height gauge on a surface plate (zero at the plate, scriber
+  just touching the roller) and read it.
+- Calculate the V-groove angle from your measurements and comment on how well
+  your repeats agree.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review right-triangle trigonometry and inverse sine.
+- Review how to zero and read a vernier height gauge (see
+  [Linear and Angular Measuring Instruments](#sec-lab-instruments)).
+- Read the precautions on the FOL sheet: the rollers must not move while the
+  height is read, the scriber edge should only *just* touch the roller, and the
+  roller diameter is measured at its middle.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- V-block and a clean, dust-free surface plate
+- Vernier height gauge and vernier caliper
+- Two rollers (gauge pins) of different diameters
+- The V-groove angle sheet from FOL (Table 1: roller diameter, roller height and
+  calculated angle for each of four samples)
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Measure the two roller diameters with the caliper; place the smaller roller in
+the groove and measure its height above the plate; repeat for the larger roller;
+calculate the angle with the equation on the sheet and record it in Table 1; then
+repeat the whole procedure for the remaining samples. Submit the completed table
+in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Taper Angle Measurement with a Sine Bar {#sec-lab-sine-bar}
+
+::: {.lab-overview}
+A **sine bar** turns an angle measurement into a length measurement. The bar, a
+stack of gauge blocks and the surface plate form a right-angled triangle: the bar
+is the hypotenuse *L* and the gauge-block stack is the side *h* opposite the
+angle, so $\sin\theta = h/L$. You build a gauge-block stack under one roller of
+the sine bar until the top surface of an unknown **taper** is parallel to the
+surface plate — confirmed by sliding a **dial indicator** along it and reading
+zero deviation — and calculate the taper angle. You measure three tapers.
+
+**AI use:** not permitted — the measurements and calculations must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain the sine principle and why the two rollers must be equal in diameter,
+  parallel, and a precisely known distance apart.
+- Wring gauge blocks into a stack and use a dial indicator to prove that a
+  surface is parallel to the plate.
+- Calculate the half-angle $\theta = \sin^{-1}(h/L)$ and the whole taper angle
+  $2\theta$, and compare it with the nominal taper angle.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review right-triangle trigonometry.
+- Review gauge-block wringing (see
+  [Linear and Angular Measuring Instruments](#sec-lab-instruments)).
+- Note that the dial-indicator reading tells you *which way* to adjust the stack:
+  if the indicator deflects, add or remove gauge blocks and try again.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Surface plate, sine bar, dial indicator on a stand, gauge-block (slip-gauge)
+  set
+- Three tapers of different angles
+- The sine-bar sheet from FOL (table: taper, gauge-block height *h*, bar length
+  *L*, half-angle θ, whole angle 2θ, comparison with the actual taper angle)
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Follow the procedure on the FOL sheet for each assigned taper, record *h*, *L*,
+θ and 2θ in the table, and compare with the actual taper angle. Submit the
+completed sheet in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Micrometer and Caliper Calibration {#sec-lab-calibration}
+
+::: {.lab-overview}
+**Calibration** compares an instrument against a *traceable standard* — in
+dimensional metrology, a gauge block whose deviation from nominal is known and
+traceable to the international standard. You calibrate a micrometer and a
+caliper: clean and inspect the instrument, let it come to ambient temperature,
+set zero, then check it against gauge-block stacks at ten points spread over its
+range, record the deviation at each point and report the instrument's accuracy
+(the deviation over its range) against the manufacturer's published accuracy.
+This is the first step of any measurement-systems analysis, and the reference
+values it produces are what *bias* and *linearity* are measured against.
+
+**AI use:** not permitted — the readings and the report must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain calibration, traceability and why calibration is done at defined
+  intervals.
+- Carry out a calibration check on a micrometer and on a caliper following a
+  standard procedure (clean, inspect, stabilise, zero, check at each size).
+- Record and interpret the deviation at each size and decide whether the
+  instrument is within its published accuracy.
+- Complete a calibration report identifying the instrument, the standard used and
+  the findings.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read Chapter 11 (MSA) — calibration, bias and linearity.
+- Review gauge-block wringing (see
+  [Linear and Angular Measuring Instruments](#sec-lab-instruments)).
+- Read the calibration procedure on the FOL sheet before the lab: the check sizes
+  for the micrometer and for the caliper (which depend on its range) are listed
+  there.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- A micrometer and a caliper to calibrate (record make, model, serial number,
+  range, resolution and published accuracy)
+- A gauge-block set with its serial number, and clean lint-free wipes
+- Cleaning fluid (methyl alcohol) — keep it off your skin
+- The calibration report forms from FOL (one for the micrometer, one for the
+  caliper)
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Complete one calibration report for the micrometer and one for the caliper:
+instrument identification, the reading and deviation at each check size, the
+accuracy over the range, the standard used, calibration notes and your
+observations and findings. Submit both reports in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+---
+
+## Statistical Quality Control and Measurement Systems {#sec-labs-sqc}
+
+The laboratory companion to Chapter 10 (SPC) and Chapter 11 (MSA). Five of the
+six labs are Excel worksheets: you collect real data — measuring roller bearings,
+inspecting beads, measuring holes — and then do the statistics yourself in the
+worksheet. The sixth, the Virtual Caliper, runs entirely on this page. Any lab
+can be delivered on its own; a sensible order is *Statistics with Excel →
+Variable Control Charts → Attribute Control Charts → Process Capability*, with
+the two measurement-system labs (hands-on Gauge R&R and the Virtual Caliper)
+alongside or after them. The *Virtual Caliper* and the hands-on *Gauge R&R* lab
+cover overlapping ground — deliver one or both.
+
+### Statistics with Excel for Quality Control {#sec-lab-excel-stats}
+
+::: {.lab-overview}
+Statistics is the language of quality control, and Excel is the tool most
+quality technicians actually use. You learn the Excel functions for the basic
+statistical parameters — average, median, mode, population and sample variance
+and standard deviation, count, minimum, maximum and range — and apply them to
+three small data sets: the processing times of 12 hot-rolled-steel samples
+(compute the statistics and interpret the difference between mean, median and
+mode), the depth of cut versus tool wear of a milling operation (20 observations,
+plotted as a labelled scatterplot), and 50 call-centre waiting times (built into
+a frequency table and a histogram, then read for the mean, the mode/median and
+whether the shape looks like a normal curve).
+
+**AI use:** not permitted — the calculations and graphs must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Use Excel's statistical functions to compute measures of centre and spread, and
+  explain when to use the population and the sample versions.
+- Interpret the difference between mean, median and mode.
+- Build a frequency table and histogram in Excel and judge whether a
+  distribution looks normal.
+- Plot and label a scatterplot to look for a relationship between two process
+  variables.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read the introductory sections of Chapter 10 (SPC) on variation, mean, standard
+  deviation and histograms.
+- Confirm you can use basic Excel formulas and insert a chart.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Computer with Microsoft Excel
+- The statistics worksheet from FOL (the data sets, function list and answer cells
+  are in the file)
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Work through the worksheet in order: the function warm-up, the processing-time
+statistics with your interpretation, the scatterplot, and the histogram with the
+four short-answer questions. Save the workbook and submit it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Variable Control Charts: X̄, R and S {#sec-lab-variable-charts}
+
+::: {.lab-overview}
+You measure the length of **100 roller bearings** — in ten subgroups of ten — and
+use the data to build an **X̄ chart**, an **R chart** and an **S chart** in Excel.
+You compute the subgroup averages, ranges and standard deviations, the grand
+average, the average range and average standard deviation, and the control
+limits from the tabulated constants; then you plot the charts and evaluate them
+against the out-of-control rules on the worksheet. (The bearings are tapered — you
+measure length, *not* diameter.)
+
+**AI use:** not permitted — the measurements, calculations and charts must be
+your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Organise measurements into rational subgroups and compute subgroup statistics.
+- Calculate centre lines and control limits for X̄, R and S charts using the
+  control-chart constants.
+- Plot the charts and apply the out-of-control rules to decide whether the
+  process is in statistical control.
+- Explain the difference between what the X̄ chart and the R/S charts monitor.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read Chapter 10 (SPC) — X̄/R and X̄/S charts, control limits and the
+  out-of-control rules.
+- Have the control-chart constants table to hand (the FOL sheet gives the
+  constants for subgroups of ten; the full table is on FOL).
+- Review how to read a micrometer or caliper to the resolution the sheet
+  specifies.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- 100 roller bearings (the same batch) and a micrometer or caliper
+- Computer with Microsoft Excel
+- The variable-control-charts worksheet from FOL and the control-chart constants
+  table
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Measure the bearings in ten subgroups of ten and enter them in the worksheet,
+complete the X̄, R and S calculations, plot the three charts, and evaluate the
+charts against the out-of-control rules. Save the workbook and submit it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Attribute Control Charts: p and np {#sec-lab-attribute-charts}
+
+::: {.lab-overview}
+Not every quality characteristic is a measurement — many are pass/fail. You
+inspect a production run of coloured beads: in each of ten samples of 50 beads
+you count the defectives (the instructor tells you which colour is "defective"
+for your sample), then compute the proportion defective and build a **p chart**
+and an **np chart** with their control limits. You judge whether the process is
+in control and say what should be done next.
+
+**AI use:** not permitted for the counts, calculations and charts. Your written
+answers must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain what a p chart and an np chart monitor and when to use each.
+- Calculate the centre line and control limits for both charts (setting a
+  negative lower limit to zero).
+- Decide whether the process is in statistical control and justify the next step.
+- Name a complementary tool (for example a Pareto chart) and say why it helps.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read Chapter 10 (SPC) — attribute data, p and np charts.
+- Review the difference between a *defect* and a *defective*.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- A bag of beads of two or more colours per bench (enough for ten samples of 50)
+- Computer with Microsoft Excel
+- The attribute-charts worksheet from FOL
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Draw and inspect ten samples of 50 beads, record the number defective in each,
+complete the p-chart and np-chart calculations, plot both charts and answer the
+questions on the worksheet. Save the workbook and submit it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Process Capability: Cp, Cpk and Distributions {#sec-lab-capability}
+
+::: {.lab-overview}
+A process can be in control and still not be **capable** — its natural spread
+may be wider than the specification. You measure the length of **50 roller
+bearings** with a micrometer, plot the data to see what distribution it follows,
+compute the average, the average range and the standard deviation (both directly
+and as the average range divided by $d_2$), and calculate **Cp** and **Cpk**
+against the specification limits on the worksheet. A capable process has an
+index of at least 1.33.
+
+**AI use:** not permitted — the measurements and calculations must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Plot a data set as a bar chart and scatter plot and describe its distribution.
+- Estimate process standard deviation from the average range and from the raw
+  data.
+- Calculate Cp and Cpk and decide whether the process is capable.
+- Explain why Cpk, not Cp, is the right index when the process is off-centre.
+- Describe the steps of a real capability study — why the process must be stable
+  and the parts must come straight from production.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read Chapter 10 (SPC) — process capability, Cp and Cpk.
+- Read the **Preparing a Capability Study** handout (FOL): the checklist a quality
+  department follows before running a study — review history, size the sample,
+  confirm the process is stable and the gauges are calibrated, quarantine and
+  number the parts, and do not discard defective parts.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- 50 roller bearings (the same batch) and a micrometer
+- Computer with Microsoft Excel
+- The capability worksheet from FOL, and the *Preparing a Capability Study*
+  handout
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Measure the 50 bearings and enter them in the worksheet, plot the distribution,
+compute the average, average range and standard deviation, then Cp and Cpk, and
+state whether the process is capable. Save the workbook and submit it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Repeatability and Reproducibility (Gauge R&R) {#sec-lab-grr}
+
+::: {.lab-overview}
+A measurement system has two sources of variation you can study directly:
+**repeatability** (one person measuring the same item repeatedly) and
+**reproducibility** (different people measuring the same item). In **Part A**, a
+team of three operators each measures the diameter of five holes on a part with
+a caliper, twice, and you work through the range-method calculation: the range
+per hole and operator, the average ranges, repeatability, reproducibility, R&R,
+part variation and total variation. In **Part B** you repeat the calculation on
+a supplied two-operator data set. This is the hands-on, physical version of the
+study you can also run in the browser in
+[SPC and Gauge R&R: the Virtual Caliper](#sec-lab-spc-rr).
+
+**AI use:** not permitted — the measurements and calculations must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain repeatability and reproducibility and how each is estimated.
+- Collect a balanced Gauge R&R data set (operators × parts × trials).
+- Calculate repeatability, reproducibility, R&R, part variation and total
+  variation with the range method, and express R&R against total variation.
+- Judge whether a measurement system is adequate for the process it measures.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read Chapter 11 (MSA) — repeatability, reproducibility and the range method.
+- Review how to read a caliper to its resolution (see
+  [Linear and Angular Measuring Instruments](#sec-lab-instruments)).
+- Know your team: three operators (assigned by your instructor), each measuring
+  independently.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- A part with five measurable holes, and a caliper
+- Computer with Microsoft Excel
+- The Gauge R&R worksheet from FOL (Part A data sheet, Part B data set and the
+  calculation steps)
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Part A: each operator measures the five holes twice and records the readings
+independently; then complete the calculation steps in the worksheet. Part B:
+complete the same steps on the supplied data. Save the workbook and submit it to
+the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### SPC and Gauge R&R: the Virtual Caliper {#sec-lab-spc-rr}
 
 ::: {.lab-overview}
 Before you ask an LLM to do statistical process control in Python (that is
-Lab 8), you do it yourself, by hand, as the measurement system. This lab runs
+[Machine Learning, Week 2](#sec-lab-ml-w2)), you do it yourself, by hand, as the measurement system. This lab runs
 entirely inside this page: **webR cells** render a **virtual vernier caliper** at
 a hidden, seeded true value, you read the scale and type the value, and the
 readings you produce carry *genuine human reading error against known ground
@@ -553,7 +1201,7 @@ measurement system being studied. You may use an LLM to check your written
 reflection only, with disclosure.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -568,7 +1216,7 @@ After this lab you should be able to:
 - Explain how an inadequate measurement system distorts a capability index.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter 10 (SPC — X̄/R charts, the Western Electric rules, Cpk) and
@@ -583,7 +1231,7 @@ After this lab you should be able to:
   in separate sittings so each is a genuine re-read, not a copy of the last.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - One computer with this book page open (a second screen helps — read the caliper
@@ -594,14 +1242,14 @@ After this lab you should be able to:
   3 trials) before you type them into the calculator cell
 - The [Précitech case study](#sec-precitech-case): shaft blanks, AISI 4140,
   Ø 25.000 ± 0.050 mm
-- The Lab 6 **FOL quiz** — the six tasks in order, and where you paste your
+- The **FOL quiz for this lab** — the six tasks in order, and where you paste your
   reading grid and the cell outputs and upload screenshots of the X̄/R chart
 :::
 
-### The lab cells
+#### The lab cells {.unnumbered .unlisted}
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 6 FOL quiz** during the lab period. It runs the six tasks
+Work through the **FOL quiz for this lab** during the lab period. It runs the six tasks
 in order — calibrate your eye, the 90-reading measurement run (three rounds of
 10 parts × 3 trials), the range-method Gauge R&R, bias and linearity, the X̄/R
 chart and Cpk, and the reflection — and asks you to paste your reading grid and
@@ -621,8 +1269,8 @@ main-scale mark. When you play the three operator rounds, read blind — do not
 look at your previous round's numbers.
 
 ```{webr-r}
-#| label: lab6-setup
-# ── Lab 6 setup — RUN THIS FIRST ──────────────────────────────────────────────
+#| label: caliper-setup
+# ── Virtual caliper setup — RUN THIS FIRST ──────────────────────────────────────────────
 # Defines the virtual caliper and the hidden true values. No third-party
 # packages: base R graphics only.
 
@@ -686,7 +1334,7 @@ cat("\nUse draw_caliper(part, trial) with part 1..10 and trial 1..3.\n")
 ```
 
 ```{webr-r}
-#| label: lab6-demo
+#| label: caliper-demo
 # Practice reads — set demo to 1, 2 or 3, run, write your reading, then check.
 demo <- 1
 
@@ -699,7 +1347,7 @@ cat("Correct reading to 0.05 mm:",
 ```
 
 ```{webr-r}
-#| label: lab6-grr
+#| label: caliper-grr
 # ── Range-method Gauge R&R — 10 parts, 3 operator rounds, 3 trials ─────────────
 # Replace the numbers below with YOUR 90 readings. Each round's matrix is
 # 10 rows (parts 1..10) x 3 columns (trials 1..3). You produce all three rounds
@@ -766,9 +1414,9 @@ cat("\nAIAG: %GRR < 10 acceptable | 10-30 marginal | > 30 unacceptable; ndc >= 5
 ```
 
 ```{webr-r}
-#| label: lab6-bias
+#| label: caliper-bias
 # ── Bias and linearity vs certified reference values ──────────────────────────
-# Uses op_A / op_B / op_C from the lab6-grr cell and caliper_ref from the setup cell.
+# Uses op_A / op_B / op_C from the caliper-grr cell and caliper_ref from the setup cell.
 
 ops <- list(A = op_A, B = op_B, C = op_C)
 obs_part_mean <- rowMeans(sapply(ops, function(M) rowMeans(M)))   # 10 part means
@@ -789,7 +1437,7 @@ cat(sprintf("Linearity over the %.2f mm study range = %.4f mm\n",
 ```
 
 ```{webr-r}
-#| label: lab6-spc
+#| label: caliper-spc
 # ── X-bar / R chart and Cpk — seeded 25-subgroup production dataset ────────────
 # Ø 25.000 +/- 0.050 mm. Same data for every group.
 
@@ -833,27 +1481,571 @@ cat("Apply the remaining Western Electric rules by eye on the chart above.\n")
 
 ---
 
-## Machine-learning module: Labs 7 to 12 {#sec-chap-ml-lab}
+## Materials Testing {#sec-labs-materials}
 
-Labs 7–12 are the laboratory component of Chapter @sec-chap-ml, running in course
-weeks 7 to 12. Each week has two hours of classroom theory (Chapter
-@sec-chap-ml) followed by a two-hour lab. The six sessions build on each other:
-by the end of Lab 11 you will have a working predictive-maintenance web
-application at a public URL, and Lab 12 is the live demo of it.
+Three destructive and hardness tests that show how a steel's heat treatment and
+processing change its strength, hardness and toughness: **hardness testing**,
+**tensile and microhardness testing of case-hardened steel**, and **Charpy impact
+testing**. **These three labs run together as a rotation over three consecutive
+weeks.** The class is split into three groups; each week every group is at a
+different one of the three labs, and each group starts at a different lab, so by
+the end of week three every student has completed all three (see
+[Materials-testing rotation](#sec-materials-rotation)). Your instructor posts your group and your starting
+lab on FOL.
+
+::: {.callout-important}
+## Safety in the materials laboratory
+
+Wear **safety glasses and safety footwear** — you will not be admitted without
+them. Do not handle dry ice with bare hands: use insulated gloves and tongs. Keep
+alcohol off your skin (it is absorbed through it), keep etchant off your skin,
+and stay clear of the pendulum's swing path in the Charpy lab.
+:::
+
+Testing is done in teams so that everyone can see the test, but **each student
+writes and submits their own report** on the template provided on FOL.
+
+### Hardness Testing: Rockwell and Brinell {#sec-lab-hardness}
+
+::: {.lab-overview}
+Hardness is a material's resistance to indentation, and it is the quickest test
+of what a heat treatment has done to a steel. You measure the hardness of three
+steel specimens — **annealed**, **quenched (hardened)** and **normalized** — with
+two methods: the **Rockwell** tester (choosing the right scale, minor load and
+major load) and the **Brinell** tester (measuring the indentation diameter and
+converting it to a Brinell number). You average repeated readings, convert
+between scales, calculate the percentage deviation and the reproducibility of
+each method, and explain why the three heat treatments give different hardness.
+
+**AI use:** not permitted for the readings and calculations. Your written answers
+must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Carry out Rockwell and Brinell hardness tests correctly, including scale and
+  load selection.
+- Convert between Rockwell and Brinell values using a conversion chart.
+- Compare the reproducibility of the two methods for each specimen.
+- Explain annealing, quenching and normalizing and relate each to the hardness
+  you measured.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read your notes on the heat treatment of steel — annealing, quenching and
+  normalizing — and the difference between the Rockwell B and C scales.
+- Review the definition of range (maximum minus minimum), which you use as your
+  measure of reproducibility.
+- Download the report template from FOL (*Hardness Testing*).
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Rockwell hardness tester (with ball and diamond indenters) and Brinell hardness
+  tester with a measuring microscope
+- Annealed, quenched and normalized steel specimens
+- Rockwell–Brinell conversion chart (or an online source)
+- Safety glasses and safety footwear
+- The hardness report template from FOL
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Test each specimen with both methods, record the readings in Tables 1 and 2 of
+the template, complete the calculations, answer the questions and write the
+conclusions on how closely the two methods agree and how reproducible each is.
+Submit your own report in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Tensile and Microhardness Testing of Case-Hardened Steel {#sec-lab-tensile}
+
+::: {.lab-overview}
+A case-hardened part is hard on the outside and tough in the core. You examine
+the microstructure of the **case** and the **core** of a case-hardened steel
+(AISI 1566) and run a **Vickers microhardness traverse** from the surface inwards
+in 0.5 mm steps, converting each indentation diameter to a Vickers and then a
+Rockwell number. You plot hardness against depth and read off the **effective case
+depth** (where hardness falls to HRC 50) and the **true case depth** (HRC 40). You
+then test tensile specimens, plot their stress–strain curves and use them to
+decide which material is the most brittle, the most ductile and the toughest, and
+you calculate stress and strain for each.
+
+**AI use:** not permitted for the readings, calculations and graphs. Your written
+conclusions must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain what case hardening does and how the microstructure of case and core
+  differ.
+- Perform a Vickers microhardness traverse, convert the results to Rockwell
+  numbers and plot a hardness profile.
+- Determine the effective and true case depths from the profile.
+- Explain what a tensile test measures — yield strength, ultimate tensile
+  strength, ductility — and calculate stress and strain from load and extension.
+- Compare materials from their stress–strain curves: brittle versus ductile, and
+  toughness as the area under the curve.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read the **Tensile Testing and Microhardness Testing of Case-Hardened Material**
+  slides from FOL — loading, stress, strain, the stress–strain curve, what the
+  tensile test reveals, and how Vickers microhardness works.
+- Review the formulas for engineering stress (load ÷ original area) and strain
+  (extension ÷ original gauge length).
+- Download the report template from FOL (*Tensile and MicroHardness Test*).
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Case-hardened AISI 1566 specimen (mounted and polished) and a metallurgical
+  microscope
+- Vickers microhardness tester
+- Tensile testing machine with data acquisition, and the tensile specimens
+- Vickers-to-Rockwell conversion chart
+- Safety glasses and safety footwear
+- The tensile and microhardness report template from FOL
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Record the metallography sketches, complete the hardness table (depth,
+indentation diameter, Vickers, Rockwell), plot the two hardness graphs, state the
+effective and true case depths, then complete the tensile results and conclusions
+in the template. Submit your own report in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### Charpy Impact Testing and the Ductile-to-Brittle Transition {#sec-lab-charpy}
+
+::: {.lab-overview}
+Some steels are tough at room temperature and shatter when cold — the failure
+mode behind brittle-fracture disasters in cold-weather structures. You break
+notched **Charpy** bars of **AISI 1018 hot-rolled** and **cold-rolled** steel in a
+pendulum impact tester at temperatures from well below freezing to above
+boiling-water heat, recording the energy absorbed at each. Low temperatures come
+from a bath of alcohol and **dry ice**; high temperatures from heated water. You
+plot impact toughness against temperature for each steel, read off the
+**ductile-to-brittle transition temperature (DBTT)**, and compare the fracture
+surfaces (fine granular for brittle fracture, necking for ductile).
+
+**AI use:** not permitted for the readings, calculations and graphs. Your written
+conclusions must be your own.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain what the Charpy value measures and how rate of loading, temperature and
+  a notch affect toughness.
+- Conduct Charpy tests safely at controlled temperatures, transferring the
+  specimen and striking it within the time limit.
+- Plot impact toughness against temperature and determine the DBTT for each
+  steel.
+- Describe and explain brittle and ductile fracture surfaces.
+- Explain which crystal structure is susceptible to low-temperature brittleness
+  and why the two steels differ.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read the **Material Toughness, Charpy Impact Test, and the Ductile to Brittle
+  Temperature Transition** slides from FOL — toughness, strain rate, notch
+  effect, the Charpy test and the DBTT.
+- Read the safety rules for the pendulum tester and for dry ice before the lab.
+- Download the report template from FOL (*Charpy Impact Test*).
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Charpy pendulum impact tester
+- Notched AISI 1018 hot-rolled and cold-rolled Charpy specimens
+- Temperature baths: alcohol and **dry ice** for the low temperatures (about
+  −60, −40, −20 and 0 °C), room temperature, and heated water for the high
+  temperatures (about 60 and 100 °C); a thermometer and tongs
+- Insulated gloves, safety glasses and safety footwear
+- The Charpy report template from FOL
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Hold each specimen at its test temperature for several minutes so the whole bar
+is at temperature, and break it **within five seconds** of removing it from the
+bath. Record the energy absorbed in the results table, plot impact toughness
+against temperature for both steels, sketch or photograph the two fracture
+surfaces, answer the questions, state the DBTT for each steel and write your
+conclusions. Submit your own report in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+---
+
+## Virtual Welding {#sec-labs-welding}
+
+Six progressive labs in **GMAW** (gas metal arc welding, often called MIG) on the
+**Lincoln Electric VRTEX 360+** virtual-reality welding simulator. There is no
+arc, no fume and no wasted metal: you practise on a simulated coupon while the
+machine tracks your gun position, angle and travel speed and **scores every
+weld**. The process is the one automated and robotic welding cells replicate, so
+these labs give you the operator's view of what a welding cell has to get right.
+In every lab you set the machine up **from a Welding Procedure Specification
+(WPS)** — the document that fixes the shielding gas and flow rate, wire feed
+speed, voltage and polarity for the joint — weld the coupon, and save your best
+scored result. The labs share one routine (start-up, login, set-up screens,
+monitor screens), so the first lab teaches it in detail and the later labs reuse
+it. They build in difficulty in the order below, so it is best to deliver them in
+that order, although any one can be delivered alone if students are given the
+start-up routine first.
+
+::: {.callout-important}
+## Working on the simulator
+
+- Log in with your username in the form **student ID + family name + first
+  letter of your given name** (the first lab uses your first name). Every scored
+  weld is saved under this name.
+- Set-up values come **only from the WPS** for the joint you are welding. Wire
+  feed speed and voltage have tolerances (for example ±5 in/min and ±1 V); a
+  reading outside tolerance triggers an "Incorrect Settings" prompt.
+- Practise as often as you like. **Save your best result to your flash drive and
+  upload it in the FOL quiz.**
+:::
+
+### GMAW Flat Surfacing: Single Pass {#sec-lab-weld-flat-single}
+
+::: {.lab-overview}
+Your first lab on the simulator. You learn the machine — power-up, the coloured
+function buttons, login, the set-up and monitor screens — then lay a **single-pass
+stringer bead** on a flat 1/4 in mild-steel plate with GMAW short-circuit
+transfer. The WPS supplies the settings: 75/25 argon–CO₂ shielding gas at
+25–35 cfh, wire feed speed 250 in/min, 18 V, DC electrode positive (DCEP), with a
+contact-tip-to-work distance of 3/8 in and a travel speed of 15 in/min.
+
+**AI use:** not applicable — the work is hands-on in the simulator.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Start up the VRTEX 360+, log in, and navigate the set-up and monitor screens.
+- Read a WPS and set the shielding gas, flow rate, wire feed speed, voltage and
+  polarity from it.
+- Lay a single-pass stringer bead and interpret the score.
+- Save your best result to a flash drive.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Read the **VRTEX 360 start-up** guide from FOL (power-up, login, gas and flow,
+  wire feed speed and voltage, placing the coupon).
+- Find this lab's WPS on FOL, or in the WPS booklet at the simulator using the
+  index at the front (look up the identification number in the top right of the
+  WPS).
+- Bring a flash drive.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Lincoln VRTEX 360+ simulator
+- The WPS for this weld (FOL or the WPS booklet at the simulator)
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+- A USB flash drive
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Complete the lab assignment sheet — the start-up questions (the coloured buttons,
+units, saving a weld, the monitor views) and the set-up values you took from the
+WPS — then practise and save your best single-pass weld. Upload the saved weld to
+the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### GMAW Flat Surfacing: Multi-Pass {#sec-lab-weld-flat-multi}
+
+::: {.lab-overview}
+You repeat the start-up routine and set the machine up from the WPS again, then
+lay a **multi-pass** weld on the flat 1/4 in plate. Each pass has to be placed
+relative to the one before it, so consistency of speed, work angle and
+stick-out matters more than in a single pass.
+
+**AI use:** not applicable — the work is hands-on in the simulator.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Set up the simulator confidently from a WPS with minimal prompting.
+- Lay overlapping multi-pass beads on a flat surface and compare the score of each
+  pass.
+- Identify from the monitor screens what you changed between passes and whether
+  it improved the score.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review the start-up routine and your notes and best score from
+  [GMAW Flat Surfacing: Single Pass](#sec-lab-weld-flat-single).
+- Find this lab's WPS on FOL or in the WPS booklet.
+- Bring a flash drive.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Lincoln VRTEX 360+ simulator
+- The WPS for this weld
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+- A USB flash drive
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Complete the lab assignment sheet, then practise the multi-pass weld as many times
+as you like and save your best result. Upload it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### GMAW Groove Weld: Single Pass {#sec-lab-weld-groove-single}
+
+::: {.lab-overview}
+You move from surfacing a plate to a **groove joint**: a butt joint in 3/8 in A36
+plate, welded in the flat position (1G), with a backing strip, a 1/4 in root
+opening and a 45° included groove angle. Unlike the surfacing labs, you change
+the machine's default selection to match the WPS — 75/25 argon–CO₂, wire feed
+speed 350 in/min, 20 V, DCEP — and you lay a single pass in the groove.
+
+**AI use:** not applicable — the work is hands-on in the simulator.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Select the weld type and joint on the simulator and set it up from the groove
+  WPS.
+- Explain how a groove joint differs from a surfacing weld.
+- Complete a single-pass groove weld and interpret the score.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review the start-up routine from
+  [GMAW Flat Surfacing: Single Pass](#sec-lab-weld-flat-single).
+- Read the groove-weld WPS (FOL or the WPS booklet): note the joint design, root
+  opening and groove angle as well as the machine settings.
+- Bring a flash drive.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Lincoln VRTEX 360+ simulator
+- The groove-weld WPS
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+- A USB flash drive
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Set up the machine from the WPS (the sheet asks for the gas and flow rate, wire
+feed speed, voltage and polarity), practise the single-pass groove weld and save
+your best result. Upload it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### GMAW Groove Weld: Multi-Pass {#sec-lab-weld-groove-multi}
+
+::: {.lab-overview}
+A thick joint cannot be filled in one pass. You weld the same groove joint with
+a **multi-pass** sequence — the sheet has room to score up to **seven passes** —
+and finish with a virtual **bend test**: if the weld is sound you earn a
+**bend-test certificate**.
+
+**AI use:** not applicable — the work is hands-on in the simulator.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Plan and execute a multi-pass weld sequence in a groove joint.
+- Record the score of each pass and see how the score changes as the joint fills.
+- Explain what a bend test checks and what a pass or fail tells you about weld
+  quality.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review [GMAW Groove Weld: Single Pass](#sec-lab-weld-groove-single).
+- Read the WPS for the multi-pass groove weld.
+- Bring a flash drive.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Lincoln VRTEX 360+ simulator
+- The groove-weld WPS
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+- A USB flash drive
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Set up the machine from the WPS, weld and record the score for each pass, run the
+bend test and note whether you earned the certificate. Save your best result and
+upload it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### GMAW T and Lap Welds {#sec-lab-weld-t-lap}
+
+::: {.lab-overview}
+Fillet welds join two plates that overlap or meet at a right angle. In three
+parts you weld a **T joint** in thin (10 gauge) sheet with a single pass, a **lap
+joint** in 10 gauge with a single pass, and a **T joint in 1/4 in plate with three
+passes**, all in the horizontal fillet position. Each part has its own WPS, so you
+re-set the machine for each, and each finishes with a bend test.
+
+**AI use:** not applicable — the work is hands-on in the simulator.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Distinguish T, lap and groove joints and the weld each calls for.
+- Switch the machine between joints and thicknesses by working from the right WPS
+  each time.
+- Complete single-pass and multi-pass fillet welds, score them and run the bend
+  test.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review the start-up routine and the multi-pass groove lab.
+- Locate all three WPSs (T single-pass, lap single-pass, T multi-pass) before the
+  lab.
+- Bring a flash drive.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Lincoln VRTEX 360+ simulator
+- The three WPSs for Parts A–C
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+- A USB flash drive
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Complete Parts A, B and C on the assignment sheet — for each, the set-up values
+from the WPS, the score of each pass and the bend-test result. Save your best
+result of each weld and upload them in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+### GMAW Vertical T Welds {#sec-lab-weld-vertical-t}
+
+::: {.lab-overview}
+The hardest position on the simulator. You weld **T joints in the vertical
+position** in two parts — a single pass in 10 gauge sheet, then a second T weld of
+up to three passes — each set up from its own WPS. Working against gravity, you
+must control the puddle with travel speed and gun angle much more carefully than
+on a flat plate.
+
+**AI use:** not applicable — the work is hands-on in the simulator.
+:::
+
+#### Learning outcomes {.unnumbered .unlisted}
+
+::: {.lab-outcomes}
+After this lab you should be able to:
+
+- Explain why vertical welding is harder to control than flat welding.
+- Set up and weld vertical T joints from the WPS and interpret the score.
+- Complete the bend test and explain the result.
+:::
+
+#### Prep work {.unnumbered .unlisted}
+
+::: {.lab-prep}
+- Review [GMAW T and Lap Welds](#sec-lab-weld-t-lap).
+- Locate the vertical-T WPSs before the lab and note the direction of travel the
+  WPS specifies.
+- Bring a flash drive.
+:::
+
+#### Materials & equipment {.unnumbered .unlisted}
+
+::: {.lab-materials}
+- Lincoln VRTEX 360+ simulator
+- The vertical-T WPSs
+- The FOL quiz for this lab (and the lab assignment sheet on FOL)
+- A USB flash drive
+:::
+
+::: {.callout-note title="Instructions & submission"}
+Complete Parts A and B on the assignment sheet — the set-up values from each WPS,
+the score of each pass and the bend-test result — then save your best result and
+upload it in the FOL quiz.
+The **FOL quiz for this lab** walks you through these steps in order and is where you record your results and upload your file.
+:::
+
+---
+
+## Machine Learning: Predictive Maintenance {#sec-chap-ml-lab}
+
+::: {.callout-important}
+## Deliver as a set — do not cherry-pick
+
+These six labs are **one six-week project**. Each week's output is the next
+week's input, and the capstone rubric spans four of the six, so they are
+delivered together, in order, or not at all.
+:::
+
+These six labs are the laboratory component of Chapter @sec-chap-ml. Each week
+has two hours of classroom theory (Chapter @sec-chap-ml) followed by a two-hour
+lab, and the six sessions build on each other: by the end of Week 5 you will
+have a working predictive-maintenance web application at a public URL, and Week 6
+is the live demo of it.
 
 Each lab's tasks, deliverables and rubric are in that lab's **FOL quiz** (see
-[How to use this chapter]); the files you upload in the quiz are:
+[How to use this chapter](#sec-labs-how-to)); the files you upload in the quiz are:
 
-| Lab | Course week | Module week | Focus | Files you upload in the FOL quiz |
-|:--|:--|:--|:--|:--|
-| 7 | 7 | 1 | AI literacy: prompt engineering, hallucination hunting, Python code generation | `prompts.md` + `spc_starter.py` |
-| 8 | 8 | 2 | Manufacturing data: cleaning, SPC, Cpk on real plant data | Completed `week2_lab.ipynb` |
-| 9 | 9 | 3 | Capstone kickoff: understanding the C-MAPSS dataset | Notebook with sensor plots and reflection |
-| 10 | 10 | 4 | Capstone build: feature engineering, model training, evaluation | Notebook + `rul_model.pkl` + `feature_cols.pkl` |
-| 11 | 11 | 5 | Capstone deploy: Streamlit app on the public internet | Public URL submitted via FOL |
-| 12 | 12 | 6 | Capstone presentations: live demo to the class | Presentation (no file submission) |
+| Module week | Lab | Focus | Files you upload in the FOL quiz |
+|:--|:--|:--|:--|
+| 1 | [AI Literacy and Prompt Engineering](#sec-lab-ml-w1) | AI literacy: prompt engineering, hallucination hunting, Python code generation | `prompts.md` + `spc_starter.py` |
+| 2 | [Manufacturing Data and SPC](#sec-lab-ml-w2) | Manufacturing data: cleaning, SPC, Cpk on real plant data | Completed `week2_lab.ipynb` |
+| 3 | [The C-MAPSS Dataset](#sec-lab-ml-w3) | Capstone kickoff: understanding the C-MAPSS dataset | Notebook with sensor plots and reflection |
+| 4 | [Building the Predictive-Maintenance Model](#sec-lab-ml-w4) | Capstone build: feature engineering, model training, evaluation | Notebook + `rul_model.pkl` + `feature_cols.pkl` |
+| 5 | [Deploying the App](#sec-lab-ml-w5) | Capstone deploy: Streamlit app on the public internet | Public URL submitted via FOL |
+| 6 | [Capstone Presentations](#sec-lab-ml-capstone) | Capstone presentations: live demo to the class | Presentation (no file submission) |
 
-**Tools used across Labs 7–12:**
+**Tools used across the module:**
 
 - [**Google Colab**](https://colab.research.google.com) — free, no local installation required
 - [**Claude.ai**](https://claude.ai) or [**ChatGPT**](https://chat.openai.com) (free tier) — for the Week 1–2 exercises
@@ -871,7 +2063,7 @@ regardless of whether it runs correctly.
 ## The course narrative — Précitech Components
 
 **You are a new process engineer at Précitech Components**, a Tier-1 automotive
-supplier in Granby, Québec (the same plant documented in Labs 2–3). The plant runs
+supplier in Granby, Québec (the same plant documented in the [Engineering Design Process Documentation](#sec-lab-design-doc) and [Facility Design & Simulation](#sec-lab-anylogic) labs). The plant runs
 CNC turning cells producing transmission shaft blanks for a major OEM customer;
 your cell produces roughly 250 parts per day.
 
@@ -892,22 +2084,19 @@ dataset, not plant data — but it will demonstrate the methodology, code qualit
 and user interface well enough for the plant manager to decide on next steps.
 :::
 
----
-
-## Lab 7 — Machine Learning, Week 1: AI Literacy and Prompt Engineering {#sec-lab-ml-w1}
+### Machine Learning, Week 1: AI Literacy and Prompt Engineering {#sec-lab-ml-w1}
 
 ::: {.lab-overview}
-The first lab of the machine-learning module, in course week 7 (the midterm is
-written in lecture time that week, so this lab period runs as normal). You compare
+The first lab of the machine-learning module. You compare
 how an LLM responds to poorly vs. well-structured prompts, deliberately trigger
 and document a hallucination, and use an LLM to generate the Python code you will
-build on in Lab 8. Set in the Précitech narrative above.
+build on in [Machine Learning, Week 2](#sec-lab-ml-w2). Set in the Précitech narrative above.
 
 **AI use:** required — you are assessed on directing an LLM well, not on writing
 Python.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 - How an LLM responds to poorly structured vs. well-structured prompts.
@@ -916,7 +2105,7 @@ Python.
   trustworthy.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 1** (the AI landscape; how LLMs work; why they
@@ -927,19 +2116,19 @@ Python.
   throughout the session and submit it at the end.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access — one per student (individual lab)
 - An LLM chat account (Claude.ai or ChatGPT, free tier)
 - `prompts.md` (you create it)
 - No dataset or local install needed this week
-- The Lab 7 **FOL quiz** — the four exercises in order, and where you paste your
+- The **FOL quiz for this lab** — the four exercises in order, and where you paste your
   prompts and upload `prompts.md` and `spc_starter.py`
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 7 FOL quiz** during the lab period. It runs the four
+Work through the **FOL quiz for this lab** during the lab period. It runs the four
 exercises in order — bad prompt → good prompt with the R-C-T-C-F pattern, FMEA
 summarisation at three audiences, the hallucination hunt, and LLM-assisted Python
 starter code — asks you to paste each prompt and response and to say what changed,
@@ -947,22 +2136,20 @@ and collects `prompts.md` and `spc_starter.py`. AI use is required; you must be
 able to explain every line of code you submit.
 :::
 
----
-
-## Lab 8 — Machine Learning, Week 2: Manufacturing Data and SPC {#sec-lab-ml-w2}
+### Machine Learning, Week 2: Manufacturing Data and SPC {#sec-lab-ml-w2}
 
 ::: {.lab-overview}
-You run your Lab 7 Python on real (messy) plant data — 90 days of production from
+You run your Week 1 Python on real (messy) plant data — 90 days of production from
 Précitech CNC Cell 3, with intentional data-quality problems embedded — find and
 document each problem without silently deleting data, then build an X-bar control
-chart and compute Cpk. This is the SPC you did by hand in Lab 6, now directed
+chart and compute Cpk. This is the SPC you may have done by hand in the [Virtual Caliper](#sec-lab-spc-rr) lab, now directed
 through an LLM.
 
 **AI use:** required — you direct an LLM to write the Python and must be able to
 explain every line.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 - How LLM-generated code behaves on real, messy industrial data.
@@ -971,29 +2158,29 @@ explain every line.
   events.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 2** (where plant data comes from; why
   industrial data is messy; statistical process control; where SPC fails).
-- Have your `spc_starter.py` from Lab 7 ready.
+- Have your `spc_starter.py` from Week 1 ready.
 - Open [Google Colab](https://colab.research.google.com) and check you can upload
   files.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access; Google Colab
 - `spc_data.csv` (90 days of CNC Cell 3 data, with embedded problems) — from FOL
 - `week2_lab.ipynb` — pre-structured lab notebook, from FOL
-- Your `spc_starter.py` from Lab 7
-- The Lab 8 **FOL quiz** — the four tasks in order, and where you upload the
+- Your `spc_starter.py` from Week 1
+- The **FOL quiz for this lab** — the four tasks in order, and where you upload the
   completed `week2_lab.ipynb` and paste your quality log and Cpk
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 8 FOL quiz** during the lab period. It runs the four tasks
+Work through the **FOL quiz for this lab** during the lab period. It runs the four tasks
 in order — run your Week 1 code on the real data, find and fix the five
 data-quality issues with a traceable quality log, build the X-bar chart with
 `sigma / sqrt(n)` limits, and the reflection — asks you to describe what you did
@@ -1001,9 +2188,7 @@ and what you found at each step, and collects the executed `week2_lab.ipynb`. Yo
 direct an LLM to write the Python and must be able to explain every line.
 :::
 
----
-
-## Lab 9 — Machine Learning, Week 3: The C-MAPSS Dataset {#sec-lab-ml-w3}
+### Machine Learning, Week 3: The C-MAPSS Dataset {#sec-lab-ml-w3}
 
 ::: {.lab-overview}
 The capstone kickoff. You load NASA's C-MAPSS turbofan run-to-failure data,
@@ -1015,7 +2200,7 @@ information.
 explain every line.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 - How to load and explore industrial time-series run-to-failure data.
@@ -1024,7 +2209,7 @@ explain every line.
 - How to identify which sensors carry predictive information.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 3** (the economics of maintenance; the P-F
@@ -1036,29 +2221,27 @@ explain every line.
 - Open [Google Colab](https://colab.research.google.com).
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access; Google Colab
 - `train_FD001.txt` — NASA C-MAPSS FD001 training set, from FOL
 - `predictive_maintenance.ipynb` — capstone notebook, pre-structured with starter
   code for Weeks 3–5, from FOL
-- The Lab 9 **FOL quiz** — the five tasks in order, and where you upload the
+- The **FOL quiz for this lab** — the five tasks in order, and where you upload the
   executed `predictive_maintenance.ipynb` and the 7×3 sensor plot
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 9 FOL quiz** during the lab period. It runs the five tasks
+Work through the **FOL quiz for this lab** during the lab period. It runs the five tasks
 in order — load and label the data, visualise one engine's life on a 7×3 grid,
 identify the constant sensors, correlate the rest with RUL, and the reflection —
 asks you to describe your findings and classifications, and collects the executed
 `predictive_maintenance.ipynb` and the sensor plot. This is the capstone kickoff;
-you keep working in the same notebook in Labs 10–11.
+you keep working in the same notebook in Weeks 4 and 5.
 :::
 
----
-
-## Lab 10 — Machine Learning, Week 4: Building the Predictive-Maintenance Model {#sec-lab-ml-w4}
+### Machine Learning, Week 4: Building the Predictive-Maintenance Model {#sec-lab-ml-w4}
 
 ::: {.lab-overview}
 The capstone build. You engineer rolling-window features per engine, perform a
@@ -1069,7 +2252,7 @@ evaluate it against a naive baseline, and save the model for deployment.
 explain every line.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 - How to engineer rolling-window features per engine without data leakage.
@@ -1079,28 +2262,28 @@ explain every line.
 - How to save a trained model for deployment.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 4** (feature engineering for time-series;
   Random Forest internals; evaluation done right).
-- Have your `predictive_maintenance.ipynb` from Lab 9 with the data loaded, RUL
+- Have your `predictive_maintenance.ipynb` from Week 3 with the data loaded, RUL
   computed, and the useful-sensor list established.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access; [Google Colab](https://colab.research.google.com)
-- Your `predictive_maintenance.ipynb` from Lab 9 (continue in the same notebook)
+- Your `predictive_maintenance.ipynb` from Week 3 (continue in the same notebook)
 - Python packages available in a standard Colab environment (`pandas`, `numpy`,
   `scikit-learn`, `matplotlib`, `joblib`)
-- The Lab 10 **FOL quiz** — the seven tasks in order, and where you upload the
+- The **FOL quiz for this lab** — the seven tasks in order, and where you upload the
   executed `predictive_maintenance.ipynb`, `rul_model.pkl` and `feature_cols.pkl`
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 10 FOL quiz** during the lab period. It runs the seven
+Work through the **FOL quiz for this lab** during the lab period. It runs the seven
 tasks in order — rolling features per engine, clip RUL at 125, the engine-wise
 train/validation split with the leak-check assert, train the Random Forest,
 evaluate against the naive baseline, feature importance, and save the model —
@@ -1109,22 +2292,20 @@ notebook plus `rul_model.pkl` and `feature_cols.pkl`. You must be able to explai
 every line.
 :::
 
----
-
-## Lab 11 — Machine Learning, Week 5: Deploying the App {#sec-lab-ml-w5}
+### Machine Learning, Week 5: Deploying the App {#sec-lab-ml-w5}
 
 ::: {.lab-overview}
 You wrap the trained model in a Streamlit web application, push it to GitHub, and
 deploy it to Streamlit Community Cloud so it is live at a public URL — the
-proof-of-concept deliverable for Sophie Tran. **Lab 14 (the take-home RoboDK
-work cell) is released this week** — read its brief now so you can plan the
-build.
+proof-of-concept deliverable for Sophie Tran. If your instructor has assigned the take-home
+[Robotic Work-Cell Design](#sec-lab-robodk) lab, **it is released this week** — read
+its brief now so you can plan the build.
 
 **AI use:** required — you direct an LLM to write the Python and must be able to
 explain every line.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 - How to wrap a trained ML model in a user-facing web application.
@@ -1133,7 +2314,7 @@ explain every line.
   others".
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 5** (the OT/IT boundary; dashboards and
@@ -1142,45 +2323,44 @@ explain every line.
   repo named `rul-predictor`.
 - Create a [**Streamlit Community Cloud**](https://share.streamlit.io) account
   using your GitHub login.
-- Have `rul_model.pkl` and `feature_cols.pkl` from Lab 10 on your machine.
+- Have `rul_model.pkl` and `feature_cols.pkl` from Week 4 on your machine.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access
 - GitHub account + `rul-predictor` public repo
 - Streamlit Community Cloud account
 - `streamlit_app.py` starter template (with `TODO` markers), from FOL
-- `rul_model.pkl`, `feature_cols.pkl` from Lab 10
+- `rul_model.pkl`, `feature_cols.pkl` from Week 4
 - A sample one-engine CSV (`sample_engine.csv`) — last 30 cycles of engine #1
-- The Lab 11 **FOL quiz** — the five tasks in order, and where you submit the
+- The **FOL quiz for this lab** — the five tasks in order, and where you submit the
   public Streamlit URL, the GitHub repo URL and a screenshot of a live prediction
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 11 FOL quiz** during the lab period. It runs the five
+Work through the **FOL quiz for this lab** during the lab period. It runs the five
 tasks in order — run the Streamlit app locally, push to GitHub, deploy to
 Streamlit Community Cloud, polish the app, and test another student's deployed
 URL — asks you to describe what you did and what broke, and collects your public
-Streamlit URL, your GitHub repo URL and a screenshot of a live prediction. Lab 14
-is released this week; read its brief now.
+Streamlit URL, your GitHub repo URL and a screenshot of a live prediction. If the take-home
+Robotic Work-Cell Design lab is assigned, it is released this week; read its
+brief now.
 :::
 
----
-
-## Lab 12 — Machine Learning, Week 6: Capstone Presentations {#sec-lab-ml-capstone}
+### Machine Learning, Week 6: Capstone Presentations {#sec-lab-ml-capstone}
 
 ::: {.lab-overview}
 Each student demos their deployed predictive-maintenance app live to the class and
 defends one technical decision — the "present to plant leadership" step of the
-Précitech assignment. This session carries the capstone rubric for Labs 9–12.
+Précitech assignment. This session carries the capstone rubric for Weeks 3–6.
 
 **AI use:** required across the module — but the presentation and defence must be
 your own.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 - Present a working technical deliverable to a non-specialist audience.
@@ -1188,7 +2368,7 @@ your own.
 - State the limitations of your own model honestly and specifically.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter @sec-chap-ml, **Week 6** (AI ethics in manufacturing; the broader
@@ -1199,27 +2379,33 @@ your own.
   presentation) and be ready for 3–5 minutes of questions.
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer + projector/display; internet access
 - Your deployed Streamlit app (public URL) and `sample_engine.csv`
-- Your Lab 10 notebook (for the RMSE / feature-importance figures if asked)
-- The Lab 12 **FOL quiz** — the demo checklist and the technical-decision and
+- Your Week 4 notebook (for the RMSE / feature-importance figures if asked)
+- The **FOL quiz for this lab** — the demo checklist and the technical-decision and
   limitation questions you answer in writing after presenting
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-The **Lab 12 FOL quiz** is where you record the capstone presentation session:
+The **FOL quiz for this lab** is where you record the capstone presentation session:
 after your 8–10 minute live demo you answer, in writing, which one technical
 decision you explained and how you defended it, and one specific limitation of
-your model. Your app URL and GitHub repo (submitted in Lab 11) must be live at
-presentation time. This session carries the capstone rubric for Labs 9–12.
+your model. Your app URL and GitHub repo (submitted in Week 5) must be live at
+presentation time. This session carries the capstone rubric for Weeks 3–6.
 :::
 
 ---
 
-## Lab 13 — TPM/OEE, Root Cause and a New Dataset {#sec-lab-tpm-rca}
+## Maintenance and Root-Cause Analysis {#sec-labs-maintenance}
+
+Bring OEE, the Six Big Losses, root-cause analysis and machine learning together
+on one failing cell. It pairs with Chapters 12 and 15, and reuses the
+[machine-learning](#sec-chap-ml-lab) pipeline, so it works best after that set.
+
+### TPM/OEE, Root Cause and a New Dataset {#sec-lab-tpm-rca}
 
 ::: {.lab-overview}
 You bring the whole term together on one problem: a Précitech CNC turning cell
@@ -1237,7 +2423,7 @@ can transfer the skill, not copy the code. Tools: **Google Sheets**,
 elsewhere. As in the ML module, you must be able to explain every line.
 :::
 
-### Learning outcomes
+#### Learning outcomes {.unnumbered .unlisted}
 
 ::: {.lab-outcomes}
 After this lab you should be able to:
@@ -1253,12 +2439,12 @@ After this lab you should be able to:
   tying model evidence back to the fishbone.
 :::
 
-### Prep work
+#### Prep work {.unnumbered .unlisted}
 
 ::: {.lab-prep}
 - Read Chapter 12 (TPM, OEE, the Six Big Losses) and Chapter 15 (troubleshooting,
   5-Why, Ishikawa, the 8D report).
-- Skim your capstone notebook from Labs 9–12 — you reuse the *workflow* (load,
+- Skim your capstone notebook from the machine-learning module — you reuse the *workflow* (load,
   explore, split, train, evaluate) but not the code.
 - Open the [AI4I 2020 dataset page](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset)
   and confirm you can download the CSV in the browser. Columns: air temperature,
@@ -1269,7 +2455,7 @@ After this lab you should be able to:
   CNC cell: planned time, downtime events, ideal cycle time, count, scrap).
 :::
 
-### Materials & equipment
+#### Materials & equipment {.unnumbered .unlisted}
 
 ::: {.lab-materials}
 - Computer with internet access
@@ -1279,12 +2465,12 @@ After this lab you should be able to:
 - `precitech_shift_log.csv` from FOL
 - **AI4I 2020** CSV, downloaded in-browser from UCI
 - Chapter 12 OEE definitions and Chapter 15 8D template
-- The Lab 13 **FOL quiz** — the five tasks in order, and where you upload the
+- The **FOL quiz for this lab** — the five tasks in order, and where you upload the
   Sheets OEE/Pareto file, the draw.io Ishikawa export and the Colab notebook link
 :::
 
 ::: {.callout-note title="Instructions & submission"}
-Work through the **Lab 13 FOL quiz** during the lab period. It runs the five
+Work through the **FOL quiz for this lab** during the lab period. It runs the five
 tasks in order — OEE and the Six Big Losses from the shift log, the failure-mode
 Pareto on the AI4I data, the 5-Why and Ishikawa with measured feature evidence,
 directing an LLM to build the failure classifier, and the 8D D4/D5 sections —
@@ -1295,127 +2481,143 @@ disclose AI use elsewhere and be able to explain every line.
 
 ---
 
-## Lab 14 — Robotic Work-Cell Design in RoboDK for Web {#sec-lab-robodk}
-
-::: {.lab-overview}
-A **take-home** lab: released in week 11, due at the end of week 14, done
-individually, with a short screen recording as part of the submission. You design
-and program the Précitech kitting cell's pick-and-place robot in **RoboDK for
-Web** — a free, no-install, in-browser robot simulator with 600+ real arms. It
-bookends Lab 1: block-logic puzzles in week 1, a real 6-axis industrial arm in week 14. You
-close the loop on the course by checking the robot's cycle time against the
-**takt time you computed in Lab 4**.
-
-**AI use:** permitted with disclosure. The station layout, the program and the
-cycle times must be your own work.
-:::
-
-### Learning outcomes
-
-::: {.lab-outcomes}
-After this lab you should be able to:
-
-- Jog a 6-axis robot in joint, linear and tool coordinates and recognise
-  singularities and joint-limit stops.
-- Lay out a work cell and verify that every pick and place point lies inside the
-  robot's reach envelope.
-- Program a pick-and-place cycle with targets and gripper I/O and read the
-  simulated cycle time.
-- Compare a simulated cycle time against a required takt time and optimise the
-  program to close the gap.
-- Compute a minimum safeguarding distance from robot stopping performance and
-  select an appropriate safeguard.
-:::
-
-### Prep work
-
-::: {.lab-prep}
-- Read Chapter 8 (industrial robotics — coordinate systems, the work envelope,
-  singularities) and Chapter 6 (machine guarding — the minimum-distance /
-  safeguarding-distance formula and the safeguard hierarchy).
-- Have your **Lab 4** takt calculation to hand — you need the takt time for
-  250 kits/day.
-- Open [RoboDK for Web](https://web.robodk.com/simulation) and confirm it loads
-  and runs a sample station in your browser. No account or licence key is
-  required.
-- Confirm your screen-recording tool works (the same tool the course plan's
-  take-home lab uses).
-:::
-
-### Materials & equipment
-
-::: {.lab-materials}
-- Personal computer with internet access and a browser (this is a take-home lab —
-  no lab PC required)
-- [RoboDK for Web](https://web.robodk.com/simulation) — no install, no licence
-  key
-- A screen-recording tool — the built-in recorder is enough (Windows **Xbox Game
-  Bar**, <kbd>Win</kbd>+<kbd>G</kbd>; macOS **Screenshot**,
-  <kbd>Shift</kbd>+<kbd>Cmd</kbd>+<kbd>5</kbd>) or free [OBS Studio](https://obsproject.com/)
-- Your Lab 4 takt time; the [Précitech case study](#sec-precitech-case) (250
-  kits/day, one 8-hour shift)
-- The Lab 14 **FOL quiz** — the five tasks in order, and where you upload the
-  report, the RoboDK station file and the 3–5 min screen recording
-:::
-
-::: {.callout-note title="Instructions & submission"}
-This is a **take-home** lab: released in week 11, due at the end of week 14, done
-on your own computer. Work through the **Lab 14 FOL quiz** — it runs the five
-tasks in order (jog and observe, build the kitting cell, program the
-pick-and-place, cycle time vs the Lab 4 takt, and the safeguarding distance),
-asks you to describe each design decision, and collects your report, the RoboDK
-station file and a 3–5 minute screen recording talking through one decision. The
-layout, the program and the cycle times must be your own work; disclose any AI
-help.
-:::
-
----
-
-## Teacher preparation
+## Teacher preparation {#sec-labs-teacher}
 
 ::: {.lab-shop}
-Everything the instructor needs to prep the term: the room, equipment and
-software per lab, then a consolidated shopping list, a software/accounts
-checklist, and a room-booking checklist. Items marked **[confirm]** are not
-stated in the source handouts.
+Everything the instructor needs to prep the term: how to choose and schedule labs
+from the catalogue (including the labs that must be delivered as a set), then the
+room, equipment and software per lab, a consolidated shopping list, a
+software/accounts checklist, and a room-booking checklist. Items marked
+**[confirm]** are not stated in the source handouts.
 :::
 
-> The full term-prep material — quickstart, term grid, grade-item checklist,
-> paste-ready Course Plan notes, the AI-use policy, answer keys, all 14 rubrics
-> and the per-lab failure modes — lives in the **instructor handbook**
-> (`instructor/instructor-guide.qmd`, renders to `instructor/instructor-guide.pdf`
-> for FOL). The matrix below is the quick per-lab view; the handbook is the
-> authoritative version.
+> The full term-prep material for the current offering — quickstart, term grid,
+> grade-item checklist, paste-ready Course Plan notes, the AI-use policy, answer
+> keys, rubrics and the per-lab failure modes for the labs it covers — lives in
+> the **instructor handbook** (`instructor/instructor-guide.qmd`, renders to
+> `instructor/instructor-guide.pdf` for FOL). The matrix below is the quick
+> per-lab view.
+
+### Choosing and scheduling labs {#sec-labs-scheduling}
+
+This chapter holds more labs than one term can deliver, so **pick labs to fit your
+course, your own background and your equipment.** Most labs stand alone. Three
+groups of labs do not, and they are the constraints to plan around:
+
+::: {.callout-important}
+## Labs that must be delivered together
+
+- **The machine-learning labs are a set — they cannot be cherry-picked.** The six
+  labs form one six-week predictive-maintenance project: each week's output is the
+  next week's input (`prompts.md` and `spc_starter.py`, then the cleaned SPC
+  notebook, then the C-MAPSS notebook, then the trained model files, then the
+  deployed app, then the presentation of that app), and the capstone rubric spans
+  four of the six. Deliver all six, in order, in six consecutive weeks (each week
+  pairs two hours of Chapter @sec-chap-ml theory with the two-hour lab) — or leave
+  the module out.
+- **The three materials labs are a 3-week rotation.** Deliver them over three
+  consecutive weeks: split the class into three groups and have each group work
+  through all three labs, each group starting at a different one — see
+  [Materials-testing rotation](#sec-materials-rotation). All three labs run in the
+  same room *every* week, so you cannot deliver just one or two of them.
+  **The Charpy lab needs dry ice, and the lab technician needs two weeks' notice
+  to order it for the three weeks.**
+:::
+
+**Dependencies between other labs** (deliver the first before the second):
+
+| Lab | Needs first |
+|---|---|
+| Manufacturing Facility Design & Simulation (AnyLogic) | Engineering Design Process Documentation (its layout drawing becomes the simulation) |
+| Robotic Work-Cell Design in RoboDK for Web | Lean: Value Stream Mapping, Takt and Pull (supplies the takt time) |
+| Machine Learning, Week 2 | Machine Learning, Week 1 — and, ideally, the Virtual Caliper (the SPC done by hand) |
+| TPM/OEE, Root Cause and a New Dataset | The machine-learning set (reuses the whole pipeline) |
+| Any Virtual Welding lab after the first | GMAW Flat Surfacing: Single Pass (teaches the start-up routine) — *recommended*, not strictly required |
+
+**Other planning notes**
+
+- **Take-home lab.** Release Robotic Work-Cell Design about three weeks before it
+  is due, and reserve 15 minutes in a lab period to demo the tool.
+- **Statistical labs.** Deliver *Statistics with Excel* first if students are not
+  yet comfortable with Excel; the Virtual Caliper and hands-on Gauge R&R overlap,
+  so choose one or both.
+- **Simulator and bench capacity.** Virtual welding and the bench labs are limited
+  by the number of simulators and instruments; plan rotations accordingly
+  **[confirm counts]**.
+- The default plan for the current offering, lab by lab and week by week, is in
+  the course schedule in `index.qmd`.
+
+### Materials-testing rotation {#sec-materials-rotation}
+
+Split the class into **three groups** (A, B, C). Each group starts at a different
+lab and moves on every week, so all three stations run every week and every group
+completes all three labs:
+
+| | Week 1 | Week 2 | Week 3 |
+|---|---|---|---|
+| **Group A** | Hardness Testing | Tensile and Microhardness | Charpy Impact |
+| **Group B** | Tensile and Microhardness | Charpy Impact | Hardness Testing |
+| **Group C** | Charpy Impact | Hardness Testing | Tensile and Microhardness |
+
+- **Dry ice (Charpy lab).** One group is at the Charpy station each of the three
+  weeks, so dry ice is needed in **all three weeks**. Give the lab technician the
+  three lab dates and **at least two weeks' notice** to order it for the full
+  three-week block; agree the quantity per session with them **[confirm]**. Dry
+  ice sublimates, so it is normally collected on the day of the lab **[confirm
+  with the technician]**.
+- **Staff the Charpy station properly.** Cold-bath handling, dry ice and a swinging
+  pendulum make it the highest-risk station; the technician or instructor should be
+  at it for the whole period.
+- **Each group needs its own specimens.** Count specimens per station per week (see
+  the shopping list).
+- Post the group list and the rotation on FOL before week 1 so students know which
+  lab they start with and can do that lab's prep.
+- Tests run in teams, but each student **submits an individual report** on the FOL
+  template.
 
 ### Per-lab prep matrix
 
-| Lab (week) | Room | Equipment (reusable) | Software / online | Consumables & printing |
+| Lab | Room | Equipment (reusable) | Software / online | Consumables & printing |
 |----|----|----|----|----|
-| 1 (wk 1) — Rocksi | Computer lab, 1 PC/student **[confirm]** | PCs with internet | **Rocksi** (browser, no plug-in); prelab YouTube `3THTZFnrxtc` | None (all instructions and submission in the FOL quiz) |
-| 2 (wk 2) — Design documentation | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates (run `python R/gen_lab_templates.py`): BOM `.xlsx`, Gantt `.xlsx` (Project-importable), HSE `.docx` |
-| 3 (wk 3) — Facility design & AnyLogic | Computer lab **[confirm]** | PCs (check AnyLogic PLE model-size limit) | **AnyLogic Personal Learning Edition**, Microsoft Visio/Project/Excel; AnyLogic order-fulfilment demo model **[confirm which]** + prelab video | None |
-| 4 (wk 4) — Lean VSM | Computer lab with internet | PCs | **draw.io** (browser), **Google Sheets**, **AnyLogic Cloud** (free public tier) — all browser, no install | None; generate + stage `vsm_station_data.csv` (run `Rscript R/make_lab_data.R`); build/fork the AnyLogic Cloud push–pull model and expose its input parameters |
-| 5 (wk 5) — Ergonomics | Computer lab with internet **[confirm]** | PCs | Browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
-| 6 (wk 6) — SPC & Gauge R&R | Computer lab, 1 PC/student | PCs with internet (to load the book page) | **This book's webR cells only — no external site, no account, no dataset.** Just confirm the rendered `30-Labs.html` page and its webR cells load | None; print the Lab 6 answer key from `Rscript R/make_lab_data.R` for marking |
-| 7 (wk 7) — ML Wk1: AI literacy | Computer lab, 1 PC/student | PCs with internet | **Claude.ai** or **ChatGPT** (free tier); Google Colab | None; post FMEA table + blank `prompts.md` on FOL. Midterm is in lecture time this week — the lab runs as normal |
-| 8 (wk 8) — ML Wk2: data & SPC | Computer lab | PCs with internet | **Google Colab**; Python (pandas, numpy, matplotlib) | None; stage `spc_data.csv` + `week2_lab.ipynb` on FOL |
-| 9 (wk 9) — ML Wk3: C-MAPSS | Computer lab | PCs with internet | **Google Colab**; scikit-learn stack | None; stage `train_FD001.txt` + `predictive_maintenance.ipynb` on FOL |
-| 10 (wk 10) — ML Wk4: model build | Computer lab | PCs with internet | **Google Colab**; scikit-learn, joblib | None; have a reference solution notebook (expected RMSE ≈ 21) |
-| 11 (wk 11) — ML Wk5: deploy | Computer lab | PCs with internet | **GitHub** + **Streamlit Community Cloud** accounts; Google Colab | None; stage `streamlit_app.py` + tested `requirements.txt` on FOL. **Release Lab 14 this week** |
-| 12 (wk 12) — ML Wk6: presentations | Room with projector/display + internet **[confirm]** | Projector; PCs | Student public Streamlit URLs | None; presentation schedule |
-| 13 (wk 13) — TPM/OEE & RCA | Computer lab with internet | PCs | **Google Sheets**, **draw.io**, **Google Colab**; **AI4I 2020** CSV from `archive.ics.uci.edu` | None; generate + stage `precitech_shift_log.csv` (run `Rscript R/make_lab_data.R`); host an AI4I 2020 copy on FOL as a fallback |
-| 14 (wk 14) — RoboDK work cell *(take-home)* | **None — done from home.** Reserve 15 min in the wk-11 lab to demo the tool | Student's own computer | **RoboDK for Web** (`web.robodk.com/simulation`) — no install, no licence key; a screen-recording tool | None; provide a reference station file and an expected cycle-time range |
+| **Logic Thinking for Robot Control: Rocksi** | Computer lab, 1 PC/student **[confirm]** | PCs with internet | **Rocksi** (browser, no plug-in); prelab YouTube `3THTZFnrxtc` | None (all instructions and submission in the FOL quiz) |
+| **Robotic Work-Cell Design in RoboDK for Web** *(take-home)* | **None — done from home.** Reserve 15 min in a lab period to demo the tool | Student's own computer | **RoboDK for Web** (`web.robodk.com/simulation`) — no install, no licence key; a screen-recording tool | None; provide a reference station file and an expected cycle-time range |
+| **Engineering Design Process Documentation** | Computer lab with full Office **[confirm]** | PCs | **Microsoft Word/Visio**, **Microsoft Project**, **Microsoft Excel** | None; post the Précitech case study + re-upload FOL templates (run `python R/gen_lab_templates.py`): BOM `.xlsx`, Gantt `.xlsx` (Project-importable), HSE `.docx` |
+| **Manufacturing Facility Design & Simulation (AnyLogic)** | Computer lab **[confirm]** | PCs (check AnyLogic PLE model-size limit) | **AnyLogic Personal Learning Edition**, Microsoft Visio/Project/Excel; AnyLogic order-fulfilment demo model **[confirm which]** + prelab video | None |
+| **Lean: Value Stream Mapping, Takt and Pull** | Computer lab with internet | PCs | **draw.io** (browser), **Google Sheets**, **AnyLogic Cloud** (free public tier) — all browser, no install | None; generate + stage `vsm_station_data.csv` (run `Rscript R/make_lab_data.R`); build/fork the AnyLogic Cloud push–pull model and expose its input parameters |
+| **Ergonomics in Automated Manufacturing (REBA)** | Computer lab with internet **[confirm]** | PCs | Browser; ergonomics + REBA videos | Print **REBA worksheets** + **REBA cheat sheet** (per student); stage task clips/photos (Lifting Boxes, Workstation, Cleaning) on FOL |
+| **Linear and Angular Measuring Instruments** | Metrology lab | Vernier calipers, vernier height gauges, micrometers, gauge-block set **[confirm counts]** | — | Post the assignment sheet on FOL |
+| **Groove Angle Measurement (V-Block)** | Metrology lab | Surface plates, V-blocks, vernier height gauges, calipers, two rollers of different diameters | — | Post the sheet; check the angle equation is legible (see instructor notes) |
+| **Taper Angle Measurement with a Sine Bar** | Metrology lab | Surface plates, sine bar, dial indicator + stand, gauge-block set, three tapers | — | Post the sheet |
+| **Micrometer and Caliper Calibration** | Metrology lab | Micrometer and caliper to calibrate, gauge-block set with its serial/certificate | — | Methyl alcohol, lint-free wipes; print the calibration report forms |
+| **Statistics with Excel for Quality Control** | Computer lab with Excel | PCs | **Microsoft Excel** | Post the worksheet |
+| **Variable Control Charts: X̄, R and S** | Metrology lab + PCs | 100 roller bearings per class/bench **[confirm]**, micrometers or calipers | **Microsoft Excel** | Post the worksheet + the control-chart constants table |
+| **Attribute Control Charts: p and np** | Bench + PCs | Bead bags, enough for ten samples of 50 | **Microsoft Excel** | Post the worksheet; assign the "defective" colour per student |
+| **Process Capability: Cp, Cpk and Distributions** | Metrology lab + PCs | 50 roller bearings, micrometers | **Microsoft Excel** | Post the worksheet + the *Preparing a Capability Study* handout |
+| **Repeatability and Reproducibility (Gauge R&R)** | Metrology lab + PCs | Part with five holes, calipers (one team of three per part) | **Microsoft Excel** | Post the worksheet; assign the teams |
+| **SPC and Gauge R&R: the Virtual Caliper** | Computer lab, 1 PC/student | PCs with internet (to load the book page) | **This book's webR cells only — no external site, no account, no dataset.** Just confirm the rendered `30-Labs.html` page and its webR cells load | None; print the answer key from `Rscript R/make_lab_data.R` for marking |
+| **Hardness Testing: Rockwell and Brinell** | Materials lab | Rockwell tester, Brinell tester + measuring microscope, annealed / quenched / normalized specimens | — | Conversion chart; post the report template |
+| **Tensile and Microhardness Testing of Case-Hardened Steel** | Materials lab | Tensile testing machine with data acquisition, Vickers microhardness tester, metallography kit (mounting, grinding, polishing, microscope), mounted case-hardened AISI 1566 specimens | — | Nital etchant, polishing consumables **[confirm]**; students bring a memory stick for the tensile data **[confirm]**; post the report template |
+| **Charpy Impact Testing and the Ductile-to-Brittle Transition** | Materials lab | Charpy pendulum tester, notched AISI 1018 hot- and cold-rolled specimens, insulated cold-bath container, hot-water bath, thermometers, tongs, insulated gloves | — | **Dry ice — order 2 weeks ahead for the 3-week block**; alcohol for the cold bath; post the report template |
+| **Virtual Welding — all six labs** | Welding-simulator lab | Lincoln VRTEX 360+ units, WPS booklets **[confirm number of units]** | — | USB flash drives; post the start-up guide, the WPSs and the six assignment sheets on FOL |
+| **Machine Learning, Week 1: AI Literacy** | Computer lab, 1 PC/student | PCs with internet | **Claude.ai** or **ChatGPT** (free tier); Google Colab | None; post FMEA table + blank `prompts.md` on FOL |
+| **Machine Learning, Week 2: Data & SPC** | Computer lab | PCs with internet | **Google Colab**; Python (pandas, numpy, matplotlib) | None; stage `spc_data.csv` + `week2_lab.ipynb` on FOL |
+| **Machine Learning, Week 3: C-MAPSS** | Computer lab | PCs with internet | **Google Colab**; scikit-learn stack | None; stage `train_FD001.txt` + `predictive_maintenance.ipynb` on FOL |
+| **Machine Learning, Week 4: Building the Model** | Computer lab | PCs with internet | **Google Colab**; scikit-learn, joblib | None; have a reference solution notebook (expected RMSE ≈ 21) |
+| **Machine Learning, Week 5: Deploying the App** | Computer lab | PCs with internet | **GitHub** + **Streamlit Community Cloud** accounts; Google Colab | None; stage `streamlit_app.py` + tested `requirements.txt` on FOL |
+| **Machine Learning, Week 6: Capstone Presentations** | Room with projector/display + internet **[confirm]** | Projector; PCs | Student public Streamlit URLs | None; presentation schedule |
+| **TPM/OEE, Root Cause and a New Dataset** | Computer lab with internet | PCs | **Google Sheets**, **draw.io**, **Google Colab**; **AI4I 2020** CSV from `archive.ics.uci.edu` | None; generate + stage `precitech_shift_log.csv` (run `Rscript R/make_lab_data.R`); host an AI4I 2020 copy on FOL as a fallback |
 
-### Instructor notes by lab
+### Instructor notes by lab {#sec-labs-instructor-notes}
 
 ::: {.lab-shop}
 Marking guidance and lab-specific prep, moved here from the individual lab
-sub-chapters. The tasks, deliverables and rubric each lab is marked against now
-live in that lab's **FOL quiz**; the full answer keys and per-lab failure modes
-are in the instructor handbook.
+sub-chapters. For the software labs the tasks, deliverables and rubric each lab
+is marked against live in that lab's **FOL quiz**; for the hands-on labs they are
+on the FOL worksheet or report template. The full answer keys and per-lab failure
+modes for the labs in the current offering are in the instructor handbook.
 :::
 
-#### Lab 1 — Rocksi
+#### Logic Thinking for Robot Control: Rocksi
 
 ::: {.lab-instructor}
 - **Prep:** confirm [Rocksi](https://rocksi.net/) is reachable through the lab
@@ -1431,7 +2633,26 @@ are in the instructor handbook.
   evidence.
 :::
 
-#### Lab 2 — Engineering Design Process Documentation
+#### Robotic Work-Cell Design in RoboDK for Web
+
+::: {.lab-instructor}
+- **Release three weeks before the due date** (in the default plan: week 11, alongside
+  Week 5 of the machine-learning set, due at the end of week 14). This mirrors the course plan's existing
+  take-home lab pattern (released three weeks out, video submission).
+- **Prep:** the day before release, run through Tasks 1–3 in RoboDK for Web
+  yourself on the college network — confirm `web.robodk.com` is reachable, the
+  library loads, and a station can be saved and re-loaded. Have a reference
+  station file and an expected cycle-time range (from the `R/make_lab_data.R`
+  answer key) ready for marking.
+- No lab room is needed — this is done from home — but reserve 15 minutes in a
+  lab period to demo the tool and walk through the brief.
+- **Marking:** the takt comparison in Task 4 only works if the student's takt from the
+  Lean lab was correct; if it was not, mark Task 4 on the *method* against a takt you
+  supply. Watch for cycle times that are physically implausible (joint speeds
+  cranked past limits) — that is where the "your own work" line is tested.
+:::
+
+#### Engineering Design Process Documentation
 
 ::: {.lab-instructor}
 - **Prep:** verify Microsoft **Project** and **Visio** licences are live on every
@@ -1441,16 +2662,16 @@ are in the instructor handbook.
   template's Import Wizard walk-through still matches your Project version, and
   save a native `.mpp` copy once you've verified it. Post the case study on FOL
   as its own one-page handout.
-- **Continuity:** this lab and Lab 3 share the Précitech kitting cell. Tell
+- **Continuity:** this lab and Facility Design & Simulation share the Précitech kitting cell. Tell
   students up front that the layout drawing they produce here becomes the model
-  they build in Lab 3.
+  they build in the AnyLogic lab.
 - **Marking:** look for traceability — the spec sheet, BOM, task list, schedule
   and layout should all describe the *same* cell and the *same* kit. Check the
   starvation / blockage annotations on the layout are present and sensible; they
-  are the link to Lab 3.
+  are the link to the AnyLogic lab.
 :::
 
-#### Lab 3 — Manufacturing Facility Design & Simulation (AnyLogic)
+#### Manufacturing Facility Design & Simulation (AnyLogic)
 
 ::: {.lab-instructor}
 - **Prep:** AnyLogic PLE install is the biggest failure point — push it to lab
@@ -1458,14 +2679,14 @@ are in the instructor handbook.
   confirm the demo model stays under it. Have the exact model file on FOL.
 - Give the Phase 1 (facility-drawing) sign-off some rigour — students who skip it
   produce screenshots with no layout to tie them to. Check the layout matches
-  their Lab 2 submission.
+  their Design Documentation submission.
 - **Marking:** the drawing carries ~40 % of the mark; analysis should reference
   the *specific* statistic that moved *and* the case-study consequence (e.g.
   "lower reorder level → more unavailable goods → longer preorder waiting time →
   kitting station idle, shipments late").
 :::
 
-#### Lab 4 — Lean: Value Stream Mapping, Takt and Pull
+#### Lean: Value Stream Mapping, Takt and Pull
 
 ::: {.lab-instructor}
 - **Prep:** generate `vsm_station_data.csv` with `Rscript R/make_lab_data.R` and
@@ -1474,16 +2695,15 @@ are in the instructor handbook.
 - Build or fork the AnyLogic Cloud push/pull model once and confirm the input
   parameters students need (control policy, WIP cap) are exposed on the public
   run screen. Test it through the college firewall the day before.
-- Confirm draw.io and cloud.anylogic.com are reachable on the lab network (Lab
-  4 / 13 firewall-check list below).
+- Confirm draw.io and cloud.anylogic.com are reachable on the lab network (see the software checklist below).
 - **Marking:** the map and the takt/PCE arithmetic must be the student's own (AI
   not permitted for those). Check the lead-time ladder actually totals to the
   numbers quoted — a ladder that does not add up is the most common error.
-- This is the takt reference for **Lab 14** — students compare the RoboDK cycle
+- This is the takt reference for **Robotic Work-Cell Design** — students compare the RoboDK cycle
   time against the takt they compute here, so make sure the takt value is right.
 :::
 
-#### Lab 5 — Ergonomics in Automated Manufacturing (REBA)
+#### Ergonomics in Automated Manufacturing (REBA)
 
 ::: {.lab-instructor}
 - **Print:** REBA worksheets + the REBA cheat sheet, one per student.
@@ -1496,13 +2716,140 @@ are in the instructor handbook.
   not just the final number.
 :::
 
-#### Lab 6 — SPC and Gauge R&R: the Virtual Caliper
+#### Linear and Angular Measuring Instruments
+
+::: {.lab-instructor}
+- **Prep:** post the assignment sheet; lay out one of each instrument per bench so
+  students can photograph and label real instruments rather than copy pictures.
+- **Post the corrected assignment sheet** (`Linear and Angular Measurements - fixed.docx` in `LabInstructions/Quality_Labs/fixed/`). The original caliper
+  problem called the main scale's 1 mm division a "least count of 0.1 mm", which
+  made the question ambiguous; both least-count problems are now worded
+  unambiguously. **Answers:** caliper = 1 mm − 0.9 mm = **0.1 mm**; micrometer
+  = 1 mm ÷ 50 = **0.02 mm** without the vernier and 0.02 mm ÷ 5 = **0.004 mm**
+  with it.
+- **Marking:** the derivation of the least-count formula, not just the number.
+:::
+
+#### Groove Angle Measurement (V-Block)
+
+::: {.lab-instructor}
+- **Prep:** confirm each roller pair is precisely measured and the roller
+  diameters differ enough that both rollers touch only the sloping sides of the
+  groove (as the sheet requires). Check the V-blocks and surface plates are clean.
+- **Answer key:** the sheet's equation (a Word equation object) is
+  $lpha = 2\sin^{-1}\!\left[\dfrac{d_2-d_1}{2(h_2-h_1)-(d_2-d_1)}
+ight]$,
+  with $d_1$, $d_2$ the roller diameters and $h_1$, $h_2$ the heights from the
+  plate to the top of each roller.
+- **Marking:** compare the repeats across the four samples; large scatter usually
+  means the roller moved or the scriber pressed on it.
+:::
+
+#### Taper Angle Measurement with a Sine Bar
+
+::: {.lab-instructor}
+- **Prep:** confirm the length *L* of each sine bar (roller centre distance) and
+  post it, and check the gauge-block set has fine enough steps to reach
+  parallelism.
+- Walk students through wringing once (see the Instruments lab).
+- **Marking:** the sheet takes θ as the taper's *half*-angle and reports 2θ as the
+  whole angle — check students follow that definition and compare 2θ with the
+  tapers' stated angles.
+:::
+
+#### Micrometer and Caliper Calibration
+
+::: {.lab-instructor}
+- **Prep:** the source sheet's check sizes are **inch** sizes (micrometer 0.106 to
+  0.954 in in nine steps; 6 in or 8 in caliper in ten steps of range/10). If your
+  instruments are metric, substitute an equivalent sequence and update the report
+  forms.
+- The gauge-block set must carry a serial number and a certificate: the report
+  asks for the standard's identification, and traceability is the point of the lab.
+- Let instruments and blocks stabilise to room temperature before the lab starts;
+  cold blocks from a cabinet give false deviations.
+- **Marking:** the deviation at each size, the accuracy over the range compared
+  with the published accuracy, and an actual finding (in / out of tolerance) rather
+  than a restatement of the numbers.
+:::
+
+#### Statistics with Excel for Quality Control
+
+::: {.lab-instructor}
+- **Prep:** post the worksheet; check the students' Excel version supports
+  `VAR.P`, `VAR.S`, `STDEV.P` and `STDEV.S`.
+- **Marking:** the sheet carries its own mark allocations (interpretation of
+  mean/median/mode, range/variance/standard deviation, the labelled scatterplot,
+  the histogram and the four questions). Check the histogram bins match the ones
+  given and that the "normal curve?" answer is argued from the shape.
+:::
+
+#### Variable Control Charts: X̄, R and S
+
+::: {.lab-instructor}
+- **Prep:** you need a batch of 100 roller bearings (or an equivalent part) and one
+  measuring instrument per student or pair. The worksheet reads **length**; the
+  bearings are tapered, so tell students *not* to measure diameter. Post the
+  control-chart constants table (the constants for subgroups of ten are already in
+  the sheet: A2 = 0.308, B3 = 0.284, B4 = 1.716, D3 = 0.223, D4 = 1.777).
+- **Post the corrected worksheet** (`Variable Control Charts - fixed.xlsx`
+  in `LabInstructions/Quality_Labs/fixed/`): its out-of-control rules now match
+  the Western Electric rules in Chapter 10 (rules 1–4), plus two extra pattern
+  rules (fifteen points within 1σ; eight points none within 1σ).
+- **Marking:** the subgroup statistics, the limits, the three charts and a
+  justified in/out-of-control call.
+:::
+
+#### Attribute Control Charts: p and np
+
+::: {.lab-instructor}
+- **Prep:** put together bead bags with a known mix of colours, and tell each
+  student (or bench) a different "defective" colour so results cannot be copied.
+- **Marking:** the p-chart limits use the sample size *n* = 50; a negative lower
+  limit is set to 0. Check the reasoning on "what to do next" and on the
+  complementary tool (a Pareto chart is the expected answer).
+:::
+
+#### Process Capability: Cp, Cpk and Distributions
+
+::: {.lab-instructor}
+- **Post the corrected worksheet** (`Process Capability - fixed.xlsx`
+  in `LabInstructions/Quality_Labs/fixed/`). The original Cp formula lacked
+  brackets (it now reads (USL − LSL) / (6σ)) and told students to use Cpk "if the
+  distribution is not normal" — Cpk is the index for an **off-centre** process, and
+  the corrected sheet says so.
+- The specification on the sheet is USL = 0.5008 and LSL = 0.4992 (inches).
+  Confirm it suits the bearings and micrometer you supply.
+- **Marking:** the σ estimate two ways (R̄/d₂ and STDEV.P), Cp, Cpk, and the
+  capable / not-capable decision against 1.33.
+:::
+
+#### Repeatability and Reproducibility (Gauge R&R)
+
+::: {.lab-instructor}
+- **Prep:** assign teams of three and give each team a part with five measurable
+  holes; operators measure independently and must not see one another's readings.
+- **Post the corrected worksheet** (`Repeatability and Reproducibility - fixed.xlsx` in `LabInstructions/Quality_Labs/fixed/`). The
+  original used the 10-part constant (3.18) and an unexplained "÷ 40". The corrected
+  sheet uses the 5.15σ convention with **d₂ = 1.128** (2 trials), **d₂\* = 1.91**
+  for three operators (Part A) or **1.41** for two (Part B), **d₂\* = 2.48** for
+  five parts, and **n × r = 10** (5 holes × 2 trials); it also adds a %R&R step.
+  (The virtual-caliper lab uses 1σ-based constants; %R&R is a ratio and is
+  unaffected by the convention.)
+- **Part B answer key** (corrected constants): average ranges 6.44 and 6.46;
+  EV ≈ 29.4; the reproducibility term is negative, so AV = 0; R&R ≈ 29.4;
+  Vp ≈ 82.2; Vt ≈ 87.3; **%R&R ≈ 34 %** — unacceptable (over 30 %).
+- **Marking:** the step-by-step calculation, R&R versus total variation, and a
+  judgement on whether the gauge is adequate.
+:::
+
+#### SPC and Gauge R&R: the Virtual Caliper
 
 ::: {.lab-instructor}
 - **Prep:** none beyond opening the rendered page and checking the webR cells
   load. This lab has **no external dependency** — no site, no account, no
   dataset file.
-- Run `Rscript R/make_lab_data.R` to print the Lab 6 answer key: the
+- Run `Rscript R/make_lab_data.R` to print the Virtual Caliper answer key: the
   `caliper_ref` values, the expected overall bias (≈ +0.03 mm), and the expected
   %GRR / ndc / Cpk ranges. The caliper and SPC data are generated inside the
   webR cells, so there is no file to stage.
@@ -1510,25 +2857,95 @@ are in the instructor handbook.
   separate sittings. A reading grid where the three rounds are identical (or
   every trial matches) was not read blind.
 - **Marking:** check that %GRR and ndc are consistent with the EV/AV/PV reported.
-- This lab is the "do it yourself first" half of the arc into Lab 8 (SPC in
+- This lab is the "do it yourself first" half of the arc into Machine Learning, Week 2 (SPC in
   Python, directed by an LLM). Point that forward explicitly.
 :::
 
-#### Lab 7 — Machine Learning, Week 1: AI Literacy and Prompt Engineering
+#### Hardness Testing: Rockwell and Brinell
+
+::: {.lab-instructor}
+- **Prep:** stage annealed, quenched and normalized specimens and check the two
+  testers are calibrated with test blocks. Post the report template.
+- Safety glasses and safety footwear are required; keep students clear of the
+  indenter when loading.
+- **Marking:** the average and % deviation, the reproducibility (max − min) for
+  each method, and a reasoned explanation of why the hardened specimen gives a
+  narrower spread than the annealed one. For the online-conversion questions,
+  Rockwell C 51 and Brinell 500 are roughly equivalent, as are Rockwell B 85 and
+  Brinell 165 — check against your conversion chart.
+:::
+
+#### Tensile and Microhardness Testing of Case-Hardened Steel
+
+::: {.lab-instructor}
+- **Prep:** mounted, polished case-hardened AISI 1566 specimens; 2% nital etchant
+  and polishing consumables if students etch (keep alcohol and etchant off skin,
+  ventilate); tensile specimens of **two or more** different materials so that the
+  most-brittle / most-ductile / toughest comparison has something to compare.
+- Tell students to bring a memory stick if the tensile machine's data are saved to
+  file **[confirm]**.
+- The template defines the effective case depth at HRC 50 and the true case depth
+  at HRC 40 — check that matches the convention you teach.
+- **Marking:** the hardness table and the two graphs, the case depths read from
+  them, and stress and strain calculated with the working shown.
+:::
+
+#### Charpy Impact Testing and the Ductile-to-Brittle Transition
+
+::: {.lab-instructor}
+- **Order dry ice two weeks ahead** through the technician, for all three weeks of
+  the rotation.
+- **Prep:** notched AISI 1018 hot-rolled and cold-rolled specimens (the template
+  has seven temperature rows: about −60, −40, −20, 0 °C, room temperature, 60 and
+  100 °C). Set up the alcohol/dry-ice bath and the hot-water bath before the
+  period so specimens can equilibrate for several minutes.
+- **Safety:** insulated gloves for dry ice, never sealed in a container, keep the
+  room ventilated. Before each swing, make sure everyone is clear on both sides of
+  the pendulum and out of its striking distance; the specimen is centred on the
+  anvil with the notch facing away from the striking edge. The break must be made
+  **within five seconds** of leaving the bath.
+- **Marking:** the plotted curves, a DBTT read from each curve, the fracture-surface
+  descriptions (fine granular vs. necking), and the answers on the Charpy value
+  and BCC crystal structure.
+:::
+
+#### Virtual Welding (all six labs)
+
+::: {.lab-instructor}
+- **Prep:** power up the VRTEX 360+ units before the lab (they need two or more
+  minutes to start), check the WPS booklets are at the simulators, and post the
+  start-up guide, the WPSs and the six assignment sheets on FOL. Students need a
+  flash drive for their best weld.
+- **The FOL quiz for each welding lab replaces the source PDF assignment sheets**,
+  which are not editable and contain copy-paste slips (the quizzes carry the
+  correct titles and steps): the flat-surfacing multi-pass sheet is titled "Single Pass"; the groove
+  single-pass sheet is headed "Lab Assignment 2" and describes flat surfacing; the
+  T-and-lap file is named for lab 4 but headed lab 5; the vertical-T sheet's Part B
+  is headed "Lap Single Pass" but selects **T 10GA** and scores three passes. The
+  single-pass and multi-pass groove labs cite the **same WPS**, whose table lists
+  two passes while the multi-pass sheet has seven score lines. The WPS pages for
+  the flat multi-pass and vertical-T welds were not among the supplied files —
+  confirm they are in the booklet.
+- **Marking:** compare the set-up values on the sheet with the WPS (within the
+  stated tolerances), check the saved weld belongs to the student's login, and
+  record the score and any bend-test result.
+:::
+
+#### Machine Learning, Week 1: AI Literacy and Prompt Engineering
 
 ::: {.lab-instructor}
 - **Prep:** confirm Claude.ai / ChatGPT and colab.research.google.com are
   reachable on the lab network. Post the FMEA table (Chapter @sec-chap-ml, Week 1)
   and a blank `prompts.md` on FOL.
-- No dataset needed this week; `spc_data.csv` is staged for Lab 8.
+- No dataset needed this week; `spc_data.csv` is staged for Week 2.
 - **Marking:** Exercise 3 is the point of the week — require genuine verification
   (a screenshot of the empty ASTM search, a Google Scholar "no results"), not
   just "I think this is made up".
-- The capstone (Labs 9–12) is assessed together against the capstone rubric held
+- The capstone (Weeks 3–6) is assessed together against the capstone rubric held
   in FOL and the instructor handbook.
 :::
 
-#### Lab 8 — Machine Learning, Week 2: Manufacturing Data and SPC
+#### Machine Learning, Week 2: Manufacturing Data and SPC
 
 ::: {.lab-instructor}
 - **Prep:** stage `spc_data.csv` and `week2_lab.ipynb` on FOL. Keep a key of the
@@ -1536,27 +2953,27 @@ are in the instructor handbook.
 - The most common error is using the standard deviation of the daily means for
   the control limits instead of `sigma_individual / sqrt(n)` — check this
   explicitly.
-- Follow up on a `spc_starter.py` line from Lab 7: ask a student to explain it.
+- Follow up on a `spc_starter.py` line from Week 1: ask a student to explain it.
 - **Marking:** deduct for silent row deletion even if the final chart looks
   right — the traceable quality log is the learning objective.
 :::
 
-#### Lab 9 — Machine Learning, Week 3: The C-MAPSS Dataset
+#### Machine Learning, Week 3: The C-MAPSS Dataset
 
 ::: {.lab-instructor}
 - **Prep:** stage `train_FD001.txt` and `predictive_maintenance.ipynb` on FOL
   (host the dataset yourself so it does not depend on Kaggle sign-in during the
   lab). Confirm Colab is reachable.
 - The "sawtooth" reflection question (Task 5.1) sets up the engine-wise split in
-  Lab 10 — make sure students actually answer it.
+  Week 4 — make sure students actually answer it.
 - **Marking:** rolled into the capstone rubric; here just verify the notebook
   runs end to end and the reflection is attempted.
 :::
 
-#### Lab 10 — Machine Learning, Week 4: Building the Model
+#### Machine Learning, Week 4: Building the Model
 
 ::: {.lab-instructor}
-- **Prep:** none beyond Lab 9 — same notebook, same data. Have a reference
+- **Prep:** none beyond Week 3 — same notebook, same data. Have a reference
   solution notebook with the expected RMSE (~21 cycles) and feature-importance
   chart.
 - **The teaching moment:** circulate during the evaluation task and look for RMSE
@@ -1565,7 +2982,7 @@ are in the instructor handbook.
 - **Marking:** rolled into the capstone rubric.
 :::
 
-#### Lab 11 — Machine Learning, Week 5: Deploying the App
+#### Machine Learning, Week 5: Deploying the App
 
 ::: {.lab-instructor}
 - **Prep:** stage `streamlit_app.py` and a known-good `requirements.txt` on FOL.
@@ -1574,27 +2991,27 @@ are in the instructor handbook.
   network.
 - Have students do the GitHub / Streamlit account creation as prep, not in the
   lab — it eats 20 min otherwise.
-- **Release Lab 14 this week.**
+- **If you are delivering the take-home Robotic Work-Cell Design lab, release it this week** (three weeks before it is due).
 - **Marking:** rolled into the capstone rubric; the deliverable is a URL that
   loads and predicts.
 :::
 
-#### Lab 12 — Machine Learning, Week 6: Capstone Presentations
+#### Machine Learning, Week 6: Capstone Presentations
 
 ::: {.lab-instructor}
 - **Prep:** build the presentation schedule; test the projector with a couple of
   student URLs beforehand; have your own reference app ready to show if a
   student's deployment is down.
-- **Stretch goals** continue in [Lab 13](#sec-lab-tpm-rca), which reuses this
+- **Stretch goals** continue in [TPM/OEE, Root Cause and a New Dataset](#sec-lab-tpm-rca), which reuses this
   pipeline on the AI4I 2020 dataset: XGBoost comparison, SHAP values, FD002
   generalisation, prediction intervals.
-- The Labs 9–12 capstone rubric (100 points: working model 30, code quality 20,
+- The Weeks 3–6 capstone rubric (100 points: working model 30, code quality 20,
   Streamlit app 25, documentation & honesty 15, presentation 10) and its
   weighting are maintained in FOL and the instructor handbook; publish them
   before the module starts.
 :::
 
-#### Lab 13 — TPM/OEE, Root Cause and a New Dataset
+#### TPM/OEE, Root Cause and a New Dataset
 
 ::: {.lab-instructor}
 - **Prep:** generate `precitech_shift_log.csv` with `Rscript R/make_lab_data.R`
@@ -1611,100 +3028,127 @@ are in the instructor handbook.
   not happen.
 :::
 
-#### Lab 14 — Robotic Work-Cell Design in RoboDK for Web
-
-::: {.lab-instructor}
-- **Release in week 11** alongside Lab 11, so students have the full three weeks;
-  it is due at the end of week 14. This mirrors the course plan's existing
-  take-home lab pattern (released three weeks out, video submission).
-- **Prep:** the day before release, run through Tasks 1–3 in RoboDK for Web
-  yourself on the college network — confirm `web.robodk.com` is reachable, the
-  library loads, and a station can be saved and re-loaded. Have a reference
-  station file and an expected cycle-time range (from the `R/make_lab_data.R`
-  answer key) ready for marking.
-- No lab room is needed — this is done from home — but reserve 15 minutes in the
-  week-11 lab to demo the tool and walk through the brief.
-- **Marking:** the takt comparison in Task 4 only works if the student's Lab 4
-  takt was correct; if it was not, mark Task 4 on the *method* against a takt you
-  supply. Watch for cycle times that are physically implausible (joint speeds
-  cranked past limits) — that is where the "your own work" line is tested.
-:::
-
 ### Consolidated shopping list (buy / restock each term)
 
-The current lab set uses **no physical consumables** — the removed bridge and
-lean-simulation labs were the only ones that did. If either is reinstated from
-`LabInstructions/`, restore its shopping list from the previous revision of this
-chapter (git history) or the original handouts.
+Tick only the labs you are delivering. The software-only labs (Rocksi, RoboDK,
+AnyLogic, Lean, ML, TPM) use **no physical consumables**; the bridge and
+lean-simulation labs that did are not in the catalogue. If either is reinstated
+from `LabInstructions/`, restore its shopping list from the previous revision of
+this chapter (git history) or the original handouts.
+
+**Consumables — order ahead**
+
+- [ ] **Dry ice for the Charpy lab — needed in all three weeks of the
+  materials-testing rotation. The lab technician needs two weeks' notice to order
+  it.** Agree the quantity per session with the technician.
+- [ ] Alcohol for the Charpy cold bath; methyl alcohol and lint-free wipes for
+  instrument and gauge-block cleaning (calibration lab)
+- [ ] Notched AISI 1018 hot-rolled and cold-rolled Charpy specimens — seven
+  temperatures × two steels per test set, times the number of test sets
+- [ ] Tensile specimens (two or more materials), mounted case-hardened AISI 1566
+  specimens, annealed / quenched / normalized hardness specimens
+- [ ] Nital (2 %) etchant, polishing consumables and mounting resin, if the
+  metallography portion is run **[confirm]**
+- [ ] Roller bearings — 100 for the variable-charts lab and 50 for the
+  process-capability lab, per class or bench **[confirm]**
+- [ ] Bead bags in two or more colours, enough for ten samples of 50 per student
+  or bench (attribute-charts lab)
+- [ ] USB flash drives for the Virtual Welding labs
 
 **Printing (per term)**
 
-- [ ] Lab 5 REBA worksheets + REBA cheat sheet (one per student)
-- [ ] Lab 2 Précitech case-study handout + document templates
-- [ ] Lab 7 FMEA table (from Chapter @sec-chap-ml, Week 1)
-- [ ] Lab 6 answer key (caliper reference values, expected %GRR / ndc / Cpk) — for marking only
+- [ ] REBA worksheets + REBA cheat sheet (one per student)
+- [ ] Précitech case-study handout + document templates
+- [ ] FMEA table for Machine Learning, Week 1 (from Chapter @sec-chap-ml, Week 1)
+- [ ] Answer key for the Virtual Caliper (caliper reference values, expected
+  %GRR / ndc / Cpk) — for marking only
+- [ ] Metrology and statistical-quality-control assignment sheets / worksheets,
+  the control-chart constants table, and the *Preparing a Capability Study* handout
+- [ ] Materials-testing report templates (hardness, tensile and microhardness,
+  Charpy) and the rotation schedule
+- [ ] Calibration report forms (micrometer, caliper)
 
 **Reusable — check stock**
 
-- [ ] Projector / display for Lab 12 presentations
+- [ ] Projector / display for the capstone presentations
+- [ ] Vernier calipers, height gauges and micrometers; gauge-block sets (check
+  serial numbers and certificates); surface plates, V-blocks, sine bar, dial
+  indicators, rollers, tapers
+- [ ] Rockwell and Brinell testers, Vickers microhardness tester, tensile testing
+  machine, Charpy pendulum tester, metallography equipment; thermometers, tongs,
+  insulated gloves, safety glasses
+- [ ] Lincoln VRTEX 360+ simulators and WPS booklets
 
 ### Software, licences & accounts — set up before the term
 
 - [ ] [**AnyLogic Personal Learning Edition**](https://www.anylogic.com/downloads/)
-  installed on every Lab 3 PC; run a full test of the demo model (watch the PLE
-  size limit)
+  installed on every Facility Design & Simulation PC; run a full test of the demo
+  model (watch the PLE size limit)
 - [ ] [**Microsoft Project**](https://www.microsoft.com/microsoft-365/project/project-management-software)
   and [**Microsoft Visio**](https://www.microsoft.com/microsoft-365/visio/flowchart-software)
-  licences live on Lab 2 / Lab 3 PCs (most likely gap in a standard Office image)
+  licences live on the Design Documentation and Facility Design PCs (most likely
+  gap in a standard Office image)
 - [ ] [**Microsoft Excel**](https://www.microsoft.com/microsoft-365/excel) /
-  [**Word**](https://www.microsoft.com/microsoft-365/word) available on Lab 2 / Lab 3 PCs
+  [**Word**](https://www.microsoft.com/microsoft-365/word) available on the
+  Design Documentation, Facility Design and statistical-quality-control PCs
 - [ ] [**Rocksi**](https://rocksi.net/) confirmed reachable through the lab
-  network/firewall (Lab 1); offline fallback prepared. *(LightBot dropped — needs
-  a plug-in the college machines do not have.)*
-- [ ] [**draw.io**](https://app.diagrams.net/) reachable on the lab network (Labs 4, 13)
+  network/firewall (Logic Thinking); offline fallback prepared. *(LightBot dropped
+  — needs a plug-in the college machines do not have.)*
+- [ ] [**draw.io**](https://app.diagrams.net/) reachable on the lab network (Lean;
+  TPM/OEE)
 - [ ] [**AnyLogic Cloud**](https://cloud.anylogic.com/) reachable, and the push–pull
-  model published with editable input parameters (Lab 4)
-- [ ] [**Google Sheets**](https://sheets.google.com/) reachable (Labs 4, 13)
+  model published with editable input parameters (Lean)
+- [ ] [**Google Sheets**](https://sheets.google.com/) reachable (Lean; TPM/OEE)
 - [ ] [**UCI ML Repository**](https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset)
-  reachable for the AI4I 2020 download, with a FOL fallback copy staged (Lab 13)
-- [ ] [**RoboDK for Web**](https://web.robodk.com/simulation) reachable; run Tasks 1–3
-  through the college firewall before releasing Lab 14
-- [ ] **Lab 6 needs no external service** — only confirm the rendered book page
-  and its webR cells load in the lab browsers
+  reachable for the AI4I 2020 download, with a FOL fallback copy staged (TPM/OEE)
+- [ ] [**RoboDK for Web**](https://web.robodk.com/simulation) reachable; run the
+  first three tasks through the college firewall before releasing the lab
+- [ ] **The Virtual Caliper needs no external service** — only confirm the rendered
+  book page and its webR cells load in the lab browsers
 - [ ] [**Google Colab**](https://colab.research.google.com) reachable on the lab
-  network (Labs 8–11, 13)
+  network (ML Weeks 2–5; TPM/OEE)
 - [ ] [**Claude.ai**](https://claude.ai) / [**ChatGPT**](https://chat.openai.com)
-  reachable on the lab network (Labs 7–8, 13)
+  reachable on the lab network (ML Weeks 1–2; TPM/OEE)
 - [ ] [**GitHub**](https://github.com/) and [**Streamlit Community Cloud**](https://share.streamlit.io)
-  reachable (Lab 11); students create accounts as prep
+  reachable (ML Week 5); students create accounts as prep
+- [ ] VRTEX 360+ units start and log in; WPS booklets present; this term's WPSs
+  posted on FOL
 - [ ] FOL document templates generated and re-uploaded — run
   `python R/gen_lab_templates.py`: `Bill_of_Materials_Template_for_Excel.xlsx`,
-  `Gantt_chart_template.xlsx`, `Risk_Assessment_Template.docx` (Lab 2);
-  `week2_lab.ipynb` (Lab 8); `predictive_maintenance.ipynb` (Lab 9, reused in
-  10–11); `streamlit_app.py` + `requirements.txt` (Lab 11)
+  `Gantt_chart_template.xlsx`, `Risk_Assessment_Template.docx` (Design
+  Documentation); `week2_lab.ipynb` (ML Week 2); `predictive_maintenance.ipynb`
+  (ML Week 3, reused in Weeks 4–5); `streamlit_app.py` + `requirements.txt` (ML
+  Week 5)
 - [ ] Lab data generated and staged on FOL — run `Rscript R/make_lab_data.R`:
-  `vsm_station_data.csv` (Lab 4), `spc_data.csv` (Lab 8),
-  `precitech_shift_log.csv` (Lab 13)
+  `vsm_station_data.csv` (Lean), `spc_data.csv` (ML Week 2),
+  `precitech_shift_log.csv` (TPM/OEE)
 - [ ] `train_FD001.txt` — the real NASA C-MAPSS FD001 dataset — hosted on FOL
-  (Lab 9; do not fabricate this one, it is real turbofan sensor data)
-- [ ] Task clips / photo sets staged on FOL for Lab 5 (Lifting Boxes, Workstation,
-  Cleaning)
-- [ ] Prelab video links checked for Labs 1, 3, 5
+  (ML Week 3; do not fabricate this one, it is real turbofan sensor data)
+- [ ] Task clips / photo sets staged on FOL for Ergonomics (Lifting Boxes,
+  Workstation, Cleaning)
+- [ ] Prelab video links checked for Logic Thinking, Facility Design and Ergonomics
 - [ ] Grade items verified in FOL against the instructor handbook's grade-item
-  checklist (34 items, 6 categories; `Lab-13` and `Lab-14` added; take-home
-  availability window on `Lab-14`)
+  checklist for the labs you deliver
 
 ### Room bookings
 
-- [ ] **Computer lab** with internet + full Microsoft Office + Project + Visio +
-  AnyLogic PLE — Labs 1–13 (Labs 2–3 need Project/Visio; Labs 4, 6–13 need only a
-  browser and internet)
-- [ ] **Room with a projector/display** for Lab 12 capstone presentations
-  **[confirm — the computer lab may suffice]**
-- [ ] **No room for Lab 14** — it is a take-home lab; only the 15-minute demo
-  slot in the week-11 lab is needed
+- [ ] **Computer lab** with internet + full Microsoft Office — for the software
+  labs. The Design Documentation and Facility Design labs also need Project, Visio
+  and AnyLogic PLE; the browser-based labs (Rocksi, Lean, Virtual Caliper, ML,
+  TPM/OEE) need only a browser and internet
+- [ ] **Metrology lab** with surface plates and the measuring instruments — the
+  metrology labs and the hands-on statistical-quality-control labs (the latter also
+  need PCs with Excel, or a computer lab booked alongside)
+- [ ] **Materials lab** (safety glasses and safety footwear required) — three
+  consecutive weeks, the same slot each week, for the materials-testing rotation
+- [ ] **Welding-simulator lab** with the VRTEX 360+ units — for the Virtual
+  Welding labs
+- [ ] **Room with a projector/display** for the machine-learning capstone
+  presentations **[confirm — the computer lab may suffice]**
+- [ ] **No room for Robotic Work-Cell Design** — it is a take-home lab; only a
+  15-minute demo slot in a lab period is needed
 
-### Appendix: instrumentation-trainer lab stream
+### Appendix: instrumentation-trainer lab stream {#sec-labs-appendix-trainer}
 
 An older set of labs for this course code was written for the **B1033** trainer
 benches (author "MZhang"). They are **not** part of the current lab set, but the
@@ -1722,3 +3166,4 @@ Prep for the alt stream: book **B1033**; confirm every trainer bench has a
 working power-supply module, pump/tank unit and the two DMMs; confirm **Siemens
 TIA Portal** licences for the PLC lab; print each handout's instructor sign-off
 sheet (4 sign-offs per lab).
+

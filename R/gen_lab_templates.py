@@ -6,31 +6,31 @@ Run:  python R/gen_lab_templates.py   (from the repo root, or anywhere)
 Writes into  labs/templates/  (gitignored, like lab_data/ and quizzes/ — these
 are staged on FOL by hand, not committed; this script is the source of record).
 
-    Bill_of_Materials_Template_for_Excel.xlsx   -- Lab 2
-    Gantt_chart_template.xlsx                   -- Lab 2 (see note below)
-    Risk_Assessment_Template.docx               -- Lab 2
-    week2_lab.ipynb                             -- Lab 8
-    predictive_maintenance.ipynb                -- Lab 9 (continues in 10-11)
-    streamlit_app.py + requirements.txt         -- Lab 11
+    Bill_of_Materials_Template_for_Excel.xlsx   -- Design Documentation
+    Gantt_chart_template.xlsx                   -- Design Documentation (see note below)
+    Risk_Assessment_Template.docx               -- Design Documentation
+    week2_lab.ipynb                             -- ML Week 2
+    predictive_maintenance.ipynb                -- ML Week 3 (continues in Weeks 4-5)
+    streamlit_app.py + requirements.txt         -- ML Week 5
 
 Requires: openpyxl, python-docx, nbformat  (pip install openpyxl python-docx nbformat)
 
 NOT generated here (deliberately -- see the Labs chapter Teacher-prep notes):
-  - Lab 3's AnyLogic demo model (needs AnyLogic; a placeholder .alp would be
+  - the Facility Design & Simulation lab's AnyLogic demo model (needs AnyLogic; a placeholder .alp would be
     useless -- build/fork the real model once and stage it on FOL).
-  - Lab 5's task video/photo sets (real footage of a workplace task).
-  - Lab 9's train_FD001.txt (the real NASA C-MAPSS dataset -- host the actual
+  - the Ergonomics lab's task video/photo sets (real footage of a workplace task).
+  - ML Week 3's train_FD001.txt (the real NASA C-MAPSS dataset -- host the actual
     file, do not fabricate turbofan sensor data).
-  - Lab 11's sample_engine.csv (students build it themselves from the real
+  - ML Week 5's sample_engine.csv (students build it themselves from the real
     C-MAPSS test set as their Task 1 TODO).
-  - Lab 14's RoboDK reference station file (needs RoboDK).
+  - the Robotic Work-Cell Design lab's RoboDK reference station file (needs RoboDK).
 
 A NOTE ON THE GANTT TEMPLATE: there is no reliable way to hand-write a real
 binary .mpp file without Microsoft Project. Instead this script produces an
 .xlsx that Microsoft Project opens natively (File > Open > this file), running
 its built-in Import Wizard to map the columns to Task Name / Duration /
 Predecessors -- a long-standing, documented Project feature. Open it, confirm
-the mapping, then File > Save As > .mpp. Update the Lab 2 materials list /
+the mapping, then File > Save As > .mpp. Update the Design Documentation materials list /
 FOL upload if you'd rather keep the historical "Gantt_chart.mpp" filename --
 the workflow is the same either way.
 """
@@ -70,7 +70,7 @@ def autosize(ws, widths):
 
 
 # ----------------------------------------------------------------------------
-# Lab 2 -- Bill of Materials template
+# Design Documentation -- Bill of Materials template
 # ----------------------------------------------------------------------------
 def make_bom():
     wb = Workbook()
@@ -139,7 +139,7 @@ def make_bom():
 
 
 # ----------------------------------------------------------------------------
-# Lab 2 -- Gantt chart template (Excel, importable by MS Project)
+# Design Documentation -- Gantt chart template (Excel, importable by MS Project)
 # ----------------------------------------------------------------------------
 def make_gantt():
     wb = Workbook()
@@ -204,7 +204,7 @@ def make_gantt():
 
 
 # ----------------------------------------------------------------------------
-# Lab 2 -- HSE risk assessment template (Word)
+# Design Documentation -- HSE risk assessment template (Word)
 # ----------------------------------------------------------------------------
 def make_hse():
     doc = Document()
@@ -266,14 +266,14 @@ def make_hse():
 
 
 # ----------------------------------------------------------------------------
-# Lab 8 -- week2_lab.ipynb
+# ML Week 2 -- week2_lab.ipynb
 # ----------------------------------------------------------------------------
 def make_week2_notebook():
     nb = nbf.v4.new_notebook()
     cells = []
 
     cells.append(nbf.v4.new_markdown_cell(
-        "# Lab 8 -- Machine Learning Week 2: Manufacturing Data and SPC\n\n"
+        "# Machine Learning Week 2: Manufacturing Data and SPC\n\n"
         "Work through the tasks below in order. Every code cell has a `TODO` "
         "where you (or the LLM you direct) fill in the work. Answer every "
         "markdown prompt in place -- this notebook is what you submit."
@@ -281,12 +281,12 @@ def make_week2_notebook():
 
     cells.append(nbf.v4.new_markdown_cell(
         "## Task 1 -- Run your Week 1 code on real data\n\n"
-        "Paste your `spc_starter.py` from Lab 7 into the cell below and run "
+        "Paste your `spc_starter.py` from ML Week 1 into the cell below and run "
         "it against `spc_data.csv`. Expect a spike so large it compresses "
         "the chart, and your 3-sigma detector flagging the wrong rows."
     ))
     cells.append(nbf.v4.new_code_cell(
-        "# TODO: paste your Lab 7 spc_starter.py code here, unchanged, and run it.\n"
+        "# TODO: paste your ML Week 1 spc_starter.py code here, unchanged, and run it.\n"
         "import pandas as pd\n"
         "import matplotlib.pyplot as plt\n"
         "import numpy as np\n"
@@ -374,14 +374,14 @@ def make_week2_notebook():
 
 
 # ----------------------------------------------------------------------------
-# Lab 9-11 -- predictive_maintenance.ipynb (capstone notebook)
+# ML Weeks 3-5 -- predictive_maintenance.ipynb (capstone notebook)
 # ----------------------------------------------------------------------------
 def make_capstone_notebook():
     nb = nbf.v4.new_notebook()
     cells = []
 
     cells.append(nbf.v4.new_markdown_cell(
-        "# Predictive Maintenance Capstone -- Labs 9-11\n\n"
+        "# Predictive Maintenance Capstone -- ML Weeks 3-5\n\n"
         "NASA C-MAPSS FD001 turbofan run-to-failure data. You build this "
         "notebook across three lab sessions: Week 3 (load & explore), Week 4 "
         "(features, train, evaluate, save the model), Week 5 (deploy -- see "
@@ -473,9 +473,9 @@ def make_capstone_notebook():
         "*Your answers here.*"
     ))
 
-    # --- Week 4 (Lab 10) ---------------------------------------------------
+    # --- Week 4 ---------------------------------------------------
     cells.append(nbf.v4.new_markdown_cell(
-        "---\n## Week 4 (Lab 10) -- Building the model\n\n"
+        "---\n## Week 4 -- Building the model\n\n"
         "Continue in this same notebook."
     ))
     cells.append(nbf.v4.new_code_cell(
@@ -517,13 +517,13 @@ def make_capstone_notebook():
         "# joblib.dump(feature_cols, \"feature_cols.pkl\")\n"
     ))
 
-    # --- Week 5 (Lab 11) ----------------------------------------------------
+    # --- Week 5 ----------------------------------------------------
     cells.append(nbf.v4.new_markdown_cell(
-        "---\n## Week 5 (Lab 11) -- Deploying the app\n\n"
+        "---\n## Week 5 -- Deploying the app\n\n"
         "The rest of this lab happens outside the notebook: complete the "
         "`TODO`s in `streamlit_app.py`, push `rul_model.pkl` and "
         "`feature_cols.pkl` (saved above) plus the app to a public GitHub "
-        "repo, and deploy on Streamlit Community Cloud. See the Lab 11 FOL "
+        "repo, and deploy on Streamlit Community Cloud. See the ML Week 5 FOL "
         "quiz for the full steps."
     ))
 
@@ -533,10 +533,10 @@ def make_capstone_notebook():
 
 
 # ----------------------------------------------------------------------------
-# Lab 11 -- streamlit_app.py + requirements.txt
+# ML Week 5 -- streamlit_app.py + requirements.txt
 # ----------------------------------------------------------------------------
 STREAMLIT_APP = '''\
-"""Precitech predictive-maintenance demo -- Lab 11 starter template.
+"""Precitech predictive-maintenance demo -- ML Week 5 starter template.
 
 Complete every TODO, then:  streamlit run streamlit_app.py
 """
@@ -550,7 +550,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Precitech RUL Predictor", page_icon=":gear:",
                    layout="centered")
 
-ROLLING_WINDOW = 5  # cycles -- must match what you trained with in Lab 10
+ROLLING_WINDOW = 5  # cycles -- must match what you trained with in Week 4
 
 
 @st.cache_resource
@@ -563,7 +563,7 @@ def load_model():
 def add_rolling_features(df, sensor_cols, window=ROLLING_WINDOW):
     """Rolling mean/std per sensor for a SINGLE engine's cycle history.
 
-    Mirrors the Lab 10 feature engineering: no grouping needed here because
+    Mirrors the Week 4 feature engineering: no grouping needed here because
     the uploaded CSV is already one engine's data, in cycle order.
     """
     out = df.copy()
@@ -586,7 +586,7 @@ def main():
 
     st.title("Precitech CNC Cell -- Remaining Useful Life Predictor")
     # TODO: add your name and course to this caption.
-    st.caption("TODO: Your Name -- ENGR-3027 -- Lab 11")
+    st.caption("TODO: Your Name -- ENGR-3027 -- ML Week 5")
 
     st.write(
         "Upload the last cycles of one engine's sensor readings (C-MAPSS "
@@ -654,7 +654,7 @@ def main():
             "**Training data:** NASA C-MAPSS FD001 simulation "
             "(one fault mode, one operating condition).\\n\\n"
             "**Model:** Random Forest, 100 trees, max depth 10.\\n\\n"
-            # TODO: put your ACTUAL Lab 10 validation RMSE here.
+            # TODO: put your ACTUAL Week 4 validation RMSE here.
             "**Validation RMSE:** TODO cycles.\\n\\n"
             # TODO: at least one Precitech-specific "not suitable for" statement.
             "**Not suitable for:** TODO -- e.g. this model has never seen "
