@@ -124,6 +124,81 @@ MSA is required by multiple quality standards:
 
 ---
 
+## Common Sources of Measurement Error
+
+```{r error-sources, echo=FALSE, fig.width=12, fig.height=8}
+error_sources <- data.frame(
+  Category = c("Equipment", "Equipment", "Equipment", "Equipment",
+               "Appraiser", "Appraiser", "Appraiser",
+               "Method", "Method", "Method",
+               "Environment", "Environment",
+               "Part", "Part"),
+  Source = c("Calibration drift", "Worn components", "Poor resolution", "Fixture issues",
+             "Training gaps", "Technique variation", "Fatigue/attention",
+             "Unclear procedures", "Inconsistent setup", "Wrong reference point",
+             "Temperature effects", "Contamination/cleanliness",
+             "Surface finish", "Part flexibility"),
+  Impact = c("Bias", "Repeatability", "Resolution/ndc", "Repeatability",
+             "Reproducibility", "Repeatability & Reproducibility", "Repeatability",
+             "Reproducibility", "Repeatability", "Bias",
+             "Bias & Repeatability", "Repeatability",
+             "Repeatability", "Repeatability")
+)
+
+ggplot(error_sources, aes(x = Category, y = 1, fill = Impact)) + # Added y = 1
+  geom_col() + # Changed from geom_bar to geom_col
+  geom_text(aes(label = Source), 
+            position = position_stack(vjust = 0.5), 
+            size = 3 * diagram_text_scale, color = "white") +
+  scale_fill_manual(values = c("Bias" = "#e74c3c",
+                               "Repeatability" = "#3498db",
+                               "Reproducibility" = "#27ae60",
+                               "Resolution/ndc" = "#f39c12",
+                               "Repeatability & Reproducibility" = "#9b59b6",
+                               "Bias & Repeatability" = "#1abc9c")) +
+  coord_flip() +
+  labs(title = "Common Sources of Measurement Error by Category",
+       subtitle = "Classified by primary impact on measurement system",
+       x = "", y = "Number of Error Sources") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    legend.position = "bottom"
+  )
+```
+
+```{r error-table, echo=FALSE}
+improvement_actions <- data.frame(
+  Issue = c("High Repeatability (EV)", "High Reproducibility (AV)",
+            "Significant Bias", "Poor Linearity", "Drift/Stability Issues",
+            "Low ndc"),
+  Likely_Causes = c(
+    "Gauge condition, fixture, resolution, part variation during measurement",
+    "Training, technique, procedure clarity",
+    "Calibration, master accuracy, technique",
+    "Gauge mechanism, calibration across range",
+    "Environmental effects, gauge wear, master deterioration",
+    "Resolution, excessive gauge variation relative to part variation"
+  ),
+  Improvement_Actions = c(
+    "Maintain gauge, improve fixture, upgrade resolution, reduce part handling",
+    "Standardize technique, retrain, improve written procedures",
+    "Recalibrate, verify master, standardize technique",
+    "Repair/replace gauge, multi-point calibration",
+    "Environmental control, maintenance, replace masters",
+    "Higher resolution gauge, reduce gauge variation"
+  )
+)
+
+kable(improvement_actions,
+      col.names = c("Issue Identified", "Likely Causes", "Improvement Actions"),
+      caption = "MSA Issues and Improvement Actions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
+```
+
+---
+
 ## Components of Measurement Variation
 
 Total measurement variation comes from multiple sources. Understanding these components is essential for improvement.
@@ -1168,81 +1243,6 @@ ggplot(resolution_data, aes(x = Value)) +
 
 ---
 
-## Common Sources of Measurement Error
-
-```{r error-sources, echo=FALSE, fig.width=12, fig.height=8}
-error_sources <- data.frame(
-  Category = c("Equipment", "Equipment", "Equipment", "Equipment",
-               "Appraiser", "Appraiser", "Appraiser",
-               "Method", "Method", "Method",
-               "Environment", "Environment",
-               "Part", "Part"),
-  Source = c("Calibration drift", "Worn components", "Poor resolution", "Fixture issues",
-             "Training gaps", "Technique variation", "Fatigue/attention",
-             "Unclear procedures", "Inconsistent setup", "Wrong reference point",
-             "Temperature effects", "Contamination/cleanliness",
-             "Surface finish", "Part flexibility"),
-  Impact = c("Bias", "Repeatability", "Resolution/ndc", "Repeatability",
-             "Reproducibility", "Repeatability & Reproducibility", "Repeatability",
-             "Reproducibility", "Repeatability", "Bias",
-             "Bias & Repeatability", "Repeatability",
-             "Repeatability", "Repeatability")
-)
-
-ggplot(error_sources, aes(x = Category, y = 1, fill = Impact)) + # Added y = 1
-  geom_col() + # Changed from geom_bar to geom_col
-  geom_text(aes(label = Source), 
-            position = position_stack(vjust = 0.5), 
-            size = 3 * diagram_text_scale, color = "white") +
-  scale_fill_manual(values = c("Bias" = "#e74c3c",
-                               "Repeatability" = "#3498db",
-                               "Reproducibility" = "#27ae60",
-                               "Resolution/ndc" = "#f39c12",
-                               "Repeatability & Reproducibility" = "#9b59b6",
-                               "Bias & Repeatability" = "#1abc9c")) +
-  coord_flip() +
-  labs(title = "Common Sources of Measurement Error by Category",
-       subtitle = "Classified by primary impact on measurement system",
-       x = "", y = "Number of Error Sources") +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-    legend.position = "bottom"
-  )
-```
-
-```{r error-table, echo=FALSE}
-improvement_actions <- data.frame(
-  Issue = c("High Repeatability (EV)", "High Reproducibility (AV)",
-            "Significant Bias", "Poor Linearity", "Drift/Stability Issues",
-            "Low ndc"),
-  Likely_Causes = c(
-    "Gauge condition, fixture, resolution, part variation during measurement",
-    "Training, technique, procedure clarity",
-    "Calibration, master accuracy, technique",
-    "Gauge mechanism, calibration across range",
-    "Environmental effects, gauge wear, master deterioration",
-    "Resolution, excessive gauge variation relative to part variation"
-  ),
-  Improvement_Actions = c(
-    "Maintain gauge, improve fixture, upgrade resolution, reduce part handling",
-    "Standardize technique, retrain, improve written procedures",
-    "Recalibrate, verify master, standardize technique",
-    "Repair/replace gauge, multi-point calibration",
-    "Environmental control, maintenance, replace masters",
-    "Higher resolution gauge, reduce gauge variation"
-  )
-)
-
-kable(improvement_actions,
-      col.names = c("Issue Identified", "Likely Causes", "Improvement Actions"),
-      caption = "MSA Issues and Improvement Actions") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
-  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
-```
-
----
-
 ## MSA and SPC Relationship
 
 Poor measurement systems directly impact SPC effectiveness.
@@ -1257,10 +1257,18 @@ n <- 50
 true_process <- rnorm(n, 100, 2)
 
 # Good measurement system (low measurement error)
-good_measurement <- true_process + rnorm(n, 0, 0.5)
+sd_good <- 0.3
+good_measurement <- true_process + rnorm(n, 0, sd_good)
 
 # Poor measurement system (high measurement error)
-poor_measurement <- true_process + rnorm(n, 0, 3)
+sd_poor <- 5
+poor_measurement <- true_process + rnorm(n, 0, sd_poor)
+
+# %GRR as a share of total observed variation (process sigma = 2)
+grr_good <- round(100 * sd_good / sqrt(2^2 + sd_good^2))
+grr_poor <- round(100 * sd_poor / sqrt(2^2 + sd_poor^2))
+lab_good <- paste0("Good MSA (%GRR = ", grr_good, "%)")
+lab_poor <- paste0("Poor MSA (%GRR = ", grr_poor, "%)")
 
 # Control limits based on good data
 mean_good <- mean(good_measurement[1:25])
@@ -1276,11 +1284,11 @@ LCL_poor <- mean_poor - 3 * sigma_poor
 chart_data <- data.frame(
   Sample = rep(1:n, 2),
   Value = c(good_measurement, poor_measurement),
-  System = rep(c("Good MSA (%GRR = 10%)", "Poor MSA (%GRR = 60%)"), each = n)
+  System = factor(rep(c(lab_good, lab_poor), each = n), levels = c(lab_good, lab_poor))
 )
 
 limits_data <- data.frame(
-  System = c("Good MSA (%GRR = 10%)", "Poor MSA (%GRR = 60%)"),
+  System = factor(c(lab_good, lab_poor), levels = c(lab_good, lab_poor)),
   Mean = c(mean_good, mean_poor),
   UCL = c(UCL_good, UCL_poor),
   LCL = c(LCL_good, LCL_poor)
@@ -1292,9 +1300,9 @@ ggplot(chart_data, aes(x = Sample, y = Value)) +
   geom_hline(data = limits_data, aes(yintercept = Mean), color = "darkgreen") +
   geom_hline(data = limits_data, aes(yintercept = UCL), color = "red", linetype = "dashed") +
   geom_hline(data = limits_data, aes(yintercept = LCL), color = "red", linetype = "dashed") +
-  facet_wrap(~System, ncol = 1, scales = "free_y") +
+  facet_wrap(~System, ncol = 1) +
   labs(title = "Impact of Measurement System Quality on Control Charts",
-       subtitle = "Same stable process measured with different gauge quality",
+       subtitle = "Same stable process measured with different gauge quality (same y-axis scale on both charts)",
        x = "Sample Number", y = "Measured Value") +
   theme_minimal() +
   theme(
