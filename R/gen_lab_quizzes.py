@@ -1174,7 +1174,13 @@ write_lab("robodk-work-cell", "Robotic Work-Cell Design in RoboDK for Web (take-
 # =============================================================================
 
 def HANDS_DECL(kind="bench"):
-    if kind == "team":
+    if kind == "swap":
+        who = ("(2) the name and student number of your <b>swap partner</b> and the "
+               "<b>serial numbers of both calipers</b>; ")
+        rule = ("This is an <b>individual</b> lab: you take your own readings, with your own caliper "
+                "and then your partner's. You and your partner exchange readings only after you have "
+                "both finished; the calculations, graphs and written answers must be your own.")
+    elif kind == "team":
         who = ("(2) the names and student numbers of the <b>other members of your "
                "team</b>, and the station / instrument you worked at; ")
         rule = ("This lab is done in a team, but <b>the write-up is individual</b>: "
@@ -1564,51 +1570,75 @@ write_lab("capability", "Process Capability: Cp, Cpk and Distributions",
 
 # ----------------------------------------------------------------------------- gauge-rr
 write_lab("gauge-rr", "Repeatability and Reproducibility (Gauge R&R)",
- ["Team lab (three operators per team, assigned by the instructor); the write-up is "
-  "individual. Use the corrected worksheet: LabInstructions/Quality_Labs/fixed/"
-  "Repeatability and Reproducibility - fixed.xlsx.",
-  "Constants (5.15 sigma convention): EV = 5.15 R-bar / 1.128; AV = sqrt((5.15 "
-  "Xdiff / 1.91)^2 - EV^2/(n r)) for 3 operators (1.41 for 2 operators), n = 5 parts, "
-  "r = 2 trials; Vp = 5.15 Rp / 2.48 (5 parts).",
-  "Part B key: EV = 29.4, AV = 0 (negative under the root), R&R = 29.4, Vp = 82.2, "
-  "Vt = 87.3, %R&R = 34 % (unacceptable, over 30 %).",
+ ["Individual lab: each student takes their own readings and writes their own report. Students work in "
+  "SWAP PAIRS: each has a serial-numbered caliper, they exchange calipers for the second half, and exchange "
+  "readings (only) afterwards, so each student analyses a 2 operators x 2 calipers x 10 bars x 2 trials design "
+  "for the diameter and the length of ten numbered sawn steel bars.",
+  "Stage the data sheet on FOL: labs/templates/Gauge_RR_Bar_Stock_Data_Sheet.xlsx "
+  "(python R/gen_grr_sheet.py). Replace the placeholder tolerances on its Setup sheet with the "
+  "bars' real specification. Instructor answer key (SIMULATED readings): "
+  "LabInstructions/Quality_Labs/fixed/Gauge RR Bar Stock - EXAMPLE (instructor).xlsx.",
+  "Constants (5.15 sigma): EV = 5.15 R-bar / 1.128; operator AV = sqrt((5.15 Xdiff_op / 1.41)^2 - EV^2/40); "
+  "caliper CV = sqrt((5.15 Xdiff_cal / 1.41)^2 - EV^2/40) (each operator or caliper average is over 40 readings); "
+  "PV = 5.15 Rp / 3.18; GRR = sqrt(EV^2 + AV^2 + CV^2); TV = sqrt(GRR^2 + PV^2); %GRR = 100 GRR / TV; "
+  "%tol = 100 GRR / (USL - LSL); ndc = INT(1.41 PV / GRR).",
+  "Example key (simulated, inches, tolerances +/-0.005 in and +/-0.020 in): diameter EV 0.0021, AV 0.0006, CV 0.0029, "
+  "GRR 0.0036, PV 0.0043, TV 0.0056 in, %GRR 65 %, %tol 36 %, ndc 1, largest component the caliper; length EV 0.0059, "
+  "AV 0.0050, CV 0.0025, GRR 0.0082, PV 0.0541, TV 0.0547 in, %GRR 14.9 %, %tol 20 %, ndc 9. Caliper difference from the "
+  "bars +0.0008 / +0.0007 in vs gauge-block +0.0007 in. The sheet is in INCHES at 0.0005 in resolution. Student results "
+  "will differ; mark the working against their own numbers.",
   "AI use: not permitted -- the measurements and calculations must be your own."],
- [HANDS_DECL("team"),
-  q("Task 1 - Part A data (2 marks)",
-    "<p>Each operator measures the <b>five holes</b> on the part with the caliper, "
-    "<b>twice</b> (trial 1 and trial 2), independently and without seeing the "
-    "others' readings. Paste the 3 x 5 x 2 table of readings with each operator's "
-    "initials, and explain how you kept the operators independent.</p>",
-    2, 3, "Full data table, initials, and the independence measures.",
-    "30 readings; operators blind to each other; holes measured in the same way."),
-  q("Task 2 - Part A: repeatability and reproducibility (3 marks)",
-    "<p>Calculate: the range for each hole and operator; the average range for "
-    "each operator and overall (R-bar); <b>EV = 5.15 x R-bar / 1.128</b>; each "
-    "operator's average reading and <b>Xdiff</b>; and <b>AV</b> from "
-    "sqrt( (5.15 x Xdiff / 1.91)^2 - EV^2 / (n x r) ) with n = 5 holes and r = 2 "
-    "trials (AV = 0 if the value under the root is negative). Show your working.</p>",
-    3, 4, "EV and AV with the working shown.",
-    "Constants as on the corrected sheet: 1.128, 1.91, n x r = 10."),
-  q("Task 3 - Part A: R&R, part and total variation (2 marks)",
-    "<p>Calculate <b>R&amp;R = sqrt(EV^2 + AV^2)</b>, <b>Vp = 5.15 x Rp / 2.48</b> "
-    "(Rp = largest minus smallest average part measurement), "
-    "<b>Vt = sqrt(R&amp;R^2 + Vp^2)</b> and <b>%R&amp;R = 100 x R&amp;R / Vt</b>.</p>",
-    2, 3, "R&R, Vp, Vt, %R&R.",
-    "Vp uses 2.48 (five parts), not 3.18."),
-  q("Task 4 - Part B: the supplied data (2 marks)",
-    "<p>Repeat the calculation on the <b>Part B</b> data (two operators, five "
-    "parts, two trials; for AV use 1.41 in place of 1.91). Report EV, AV, R&amp;R, "
-    "Vp, Vt and %R&amp;R.</p>",
-    2, 4, "All six values for Part B.",
-    "EV = 29.4; AV = 0; R&R = 29.4; Vp = 82.2; Vt = 87.3; %R&R = 34 %."),
-  q("Task 5 - Is the gauge adequate? (1 mark)",
-    "<p>For both parts, judge whether the measurement system is adequate "
-    "(under 10 % acceptable, 10-30 % marginal, over 30 % unacceptable). Which "
-    "component - repeatability or reproducibility - dominates, and what would you "
-    "do to improve it?</p>",
-    1, 3, "Adequacy judgement, dominant component, an improvement action.",
-    "Part B is unacceptable (about 34 %); repeatability dominates; e.g. better gauge/fixture, training, clearer method."),
-  REPORT(["Completed Excel workbook (Part A and Part B)"]),
+ [HANDS_DECL("swap"),
+  q("Task 1 - Check both calipers against the gauge block (2 marks)",
+    "<p>With your partner, clean the jaws and the gauge block. For <b>each</b> of the two calipers (yours and "
+    "your partner's): close the jaws and record the <b>zero reading</b>, then measure the gauge block <b>three "
+    "times</b>. Report the <b>serial number</b> of each caliper, the block's <b>certified size</b>, the zero "
+    "readings, the three block readings and their mean for each caliper, the <b>bias</b> of each (mean minus "
+    "certified size), whether each is within the acceptable limit, and the <b>difference in bias</b> between "
+    "the two calipers. What would you do if a caliper were outside the limit? Name one thing this single-block "
+    "check does <b>not</b> tell you.</p>",
+    2, 2, "Serials, zeros, block readings, means, both biases, limit judgement, bias difference, action, one limitation.",
+    "Bias = mean - certified. Outside the limit: do not use it / tell the instructor / re-zero or replace. "
+    "Limitation: one size only (no linearity, nothing about the bar length), and nothing about operator technique."),
+  q("Task 2 - How the data set was collected (2 marks)",
+    "<p>You measured all ten bars, twice, with <b>your</b> caliper (phase 1), swapped calipers with your partner, "
+    "and measured all ten bars, twice, with <b>their</b> caliper (phase 2) - diameter and length each time, in your "
+    "randomised order. You then copied your partner's readings into your sheet. Paste your two data tables (diameter "
+    "and length, all 8 reading columns per bar, showing which columns are yours and which are your partner's) with "
+    "the bar numbers. Then describe: (a) your <b>operational definition</b> of how you measured the diameter and the "
+    "length; (b) how you kept your readings independent (of your own earlier readings and of your partner's); "
+    "(c) why the order is randomised; (d) what you would <b>not</b> be able to tell apart if you and your partner "
+    "had each used only your own caliper.</p>",
+    2, 3, "Both tables with all 8 columns, bar numbers, operational definitions, independence, why randomise, why swap.",
+    "80 readings per characteristic in the sheet (40 own + 40 partner's); randomisation stops order effects; "
+    "(d) with each operator on their own caliper, an operator difference and a caliper difference are confounded."),
+  q("Task 3 - Diameter: Gauge R&R results (2 marks)",
+    "<p>From the <b>Diameter</b> sheet, report: <b>R-bar</b>, <b>EV</b>, <b>operator X-diff</b>, <b>AV</b>, "
+    "<b>caliper X-diff</b>, <b>CV</b>, <b>GRR</b>, <b>Rp</b>, <b>PV</b>, <b>TV</b>, <b>%GRR</b> (of total "
+    "variation), <b>%GRR of tolerance</b> and <b>ndc</b>. Then show, with a calculator, <b>one hand calculation "
+    "of EV and of AV</b> that reproduces the sheet's numbers (AV = 0 if the value under the root is "
+    "negative).</p>",
+    2, 4, "All thirteen values plus the hand calculation of EV and AV.",
+    "EV = 5.15 x R-bar / 1.128; AV = sqrt((operator Xdiff x 5.15/1.41)^2 - EV^2/40); CV likewise with the caliper Xdiff; "
+    "PV = 5.15 x Rp / 3.18. Accept any values that follow from the student's own data."),
+  q("Task 4 - Length: Gauge R&R results (2 marks)",
+    "<p>From the <b>Length</b> sheet, report the same thirteen values and state the unit of every one.</p>",
+    2, 3, "All thirteen values with units.",
+    "Same formulas as the diameter; values in inches."),
+  q("Task 5 - Operator or caliper? Is the gauge adequate? (2 marks)",
+    "<p>(a) For the diameter and for the length, judge the measurement system using %GRR of total variation (under "
+    "10 % acceptable, 10-30 % marginal, over 30 % unacceptable), %GRR of tolerance and ndc (5 or more). Do the three "
+    "measures agree, and why can the <b>same</b> calipers get different verdicts for the two characteristics "
+    "(compare PV and the caliper resolution)? (b) For each characteristic, which component is largest - repeatability, "
+    "operator or caliper - and what one action would you take? (c) Compare the <b>caliper difference</b> you found on "
+    "the bars with the <b>difference in gauge-block bias</b>: does the block explain the caliper effect? Is the "
+    "operator-by-caliper interaction noticeable, and what does that mean for splitting the two effects? (d) Name one "
+    "limitation of separating operator from caliper with only you and one partner, and one way to improve it.</p>",
+    2, 4, "Verdicts and agreement, why they differ, largest component and action, caliper vs block, interaction, one limitation and remedy.",
+    "%GRR is relative to the spread of the parts: small part variation (bar-stock diameter) makes the same gauge look worse. "
+    "The block explains the caliper effect if the two differences agree (one size only). Limitation: two operators and two calipers "
+    "give crude estimates (d2* for two levels); improve by pooling the class's data or using more operators and calipers."),
+  REPORT(["Completed Excel workbook (setup, caliper check, diameter and length sheets, summary)"]),
  ])
 
 # ----------------------------------------------------------------------------- hardness

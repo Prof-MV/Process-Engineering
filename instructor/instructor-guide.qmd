@@ -217,7 +217,7 @@ marked **[confirm]** are not stated in the source handouts.
 | Variable Control Charts: X̄, R and S | Metrology lab + PCs | 100 roller bearings, micrometers/calipers; Excel | Corrected worksheet + constants table | Instructor's choice |
 | Attribute Control Charts: p and np | Bench + PCs | Bead bags (≥ 500 per student/bench); Excel | Worksheet; assign a defective colour each | Instructor's choice |
 | Process Capability: Cp, Cpk and Distributions | Metrology lab + PCs | 50 roller bearings, micrometers; Excel | Corrected worksheet + *Preparing a Capability Study* | Instructor's choice |
-| Repeatability and Reproducibility (Gauge R&R) | Metrology lab + PCs | Part with 5 holes, calipers; Excel | Corrected worksheet | **Team of 3** |
+| Repeatability and Reproducibility (Gauge R&R) | Metrology lab + PCs | One serial-numbered caliper per student, a certified gauge block, 10 numbered sawn steel bars per pair (pool of 10–30); Excel | `Gauge_RR_Bar_Stock_Data_Sheet.xlsx` (from `R/gen_grr_sheet.py`; **inches**, 0.0005 in resolution) with the bars' real tolerances entered; student numbers 1–30 | **Individual** (swap partner) |
 | Hardness Testing: Rockwell and Brinell | Materials lab | Rockwell + Brinell testers; annealed/quenched/normalized specimens | Report template; conversion chart | Team (rotation) |
 | Tensile and Microhardness Testing of Case-Hardened Steel | Materials lab | Tensile machine + DAQ, Vickers tester, metallography kit, case-hardened AISI 1566 | Report template; nital, polishing consumables | Team (rotation) |
 | Charpy Impact Testing and the Ductile-to-Brittle Transition | Materials lab | Charpy pendulum, notched 1018 HR/CR bars, baths | **Dry ice (2 weeks' notice)**; alcohol; report template | Team (rotation) |
@@ -249,6 +249,16 @@ every term until the generator is changed.
 The Virtual Caliper data and its SPC dataset are generated **inside the webR
 cells** in `30-Labs.qmd`, not written to a file — the script reproduces their
 seeding so you have the ground truth for marking.
+
+**Gauge R&R data sheet** — run `python R/gen_grr_sheet.py` (needs `openpyxl`). It
+writes `labs/templates/Gauge_RR_Bar_Stock_Data_Sheet.xlsx` (the blank student
+workbook — stage it on FOL) and, if `LabInstructions/Quality_Labs/fixed/` exists,
+`Gauge RR Bar Stock - EXAMPLE (instructor).xlsx` filled with **simulated**
+readings (the answer key; never give it to students). `python R/gen_lab_templates.py`
+calls it too. Open the blank workbook's **Setup** sheet and replace the
+placeholder tolerances (Ø1.000 ± 0.005 in, length 2.000 ± 0.020 in) with the real
+specification for your bars. Give each student a number 1–30 (different from
+their swap partner's): it picks their random run order on the sheet.
 
 The AI4I 2020 dataset (TPM/OEE lab) is **not** generated — students download it from
 UCI in the browser. Host a copy on FOL as a firewall fallback.
@@ -371,13 +381,29 @@ cycle times that are physically implausible (joint speeds cranked past limits).
 - **Process capability:** Cp = (USL − LSL)/(6σ); Cpk = min[(USL − X̄)/(3σ),
   (X̄ − LSL)/(3σ)]; capable if ≥ 1.33; USL 0.5008, LSL 0.4992 in; σ = R̄/d₂
   (d₂ = 2.326) or STDEV.P. Cpk ≤ Cp, and Cpk is the off-centre index.
-- **Gauge R&R (5.15σ convention; corrected sheet):** EV = 5.15 R̄/1.128;
-  AV = √((5.15 X̄diff/K)² − EV²/(n r)) with K = d₂\* = 1.91 (3 operators) or 1.41
-  (2 operators), n = 5 parts, r = 2 trials (n r = 10); Vp = 5.15 Rp/2.48 (five
-  parts). **Part B key:** average ranges 6.44 and 6.46; EV ≈ 29.4; AV = 0 (the
-  root is negative); R&R ≈ 29.4; Vp ≈ 82.2; Vt ≈ 87.3; **%R&R ≈ 34 %** —
-  unacceptable. (With the original sheet's 3.18 and ÷ 40 the answer is ≈ 42 %,
-  which is why the sheet was corrected.)
+- **Gauge R&R (bar stock, calipers, gauge block, caliper swap; 5.15σ convention):**
+  crossed design, 2 operators (student and swap partner) × 2 calipers × 10 bars ×
+  2 trials. EV = 5.15 R̄/1.128 (d₂, 2 trials; R̄ = mean of the four conditions'
+  average ranges); operator effect AV = √((5.15 X̄diff,op/1.41)² − EV²/40) and
+  caliper effect CV = √((5.15 X̄diff,cal/1.41)² − EV²/40) (d₂\* = 1.41 for two
+  levels; 40 = 10 bars × 2 trials × 2 is the number of readings behind each
+  operator or caliper average); PV = 5.15 Rp/3.18 (d₂\* for 10 parts);
+  GRR = √(EV² + AV² + CV²); TV = √(GRR² + PV²); %GRR = 100 GRR/TV;
+  %tolerance = 100 GRR/(USL − LSL); ndc = INT(1.41 PV/GRR). Caliper bias = mean of
+  three gauge-block readings − certified size; acceptable within ±2 resolution steps
+  (editable on the sheet). The interaction contrast |(me,mine) − (me,theirs) −
+  (partner,mine) + (partner,theirs)|/2 is compared with 2(EV/5.15)/√20.
+  **Example key (simulated readings in inches; 1.000 in gauge block; caliper bias
+  0 and −0.0007 in; partner offset +0.0015 in on length; tolerances ± 0.005 in and
+  ± 0.020 in):** diameter EV ≈ 0.0021, AV ≈ 0.0006, CV ≈ 0.0029, GRR ≈ 0.0036,
+  PV ≈ 0.0043, TV ≈ 0.0056 in, **%GRR ≈ 65 %**, %tolerance ≈ 36 %, ndc = 1; length
+  EV ≈ 0.0059, AV ≈ 0.0050, CV ≈ 0.0025, GRR ≈ 0.0082, PV ≈ 0.0541, TV ≈ 0.0547 in,
+  **%GRR ≈ 14.9 %**, %tolerance ≈ 20 %, ndc = 9; caliper difference from the bars
+  +0.0008 / +0.0007 in vs +0.0007 in from the block. Real bars will give different numbers: the expectation is that part
+  variation is large for sawn lengths and small for drawn-bar diameters, so the
+  same caliper looks better on length. AV and CV rest on two levels each and are
+  crude — a small real difference is magnified by 5.15/1.41; pooling the class's
+  readings firms them up.
 
 ## Materials-testing labs
 
@@ -529,8 +555,15 @@ four questions 3.
 **Process Capability**: data and distribution 2 · statistics (σ two ways) 2 · Cp 2 ·
 Cpk 2 · capability decision and the study-preparation steps 2.
 
-**Gauge R&R**: Part A data and independence 2 · EV and AV 3 · R&R, Vp, Vt, %R&R
-2 · Part B 2 · adequacy judgement 1.
+**Gauge R&R**: check of both calipers against the gauge block (serials, zeros,
+biases, bias difference, action, limitation) 2 · data set and how it was collected
+(80 readings per characteristic, operational definitions, randomisation,
+independence, why the swap) 2 · diameter results with one hand-checked EV and AV 2
+· length results 2 · interpretation (verdicts and whether the measures agree, why
+diameter and length differ, largest component and action, caliper difference
+against the gauge-block difference, interaction, a limitation of the two-by-two
+design) 2. *Accept any values that follow from the student's own R̄ and
+X̄diff; check that the verdict follows from the %GRR they report.*
 
 **Hardness Testing**: set-up 1 · Rockwell table 2 · Brinell table 2 · calculations
 2 · questions 2 · conclusion 1.
@@ -583,6 +616,7 @@ third-party site that could be blocked or down on the day.
 | ML Week 6 | A student's deployment is down at presentation time | Instructor's reference app on the projector; the student still defends their technical decision and limitations |
 | TPM/OEE | `archive.ics.uci.edu` unreachable; or team reuses C-MAPSS code that doesn't fit tabular data | FOL fallback copy of AI4I 2020; the C-MAPSS-code red flag means mark down the "transfer" criterion |
 | Robotic Work-Cell Design | `web.robodk.com` blocked at home for a student; station file won't reload | Extended deadline (it is already a 3-week take-home); accept a screen recording made on any machine where it does load |
+| Gauge R&R (bar stock) | Bar numbers missing or rubbed off; gauge block or a caliper unavailable; pairs need the same bars at once; partners' rows do not line up (different bars or order) | Re-mark bars before the lab; check calipers one at a time and stagger teams; a caliper that reads a large bias is recorded and used anyway (the bias is a finding), but tell the instructor |
 | Metrology / quality-control labs | Instruments or gauge blocks missing; bearings or beads short; worksheet constants wrong | Post the corrected sheets from `Quality_Labs/fixed/`; share instruments in a rotation; run the Excel part from a class data set if measuring runs out of time |
 | Materials rotation | **Dry ice not delivered** for the Charpy station | Order two weeks ahead for all three weeks; if a delivery fails, run Charpy on the room-temperature and hot-water points only, or swap that week's group to another station and repeat Charpy later |
 | Materials rotation | A tester is down (Rockwell/Brinell, tensile machine, pendulum) | Instructor runs the test and shares the raw data with the group; each student still writes their own report |

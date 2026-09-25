@@ -12,6 +12,8 @@ are staged on FOL by hand, not committed; this script is the source of record).
     week2_lab.ipynb                             -- ML Week 2
     predictive_maintenance.ipynb                -- ML Week 3 (continues in Weeks 4-5)
     streamlit_app.py + requirements.txt         -- ML Week 5
+    Gauge_RR_Bar_Stock_Data_Sheet.xlsx          -- Gauge R&R (via gen_grr_sheet.py; also writes the instructor
+                                                   answer-key copy into LabInstructions/ if that folder exists)
 
 Requires: openpyxl, python-docx, nbformat  (pip install openpyxl python-docx nbformat)
 
@@ -691,6 +693,8 @@ if __name__ == "__main__":
     make_week2_notebook()
     make_capstone_notebook()
     make_streamlit_starter()
+    import gen_grr_sheet   # sits next to this script
+    gen_grr_sheet.main()
     print("Wrote FOL templates to", OUT)
     for fn in sorted(os.listdir(OUT)):
         print(" -", fn)
