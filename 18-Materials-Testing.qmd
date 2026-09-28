@@ -345,7 +345,7 @@ charpy_data <- rbind(
 
 ggplot(charpy_data, aes(x = temp, y = energy, color = material)) +
   geom_point(size = 2.2) +
-  geom_smooth(se = FALSE, span = 0.9, linewidth = 1) +
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE, span = 0.9, linewidth = 1) +
   annotate("segment", x = -10, xend = -10, y = 0, yend = 55,
             linetype = "dashed", color = "grey40") +
   annotate("text", x = -10, y = 60, label = "approximate DBTT\n(steel)",

@@ -160,7 +160,7 @@ hp_data <- data.frame(d = grain_d, inv_sqrt_d = grain_d^(-0.5), sigma_y = sigma_
 
 ggplot(hp_data, aes(x = inv_sqrt_d, y = sigma_y)) +
   geom_point(size = 2.2, color = "#4477AA", alpha = 0.75) +
-  geom_smooth(method = "lm", se = FALSE, color = "#CC3311", linewidth = 1) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "#CC3311", linewidth = 1) +
   annotate("text", x = 8, y = 130,
            label = expression(sigma[y] == sigma[0] + k*d^{-1/2}),
            size = 4.5 * diagram_text_scale, color = "#CC3311") +
