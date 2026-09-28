@@ -1,0 +1,3458 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>20&nbsp; Materials Testing: Tensile, Hardness, Impact, and Metallography – Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./30-Labs.html" rel="next">
+<link href="./17-Metallurgy-Fundamentals.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-95863af46656191e6a2cf1560d98dcd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/editor/editor.main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+<style type="text/css">
+.monaco-editor pre {
+  background-color: unset !important;
+}
+
+.qwebr-editor-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.qwebr-editor-toolbar-left-buttons, .qwebr-editor-toolbar-right-buttons {
+  display: flex;
+}
+
+.qwebr-non-interactive-loading-container.qwebr-cell-needs-evaluation, .qwebr-non-interactive-loading-container.qwebr-cell-evaluated {
+  justify-content: center;
+  display: flex;
+  background-color: rgba(250, 250, 250, 0.65);
+  border: 1px solid rgba(233, 236, 239, 0.65);
+  border-radius: 0.5rem;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.qwebr-r-project-logo {
+  color: #2767B0; /* R Project's blue color */
+}
+
+.qwebr-icon-status-spinner {
+  color: #7894c4;
+}
+
+.qwebr-icon-run-code {
+  color: #0d9c29
+}
+
+body.quarto-light .qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.quarto-dark .qwebr-output-code-stdout {
+  color: #EEE;
+}
+
+.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+body.quarto-light .qwebr-editor {
+  border: 1px solid #EEEEEE;
+}
+
+body.quarto-light .qwebr-editor-toolbar {
+  background-color: #EEEEEE;
+  padding: 0.2rem 0.5rem;
+}
+
+body.quarto-dark .qwebr-editor {
+  border: 1px solid #111;
+}
+
+body.quarto-dark .qwebr-editor-toolbar {
+  background-color: #111;
+  padding: 0.2rem 0.5rem;
+}
+
+.qwebr-button {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  padding: 0.375rem 0.75rem;
+  font-size: .9rem;
+  border-radius: 0.25rem;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+body.quarto-light .qwebr-button {
+  background-color: #EEEEEE;
+  color: #000;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-dark .qwebr-button {
+  background-color: #111;
+  color: #EEE;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-light .qwebr-button:hover {
+  color: #000;
+  background-color: #d9dce0;
+  border-color: #c8ccd0;
+}
+
+body.quarto-dark .qwebr-button:hover {
+  color: #d9dce0;
+  background-color: #323232;
+  border-color: #d9dce0;
+}
+
+.qwebr-button:disabled,.qwebr-button.disabled,fieldset:disabled .qwebr-button {
+  pointer-events: none;
+  opacity: .65
+}
+
+.qwebr-button-reset {
+  color: #696969; /*#4682b4;*/
+}
+
+.qwebr-button-copy {
+  color: #696969;
+}
+
+/* Style the code highlight lines */
+body.quarto-light .qwebr-editor-highlight-line {
+  background-color: lightblue;
+}
+
+body.quarto-dark .qwebr-editor-highlight-line {
+  background-color: darkblue;
+}
+
+/* Style the modal pop-up */
+
+/* The Modal (background) */
+.qwebr-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content */
+.qwebr-modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.qwebr-modal-content-code {
+  max-height: 50vh;
+  min-height: 5vh;
+  overflow: scroll;
+  border: 1px solid #888;
+}
+
+/* The Close Button */
+.qwebr-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.qwebr-modal-close:hover,
+.qwebr-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.qwebr-download-btn {
+  margin-top: 10px;
+  text-decoration: none !important;
+}
+
+/* Styling to download image that is created */
+
+.qwebr-canvas-image {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.qwebr-canvas-image-download-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+figure:hover .qwebr-canvas-image-download-btn {
+  display: block;
+}
+
+/* Custom styling for RevealJS Presentations*/
+
+/* Reset the style of the interactive area */
+.reveal div.qwebr-interactive-area {
+  display: block;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Provide space to entries */
+.reveal div.qwebr-output-code-area pre div {
+  margin: 1px 2px 1px 10px;
+}
+
+/* Collapse the inside code tags to avoid extra space between line outputs */
+.reveal pre div code.qwebr-output-code-stdout, .reveal pre div code.qwebr-output-code-stderr {
+  padding: 0;
+  display: contents;
+}
+
+body.reveal.quarto-light pre div code.qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.reveal.quarto-dark pre div code.qwebr-output-code-stdout {
+  color: #EEEEEE;
+}
+
+.reveal pre div code.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+
+/* Create a border around console and output (does not effect graphs) */
+body.reveal.quarto-light div.qwebr-console-area {
+  border: 1px solid #EEEEEE;
+  box-shadow: 2px 2px 10px #EEEEEE;
+}
+
+body.reveal.quarto-dark div.qwebr-console-area {
+  border: 1px solid #111;
+  box-shadow: 2px 2px 10px #111;
+}
+
+
+/* Cap output height and allow text to scroll */
+/* TODO: Is there a better way to fit contents/max it parallel to the monaco editor size? */
+.reveal div.qwebr-output-code-area pre {
+  max-height: 400px;
+  overflow: scroll;
+}
+
+iframe.qwebr-output-code-browse {
+  width: 100%;
+
+  /*
+    TODO: How to make the height automatic according to the widget size,
+    or respect the quarto code block options?
+  */
+  min-height: 500px;
+}
+
+</style>
+<script type="module">
+// Document level settings ----
+
+// Determine if we need to install R packages
+globalThis.qwebrInstallRPackagesList = [''];
+
+// Specify possible locations to search for the repository
+globalThis.qwebrPackageRepoURLS = ['https://repo.r-wasm.org/'];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qwebrSetupRPackages = !(qwebrInstallRPackagesList.indexOf("") !== -1);
+globalThis.qwebrAutoloadRPackages = true;
+
+// Display a startup message?
+globalThis.qwebrShowStartupMessage = true;
+globalThis.qwebrShowHeaderMessage = false;
+
+// Describe the webR settings that should be used
+globalThis.qwebrCustomizedWebROptions = {
+  "baseURL": "https://webr.r-wasm.org/v0.5.2/",
+  "serviceWorkerUrl": "",
+  "homedir": "/home/web_user", 
+  "channelType": "ChannelType.Automatic"
+};
+
+// Store cell data
+globalThis.qwebrCellDetails = [{"code":"# Elastic-region data point, well below yield, to estimate modulus of elasticity\nD0 <- 12.83        # mm\nL0 <- 50.0         # mm\nP_elastic <- 15000  # N, a load safely in the straight-line region\ndL_elastic <- 0.018 # mm, measured elongation at that load (small!)\n\nA0 <- pi * (D0/2)^2\nstress_e <- P_elastic / A0\nstrain_e <- dL_elastic / L0\nE_modulus <- stress_e / strain_e\n\ncat(sprintf(\"Stress at this point  = %.1f MPa\\n\", stress_e))\ncat(sprintf(\"Strain at this point  = %.5f (%.3f%%)\\n\", strain_e, strain_e * 100))\ncat(sprintf(\"Estimated modulus E   = %.0f MPa = %.0f GPa\\n\", E_modulus, E_modulus / 1000))\ncat(\"Compare to typical steel: ~200 GPa. A result far off that value usually means\\n\")\ncat(\"the extensometer reading or load was taken outside the truly elastic region.\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-modulus-example-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"D0 <- 12.83\nL0 <- 50.0\nLf <- 50.9       # mm -- very little stretch\nDf <- 12.60      # mm -- very little necking\n\nA0 <- pi * (D0/2)^2\nAf <- pi * (Df/2)^2\npct_elong <- (Lf - L0) / L0 * 100\npct_ra <- (A0 - Af) / A0 * 100\n\ncat(sprintf(\"Percent elongation = %.1f%%\\n\", pct_elong))\ncat(sprintf(\"Percent reduction of area = %.1f%%\\n\", pct_ra))\ncat(\"Low values on both measures, with little visible necking, point to brittle\\n\")\ncat(\"behaviour -- e.g. an as-quenched, untempered specimen, or cast iron.\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-brittle-example-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_load <- 0.3       # kgf (300 gf), typical microhardness load\nd1 <- 58.0           # micrometers\nd2 <- 60.5           # micrometers\n\nd_mm <- ((d1 + d2) / 2) / 1000\nHV <- 1.8544 * F_load / d_mm^2\n\ncat(sprintf(\"Mean diagonal = %.4f mm\\n\", d_mm))\ncat(sprintf(\"Vickers hardness = %.0f HV\\n\", HV))\ncat(sprintf(\"Approximate equivalent UTS (steel only, HB~HV for this range): %.0f MPa\\n\", 3.45 * HV))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-vickers-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Simplified illustrative HV-to-approximate-HRC relationship (NOT for real reporting --\n# use the actual ASTM E140 table / chart supplied for your lab)\nHV_reading <- 620\n\napprox_HRC <- (HV_reading - 100) / 11.9   # rough linear fit, illustrative only\n\ncat(sprintf(\"Vickers reading: %.0f HV\\n\", HV_reading))\ncat(sprintf(\"Rough approximate Rockwell C equivalent: %.0f HRC\\n\", approx_HRC))\ncat(\"Effective case depth is read where the profile crosses HRC 50;\\n\")\ncat(\"true case depth is read where it crosses HRC 40 (see your lab template).\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-case-depth-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+
+</script>
+<script type="module">
+// Declare startupMessageQWebR globally
+globalThis.qwebrStartupMessage = document.createElement("p");
+
+// Verify if OffScreenCanvas is supported
+globalThis.qwebrOffScreenCanvasSupport = function() {
+  return typeof OffscreenCanvas !== 'undefined'
+}
+
+// Function to set the button text
+globalThis.qwebrSetInteractiveButtonState = function(buttonText, enableCodeButton = true) {
+  document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+    btn.innerHTML = buttonText;
+    btn.disabled = !enableCodeButton;
+  });
+}
+
+// Function to update the status message in non-interactive cells
+globalThis.qwebrUpdateStatusMessage = function(message) {
+  document.querySelectorAll(".qwebr-status-text.qwebr-cell-needs-evaluation").forEach((elem) => {
+    elem.innerText = message;
+  });
+}
+
+// Function to update the status message
+globalThis.qwebrUpdateStatusHeader = function(message) {
+  qwebrStartupMessage.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i>
+    <span>${message}</span>`;
+}
+
+// Function to return true if element is found, false if not
+globalThis.qwebrCheckHTMLElementExists = function(selector) {
+  const element = document.querySelector(selector);
+  return !!element;
+}
+
+// Function that detects whether reveal.js slides are present
+globalThis.qwebrIsRevealJS = function() {
+  // If the '.reveal .slides' selector exists, RevealJS is likely present
+  return qwebrCheckHTMLElementExists('.reveal .slides');
+}
+
+// Initialize the Quarto sidebar element
+function qwebrSetupQuartoSidebar() {
+  var newSideBarDiv = document.createElement('div');
+  newSideBarDiv.id = 'quarto-margin-sidebar';
+  newSideBarDiv.className = 'sidebar margin-sidebar';
+  newSideBarDiv.style.top = '0px';
+  newSideBarDiv.style.maxHeight = 'calc(0px + 100vh)';
+
+  return newSideBarDiv;
+}
+
+// Position the sidebar in the document
+function qwebrPlaceQuartoSidebar() {
+  // Get the reference to the element with id 'quarto-document-content'
+  var referenceNode = document.getElementById('quarto-document-content');
+
+  // Create the new div element
+  var newSideBarDiv = qwebrSetupQuartoSidebar();
+
+  // Insert the new div before the 'quarto-document-content' element
+  referenceNode.parentNode.insertBefore(newSideBarDiv, referenceNode);
+}
+
+function qwebrPlaceMessageContents(content, html_location = "title-block-header", revealjs_location = "title-slide") {
+
+  // Get references to header elements
+  const headerHTML = document.getElementById(html_location);
+  const headerRevealJS = document.getElementById(revealjs_location);
+
+  // Determine where to insert the quartoTitleMeta element
+  if (headerHTML || headerRevealJS) {
+    // Append to the existing "title-block-header" element or "title-slide" div
+    (headerHTML || headerRevealJS).appendChild(content);
+  } else {
+    // If neither headerHTML nor headerRevealJS is found, insert after "webr-monaco-editor-init" script
+    const monacoScript = document.getElementById("qwebr-monaco-editor-init");
+    const header = document.createElement("header");
+    header.setAttribute("id", "title-block-header");
+    header.appendChild(content);
+    monacoScript.after(header);
+  }
+}
+
+
+
+function qwebrOffScreenCanvasSupportWarningMessage() {
+  
+  // Verify canvas is supported.
+  if(qwebrOffScreenCanvasSupport()) return;
+
+  // Create the main container div
+  var calloutContainer = document.createElement('div');
+  calloutContainer.classList.add('callout', 'callout-style-default', 'callout-warning', 'callout-titled');
+
+  // Create the header div
+  var headerDiv = document.createElement('div');
+  headerDiv.classList.add('callout-header', 'd-flex', 'align-content-center');
+
+  // Create the icon container div
+  var iconContainer = document.createElement('div');
+  iconContainer.classList.add('callout-icon-container');
+
+  // Create the icon element
+  var iconElement = document.createElement('i');
+  iconElement.classList.add('callout-icon');
+
+  // Append the icon element to the icon container
+  iconContainer.appendChild(iconElement);
+
+  // Create the title container div
+  var titleContainer = document.createElement('div');
+  titleContainer.classList.add('callout-title-container', 'flex-fill');
+  titleContainer.innerText = 'Warning: Web Browser Does Not Support Graphing!';
+
+  // Append the icon container and title container to the header div
+  headerDiv.appendChild(iconContainer);
+  headerDiv.appendChild(titleContainer);
+
+  // Create the body container div
+  var bodyContainer = document.createElement('div');
+  bodyContainer.classList.add('callout-body-container', 'callout-body');
+
+  // Create the paragraph element for the body content
+  var paragraphElement = document.createElement('p');
+  paragraphElement.innerHTML = 'This web browser does not have support for displaying graphs through the <code>quarto-webr</code> extension since it lacks an <code>OffScreenCanvas</code>. Please upgrade your web browser to one that supports <code>OffScreenCanvas</code>.';
+
+  // Append the paragraph element to the body container
+  bodyContainer.appendChild(paragraphElement);
+
+  // Append the header div and body container to the main container div
+  calloutContainer.appendChild(headerDiv);
+  calloutContainer.appendChild(bodyContainer);
+
+  // Append the main container div to the document depending on format
+  qwebrPlaceMessageContents(calloutContainer, "title-block-header"); 
+
+}
+
+
+// Function that attaches the document status message and diagnostics
+function displayStartupMessage(showStartupMessage, showHeaderMessage) {
+  if (!showStartupMessage) {
+    return;
+  }
+
+  // Create the outermost div element for metadata
+  const quartoTitleMeta = document.createElement("div");
+  quartoTitleMeta.classList.add("quarto-title-meta");
+
+  // Create the first inner div element
+  const firstInnerDiv = document.createElement("div");
+  firstInnerDiv.setAttribute("id", "qwebr-status-message-area");
+
+  // Create the second inner div element for "WebR Status" heading and contents
+  const secondInnerDiv = document.createElement("div");
+  secondInnerDiv.setAttribute("id", "qwebr-status-message-title");
+  secondInnerDiv.classList.add("quarto-title-meta-heading");
+  secondInnerDiv.innerText = "WebR Status";
+
+  // Create another inner div for contents
+  const secondInnerDivContents = document.createElement("div");
+  secondInnerDivContents.setAttribute("id", "qwebr-status-message-body");
+  secondInnerDivContents.classList.add("quarto-title-meta-contents");
+
+  // Describe the WebR state
+  qwebrStartupMessage.innerText = "🟡 Loading...";
+  qwebrStartupMessage.setAttribute("id", "qwebr-status-message-text");
+  // Add `aria-live` to auto-announce the startup status to screen readers
+  qwebrStartupMessage.setAttribute("aria-live", "assertive");
+
+  // Append the startup message to the contents
+  secondInnerDivContents.appendChild(qwebrStartupMessage);
+
+  // Add a status indicator for COOP and COEP Headers if needed
+  if (showHeaderMessage) {
+    const crossOriginMessage = document.createElement("p");
+    crossOriginMessage.innerText = `${crossOriginIsolated ? '🟢' : '🟡'} COOP & COEP Headers`;
+    crossOriginMessage.setAttribute("id", "qwebr-coop-coep-header");
+    secondInnerDivContents.appendChild(crossOriginMessage);
+  }
+
+  // Combine the inner divs and contents
+  firstInnerDiv.appendChild(secondInnerDiv);
+  firstInnerDiv.appendChild(secondInnerDivContents);
+  quartoTitleMeta.appendChild(firstInnerDiv);
+
+  // Place message on webpage
+  qwebrPlaceMessageContents(quartoTitleMeta); 
+}
+
+function qwebrAddCommandHistoryModal() {
+  // Create the modal div
+  var modalDiv = document.createElement('div');
+  modalDiv.id = 'qwebr-history-modal';
+  modalDiv.className = 'qwebr-modal';
+
+  // Create the modal content div
+  var modalContentDiv = document.createElement('div');
+  modalContentDiv.className = 'qwebr-modal-content';
+
+  // Create the span for closing the modal
+  var closeSpan = document.createElement('span');
+  closeSpan.id = 'qwebr-command-history-close-btn';
+  closeSpan.className = 'qwebr-modal-close';
+  closeSpan.innerHTML = '&times;';
+
+  // Create the h1 element for the modal
+  var modalH1 = document.createElement('h1');
+  modalH1.textContent = 'R History Command Contents';
+
+  // Create an anchor element for downloading the Rhistory file 
+  var downloadLink = document.createElement('a');
+  downloadLink.href = '#';
+  downloadLink.id = 'qwebr-download-history-btn';
+  downloadLink.className = 'qwebr-download-btn';
+
+  // Create an 'i' element for the icon
+  var icon = document.createElement('i');
+  icon.className = 'bi bi-file-code';
+
+  // Append the icon to the anchor element
+  downloadLink.appendChild(icon);
+
+  // Add the text 'Download R History' to the anchor element
+  downloadLink.appendChild(document.createTextNode(' Download R History File'));
+
+  // Create the pre for command history contents
+  var commandContentsPre = document.createElement('pre');
+  commandContentsPre.id = 'qwebr-command-history-contents';
+  commandContentsPre.className = 'qwebr-modal-content-code';
+
+  // Append the close span, h1, and history contents pre to the modal content div
+  modalContentDiv.appendChild(closeSpan);
+  modalContentDiv.appendChild(modalH1);
+  modalContentDiv.appendChild(downloadLink);
+  modalContentDiv.appendChild(commandContentsPre);
+
+  // Append the modal content div to the modal div
+  modalDiv.appendChild(modalContentDiv);
+
+  // Append the modal div to the body
+  document.body.appendChild(modalDiv);
+}
+
+function qwebrRegisterRevealJSCommandHistoryModal() {
+  // Select the <ul> element inside the <div> with data-panel="Custom0"
+  let ulElement = document.querySelector('div[data-panel="Custom0"] > ul.slide-menu-items');
+
+  // Find the last <li> element with class slide-tool-item
+  let lastItem = ulElement.querySelector('li.slide-tool-item:last-child');
+
+  // Calculate the next data-item value
+  let nextItemValue = 0;
+  if (lastItem) {
+      nextItemValue = parseInt(lastItem.dataset.item) + 1;
+  }
+
+  // Create a new <li> element
+  let newListItem = document.createElement('li');
+  newListItem.className = 'slide-tool-item';
+  newListItem.dataset.item = nextItemValue.toString(); // Set the next available data-item value
+
+  // Create the <a> element inside the <li>
+  let newLink = document.createElement('a');
+  newLink.href = '#';
+  newLink.id = 'qwebrRHistoryButton'; // Set the ID for the new link
+  
+  // Create the <kbd> element inside the <a>
+  let newKbd = document.createElement('kbd');
+  newKbd.textContent = ' '; // Set to empty as we are not registering a keyboard shortcut
+
+  // Create text node for the link text
+  let newText = document.createTextNode(' View R History');
+
+  // Append <kbd> and text node to <a>
+  newLink.appendChild(newKbd);
+  newLink.appendChild(newText);
+
+  // Append <a> to <li>
+  newListItem.appendChild(newLink);
+
+  // Append <li> to <ul>
+  ulElement.appendChild(newListItem);
+}
+
+// Handle setting up the R history modal
+function qwebrCodeLinks() {
+
+  if (qwebrIsRevealJS()) {
+    qwebrRegisterRevealJSCommandHistoryModal();
+    return;
+  }
+
+  // Create the container div
+  var containerDiv = document.createElement('div');
+  containerDiv.className = 'quarto-code-links';
+
+  // Create the h2 element
+  var h2 = document.createElement('h2');
+  h2.textContent = 'webR Code Links';
+
+  // Create the ul element
+  var ul = document.createElement('ul');
+
+  // Create the li element
+  var li = document.createElement('li');
+
+  // Create the a_history_btn element
+  var a_history_btn = document.createElement('a');
+  a_history_btn.href = 'javascript:void(0)';
+  a_history_btn.setAttribute('id', 'qwebrRHistoryButton');
+
+  // Create the i_history_btn element
+  var i_history_btn = document.createElement('i');
+  i_history_btn.className = 'bi bi-file-code';
+
+  // Create the text node for the link text
+  var text_history_btn = document.createTextNode('View R History');
+
+  // Append the icon element and link text to the a element
+  a_history_btn.appendChild(i_history_btn);
+  a_history_btn.appendChild(text_history_btn);
+
+  // Append the a element to the li element
+  li.appendChild(a_history_btn);
+
+  // Append the li element to the ul element
+  ul.appendChild(li);
+
+  // Append the h2 and ul elements to the container div
+  containerDiv.appendChild(h2);
+  containerDiv.appendChild(ul);
+
+  // Append the container div to the element with the ID 'quarto-margin-sidebar'
+  var sidebar = document.getElementById('quarto-margin-sidebar');
+    
+  // If the sidebar element is not found, create it
+  if(!sidebar) {
+    qwebrPlaceQuartoSidebar();
+  }
+  
+  // Re-select the sidebar element (if it was just created)
+  sidebar = document.getElementById('quarto-margin-sidebar');   
+
+
+  // If the sidebar element exists, append the container div to it
+  if(sidebar) {
+    // Append the container div to the sidebar
+    sidebar.appendChild(containerDiv);
+    // Force the sidebar to be clickable by removing the 'zindex-bottom' class
+    // added in pre-release: https://github.com/quarto-dev/quarto-cli/commit/f0c53a1ffcaa1de4eccbf07803b096898248adcc
+    sidebar.className = 'sidebar margin-sidebar';
+  } else {
+    // Get a debugger ...
+    console.warn('Element with ID "quarto-margin-sidebar" not found.');
+  }
+}
+
+// Call the function to append the code links for qwebR into the right sidebar
+qwebrCodeLinks();
+
+// Add the command history modal
+qwebrAddCommandHistoryModal();
+
+displayStartupMessage(qwebrShowStartupMessage, qwebrShowHeaderMessage);
+qwebrOffScreenCanvasSupportWarningMessage();
+</script>
+<script type="module">
+// Define a global storage and retrieval solution ----
+
+// Store commands executed in R
+globalThis.qwebrRCommandHistory = [];
+
+// Function to retrieve the command history
+globalThis.qwebrFormatRHistory = function() {
+   return qwebrRCommandHistory.join("\n\n");
+}
+
+// Retrieve HTML Elements ----
+
+// Get the command modal
+const command_history_modal = document.getElementById("qwebr-history-modal");
+
+// Get the button that opens the command modal
+const command_history_btn = document.getElementById("qwebrRHistoryButton");
+
+// Get the <span> element that closes the command modal
+const command_history_close_span = document.getElementById("qwebr-command-history-close-btn");
+
+// Get the download button for r history information
+const command_history_download_btn = document.getElementById("qwebr-download-history-btn");
+
+// Plug in command history into modal/download button ----
+
+// Function to populate the modal with command history
+function populateCommandHistoryModal() {
+    document.getElementById("qwebr-command-history-contents").innerHTML = qwebrFormatRHistory() || "No commands have been executed yet.";
+}
+
+// Function to format the current date and time to
+// a string with the format YYYY-MM-DD-HH-MM-SS
+function formatDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+}
+
+
+// Function to convert document title with datetime to a safe filename
+function safeFileName() {
+    // Get the current page title
+    let pageTitle = document.title;
+
+    // Combine the current page title with the current date and time
+    let pageNameWithDateTime = `Rhistory-${pageTitle}-${formatDateTime()}`;
+
+    // Replace unsafe characters with safe alternatives
+    let safeFilename = pageNameWithDateTime.replace(/[\\/:\*\?! "<>\|]/g, '-');
+
+    return safeFilename;
+}
+
+
+// Function to download list contents as text file
+function downloadRHistory() {
+    // Get the current page title + datetime and use it as the filename
+    const filename = `${safeFileName()}.R`;
+
+    // Get the text contents of the R History list
+    const text = qwebrFormatRHistory();
+
+    // Create a new Blob object with the text contents
+    const blob = new Blob([text], { type: 'text/plain' });
+  
+    // Create a new anchor element for the download
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+
+    // Append the anchor to the body, click it, and remove it
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Register event handlers ----
+
+// When the user clicks the View R History button, open the command modal
+command_history_btn.onclick = function() {
+    populateCommandHistoryModal();
+    command_history_modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the command modal
+command_history_close_span.onclick = function() {
+    command_history_modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the command modal, close it
+window.onclick = function(event) {
+    if (event.target == command_history_modal) {
+        command_history_modal.style.display = "none";
+    }
+}
+
+// Add an onclick event listener to the download button so that
+// the user can download the R history as a text file
+command_history_download_btn.onclick = function() {
+    downloadRHistory();
+};
+</script>
+<script type="module">
+// Supported Evaluation Types for Context
+globalThis.EvalTypes = Object.freeze({
+  Interactive: 'interactive',
+  Setup: 'setup',
+  Output: 'output',
+});
+
+// Function that obtains the font size for a given element 
+globalThis.qwebrCurrentFontSizeOnElement = function(element, cssProperty = 'font-size') {
+
+  const currentFontSize = parseFloat(
+    window
+    .getComputedStyle(element)
+    .getPropertyValue(cssProperty)
+  );
+  
+  return currentFontSize;
+}
+
+// Function to determine font scaling
+globalThis.qwebrScaledFontSize = function(div, qwebrOptions) {
+  // Determine if we should compute font-size using RevealJS's `--r-main-font-size` 
+  // or if we can directly use the document's `font-size`.
+  const cssProperty = document.body.classList.contains('reveal') ? 
+    "--r-main-font-size" : "font-size";
+  
+  // Get the current font size on the div element
+  const elementFontSize = qwebrCurrentFontSizeOnElement(div, cssProperty);
+
+  // Determine the scaled font size value
+  const scaledFontSize = ((qwebrOptions['editor-font-scale'] ?? 1) * elementFontSize) ?? 17.5;
+
+  return scaledFontSize;
+}
+
+
+// Function that dispatches the creation request
+globalThis.qwebrCreateHTMLElement = function (
+  cellData
+) {
+
+  // Extract key components
+  const evalType = cellData.options.context;
+  const qwebrCounter = cellData.id;
+
+  // We make an assumption that insertion points are defined by the Lua filter as:
+  // qwebr-insertion-location-{qwebrCounter} 
+  const elementLocator = document.getElementById(`qwebr-insertion-location-${qwebrCounter}`);
+
+  // Figure out the routine to use to insert the element.
+  let qwebrElement;
+  switch ( evalType ) {
+    case EvalTypes.Interactive:
+      qwebrElement = qwebrCreateInteractiveElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Output: 
+      qwebrElement = qwebrCreateNonInteractiveOutputElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Setup: 
+      qwebrElement = qwebrCreateNonInteractiveSetupElement(qwebrCounter, cellData.options);
+      break;
+    default: 
+      qwebrElement = document.createElement('div');
+      qwebrElement.textContent = 'Error creating `quarto-webr` element';
+  }
+
+  // Insert the dynamically generated object at the document location.
+  elementLocator.appendChild(qwebrElement);
+};
+
+// Function that setups the interactive element creation
+globalThis.qwebrCreateInteractiveElement = function (qwebrCounter, qwebrOptions) {
+
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-interactive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-interactive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create toolbar div
+  var toolbarDiv = document.createElement('div');
+  toolbarDiv.className = 'qwebr-editor-toolbar';
+  toolbarDiv.id = 'qwebr-editor-toolbar-' + qwebrCounter;
+
+  // Create a div to hold the left buttons
+  var leftButtonsDiv = document.createElement('div');
+  leftButtonsDiv.className = 'qwebr-editor-toolbar-left-buttons';
+
+  // Create a div to hold the right buttons
+  var rightButtonsDiv = document.createElement('div');
+  rightButtonsDiv.className = 'qwebr-editor-toolbar-right-buttons';
+
+  // Create Run Code button
+  var runCodeButton = document.createElement('button');
+  runCodeButton.className = 'btn btn-default qwebr-button qwebr-button-run';
+  runCodeButton.disabled = true;
+  runCodeButton.type = 'button';
+  runCodeButton.id = 'qwebr-button-run-' + qwebrCounter;
+  runCodeButton.textContent = '🟡 Loading webR...';
+  runCodeButton.title = `Run code (Shift + Enter)`;
+
+  // Append buttons to the leftButtonsDiv
+  leftButtonsDiv.appendChild(runCodeButton);
+
+  // Create Reset button
+  var resetButton = document.createElement('button');
+  resetButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-reset';
+  resetButton.type = 'button';
+  resetButton.id = 'qwebr-button-reset-' + qwebrCounter;
+  resetButton.title = 'Start over';
+  resetButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i>';
+
+  // Create Copy button
+  var copyButton = document.createElement('button');
+  copyButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-copy';
+  copyButton.type = 'button';
+  copyButton.id = 'qwebr-button-copy-' + qwebrCounter;
+  copyButton.title = 'Copy code';
+  copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+
+  // Append buttons to the rightButtonsDiv
+  rightButtonsDiv.appendChild(resetButton);
+  rightButtonsDiv.appendChild(copyButton);
+
+  // Create console area div
+  var consoleAreaDiv = document.createElement('div');
+  consoleAreaDiv.id = 'qwebr-console-area-' + qwebrCounter;
+  consoleAreaDiv.className = 'qwebr-console-area';
+
+  // Create editor div
+  var editorDiv = document.createElement('div');
+  editorDiv.id = 'qwebr-editor-' + qwebrCounter;
+  editorDiv.className = 'qwebr-editor';
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append buttons to the toolbar
+  toolbarDiv.appendChild(leftButtonsDiv);
+  toolbarDiv.appendChild(rightButtonsDiv);
+
+  // Append all elements to the main div
+  mainDiv.appendChild(toolbarDiv);
+  consoleAreaDiv.appendChild(editorDiv);
+  consoleAreaDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(consoleAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+}
+
+// Function that adds output structure for non-interactive output
+globalThis.qwebrCreateNonInteractiveOutputElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-noninteractive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-noninteractive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+  
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+  
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append all elements to the main div
+  mainDiv.appendChild(statusContainer);
+  mainDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+};
+
+// Function that adds a stub in the page to indicate a setup cell was used.
+globalThis.qwebrCreateNonInteractiveSetupElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = `qwebr-noninteractive-setup-area-${qwebrCounter}`;
+  mainDiv.className = `qwebr-noninteractive-setup-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Append status onto the main div
+  mainDiv.appendChild(statusContainer);
+
+  return mainDiv;
+}
+
+
+// Function to create loading container with specified ID
+globalThis.createLoadingContainer = function(qwebrCounter) {
+
+  // Create a status container
+  const container = document.createElement('div');
+  container.id = `qwebr-non-interactive-loading-container-${qwebrCounter}`;
+  container.className = 'qwebr-non-interactive-loading-container qwebr-cell-needs-evaluation';
+
+  // Create an R project logo to indicate its a code space
+  const rProjectIcon = document.createElement('i');
+  rProjectIcon.className = 'fa-brands fa-r-project fa-3x qwebr-r-project-logo';
+
+  // Setup a loading icon from font awesome
+  const spinnerIcon = document.createElement('i');
+  spinnerIcon.className = 'fa-solid fa-spinner fa-spin fa-1x qwebr-icon-status-spinner';
+
+  // Add a section for status text
+  const statusText = document.createElement('p');
+  statusText.id = `qwebr-status-text-${qwebrCounter}`;
+  statusText.className = `qwebr-status-text qwebr-cell-needs-evaluation`;
+  statusText.innerText = 'Loading webR...';
+
+  // Incorporate an inner container
+  const innerContainer = document.createElement('div');
+
+  // Append elements to the inner container
+  innerContainer.appendChild(spinnerIcon);
+  innerContainer.appendChild(statusText);
+
+  // Append elements to the main container
+  container.appendChild(rProjectIcon);
+  container.appendChild(innerContainer);
+
+  return container;
+}
+</script>
+<script type="module">
+// Function to install a single package
+async function qwebrInstallRPackage(packageName) {
+  await mainWebR.evalRVoid(`webr::install('${packageName}');`);
+}
+
+// Function to load a single package
+async function qwebrLoadRPackage(packageName) {
+  await mainWebR.evalRVoid(`require('${packageName}', quietly = TRUE)`);
+}
+
+// Generic function to process R packages
+async function qwebrProcessRPackagesWithStatus(packages, processType, displayStatusMessageUpdate = true) {
+  // Switch between contexts
+  const messagePrefix = processType === 'install' ? 'Installing' : 'Loading';
+
+  // Modify button state
+  qwebrSetInteractiveButtonState(`🟡 ${messagePrefix} package ...`, false);
+
+  // Iterate over packages
+  for (let i = 0; i < packages.length; i++) {
+    const activePackage = packages[i];
+    const formattedMessage = `${messagePrefix} package ${i + 1} out of ${packages.length}: ${activePackage}`;
+
+    // Display the update in header
+    if (displayStatusMessageUpdate) {
+      qwebrUpdateStatusHeader(formattedMessage);
+    }
+
+    // Display the update in non-active areas
+    qwebrUpdateStatusMessage(formattedMessage);
+
+    // Run package installation
+    if (processType === 'install') {
+      await qwebrInstallRPackage(activePackage);
+    } else {
+      await qwebrLoadRPackage(activePackage);
+    }
+  }
+
+  // Clean slate
+  if (processType === 'load') {
+    await mainWebR.flush();
+  }
+}
+
+// Start a timer
+const initializeWebRTimerStart = performance.now();
+
+// Encase with a dynamic import statement
+globalThis.qwebrInstance = import(qwebrCustomizedWebROptions.baseURL + "webr.mjs").then(
+  async ({ WebR, ChannelType }) => {
+    // Populate WebR options with defaults or new values based on `webr` meta
+    globalThis.mainWebR = new WebR(qwebrCustomizedWebROptions);
+
+    // Initialization WebR
+    await mainWebR.init();
+
+    // Setup a shelter
+    globalThis.mainWebRCodeShelter = await new mainWebR.Shelter();
+
+    // Setup a pager to allow processing help documentation
+    await mainWebR.evalRVoid('webr::pager_install()');
+
+    // Setup a viewer to allow processing htmlwidgets.
+    // This might not be available in old webr version
+    await mainWebR.evalRVoid('try({ webr::viewer_install() })');
+
+    // Override the existing install.packages() to use webr::install()
+    await mainWebR.evalRVoid('webr::shim_install()');
+
+    // Specify the repositories to pull from
+    // Note: webR does not use the `repos` option, but instead uses `webr_pkg_repos`
+    // inside of `install()`. However, other R functions still pull from `repos`.
+    await mainWebR.evalRVoid(`
+      options(
+        webr_pkg_repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')}),
+        repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')})
+      )
+    `);
+
+    // Check to see if any packages need to be installed
+    if (qwebrSetupRPackages) {
+      // Obtain only a unique list of packages
+      const uniqueRPackageList = Array.from(new Set(qwebrInstallRPackagesList));
+
+      // Install R packages one at a time (either silently or with a status update)
+      await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'install', qwebrShowStartupMessage);
+
+      if (qwebrAutoloadRPackages) {
+        // Load R packages one at a time (either silently or with a status update)
+        await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'load', qwebrShowStartupMessage);
+      }
+    }
+  }
+);
+
+// Stop timer
+const initializeWebRTimerEnd = performance.now();
+
+</script>
+<script type="module">
+// Function to verify a given JavaScript Object is empty
+globalThis.qwebrIsObjectEmpty = function (arr) {
+    return Object.keys(arr).length === 0;
+}
+
+// Global version of the Escape HTML function that converts HTML
+// characters to their HTML entities.
+globalThis.qwebrEscapeHTMLCharacters = function(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+};
+
+// Passthrough results
+globalThis.qwebrIdentity = function(x) {
+    return x;
+};
+
+// Append a comment
+globalThis.qwebrPrefixComment = function(x, comment) {
+    return `${comment}${x}`;
+};
+
+// Function to store the code in the history
+globalThis.qwebrLogCodeToHistory = function(codeToRun, options) {
+    qwebrRCommandHistory.push(
+        `# Ran code in ${options.label} at ${new Date().toLocaleString()} ----\n${codeToRun}`
+    );
+};
+
+// Function to attach a download button onto the canvas
+// allowing the user to download the image.
+function qwebrImageCanvasDownloadButton(canvas, canvasContainer) {
+
+    // Create the download button
+    const downloadButton = document.createElement('button');
+    downloadButton.className = 'qwebr-canvas-image-download-btn';
+    downloadButton.textContent = 'Download Image';
+    canvasContainer.appendChild(downloadButton);
+
+    // Trigger a download of the image when the button is clicked
+    downloadButton.addEventListener('click', function() {
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'qwebr-canvas-image.png';
+        link.click();
+    });
+}
+
+
+// Function to parse the pager results
+globalThis.qwebrParseTypePager = async function (msg) {
+
+    // Split out the event data
+    const { path, title, deleteFile } = msg.data;
+
+    // Process the pager data by reading the information from disk
+    const paged_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        // Remove excessive backspace characters until none remain
+        while(content.match(/.[\b]/)){
+            content = content.replace(/.[\b]/g, '');
+        }
+
+        // Returned cleaned data
+        return content;
+    });
+
+    // Unlink file if needed
+    if (deleteFile) {
+        await mainWebR.FS.unlink(path);
+    }
+
+    // Return extracted data with spaces
+    return paged_data;
+};
+
+
+// Function to parse the browse results
+globalThis.qwebrParseTypeBrowse = async function (msg) {
+
+    // msg.type === "browse"
+    const path = msg.data.url;
+
+    // Process the browse data by reading the information from disk
+    const browse_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        return content;
+    });
+
+    // Return extracted data as-is
+    return browse_data;
+};
+
+// Function to run the code using webR and parse the output
+globalThis.qwebrComputeEngine = async function(
+    codeToRun,
+    elements,
+    options) {
+
+    // Call into the R compute engine that persists within the document scope.
+    // To be prepared for all scenarios, the following happens:
+    // 1. We setup a canvas device to write to by making a namespace call into the {webr} package
+    // 2. We use values inside of the options array to set the figure size.
+    // 3. We capture the output stream information (STDOUT and STERR)
+    // 4. We disable the current device's image creation.
+    // 5. Piece-wise parse the results into the different output areas
+
+    // Create a pager variable for help/file contents
+    let pager = [];
+
+    // Handle how output is processed
+    let showMarkup = options.results === "markup" && options.output !== "asis";
+    let processOutput;
+
+    if (showMarkup) {
+        processOutput = qwebrEscapeHTMLCharacters;
+    } else {
+        processOutput = qwebrIdentity;
+    }
+
+    // ----
+    // Convert from Inches to Pixels by using DPI (dots per inch)
+    // for bitmap devices (dpi * inches = pixels)
+    let fig_width = options["fig-width"] * options["dpi"];
+    let fig_height = options["fig-height"] * options["dpi"];
+
+    // Initialize webR
+    await mainWebR.init();
+
+    // Configure capture output
+    let captureOutputOptions = {
+        withAutoprint: true,
+        captureStreams: true,
+        captureConditions: false,
+        // env: webR.objs.emptyEnv, // maintain a global environment for webR v0.2.0
+    };
+
+    // Determine if the browser supports OffScreen
+    if (qwebrOffScreenCanvasSupport()) {
+        // Mirror default options of webr::canvas()
+        // with changes to figure height and width.
+        captureOutputOptions.captureGraphics = {
+            width: fig_width,
+            height: fig_height,
+            bg: "white", // default: transparent
+            pointsize: 12,
+            capture: true
+        };
+    }  else {
+        // Disable generating graphics
+        captureOutputOptions.captureGraphics = false;
+    }
+
+    // Store the code to run in history
+    qwebrLogCodeToHistory(codeToRun, options);
+
+    // Setup a webR canvas by making a namespace call into the {webr} package
+    // Evaluate the R code
+    // Remove the active canvas silently
+    const result = await mainWebRCodeShelter.captureR(
+        `${codeToRun}`,
+        captureOutputOptions
+    );
+
+    // -----
+
+    // Start attempting to parse the result data
+    processResultOutput:try {
+
+        // Avoid running through output processing
+        if (options.results === "hide" || options.output === "false") {
+            break processResultOutput;
+        }
+
+        // Merge output streams of STDOUT and STDErr (messages and errors are combined.)
+        // Require both `warning` and `message` to be true to display `STDErr`.
+        const out = result.output
+        .filter(
+            evt => evt.type === "stdout" ||
+            ( evt.type === "stderr" && (options.warning === "true" && options.message === "true"))
+        )
+        .map((evt, index) => {
+            const className = `qwebr-output-code-${evt.type}`;
+            const outputResult = qwebrPrefixComment(processOutput(evt.data), options.comment);
+            return `<code id="${className}-editor-${elements.id}-result-${index + 1}" class="${className}">${outputResult}</code>`;
+        })
+        .join("\n");
+
+
+        // Clean the state
+        // We're now able to process pager events.
+        // As a result, we cannot maintain a true 1-to-1 output order
+        // without individually feeding each line
+        const msgs = await mainWebR.flush();
+
+        // Use `map` to process the filtered "pager" events asynchronously
+        const pager = [];
+        const browse = [];
+
+        await Promise.all(
+            msgs.map(
+                async (msg) => {
+
+                    const msgType = msg.type || "unknown";
+
+                    switch(msgType) {
+                        case 'pager':
+                            const pager_data = await qwebrParseTypePager(msg);
+                            pager.push(pager_data);
+                            break;
+                        case 'browse':
+                            const browse_data = await qwebrParseTypeBrowse(msg);
+                            browse.push(browse_data);
+                            break;
+                    }
+                    return;
+                }
+            )
+        );
+
+        // Nullify the output area of content
+        elements.outputCodeDiv.innerHTML = "";
+        elements.outputGraphDiv.innerHTML = "";
+
+        // Design an output object for messages
+        const pre = document.createElement("pre");
+        if (/\S/.test(out)) {
+            // Display results as HTML elements to retain output styling
+            const div = document.createElement("div");
+            div.innerHTML = out;
+
+            // Calculate a scaled font-size value
+            const scaledFontSize = qwebrScaledFontSize(
+                elements.outputCodeDiv, options);
+
+            // Override output code cell size
+            pre.style.fontSize = `${scaledFontSize}px`;
+            pre.appendChild(div);
+        } else {
+            // If nothing is present, hide the element.
+            pre.style.visibility = "hidden";
+        }
+
+        elements.outputCodeDiv.appendChild(pre);
+
+        // Determine if we have graphs to display
+        if (result.images.length > 0) {
+
+            // Create figure element
+            const figureElement = document.createElement("figure");
+            figureElement.className = "qwebr-canvas-image";
+
+            // Place each rendered graphic onto a canvas element
+            result.images.forEach((img) => {
+
+                // Construct canvas for object
+                const canvas = document.createElement("canvas");
+
+                // Add an image download button
+                qwebrImageCanvasDownloadButton(canvas, figureElement);
+
+                // Set canvas size to image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // Apply output truncations
+                canvas.style.width = options["out-width"] ? options["out-width"] : `${fig_width}px`;
+                if (options["out-height"]) {
+                    canvas.style.height = options["out-height"];
+                }
+
+                // Apply styling
+                canvas.style.display = "block";
+                canvas.style.margin = "auto";
+
+                // Draw image onto Canvas
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                // Append canvas to figure output area
+                figureElement.appendChild(canvas);
+
+            });
+
+            if (options['fig-cap']) {
+                // Create figcaption element
+                const figcaptionElement = document.createElement('figcaption');
+                figcaptionElement.innerText = options['fig-cap'];
+                // Append figcaption to figure
+                figureElement.appendChild(figcaptionElement);
+            }
+
+            elements.outputGraphDiv.appendChild(figureElement);
+
+        }
+
+        // Display the pager data
+        if (pager.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            pager.forEach((paged_data, index) => {
+                const pre_pager = document.createElement("pre");
+                pre_pager.innerText = paged_data;
+                pre_pager.classList.add("qwebr-output-code-pager");
+                pre_pager.setAttribute("id", `qwebr-output-code-pager-editor-${elements.id}-result-${index + 1}`);
+                elements.outputCodeDiv.appendChild(pre_pager);
+            });
+        }
+
+        // Display the browse data
+        if (browse.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            browse.forEach((browse_data, index) => {
+                const iframe_browse = document.createElement('iframe');
+                iframe_browse.classList.add("qwebr-output-code-browse");
+                iframe_browse.setAttribute("id", `qwebr-output-code-browse-editor-${elements.id}-result-${index + 1}`);
+                iframe_browse.style.width = "100%";
+                iframe_browse.style.minHeight = "500px";
+                elements.outputCodeDiv.appendChild(iframe_browse);
+
+                iframe_browse.contentWindow.document.open();
+                iframe_browse.contentWindow.document.write(browse_data);
+                iframe_browse.contentWindow.document.close();
+            });
+        }
+    } finally {
+        // Clean up the remaining code
+        mainWebRCodeShelter.purge();
+    }
+};
+
+// Function to execute the code (accepts code as an argument)
+globalThis.qwebrExecuteCode = async function (
+    codeToRun,
+    id,
+    options = {}) {
+
+    // If options are not passed, we fall back on the bare minimum to handle the computation
+    if (qwebrIsObjectEmpty(options)) {
+        options = {
+            "context": "interactive",
+            "fig-width": 7, "fig-height": 5,
+            "out-width": "700px", "out-height": "",
+            "dpi": 72,
+            "results": "markup",
+            "warning": "true", "message": "true",
+        };
+    }
+
+    // Next, we access the compute areas values
+    const elements = {
+        runButton: document.getElementById(`qwebr-button-run-${id}`),
+        outputCodeDiv: document.getElementById(`qwebr-output-code-area-${id}`),
+        outputGraphDiv: document.getElementById(`qwebr-output-graph-area-${id}`),
+        id: id,
+    }
+
+    // Disallowing execution of other code cells
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = true;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Emphasize the active code cell
+        elements.runButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i> <span>Run Code</span>';
+    }
+
+    // Evaluate the code and parse the output into the document
+    await qwebrComputeEngine(codeToRun, elements, options);
+
+    // Switch to allowing execution of code
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = false;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Revert to the initial code cell state
+        elements.runButton.innerHTML = '<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>';
+    }
+}
+
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./18-Materials-Testing.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Working-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21-Machine-Learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17-Metallurgy-Fundamentals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18-Materials-Testing.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./30-Labs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Labs</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-testing-objectives" id="toc-sec-testing-objectives" class="nav-link active" data-scroll-target="#sec-testing-objectives"><span class="header-section-number">20.1</span> Learning Objectives</a></li>
+  <li><a href="#sec-testing-tensile" id="toc-sec-testing-tensile" class="nav-link" data-scroll-target="#sec-testing-tensile"><span class="header-section-number">20.2</span> Tensile Testing Theory</a>
+  <ul class="collapse">
+  <li><a href="#sec-testing-stress-strain-defs" id="toc-sec-testing-stress-strain-defs" class="nav-link" data-scroll-target="#sec-testing-stress-strain-defs"><span class="header-section-number">20.2.1</span> Stress and Strain</a></li>
+  <li><a href="#sec-testing-stress-strain-curve" id="toc-sec-testing-stress-strain-curve" class="nav-link" data-scroll-target="#sec-testing-stress-strain-curve"><span class="header-section-number">20.2.2</span> The Stress-Strain Curve, Region by Region</a></li>
+  <li><a href="#sec-testing-ductility-measures" id="toc-sec-testing-ductility-measures" class="nav-link" data-scroll-target="#sec-testing-ductility-measures"><span class="header-section-number">20.2.3</span> Percent Elongation and Reduction of Area</a></li>
+  <li><a href="#sec-testing-fracture-surfaces" id="toc-sec-testing-fracture-surfaces" class="nav-link" data-scroll-target="#sec-testing-fracture-surfaces"><span class="header-section-number">20.2.4</span> Ductile vs.&nbsp;Brittle Fracture Surfaces</a></li>
+  <li><a href="#sec-testing-tensile-examples" id="toc-sec-testing-tensile-examples" class="nav-link" data-scroll-target="#sec-testing-tensile-examples"><span class="header-section-number">20.2.5</span> Worked Examples</a></li>
+  </ul></li>
+  <li><a href="#sec-testing-hardness" id="toc-sec-testing-hardness" class="nav-link" data-scroll-target="#sec-testing-hardness"><span class="header-section-number">20.3</span> Hardness and Microhardness Theory</a>
+  <ul class="collapse">
+  <li><a href="#sec-testing-hardness-definition" id="toc-sec-testing-hardness-definition" class="nav-link" data-scroll-target="#sec-testing-hardness-definition"><span class="header-section-number">20.3.1</span> What Hardness Actually Measures</a></li>
+  <li><a href="#sec-testing-hardness-scales" id="toc-sec-testing-hardness-scales" class="nav-link" data-scroll-target="#sec-testing-hardness-scales"><span class="header-section-number">20.3.2</span> Rockwell, Brinell, Vickers, and Knoop</a></li>
+  <li><a href="#sec-testing-hardness-conversion" id="toc-sec-testing-hardness-conversion" class="nav-link" data-scroll-target="#sec-testing-hardness-conversion"><span class="header-section-number">20.3.3</span> Why Scale Choice Matters, and Why Conversions Are Approximate</a></li>
+  <li><a href="#sec-testing-hardness-tensile-relationship" id="toc-sec-testing-hardness-tensile-relationship" class="nav-link" data-scroll-target="#sec-testing-hardness-tensile-relationship"><span class="header-section-number">20.3.4</span> The Approximate Hardness-Tensile Strength Relationship</a></li>
+  <li><a href="#sec-testing-hardness-errors" id="toc-sec-testing-hardness-errors" class="nav-link" data-scroll-target="#sec-testing-hardness-errors"><span class="header-section-number">20.3.5</span> Sources of Error</a></li>
+  </ul></li>
+  <li><a href="#sec-testing-charpy" id="toc-sec-testing-charpy" class="nav-link" data-scroll-target="#sec-testing-charpy"><span class="header-section-number">20.4</span> Impact (Charpy) Testing and Temperature Effects</a>
+  <ul class="collapse">
+  <li><a href="#sec-testing-toughness-vs-strength" id="toc-sec-testing-toughness-vs-strength" class="nav-link" data-scroll-target="#sec-testing-toughness-vs-strength"><span class="header-section-number">20.4.1</span> Toughness vs.&nbsp;Strength</a></li>
+  <li><a href="#sec-testing-charpy-what" id="toc-sec-testing-charpy-what" class="nav-link" data-scroll-target="#sec-testing-charpy-what"><span class="header-section-number">20.4.2</span> What the Charpy Test Measures</a></li>
+  <li><a href="#sec-testing-dbtt" id="toc-sec-testing-dbtt" class="nav-link" data-scroll-target="#sec-testing-dbtt"><span class="header-section-number">20.4.3</span> The Ductile-to-Brittle Transition Temperature (DBTT)</a></li>
+  <li><a href="#sec-testing-charpy-history" id="toc-sec-testing-charpy-history" class="nav-link" data-scroll-target="#sec-testing-charpy-history"><span class="header-section-number">20.4.4</span> Historical Examples</a></li>
+  <li><a href="#sec-testing-charpy-predict" id="toc-sec-testing-charpy-predict" class="nav-link" data-scroll-target="#sec-testing-charpy-predict"><span class="header-section-number">20.4.5</span> Predicting Your Own Lab Results</a></li>
+  <li><a href="#sec-testing-temperature-other-tests" id="toc-sec-testing-temperature-other-tests" class="nav-link" data-scroll-target="#sec-testing-temperature-other-tests"><span class="header-section-number">20.4.6</span> Temperature Effects on Tensile and Hardness Results</a></li>
+  </ul></li>
+  <li><a href="#sec-testing-metallography" id="toc-sec-testing-metallography" class="nav-link" data-scroll-target="#sec-testing-metallography"><span class="header-section-number">20.5</span> Sectioning and Metallography Theory</a>
+  <ul class="collapse">
+  <li><a href="#sec-testing-why-metallography" id="toc-sec-testing-why-metallography" class="nav-link" data-scroll-target="#sec-testing-why-metallography"><span class="header-section-number">20.5.1</span> Why We Cut, Mount, Grind, Polish, and Etch</a></li>
+  <li><a href="#sec-testing-reading-micrographs" id="toc-sec-testing-reading-micrographs" class="nav-link" data-scroll-target="#sec-testing-reading-micrographs"><span class="header-section-number">20.5.2</span> Reading a Micrograph</a></li>
+  </ul></li>
+  <li><a href="#sec-testing-other-materials" id="toc-sec-testing-other-materials" class="nav-link" data-scroll-target="#sec-testing-other-materials"><span class="header-section-number">20.6</span> How Other Materials Behave</a>
+  <ul class="collapse">
+  <li><a href="#sec-testing-aluminum" id="toc-sec-testing-aluminum" class="nav-link" data-scroll-target="#sec-testing-aluminum"><span class="header-section-number">20.6.1</span> Aluminum Alloys</a></li>
+  <li><a href="#sec-testing-stainless" id="toc-sec-testing-stainless" class="nav-link" data-scroll-target="#sec-testing-stainless"><span class="header-section-number">20.6.2</span> Stainless Steels</a></li>
+  <li><a href="#sec-testing-cast-iron" id="toc-sec-testing-cast-iron" class="nav-link" data-scroll-target="#sec-testing-cast-iron"><span class="header-section-number">20.6.3</span> Cast Iron</a></li>
+  <li><a href="#sec-testing-copper-brass" id="toc-sec-testing-copper-brass" class="nav-link" data-scroll-target="#sec-testing-copper-brass"><span class="header-section-number">20.6.4</span> Copper and Brass</a></li>
+  <li><a href="#sec-testing-polymers" id="toc-sec-testing-polymers" class="nav-link" data-scroll-target="#sec-testing-polymers"><span class="header-section-number">20.6.5</span> Polymers</a></li>
+  </ul></li>
+  <li><a href="#sec-testing-takeaways" id="toc-sec-testing-takeaways" class="nav-link" data-scroll-target="#sec-testing-takeaways"><span class="header-section-number">20.7</span> Key Takeaways</a></li>
+  <li><a href="#sec-testing-glossary" id="toc-sec-testing-glossary" class="nav-link" data-scroll-target="#sec-testing-glossary"><span class="header-section-number">20.8</span> Glossary</a></li>
+  <li><a href="#sec-testing-practice" id="toc-sec-testing-practice" class="nav-link" data-scroll-target="#sec-testing-practice"><span class="header-section-number">20.9</span> Practice Problems</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/18-Materials-Testing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/loader.js"></script>
+<script type="module" id="qwebr-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs'
+    }
+  });
+</script>
+<script type="module">
+// Function to update Monaco Editors when body class changes
+function updateMonacoEditorsOnBodyClassChange() {
+    // Select the body element
+    const body = document.querySelector('body');
+
+    // Options for the observer (which mutations to observe)
+    const observerOptions = {
+        attributes: true,  // Observe changes to attributes
+        attributeFilter: ['class'] // Only observe changes to the 'class' attribute
+    };
+
+    // Callback function to execute when mutations are observed
+    const bodyClassChangeCallback = function(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                // Class attribute has changed
+                // Update all Monaco Editors on the page
+                updateMonacoEditorTheme();
+            }
+        }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(bodyClassChangeCallback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(body, observerOptions);
+}
+
+// Function to update all instances of Monaco Editors on the page
+function updateMonacoEditorTheme() {
+    // Determine what VS Theme to use
+    const vsThemeToUse = document.body.classList.contains("quarto-dark") ? 'vs-dark' : 'vs' ;
+
+    // Iterate through all initialized Monaco Editors
+    qwebrEditorInstances.forEach( function(editorInstance) { 
+        editorInstance.updateOptions({ theme: vsThemeToUse }); 
+    });
+}
+
+// Call the function to start observing changes to body class
+updateMonacoEditorsOnBodyClassChange();
+</script>
+<script type="module">
+// Global array to store Monaco Editor instances
+globalThis.qwebrEditorInstances = [];
+
+function isValidCodeLineNumbers(stringCodeLineNumbers) {
+  // Regular expression to match valid input strings
+  const regex = /^(\d+(-\d+)?)(,\d+(-\d+)?)*$/;
+  return regex.test(stringCodeLineNumbers);
+}
+
+// Function that builds and registers a Monaco Editor instance    
+globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
+
+  const initialCode = cellData.code;
+  const qwebrCounter = cellData.id;
+  const qwebrOptions = cellData.options;
+
+  // Retrieve the previously created document elements
+  let runButton = document.getElementById(`qwebr-button-run-${qwebrCounter}`);
+  let resetButton = document.getElementById(`qwebr-button-reset-${qwebrCounter}`);
+  let copyButton = document.getElementById(`qwebr-button-copy-${qwebrCounter}`);
+  let editorDiv = document.getElementById(`qwebr-editor-${qwebrCounter}`);
+
+  // Load the Monaco Editor and create an instance
+  let editor;
+  require(['vs/editor/editor.main'], function () {
+    editor = monaco.editor.create(editorDiv, {
+      value: initialCode,
+      language: 'r',
+      theme: 'vs-light',
+      automaticLayout: true,           // Works wonderfully with RevealJS
+      scrollBeyondLastLine: false,
+      minimap: {
+        enabled: false
+      },
+      fontSize: qwebrScaledFontSize(editorDiv, qwebrOptions),         
+      renderLineHighlight: "none",      // Disable current line highlighting
+      hideCursorInOverviewRuler: true,  // Remove cursor indictor in right hand side scroll bar
+      readOnly: qwebrOptions['read-only'] ?? false,
+      quickSuggestions: qwebrOptions['editor-quick-suggestions'] ?? false,
+      wordWrap: (qwebrOptions['editor-word-wrap'] == 'true' ? "on" : "off")
+    });
+
+    // Store the official counter ID to be used in keyboard shortcuts
+    editor.__qwebrCounter = qwebrCounter;
+
+    // Store the official div container ID
+    editor.__qwebrEditorId = `qwebr-editor-${qwebrCounter}`;
+
+    // Store the initial code value and options
+    editor.__qwebrinitialCode = initialCode;
+    editor.__qwebrOptions = qwebrOptions;
+
+    // Set at the model level the preferred end of line (EOL) character to LF.
+    // This prevent `\r\n` from being given to the webR engine if the user is on Windows.
+    // See details in: https://github.com/coatless/quarto-webr/issues/94
+    // Associated error text: 
+    // Error: <text>:1:7 unexpected input
+
+    // Retrieve the underlying model
+    const model = editor.getModel();
+    // Set EOL for the model
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+    
+    // Dynamically modify the height of the editor window if new lines are added.
+    let ignoreEvent = false;
+    const updateHeight = () => {
+      // Increment editor height by 2 to prevent vertical scroll bar from appearing
+      const contentHeight = editor.getContentHeight() + 2;
+
+      // Retrieve editor-max-height option
+      const maxEditorHeight = qwebrOptions['editor-max-height'];
+
+      // If editor-max-height is missing, allow infinite growth. Otherwise, threshold.
+      const editorHeight = !maxEditorHeight ?  contentHeight : Math.min(contentHeight, maxEditorHeight);
+
+      // We're avoiding a width change
+      //editorDiv.style.width = `${width}px`;
+      editorDiv.style.height = `${editorHeight}px`;
+      try {
+        ignoreEvent = true;
+
+        // The key to resizing is this call
+        editor.layout();
+      } finally {
+        ignoreEvent = false;
+      }
+    };
+
+    // Function to generate decorations to highlight lines
+    // in the editor based on input string.
+    function decoratorHighlightLines(codeLineNumbers) {
+      // Store the lines to be lighlight
+      let linesToHighlight = [];
+      
+      // Parse the codeLineNumbers string to get the line numbers to highlight
+      // First, split the string by commas
+      codeLineNumbers.split(',').forEach(part => {
+        // Check if we have a range of lines
+        if (part.includes('-')) {
+            // Handle range of lines (e.g., "6-8")
+            const [start, end] = part.split('-').map(Number);
+            for (let i = start; i <= end; i++) {
+                linesToHighlight.push(i);
+            }
+        } else {
+            // Handle single line (e.g., "7")
+            linesToHighlight.push(Number(part));
+        }
+      });
+  
+      // Create monaco decorations for the lines to highlight
+      const decorations = linesToHighlight.map(lineNumber => ({
+          range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+          options: {
+              isWholeLine: true,
+              className: 'qwebr-editor-highlight-line'
+          }
+      }));
+  
+      // Return decorations to be applied to the editor
+      return decorations;
+    }
+
+    // Ensure that the editor-code-line-numbers option is set and valid
+    // then apply styling
+    if (qwebrOptions['editor-code-line-numbers']) {
+      // Remove all whitespace from the string
+      const codeLineNumbers = qwebrOptions['editor-code-line-numbers'].replace(/\s/g,'');
+      // Check if the string is valid for line numbers, e.g., "1,3-5,7"
+      if (isValidCodeLineNumbers(codeLineNumbers)) {
+        // Apply the decorations to the editor
+        editor.createDecorationsCollection(decoratorHighlightLines(codeLineNumbers));
+      } else {
+        // Warn the user that the input is invalid
+        console.warn(`Invalid "editor-code-line-numbers" value in code cell ${qwebrOptions['label']}: ${codeLineNumbers}`);
+      }
+    }
+
+    // Helper function to check if selected text is empty
+    function isEmptyCodeText(selectedCodeText) {
+      return (selectedCodeText === null || selectedCodeText === undefined || selectedCodeText === "");
+    }
+
+    // Registry of keyboard shortcuts that should be re-added to each editor window
+    // when focus changes.
+    const addWebRKeyboardShortCutCommands = () => {
+      // Add a keydown event listener for Shift+Enter to run all code in cell
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
+
+        // Retrieve all text inside the editor
+        qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+      });
+
+      // Add a keydown event listener for CMD/Ctrl+Enter to run selected code
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+
+        // Get the selected text from the editor
+        const selectedText = editor.getModel().getValueInRange(editor.getSelection());
+        // Check if no code is selected
+        if (isEmptyCodeText(selectedText)) {
+          // Obtain the current cursor position
+          let currentPosition = editor.getPosition();
+          // Retrieve the current line content
+          let currentLine = editor.getModel().getLineContent(currentPosition.lineNumber);
+
+          // Propose a new position to move the cursor to
+          let newPosition = new monaco.Position(currentPosition.lineNumber + 1, 1);
+
+          // Check if the new position is beyond the last line of the editor
+          if (newPosition.lineNumber > editor.getModel().getLineCount()) {
+            // Add a new line at the end of the editor
+            editor.executeEdits("addNewLine", [{
+            range: new monaco.Range(newPosition.lineNumber, 1, newPosition.lineNumber, 1),
+            text: "\n", 
+            forceMoveMarkers: true,
+            }]);
+          }
+          
+          // Run the entire line of code.
+          qwebrExecuteCode(currentLine, editor.__qwebrCounter, editor.__qwebrOptions);
+
+          // Move cursor to new position
+          editor.setPosition(newPosition);
+        } else {
+          // Code to run when Ctrl+Enter is pressed with selected code
+          qwebrExecuteCode(selectedText, editor.__qwebrCounter, editor.__qwebrOptions);
+        }
+      });
+    }
+
+    // Register an on focus event handler for when a code cell is selected to update
+    // what keyboard shortcut commands should work.
+    // This is a workaround to fix a regression that happened with multiple
+    // editor windows since Monaco 0.32.0 
+    // https://github.com/microsoft/monaco-editor/issues/2947
+    editor.onDidFocusEditorText(addWebRKeyboardShortCutCommands);
+
+    // Register an on change event for when new code is added to the editor window
+    editor.onDidContentSizeChange(updateHeight);
+
+    // Manually re-update height to account for the content we inserted into the call
+    updateHeight();
+
+    // Store the editor instance in the global dictionary
+    qwebrEditorInstances[editor.__qwebrCounter] = editor;
+
+  });
+
+  // Add a click event listener to the run button
+  runButton.onclick = function () {
+    qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+  };
+
+  // Add a click event listener to the reset button
+  copyButton.onclick = function () {
+    // Retrieve current code data
+    const data = editor.getValue();
+    
+    // Write code data onto the clipboard.
+    navigator.clipboard.writeText(data || "");
+  };
+  
+  // Add a click event listener to the copy button
+  resetButton.onclick = function () {
+    editor.setValue(editor.__qwebrinitialCode);
+  };
+  
+}
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-materials-testing" class="quarto-section-identifier"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="sec-testing-objectives" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="sec-testing-objectives"><span class="header-section-number">20.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Calculate engineering stress, strain, elastic modulus, percent elongation, and percent reduction of area from tensile test data.</li>
+<li>Read a stress-strain curve region by region and connect each region to what is happening to the metal’s dislocations and grains.</li>
+<li>Explain what each hardness scale (Rockwell B/C, Brinell, Vickers, Knoop) measures, when to use it, and why the scales aren’t directly interchangeable.</li>
+<li>Explain what a Charpy test measures, predict how a BCC steel’s toughness changes with temperature, and describe the resulting fracture surfaces.</li>
+<li>Explain why sectioning, mounting, grinding, polishing, and etching are necessary before a specimen can be examined under a microscope, and read a basic micrograph.</li>
+<li>Compare steel’s behaviour under these same tests to aluminum, stainless steel, cast iron, copper/brass, and polymers.</li>
+</ul>
+<p>This is Part B of a two-part chapter. <a href="./17-Metallurgy-Fundamentals.html">Part A</a> covered what steel is made of and how heat treatment changes it — you’ll need that background here, especially the phase diagram (<a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-fe-c" class="quarto-xref"><span>Section 19.5</span></a>) and the five heat treatments (<a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-heat-treatment" class="quarto-xref"><span>Section 19.6</span></a>). This part covers <em>how we measure</em> the properties heat treatment changes, and connects directly to your three materials-testing labs: <strong>Hardness Testing (Rockwell and Brinell)</strong>, <strong>Tensile and Microhardness Testing of Case-Hardened Steel</strong>, and <strong>Charpy Impact Testing and the Ductile-to-Brittle Transition</strong> (see <a href="./30-Labs.html#sec-labs-materials">the Labs chapter</a> for the full procedures — this chapter does not repeat them).</p>
+<hr>
+</section>
+<section id="sec-testing-tensile" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="sec-testing-tensile"><span class="header-section-number">20.2</span> Tensile Testing Theory</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Before you read on">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Before you read on
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Picture pulling on a rubber band, then on a steel paperclip, until each breaks. Which one stretches more before it snaps? Which one “gives” noticeably before it breaks, versus breaking almost without warning? Keep those two objects in mind — you’re about to learn the vocabulary for exactly what you already felt.</p>
+</div>
+</div>
+<section id="sec-testing-stress-strain-defs" class="level3" data-number="20.2.1">
+<h3 data-number="20.2.1" class="anchored" data-anchor-id="sec-testing-stress-strain-defs"><span class="header-section-number">20.2.1</span> Stress and Strain</h3>
+<p>A tensile test pulls a standardized specimen apart at a controlled rate while recording load and extension — the same basic principle whether the machine is testing a bolt for an automotive supplier or armor plate for a defense contractor. Raw load and extension depend on specimen size, so we convert them to size-independent quantities:</p>
+<p><span id="eq-eng-stress"><span class="math display">\[\sigma = \frac{P}{A_0} \tag{20.1}\]</span></span></p>
+<p><span id="eq-eng-strain"><span class="math display">\[\varepsilon = \frac{\Delta L}{L_0} \tag{20.2}\]</span></span></p>
+<p>where <span class="math inline">\(\sigma\)</span> is <strong>engineering stress</strong> (MPa, or psi/ksi), <span class="math inline">\(P\)</span> is the applied load (N or lbf), <span class="math inline">\(A_0\)</span> is the <em>original</em> cross-sectional area, <span class="math inline">\(\varepsilon\)</span> is <strong>engineering strain</strong> (dimensionless, or %), <span class="math inline">\(\Delta L\)</span> is the change in length, and <span class="math inline">\(L_0\)</span> is the <em>original</em> gauge length. Both use the <em>original</em> dimensions throughout the test — that’s what makes them “engineering” stress and strain, as opposed to <em>true</em> stress and strain, which continuously account for the specimen’s shrinking cross-section (true stress/strain is more accurate at large deformation but is beyond this course; ASTM E8/E8M, the standard tensile test method for metals, is written around engineering stress and strain).</p>
+</section>
+<section id="sec-testing-stress-strain-curve" class="level3" data-number="20.2.2">
+<h3 data-number="20.2.2" class="anchored" data-anchor-id="sec-testing-stress-strain-curve"><span class="header-section-number">20.2.2</span> The Stress-Strain Curve, Region by Region</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-stress-strain-comparison" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-stress-strain-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-Materials-Testing_files/figure-html/fig-stress-strain-comparison-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1056">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stress-strain-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.1: Representative engineering stress-strain curves for several material conditions (schematic, typical shapes only – actual curves depend on exact grade, condition, and specimen). CRS and quenched-and-tempered steel show higher strength but lower ductility than HRS/annealed steel; aluminum shows no sharp yield point; the polymer shows a much lower modulus and a very different curve shape.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Follow any one curve in <a href="#fig-stress-strain-comparison" class="quarto-xref">Figure&nbsp;<span>20.1</span></a> from left to right — this is the region-by-region reading you’ll do on your own tensile lab data:</p>
+<ul>
+<li><strong>Elastic region:</strong> the initial straight-line portion. Stress and strain are directly proportional — this is <strong>Hooke’s Law</strong>, <span class="math inline">\(\sigma = E\varepsilon\)</span>, where <span class="math inline">\(E\)</span> is the <strong>modulus of elasticity</strong> (Young’s modulus), the slope of this line. Physically, atoms are being stretched slightly away from their equilibrium spacing, and the bonds pull them right back the instant the load is removed — no dislocations have moved yet, so this deformation is fully <strong>recoverable</strong>. Steel’s modulus (~200 GPa) is essentially the same whether the steel is annealed, cold-worked, or quenched and tempered — heat treatment barely touches elastic modulus, because it’s a property of the atomic bonding itself, not the microstructure. This is why all the steel curves in <a href="#fig-stress-strain-comparison" class="quarto-xref">Figure&nbsp;<span>20.1</span></a> start with the same slope, while aluminum (weaker metallic bonding, ~69 GPa) and the polymer (van der Waals and covalent bonding between long chains, ~2 GPa or less) start with much shallower slopes.</li>
+<li><strong>Yield point:</strong> the stress at which the material stops behaving elastically and dislocations begin moving enough to produce permanent (plastic) deformation. Some steels show a sharp, obvious yield point (a momentary load drop) because dislocations are initially “pinned” by interstitial carbon/nitrogen atoms and need a burst of extra stress to break free before they can move freely. Most other metals — aluminum, many steels, and virtually all non-ferrous alloys — yield gradually with no sharp point, so engineers define an offset instead: the <strong>0.2% offset yield strength</strong> is found by drawing a line parallel to the elastic region, starting from 0.2% strain, and reading where it intersects the curve.</li>
+<li><strong>Strain hardening (plastic region):</strong> as dislocations move, they multiply and tangle with each other and with grain boundaries — more and more obstacles pile up in their own path, so more stress is needed to keep deformation going. This is the same physical mechanism, from the atomic level, that makes cold-rolled steel stronger than hot-rolled steel (<a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hrs-crs" class="quarto-xref"><span>Section 19.4</span></a>): CRS has <em>already</em> been strain hardened by the rolling process before you ever put it in the tensile machine.</li>
+<li><strong>Ultimate tensile strength (UTS):</strong> the highest engineering stress reached, at the peak of the curve. Beyond this point, strain hardening in the gauge section can no longer keep up with the loss of cross-sectional area, and deformation localizes.</li>
+<li><strong>Necking:</strong> the specimen begins to thin locally rather than uniformly along its length. Because engineering stress uses the <em>original</em> area (<a href="#eq-eng-stress" class="quarto-xref">Equation&nbsp;<span>20.1</span></a>), the calculated engineering stress actually appears to <em>drop</em> after UTS even though the true stress at the neck keeps rising — this is purely a bookkeeping effect of using <span class="math inline">\(A_0\)</span> instead of the shrinking real area.</li>
+<li><strong>Fracture:</strong> final separation, at the end of the curve.</li>
+</ul>
+</section>
+<section id="sec-testing-ductility-measures" class="level3" data-number="20.2.3">
+<h3 data-number="20.2.3" class="anchored" data-anchor-id="sec-testing-ductility-measures"><span class="header-section-number">20.2.3</span> Percent Elongation and Reduction of Area</h3>
+<p>Two standard ductility measures are taken <em>after</em> fracture, by fitting the broken pieces back together (per ASTM E8/E8M):</p>
+<p><span id="eq-percent-elongation"><span class="math display">\[\%EL = \frac{L_f - L_0}{L_0} \times 100 \tag{20.3}\]</span></span></p>
+<p><span id="eq-percent-ra"><span class="math display">\[\%RA = \frac{A_0 - A_f}{A_0} \times 100 \tag{20.4}\]</span></span></p>
+<p>where <span class="math inline">\(L_f\)</span> is the final gauge length (measured across the fracture) and <span class="math inline">\(A_f\)</span> is the final (minimum, necked-down) cross-sectional area. Both numbers answer “how much did this material deform before it broke?” — %EL captures length change over the whole gauge length, %RA captures the local necking right at the fracture, so %RA is typically the larger, more sensitive number for very ductile materials.</p>
+</section>
+<section id="sec-testing-fracture-surfaces" class="level3" data-number="20.2.4">
+<h3 data-number="20.2.4" class="anchored" data-anchor-id="sec-testing-fracture-surfaces"><span class="header-section-number">20.2.4</span> Ductile vs.&nbsp;Brittle Fracture Surfaces</h3>
+<p>A <strong>ductile</strong> fracture (typical of annealed or hot-rolled steel, aluminum, copper) shows visible necking and a rough, fibrous, “cup-and-cone” surface: a flat central fibrous zone where microscopic voids nucleated (often at inclusions), grew, and coalesced, surrounded by a shear lip at roughly 45° where final separation occurred by shear. A <strong>brittle</strong> fracture (typical of untempered martensite, cast iron, or any ductile metal tested below its ductile-to-brittle transition temperature — <a href="#sec-testing-charpy" class="quarto-xref"><span>Section 20.4</span></a>) shows little to no necking and a flat, bright, crystalline-looking surface, because the crack propagated rapidly along (or across) grains with almost no plastic deformation absorbing energy first.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Industry application">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Industry application
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Automotive:</strong> crash-worthiness design deliberately uses ductile, lower-strength steel in some body structures so they crumple (absorbing crash energy through large plastic deformation) rather than shattering. <strong>Food processing:</strong> conveyor components are chosen for enough ductility to dent rather than fracture under an accidental impact, since a fractured piece in a food line is a contamination hazard. <strong>Defense:</strong> fractography (reading a fracture surface) is standard failure-analysis practice for a cracked component — the surface itself tells you whether the failure was ductile overload, brittle fracture, or fatigue, often without needing to test another sample.</p>
+</div>
+</div>
+</section>
+<section id="sec-testing-tensile-examples" class="level3" data-number="20.2.5">
+<h3 data-number="20.2.5" class="anchored" data-anchor-id="sec-testing-tensile-examples"><span class="header-section-number">20.2.5</span> Worked Examples</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tensile test data for a round specimen, per ASTM E8/E8M style reporting</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>D0 <span class="ot">&lt;-</span> <span class="fl">12.83</span>     <span class="co"># mm, original diameter (0.505 in specimen)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>L0 <span class="ot">&lt;-</span> <span class="fl">50.0</span>      <span class="co"># mm, original gauge length</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>P_yield <span class="ot">&lt;-</span> <span class="dv">41500</span>   <span class="co"># N, load at 0.2% offset yield</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>P_max   <span class="ot">&lt;-</span> <span class="dv">58200</span>   <span class="co"># N, maximum (UTS) load</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Lf <span class="ot">&lt;-</span> <span class="fl">61.8</span>      <span class="co"># mm, final gauge length after fracture</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Df <span class="ot">&lt;-</span> <span class="fl">9.40</span>      <span class="co"># mm, minimum diameter after fracture</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>A0 <span class="ot">&lt;-</span> pi <span class="sc">*</span> (D0<span class="sc">/</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>Af <span class="ot">&lt;-</span> pi <span class="sc">*</span> (Df<span class="sc">/</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>sigma_yield <span class="ot">&lt;-</span> P_yield <span class="sc">/</span> A0</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>sigma_uts   <span class="ot">&lt;-</span> P_max <span class="sc">/</span> A0</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>pct_elong   <span class="ot">&lt;-</span> (Lf <span class="sc">-</span> L0) <span class="sc">/</span> L0 <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>pct_ra      <span class="ot">&lt;-</span> (A0 <span class="sc">-</span> Af) <span class="sc">/</span> A0 <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original area A0 = %.2f mm^2</span><span class="sc">\n</span><span class="st">"</span>, A0))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"0.2%% offset yield strength = %.1f MPa</span><span class="sc">\n</span><span class="st">"</span>, sigma_yield))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Ultimate tensile strength   = %.1f MPa</span><span class="sc">\n</span><span class="st">"</span>, sigma_uts))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Percent elongation  = %.1f%%</span><span class="sc">\n</span><span class="st">"</span>, pct_elong))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Percent reduction of area = %.1f%%</span><span class="sc">\n</span><span class="st">"</span>, pct_ra))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Original area A0 = 129.28 mm^2
+0.2% offset yield strength = 321.0 MPa
+Ultimate tensile strength   = 450.2 MPa
+Percent elongation  = 23.6%
+Percent reduction of area = 46.3%</code></pre>
+</div>
+</div>
+<p>Live cell — try changing the loads and final dimensions to see how yield strength, UTS, %EL, and %RA respond. A brittle specimen would show a much smaller <code>Lf - L0</code> and <code>D0 - Df</code>.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Live cell — this specimen breaks well before it necks noticeably. Try small <code>Lf</code> and <code>Df</code> changes and see how brittle behaviour (low %EL, low %RA) looks compared to the ductile example above.</p>
+<div id="qwebr-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled" title="Quick check">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Quick check
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Looking back at <a href="#fig-stress-strain-comparison" class="quarto-xref">Figure&nbsp;<span>20.1</span></a>: which curve would you expect from the <strong>as-quenched (untempered)</strong> specimen you’ll encounter conceptually in the hardness lab, if it were pulled in tension instead? <em>(Answer: highest strength, but the shortest, steepest curve of all — even less strain to failure than the quenched-and-tempered curve shown, since tempering is what restores ductility; see <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hardness-toughness" class="quarto-xref"><span>Section 19.6.4</span></a>.)</em></p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="sec-testing-hardness" class="level2" data-number="20.3">
+<h2 data-number="20.3" class="anchored" data-anchor-id="sec-testing-hardness"><span class="header-section-number">20.3</span> Hardness and Microhardness Theory</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Before you read on">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Before you read on
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Press your thumbnail into a pencil eraser, then into a wooden pencil. One dents easily, one barely marks at all. That’s hardness, felt rather than measured — the rest of this section is just making that comparison precise and repeatable.</p>
+</div>
+</div>
+<section id="sec-testing-hardness-definition" class="level3" data-number="20.3.1">
+<h3 data-number="20.3.1" class="anchored" data-anchor-id="sec-testing-hardness-definition"><span class="header-section-number">20.3.1</span> What Hardness Actually Measures</h3>
+<p><strong>Hardness</strong> is a material’s resistance to <em>localized permanent (plastic) deformation</em> — specifically, resistance to being indented by a harder object under a known load. It is not a fundamental material property the way stress and strain are; it’s a comparative, standardized test. But because it correlates well with strength (<a href="#sec-testing-hardness-tensile-relationship" class="quarto-xref"><span>Section 20.3.4</span></a>) and is fast, cheap, and often non-destructive, it’s one of the most-used tests on a shop floor — exactly why it’s the quickest way to check what a heat treatment actually did to a part.</p>
+</section>
+<section id="sec-testing-hardness-scales" class="level3" data-number="20.3.2">
+<h3 data-number="20.3.2" class="anchored" data-anchor-id="sec-testing-hardness-scales"><span class="header-section-number">20.3.2</span> Rockwell, Brinell, Vickers, and Knoop</h3>
+<div id="tbl-hardness-methods" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-hardness-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;20.1: Hardness test methods relevant to this course. Loads shown are typical, standard values — always confirm the load and scale specified for your test. See ASTM E18 (Rockwell), E10 (Brinell), and E384 (Vickers/Knoop microhardness).
+</figcaption>
+<div aria-describedby="tbl-hardness-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Indenter</th>
+<th>Load</th>
+<th>What it reads</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rockwell B (HRB)</td>
+<td>1/16 in (1.588 mm) steel ball</td>
+<td>10 kgf minor, 100 kgf major</td>
+<td>Depth of penetration, converted to a dial/digital number</td>
+<td>Softer materials: annealed or low-carbon steel, aluminum, brass</td>
+</tr>
+<tr class="even">
+<td>Rockwell C (HRC)</td>
+<td>120° diamond cone (“brale”)</td>
+<td>10 kgf minor, 150 kgf major</td>
+<td>Depth of penetration</td>
+<td>Harder materials: hardened/tempered steel, tool steel</td>
+</tr>
+<tr class="odd">
+<td>Brinell (HBW)</td>
+<td>10 mm tungsten carbide ball</td>
+<td>typically 3000 kgf (steel)</td>
+<td>Diameter of the indentation, converted to a number</td>
+<td>Coarse-grained or non-uniform materials (castings), where a large indent averages out local variation</td>
+</tr>
+<tr class="even">
+<td>Vickers (HV)</td>
+<td>Square-based diamond pyramid</td>
+<td>1 gf to 120 kgf, chosen by application</td>
+<td>Diagonal length of the (square) indentation</td>
+<td>Wide range, including microhardness; especially phases, thin sections, weld zones</td>
+</tr>
+<tr class="odd">
+<td>Knoop (HK)</td>
+<td>Elongated rhombic-based diamond pyramid</td>
+<td>Typically under 1 kgf (microhardness range)</td>
+<td>Long diagonal length</td>
+<td>Very thin sections/coatings and brittle materials, where Vickers’ more symmetric indent risks cracking the specimen</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>Rockwell</strong> tests in two steps: a small <strong>minor load</strong> is applied first to seat the indenter and remove the effect of surface roughness, then the much larger <strong>major load</strong> is applied and removed, and the <em>difference</em> in penetration depth between the two loads is converted directly to a hardness number on the machine’s dial or display — no separate measurement step is needed, which is why Rockwell is the fastest of these tests. <strong>Brinell</strong> requires measuring the indentation diameter afterward (with a measuring microscope) and converting it via a chart or formula.</p>
+<p><strong>Vickers</strong> hardness is calculated directly from the applied force and the indentation diagonal:</p>
+<p><span id="eq-vickers"><span class="math display">\[HV = \frac{1.8544\,F}{d^2} \tag{20.5}\]</span></span></p>
+<p>where <span class="math inline">\(F\)</span> is the applied load (kgf) and <span class="math inline">\(d\)</span> is the mean of the two diagonals of the square indentation (mm). Because the indenter is always the same 136° diamond pyramid regardless of load, Vickers numbers are directly comparable across a huge range of loads and material hardnesses — one reason it (and the closely related Knoop test) is the standard choice for <strong>microhardness</strong>: measuring the hardness of something too small, too thin, or too localized for a full-size Rockwell or Brinell indent, such as:</p>
+<ul>
+<li><strong>An individual phase</strong> — e.g., distinguishing the hardness of a specific microconstituent under a microscope, rather than an average over many phases.</li>
+<li><strong>A case-hardened layer</strong> — exactly what you’ll do in your tensile/microhardness lab: a series of small Vickers indents stepping inward from the surface of the AISI 1566 specimen, tracing out how hardness falls from the hard, carbon-rich case to the softer core.</li>
+<li><strong>A weld heat-affected zone</strong> — mapping hardness across the narrow band of microstructure changed by welding heat.</li>
+<li><strong>Thin sections or coatings</strong> — where a full-size Rockwell/Brinell indent would be too deep and would measure the substrate underneath instead of the coating itself.</li>
+</ul>
+</section>
+<section id="sec-testing-hardness-conversion" class="level3" data-number="20.3.3">
+<h3 data-number="20.3.3" class="anchored" data-anchor-id="sec-testing-hardness-conversion"><span class="header-section-number">20.3.3</span> Why Scale Choice Matters, and Why Conversions Are Approximate</h3>
+<p>Choosing the wrong scale gives a meaningless or invalid reading: Rockwell B’s soft steel ball would simply punch straight through a hardened steel specimen without giving a useful number, and Rockwell C’s diamond cone on a very soft material can produce an indentation deep enough to bottom out the scale. This is exactly why the hardness lab has you choose the <em>correct</em> combination of indenter and load for each specimen before testing.</p>
+<p>Because each scale measures a different physical quantity (depth vs.&nbsp;diameter vs.&nbsp;diagonal, at different loads, with different indenter geometries), there is <strong>no exact mathematical conversion</strong> between them — only <strong>empirical conversion tables</strong>, built from testing many samples of similar materials with both methods and tabulating the typical correspondence. <strong>ASTM E140</strong> is the standard reference for these conversions, and it explicitly warns that they are most reliable for plain carbon and low-alloy steels, and become progressively less reliable for other materials, unusual heat treatments, or very high/low hardness values outside the range the table was built from. Treat any converted hardness value as an estimate, not a measurement.</p>
+</section>
+<section id="sec-testing-hardness-tensile-relationship" class="level3" data-number="20.3.4">
+<h3 data-number="20.3.4" class="anchored" data-anchor-id="sec-testing-hardness-tensile-relationship"><span class="header-section-number">20.3.4</span> The Approximate Hardness-Tensile Strength Relationship</h3>
+<p>For steels, hardness and tensile strength correlate strongly enough that a widely used rule of thumb exists:</p>
+<p><span id="eq-hardness-uts"><span class="math display">\[\sigma_{UTS} \text{(MPa)} \approx 3.45 \times \text{HB} \tag{20.6}\]</span></span></p>
+<p>(where HB is the Brinell hardness number). This comes from the same physical root as the hardness-to-conversion-table warning above: it is an <strong>empirical correlation for steels</strong>, not a law of physics, and it breaks down for cast irons, non-ferrous metals, and materials with an unusual microstructure. Still, it’s genuinely useful on a shop floor: a quick hardness test can give a fast, non-destructive <em>estimate</em> of tensile strength without cutting up a part for a full tensile test.</p>
+</section>
+<section id="sec-testing-hardness-errors" class="level3" data-number="20.3.5">
+<h3 data-number="20.3.5" class="anchored" data-anchor-id="sec-testing-hardness-errors"><span class="header-section-number">20.3.5</span> Sources of Error</h3>
+<ul>
+<li><strong>Specimen thickness:</strong> too thin, and the indentation can be influenced by the (harder or softer) material or fixture beneath the specimen — a rule of thumb for Rockwell is that specimen thickness should be at least 10 times the indentation depth.</li>
+<li><strong>Edge distance:</strong> an indentation placed too close to a specimen edge deforms asymmetrically (material can flow sideways out of the edge instead of being resisted), giving an artificially low reading — standards specify minimum distance from any edge or from another indentation.</li>
+<li><strong>Surface preparation:</strong> scale, paint, roughness, or curvature under the indenter distorts the reading; hardness testing (unlike a full micrograph) usually needs a reasonably clean, flat surface, not necessarily a mirror polish.</li>
+<li><strong>Curved surfaces:</strong> testing a round bar or curved part changes the effective contact geometry compared to the flat surface the conversion charts assume, and typically requires a correction factor.</li>
+</ul>
+<details>
+<summary>
+Worked example: Vickers hardness calculation (static)
+</summary>
+<p><strong>Problem:</strong> A Vickers microhardness test at 500 gf (0.5 kgf) produces an indentation with diagonals of 62.4 µm and 63.8 µm. Calculate the Vickers hardness number.</p>
+<p><strong>Solution:</strong> Convert diagonals to mm and average: <span class="math inline">\(d = (0.0624 + 0.0638)/2 = 0.0631\)</span> mm.</p>
+<p><span class="math display">\[HV = \frac{1.8544 \times 0.5}{0.0631^2} = \frac{0.9272}{0.00398} \approx 233 \text{ HV}\]</span></p>
+For a case-hardened specimen, you’d repeat this calculation at each depth of your traverse and plot HV against distance from the surface — exactly the profile you build in the tensile/microhardness lab.
+</details>
+<p>Live cell — try different diagonal measurements and loads. Notice how the <em>same</em> diagonal size at a higher load gives a lower HV, and vice versa — this is why comparing hardness numbers taken at different loads without converting first is a common source of confusion.</p>
+<div id="qwebr-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Live cell — convert a case-hardened part’s Vickers profile toward the Rockwell C scale used to define case depth. (Real conversion requires the ASTM E140 table; this is a simplified linear approximation for illustration only — never use it for a real report.)</p>
+<div id="qwebr-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<hr>
+</section>
+</section>
+<section id="sec-testing-charpy" class="level2" data-number="20.4">
+<h2 data-number="20.4" class="anchored" data-anchor-id="sec-testing-charpy"><span class="header-section-number">20.4</span> Impact (Charpy) Testing and Temperature Effects</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Before you read on">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Before you read on
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Think about a plastic milk jug left outside all winter versus one fresh from the store. The cold one shatters if you drop it; the room-temperature one just bounces. Same material, same shape — only the temperature changed. That’s the ductile-to-brittle transition, and you’re about to see steel do almost exactly the same thing.</p>
+</div>
+</div>
+<section id="sec-testing-toughness-vs-strength" class="level3" data-number="20.4.1">
+<h3 data-number="20.4.1" class="anchored" data-anchor-id="sec-testing-toughness-vs-strength"><span class="header-section-number">20.4.1</span> Toughness vs.&nbsp;Strength</h3>
+<p><strong>Toughness</strong> is the ability to absorb energy before fracturing — it is <em>not</em> the same thing as strength. A material can be very strong (high UTS) but have low toughness if it fractures with little plastic deformation (as-quenched martensite is the clearest example: very high strength, very low toughness). On a stress-strain curve, toughness is roughly the <em>area under the curve</em> — strength times ductility, not either one alone.</p>
+</section>
+<section id="sec-testing-charpy-what" class="level3" data-number="20.4.2">
+<h3 data-number="20.4.2" class="anchored" data-anchor-id="sec-testing-charpy-what"><span class="header-section-number">20.4.2</span> What the Charpy Test Measures</h3>
+<p>The <strong>Charpy impact test</strong> (ASTM E23) swings a heavy pendulum from a fixed height to strike a small, standardized, notched bar, breaking it in a fraction of a second. The pendulum’s height before and after the break tells you how much energy the specimen <strong>absorbed</strong> in fracturing — reported in joules (J) or foot-pounds (ft·lbf). This absorbed energy is the direct measure of impact toughness: a bar that absorbs a lot of energy bent, tore, and consumed energy through plastic deformation before breaking; a bar that absorbs very little snapped almost instantly.</p>
+<p>The <strong>notch</strong> is deliberately machined into the specimen, and it matters enormously: a notch is a stress concentrator, and it also constrains the material at the notch root from deforming freely in all directions (a condition called triaxial stress state), which suppresses the material’s ability to deform plastically right where the crack needs to start. This makes the Charpy test a much harsher, more realistic test of how a material behaves at a stress concentration — a hole, a fillet, a weld toe, a scratch — than a smooth tensile bar ever could be, which is exactly why so many real engineering structures (and Charpy specimens) fail from notches and stress risers rather than from smooth sections.</p>
+</section>
+<section id="sec-testing-dbtt" class="level3" data-number="20.4.3">
+<h3 data-number="20.4.3" class="anchored" data-anchor-id="sec-testing-dbtt"><span class="header-section-number">20.4.3</span> The Ductile-to-Brittle Transition Temperature (DBTT)</h3>
+<p>Recall from <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-crystal-structures" class="quarto-xref"><span>Section 19.3.2</span></a> (Part A) that <strong>BCC</strong> metals have far fewer easy slip systems than <strong>FCC</strong> metals. At room temperature, thermal energy is enough to help dislocations in a BCC steel overcome the resistance to slip and move relatively freely, so the steel behaves in a tough, ductile manner. Cool it down, and there is progressively less thermal energy available to assist dislocation motion — at some temperature, moving a crack through the material (brittle fracture) simply requires <em>less</em> energy than moving dislocations to deform around it (ductile fracture), and the material’s failure mode flips from ductile to brittle, often over a surprisingly narrow temperature range. That temperature (range) is the <strong>ductile-to-brittle transition temperature (DBTT)</strong>.</p>
+<p><strong>FCC</strong> metals (aluminum, austenitic stainless steel, copper — see <a href="#sec-testing-other-materials" class="quarto-xref"><span>Section 20.6</span></a>) have so many available slip systems that dislocations keep moving relatively easily even at very low temperatures, so they do <strong>not</strong> show a sharp DBTT — their toughness declines gradually, if at all, as temperature drops, rather than falling off a cliff.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-charpy-curve" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-charpy-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-Materials-Testing_files/figure-html/fig-charpy-curve-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-charpy-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.2: Representative Charpy absorbed energy vs.&nbsp;temperature curves: a BCC steel shows a sharp ductile-to-brittle transition; an FCC aluminum alloy stays comparatively flat across the same temperature range (schematic, typical shapes only).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Reading <a href="#fig-charpy-curve" class="quarto-xref">Figure&nbsp;<span>20.2</span></a>: at low temperature, the steel sits on a <strong>lower shelf</strong> of low, roughly constant absorbed energy (brittle behaviour). At high temperature, it sits on an <strong>upper shelf</strong> of high, roughly constant absorbed energy (ductile behaviour). In between is the <strong>transition region</strong>, where absorbed energy climbs steeply — this is where the DBTT is reported, sometimes as the temperature at the curve’s midpoint, sometimes as the temperature for a specified minimum energy (different standards/specifications define it slightly differently; report whichever definition your lab template specifies).</p>
+<p><strong>Fracture appearance</strong> changes right along with the energy: a low-shelf (brittle) fracture is flat and bright, with a granular, crystalline look (individual grain facets reflecting light) and little to no visible shear lip. An upper-shelf (ductile) fracture is dull and fibrous, with a large <strong>shear lip</strong> — the sloped, 45° rim around the fracture where the material failed by shear rather than cleavage — and specimens through the transition region show a mix, often reported as a <strong>percent shear</strong> (the fraction of the fracture surface showing ductile shear character rather than flat, brittle cleavage).</p>
+</section>
+<section id="sec-testing-charpy-history" class="level3" data-number="20.4.4">
+<h3 data-number="20.4.4" class="anchored" data-anchor-id="sec-testing-charpy-history"><span class="header-section-number">20.4.4</span> Historical Examples</h3>
+<p>The DBTT is not an academic curiosity — it has caused some of the most famous structural failures in history. During the Second World War, a number of welded <strong>Liberty ships</strong> fractured suddenly, some literally splitting in half, in cold North Atlantic water; investigation found that the hull steel’s DBTT was close to the seawater temperature the ships operated in, and that welded construction (unlike the riveted ships built before it) allowed a crack starting at one flaw to run continuously across an entire welded plate without stopping at a riveted joint. The <strong>RMS Titanic</strong>’s hull steel has similarly been studied and found to have had a DBTT high enough that, in the near-freezing water of the collision, the steel was likely already on the lower (brittle) shelf, making it far more prone to fracturing on impact than a modern, cold-tolerant steel would be.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Industry application">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Industry application
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Canadian context:</strong> pipelines, heavy equipment, and structural steel used outdoors in a Canadian winter (routinely well below −20 °C in much of the country) must be specified with a DBTT safely below the lowest service temperature the structure will see — this is exactly why Charpy testing at multiple sub-zero temperatures, as in your own lab, is standard practice for structural and pipeline steel qualification, not just a classroom exercise. Outdoor equipment, from farm machinery to snow-clearing equipment, faces the same requirement.</p>
+</div>
+</div>
+</section>
+<section id="sec-testing-charpy-predict" class="level3" data-number="20.4.5">
+<h3 data-number="20.4.5" class="anchored" data-anchor-id="sec-testing-charpy-predict"><span class="header-section-number">20.4.5</span> Predicting Your Own Lab Results</h3>
+<p>Your Charpy lab tests AISI 1018 hot-rolled and cold-rolled specimens at approximately −60, −40, −20, 0 °C, room temperature, 60 °C, and 100 °C. Based on everything above, you should predict:</p>
+<ul>
+<li><strong>Low temperatures (−60 to −20 °C):</strong> low absorbed energy, flat/bright/granular fracture surface — lower shelf behaviour.</li>
+<li><strong>Around 0 °C to room temperature:</strong> rapidly rising absorbed energy as you move through the transition region — exact values will scatter more here than on either shelf, which is normal and expected for a transition-region test.</li>
+<li><strong>High temperatures (60–100 °C):</strong> high, roughly leveled-off absorbed energy, dull/fibrous fracture with a large shear lip — upper shelf behaviour.</li>
+<li><strong>Hot-rolled vs.&nbsp;cold-rolled:</strong> recall from <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hrs-crs" class="quarto-xref"><span>Section 19.4</span></a> (Part A) that cold work raises strength but lowers ductility/toughness. Predict the cold-rolled specimens will generally show <em>lower</em> absorbed energy than hot-rolled at a given temperature, and may show a DBTT shifted to a somewhat higher temperature.</li>
+</ul>
+</section>
+<section id="sec-testing-temperature-other-tests" class="level3" data-number="20.4.6">
+<h3 data-number="20.4.6" class="anchored" data-anchor-id="sec-testing-temperature-other-tests"><span class="header-section-number">20.4.6</span> Temperature Effects on Tensile and Hardness Results</h3>
+<p>Temperature doesn’t only affect impact toughness. <strong>Tensile strength and yield strength of steel generally rise somewhat as temperature drops</strong> (and ductility drops somewhat too — the same underlying dislocation-mobility story as the DBTT, just measured slowly instead of by impact), while at elevated temperature, strength typically falls and ductility rises. <strong>Hardness</strong> shows a similar trend — most metals read slightly softer hot and slightly harder cold — which is one reason hardness testing standards call for testing near room temperature unless a test is specifically designed for elevated- or low-temperature service conditions.</p>
+<hr>
+</section>
+</section>
+<section id="sec-testing-metallography" class="level2" data-number="20.5">
+<h2 data-number="20.5" class="anchored" data-anchor-id="sec-testing-metallography"><span class="header-section-number">20.5</span> Sectioning and Metallography Theory</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Before you read on">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Before you read on
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can’t see individual grains with your bare eyes or even most hand lenses — steel looks like a featureless grey solid at that scale. Metallography is simply the set of steps that gets a metal surface flat, smooth, and chemically revealed enough that a microscope can finally show you the grain structure that’s been controlling all your test results this whole chapter.</p>
+</div>
+</div>
+<section id="sec-testing-why-metallography" class="level3" data-number="20.5.1">
+<h3 data-number="20.5.1" class="anchored" data-anchor-id="sec-testing-why-metallography"><span class="header-section-number">20.5.1</span> Why We Cut, Mount, Grind, Polish, and Etch</h3>
+<p>Each step in metallographic preparation exists to remove the damage the previous step created, while getting progressively closer to a true, undisturbed view of the microstructure:</p>
+<ul>
+<li><strong>Sectioning (cutting)</strong> removes a small, manageable sample from the part, oriented deliberately — recall from <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hrs-crs-observations" class="quarto-xref"><span>Section 19.4.2</span></a> that a <strong>transverse</strong> section (across the bar) and a <strong>longitudinal</strong> section (along the bar) can look completely different in cold-worked material, so the choice of section is not arbitrary.</li>
+<li><strong>Mounting</strong> embeds the small, often awkwardly-shaped sample in a plastic (commonly bakelite, applied hot under pressure) so it can be handled and polished safely and consistently.</li>
+<li><strong>Grinding</strong> (successively finer abrasive papers) removes the rough cut surface and the deformation it caused, working down through a sequence of grits until scratches are fine and uniform.</li>
+<li><strong>Polishing</strong> (progressively finer abrasive suspensions, down to sub-micron) removes the remaining grinding scratches until the surface is mirror-flat and scratch-free — at this point you can see large features like porosity or graphite flakes (<a href="#sec-testing-other-materials" class="quarto-xref"><span>Section 20.6</span></a>, cast iron), but not yet grain boundaries or phases, because a polished, unetched metal surface reflects light almost uniformly.</li>
+<li><strong>Etching</strong> (a mild acid, most commonly <strong>2% nital</strong> — nitric acid in alcohol — for plain carbon and low-alloy steels) chemically attacks the surface at a rate that depends on crystallographic orientation and on which phase is present. Grain boundaries, being more reactive/higher-energy regions, etch faster and etch a tiny groove, which scatters light and shows up dark under the microscope; different phases (ferrite vs.&nbsp;pearlite vs.&nbsp;martensite) etch at different rates and therefore show different degrees of light and dark, revealing the microstructure.</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled" title="Cutting heat and pressure can lie to you">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Cutting heat and pressure can lie to you
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>An improperly cut or ground specimen — too much heat from a dull blade, too much pressure during coarse grinding — can locally overheat or cold-work the very surface layer you’re trying to examine, changing the microstructure right where you’re looking (for example, inadvertently tempering martensite near the cut edge, or smearing grains from mechanical damage). This is exactly why the grinding sequence uses copious water cooling and works through a full sequence of grit sizes rather than skipping straight to fine polish — each step is there to remove the damage the previous, coarser step introduced, right down to a damage-free final surface.</p>
+</div>
+</div>
+</section>
+<section id="sec-testing-reading-micrographs" class="level3" data-number="20.5.2">
+<h3 data-number="20.5.2" class="anchored" data-anchor-id="sec-testing-reading-micrographs"><span class="header-section-number">20.5.2</span> Reading a Micrograph</h3>
+<ul>
+<li><strong>Ferrite</strong> etches lightly and appears as the light-coloured background/matrix phase in a nital-etched plain carbon steel.</li>
+<li><strong>Pearlite</strong> etches more heavily (more grain-boundary-like area per unit volume, from all those ferrite/cementite interfaces) and appears darker, sometimes showing a fine striped/lamellar pattern at high magnification, sometimes just appearing as darker patches at low magnification where the lamellae are too fine to resolve.</li>
+<li><strong>Martensite</strong> has a very different, characteristic appearance: a fine, needle-like or plate-like (“acicular”) pattern, quite different from the smoother, more rounded grain structure of ferrite/pearlite — a trained eye can usually identify martensite (or tempered martensite, which looks similar but slightly softer-edged after the fine carbide precipitation of tempering) on sight.</li>
+<li><strong>Grain size</strong> can be estimated formally using the <strong>ASTM E112</strong> grain size number, <span class="math inline">\(G\)</span> — a higher <span class="math inline">\(G\)</span> number means smaller (finer) grains, related to the number of grains visible per unit area at a standard magnification (roughly, <span class="math inline">\(N = 2^{G-1}\)</span> grains per square inch at 100X, though the full standard method involves comparison charts or systematic counting rather than working from this formula directly). For this course, the basic idea to take away is: <strong>count or compare, don’t guess</strong> — a finer-grained specimen (higher <span class="math inline">\(G\)</span>) should correlate with the higher strength/hardness predicted by Hall-Petch (<a href="17-Metallurgy-Fundamentals.html#eq-hallpetch" class="quarto-xref">Equation&nbsp;<span>19.1</span></a>), and this is a useful sanity check between your micrograph and your hardness results on the same specimen.</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled" title="These are schematic diagrams, not photomicrographs">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>These are schematic diagrams, not photomicrographs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#fig-case-core-micrograph" class="quarto-xref">Figure&nbsp;<span>20.3</span></a> and <a href="#fig-heat-treatment-micrograph" class="quarto-xref">Figure&nbsp;<span>20.4</span></a> are simplified illustrations of the <em>pattern</em> each microstructure makes, not real photographs. Your own case-hardened and heat-treated specimens will look noisier, and the case/core boundary will be more gradual than the clean split drawn here.</p>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-case-core-micrograph" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-case-core-micrograph-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-Materials-Testing_files/figure-html/fig-case-core-micrograph-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-case-core-micrograph-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.3: Schematic diagram (not an actual photomicrograph) of a case-hardened cross-section: a dense, acicular (needle-like) martensite/tempered-martensite case near the surface, transitioning to coarser ferrite+pearlite grains in the core. The boundary is drawn sharp for clarity; a real transition is more gradual.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-heat-treatment-micrograph" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-heat-treatment-micrograph-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-Materials-Testing_files/figure-html/fig-heat-treatment-micrograph-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-heat-treatment-micrograph-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.4: Schematic diagram (not an actual photomicrograph) comparing three heat-treated conditions of the same steel at the same scale: annealed (coarse pearlite + ferrite), normalized (finer pearlite + ferrite), and quenched (acicular, untempered martensite).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Industry application">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Industry application
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Automotive and defense:</strong> failure analysis labs routinely section a failed part right through the crack or fracture origin and prepare a metallographic specimen specifically to answer “was the microstructure what the print specified?” — the wrong hardness, the wrong grain size, or an unexpected phase (like untempered martensite where tempered martensite was specified) shows up immediately once you know how to read it, exactly as you’re learning to do here.</p>
+</div>
+</div>
+<details>
+<summary>
+Predict and explain: connecting the metallography to the hardness lab
+</summary>
+<p><strong>Question:</strong> In the hardness lab you’ll examine (or be told about) annealed, quenched, and normalized specimens of the same steel. Based on this section and <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-heat-treatment" class="quarto-xref"><span>Section 19.6</span></a> (Part A), predict what each should look like under the microscope, from coarsest/softest-looking to finest/hardest-looking.</p>
+<strong>Answer:</strong> Annealed: coarsest pearlite + ferrite, most relaxed-looking grain structure. Normalized: finer, more uniform pearlite + ferrite than annealed. Quenched (untempered): acicular (needle-like) martensite, visually the most different from the other two — no pearlite lamellae at all if fully martensitic. This visual ranking should match the hardness ranking from the Part A practice problem in <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-low-carbon-hardening" class="quarto-xref"><span>Section 19.6.6</span></a>.
+</details>
+<hr>
+</section>
+</section>
+<section id="sec-testing-other-materials" class="level2" data-number="20.6">
+<h2 data-number="20.6" class="anchored" data-anchor-id="sec-testing-other-materials"><span class="header-section-number">20.6</span> How Other Materials Behave</h2>
+<p>Everything above was built around plain carbon and low-alloy steel. Here’s how the same tests behave on the other materials you’re likely to encounter in the shop — and in the “two or more materials” set of your tensile lab.</p>
+<section id="sec-testing-aluminum" class="level3" data-number="20.6.1">
+<h3 data-number="20.6.1" class="anchored" data-anchor-id="sec-testing-aluminum"><span class="header-section-number">20.6.1</span> Aluminum Alloys</h3>
+<p>Aluminum is <strong>FCC</strong>, so — consistent with <a href="#sec-testing-dbtt" class="quarto-xref"><span>Section 20.4.3</span></a> — it shows <strong>no sharp ductile-to-brittle transition</strong>; many aluminum alloys actually get slightly <em>tougher</em> at cryogenic temperatures, which is one reason aluminum is common in low-temperature and aerospace applications. Aluminum cannot be hardened by the quench-and-temper route steel uses (it doesn’t have an analogous martensitic transformation in the alloys used structurally); instead, many aluminum alloys are strengthened by <strong>precipitation hardening</strong> (also called age hardening): the alloy is heated to dissolve alloying elements into solid solution, quenched to trap them in a supersaturated state, then aged (at room temperature or a moderate elevated temperature) to let extremely fine second-phase particles precipitate out — these tiny particles block dislocation motion much the way cementite does in steel, just via a completely different mechanism. This is what a <strong>temper designation</strong> like <strong>6061-T6</strong> means: “T6” specifies solution heat treated and artificially aged (as opposed to, say, “T4,” solution heat treated and naturally aged at room temperature, or “O,” fully annealed/softest condition).</p>
+</section>
+<section id="sec-testing-stainless" class="level3" data-number="20.6.2">
+<h3 data-number="20.6.2" class="anchored" data-anchor-id="sec-testing-stainless"><span class="header-section-number">20.6.2</span> Stainless Steels</h3>
+<p>Not all stainless steels behave alike. <strong>Austenitic</strong> stainless steels (like the common 304 and 316 grades) are alloyed with enough nickel to keep the <strong>FCC austenite structure stable all the way down to room temperature</strong> — which is why they don’t transform to ferrite/martensite on cooling the way plain carbon steel does. Two direct, testable consequences follow: <strong>304 is not magnetic</strong> (ferrite and martensite are magnetic BCC/BCT structures; stable FCC austenite is not), and <strong>304 cannot be hardened by the heat treatments in this chapter</strong> (quench hardening relies on the austenite-to-martensite shear transformation, which austenitic stainless is specifically alloyed to avoid) — its strength comes mainly from cold work (strain hardening) instead. <strong>Martensitic</strong> stainless steels (like 410, 420) have much lower nickel content, <em>do</em> transform to martensite on quenching just like a carbon steel, and <em>are</em> magnetic — this is genuinely a different metallurgical family from austenitic stainless, not just a different grade number.</p>
+</section>
+<section id="sec-testing-cast-iron" class="level3" data-number="20.6.3">
+<h3 data-number="20.6.3" class="anchored" data-anchor-id="sec-testing-cast-iron"><span class="header-section-number">20.6.3</span> Cast Iron</h3>
+<p>Cast iron is, by definition, iron-carbon alloy above roughly 2.1 wt% carbon (recall <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-fe-c-phases" class="quarto-xref"><span>Section 19.5.2</span></a>: this is the composition range <em>above</em> what we called “steel”). At these carbon levels, much of the carbon doesn’t stay dissolved or combined as cementite — it precipitates as free <strong>graphite</strong>, most commonly as flakes in ordinary “grey” cast iron. Those flakes are essentially internal stress concentrators and crack initiation sites throughout the material, which is why grey cast iron is <strong>characteristically brittle</strong>, with very low tensile ductility and no useful yield point in the way steel has one — although it is comparatively strong in <em>compression</em>, and its graphite flakes give it excellent vibration damping and machinability. (Ductile, or nodular, cast iron modifies the graphite into rounded nodules instead of sharp flakes, dramatically improving ductility and toughness over grey iron — a good example of how much microstructure, not just composition, controls behaviour.)</p>
+</section>
+<section id="sec-testing-copper-brass" class="level3" data-number="20.6.4">
+<h3 data-number="20.6.4" class="anchored" data-anchor-id="sec-testing-copper-brass"><span class="header-section-number">20.6.4</span> Copper and Brass</h3>
+<p>Copper is <strong>FCC</strong>, ductile, an excellent electrical and thermal conductor, and — like aluminum — does not show a sharp DBTT. It strengthens primarily by cold work (strain hardening), the same mechanism behind CRS in <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hrs-crs" class="quarto-xref"><span>Section 19.4</span></a>, and softens (recrystallizes, in the sense of <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-recrystallization" class="quarto-xref"><span>Section 19.4.1</span></a>) if annealed. <strong>Brass</strong> (copper-zinc alloy) is also FCC-based at common compositions, generally more machinable than pure copper, and used widely for its combination of corrosion resistance, appearance, and machinability rather than for high strength.</p>
+</section>
+<section id="sec-testing-polymers" class="level3" data-number="20.6.5">
+<h3 data-number="20.6.5" class="anchored" data-anchor-id="sec-testing-polymers"><span class="header-section-number">20.6.5</span> Polymers</h3>
+<p>Polymers behave completely differently from metals because they aren’t held together by metallic (or even simple ionic/covalent-network) bonding — they’re long molecular chains, tangled together and held by comparatively weak intermolecular forces (with the exception of covalent bonds along each chain). The single most important reference temperature for a polymer’s mechanical behaviour is its <strong>glass transition temperature (<span class="math inline">\(T_g\)</span>)</strong>: above <span class="math inline">\(T_g\)</span>, chains have enough thermal energy to slide and rearrange somewhat, so the polymer behaves in a relatively soft, flexible, sometimes rubbery manner; below <span class="math inline">\(T_g\)</span>, the chains are essentially frozen in place, and the polymer becomes stiff, glassy, and brittle — a direct parallel to the DBTT idea in <a href="#sec-testing-dbtt" class="quarto-xref"><span>Section 20.4.3</span></a>, though the underlying mechanism (chain mobility, not dislocation motion) is completely different. This is exactly why a rubber gasket or a plastic component can perform well at room temperature but crack or shatter in cold weather — it has been cooled below its <span class="math inline">\(T_g\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Industry application">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Industry application
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Food processing:</strong> many food-contact seals and gaskets are polymers chosen specifically for a <span class="math inline">\(T_g\)</span> well below the coldest temperature the equipment will see (e.g.&nbsp;cold-storage or freezer environments), for exactly the same reason structural steel is chosen for a DBTT below its service temperature.</p>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-material-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-material-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;20.2: Relative behaviour of common engineering materials compared to plain carbon steel.
+</figcaption>
+<div aria-describedby="tbl-material-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed cell caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Material</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Crystal structure</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Heat-treatment hardenable?</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Sharp DBTT?</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Typical ductility</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Plain carbon steel</td>
+<td style="text-align: left;">BCC (ferrite) / FCC (austenite, high temp)</td>
+<td style="text-align: left;">Yes (quench + temper)</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">Moderate-high (condition dependent)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Austenitic stainless (304)</td>
+<td style="text-align: left;">FCC (stable at RT)</td>
+<td style="text-align: left;">No (work-hardens instead)</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Aluminum alloy</td>
+<td style="text-align: left;">FCC</td>
+<td style="text-align: left;">No (precipitation/age hardening instead)</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Moderate-high</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Grey cast iron</td>
+<td style="text-align: left;">BCC ferrite/pearlite matrix + graphite flakes</td>
+<td style="text-align: left;">Limited (can be heat treated, less common)</td>
+<td style="text-align: left;">N/A (already brittle)</td>
+<td style="text-align: left;">Very low</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Copper / brass</td>
+<td style="text-align: left;">FCC</td>
+<td style="text-align: left;">No (work-hardens)</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Thermoplastic polymer</td>
+<td style="text-align: left;">Amorphous / semi-crystalline chains</td>
+<td style="text-align: left;">Not applicable</td>
+<td style="text-align: left;">Behaves brittle below Tg (similar concept)</td>
+<td style="text-align: left;">Condition/temperature dependent</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<details>
+<summary>
+Predict and explain: identifying an unknown specimen
+</summary>
+<p><strong>Question:</strong> In the tensile lab, one of your “unknown” specimens turns out to be non-magnetic, does not respond to any heat treatment you try, and shows high ductility with a smoothly rounded (no sharp point) yield region on its stress-strain curve. What is it likely to be, and why?</p>
+<strong>Answer:</strong> Very likely an <strong>austenitic stainless steel</strong> (e.g.&nbsp;304): non-magnetic and heat-treatment-unresponsive both point directly to stable FCC austenite (<a href="#sec-testing-stainless" class="quarto-xref"><span>Section 20.6.2</span></a>), and FCC metals characteristically show gradual, rounded yielding rather than steel’s sometimes-sharp yield point (<a href="#sec-testing-stress-strain-curve" class="quarto-xref"><span>Section 20.2.2</span></a>).
+</details>
+<hr>
+</section>
+</section>
+<section id="sec-testing-takeaways" class="level2" data-number="20.7">
+<h2 data-number="20.7" class="anchored" data-anchor-id="sec-testing-takeaways"><span class="header-section-number">20.7</span> Key Takeaways</h2>
+<ul>
+<li>Engineering stress and strain use the <em>original</em> specimen dimensions throughout the test (<a href="#eq-eng-stress" class="quarto-xref">Equation&nbsp;<span>20.1</span></a>, <a href="#eq-eng-strain" class="quarto-xref">Equation&nbsp;<span>20.2</span></a>); modulus of elasticity is set by atomic bonding and barely changes with heat treatment, while yield strength, UTS, and ductility change a great deal.</li>
+<li>The stress-strain curve’s regions map directly to dislocation behaviour: elastic (no dislocation motion), yield (dislocations start moving), strain hardening (dislocations multiply and tangle), necking (localized thinning after UTS).</li>
+<li>Rockwell is fast (direct-reading, depth-based); Brinell averages over a larger area (good for coarse structures); Vickers/Knoop give load-independent, comparable numbers well suited to microhardness — reading a case-hardened profile, a weld zone, or an individual phase.</li>
+<li>Hardness scales are not directly interchangeable; conversions (ASTM E140) are empirical approximations, most reliable for steel.</li>
+<li>The Charpy test measures absorbed energy at fracture — toughness, not strength. BCC steels show a sharp ductile-to-brittle transition temperature (DBTT); FCC metals (aluminum, austenitic stainless, copper) generally do not.</li>
+<li>Metallographic preparation (cut, mount, grind, polish, etch) exists to reveal the true microstructure without introducing new damage at each step; 2% nital etch reveals ferrite, pearlite, and martensite in plain carbon steel by their different etching/reflectivity.</li>
+<li>Steel’s behaviour is the exception, not the rule, among engineering materials: most non-ferrous metals don’t quench-harden the way steel does, and most FCC metals don’t show steel’s sharp DBTT. Polymers show an analogous but mechanistically different transition at their glass transition temperature.</li>
+</ul>
+<hr>
+</section>
+<section id="sec-testing-glossary" class="level2" data-number="20.8">
+<h2 data-number="20.8" class="anchored" data-anchor-id="sec-testing-glossary"><span class="header-section-number">20.8</span> Glossary</h2>
+<p><strong>Brinell hardness (HBW)</strong> — a hardness test using a large-diameter ball indenter, reading the diameter of the resulting indentation; suited to coarse or non-uniform structures.</p>
+<p><strong>Ductile-to-brittle transition temperature (DBTT)</strong> — the temperature (range) over which a metal’s fracture behaviour shifts from ductile to brittle; sharp and pronounced in BCC metals, generally absent in FCC metals.</p>
+<p><strong>Ductility</strong> — a material’s ability to deform plastically before fracture, commonly measured as %EL or %RA.</p>
+<p><strong>Elastic modulus (Young’s modulus, E)</strong> — the slope of the elastic (straight-line) portion of a stress-strain curve; set primarily by atomic bonding.</p>
+<p><strong>Engineering strain</strong> — extension divided by original gauge length.</p>
+<p><strong>Engineering stress</strong> — load divided by original cross-sectional area.</p>
+<p><strong>Fractography</strong> — the study and interpretation of fracture surfaces to determine the mode and cause of failure.</p>
+<p><strong>Glass transition temperature (Tg)</strong> — the temperature below which a polymer becomes stiff and glassy, and above which it becomes more flexible; the polymer analog of a metal’s DBTT.</p>
+<p><strong>Grain size number (ASTM E112, G)</strong> — a standardized measure of average grain size; higher G means finer (smaller) grains.</p>
+<p><strong>Hardness</strong> — a material’s resistance to localized, permanent (plastic) deformation by an indenter.</p>
+<p><strong>Knoop hardness (HK)</strong> — a microhardness test using an elongated, rhombic-based diamond indenter; suited to thin or brittle sections.</p>
+<p><strong>Metallography</strong> — the preparation and microscopic examination of a metal’s microstructure.</p>
+<p><strong>Necking</strong> — localized reduction in cross-sectional area of a tensile specimen after the ultimate tensile strength is reached.</p>
+<p><strong>Nital</strong> — a nitric-acid-in-alcohol solution (commonly 2%) used to etch plain carbon and low-alloy steel for metallographic examination.</p>
+<p><strong>Percent elongation (%EL)</strong> — the increase in gauge length at fracture, divided by original gauge length, expressed as a percentage.</p>
+<p><strong>Percent reduction of area (%RA)</strong> — the decrease in cross-sectional area at fracture, divided by original area, expressed as a percentage.</p>
+<p><strong>Precipitation (age) hardening</strong> — a strengthening mechanism (common in aluminum alloys) using fine second-phase particles precipitated from solid solution to block dislocation motion.</p>
+<p><strong>Rockwell hardness (HRB, HRC, etc.)</strong> — a hardness test reading indentation depth directly, using a minor and major load; scale (B, C, etc.) depends on indenter and load.</p>
+<p><strong>Shear lip</strong> — the sloped, ~45° rim on a fracture surface where final separation occurred by shear rather than cleavage; larger and more prominent in ductile fracture.</p>
+<p><strong>Toughness</strong> — the ability to absorb energy before fracture; approximately the area under a stress-strain curve, or the energy absorbed in a Charpy test.</p>
+<p><strong>Ultimate tensile strength (UTS)</strong> — the maximum engineering stress reached during a tensile test.</p>
+<p><strong>Vickers hardness (HV)</strong> — a hardness test using a square-based diamond pyramid indenter, calculated directly from load and indentation diagonal (<a href="#eq-vickers" class="quarto-xref">Equation&nbsp;<span>20.5</span></a>); load-independent and suited to microhardness.</p>
+<p><strong>Yield strength</strong> — the stress at which a material transitions from elastic to plastic (permanent) deformation; often reported as the 0.2% offset yield strength when no sharp yield point exists.</p>
+<hr>
+</section>
+<section id="sec-testing-practice" class="level2" data-number="20.9">
+<h2 data-number="20.9" class="anchored" data-anchor-id="sec-testing-practice"><span class="header-section-number">20.9</span> Practice Problems</h2>
+<details>
+<summary>
+Problem 1 (calculation): stress and strain
+</summary>
+<p><strong>Problem:</strong> A round tensile specimen, 10.0 mm original diameter and 50.0 mm original gauge length, is loaded to 35 000 N and stretches by 0.15 mm at that load (still elastic). Calculate the engineering stress and strain at that point, and estimate the modulus of elasticity.</p>
+<strong>Answer:</strong> <span class="math inline">\(A_0 = \pi(5.0)^2 = 78.5\)</span> mm². <span class="math inline">\(\sigma = 35000/78.5 = 446\)</span> MPa. <span class="math inline">\(\varepsilon = 0.15/50.0 = 0.0030\)</span>. <span class="math inline">\(E = \sigma/\varepsilon = 446/0.0030 \approx 149\,000\)</span> MPa <span class="math inline">\(\approx 149\)</span> GPa (somewhat lower than the ~200 GPa typical of steel — in a real test this gap would prompt a check of the extensometer/load reading, since E should be close to 200 GPa for any steel regardless of grade or heat treatment).
+</details>
+<details>
+<summary>
+Problem 2 (calculation): ductility measures
+</summary>
+<p><strong>Problem:</strong> The specimen from Problem 1 fractures at <span class="math inline">\(L_f = 66.5\)</span> mm and a minimum diameter of 6.2 mm. Calculate %EL and %RA.</p>
+<strong>Answer:</strong> %EL = (66.5 − 50.0)/50.0 × 100 = 33%. <span class="math inline">\(A_f = \pi(3.1)^2 = 30.2\)</span> mm². %RA = (78.5 − 30.2)/78.5 × 100 ≈ 62%. Both values indicate a quite ductile material.
+</details>
+<details>
+<summary>
+Problem 3 (predict and explain): comparing two tensile curves
+</summary>
+<p><strong>Problem:</strong> Two steel specimens are tested: one shows a sharp yield point and 15% elongation; the other shows a smooth, gradual yield (no sharp point) and 28% elongation, with a lower UTS. Which is more likely the cold-rolled specimen, and which the hot-rolled/annealed specimen?</p>
+<strong>Answer:</strong> The sharp-yield, lower-elongation, (implied) higher-strength specimen is more likely <strong>cold-rolled</strong> — recall <a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hrs-crs" class="quarto-xref"><span>Section 19.4</span></a>, cold work raises strength and lowers ductility. The smooth-yielding, higher-elongation, lower-UTS specimen is more likely <strong>hot-rolled/annealed</strong>.
+</details>
+<details>
+<summary>
+Problem 4 (calculation): Vickers hardness
+</summary>
+<p><strong>Problem:</strong> A Vickers test at 1 kgf produces a mean diagonal of 0.085 mm. Calculate HV, and estimate the equivalent tensile strength using <a href="#eq-hardness-uts" class="quarto-xref">Equation&nbsp;<span>20.6</span></a> (treat HV ≈ HB for this estimate — a simplification, not exact for all hardness ranges).</p>
+<strong>Answer:</strong> <span class="math inline">\(HV = 1.8544(1)/0.085^2 = 1.8544/0.007225 \approx 257\)</span> HV. Estimated UTS <span class="math inline">\(\approx 3.45 \times 257 \approx 887\)</span> MPa.
+</details>
+<details>
+<summary>
+Problem 5 (phase diagram + testing, integrative): predicting the hardness lab
+</summary>
+<p><strong>Problem:</strong> Using the lever rule from Part A (<a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-1045-walkthrough" class="quarto-xref"><span>Section 19.5.4</span></a>) and this chapter’s hardness theory, explain in one or two sentences why a quenched specimen’s hardness reading is expected to be far more consistent (less reproducible spread run to run) or far less consistent than an annealed specimen’s — think about what phase(s) each contains.</p>
+<strong>Answer:</strong> The annealed specimen is expected to show <strong>more scatter</strong>, because it contains a mixture of two phases (ferrite and pearlite) whose relative proportion right under the small indenter can vary from one test location to the next; the quenched specimen is far more uniformly martensitic throughout, so the indenter samples essentially the same single-phase structure wherever it lands, typically giving tighter, more reproducible readings (this is exactly what you’re asked to compare in the hardness lab’s conclusions).
+</details>
+<details>
+<summary>
+Problem 6 (predict and explain): Charpy at different temperatures
+</summary>
+<p><strong>Problem:</strong> Predict, with reasoning, how the fracture surface of a 1018 Charpy specimen tested at −60 °C will differ in appearance from one tested at 100 °C.</p>
+<strong>Answer:</strong> The −60 °C specimen (well below the DBTT, lower shelf) should show a flat, bright, granular/crystalline surface with little or no shear lip — brittle fracture. The 100 °C specimen (upper shelf) should show a dull, fibrous surface with a large, obvious shear lip — ductile fracture, and should absorb substantially more energy.
+</details>
+<details>
+<summary>
+Problem 7 (predict and explain): hot-rolled vs cold-rolled Charpy results
+</summary>
+<p><strong>Problem:</strong> Your Charpy lab tests both hot-rolled and cold-rolled AISI 1018. Predict which one shows the lower absorbed energy at any given test temperature, and connect your answer to at least one other test from this chapter.</p>
+<strong>Answer:</strong> Cold-rolled should generally show <strong>lower</strong> absorbed energy (less toughness) than hot-rolled at the same temperature, because the cold work has already used up some of the material’s capacity for plastic deformation (fewer “fresh” dislocations available to move before fracture) — the same underlying reasoning connects to cold-rolled steel’s lower %EL and %RA in the tensile test (<a href="#sec-testing-ductility-measures" class="quarto-xref"><span>Section 20.2.3</span></a>) and its higher hardness (<a href="17-Metallurgy-Fundamentals.html#sec-metallurgy-hrs-crs" class="quarto-xref"><span>Section 19.4</span></a>).
+</details>
+<details>
+<summary>
+Problem 8 (predict and explain): material identification
+</summary>
+<p><strong>Problem:</strong> An unknown metal specimen shows very low ductility (near-zero %EL), no clear yield point, is stronger in compression than tension, and its polished-but-unetched surface already shows dark flake-like features under the microscope before any etching is done. What is it, and how do you know?</p>
+<strong>Answer:</strong> <strong>Grey cast iron.</strong> The unetched, already-visible dark flakes are graphite (<a href="#sec-testing-cast-iron" class="quarto-xref"><span>Section 20.6.3</span></a>) — a feature genuinely visible before etching, unlike steel’s phases, which require etching to see. The low ductility, no clear yield point, and compression-favoured strength are all classic cast iron behaviour, driven by the stress-concentrating graphite flakes throughout the matrix.
+</details>
+<details>
+<summary>
+Problem 9 (predict and explain): temper designation
+</summary>
+<p><strong>Problem:</strong> You are asked to select 6061 aluminum in either the “O” (annealed) or “T6” condition for a structural bracket that needs high strength. Which do you specify, and what does that designation tell a supplier about how the material was processed?</p>
+<strong>Answer:</strong> Specify <strong>6061-T6</strong>. “T6” indicates the alloy was solution heat treated (to dissolve alloying elements) and artificially aged (to precipitate fine strengthening particles) — the precipitation-hardening process described in <a href="#sec-testing-aluminum" class="quarto-xref"><span>Section 20.6.1</span></a> — giving substantially higher strength than the soft, fully annealed “O” condition.
+</details>
+<hr>
+<p>This completes the metallurgy and materials-testing theory for your three labs. Before each lab, re-read the matching section here — <a href="#sec-testing-hardness" class="quarto-xref"><span>Section 20.3</span></a> before Hardness Testing, <a href="#sec-testing-tensile" class="quarto-xref"><span>Section 20.2</span></a> and <a href="#sec-testing-hardness" class="quarto-xref"><span>Section 20.3</span></a> before Tensile and Microhardness Testing, <a href="#sec-testing-charpy" class="quarto-xref"><span>Section 20.4</span></a> before Charpy Impact Testing — and after each lab, come back and check your results against what this chapter predicted.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./17-Metallurgy-Fundamentals.html" class="pagination-link" aria-label="Introduction to Metallurgy: Structure and Heat Treatment">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./30-Labs.html" class="pagination-link" aria-label="Labs">
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Labs</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/18-Materials-Testing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="module">
+// Handle cell initialization initialization
+qwebrCellDetails.map(
+  (entry) => {
+    // Handle the creation of the element
+    qwebrCreateHTMLElement(entry);
+    // In the event of interactive, initialize the monaco editor
+    if (entry.options.context == EvalTypes.Interactive) {
+      qwebrCreateMonacoEditorInstance(entry);
+    }
+  }
+);
+
+// Identify non-interactive cells (in order)
+const filteredEntries = qwebrCellDetails.filter(entry => {
+  const contextOption = entry.options && entry.options.context;
+  return ['output', 'setup'].includes(contextOption) || (contextOption == "interactive" && entry.options && entry.options.autorun === 'true');
+});
+
+// Condition non-interactive cells to only be run after webR finishes its initialization.
+qwebrInstance.then(
+  async () => {
+    const nHiddenCells = filteredEntries.length;
+    var currentHiddenCell = 0;
+
+
+    // Modify button state
+    qwebrSetInteractiveButtonState(`🟡 Running hidden code cells ...`, false);
+
+    // Begin processing non-interactive sections
+    // Due to the iteration policy, we must use a for() loop.
+    // Otherwise, we would need to switch to using reduce with an empty
+    // starting promise
+    for (const entry of filteredEntries) {
+
+      // Determine cell being examined
+      currentHiddenCell = currentHiddenCell + 1;
+      const formattedMessage = `Evaluating hidden cell ${currentHiddenCell} out of ${nHiddenCells}`;
+
+      // Update the document status header
+      if (qwebrShowStartupMessage) {
+        qwebrUpdateStatusHeader(formattedMessage);
+      }
+
+      // Display the update in non-active areas
+      qwebrUpdateStatusMessage(formattedMessage);
+
+      // Extract details on the active cell
+      const evalType = entry.options.context;
+      const cellCode = entry.code;
+      const qwebrCounter = entry.id;
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        activeContainer.classList.remove('qwebr-cell-needs-evaluation');
+        activeContainer.classList.add('qwebr-cell-evaluated');
+
+        // Update status on the code cell
+        const activeStatus = document.getElementById(`qwebr-status-text-${qwebrCounter}`);
+        activeStatus.innerText = " Evaluating hidden code cell...";
+        activeStatus.classList.remove('qwebr-cell-needs-evaluation');
+        activeStatus.classList.add('qwebr-cell-evaluated');
+      }
+
+      switch (evalType) {
+        case 'interactive':
+          // TODO: Make this more standardized.
+          // At the moment, we're overriding the interactive status update by pretending its
+          // output-like. 
+          const tempOptions = entry.options;
+          tempOptions["context"] = "output"
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, tempOptions);
+          break;
+        case 'output':
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, entry.options);
+          break;
+        case 'setup':
+          const activeDiv = document.getElementById(`qwebr-noninteractive-setup-area-${qwebrCounter}`);
+
+          // Store code in history
+          qwebrLogCodeToHistory(cellCode, entry.options);
+
+          // Run the code in a non-interactive state with all output thrown away
+          await mainWebR.evalRVoid(`${cellCode}`);
+          break;
+        default: 
+          break; 
+      }
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        // Disable visibility
+        activeContainer.style.visibility = 'hidden';
+        activeContainer.style.display = 'none';
+      }
+    }
+  }
+).then(
+  () => {
+    // Release document status as ready
+
+    if (qwebrShowStartupMessage) {
+      qwebrStartupMessage.innerText = "🟢 Ready!"
+    }
+  
+    qwebrSetInteractiveButtonState(
+      `<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>`, 
+      true
+    );  
+  }
+);
+</script>
+
+
+
+
+</body></html>
