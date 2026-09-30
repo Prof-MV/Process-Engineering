@@ -225,6 +225,56 @@ Press your thumbnail into a pencil eraser, then into a wooden pencil. One dents 
 
 : Hardness test methods relevant to this course. Loads shown are typical, standard values — always confirm the load and scale specified for your test. See ASTM E18 (Rockwell), E10 (Brinell), and E384 (Vickers/Knoop microhardness). {#tbl-hardness-methods}
 
+@fig-indenter-geometry shows the four indenter shapes from @tbl-hardness-methods side by side, drawn to comparable scale. The ball is shared by Rockwell B and Brinell; the Rockwell C cone is a much sharper point than either diamond pyramid; and Vickers vs. Knoop is really a question of how symmetric the pyramid is — Knoop's very shallow, elongated shape (versus Vickers' symmetric, deeper pyramid) is exactly what lets it indent thin sections and brittle materials without cracking them.
+
+```{r fig-indenter-geometry, echo=FALSE, fig.cap="Simplified cross-section schematics of the four indenter geometries in @tbl-hardness-methods (not to scale). Included angles shown are the actual ASTM standard values for each indenter.", fig.align='center', fig.width=11, fig.height=4}
+library(ggplot2)
+library(gridExtra)
+
+surface_line <- data.frame(x = c(-1.3, 1.3), y = c(0, 0))
+
+make_ball_panel <- function(title) {
+  r <- 0.35
+  theta <- seq(0, 2 * pi, length.out = 100)
+  circle <- data.frame(x = r * cos(theta), y = r + r * sin(theta))
+  ggplot() +
+    geom_line(data = surface_line, aes(x, y), color = "grey40", linewidth = 1) +
+    geom_polygon(data = circle, aes(x, y), fill = "#4477AA", color = "black", linewidth = 0.6) +
+    annotate("segment", x = 0, xend = 0, y = 0.95, yend = 2 * r + 0.05,
+             arrow = arrow(length = unit(0.06, "in"), ends = "first")) +
+    annotate("text", x = 0, y = 1.15, label = "ball\n(diameter D)", size = 3.2 * diagram_text_scale, fontface = "bold") +
+    coord_fixed(xlim = c(-1.3, 1.3), ylim = c(-0.15, 1.6)) +
+    labs(title = title) +
+    theme_void() +
+    theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5))
+}
+
+make_point_panel <- function(title, half_angle_deg, height, angle_label) {
+  half_angle <- half_angle_deg * pi / 180
+  top_x <- height * tan(half_angle)
+  tri <- data.frame(x = c(0, top_x, -top_x), y = c(0, height, height))
+  ggplot() +
+    geom_line(data = surface_line, aes(x, y), color = "grey40", linewidth = 1) +
+    geom_polygon(data = tri, aes(x, y), fill = "#EE6677", color = "black", linewidth = 0.6) +
+    annotate("segment", x = 0, xend = 0, y = 0.95, yend = height + 0.05,
+             arrow = arrow(length = unit(0.06, "in"), ends = "first")) +
+    annotate("text", x = 0, y = 1.15, label = angle_label, size = 3.2 * diagram_text_scale, fontface = "bold") +
+    coord_fixed(xlim = c(-1.3, 1.3), ylim = c(-0.15, 1.6)) +
+    labs(title = title) +
+    theme_void() +
+    theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5))
+}
+
+panels <- list(
+  make_ball_panel("Rockwell B /\nBrinell"),
+  make_point_panel("Rockwell C", half_angle_deg = 60, height = 0.55, angle_label = "120° cone"),
+  make_point_panel("Vickers", half_angle_deg = 68, height = 0.42, angle_label = "136° pyramid"),
+  make_point_panel("Knoop", half_angle_deg = 86.25, height = 0.07, angle_label = "172.5° pyramid\n(very shallow)")
+)
+
+grid.arrange(grobs = panels, ncol = 4)
+```
+
 **Rockwell** tests in two steps: a small **minor load** is applied first to seat the indenter and remove the effect of surface roughness, then the much larger **major load** is applied and removed, and the *difference* in penetration depth between the two loads is converted directly to a hardness number on the machine's dial or display — no separate measurement step is needed, which is why Rockwell is the fastest of these tests. **Brinell** requires measuring the indentation diameter afterward (with a measuring microscope) and converting it via a chart or formula.
 
 **Vickers** hardness is calculated directly from the applied force and the indentation diagonal:
@@ -325,7 +375,7 @@ The **notch** is deliberately machined into the specimen, and it matters enormou
 
 Recall from @sec-metallurgy-crystal-structures (Part A) that **BCC** metals have far fewer easy slip systems than **FCC** metals. At room temperature, thermal energy is enough to help dislocations in a BCC steel overcome the resistance to slip and move relatively freely, so the steel behaves in a tough, ductile manner. Cool it down, and there is progressively less thermal energy available to assist dislocation motion — at some temperature, moving a crack through the material (brittle fracture) simply requires *less* energy than moving dislocations to deform around it (ductile fracture), and the material's failure mode flips from ductile to brittle, often over a surprisingly narrow temperature range. That temperature (range) is the **ductile-to-brittle transition temperature (DBTT)**.
 
-**FCC** metals (aluminum, austenitic stainless steel, copper — see @sec-testing-other-materials) have so many available slip systems that dislocations keep moving relatively easily even at very low temperatures, so they do **not** show a sharp DBTT — their toughness declines gradually, if at all, as temperature drops, rather than falling off a cliff.
+**FCC** metals (@sec-metallurgy-crystal-structures) (aluminum, austenitic stainless steel, copper — see @sec-testing-other-materials) have so many available slip systems that dislocations keep moving relatively easily even at very low temperatures, so they do **not** show a sharp DBTT — their toughness declines gradually, if at all, as temperature drops, rather than falling off a cliff.
 
 ```{r fig-charpy-curve, echo=FALSE, fig.cap="Representative Charpy absorbed energy vs. temperature curves: a BCC steel shows a sharp ductile-to-brittle transition; an FCC aluminum alloy stays comparatively flat across the same temperature range (schematic, typical shapes only).", fig.align='center', fig.width=10, fig.height=6}
 set.seed(404)
@@ -367,7 +417,11 @@ Reading @fig-charpy-curve: at low temperature, the steel sits on a **lower shelf
 
 ### Historical Examples {#sec-testing-charpy-history}
 
-The DBTT is not an academic curiosity — it has caused some of the most famous structural failures in history. During the Second World War, a number of welded **Liberty ships** fractured suddenly, some literally splitting in half, in cold North Atlantic water; investigation found that the hull steel's DBTT was close to the seawater temperature the ships operated in, and that welded construction (unlike the riveted ships built before it) allowed a crack starting at one flaw to run continuously across an entire welded plate without stopping at a riveted joint. The **RMS Titanic**'s hull steel has similarly been studied and found to have had a DBTT high enough that, in the near-freezing water of the collision, the steel was likely already on the lower (brittle) shelf, making it far more prone to fracturing on impact than a modern, cold-tolerant steel would be.
+The DBTT is not an academic curiosity — it has caused some of the most famous structural failures in history. During the Second World War, a number of welded **Liberty ships** fractured suddenly, some literally splitting in half, in cold North Atlantic water (@fig-liberty-ship-fracture); investigation found that the hull steel's DBTT was close to the seawater temperature the ships operated in, and that welded construction (unlike the riveted ships built before it) allowed a crack starting at one flaw to run continuously across an entire welded plate without stopping at a riveted joint. The **RMS Titanic**'s hull steel has similarly been studied and found to have had a DBTT high enough that, in the near-freezing water of the collision, the steel was likely already on the lower (brittle) shelf, making it far more prone to fracturing on impact than a modern, cold-tolerant steel would be.
+
+![The SS *Schenectady*, a Liberty-ship-type T2 tanker, moored at the dock in Portland, Oregon, after her welded hull fractured almost completely in two on 16 January 1943 — a dramatic, non-fatal example of exactly the brittle fracture this section describes. (U.S. Government Printing Office, 1947; public domain, via Wikimedia Commons.)](images/liberty-ship-schenectady-fracture.jpg){#fig-liberty-ship-fracture fig-align="center" width="80%"}
+
+The investigation into these failures was led by Cambridge metallurgist **Constance Tipper**, who showed the cause was brittle fracture of the steel itself rather than poor welding, and developed the low-temperature bend test — the **Tipper test** — still used to find a steel's transition temperature. Read more about her work in [Imperial College London's profile of her](https://www.imperial.ac.uk/Stories/constance-tipper/).
 
 ::: {.callout-tip title="Industry application"}
 **Canadian context:** pipelines, heavy equipment, and structural steel used outdoors in a Canadian winter (routinely well below −20 °C in much of the country) must be specified with a DBTT safely below the lowest service temperature the structure will see — this is exactly why Charpy testing at multiple sub-zero temperatures, as in your own lab, is standard practice for structural and pipeline steel qualification, not just a classroom exercise. Outdoor equipment, from farm machinery to snow-clearing equipment, faces the same requirement.

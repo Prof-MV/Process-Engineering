@@ -113,8 +113,9 @@ make_cell <- function(structure) {
   extra <- switch(structure,
     "BCC (ferrite)" = data.frame(x = 0.65, y = 0.75, role = "special"),
     "FCC (austenite)" = data.frame(
-      x = c(0.5, 0.5, 0.15, 0.65, 0.15, 0.65),
-      y = c(0.5, 1.5, 0.75, 0.5,  1.25, 1.5),
+      # centroid of each of the 6 cube faces: front, back, left, right, top, bottom
+      x = c(0.5, 0.8, 0.15, 1.15, 0.65, 0.65),
+      y = c(0.5, 1.0, 0.75, 0.75, 1.25, 0.25),
       role = "special"),
     "HCP" = data.frame(x = c(0.35,0.95), y = c(0.85,1.15), role = "special")
   )
@@ -347,7 +348,7 @@ The full iron-carbon diagram runs from pure iron (0% C) to iron carbide, Fe₃C 
 The **phases** you need to know:
 
 - **Ferrite (α):** iron in its low-temperature **BCC** crystal structure (@sec-metallurgy-crystal-structures). Soft, ductile, and can only dissolve a tiny amount of carbon — at most about 0.02 wt% at 727 °C, essentially zero at room temperature. Under the microscope, ferrite is the light-etching background phase.
-- **Austenite (γ):** iron in its high-temperature **FCC** crystal structure. Much more open lattice than BCC, so it can dissolve far more carbon — up to about 2.1 wt% at 1147 °C. **Austenite does not exist at room temperature in plain carbon steel** — it's only stable at high temperature, but it is the starting phase for every heat-treatment process in @sec-metallurgy-heat-treatment, which is why it matters so much.
+- **Austenite (γ):** iron in its high-temperature **FCC** crystal structure (@sec-metallurgy-crystal-structures). Much more open lattice than BCC, so it can dissolve far more carbon — up to about 2.1 wt% at 1147 °C. **Austenite does not exist at room temperature in plain carbon steel** — it's only stable at high temperature, but it is the starting phase for every heat-treatment process in @sec-metallurgy-heat-treatment, which is why it matters so much.
 - **Cementite (Fe₃C):** iron carbide, a hard, brittle intermetallic compound, essentially fixed at 6.7 wt% C. Under the microscope, cementite etches dark.
 - **Pearlite:** not a phase but a **microstructure** — alternating thin lamellae (plates) of ferrite and cementite, formed when austenite of eutectoid composition transforms on slow cooling. It gets its name because it can show a pearly, iridescent look under the microscope from light diffracting off the fine lamellae. Pearlite is harder and stronger than plain ferrite (because the hard cementite plates block dislocation motion — the same strengthening idea as Hall-Petch, just via a second phase instead of a grain boundary) but softer than martensite (@sec-metallurgy-martensite).
 
@@ -503,7 +504,7 @@ The **AISI/SAE** designation system lets you read approximate composition straig
 
 Go back to @fig-fe-c-diagram and look for martensite. You won't find it — **martensite does not appear anywhere on the equilibrium iron-carbon phase diagram**, because that diagram only shows phases that form under *slow, near-equilibrium* cooling, where atoms have time to diffuse into their lowest-energy arrangement.
 
-**Quenching** — cooling austenite *fast* — denies carbon the time it needs to diffuse out of the iron lattice and form cementite. Instead, the FCC austenite lattice flips to something close to BCC almost instantly (a **diffusionless, shear-type transformation**, not the same slow nucleation-and-growth process that makes pearlite), but it's now trying to cram far more carbon into that structure than BCC ferrite can normally hold. The lattice distorts into a stretched, tetragonal shape to accommodate the trapped carbon — this stressed, supersaturated, distorted structure is **martensite**. It's not a new equilibrium phase; it's iron and carbon frozen in a highly stressed, metastable arrangement they'd rather not be in.
+**Quenching** — cooling austenite *fast* — denies carbon the time it needs to diffuse out of the iron lattice and form cementite. Instead, the FCC (@sec-metallurgy-crystal-structures) austenite lattice flips to something close to BCC almost instantly (a **diffusionless, shear-type transformation**, not the same slow nucleation-and-growth process that makes pearlite), but it's now trying to cram far more carbon into that structure than BCC ferrite can normally hold. The lattice distorts into a stretched, tetragonal shape to accommodate the trapped carbon — this stressed, supersaturated, distorted structure is **martensite**. It's not a new equilibrium phase; it's iron and carbon frozen in a highly stressed, metastable arrangement they'd rather not be in.
 
 That internal distortion is exactly why martensite is **extremely hard, and extremely brittle** — the trapped carbon and distorted lattice choke off dislocation motion almost completely (recall @sec-metallurgy-dislocations: no dislocation motion means no ability to deform plastically before fracturing).
 
@@ -545,7 +546,8 @@ ggplot(temper_data, aes(x = temp, y = hrc)) +
   geom_point(size = 2.2, color = "#4477AA") +
   annotate("point", x = 150, y = predict(loess(hrc ~ temp, data = temper_data), newdata = data.frame(temp = 150)),
            size = 3.5, color = "#CC3311") +
-  annotate("text", x = 150, y = 58, label = "as-quenched\n(low temper)", size = 3.2 * diagram_text_scale, hjust = 0) +
+  annotate("text", x = 165, y = 64, label = "as-quenched\n(low temper)", size = 3.2 * diagram_text_scale, hjust = 0, vjust = 0) +
+  expand_limits(y = 70) +
   labs(title = "Hardness vs. Tempering Temperature",
        x = "Tempering Temperature (deg C)", y = "Hardness (HRC)") +
   theme_minimal() +
