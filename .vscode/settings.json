@@ -1,4 +1,41 @@
 {
     "chat.useAgentSkills": true,
-    "claudeCode.useTerminal": false
+    "claudeCode.useTerminal": false,
+
+    // --- R -----------------------------------------------------------------
+    // Pin the interpreter so the extension never auto-detects the broken
+    // R-4.5.2 install (its bin/ has no Rterm.exe).
+    "r.rpath.windows": "C:\\Program Files\\R\\R-4.6.1\\bin\\x64\\R.exe",
+    "r.rterm.windows": "C:\\Program Files\\R\\R-4.6.1\\bin\\x64\\R.exe",
+    // The language server was not crashing on its own -- it dies because the
+    // whole VS Code window runs out of memory and takes the extension host
+    // (and its child Rterm.exe) down with it, which the client reports as
+    // "read ECONNRESET". Turning the LSP off removes ~250-500 MB of R + its
+    // constant re-parsing of the .qmd corpus. Re-enable once the machine has
+    // memory headroom again; syntax highlighting is unaffected (that comes
+    // from the separate reditorsupport.r-syntax extension).
+    "r.lsp.enabled": false,
+    "r.lsp.diagnostics": false,
+
+    // --- Stop indexing / watching the generated Quarto trees --------------
+    // .quarto (849 files), _freeze (759), docs/, every *_files/ dir, etc. are
+    // rebuilt on each render. Watching and searching them wastes memory and
+    // was making the extension activation scan time out.
+    "files.watcherExclude": {
+        "**/.quarto/**": true,
+        "**/_freeze/**": true,
+        "**/docs/**": true,
+        "**/site_libs/**": true,
+        "**/*_files/**": true,
+        "**/*_cache/**": true,
+        "**/.Rproj.user/**": true
+    },
+    "search.exclude": {
+        "**/.quarto": true,
+        "**/_freeze": true,
+        "**/docs": true,
+        "**/site_libs": true,
+        "**/*_files": true,
+        "**/*_cache": true
+    }
 }
