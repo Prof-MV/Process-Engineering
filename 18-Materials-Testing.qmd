@@ -92,7 +92,8 @@ ggplot(curves, aes(x = strain * 100, y = stress, color = material)) +
     "Polymer (thermoplastic)" = "#AA3377"
   )) +
   labs(title = "Representative Engineering Stress-Strain Curves",
-       x = "Engineering Strain (%)", y = "Engineering Stress (MPa)", color = "Material / condition") +
+       x = "Engineering Strain (%)", y = "Engineering Stress (MPa)", color = "Material") +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
   theme_minimal() +
   theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
         axis.title = element_text(size = 11 * diagram_text_scale),
@@ -108,8 +109,45 @@ Follow any one curve in @fig-stress-strain-comparison from left to right — thi
 - **Yield point:** the stress at which the material stops behaving elastically and dislocations begin moving enough to produce permanent (plastic) deformation. Some steels show a sharp, obvious yield point (a momentary load drop) because dislocations are initially "pinned" by interstitial carbon/nitrogen atoms and need a burst of extra stress to break free before they can move freely. Most other metals — aluminum, many steels, and virtually all non-ferrous alloys — yield gradually with no sharp point, so engineers define an offset instead: the **0.2% offset yield strength** is found by drawing a line parallel to the elastic region, starting from 0.2% strain, and reading where it intersects the curve.
 - **Strain hardening (plastic region):** as dislocations move, they multiply and tangle with each other and with grain boundaries — more and more obstacles pile up in their own path, so more stress is needed to keep deformation going. This is the same physical mechanism, from the atomic level, that makes cold-rolled steel stronger than hot-rolled steel (@sec-metallurgy-hrs-crs): CRS has *already* been strain hardened by the rolling process before you ever put it in the tensile machine.
 - **Ultimate tensile strength (UTS):** the highest engineering stress reached, at the peak of the curve. Beyond this point, strain hardening in the gauge section can no longer keep up with the loss of cross-sectional area, and deformation localizes.
-- **Necking:** the specimen begins to thin locally rather than uniformly along its length. Because engineering stress uses the *original* area (@eq-eng-stress), the calculated engineering stress actually appears to *drop* after UTS even though the true stress at the neck keeps rising — this is purely a bookkeeping effect of using $A_0$ instead of the shrinking real area.
+- **Necking:** the specimen begins to thin locally rather than uniformly along its length (@fig-necking-profile). Because engineering stress uses the *original* area (@eq-eng-stress), the calculated engineering stress actually appears to *drop* after UTS even though the true stress at the neck keeps rising — this is purely a bookkeeping effect of using $A_0$ instead of the shrinking real area.
 - **Fracture:** final separation, at the end of the curve.
+
+```{r fig-necking-profile, echo=FALSE, fig.cap="Schematic profile of a round tensile specimen showing localized necking (not to scale). Deformation that was uniform along the gauge length concentrates into one local neck once the ultimate tensile strength is passed, and the specimen ultimately fractures at that minimum-diameter cross-section, Df -- the same Df that @eq-percent-ra uses to calculate %RA.", fig.align='center', fig.width=10, fig.height=5}
+x <- seq(-6, 6, length.out = 300)
+r0 <- 1.1    # original specimen radius (normalized units)
+rf <- 0.6    # minimum neck radius
+w <- 1.4     # controls how localized the neck is
+r <- rf + (r0 - rf) * (1 - exp(-(x / w)^2))
+
+specimen <- data.frame(x = x, ymin = -r, ymax = r)
+
+ggplot(specimen) +
+  geom_ribbon(aes(x = x, ymin = ymin, ymax = ymax), fill = "grey82", color = "grey20", linewidth = 0.6) +
+  # original (un-necked) diameter, shown as a dashed reference outline
+  geom_hline(yintercept = c(-r0, r0), linetype = "dashed", color = "grey45", linewidth = 0.5) +
+  # D0 measurement at the left end, away from the neck
+  annotate("segment", x = -5.3, xend = -5.3, y = -r0, yend = r0,
+            arrow = arrow(ends = "both", length = unit(0.12, "cm")), color = "#4477AA", linewidth = 0.7) +
+  annotate("text", x = -5.0, y = 0, label = "D[0]", parse = TRUE, hjust = 0,
+            size = 4 * diagram_text_scale, color = "#4477AA") +
+  # Df measurement right at the neck
+  annotate("segment", x = 0, xend = 0, y = -rf, yend = rf,
+            arrow = arrow(ends = "both", length = unit(0.12, "cm")), color = "#CC3311", linewidth = 0.9) +
+  annotate("text", x = 0.35, y = 0, label = "D[f]", parse = TRUE, hjust = 0,
+            size = 4 * diagram_text_scale, color = "#CC3311") +
+  # necked-region dimension bracket
+  annotate("segment", x = -1.8, xend = 1.8, y = -1.55, yend = -1.55, color = "grey30", linewidth = 0.5) +
+  annotate("segment", x = -1.8, xend = -1.8, y = -1.55, yend = -1.4, color = "grey30", linewidth = 0.5) +
+  annotate("segment", x = 1.8, xend = 1.8, y = -1.55, yend = -1.4, color = "grey30", linewidth = 0.5) +
+  annotate("text", x = 0, y = -1.8, label = "necked region", size = 3.4 * diagram_text_scale) +
+  # fracture location marker
+  annotate("point", x = 0, y = 0, shape = 4, size = 3.5, stroke = 1.1, color = "black") +
+  annotate("text", x = 0, y = 1.55, label = "fractures here (minimum area)", size = 3.2 * diagram_text_scale) +
+  coord_fixed(xlim = c(-6, 6), ylim = c(-2.0, 2.0), expand = FALSE) +
+  labs(title = "Localized Necking Just Before Fracture") +
+  theme_void() +
+  theme(plot.title = element_text(size = 13 * diagram_text_scale, face = "bold", hjust = 0.5))
+```
 
 ### Percent Elongation and Reduction of Area {#sec-testing-ductility-measures}
 
@@ -124,6 +162,90 @@ where $L_f$ is the final gauge length (measured across the fracture) and $A_f$ i
 ### Ductile vs. Brittle Fracture Surfaces {#sec-testing-fracture-surfaces}
 
 A **ductile** fracture (typical of annealed or hot-rolled steel, aluminum, copper) shows visible necking and a rough, fibrous, "cup-and-cone" surface: a flat central fibrous zone where microscopic voids nucleated (often at inclusions), grew, and coalesced, surrounded by a shear lip at roughly 45° where final separation occurred by shear. A **brittle** fracture (typical of untempered martensite, cast iron, or any ductile metal tested below its ductile-to-brittle transition temperature — @sec-testing-charpy) shows little to no necking and a flat, bright, crystalline-looking surface, because the crack propagated rapidly along (or across) grains with almost no plastic deformation absorbing energy first.
+
+```{r fig-fracture-surfaces, echo=FALSE, fig.cap="Schematic (not photographic) comparison of the two fracture-surface types, drawn at the same scale. Ductile fracture (left) shows a rough, dull, fibrous central zone -- where microscopic voids nucleated, grew, and coalesced -- ringed by a smoother shear lip at roughly 45 degrees, and the whole face is visibly smaller than the original cross-section because of necking. Brittle fracture (right) shows a flat, bright, crystalline-looking surface with no necking, drawn here at the specimen's full original diameter for comparison.", fig.align='center', fig.width=12, fig.height=6}
+make_facet_field <- function(seed, n, center = c(0, 0), r_max, size_mean,
+                              size_jitter = 0.4, n_pts = 9, angularity = 0.3) {
+  set.seed(seed)
+  ang <- runif(n, 0, 2 * pi)
+  rad <- r_max * sqrt(runif(n))
+  cx <- center[1] + rad * cos(ang)
+  cy <- center[2] + rad * sin(ang)
+  size <- size_mean * (1 + runif(n, -size_jitter, size_jitter))
+  shade <- runif(n, 0, 1)
+
+  blobs <- lapply(seq_len(n), function(i) {
+    angles <- seq(0, 2 * pi, length.out = n_pts + 1)[-(n_pts + 1)]
+    rj <- 1 + runif(n_pts, -angularity, angularity)
+    data.frame(
+      id = i,
+      x = cx[i] + size[i] * rj * cos(angles),
+      y = cy[i] + size[i] * rj * sin(angles),
+      shade = shade[i]
+    )
+  })
+  do.call(rbind, blobs)
+}
+
+make_disc <- function(r, n = 100, center = c(0, 0)) {
+  theta <- seq(0, 2 * pi, length.out = n)
+  data.frame(x = center[1] + r * cos(theta), y = center[2] + r * sin(theta))
+}
+
+fracture_panel_theme <- theme_void() +
+  theme(plot.title = element_text(size = 13 * diagram_text_scale, face = "bold", hjust = 0.5),
+        plot.background = element_rect(fill = "white", color = "grey70"))
+
+lims <- c(-2.3, 2.3)
+
+## --- Ductile (cup-and-cone) panel ---
+R_shear_outer <- 1.7
+R_fibrous <- 1.05
+
+shear_disc <- make_disc(R_shear_outer)
+fibrous_facets <- make_facet_field(seed = 51, n = 90, r_max = R_fibrous - 0.05,
+                                     size_mean = 0.16, size_jitter = 0.5,
+                                     n_pts = 8, angularity = 0.45)
+
+p_ductile <- ggplot() +
+  geom_polygon(data = shear_disc, aes(x = x, y = y), fill = "#C9B89C", color = "grey20", linewidth = 0.7) +
+  geom_polygon(data = fibrous_facets, aes(x = x, y = y, group = id, fill = shade),
+               color = "grey25", linewidth = 0.15) +
+  scale_fill_gradient(low = "#5E4B35", high = "#9C8363", guide = "none") +
+  annotate("segment", x = -0.55, xend = -0.15, y = 1.85, yend = 0.55,
+            arrow = arrow(length = unit(0.15, "cm")), color = "grey20", linewidth = 0.5) +
+  annotate("text", x = -0.6, y = 2.05, label = "fibrous zone\n(voids nucleate, grow, coalesce)",
+            size = 3.1 * diagram_text_scale, hjust = 0.5) +
+  annotate("segment", x = 1.55, xend = 1.25, y = -1.55, yend = -1.1,
+            arrow = arrow(length = unit(0.15, "cm")), color = "grey20", linewidth = 0.5) +
+  annotate("text", x = 1.6, y = -1.85, label = "shear lip (~45 deg,\nfinal shear separation)",
+            size = 3.1 * diagram_text_scale, hjust = 0.5) +
+  coord_fixed(xlim = lims, ylim = lims, expand = FALSE) +
+  labs(title = "Ductile Fracture (cup-and-cone)\nsmaller face -- necked down first") +
+  fracture_panel_theme
+
+## --- Brittle (cleavage) panel ---
+R_brittle <- 2.0
+brittle_disc <- make_disc(R_brittle)
+brittle_facets <- make_facet_field(seed = 61, n = 140, r_max = R_brittle - 0.05,
+                                     size_mean = 0.22, size_jitter = 0.35,
+                                     n_pts = 7, angularity = 0.18)
+
+p_brittle <- ggplot() +
+  geom_polygon(data = brittle_disc, aes(x = x, y = y), fill = "grey90", color = "grey20", linewidth = 0.7) +
+  geom_polygon(data = brittle_facets, aes(x = x, y = y, group = id, fill = shade),
+               color = "grey50", linewidth = 0.15) +
+  scale_fill_gradient(low = "grey60", high = "grey97", guide = "none") +
+  annotate("segment", x = -0.6, xend = -1.1, y = 1.85, yend = 0.9,
+            arrow = arrow(length = unit(0.15, "cm")), color = "grey20", linewidth = 0.5) +
+  annotate("text", x = -0.6, y = 2.05, label = "flat, bright, crystalline\n(little/no plastic deformation)",
+            size = 3.1 * diagram_text_scale, hjust = 0.5) +
+  coord_fixed(xlim = lims, ylim = lims, expand = FALSE) +
+  labs(title = "Brittle Fracture (cleavage)\nfull original diameter -- no necking") +
+  fracture_panel_theme
+
+gridExtra::grid.arrange(p_ductile, p_brittle, ncol = 2)
+```
 
 ::: {.callout-tip title="Industry application"}
 **Automotive:** crash-worthiness design deliberately uses ductile, lower-strength steel in some body structures so they crumple (absorbing crash energy through large plastic deformation) rather than shattering. **Food processing:** conveyor components are chosen for enough ductility to dent rather than fracture under an accidental impact, since a fractured piece in a food line is a contamination hazard. **Defense:** fractography (reading a fracture surface) is standard failure-analysis practice for a cracked component — the surface itself tells you whether the failure was ductile overload, brittle fracture, or fatigue, often without needing to test another sample.
