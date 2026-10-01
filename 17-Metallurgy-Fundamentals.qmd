@@ -209,33 +209,7 @@ Almost all the bar, sheet, and plate steel you'll ever touch on a shop floor sta
 Every metal has a **recrystallization temperature** — roughly 0.3 to 0.5 times its absolute melting point (this rule of thumb is a simplification; the exact value depends on alloy content and prior cold work). Below that temperature, deforming the metal *distorts and elongates* the existing grains without replacing them. Above it, the metal has enough thermal energy that new, strain-free, equiaxed (roughly equal in all directions) grains nucleate and grow, wiping out the deformation damage almost as fast as it's created. For plain carbon steel, recrystallization temperature is roughly 500 to 700 °C — well below the temperatures used for hot rolling (typically 1100 to 1250 °C, comfortably in the austenite range).
 
 - **Hot-rolled steel (HRS)** is rolled *above* the recrystallization temperature. The steel continuously recrystallizes as it's deformed, so the final grains are small and **equiaxed** — roughly the same shape and size looking from any direction.
-- **Cold-rolled steel (CRS)** is rolled *below* the recrystallization temperature (often starting from hot-rolled stock, pickled to remove scale, then rolled further at room temperature). There's no recrystallization to erase the deformation, so the grains get physically stretched and flattened in the rolling direction — **elongated grains**.
-
-### What You Will See and Measure {#sec-metallurgy-hrs-crs-observations}
-
-::: {.callout-important title="This is what you'll be looking for in the metallography lab"}
-Grain elongation is a **directional** effect. Cut a cross-section *across* the bar (transverse) and elongated grains in CRS look almost the same as equiaxed grains — you're looking at the grains end-on. Cut a section *along* the length of the bar (longitudinal) and CRS grains show up clearly stretched and lined up, like streaks of taffy, while HRS grains still look equiaxed and randomly oriented no matter which way you cut it. **This is exactly why the metallography procedures for the hardness and tensile labs specify which section to take.**
-:::
-
-| Property | Hot-Rolled Steel (HRS) | Cold-Rolled Steel (CRS) |
-|---|---|---|
-| Grain shape | Equiaxed, same in all sections | Elongated in the rolling direction (visible in longitudinal section only) |
-| Surface finish | Rougher; often covered in blue-grey **mill scale** (iron oxide formed at high temperature) | Smooth, bright, often slightly oily from the rolling process |
-| Dimensional tolerance | Looser — the steel shrinks unevenly as it cools from rolling temperature | Tighter — sized precisely at room temperature |
-| Residual stress | Low — the steel had time to relax as it cooled slowly from a hot, soft state | **High** — cold deformation locks elastic stresses into the surface and core that don't fully relax |
-| Yield strength | Lower (typical values only; always check the actual mill certificate) | Higher — cold work raises yield strength through the same dislocation-tangling mechanism as strain hardening (@sec-testing-tensile) |
-| Ductility (% elongation) | Higher | Lower — the cold work has already used up some of the material's capacity to deform further |
-| Hardness | Lower | Higher |
-
-: Typical, approximate differences between HRS and CRS of the same grade. Exact values vary by supplier, section size, and specific grade — always confirm against a materials handbook or mill certificate rather than assuming these numbers. {#tbl-hrs-crs}
-
-::: {.callout-note title="What to expect in your own results"}
-**In the metallography portion of your labs**, expect HRS specimens to show equiaxed grains regardless of orientation, often with visible mill-scale pitting near the original surface. **In the hardness lab and the tensile/microhardness lab**, if you are given both conditions of a grade, expect the cold-worked material to read measurably harder and stronger, with lower elongation, than the hot-rolled or annealed condition of the same steel.
-:::
-
-::: {.callout-warning title="These are schematic diagrams, not photomicrographs"}
-@fig-hrs-micrograph and @fig-crs-micrograph below are simplified illustrations — grain shapes drawn to show the *pattern* you're looking for, not the texture of a real photograph. Your lab's actual micrographs will look noisier and less tidy than these. Read them for shape and orientation, not as a stand-in for the real thing under the scope.
-:::
+- **Cold-rolled steel (CRS)** is rolled *below* the recrystallization temperature (often starting from hot-rolled stock, [**pickled**](#sec-metallurgy-pickling) to remove scale, then rolled further at room temperature). There's no recrystallization to erase the deformation, so the grains get physically stretched and flattened in the rolling direction — **elongated grains**.
 
 ```{r metallurgy-grain-helper, include=FALSE}
 # Shared helper: draws a field of irregular polygon "grains" on a grid of
@@ -280,6 +254,91 @@ grain_theme <- theme_void() +
         legend.position = "bottom",
         plot.background = element_rect(fill = "white", color = "grey70"))
 ```
+
+```{r fig-cold-rolling-process, echo=FALSE, fig.cap="Schematic of the cold rolling mechanism (not to scale). Stock enters the roll gap at full thickness with equiaxed grains; the work rolls squeeze it under heavy compressive force; it exits thinner, with the same grains flattened in the thickness direction and stretched out in the rolling direction. This is the mechanism behind the elongated-grain micrograph in @fig-crs-micrograph.", fig.align='center', fig.width=10, fig.height=6.5}
+make_circle <- function(cx, cy, r, n = 72) {
+  theta <- seq(0, 2 * pi, length.out = n)
+  data.frame(x = cx + r * cos(theta), y = cy + r * sin(theta))
+}
+
+# Before: equiaxed grains, full thickness, approaching the roll gap from the left
+before_grains <- make_grain_field(seed = 21, nx = 4, ny = 6, xlim = c(0, 3.4), ylim = c(0.5, 5.5),
+                                   elongate_x = 1, elongate_y = 1, phase_prob = 0.6)
+
+# After: elongated grains, reduced thickness -- drawn threading through the roll
+# gap itself and continuing out the right-hand side, so the squeeze is visible.
+after_grains <- make_grain_field(seed = 22, nx = 7, ny = 2, xlim = c(3.2, 10), ylim = c(2.3, 3.7),
+                                  elongate_x = 2.4, elongate_y = 0.4, phase_prob = 0.6)
+
+top_roll <- make_circle(cx = 5, cy = 5.3, r = 1.5)
+bot_roll <- make_circle(cx = 5, cy = 0.7, r = 1.5)
+
+ggplot() +
+  # draw the thinned (after) ribbon first so the rolls appear to pinch it
+  geom_polygon(data = after_grains, aes(x = x, y = y, group = grain_id, fill = phase),
+               color = "grey15", linewidth = 0.35) +
+  geom_polygon(data = before_grains, aes(x = x, y = y, group = grain_id, fill = phase),
+               color = "grey15", linewidth = 0.35) +
+  geom_polygon(data = top_roll, aes(x = x, y = y), fill = "grey55", color = "grey20", linewidth = 0.6) +
+  geom_polygon(data = bot_roll, aes(x = x, y = y), fill = "grey55", color = "grey20", linewidth = 0.6) +
+  scale_fill_manual(values = c(Ferrite = "#F1E7D6", Pearlite = "#6E5B42"), name = "Phase") +
+  # compressive force arrows pointing into the roll gap
+  annotate("segment", x = 4.3, xend = 4.3, y = 4.3, yend = 3.85,
+            arrow = arrow(length = unit(0.18, "cm")), color = "#CC3311", linewidth = 0.9) +
+  annotate("segment", x = 4.3, xend = 4.3, y = 1.7, yend = 2.15,
+            arrow = arrow(length = unit(0.18, "cm")), color = "#CC3311", linewidth = 0.9) +
+  annotate("text", x = 4.3, y = 4.75, label = "roll force", size = 3.0 * diagram_text_scale, color = "#CC3311") +
+  # rolling direction arrow
+  annotate("segment", x = 0.3, xend = 9.7, y = -0.9, yend = -0.9,
+            arrow = arrow(length = unit(0.2, "cm"), ends = "last"), color = "#0077BB", linewidth = 0.8) +
+  annotate("text", x = 5, y = -1.4, label = "rolling direction (direction of travel)",
+            size = 3.3 * diagram_text_scale, color = "#0077BB") +
+  annotate("text", x = 1.7, y = 6.1, label = "Before: equiaxed grains,\nfull thickness",
+            size = 3.4 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = 8.3, y = 4.5, label = "After: elongated grains,\nreduced thickness",
+            size = 3.4 * diagram_text_scale, fontface = "bold") +
+  coord_fixed(xlim = c(0, 10), ylim = c(-1.9, 6.8), expand = FALSE) +
+  labs(title = "How Cold Rolling Elongates the Grains") +
+  grain_theme
+```
+
+### What You Will See and Measure {#sec-metallurgy-hrs-crs-observations}
+
+::: {.callout-important title="This is what you'll be looking for in the metallography lab"}
+Grain elongation is a **directional** effect. Cut a cross-section *across* the bar (transverse) and elongated grains in CRS look almost the same as equiaxed grains — you're looking at the grains end-on. Cut a section *along* the length of the bar (longitudinal) and CRS grains show up clearly stretched and lined up, like streaks of taffy, while HRS grains still look equiaxed and randomly oriented no matter which way you cut it. **This is exactly why the metallography procedures for the hardness and tensile labs specify which section to take.**
+:::
+
+| Property | Hot-Rolled Steel (HRS) | Cold-Rolled Steel (CRS) |
+|---|---|---|
+| Grain shape | Equiaxed, same in all sections | Elongated in the rolling direction (visible in longitudinal section only) |
+| Surface finish | Rougher; often covered in blue-grey **mill scale** (iron oxide formed at high temperature) | Smooth, bright, often slightly oily from the rolling process |
+| Dimensional tolerance | Looser — the steel shrinks unevenly as it cools from rolling temperature | Tighter — sized precisely at room temperature |
+| Residual stress | Low — the steel had time to relax as it cooled slowly from a hot, soft state | **High** — cold deformation locks elastic stresses into the surface and core that don't fully relax |
+| Yield strength | Lower (typical values only; always check the actual mill certificate) | Higher — cold work raises yield strength through the same dislocation-tangling mechanism as strain hardening (@sec-testing-tensile) |
+| Ductility (% elongation) | Higher | Lower — the cold work has already used up some of the material's capacity to deform further |
+| Hardness | Lower | Higher |
+
+: Typical, approximate differences between HRS and CRS of the same grade. Exact values vary by supplier, section size, and specific grade — always confirm against a materials handbook or mill certificate rather than assuming these numbers. {#tbl-hrs-crs}
+
+### Pickling: Removing Mill Scale Before Cold Rolling {#sec-metallurgy-pickling}
+
+Hot rolling happens at 1100–1250 °C, and at that temperature the steel surface reacts continuously with oxygen in the air, growing a layer of iron oxides (a mix of FeO, Fe₃O₄, and Fe₂O₃) called **mill scale**. Mill scale is hard, brittle, and adheres unevenly — exactly the surface condition you do *not* want going into a cold-rolling mill, for two practical reasons: it's abrasive enough to score and prematurely wear the hardened work rolls, and it would get pressed into the steel surface rather than rolled smooth, ruining the bright finish CRS is sold for.
+
+**Pickling** removes it chemically before cold rolling begins. The coil is uncoiled and run continuously through a line of tanks containing a dilute acid bath — historically sulfuric acid, more commonly hydrochloric acid in modern continuous pickling lines — which dissolves the oxide scale without significantly attacking the base metal underneath. The strip then passes through rinse tanks to wash off acid residue and is dried, often with a very thin coat of oil applied immediately afterward to prevent **flash rusting** (the clean, reactive surface will rust in minutes otherwise) before it reaches the cold mill. This is the "pickled to remove scale" step referenced in the CRS description above — it's why CRS comes out smooth and bright while HRS keeps its dull, scaled surface.
+
+::: {.callout-note title="Why this matters to a technician, not just a mill operator"}
+You won't operate a pickling line, but you will see its effects: mill scale explains the rougher, blue-grey surface and pitting you're told to expect on HRS specimens in the metallography lab (@tbl-hrs-crs), and the acid-handling hazards of pickling (fumes, splash, waste acid neutralization) are the same category of chemical-exposure hazard covered generally in the [Machine Guarding and Functional Safety](06-Machine-Guarding-and-Safety.qmd) chapter — concentrated acid baths are an industrial hazard even though you'll never need to manage one directly as a maintenance technician.
+:::
+
+For more detail than this course requires, see [Pickling (metal) — Wikipedia](https://en.wikipedia.org/wiki/Pickling_(metal)) for an overview of acid pickling chemistry and practice.
+
+::: {.callout-note title="What to expect in your own results"}
+**In the metallography portion of your labs**, expect HRS specimens to show equiaxed grains regardless of orientation, often with visible mill-scale pitting near the original surface. **In the hardness lab and the tensile/microhardness lab**, if you are given both conditions of a grade, expect the cold-worked material to read measurably harder and stronger, with lower elongation, than the hot-rolled or annealed condition of the same steel.
+:::
+
+::: {.callout-warning title="These are schematic diagrams, not photomicrographs"}
+@fig-cold-rolling-process, @fig-hrs-micrograph, and @fig-crs-micrograph are simplified illustrations — grain shapes drawn to show the *pattern* you're looking for, not the texture of a real photograph. Your lab's actual micrographs will look noisier and less tidy than these. Read them for shape and orientation, not as a stand-in for the real thing under the scope.
+:::
 
 ```{r fig-hrs-micrograph, echo=FALSE, fig.cap="Schematic diagram (not an actual photomicrograph) of hot-rolled 1018 steel: equiaxed grains, similar in every direction, regardless of which way the section is cut.", fig.align='center', fig.width=8, fig.height=5.5}
 hrs_grains <- make_grain_field(seed = 11, nx = 9, ny = 6, xlim = c(0, 10), ylim = c(0, 6),
@@ -500,6 +559,24 @@ The **AISI/SAE** designation system lets you read approximate composition straig
 
 ## Heat Treatment {#sec-metallurgy-heat-treatment}
 
+### Two Different Things Called "Heating the Steel" {#sec-metallurgy-recryst-vs-phase}
+
+Before going further, it's worth separating two ideas that both involve heating steel and both end up changing its grain structure, but that work by completely different mechanisms — mixing them up is one of the most common sources of confusion in this material.
+
+1. **Recrystallization** (@sec-metallurgy-recrystallization) — what happens during hot rolling, and what a *process anneal* does to cold-worked wire or sheet between drawing passes. This happens at a comparatively modest temperature (roughly 500–700 °C for plain carbon steel) that stays **below A1 (727 °C)** — nowhere near the iron-carbon phase diagram's transformation lines in @fig-fe-c-diagram. Iron never leaves its BCC (ferrite) structure. All that changes is **grain shape and size**: strained, elongated grains tangled with dislocations are replaced by new, strain-free, equiaxed grains. No new phase forms — it's a purely mechanical "reset" of the existing phase.
+2. **The five heat treatments below** (full annealing, normalizing, quench hardening, tempering, stress relieving) are read directly off the phase diagram, and the four of them that actually change the microstructure (all but stress relieving) require heating **above A1, A3, or Acm** — deliberately crossing into the **austenite (FCC) field** in @fig-fe-c-diagram. The iron itself changes crystal structure: BCC ferrite transforms to FCC austenite, which then transforms back on cooling into ferrite + pearlite, or — if cooled fast enough to beat the TTT/CCT nose (@sec-metallurgy-ttt-cct) — into martensite instead. This is a genuine **phase transformation**, not just a grain-shape reset, and it's exactly why austenite (@sec-metallurgy-fe-c-phases) matters so much: it's the one starting phase every treatment below is built on.
+
+| | Recrystallization (hot rolling, process annealing) | Heat treatments in @sec-metallurgy-five-treatments |
+|---|---|---|
+| Typical temperature | ~500–700 °C (steel) | Above A1 (727 °C), often well above A3/Acm |
+| Where on @fig-fe-c-diagram | Below A1 — no phase boundary crossed | Above A1/A3/Acm — enters the austenite field |
+| What actually changes | Grain shape/size only; new strain-free equiaxed grains replace deformed ones | The crystal structure itself: BCC ferrite ⇌ FCC austenite (⇌ martensite on fast cooling) |
+| Governed by | The recrystallization temperature (~0.3–0.5 × absolute melting point) | The Fe-C phase diagram (A1/A3/Acm) plus TTT/CCT cooling-rate diagrams |
+
+::: {.callout-important title="Watch the word \"annealing\" — it means two different things"}
+The **full annealing** described in @sec-metallurgy-five-treatments below is deliberately heated *above* A3 (or A1) into austenite, then cooled slowly back through the transformation — a genuine round-trip phase change, same mechanism as the slow-cooling walkthrough in @sec-metallurgy-1045-walkthrough. That is a different process from the **process anneal / recrystallization anneal** described in @sec-metallurgy-recrystallization, which stays below A1 the entire time and only recrystallizes the existing ferrite grains. Both soften the steel; only one of them ever leaves the ferrite phase.
+:::
+
 ### Martensite: The Phase That Isn't on the Diagram {#sec-metallurgy-martensite}
 
 Go back to @fig-fe-c-diagram and look for martensite. You won't find it — **martensite does not appear anywhere on the equilibrium iron-carbon phase diagram**, because that diagram only shows phases that form under *slow, near-equilibrium* cooling, where atoms have time to diffuse into their lowest-energy arrangement.
@@ -589,7 +666,71 @@ Not every steel, and not every part shape, needs (or can survive) the fastest po
 
 Go back to @sec-metallurgy-martensite: martensite's hardness comes from carbon atoms forced into, and distorting, the iron lattice. **A steel with very little carbon to begin with — like 1018, at roughly 0.18% C — simply doesn't have enough carbon available to distort the lattice very much, no matter how fast you quench it.** You can absolutely form martensite in 1018 with a fast enough quench, but the resulting hardness increase is modest compared to a medium- or high-carbon steel, because the martensite itself is low-carbon and much less distorted.
 
-This is precisely why components that need a hard, wear-resistant surface but are made from a low-carbon steel (for toughness, weldability, or cost) are **case hardened** — carbon (or nitrogen) is diffused into just the surface layer before quenching, so *only the case* has enough carbon to form high-hardness martensite, while the low-carbon core stays comparatively soft and tough. You'll measure exactly this effect — a hardness gradient from a carbon-rich case to a low-carbon core — in the Vickers microhardness traverse of the AISI 1566 specimen in @sec-testing-hardness (Part B).
+This is precisely why components that need a hard, wear-resistant surface but are made from a low-carbon steel (for toughness, weldability, or cost) are **case hardened** — carbon (or nitrogen) is diffused into just the surface layer before quenching, so *only the case* has enough carbon to form high-hardness martensite, while the low-carbon core stays comparatively soft and tough. You'll measure exactly this effect — a hardness gradient from a carbon-rich case to a low-carbon core — in the Vickers microhardness traverse of the AISI 1566 specimen in @sec-testing-hardness (Part B). The rest of this section explains *how* that carbon actually gets in.
+
+### Carburizing: How Carbon Gets Into the Case {#sec-metallurgy-carburizing}
+
+**Carburizing** is a two-part process: first carbon is added to the surface and diffused inward, then the part is quenched (sometimes directly from the carburizing temperature, sometimes after cooling and reheating) to turn the now carbon-rich case into martensite.
+
+**Why it has to be done hot, in the austenite range.** Recall from @sec-metallurgy-fe-c-phases that **ferrite can dissolve almost no carbon (about 0.02 wt% at best), while austenite can dissolve up to 2.1 wt%.** Carburizing only works because the part is held *above A3* — fully austenitic — so the FCC lattice has room to actually take carbon into solution at the surface. Try to pack the same carbon-rich atmosphere around room-temperature (ferritic) steel and essentially none of it would dissolve in; this is yet another place where the phase diagram, not just "heat," is doing the real work (@sec-metallurgy-recryst-vs-phase).
+
+**How the carbon is supplied**, from most to least common in industry today:
+
+| Method | How carbon reaches the surface | Typical temperature |
+|---|---|---|
+| Gas carburizing | Part sits in a furnace atmosphere of hydrocarbon gas (e.g. methane or propane) mixed with a carrier gas; the gas decomposes (*cracks*) at the hot steel surface, depositing carbon atoms directly onto it | ~870–950 °C |
+| Liquid (salt bath) carburizing | Part is immersed in a molten cyanide- or carbonate-based salt bath that supplies carbon (and often some nitrogen) at the surface | ~850–950 °C |
+| Pack carburizing | Part is packed in a sealed container with a carbon-rich solid compound (charcoal plus an energizer) and heated for hours — the oldest method, now mostly a classroom/historical example rather than a production process | ~900–950 °C |
+
+: Common ways carbon is introduced at the surface before it diffuses inward. All three rely on the same diffusion mechanism once carbon reaches the surface — they differ only in how carbon gets delivered there. {#tbl-carburizing-methods}
+
+**Diffusion does the rest.** Once carbon atoms are available at the surface, they move inward by ordinary interstitial diffusion — hopping between the gaps in the iron lattice — driven simply by the concentration difference between the carbon-rich surface and the lower-carbon interior (the same kind of concentration-gradient-driven diffusion you'd see with a drop of food coloring spreading through still water, just far slower in a solid). Two things control how deep the carbon gets, and both are shop-floor levers a technician actually sets on a carburizing furnace:
+
+- **Temperature** — diffusion speeds up sharply as temperature rises (more thermal energy, more successful atomic jumps per second), so a hotter furnace drives carbon in faster for the same hold time.
+- **Time** — case depth does *not* grow in direct proportion to time. Diffusion depth scales roughly with the **square root of time**, so doubling the case depth takes roughly *four times* as long, not twice — a practical rule worth remembering when a process plan asks for a deeper case.
+
+```{r fig-carburizing-profile, echo=FALSE, fig.cap="Illustrative carbon concentration profile after gas carburizing (schematic, not measured data). Carbon is highest at the surface, set by the furnace atmosphere, and falls off smoothly with depth -- an error-function-shaped curve, which is the solution to Fick's second law for this situation -- down to the steel's original core carbon content. 'Case depth' is conventionally defined as the depth at which carbon content falls to a chosen threshold, often 0.4% C.", fig.align='center', fig.width=9, fig.height=5.5}
+depth <- seq(0, 2, by = 0.02)   # mm below the surface
+C_surface <- 0.90                # wt% C at the surface (typical gas-carburizing target)
+C_core <- 0.18                   # wt% C of the base steel (e.g. 1018)
+case_depth_scale <- 0.55         # mm; controls how quickly carbon falls off with depth
+
+# Error-function-shaped diffusion profile: erfc(z) = 2*pnorm(-z*sqrt(2))
+z <- depth / case_depth_scale
+erfc_z <- 2 * pnorm(-z * sqrt(2))
+C_profile <- C_core + (C_surface - C_core) * erfc_z
+
+profile_data <- data.frame(depth = depth, C = C_profile)
+
+threshold <- 0.40   # conventional case-depth definition: depth where C falls to 0.4%
+case_depth <- approx(profile_data$C, profile_data$depth, xout = threshold)$y
+
+ggplot(profile_data, aes(x = depth, y = C)) +
+  geom_line(color = "#CC3311", linewidth = 1.1) +
+  geom_hline(yintercept = C_core, linetype = "dashed", color = "grey40") +
+  geom_vline(xintercept = case_depth, linetype = "dotted", color = "#0077BB") +
+  annotate("point", x = 0, y = C_surface, size = 2.5, color = "#CC3311") +
+  annotate("text", x = 0.05, y = C_surface + 0.03, label = "surface",
+            size = 3.2 * diagram_text_scale, hjust = 0) +
+  annotate("text", x = 0.05, y = C_core + 0.05, label = "core (base) carbon content",
+            size = 3.2 * diagram_text_scale, hjust = 0, color = "grey30") +
+  annotate("text", x = case_depth + 0.04, y = 0.72, label = sprintf("case depth\n(~%.2f mm here)", case_depth),
+            size = 3.2 * diagram_text_scale, hjust = 0, color = "#0077BB") +
+  scale_x_continuous(limits = c(0, 2), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0, 1.0)) +
+  labs(title = "Carbon Concentration vs. Depth After Carburizing",
+       x = "Depth Below Surface (mm)", y = "Carbon Content (wt% C)") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * diagram_text_scale),
+        axis.text = element_text(size = 10 * diagram_text_scale))
+```
+
+**After diffusion, quench.** Once the furnace cycle has built the carbon gradient shown in @fig-carburizing-profile, the part is quenched while still (or after being reheated to be) fully austenitic. The high-carbon case has plenty of carbon to form hard martensite; the low-carbon core — recall the opening of this section — barely hardens even though it was quenched too, because it never had the carbon to begin with. The result is one part with two microstructures: a hard, wear-resistant martensitic case over a tough, crack-resistant low-carbon core, exactly the hardness-vs-depth profile you'll traverse with the Vickers microhardness tester in @sec-testing-hardness.
+
+::: {.callout-note title="Nitriding: a lower-temperature alternative"}
+**Nitriding** diffuses nitrogen instead of carbon, forming very hard iron nitride compounds at the surface. The practical advantage: common (ferritic) nitriding is done at only ~500–550 °C, **below A1** — the part never enters the austenite field at all, so no quench is needed afterward and distortion is much lower than carburizing. The trade-off is a much thinner case and a longer processing time. Carburizing has to cross into austenite because it needs austenite's much higher carbon solubility; nitriding doesn't need to, because iron nitrides can form directly in the ferrite structure.
+:::
 
 ::: {#tbl-heat-treatment-summary}
 
