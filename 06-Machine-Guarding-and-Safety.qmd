@@ -949,30 +949,44 @@ c_values %>%
 
 ### Example Calculation
 
-Live cell — try different approach speed, response time, or resolution values.
+Try it — change the approach speed, response time, or resolution below.
+
+```{r calc-safety-distance, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "safety-calc-example",
+  title = "Minimum Safety Distance Calculator",
+  icon = "shield-halved",
+  inputs = list(
+    qwebr_calc_input("K", "Approach speed", value = 2000, min = 500, max = 4000, step = 100, suffix = "mm/s"),
+    qwebr_calc_input("T_device", "Device response time", value = 0.020, min = 0.005, max = 0.200, step = 0.005, suffix = "sec"),
+    qwebr_calc_input("T_machine", "Machine stopping time", value = 0.150, min = 0.020, max = 0.500, step = 0.010, suffix = "sec", type = "slider"),
+    qwebr_calc_input("C", "Penetration depth", value = 0, min = 0, max = 40, step = 1, suffix = "mm")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: safety-calc-example
 # Given parameters
-K <- 2000        # Approach speed (mm/s) - fast hand approach
+K <- 2000          # Approach speed (mm/s) - fast hand approach
 T_device <- 0.020  # Light curtain response time (20 ms = 0.020 s)
 T_machine <- 0.150 # Machine stopping time (150 ms = 0.150 s)
-C <- 0           # Penetration depth for 14mm resolution
+C <- 0             # Penetration depth for 14mm resolution
 
 # Calculate total stopping time
 T_total <- T_device + T_machine
-cat("Total stopping time (T):", T_total * 1000, "ms\n")
 
 # Calculate minimum safety distance
 S <- (K * T_total) + C
-cat("Minimum safety distance (S):", S, "mm\n")
-cat("Minimum safety distance (S):", S / 25.4, "inches\n")
 
-# Interpretation
-cat("\n--- Interpretation ---\n")
-cat("The light curtain must be at least", S, "mm from the hazard.\n")
-cat("This ensures the machine stops before a person can reach the danger zone.\n")
+cat(sprintf("Minimum safety distance: %.0f mm (%.1f in)\n", S, S / 25.4))
+cat(sprintf("  Total stopping time  %.0f ms\n", T_total * 1000))
 ```
+
+</details>
 
 <details>
 <summary>Practice Problem: Calculate Safety Distance</summary>

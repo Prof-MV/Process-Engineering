@@ -1680,7 +1680,25 @@ li_interp %>%
   row_spec(4, background = "#E74C3C", color = "white")
 ```
 
-Live cell — change the distances, angle, or frequency and re-run.
+Try it — change the distances, angle, or weight below.
+
+```{r calc-niosh-example, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "niosh-example",
+  title = "NIOSH Lifting Index Calculator",
+  icon = "weight-hanging",
+  inputs = list(
+    qwebr_calc_input("H", "Horizontal distance", value = 40, min = 20, max = 60, step = 1, suffix = "cm"),
+    qwebr_calc_input("V", "Vertical height at start", value = 30, min = 0, max = 175, step = 5, suffix = "cm"),
+    qwebr_calc_input("D", "Vertical travel distance", value = 60, min = 10, max = 150, step = 5, suffix = "cm"),
+    qwebr_calc_input("A", "Asymmetry angle", value = 30, min = 0, max = 135, step = 5, suffix = "deg"),
+    qwebr_calc_input("actual_weight", "Actual load weight", value = 15, min = 5, max = 50, step = 1, suffix = "kg", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: niosh-example
@@ -1691,8 +1709,6 @@ H <- 40    # Horizontal distance (cm)
 V <- 30    # Vertical height at start (cm)
 D <- 60    # Vertical travel distance (cm)
 A <- 30    # Asymmetry angle (degrees)
-F <- 2     # Lifts per minute
-duration <- 2  # Hours of lifting
 
 # Constants
 LC <- 23   # Load constant (kg)
@@ -1709,35 +1725,30 @@ FM <- 0.84
 # Coupling multiplier (assume "fair" coupling)
 CM <- 0.95
 
-cat("Multipliers:\n")
-cat("HM =", round(HM, 3), "\n")
-cat("VM =", round(VM, 3), "\n")
-cat("DM =", round(DM, 3), "\n")
-cat("AM =", round(AM, 3), "\n")
-cat("FM =", FM, "\n")
-cat("CM =", CM, "\n\n")
-
 # Calculate RWL
 RWL <- LC * HM * VM * DM * AM * FM * CM
-cat("Recommended Weight Limit (RWL):", round(RWL, 1), "kg\n\n")
 
 # Calculate Lifting Index for actual load
 actual_weight <- 15  # kg
 LI <- actual_weight / RWL
-cat("Actual Weight:", actual_weight, "kg\n")
-cat("Lifting Index (LI):", round(LI, 2), "\n\n")
 
-# Interpretation
+cat(sprintf("Lifting Index: %.2f (RWL = %.1f kg)\n", LI, RWL))
+cat(sprintf("  HM (horizontal)   %.3f\n", HM))
+cat(sprintf("  VM (vertical)     %.3f\n", VM))
+cat(sprintf("  DM (distance)     %.3f\n", DM))
+cat(sprintf("  AM (asymmetry)    %.3f\n", AM))
 if (LI <= 1.0) {
-  cat("Risk Level: LOW - Task acceptable\n")
+  cat("  Risk level        Low - task acceptable\n")
 } else if (LI <= 2.0) {
-  cat("Risk Level: MODERATE - Consider changes\n")
+  cat("  Risk level        Moderate - consider changes\n")
 } else if (LI <= 3.0) {
-  cat("Risk Level: HIGH - Changes recommended\n")
+  cat("  Risk level        High - changes recommended\n")
 } else {
-  cat("Risk Level: VERY HIGH - Immediate changes required\n")
+  cat("  Risk level        Very high - immediate changes required\n")
 }
 ```
+
+</details>
 
 ------------------------------------------------------------------------
 
@@ -2089,7 +2100,25 @@ ggplot(results_long, aes(x = metric, y = change)) +
   )
 ```
 
-**ROI Analysis:** (live cell — try different investment or savings figures)
+**ROI Analysis:** try different investment or savings figures below.
+
+```{r calc-roi-analysis, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "roi-analysis",
+  title = "Ergonomics ROI Calculator",
+  icon = "sack-dollar",
+  inputs = list(
+    qwebr_calc_input("equipment_cost", "Equipment investment", value = 150000, min = 50000, max = 500000, step = 10000, prefix = "$"),
+    qwebr_calc_input("training_cost", "Training cost", value = 15000, min = 0, max = 50000, step = 1000, prefix = "$"),
+    qwebr_calc_input("injury_reduction", "Annual injury-cost savings", value = 220000, min = 0, max = 500000, step = 10000, prefix = "$", type = "slider"),
+    qwebr_calc_input("productivity_gain", "Annual productivity savings", value = 90000, min = 0, max = 300000, step = 10000, prefix = "$"),
+    qwebr_calc_input("quality_improvement", "Annual quality savings", value = 17500, min = 0, max = 100000, step = 2500, prefix = "$")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: roi-analysis
@@ -2099,17 +2128,19 @@ training_cost <- 15000
 total_investment <- equipment_cost + training_cost
 
 # Annual Savings
-injury_reduction <- (15 - 4) * 20000  # Avg cost per injury
-productivity_gain <- 0.18 * 500000    # 18% improvement on labor cost
-quality_improvement <- 0.35 * 50000   # 35% defect reduction
+injury_reduction <- 220000     # (15 - 4 injuries avoided) x $20,000 avg cost per injury
+productivity_gain <- 90000     # 18% improvement on $500,000 labor cost
+quality_improvement <- 17500   # 35% defect reduction on $50,000 cost
 
 annual_savings <- injury_reduction + productivity_gain + quality_improvement
 
-cat("Total Investment: $", format(total_investment, big.mark = " ", scientific = FALSE), "\n")
-cat("Annual Savings: $", format(annual_savings, big.mark = " ", scientific = FALSE), "\n")
-cat("Payback Period:", round(total_investment / annual_savings, 1), "years\n")
-cat("5-Year ROI:", round((annual_savings * 5 - total_investment) / total_investment * 100), "%\n")
+cat(sprintf("5-year ROI: %.0f%%\n", (annual_savings * 5 - total_investment) / total_investment * 100))
+cat(sprintf("  Total investment     $%s\n", format(total_investment, big.mark = " ", scientific = FALSE)))
+cat(sprintf("  Annual savings       $%s\n", format(annual_savings, big.mark = " ", scientific = FALSE)))
+cat(sprintf("  Payback period       %.1f years\n", total_investment / annual_savings))
 ```
+
+</details>
 
 ------------------------------------------------------------------------
 

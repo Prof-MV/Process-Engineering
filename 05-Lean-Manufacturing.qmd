@@ -681,29 +681,42 @@ $$\text{Throughput Time} = \text{Processing} + \text{Inspection} + \text{Queue} 
 
 ### Interactive Example: Calculating Takt Time
 
-Live cell — try different shift length, breaks, or customer demand.
+Try it — change the shift length, breaks, or customer demand below.
+
+```{r calc-takt-calculation, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "takt-calculation",
+  title = "Takt Time Calculator",
+  icon = "stopwatch",
+  inputs = list(
+    qwebr_calc_input("available_time_per_day", "Shift length", value = 480, min = 120, max = 1440, step = 30, suffix = "min"),
+    qwebr_calc_input("breaks_and_meetings", "Breaks & meetings", value = 60, min = 0, max = 240, step = 10, suffix = "min"),
+    qwebr_calc_input("customer_demand", "Customer demand", value = 240, min = 10, max = 2000, step = 10, suffix = "units/day", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: takt-calculation
 # Given data
-available_time_per_day <- 8 * 60  # 8 hours = 480 minutes
+available_time_per_day <- 480     # 8 hours = 480 minutes
 breaks_and_meetings <- 60         # 60 minutes for breaks/meetings
 customer_demand <- 240            # 240 units per day
 
 # Calculate net available time
 net_available_time <- available_time_per_day - breaks_and_meetings
-cat("Net Available Time:", net_available_time, "minutes/day\n")
 
 # Calculate Takt Time
 takt_time <- net_available_time / customer_demand
-cat("Takt Time:", takt_time, "minutes per unit\n")
-cat("Takt Time:", takt_time * 60, "seconds per unit\n")
 
-# Interpretation
-cat("\n--- Interpretation ---\n")
-cat("To meet customer demand, we must produce 1 unit every",
-    takt_time, "minutes (", takt_time * 60, "seconds).\n")
+cat(sprintf("Takt time: %.2f min per unit (%.1f sec)\n", takt_time, takt_time * 60))
+cat(sprintf("  Net available time   %d min/day\n", net_available_time))
 ```
+
+</details>
 
 <details>
 <summary>Practice Problem: Calculate Your Takt Time</summary>

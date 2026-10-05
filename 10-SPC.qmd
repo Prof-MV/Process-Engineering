@@ -1233,7 +1233,24 @@ if (Cpk >= 1.33) {
 }
 ```
 
-Live cell — try different specification limits, process mean, and sigma to see how Cp and Cpk respond.
+Try it — change the specification limits, process mean, or sigma below.
+
+```{r calc-cp-cpk, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "cp-cpk-live",
+  title = "Process Capability Calculator",
+  icon = "gauge-high",
+  inputs = list(
+    qwebr_calc_input("LSL", "Lower spec limit (LSL)", value = 24.85, min = 24.0, max = 25.5, step = 0.01),
+    qwebr_calc_input("USL", "Upper spec limit (USL)", value = 25.15, min = 24.5, max = 26.0, step = 0.01),
+    qwebr_calc_input("X_bar_cap", "Process mean", value = 25.03, min = 24.5, max = 25.5, step = 0.01, type = "slider"),
+    qwebr_calc_input("sigma_within", "Within-subgroup sigma", value = 0.045, min = 0.01, max = 0.20, step = 0.005)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: cp-cpk-live
@@ -1248,19 +1265,19 @@ Cpu <- (USL - X_bar_cap) / (3 * sigma_within)
 Cpl <- (X_bar_cap - LSL) / (3 * sigma_within)
 Cpk <- min(Cpu, Cpl)
 
-cat("Cp  =", round(Cp, 2), "\n")
-cat("Cpu =", round(Cpu, 2), "\n")
-cat("Cpl =", round(Cpl, 2), "\n")
-cat("Cpk =", round(Cpk, 2), "\n\n")
-
 if (Cpk >= 1.33) {
-  cat("Process is CAPABLE (Cpk >= 1.33)\n")
+  cat(sprintf("Cpk = %.2f - Capable\n", Cpk))
 } else if (Cpk >= 1.00) {
-  cat("Process is MARGINALLY CAPABLE (1.00 <= Cpk < 1.33)\n")
+  cat(sprintf("Cpk = %.2f - Marginally capable\n", Cpk))
 } else {
-  cat("Process is NOT CAPABLE (Cpk < 1.00)\n")
+  cat(sprintf("Cpk = %.2f - Not capable\n", Cpk))
 }
+cat(sprintf("  Cp                   %.2f\n", Cp))
+cat(sprintf("  Cpu                  %.2f\n", Cpu))
+cat(sprintf("  Cpl                  %.2f\n", Cpl))
 ```
+
+</details>
 
 ### Capability Index Interpretation
 

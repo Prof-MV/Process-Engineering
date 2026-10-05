@@ -344,73 +344,61 @@ oee_formulas %>%
 
 ### OEE Calculation Example
 
-Live cell — try different downtime, production, or defect numbers.
+Try it — change the downtime, production, or defect numbers below.
+
+```{r calc-oee, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "oee-calculation",
+  title = "OEE Calculator",
+  icon = "gauge-high",
+  inputs = list(
+    qwebr_calc_input("shift_length", "Shift length", value = 480, min = 240, max = 600, step = 10, suffix = "min"),
+    qwebr_calc_input("planned_downtime", "Planned downtime", value = 30, min = 0, max = 120, step = 5, suffix = "min"),
+    qwebr_calc_input("total_downtime", "Unplanned downtime", value = 70, min = 0, max = 150, step = 5, suffix = "min"),
+    qwebr_calc_input("ideal_cycle_time", "Ideal cycle time", value = 0.5, min = 0.1, max = 5, step = 0.1, suffix = "min/part"),
+    qwebr_calc_input("total_parts", "Parts produced", value = 700, min = 50, max = 2000, step = 10, type = "slider"),
+    qwebr_calc_input("good_parts", "Good parts", value = 665, min = 0, max = 2000, step = 10)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: oee-calculation
 # OEE Calculation Example: Injection Molding Machine
 
-cat("=== SHIFT DATA ===\n")
 # Time data
-shift_length <- 480  # minutes (8 hours)
-planned_downtime <- 30  # breaks, planned maintenance
+shift_length <- 480      # minutes (8 hours)
+planned_downtime <- 30   # breaks, planned maintenance
 planned_production_time <- shift_length - planned_downtime
-cat("Planned Production Time:", planned_production_time, "minutes\n")
 
-# Downtime losses
-breakdown_time <- 25  # equipment failure
-changeover_time <- 35  # mold changes
-adjustment_time <- 10  # setup adjustments
-total_downtime <- breakdown_time + changeover_time + adjustment_time
-cat("Unplanned Downtime:", total_downtime, "minutes\n")
-
+# Downtime losses (breakdowns, changeovers, adjustments combined)
+total_downtime <- 70     # minutes
 run_time <- planned_production_time - total_downtime
-cat("Run Time:", run_time, "minutes\n\n")
 
 # Production data
 ideal_cycle_time <- 0.5  # minutes per part (design spec)
-total_parts <- 700  # parts produced
-good_parts <- 665   # parts passing inspection
-defects <- total_parts - good_parts
-
-cat("=== PRODUCTION DATA ===\n")
-cat("Total Parts Produced:", total_parts, "\n")
-cat("Good Parts:", good_parts, "\n")
-cat("Defects:", defects, "\n\n")
+total_parts <- 700       # parts produced
+good_parts <- 665        # parts passing inspection
 
 # Calculate OEE Components
-cat("=== OEE CALCULATION ===\n\n")
-
-# Availability
 availability <- (run_time / planned_production_time) * 100
-cat("AVAILABILITY:\n")
-cat("  = Run Time / Planned Production Time\n")
-cat("  =", run_time, "/", planned_production_time, "\n")
-cat("  =", round(availability, 1), "%\n\n")
-
-# Performance
-# Actual output vs. theoretical output during run time
 theoretical_output <- run_time / ideal_cycle_time
 performance <- (total_parts / theoretical_output) * 100
-cat("PERFORMANCE:\n")
-cat("  Theoretical Output =", theoretical_output, "parts\n")
-cat("  Actual Output =", total_parts, "parts\n")
-cat("  = Actual / Theoretical\n")
-cat("  =", round(performance, 1), "%\n\n")
-
-# Quality
 quality <- (good_parts / total_parts) * 100
-cat("QUALITY:\n")
-cat("  = Good Parts / Total Parts\n")
-cat("  =", good_parts, "/", total_parts, "\n")
-cat("  =", round(quality, 1), "%\n\n")
 
 # Overall OEE
-oee <- (availability/100) * (performance/100) * (quality/100) * 100
-cat("=== OVERALL OEE ===\n")
-cat("OEE =", round(availability, 1), "% ×", round(performance, 1), "% ×", round(quality, 1), "%\n")
-cat("OEE =", round(oee, 1), "%\n")
+oee <- (availability / 100) * (performance / 100) * (quality / 100) * 100
+
+cat(sprintf("OEE: %.1f%%\n", oee))
+cat(sprintf("  Availability         %.1f%%\n", availability))
+cat(sprintf("  Performance          %.1f%%\n", performance))
+cat(sprintf("  Quality              %.1f%%\n", quality))
 ```
+
+</details>
 
 ```{r oee-waterfall, echo=FALSE, fig.align="center", fig.cap="OEE Waterfall Chart: Where Time Goes", fig.width=10, fig.height=6}
 # Create waterfall data with proper cascading structure

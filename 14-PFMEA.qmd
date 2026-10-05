@@ -1004,41 +1004,54 @@ pfmea_example %>%
   column_spec(10, bold = TRUE)
 ```
 
-Live cell — try different S/O/D ratings for each improvement option.
+Try it — change the baseline or improved S/O/D ratings below.
+
+```{r calc-rpn-improvement, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "rpn-improvement",
+  title = "RPN Improvement Calculator",
+  icon = "arrow-trend-down",
+  inputs = list(
+    qwebr_calc_input("S_current", "Severity (fixed)", value = 7, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O_current", "Current occurrence", value = 5, min = 1, max = 10, step = 1),
+    qwebr_calc_input("D_current", "Current detection", value = 6, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("D_option1", "Improved detection", value = 2, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O_option2", "Improved occurrence", value = 2, min = 1, max = 10, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: rpn-improvement
 # Improvement Analysis for Short Shot (Highest RPN = 210)
 
-cat("=== CURRENT STATE ===\n")
 S_current <- 7  # Severity (cannot change - inherent to failure)
 O_current <- 5  # Occurrence
 D_current <- 6  # Detection
 RPN_current <- S_current * O_current * D_current
-cat("Current RPN:", RPN_current, "(S=7, O=5, D=6)\n\n")
 
-cat("=== IMPROVEMENT OPTIONS ===\n\n")
-
-# Option 1: Improve Detection
-cat("Option 1: Add automatic shot weight monitoring\n")
-D_option1 <- 2  # Automated detection
+# Option 1: Add automatic shot weight monitoring (improves Detection)
+D_option1 <- 2
 RPN_option1 <- S_current * O_current * D_option1
-cat("New RPN:", RPN_option1, "(S=7, O=5, D=2)\n")
-cat("Reduction:", round((1 - RPN_option1/RPN_current)*100), "%\n\n")
 
-# Option 2: Improve Occurrence (Prevention)
-cat("Option 2: Add screw position monitoring with feedback control\n")
-O_option2 <- 2  # Much lower occurrence
+# Option 2: Add screw position monitoring with feedback control (improves Occurrence)
+O_option2 <- 2
 RPN_option2 <- S_current * O_option2 * D_current
-cat("New RPN:", RPN_option2, "(S=7, O=2, D=6)\n")
-cat("Reduction:", round((1 - RPN_option2/RPN_current)*100), "%\n\n")
 
-# Option 3: Both improvements
-cat("Option 3: Both improvements combined\n")
+# Option 3: Both improvements combined
 RPN_option3 <- S_current * O_option2 * D_option1
-cat("New RPN:", RPN_option3, "(S=7, O=2, D=2)\n")
-cat("Reduction:", round((1 - RPN_option3/RPN_current)*100), "%\n")
+
+cat(sprintf("Best option cuts RPN by %.0f%% (%d -> %d)\n",
+            (1 - RPN_option3 / RPN_current) * 100, RPN_current, RPN_option3))
+cat(sprintf("  Option 1: Detection only   RPN=%d (-%.0f%%)\n", RPN_option1, (1 - RPN_option1 / RPN_current) * 100))
+cat(sprintf("  Option 2: Occurrence only  RPN=%d (-%.0f%%)\n", RPN_option2, (1 - RPN_option2 / RPN_current) * 100))
+cat(sprintf("  Option 3: Both combined    RPN=%d (-%.0f%%)\n", RPN_option3, (1 - RPN_option3 / RPN_current) * 100))
 ```
+
+</details>
 
 ```{r rpn-comparison-viz, echo=FALSE, fig.align="center", fig.cap="RPN Improvement Comparison", fig.width=9, fig.height=5}
 improvement_data <- data.frame(
@@ -1334,7 +1347,25 @@ Based on the PFMEA, the team implemented:
 2. **Fixture monitoring:** Temperature compensation and wear tracking (O: 4 → 2)
 3. **Enhanced fixture design:** Carbide wear surfaces (O: 4 → 2)
 
-Live cell — try different before/after ratings.
+Try it — change the before/after ratings below.
+
+```{r calc-case-study-improvement, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "case-study-improvement",
+  title = "Before/After RPN Calculator",
+  icon = "arrow-trend-down",
+  inputs = list(
+    qwebr_calc_input("S_before", "Severity (fixed)", value = 9, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O_before", "Occurrence (before)", value = 4, min = 1, max = 10, step = 1),
+    qwebr_calc_input("D_before", "Detection (before)", value = 5, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O_after", "Occurrence (after)", value = 2, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("D_after", "Detection (after)", value = 2, min = 1, max = 10, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: case-study-improvement
@@ -1343,16 +1374,19 @@ S_before <- 9
 O_before <- 4
 D_before <- 5
 RPN_before <- S_before * O_before * D_before
-cat("Before RPN:", RPN_before, "\n")
 
 # After improvements
 S_after <- 9    # Severity unchanged (inherent)
 O_after <- 2    # Reduced through fixture improvements
 D_after <- 2    # Reduced through 100% gauging
 RPN_after <- S_after * O_after * D_after
-cat("After RPN:", RPN_after, "\n")
-cat("Reduction:", round((1 - RPN_after/RPN_before)*100), "%\n")
+
+cat(sprintf("RPN reduced by %.0f%% (%d -> %d)\n", (1 - RPN_after / RPN_before) * 100, RPN_before, RPN_after))
+cat(sprintf("  Before RPN           %d\n", RPN_before))
+cat(sprintf("  After RPN            %d\n", RPN_after))
 ```
+
+</details>
 
 ### Results
 

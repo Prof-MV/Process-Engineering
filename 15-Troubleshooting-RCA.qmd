@@ -765,7 +765,25 @@ FTA allows quantitative risk analysis by calculating the probability of the top 
 
 **AND Gate:** P(output) = P~A~ × P~B~ × ...
 
-Live cell — try different basic-event probabilities.
+Try it — change the basic-event probabilities below.
+
+```{r calc-fta, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "fta-calculation",
+  title = "Fault Tree Top-Event Calculator",
+  icon = "sitemap",
+  inputs = list(
+    qwebr_calc_input("P_breaker_trip", "P(breaker trip)", value = 0.02, min = 0, max = 0.2, step = 0.005),
+    qwebr_calc_input("P_motor_fail", "P(motor fail)", value = 0.01, min = 0, max = 0.2, step = 0.005),
+    qwebr_calc_input("P_impeller_worn", "P(impeller worn)", value = 0.03, min = 0, max = 0.2, step = 0.005, type = "slider"),
+    qwebr_calc_input("P_tank_empty", "P(tank empty)", value = 0.05, min = 0, max = 0.2, step = 0.005),
+    qwebr_calc_input("P_valve_closed", "P(valve closed)", value = 0.01, min = 0, max = 0.2, step = 0.005)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: fta-calculation
@@ -782,21 +800,23 @@ P_line_blocked <- 0.02
 
 # Impeller failure (OR gate)
 P_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)
-cat("P(Impeller failure):", round(P_impeller_fail, 4), "\n")
 
 # Mechanical failure (OR gate)
 P_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)
-cat("P(Mechanical failure):", round(P_mechanical, 4), "\n")
 
 # No fluid available (OR gate)
 P_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)
-cat("P(No fluid available):", round(P_no_fluid, 4), "\n")
 
 # Top event: Pump fails (OR gate)
 P_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)
-cat("P(Pump fails to deliver flow):", round(P_top, 4), "\n")
-cat("This represents a", round(P_top * 100, 1), "% annual probability of failure")
+
+cat(sprintf("P(pump fails to deliver flow): %.1f%% per year\n", P_top * 100))
+cat(sprintf("  P(impeller failure)      %.4f\n", P_impeller_fail))
+cat(sprintf("  P(mechanical failure)    %.4f\n", P_mechanical))
+cat(sprintf("  P(no fluid available)    %.4f\n", P_no_fluid))
 ```
+
+</details>
 
 ---
 

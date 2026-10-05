@@ -518,7 +518,23 @@ $$\text{Fraction proeutectoid ferrite} = 1 - 0.58 = 0.42$$
 So a slowly-cooled 1045 specimen should be roughly **58% pearlite and 42% proeutectoid ferrite** by area — a number you can sanity-check directly against your own micrograph in the lab (this is the basic idea behind the **ASM grain-size / phase-fraction estimation** you'll practice in @sec-testing-metallography, Part B).
 </details>
 
-Live cell — try a different carbon content. Change `C_alloy` and re-run to see how the pearlite fraction shifts (try 0.20 for a low-carbon steel like 1018, or 0.60 for a higher-carbon steel).
+Try it — drag the carbon content slider to see how the pearlite fraction shifts (try 0.20 for a low-carbon steel like 1018, or 0.60 for a higher-carbon steel).
+
+```{r calc-lever-rule, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "metallurgy-lever-rule-live",
+  title = "Lever Rule Calculator",
+  icon = "scale-balanced",
+  inputs = list(
+    qwebr_calc_input("C_ferrite", "Ferrite solvus (C)", value = 0.02, min = 0.00, max = 0.10, step = 0.01, suffix = "% C"),
+    qwebr_calc_input("C_eutectoid", "Eutectoid composition", value = 0.76, min = 0.60, max = 0.90, step = 0.01, suffix = "% C"),
+    qwebr_calc_input("C_alloy", "Alloy carbon content", value = 0.20, min = 0.05, max = 0.76, step = 0.01, suffix = "% C", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: metallurgy-lever-rule-live
@@ -529,10 +545,11 @@ C_eutectoid <- 0.76
 frac_pearlite <- (C_alloy - C_ferrite) / (C_eutectoid - C_ferrite)
 frac_ferrite <- 1 - frac_pearlite
 
-cat(sprintf("Alloy: %.2f%% C\n", C_alloy))
-cat(sprintf("Estimated pearlite fraction:  %.1f%%\n", frac_pearlite * 100))
-cat(sprintf("Estimated proeutectoid ferrite fraction: %.1f%%\n", frac_ferrite * 100))
+cat(sprintf("Pearlite fraction: %.1f%% (alloy = %.2f%% C)\n", frac_pearlite * 100, C_alloy))
+cat(sprintf("  Proeutectoid ferrite fraction    %.1f%%\n", frac_ferrite * 100))
 ```
+
+</details>
 
 ### Reading Carbon Content from the Steel Numbering System {#sec-metallurgy-steel-numbers}
 

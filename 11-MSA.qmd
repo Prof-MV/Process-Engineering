@@ -1175,7 +1175,23 @@ The **Rule of Ten** states that measurement resolution should be at least 1/10 o
 
 Whichever is smaller.
 
-Live cell — try different tolerance, process spread, or gauge resolution values.
+Try it — change the tolerance, process spread, or gauge resolution below.
+
+```{r calc-resolution-check, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "resolution-check",
+  title = "Gauge Resolution Calculator",
+  icon = "ruler",
+  inputs = list(
+    qwebr_calc_input("tolerance", "Total tolerance", value = 0.100, min = 0.010, max = 1.000, step = 0.010, suffix = "mm"),
+    qwebr_calc_input("process_6sigma", "Process 6σ", value = 0.080, min = 0.010, max = 1.000, step = 0.010, suffix = "mm"),
+    qwebr_calc_input("gauge_resolution", "Gauge resolution", value = 0.010, min = 0.001, max = 0.050, step = 0.001, suffix = "mm", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: resolution-check
@@ -1189,17 +1205,16 @@ ratio_tolerance <- tolerance / gauge_resolution
 # Check against process
 ratio_process <- process_6sigma / gauge_resolution
 
-cat("=== Resolution Adequacy Check ===\n\n")
-cat("Tolerance:", tolerance, "mm\n")
-cat("Process 6σ:", process_6sigma, "mm\n")
-cat("Gauge Resolution:", gauge_resolution, "mm\n\n")
-
-cat("Tolerance / Resolution:", ratio_tolerance, ":1")
-if(ratio_tolerance >= 10) cat(" - ADEQUATE\n") else cat(" - INADEQUATE\n")
-
-cat("Process 6σ / Resolution:", ratio_process, ":1")
-if(ratio_process >= 10) cat(" - ADEQUATE\n") else cat(" - INADEQUATE\n")
+if (ratio_tolerance >= 10 && ratio_process >= 10) {
+  cat("Gauge resolution is adequate\n")
+} else {
+  cat("Gauge resolution is inadequate\n")
+}
+cat(sprintf("  Tolerance / Resolution   %.0f : 1 (%s)\n", ratio_tolerance, ifelse(ratio_tolerance >= 10, "adequate", "inadequate")))
+cat(sprintf("  Process 6σ / Resolution   %.0f : 1 (%s)\n", ratio_process, ifelse(ratio_process >= 10, "adequate", "inadequate")))
 ```
+
+</details>
 
 ### Resolution Impact on Gauge R&R
 
@@ -1313,7 +1328,24 @@ ggplot(chart_data, aes(x = Sample, y = Value)) +
 
 ### Effect on Capability Studies
 
-Live cell — try different tolerance/sigma values or GRR percentages.
+Try it — change the process mean, sigma, or spec limits below.
+
+```{r calc-msa-capability-effect, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "msa-capability-effect",
+  title = "MSA Impact on Capability Calculator",
+  icon = "magnifying-glass-chart",
+  inputs = list(
+    qwebr_calc_input("LSL", "Lower spec limit", value = 94, min = 80, max = 100, step = 1),
+    qwebr_calc_input("USL", "Upper spec limit", value = 106, min = 100, max = 120, step = 1),
+    qwebr_calc_input("true_mean", "True process mean", value = 100, min = 90, max = 110, step = 0.5, type = "slider"),
+    qwebr_calc_input("true_sigma", "True process sigma", value = 2.0, min = 0.5, max = 5.0, step = 0.1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: msa-capability-effect
@@ -1325,39 +1357,25 @@ LSL <- 94
 tolerance <- USL - LSL
 
 # True capability
-true_Cp <- tolerance / (6 * true_sigma)
 true_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)
-
-cat("=== True Process Capability ===\n")
-cat("True σ:", true_sigma, "\n")
-cat("True Cp:", round(true_Cp, 2), "\n")
-cat("True Cpk:", round(true_Cpk, 2), "\n\n")
 
 # With good measurement system (10% GRR)
 grr_good <- 0.10 * tolerance / 5.15
 observed_sigma_good <- sqrt(true_sigma^2 + grr_good^2)
-observed_Cp_good <- tolerance / (6 * observed_sigma_good)
 observed_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)
-
-cat("=== With Good MSA (10% GRR) ===\n")
-cat("Observed σ:", round(observed_sigma_good, 3), "\n")
-cat("Observed Cp:", round(observed_Cp_good, 2), "\n")
-cat("Observed Cpk:", round(observed_Cpk_good, 2), "\n\n")
 
 # With poor measurement system (50% GRR)
 grr_poor <- 0.50 * tolerance / 5.15
 observed_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)
-observed_Cp_poor <- tolerance / (6 * observed_sigma_poor)
 observed_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)
 
-cat("=== With Poor MSA (50% GRR) ===\n")
-cat("Observed σ:", round(observed_sigma_poor, 3), "\n")
-cat("Observed Cp:", round(observed_Cp_poor, 2), "\n")
-cat("Observed Cpk:", round(observed_Cpk_poor, 2), "\n\n")
-
-cat("Poor MSA makes a capable process (Cpk=1.0) appear incapable (Cpk=",
-    round(observed_Cpk_poor, 2), ")\n")
+cat(sprintf("A capable process (true Cpk = %.2f) can appear incapable under poor MSA\n", true_Cpk))
+cat(sprintf("  True Cpk                 %.2f\n", true_Cpk))
+cat(sprintf("  Observed Cpk (10%% GRR)   %.2f\n", observed_Cpk_good))
+cat(sprintf("  Observed Cpk (50%% GRR)   %.2f\n", observed_Cpk_poor))
 ```
+
+</details>
 
 ---
 

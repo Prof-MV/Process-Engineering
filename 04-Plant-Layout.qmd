@@ -432,28 +432,56 @@ p2 <- ggplot(layout_B, aes(x = x, y = y)) +
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
 
-Live cell — try different from-to volumes or layout distances.
+Try it — change the material flow volumes below.
+
+```{r calc-load-distance, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "load-distance-calc",
+  title = "Load-Distance Calculator",
+  icon = "route",
+  inputs = list(
+    qwebr_calc_input("flow_receiving_machining", "Receiving to Machining", value = 100, min = 0, max = 500, step = 10),
+    qwebr_calc_input("flow_machining_assembly", "Machining to Assembly", value = 200, min = 0, max = 500, step = 10, type = "slider"),
+    qwebr_calc_input("flow_assembly_painting", "Assembly to Painting", value = 100, min = 0, max = 500, step = 10),
+    qwebr_calc_input("flow_painting_shipping", "Painting to Shipping", value = 150, min = 0, max = 500, step = 10)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: load-distance-calc
 # Calculate Load-Distance scores for both layouts
-# From-To data: Receiving->Machining=100, Machining->Assembly=200,
-#               Assembly->Painting=100, Painting->Shipping=150
+# From-To data: Receiving->Machining, Machining->Assembly,
+#               Assembly->Painting, Painting->Shipping
+
+flow_receiving_machining <- 100
+flow_machining_assembly <- 200
+flow_assembly_painting <- 100
+flow_painting_shipping <- 150
 
 # Layout A distances (linear): all adjacent = 1 unit
-layout_A_score <- 100*1 + 200*1 + 100*1 + 150*1
-cat("Layout A Total Load-Distance:", layout_A_score, "\n")
+layout_A_score <- flow_receiving_machining*1 + flow_machining_assembly*1 +
+  flow_assembly_painting*1 + flow_painting_shipping*1
 
 # Layout B distances (compact): most departments closer together
-# Receiving to Machining = 1.12 (diagonal)
-# Machining to Assembly = 1
-# Assembly to Painting = 1.12 (diagonal)
-# Painting to Shipping = 1
-layout_B_score <- 100*1.12 + 200*1 + 100*1.12 + 150*1
-cat("Layout B Total Load-Distance:", round(layout_B_score, 1), "\n")
+# Receiving to Machining = 1.12 (diagonal), Machining to Assembly = 1,
+# Assembly to Painting = 1.12 (diagonal), Painting to Shipping = 1
+layout_B_score <- flow_receiving_machining*1.12 + flow_machining_assembly*1 +
+  flow_assembly_painting*1.12 + flow_painting_shipping*1
 
-cat("\nLayout A is better by:", round(layout_B_score - layout_A_score, 1), "units")
+if (layout_A_score <= layout_B_score) {
+  cat(sprintf("Layout A (linear) wins by %.1f units\n", layout_B_score - layout_A_score))
+} else {
+  cat(sprintf("Layout B (compact) wins by %.1f units\n", layout_A_score - layout_B_score))
+}
+cat(sprintf("  Layout A (linear)    %.1f\n", layout_A_score))
+cat(sprintf("  Layout B (compact)   %.1f\n", layout_B_score))
 ```
+
+</details>
 
 <details>
 <summary>Why does the linear layout win in this case?</summary>
@@ -1082,54 +1110,65 @@ li_table %>%
 
 ### NIOSH Lifting Example
 
-Also live — try changing the box weight, distances, or lift frequency below and re-running.
+Also live — try changing the box weight, distances, or lift frequency below.
+
+```{r calc-niosh-plant, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "niosh-example-plant",
+  title = "NIOSH Lifting Index Calculator",
+  icon = "weight-hanging",
+  inputs = list(
+    qwebr_calc_input("H", "Horizontal distance", value = 15, min = 10, max = 25, step = 1, suffix = "in"),
+    qwebr_calc_input("V", "Vertical height at origin", value = 10, min = 0, max = 70, step = 1, suffix = "in"),
+    qwebr_calc_input("D", "Vertical travel distance", value = 20, min = 1, max = 70, step = 1, suffix = "in"),
+    qwebr_calc_input("A", "Asymmetry angle", value = 30, min = 0, max = 135, step = 5, suffix = "deg"),
+    qwebr_calc_input("actual_weight", "Box weight", value = 35, min = 5, max = 100, step = 1, suffix = "lb", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: niosh-example-plant
-# Example: Worker lifts 35 lb boxes from pallet to conveyor
-# Conditions:
-# - Horizontal distance (H) = 15 inches
-# - Vertical height at start (V) = 10 inches
-# - Vertical travel distance (D) = 20 inches
-# - Asymmetry angle (A) = 30 degrees
-# - Frequency = 4 lifts per minute, 2 hours
-# - Coupling = Fair (handles present)
+# Example: Worker lifts boxes from pallet to conveyor
+# Conditions: Frequency = 4 lifts per minute, 2 hours; Coupling = Fair (handles present)
 
 LC <- 51  # Load constant (lb)
+H <- 15   # Horizontal distance, hands to ankles (in)
+V <- 10   # Vertical height at origin of lift (in)
+D <- 20   # Vertical travel distance (in)
+A <- 30   # Asymmetry angle (degrees)
+FM <- 0.72  # Frequency multiplier: 4 lifts/min, 1-2 hours, from NIOSH table
+CM <- 0.95  # Coupling multiplier: fair
+actual_weight <- 35  # Actual load weight (lb)
 
 # Calculate multipliers
-HM <- 10 / 15  # Horizontal multiplier
-VM <- 1 - 0.0075 * abs(10 - 30)  # Vertical multiplier
-DM <- 0.82 + (1.8 / 20)  # Distance multiplier
-AM <- 1 - 0.0032 * 30  # Asymmetric multiplier
-FM <- 0.72  # From NIOSH table: 4 lifts/min, 1-2 hours
-CM <- 0.95  # Fair coupling
+HM <- 10 / H  # 10 here is a fixed NIOSH constant, not our V
+VM <- 1 - 0.0075 * abs(V - 30)  # 30 = NIOSH's fixed optimal reference height (in)
+DM <- 0.82 + (1.8 / D)
+AM <- 1 - 0.0032 * A
 
-cat("Multiplier Values:\n")
-cat("  HM (Horizontal):", round(HM, 3), "\n")
-cat("  VM (Vertical):", round(VM, 3), "\n")
-cat("  DM (Distance):", round(DM, 3), "\n")
-cat("  AM (Asymmetry):", round(AM, 3), "\n")
-cat("  FM (Frequency):", FM, "\n")
-cat("  CM (Coupling):", CM, "\n")
-
-# Calculate RWL
+# Calculate RWL and Lifting Index
 RWL <- LC * HM * VM * DM * AM * FM * CM
-cat("\nRecommended Weight Limit (RWL):", round(RWL, 1), "lb\n")
-
-# Calculate Lifting Index
-actual_weight <- 35
 LI <- actual_weight / RWL
-cat("Lifting Index (LI):", round(LI, 2), "\n")
 
+cat(sprintf("Lifting Index: %.2f (RWL = %.1f lb)\n", LI, RWL))
+cat(sprintf("  HM (horizontal)   %.3f\n", HM))
+cat(sprintf("  VM (vertical)     %.3f\n", VM))
+cat(sprintf("  DM (distance)     %.3f\n", DM))
+cat(sprintf("  AM (asymmetry)    %.3f\n", AM))
 if (LI <= 1.0) {
-  cat("\nRisk Level: LOW - Task is acceptable\n")
+  cat("  Risk level        Low - task is acceptable\n")
 } else if (LI <= 3.0) {
-  cat("\nRisk Level: MODERATE - Consider engineering controls\n")
+  cat("  Risk level        Moderate - consider engineering controls\n")
 } else {
-  cat("\nRisk Level: HIGH - Immediate redesign required\n")
+  cat("  Risk level        High - immediate redesign required\n")
 }
 ```
+
+</details>
 
 <details>
 <summary>Discussion Question: Reducing the Lifting Index</summary>
