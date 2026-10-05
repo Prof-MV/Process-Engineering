@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Scan Time Calculation Example\ninput_scan_time <- 1.2    # ms\nprogram_execution <- 15.5  # ms (depends on program size)\noutput_update <- 1.0       # ms\nhousekeeping <- 2.3        # ms\n\ntotal_scan_time <- input_scan_time + program_execution + output_update + housekeeping\n\ncat(\"PLC Scan Time Calculation:\\n\")\ncat(\"─────────────────────────────\\n\")\ncat(\"Input Scan:       \", input_scan_time, \"ms\\n\")\ncat(\"Program Execution:\", program_execution, \"ms\\n\")\ncat(\"Output Update:    \", output_update, \"ms\\n\")\ncat(\"Housekeeping:     \", housekeeping, \"ms\\n\")\ncat(\"─────────────────────────────\\n\")\ncat(\"Total Scan Time:  \", total_scan_time, \"ms\\n\")\ncat(\"\\nScans per second: \", round(1000/total_scan_time, 0), \"\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"scan-time-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# VFD Speed and Torque Calculations\n\n# Motor nameplate data\nmotor_hp <- 10\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\nslip_rpm <- (120 * rated_frequency / poles) - rated_rpm\n\n# Synchronous speed at rated frequency\nsync_speed_60 <- 120 * rated_frequency / poles\ncat(\"Motor Data:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_rpm/sync_speed_60*100, 1), \"%)\\n\\n\")\n\n# Calculate speed at different frequencies\nfrequencies <- c(15, 30, 45, 60, 75)\nspeeds <- sapply(frequencies, function(f) {\n  sync <- 120 * f / poles\n  sync - slip_rpm  # Assuming constant slip (approximation)\n})\n\ncat(\"Speed vs Frequency (V/Hz mode):\\n\")\ncat(\"─────────────────────────────\\n\")\nfor(i in seq_along(frequencies)) {\n  cat(sprintf(\"%2d Hz: %4d RPM\\n\", frequencies[i], speeds[i]))\n}\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"\\nV/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\")\ncat(\"At 30Hz, voltage should be:\", 30 * vhz_ratio, \"V\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"vfd-calculations","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Motor parameters\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\n\n# Calculate synchronous speed and slip at rated conditions\nsync_speed_60 <- 120 * rated_frequency / poles\nslip_rpm <- sync_speed_60 - rated_rpm\nslip_percent <- (slip_rpm / sync_speed_60) * 100\n\ncat(\"Motor Analysis:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_percent, 1), \"%)\\n\\n\")\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"V/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\\n\")\n\n# Calculate at 30Hz\nfreq_30 <- 30\nsync_30 <- 120 * freq_30 / poles\nspeed_30 <- sync_30 - slip_rpm  # Assuming constant slip in RPM\nvoltage_30 <- freq_30 * vhz_ratio\n\ncat(\"At 30Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_30, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_30, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_30, \"V\\n\\n\")\n\n# Calculate at 45Hz\nfreq_45 <- 45\nsync_45 <- 120 * freq_45 / poles\nspeed_45 <- sync_45 - slip_rpm\nvoltage_45 <- freq_45 * vhz_ratio\n\ncat(\"At 45Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_45, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_45, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_45, \"V\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q4-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Scan Time Calculation Example\ninput_scan_time <- 1.2    # ms\nprogram_execution <- 15.5  # ms (depends on program size)\noutput_update <- 1.0       # ms\nhousekeeping <- 2.3        # ms\n\ntotal_scan_time <- input_scan_time + program_execution + output_update + housekeeping\n\ncat(sprintf(\"Total scan time: %.1f ms (%.0f scans/sec)\\n\", total_scan_time, 1000 / total_scan_time))\ncat(sprintf(\"  Input scan           %.1f ms\\n\", input_scan_time))\ncat(sprintf(\"  Program execution    %.1f ms\\n\", program_execution))\ncat(sprintf(\"  Output update        %.1f ms\\n\", output_update))\ncat(sprintf(\"  Housekeeping         %.1f ms\\n\", housekeeping))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"scan-time-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# VFD Speed and Torque Calculations\n\n# Motor nameplate data\npoles <- 4\nrated_voltage <- 460      # V\nrated_frequency <- 60     # Hz\nrated_rpm <- 1750\nselected_frequency <- 30  # Hz - frequency to check\n\nslip_rpm <- (120 * rated_frequency / poles) - rated_rpm\nsync_speed_rated <- 120 * rated_frequency / poles\nvhz_ratio <- rated_voltage / rated_frequency\n\nspeed_at <- function(f) (120 * f / poles) - slip_rpm  # assumes constant slip (approximation)\n\nfrequencies <- seq(5, 75, length.out = 150)\npar(mar = c(4, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)\nplot(frequencies, speed_at(frequencies), type = \"l\", lwd = 4, col = \"#2c3e50\",\n     xlab = \"Frequency (Hz)\", ylab = \"Motor speed (RPM)\",\n     main = \"Motor Speed vs. VFD Frequency\", las = 1)\nabline(v = selected_frequency, lty = 2, col = \"#bdc3c7\")\npoints(selected_frequency, speed_at(selected_frequency), pch = 19, cex = 2.2, col = \"#e74c3c\")\n\ncat(sprintf(\"At %d Hz: %.0f RPM (voltage should be %.0f V)\\n\",\n            selected_frequency, speed_at(selected_frequency), selected_frequency * vhz_ratio))\ncat(sprintf(\"  Synchronous speed @ rated Hz  %.0f RPM\\n\", sync_speed_rated))\ncat(sprintf(\"  Slip                          %.0f RPM (%.1f%%)\\n\", slip_rpm, slip_rpm / sync_speed_rated * 100))\ncat(sprintf(\"  V/Hz ratio                    %.2f V/Hz\\n\", vhz_ratio))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"vfd-calculations","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Motor parameters\npoles <- 4\nrated_voltage <- 460  # V\nrated_frequency <- 60  # Hz\nrated_rpm <- 1750\n\n# Calculate synchronous speed and slip at rated conditions\nsync_speed_60 <- 120 * rated_frequency / poles\nslip_rpm <- sync_speed_60 - rated_rpm\nslip_percent <- (slip_rpm / sync_speed_60) * 100\n\ncat(\"Motor Analysis:\\n\")\ncat(\"Synchronous speed at 60Hz:\", sync_speed_60, \"RPM\\n\")\ncat(\"Rated speed:\", rated_rpm, \"RPM\\n\")\ncat(\"Slip:\", slip_rpm, \"RPM (\", round(slip_percent, 1), \"%)\\n\\n\")\n\n# V/Hz ratio\nvhz_ratio <- rated_voltage / rated_frequency\ncat(\"V/Hz Ratio:\", round(vhz_ratio, 2), \"V/Hz\\n\\n\")\n\n# Calculate at 30Hz\nfreq_30 <- 30\nsync_30 <- 120 * freq_30 / poles\nspeed_30 <- sync_30 - slip_rpm  # Assuming constant slip in RPM\nvoltage_30 <- freq_30 * vhz_ratio\n\ncat(\"At 30Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_30, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_30, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_30, \"V\\n\\n\")\n\n# Calculate at 45Hz\nfreq_45 <- 45\nsync_45 <- 120 * freq_45 / poles\nspeed_45 <- sync_45 - slip_rpm\nvoltage_45 <- freq_45 * vhz_ratio\n\ncat(\"At 45Hz:\\n\")\ncat(\"  Synchronous speed:\", sync_45, \"RPM\\n\")\ncat(\"  Motor speed (approx):\", speed_45, \"RPM\\n\")\ncat(\"  VFD output voltage:\", voltage_45, \"V\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q4-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2519,9 +2519,54 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </div>
-<p>Live cell — try different scan time components.</p>
+<p>Try it — change the scan time components below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="scan-time-calc" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-microchip qwebr-calc-icon"></i>
+    <h4 class="anchored">PLC Scan Time Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-scan-time-calc-input-scan-time">Input scan</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-scan-time-calc-input-scan-time" data-var="input_scan_time" value="1.2" min="0.1" max="10" step="0.1">
+        <span class="qwebr-calc-suffix">ms</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-scan-time-calc-program-execution">Program execution <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-scan-time-calc-program-execution" id="qcalc-scan-time-calc-program-execution-readout">15.5</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-scan-time-calc-program-execution" data-var="program_execution" value="15.5" min="1" max="100" step="0.5">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-scan-time-calc-output-update">Output update</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-scan-time-calc-output-update" data-var="output_update" value="1" min="0.1" max="10" step="0.1">
+        <span class="qwebr-calc-suffix">ms</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-scan-time-calc-housekeeping">Housekeeping</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-scan-time-calc-housekeeping" data-var="housekeeping" value="2.3" min="0.1" max="10" step="0.1">
+        <span class="qwebr-calc-suffix">ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="plc-programming-languages-iec-61131-3" class="level3" data-number="16.4.4">
 <h3 data-number="16.4.4" class="anchored" data-anchor-id="plc-programming-languages-iec-61131-3"><span class="header-section-number">16.4.4</span> PLC Programming Languages (IEC 61131-3)</h3>
@@ -2790,9 +2835,61 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </div>
-<p>Live cell — try different frequencies or motor parameters.</p>
+<p>Try it — change the motor parameters or drag the frequency slider below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="vfd-calculations" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-bolt qwebr-calc-icon"></i>
+    <h4 class="anchored">VFD Speed Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-vfd-calculations-poles">Motor poles</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-vfd-calculations-poles" data-var="poles" value="4" min="2" max="8" step="2">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-vfd-calculations-rated-rpm">Rated speed</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-vfd-calculations-rated-rpm" data-var="rated_rpm" value="1750" min="500" max="3600" step="10">
+        <span class="qwebr-calc-suffix">RPM</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-vfd-calculations-rated-voltage">Rated voltage</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-vfd-calculations-rated-voltage" data-var="rated_voltage" value="460" min="200" max="600" step="10">
+        <span class="qwebr-calc-suffix">V</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-vfd-calculations-rated-frequency">Rated frequency</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-vfd-calculations-rated-frequency" data-var="rated_frequency" value="60" min="50" max="60" step="1">
+        <span class="qwebr-calc-suffix">Hz</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-vfd-calculations-selected-frequency">VFD frequency <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-vfd-calculations-selected-frequency" id="qcalc-vfd-calculations-selected-frequency-readout">30</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-vfd-calculations-selected-frequency" data-var="selected_frequency" value="30" min="5" max="75" step="1">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="vfd-benefits" class="level3" data-number="16.6.3">
 <h3 data-number="16.6.3" class="anchored" data-anchor-id="vfd-benefits"><span class="header-section-number">16.6.3</span> VFD Benefits</h3>

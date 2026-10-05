@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# OEE Calculation Example: Injection Molding Machine\n\ncat(\"=== SHIFT DATA ===\\n\")\n# Time data\nshift_length <- 480  # minutes (8 hours)\nplanned_downtime <- 30  # breaks, planned maintenance\nplanned_production_time <- shift_length - planned_downtime\ncat(\"Planned Production Time:\", planned_production_time, \"minutes\\n\")\n\n# Downtime losses\nbreakdown_time <- 25  # equipment failure\nchangeover_time <- 35  # mold changes\nadjustment_time <- 10  # setup adjustments\ntotal_downtime <- breakdown_time + changeover_time + adjustment_time\ncat(\"Unplanned Downtime:\", total_downtime, \"minutes\\n\")\n\nrun_time <- planned_production_time - total_downtime\ncat(\"Run Time:\", run_time, \"minutes\\n\\n\")\n\n# Production data\nideal_cycle_time <- 0.5  # minutes per part (design spec)\ntotal_parts <- 700  # parts produced\ngood_parts <- 665   # parts passing inspection\ndefects <- total_parts - good_parts\n\ncat(\"=== PRODUCTION DATA ===\\n\")\ncat(\"Total Parts Produced:\", total_parts, \"\\n\")\ncat(\"Good Parts:\", good_parts, \"\\n\")\ncat(\"Defects:\", defects, \"\\n\\n\")\n\n# Calculate OEE Components\ncat(\"=== OEE CALCULATION ===\\n\\n\")\n\n# Availability\navailability <- (run_time / planned_production_time) * 100\ncat(\"AVAILABILITY:\\n\")\ncat(\"  = Run Time / Planned Production Time\\n\")\ncat(\"  =\", run_time, \"/\", planned_production_time, \"\\n\")\ncat(\"  =\", round(availability, 1), \"%\\n\\n\")\n\n# Performance\n# Actual output vs. theoretical output during run time\ntheoretical_output <- run_time / ideal_cycle_time\nperformance <- (total_parts / theoretical_output) * 100\ncat(\"PERFORMANCE:\\n\")\ncat(\"  Theoretical Output =\", theoretical_output, \"parts\\n\")\ncat(\"  Actual Output =\", total_parts, \"parts\\n\")\ncat(\"  = Actual / Theoretical\\n\")\ncat(\"  =\", round(performance, 1), \"%\\n\\n\")\n\n# Quality\nquality <- (good_parts / total_parts) * 100\ncat(\"QUALITY:\\n\")\ncat(\"  = Good Parts / Total Parts\\n\")\ncat(\"  =\", good_parts, \"/\", total_parts, \"\\n\")\ncat(\"  =\", round(quality, 1), \"%\\n\\n\")\n\n# Overall OEE\noee <- (availability/100) * (performance/100) * (quality/100) * 100\ncat(\"=== OVERALL OEE ===\\n\")\ncat(\"OEE =\", round(availability, 1), \"% ×\", round(performance, 1), \"% ×\", round(quality, 1), \"%\\n\")\ncat(\"OEE =\", round(oee, 1), \"%\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"oee-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# OEE Calculation Example: Injection Molding Machine\n\n# Time data\nshift_length <- 480      # minutes (8 hours)\nplanned_downtime <- 30   # breaks, planned maintenance\nplanned_production_time <- shift_length - planned_downtime\n\n# Downtime losses (breakdowns, changeovers, adjustments combined)\ntotal_downtime <- 70     # minutes\nrun_time <- planned_production_time - total_downtime\n\n# Production data\nideal_cycle_time <- 0.5  # minutes per part (design spec)\ntotal_parts <- 700       # parts produced\ngood_parts <- 665        # parts passing inspection\n\n# Calculate OEE Components\navailability <- (run_time / planned_production_time) * 100\ntheoretical_output <- run_time / ideal_cycle_time\nperformance <- (total_parts / theoretical_output) * 100\nquality <- (good_parts / total_parts) * 100\n\n# Overall OEE\noee <- (availability / 100) * (performance / 100) * (quality / 100) * 100\n\ncat(sprintf(\"OEE: %.1f%%\\n\", oee))\ncat(sprintf(\"  Availability         %.1f%%\\n\", availability))\ncat(sprintf(\"  Performance          %.1f%%\\n\", performance))\ncat(sprintf(\"  Quality              %.1f%%\\n\", quality))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"oee-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2533,9 +2533,69 @@ Question: Why involve operators in maintenance?
 </section>
 <section id="oee-calculation-example" class="level3" data-number="14.4.3">
 <h3 data-number="14.4.3" class="anchored" data-anchor-id="oee-calculation-example"><span class="header-section-number">14.4.3</span> OEE Calculation Example</h3>
-<p>Live cell — try different downtime, production, or defect numbers.</p>
+<p>Try it — change the downtime, production, or defect numbers below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="oee-calculation" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-gauge-high qwebr-calc-icon"></i>
+    <h4 class="anchored">OEE Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-oee-calculation-shift-length">Shift length</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-oee-calculation-shift-length" data-var="shift_length" value="480" min="240" max="600" step="10">
+        <span class="qwebr-calc-suffix">min</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-oee-calculation-planned-downtime">Planned downtime</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-oee-calculation-planned-downtime" data-var="planned_downtime" value="30" min="0" max="120" step="5">
+        <span class="qwebr-calc-suffix">min</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-oee-calculation-total-downtime">Unplanned downtime</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-oee-calculation-total-downtime" data-var="total_downtime" value="70" min="0" max="150" step="5">
+        <span class="qwebr-calc-suffix">min</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-oee-calculation-ideal-cycle-time">Ideal cycle time</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-oee-calculation-ideal-cycle-time" data-var="ideal_cycle_time" value="0.5" min="0.1" max="5" step="0.1">
+        <span class="qwebr-calc-suffix">min/part</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-oee-calculation-total-parts">Parts produced <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-oee-calculation-total-parts" id="qcalc-oee-calculation-total-parts-readout">700</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-oee-calculation-total-parts" data-var="total_parts" value="700" min="50" max="2000" step="10">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-oee-calculation-good-parts">Good parts</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-oee-calculation-good-parts" data-var="good_parts" value="665" min="0" max="2000" step="10">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">

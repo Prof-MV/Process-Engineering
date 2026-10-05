@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Elastic-region data point, well below yield, to estimate modulus of elasticity\nD0 <- 12.83        # mm\nL0 <- 50.0         # mm\nP_elastic <- 15000  # N, a load safely in the straight-line region\ndL_elastic <- 0.018 # mm, measured elongation at that load (small!)\n\nA0 <- pi * (D0/2)^2\nstress_e <- P_elastic / A0\nstrain_e <- dL_elastic / L0\nE_modulus <- stress_e / strain_e\n\ncat(sprintf(\"Stress at this point  = %.1f MPa\\n\", stress_e))\ncat(sprintf(\"Strain at this point  = %.5f (%.3f%%)\\n\", strain_e, strain_e * 100))\ncat(sprintf(\"Estimated modulus E   = %.0f MPa = %.0f GPa\\n\", E_modulus, E_modulus / 1000))\ncat(\"Compare to typical steel: ~200 GPa. A result far off that value usually means\\n\")\ncat(\"the extensometer reading or load was taken outside the truly elastic region.\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-modulus-example-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"D0 <- 12.83\nL0 <- 50.0\nLf <- 50.9       # mm -- very little stretch\nDf <- 12.60      # mm -- very little necking\n\nA0 <- pi * (D0/2)^2\nAf <- pi * (Df/2)^2\npct_elong <- (Lf - L0) / L0 * 100\npct_ra <- (A0 - Af) / A0 * 100\n\ncat(sprintf(\"Percent elongation = %.1f%%\\n\", pct_elong))\ncat(sprintf(\"Percent reduction of area = %.1f%%\\n\", pct_ra))\ncat(\"Low values on both measures, with little visible necking, point to brittle\\n\")\ncat(\"behaviour -- e.g. an as-quenched, untempered specimen, or cast iron.\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-brittle-example-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_load <- 0.3       # kgf (300 gf), typical microhardness load\nd1 <- 58.0           # micrometers\nd2 <- 60.5           # micrometers\n\nd_mm <- ((d1 + d2) / 2) / 1000\nHV <- 1.8544 * F_load / d_mm^2\n\ncat(sprintf(\"Mean diagonal = %.4f mm\\n\", d_mm))\ncat(sprintf(\"Vickers hardness = %.0f HV\\n\", HV))\ncat(sprintf(\"Approximate equivalent UTS (steel only, HB~HV for this range): %.0f MPa\\n\", 3.45 * HV))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-vickers-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Simplified illustrative HV-to-approximate-HRC relationship (NOT for real reporting --\n# use the actual ASTM E140 table / chart supplied for your lab)\nHV_reading <- 620\n\napprox_HRC <- (HV_reading - 100) / 11.9   # rough linear fit, illustrative only\n\ncat(sprintf(\"Vickers reading: %.0f HV\\n\", HV_reading))\ncat(sprintf(\"Rough approximate Rockwell C equivalent: %.0f HRC\\n\", approx_HRC))\ncat(\"Effective case depth is read where the profile crosses HRC 50;\\n\")\ncat(\"true case depth is read where it crosses HRC 40 (see your lab template).\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-case-depth-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Elastic-region data point, well below yield, to estimate modulus of elasticity\nD0 <- 12.83        # mm\nL0 <- 50.0         # mm\nP_elastic <- 15000  # N, a load safely in the straight-line region\ndL_elastic <- 0.018 # mm, measured elongation at that load (small!)\n\nA0 <- pi * (D0/2)^2\nstress_e <- P_elastic / A0\nstrain_e <- dL_elastic / L0\nE_modulus <- stress_e / strain_e\n\ncat(sprintf(\"Estimated modulus E: %.0f GPa (compare to ~200 GPa for steel)\\n\", E_modulus / 1000))\ncat(sprintf(\"  Stress at this point     %.1f MPa\\n\", stress_e))\ncat(sprintf(\"  Strain at this point     %.5f (%.3f%%)\\n\", strain_e, strain_e * 100))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-modulus-example-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"D0 <- 12.83\nL0 <- 50.0\nLf <- 50.9       # mm -- very little stretch\nDf <- 12.60      # mm -- very little necking\n\nA0 <- pi * (D0/2)^2\nAf <- pi * (Df/2)^2\npct_elong <- (Lf - L0) / L0 * 100\npct_ra <- (A0 - Af) / A0 * 100\n\ncat(sprintf(\"Percent elongation: %.1f%% (%.1f%% reduction of area)\\n\", pct_elong, pct_ra))\ncat(\"Low values on both measures, with little visible necking, point to brittle\\n\")\ncat(\"behaviour -- e.g. an as-quenched, untempered specimen, or cast iron.\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-brittle-example-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"F_load <- 0.3       # kgf (300 gf), typical microhardness load\nd1 <- 58.0           # micrometers\nd2 <- 60.5           # micrometers\n\nd_mm <- ((d1 + d2) / 2) / 1000\nHV <- 1.8544 * F_load / d_mm^2\n\ncat(sprintf(\"Vickers hardness: %.0f HV (mean diagonal %.4f mm)\\n\", HV, d_mm))\ncat(sprintf(\"  Approx. equivalent UTS   %.0f MPa\\n\", 3.45 * HV))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-vickers-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Simplified illustrative HV-to-approximate-HRC relationship (NOT for real reporting --\n# use the actual ASTM E140 table / chart supplied for your lab)\nHV_reading <- 620\n\napprox_HRC <- (HV_reading - 100) / 11.9   # rough linear fit, illustrative only\n\ncat(sprintf(\"Rough approximate Rockwell C equivalent: %.0f HRC\\n\", approx_HRC))\ncat(\"Effective case depth is read where the profile crosses HRC 50;\\n\")\ncat(\"true case depth is read where it crosses HRC 40 (see your lab template).\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"testing-case-depth-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2378,12 +2378,102 @@ Percent elongation  = 23.6%
 Percent reduction of area = 46.3%</code></pre>
 </div>
 </div>
-<p>Live cell — try changing the loads and final dimensions to see how yield strength, UTS, %EL, and %RA respond. A brittle specimen would show a much smaller <code>Lf - L0</code> and <code>D0 - Df</code>.</p>
+<p>Try it — change the load and elongation below. A brittle specimen would show a much smaller <code>Lf - L0</code> and <code>D0 - Df</code>.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="testing-modulus-example-live" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-ruler-horizontal qwebr-calc-icon"></i>
+    <h4 class="anchored">Modulus of Elasticity Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-modulus-example-live-D0">Original diameter</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-modulus-example-live-D0" data-var="D0" value="12.83" min="5" max="25" step="0.01">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-modulus-example-live-L0">Gauge length</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-modulus-example-live-L0" data-var="L0" value="50" min="10" max="100" step="1">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-testing-modulus-example-live-P-elastic">Elastic-region load <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-testing-modulus-example-live-P-elastic" id="qcalc-testing-modulus-example-live-P-elastic-readout">15 000</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-testing-modulus-example-live-P-elastic" data-var="P_elastic" value="15000" min="1000" max="50000" step="500">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-modulus-example-live-dL-elastic">Measured elongation</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-modulus-example-live-dL-elastic" data-var="dL_elastic" value="0.018" min="0.001" max="0.1" step="0.001">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Live cell — this specimen breaks well before it necks noticeably. Try small <code>Lf</code> and <code>Df</code> changes and see how brittle behaviour (low %EL, low %RA) looks compared to the ductile example above.</p>
+</details>
+<p>Try it — this specimen breaks well before it necks noticeably. Try small <code>Lf</code> and <code>Df</code> changes and see how brittle behaviour (low %EL, low %RA) looks compared to the ductile example above.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="testing-brittle-example-live" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-ruler-horizontal qwebr-calc-icon"></i>
+    <h4 class="anchored">Ductility Calculator (Brittle Specimen)</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-brittle-example-live-D0">Original diameter</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-brittle-example-live-D0" data-var="D0" value="12.83" min="5" max="25" step="0.01">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-brittle-example-live-L0">Original length</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-brittle-example-live-L0" data-var="L0" value="50" min="10" max="100" step="1">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-testing-brittle-example-live-Lf">Final length <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-testing-brittle-example-live-Lf" id="qcalc-testing-brittle-example-live-Lf-readout">50.9</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-testing-brittle-example-live-Lf" data-var="Lf" value="50.9" min="10" max="110" step="0.1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-brittle-example-live-Df">Final diameter</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-brittle-example-live-Df" data-var="Df" value="12.6" min="5" max="25" step="0.01">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <div class="callout callout-style-default callout-tip callout-titled" title="Quick check">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2539,12 +2629,70 @@ Worked example: Vickers hardness calculation (static)
 <p><span class="math display">\[HV = \frac{1.8544 \times 0.5}{0.0631^2} = \frac{0.9272}{0.00398} \approx 233 \text{ HV}\]</span></p>
 For a case-hardened specimen, you’d repeat this calculation at each depth of your traverse and plot HV against distance from the surface — exactly the profile you build in the tensile/microhardness lab.
 </details>
-<p>Live cell — try different diagonal measurements and loads. Notice how the <em>same</em> diagonal size at a higher load gives a lower HV, and vice versa — this is why comparing hardness numbers taken at different loads without converting first is a common source of confusion.</p>
+<p>Try it — change the diagonal measurements and load below. Notice how the <em>same</em> diagonal size at a higher load gives a lower HV, and vice versa — this is why comparing hardness numbers taken at different loads without converting first is a common source of confusion.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="testing-vickers-live" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-gem qwebr-calc-icon"></i>
+    <h4 class="anchored">Vickers Hardness Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-vickers-live-F-load">Load</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-vickers-live-F-load" data-var="F_load" value="0.3" min="0.01" max="5" step="0.01">
+        <span class="qwebr-calc-suffix">kgf</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-testing-vickers-live-d1">Diagonal 1</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-testing-vickers-live-d1" data-var="d1" value="58" min="10" max="300" step="0.5">
+        <span class="qwebr-calc-suffix">µm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-testing-vickers-live-d2">Diagonal 2 <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-testing-vickers-live-d2" id="qcalc-testing-vickers-live-d2-readout">60.5</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-testing-vickers-live-d2" data-var="d2" value="60.5" min="10" max="300" step="0.5">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p>Live cell — convert a case-hardened part’s Vickers profile toward the Rockwell C scale used to define case depth. (Real conversion requires the ASTM E140 table; this is a simplified linear approximation for illustration only — never use it for a real report.)</p>
+</details>
+<p>Try it — convert a case-hardened part’s Vickers profile toward the Rockwell C scale used to define case depth. (Real conversion requires the ASTM E140 table; this is a simplified linear approximation for illustration only — never use it for a real report.)</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="testing-case-depth-live" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-layer-group qwebr-calc-icon"></i>
+    <h4 class="anchored">HV-to-HRC Estimate Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-testing-case-depth-live-HV-reading">Vickers reading <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-testing-case-depth-live-HV-reading" id="qcalc-testing-case-depth-live-HV-reading-readout">620</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-testing-case-depth-live-HV-reading" data-var="HV_reading" value="620" min="150" max="900" step="5">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <hr>
 </section>
 </section>

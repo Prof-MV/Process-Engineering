@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Example RPN Calculations\n\n# Failure Mode 1: Short shot\nS1 <- 7    # Severity: Product inoperable (assembly)\nO1 <- 5    # Occurrence: Occasional\nD1 <- 6    # Detection: Moderate (visual inspection)\n\nRPN1 <- S1 * O1 * D1\ncat(\"Short shot RPN:\", RPN1, \"\\n\")\n\n# Failure Mode 2: Flash\nS2 <- 4    # Severity: Appearance issue\nO2 <- 6    # Occurrence: Regular\nD2 <- 3    # Detection: High (easy to see)\n\nRPN2 <- S2 * O2 * D2\ncat(\"Flash RPN:\", RPN2, \"\\n\")\n\n# Failure Mode 3: Contamination\nS3 <- 9    # Severity: Safety concern (medical device)\nO3 <- 3    # Occurrence: Low\nD3 <- 7    # Detection: Low (internal contamination)\n\nRPN3 <- S3 * O3 * D3\ncat(\"Contamination RPN:\", RPN3, \"\\n\")\n\n# Comparison\ncat(\"\\n--- Priority Order by RPN ---\\n\")\ncat(\"1. Short shot (RPN =\", RPN1, \")\\n\")\ncat(\"2. Contamination (RPN =\", RPN3, \")\\n\")\ncat(\"3. Flash (RPN =\", RPN2, \")\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Improvement Analysis for Short Shot (Highest RPN = 210)\n\ncat(\"=== CURRENT STATE ===\\n\")\nS_current <- 7  # Severity (cannot change - inherent to failure)\nO_current <- 5  # Occurrence\nD_current <- 6  # Detection\nRPN_current <- S_current * O_current * D_current\ncat(\"Current RPN:\", RPN_current, \"(S=7, O=5, D=6)\\n\\n\")\n\ncat(\"=== IMPROVEMENT OPTIONS ===\\n\\n\")\n\n# Option 1: Improve Detection\ncat(\"Option 1: Add automatic shot weight monitoring\\n\")\nD_option1 <- 2  # Automated detection\nRPN_option1 <- S_current * O_current * D_option1\ncat(\"New RPN:\", RPN_option1, \"(S=7, O=5, D=2)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option1/RPN_current)*100), \"%\\n\\n\")\n\n# Option 2: Improve Occurrence (Prevention)\ncat(\"Option 2: Add screw position monitoring with feedback control\\n\")\nO_option2 <- 2  # Much lower occurrence\nRPN_option2 <- S_current * O_option2 * D_current\ncat(\"New RPN:\", RPN_option2, \"(S=7, O=2, D=6)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option2/RPN_current)*100), \"%\\n\\n\")\n\n# Option 3: Both improvements\ncat(\"Option 3: Both improvements combined\\n\")\nRPN_option3 <- S_current * O_option2 * D_option1\ncat(\"New RPN:\", RPN_option3, \"(S=7, O=2, D=2)\\n\")\ncat(\"Reduction:\", round((1 - RPN_option3/RPN_current)*100), \"%\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Before improvements\nS_before <- 9\nO_before <- 4\nD_before <- 5\nRPN_before <- S_before * O_before * D_before\ncat(\"Before RPN:\", RPN_before, \"\\n\")\n\n# After improvements\nS_after <- 9    # Severity unchanged (inherent)\nO_after <- 2    # Reduced through fixture improvements\nD_after <- 2    # Reduced through 100% gauging\nRPN_after <- S_after * O_after * D_after\ncat(\"After RPN:\", RPN_after, \"\\n\")\ncat(\"Reduction:\", round((1 - RPN_after/RPN_before)*100), \"%\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"case-study-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Example RPN Calculations\n\n# Failure Mode 1: Short shot\nS1 <- 7    # Severity: Product inoperable (assembly)\nO1 <- 5    # Occurrence: Occasional\nD1 <- 6    # Detection: Moderate (visual inspection)\n\nRPN1 <- S1 * O1 * D1\ncat(\"Short shot RPN:\", RPN1, \"\\n\")\n\n# Failure Mode 2: Flash\nS2 <- 4    # Severity: Appearance issue\nO2 <- 6    # Occurrence: Regular\nD2 <- 3    # Detection: High (easy to see)\n\nRPN2 <- S2 * O2 * D2\ncat(\"Flash RPN:\", RPN2, \"\\n\")\n\n# Failure Mode 3: Contamination\nS3 <- 9    # Severity: Safety concern (medical device)\nO3 <- 3    # Occurrence: Low\nD3 <- 7    # Detection: Low (internal contamination)\n\nRPN3 <- S3 * O3 * D3\ncat(\"Contamination RPN:\", RPN3, \"\\n\")\n\n# Comparison\ncat(\"\\n--- Priority Order by RPN ---\\n\")\ncat(\"1. Short shot (RPN =\", RPN1, \")\\n\")\ncat(\"2. Contamination (RPN =\", RPN3, \")\\n\")\ncat(\"3. Flash (RPN =\", RPN2, \")\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Improvement Analysis for Short Shot (Highest RPN = 210)\n\nS_current <- 7  # Severity (cannot change - inherent to failure)\nO_current <- 5  # Occurrence\nD_current <- 6  # Detection\nRPN_current <- S_current * O_current * D_current\n\n# Option 1: Add automatic shot weight monitoring (improves Detection)\nD_option1 <- 2\nRPN_option1 <- S_current * O_current * D_option1\n\n# Option 2: Add screw position monitoring with feedback control (improves Occurrence)\nO_option2 <- 2\nRPN_option2 <- S_current * O_option2 * D_current\n\n# Option 3: Both improvements combined\nRPN_option3 <- S_current * O_option2 * D_option1\n\ncat(sprintf(\"Best option cuts RPN by %.0f%% (%d -> %d)\\n\",\n            (1 - RPN_option3 / RPN_current) * 100, RPN_current, RPN_option3))\ncat(sprintf(\"  Option 1: Detection only   RPN=%d (-%.0f%%)\\n\", RPN_option1, (1 - RPN_option1 / RPN_current) * 100))\ncat(sprintf(\"  Option 2: Occurrence only  RPN=%d (-%.0f%%)\\n\", RPN_option2, (1 - RPN_option2 / RPN_current) * 100))\ncat(sprintf(\"  Option 3: Both combined    RPN=%d (-%.0f%%)\\n\", RPN_option3, (1 - RPN_option3 / RPN_current) * 100))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"rpn-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Before improvements\nS_before <- 9\nO_before <- 4\nD_before <- 5\nRPN_before <- S_before * O_before * D_before\n\n# After improvements\nS_after <- 9    # Severity unchanged (inherent)\nO_after <- 2    # Reduced through fixture improvements\nD_after <- 2    # Reduced through 100% gauging\nRPN_after <- S_after * O_after * D_after\n\ncat(sprintf(\"RPN reduced by %.0f%% (%d -> %d)\\n\", (1 - RPN_after / RPN_before) * 100, RPN_before, RPN_after))\ncat(sprintf(\"  Before RPN           %d\\n\", RPN_before))\ncat(sprintf(\"  After RPN            %d\\n\", RPN_after))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"case-study-improvement","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -3445,9 +3445,58 @@ Interactive Exercise: Calculate RPN
 </div>
 </div>
 </div>
-<p>Live cell — try different S/O/D ratings for each improvement option.</p>
+<p>Try it — change the baseline or improved S/O/D ratings below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="rpn-improvement" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-arrow-trend-down qwebr-calc-icon"></i>
+    <h4 class="anchored">RPN Improvement Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-rpn-improvement-S-current">Severity (fixed)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-rpn-improvement-S-current" data-var="S_current" value="7" min="1" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-rpn-improvement-O-current">Current occurrence</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-rpn-improvement-O-current" data-var="O_current" value="5" min="1" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-rpn-improvement-D-current">Current detection <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-rpn-improvement-D-current" id="qcalc-rpn-improvement-D-current-readout">6</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-rpn-improvement-D-current" data-var="D_current" value="6" min="1" max="10" step="1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-rpn-improvement-D-option1">Improved detection</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-rpn-improvement-D-option1" data-var="D_option1" value="2" min="1" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-rpn-improvement-O-option2">Improved occurrence</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-rpn-improvement-O-option2" data-var="O_option2" value="2" min="1" max="10" step="1">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -4002,9 +4051,58 @@ Interactive Exercise: Create a PFMEA
 <li><strong>Fixture monitoring:</strong> Temperature compensation and wear tracking (O: 4 → 2)</li>
 <li><strong>Enhanced fixture design:</strong> Carbide wear surfaces (O: 4 → 2)</li>
 </ol>
-<p>Live cell — try different before/after ratings.</p>
+<p>Try it — change the before/after ratings below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="case-study-improvement" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-arrow-trend-down qwebr-calc-icon"></i>
+    <h4 class="anchored">Before/After RPN Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-case-study-improvement-S-before">Severity (fixed)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-case-study-improvement-S-before" data-var="S_before" value="9" min="1" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-case-study-improvement-O-before">Occurrence (before)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-case-study-improvement-O-before" data-var="O_before" value="4" min="1" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-case-study-improvement-D-before">Detection (before)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-case-study-improvement-D-before" data-var="D_before" value="5" min="1" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-case-study-improvement-O-after">Occurrence (after) <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-case-study-improvement-O-after" id="qcalc-case-study-improvement-O-after-readout">2</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-case-study-improvement-O-after" data-var="O_after" value="2" min="1" max="10" step="1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-case-study-improvement-D-after">Detection (after)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-case-study-improvement-D-after" data-var="D_after" value="2" min="1" max="10" step="1">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="results" class="level3" data-number="18.9.4">
 <h3 data-number="18.9.4" class="anchored" data-anchor-id="results"><span class="header-section-number">18.9.4</span> Results</h3>

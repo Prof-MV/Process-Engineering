@@ -377,7 +377,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"C_alloy <- 0.20       # try 0.15-0.20 for 1018, up to 0.76 for eutectoid steel\nC_ferrite <- 0.02\nC_eutectoid <- 0.76\n\nfrac_pearlite <- (C_alloy - C_ferrite) / (C_eutectoid - C_ferrite)\nfrac_ferrite <- 1 - frac_pearlite\n\ncat(sprintf(\"Alloy: %.2f%% C\\n\", C_alloy))\ncat(sprintf(\"Estimated pearlite fraction:  %.1f%%\\n\", frac_pearlite * 100))\ncat(sprintf(\"Estimated proeutectoid ferrite fraction: %.1f%%\\n\", frac_ferrite * 100))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"metallurgy-lever-rule-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"C_alloy <- 0.20       # try 0.15-0.20 for 1018, up to 0.76 for eutectoid steel\nC_ferrite <- 0.02\nC_eutectoid <- 0.76\n\nfrac_pearlite <- (C_alloy - C_ferrite) / (C_eutectoid - C_ferrite)\nfrac_ferrite <- 1 - frac_pearlite\n\ncat(sprintf(\"Pearlite fraction: %.1f%% (alloy = %.2f%% C)\\n\", frac_pearlite * 100, C_alloy))\ncat(sprintf(\"  Proeutectoid ferrite fraction    %.1f%%\\n\", frac_ferrite * 100))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"metallurgy-lever-rule-live","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2653,9 +2653,46 @@ Worked example: reading the lever rule (static)
 <p><span class="math display">\[\text{Fraction proeutectoid ferrite} = 1 - 0.58 = 0.42\]</span></p>
 So a slowly-cooled 1045 specimen should be roughly <strong>58% pearlite and 42% proeutectoid ferrite</strong> by area — a number you can sanity-check directly against your own micrograph in the lab (this is the basic idea behind the <strong>ASM grain-size / phase-fraction estimation</strong> you’ll practice in <a href="18-Materials-Testing.html#sec-testing-metallography" class="quarto-xref"><span>Section 20.5</span></a>, Part B).
 </details>
-<p>Live cell — try a different carbon content. Change <code>C_alloy</code> and re-run to see how the pearlite fraction shifts (try 0.20 for a low-carbon steel like 1018, or 0.60 for a higher-carbon steel).</p>
+<p>Try it — drag the carbon content slider to see how the pearlite fraction shifts (try 0.20 for a low-carbon steel like 1018, or 0.60 for a higher-carbon steel).</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="metallurgy-lever-rule-live" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-scale-balanced qwebr-calc-icon"></i>
+    <h4 class="anchored">Lever Rule Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-metallurgy-lever-rule-live-C-ferrite">Ferrite solvus (C)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-metallurgy-lever-rule-live-C-ferrite" data-var="C_ferrite" value="0.02" min="0" max="0.1" step="0.01">
+        <span class="qwebr-calc-suffix">% C</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-metallurgy-lever-rule-live-C-eutectoid">Eutectoid composition</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-metallurgy-lever-rule-live-C-eutectoid" data-var="C_eutectoid" value="0.76" min="0.6" max="0.9" step="0.01">
+        <span class="qwebr-calc-suffix">% C</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-metallurgy-lever-rule-live-C-alloy">Alloy carbon content <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-metallurgy-lever-rule-live-C-alloy" id="qcalc-metallurgy-lever-rule-live-C-alloy-readout">0.2</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-metallurgy-lever-rule-live-C-alloy" data-var="C_alloy" value="0.2" min="0.05" max="0.76" step="0.01">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="sec-metallurgy-steel-numbers" class="level3" data-number="19.5.5">
 <h3 data-number="19.5.5" class="anchored" data-anchor-id="sec-metallurgy-steel-numbers"><span class="header-section-number">19.5.5</span> Reading Carbon Content from the Steel Numbering System</h3>

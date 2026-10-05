@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Given parameters\nK <- 2000        # Approach speed (mm/s) - fast hand approach\nT_device <- 0.020  # Light curtain response time (20 ms = 0.020 s)\nT_machine <- 0.150 # Machine stopping time (150 ms = 0.150 s)\nC <- 0           # Penetration depth for 14mm resolution\n\n# Calculate total stopping time\nT_total <- T_device + T_machine\ncat(\"Total stopping time (T):\", T_total * 1000, \"ms\\n\")\n\n# Calculate minimum safety distance\nS <- (K * T_total) + C\ncat(\"Minimum safety distance (S):\", S, \"mm\\n\")\ncat(\"Minimum safety distance (S):\", S / 25.4, \"inches\\n\")\n\n# Interpretation\ncat(\"\\n--- Interpretation ---\\n\")\ncat(\"The light curtain must be at least\", S, \"mm from the hazard.\\n\")\ncat(\"This ensures the machine stops before a person can reach the danger zone.\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"safety-calc-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Given parameters\nK <- 2000          # Approach speed (mm/s) - fast hand approach\nT_device <- 0.020  # Light curtain response time (20 ms = 0.020 s)\nT_machine <- 0.150 # Machine stopping time (150 ms = 0.150 s)\nC <- 0             # Penetration depth for 14mm resolution\n\n# Calculate total stopping time\nT_total <- T_device + T_machine\n\n# Calculate minimum safety distance\nS <- (K * T_total) + C\n\ncat(sprintf(\"Minimum safety distance: %.0f mm (%.1f in)\\n\", S, S / 25.4))\ncat(sprintf(\"  Total stopping time  %.0f ms\\n\", T_total * 1000))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"safety-calc-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2942,9 +2942,54 @@ Discussion: Are Cobots Always Safe?
 </section>
 <section id="example-calculation" class="level3" data-number="9.7.4">
 <h3 data-number="9.7.4" class="anchored" data-anchor-id="example-calculation"><span class="header-section-number">9.7.4</span> Example Calculation</h3>
-<p>Live cell — try different approach speed, response time, or resolution values.</p>
+<p>Try it — change the approach speed, response time, or resolution below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="safety-calc-example" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-shield-halved qwebr-calc-icon"></i>
+    <h4 class="anchored">Minimum Safety Distance Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-safety-calc-example-K">Approach speed</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-safety-calc-example-K" data-var="K" value="2000" min="500" max="4000" step="100">
+        <span class="qwebr-calc-suffix">mm/s</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-safety-calc-example-T-device">Device response time</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-safety-calc-example-T-device" data-var="T_device" value="0.02" min="0.005" max="0.2" step="0.005">
+        <span class="qwebr-calc-suffix">sec</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-safety-calc-example-T-machine">Machine stopping time <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-safety-calc-example-T-machine" id="qcalc-safety-calc-example-T-machine-readout">0.15</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-safety-calc-example-T-machine" data-var="T_machine" value="0.15" min="0.02" max="0.5" step="0.01">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-safety-calc-example-C">Penetration depth</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-safety-calc-example-C" data-var="C" value="0" min="0" max="40" step="1">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <details>
 <summary>
 Practice Problem: Calculate Safety Distance

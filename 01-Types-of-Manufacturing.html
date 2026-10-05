@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Injection Molding Cost Analysis Example\n# Comparing costs at different production volumes\n\nmold_cost <- 50000  # Typical mold cost in dollars\nmaterial_cost_per_kg <- 2.50  # ABS plastic\npart_weight_kg <- 0.1\ncycle_time_sec <- 30\nmachine_rate_per_hour <- 75  # Machine + operator cost\n\n# Calculate cost per part at different volumes\nvolumes <- c(1000, 10000, 50000, 100000, 500000)\n\ncost_analysis <- data.frame(\n  Volume = volumes,\n  Mold_Per_Part = mold_cost / volumes,\n  Material = part_weight_kg * material_cost_per_kg,\n  Processing = (cycle_time_sec / 3600) * machine_rate_per_hour\n)\n\ncost_analysis$Total_Per_Part <- cost_analysis$Mold_Per_Part +\n                                 cost_analysis$Material +\n                                 cost_analysis$Processing\n\ncat(\"Injection Molding Cost Breakdown:\\n\")\ncat(\"================================\\n\")\nfor(i in 1:nrow(cost_analysis)) {\n  cat(sprintf(\"At %s parts: $%.2f per part (Tooling: $%.2f, Material: $%.2f, Processing: $%.2f)\\n\",\n              format(cost_analysis$Volume[i], big.mark = \" \", scientific = FALSE),\n              cost_analysis$Total_Per_Part[i],\n              cost_analysis$Mold_Per_Part[i],\n              cost_analysis$Material[i],\n              cost_analysis$Processing[i]))\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"injection-molding-cost","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Injection Molding Cost Analysis Example\n# Cost per part = tooling cost spread over the run + material + processing time\n\nmold_cost <- 50000             # Steel mold (tooling), one-time cost\nmaterial_cost_per_kg <- 2.50   # ABS plastic, $ per kg\npart_weight_kg <- 0.10         # Mass of one part\ncycle_time_sec <- 30           # Time to mold one part\nmachine_rate_per_hour <- 75    # Machine + operator, $ per hour\nselected_volume <- 50000       # Parts to produce this run\n\ncost_per_part <- function(volume) {\n  tooling    <- mold_cost / volume\n  material   <- part_weight_kg * material_cost_per_kg\n  processing <- (cycle_time_sec / 3600) * machine_rate_per_hour\n  tooling + material + processing\n}\n\nvolumes <- seq(500, 500000, length.out = 200)\n\npar(mar = c(4, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)\nplot(volumes, cost_per_part(volumes), type = \"l\", log = \"x\", lwd = 4, col = \"#2c3e50\",\n     xlab = \"Production volume (parts, log scale)\", ylab = \"Cost per part ($)\",\n     main = \"Cost per Part vs. Production Volume\", las = 1, xaxt = \"n\")\naxis(1, at = c(500, 5000, 50000, 500000),\n     labels = c(\"500\", \"5,000\", \"50,000\", \"500,000\"))\nabline(v = selected_volume, lty = 2, col = \"#bdc3c7\")\npoints(selected_volume, cost_per_part(selected_volume), pch = 19, cex = 2.2, col = \"#e74c3c\")\n\ncat(sprintf(\"Cost per part at %s parts: $%.2f\\n\",\n            format(selected_volume, big.mark = \" \", scientific = FALSE),\n            cost_per_part(selected_volume)))\ncat(sprintf(\"  Tooling      $%.2f\\n\", mold_cost / selected_volume))\ncat(sprintf(\"  Material     $%.2f\\n\", part_weight_kg * material_cost_per_kg))\ncat(sprintf(\"  Processing   $%.2f\\n\", (cycle_time_sec / 3600) * machine_rate_per_hour))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"injection-molding-cost","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2489,9 +2489,73 @@ Why do aerospace companies pay premium prices for investment casting?
 </ol>
 <p><strong>Cycle times:</strong> 10-60 seconds typical, as fast as 2 seconds for small parts</p>
 <p><strong>Examples:</strong> Automotive dashboards, phone cases, medical devices, food containers, toys</p>
-<p>Live cell — try different volumes, mold cost, or cycle time.</p>
+<p>Try it — drag the volume slider or change any input below and the chart and cost breakdown update immediately.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="injection-molding-cost" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-gears qwebr-calc-icon"></i>
+    <h4 class="anchored">Injection Molding Cost Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-injection-molding-cost-mold-cost">Mold (tooling) cost</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-injection-molding-cost-mold-cost" data-var="mold_cost" value="50000" min="5000" max="3e+05" step="1000">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-injection-molding-cost-material-cost-per-kg">Material cost</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-injection-molding-cost-material-cost-per-kg" data-var="material_cost_per_kg" value="2.5" min="0.1" max="20" step="0.1">
+        <span class="qwebr-calc-suffix">/ kg</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-injection-molding-cost-part-weight-kg">Part weight</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-injection-molding-cost-part-weight-kg" data-var="part_weight_kg" value="0.1" min="0.01" max="5" step="0.01">
+        <span class="qwebr-calc-suffix">kg</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-injection-molding-cost-cycle-time-sec">Cycle time</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-injection-molding-cost-cycle-time-sec" data-var="cycle_time_sec" value="30" min="2" max="180" step="1">
+        <span class="qwebr-calc-suffix">sec</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-injection-molding-cost-machine-rate-per-hour">Machine + operator rate</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-injection-molding-cost-machine-rate-per-hour" data-var="machine_rate_per_hour" value="75" min="10" max="300" step="5">
+        <span class="qwebr-calc-suffix">/ hr</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-injection-molding-cost-selected-volume">Production volume <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-injection-molding-cost-selected-volume" id="qcalc-injection-molding-cost-selected-volume-readout">50 000</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-injection-molding-cost-selected-volume" data-var="selected_volume" value="50000" min="500" max="5e+05" step="500">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
+<p>The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press <strong>Run Code</strong> to experiment further.</p>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <details>
 <summary>
 Discussion: When does injection molding become cost-effective vs.&nbsp;3D printing?

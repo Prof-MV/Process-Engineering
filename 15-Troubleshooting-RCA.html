@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Example: Calculate top event probability\n# Basic event probabilities (annual failure rates)\nP_breaker_trip <- 0.02\nP_motor_fail <- 0.01\nP_impeller_worn <- 0.03\nP_impeller_break <- 0.005\nP_shaft_seize <- 0.008\nP_tank_empty <- 0.05\nP_valve_closed <- 0.01\nP_line_blocked <- 0.02\n\n# Impeller failure (OR gate)\nP_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)\ncat(\"P(Impeller failure):\", round(P_impeller_fail, 4), \"\\n\")\n\n# Mechanical failure (OR gate)\nP_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)\ncat(\"P(Mechanical failure):\", round(P_mechanical, 4), \"\\n\")\n\n# No fluid available (OR gate)\nP_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)\ncat(\"P(No fluid available):\", round(P_no_fluid, 4), \"\\n\")\n\n# Top event: Pump fails (OR gate)\nP_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)\ncat(\"P(Pump fails to deliver flow):\", round(P_top, 4), \"\\n\")\ncat(\"This represents a\", round(P_top * 100, 1), \"% annual probability of failure\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"fta-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Pareto analysis interpretation\ndefects <- data.frame(\n  Defect = c(\"Surface Scratch\", \"Dimensional Error\", \"Burrs\",\n             \"Missing Feature\", \"Wrong Material\", \"Contamination\",\n             \"Color Mismatch\", \"Packaging Damage\"),\n  Count = c(145, 98, 67, 34, 28, 21, 15, 12)\n)\n\ndefects <- defects[order(-defects$Count),]\ndefects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100\n\n# Identify the \"vital few\" (those that contribute to 80%)\nvital_few <- defects[defects$Cumulative_Pct <= 80 |\n                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]\n\ncat(\"Total defects:\", sum(defects$Count), \"\\n\")\ncat(\"\\nVital Few (contributing to ~80% of defects):\\n\")\nprint(vital_few[, c(\"Defect\", \"Count\", \"Cumulative_Pct\")])\ncat(\"\\nFocusing on these\", nrow(vital_few), \"defect types addresses\",\n    round(max(vital_few$Cumulative_Pct), 1), \"% of all defects\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-interpretation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Create and analyze the data\ndefects <- data.frame(\n  Type = c(\"Burrs\", \"Dimensional\", \"Scratches\", \"Surface Dents\",\n           \"Wrinkles\", \"Splits/Cracks\", \"Missing Features\"),\n  Count = c(156, 112, 89, 67, 45, 28, 18)\n)\n\n# Sort by count descending\ndefects <- defects[order(-defects$Count),]\n\n# Calculate percentages\ndefects$Percent <- defects$Count / sum(defects$Count) * 100\ndefects$Cumulative <- cumsum(defects$Percent)\n\n# Display results\nprint(defects)\n\n# Identify vital few\nvital_few <- defects$Type[defects$Cumulative <= 80 |\n                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]\ncat(\"\\nVital Few (contributing to ~80%):\", paste(vital_few, collapse = \", \"))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-practice","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Example: Calculate top event probability\n# Basic event probabilities (annual failure rates)\nP_breaker_trip <- 0.02\nP_motor_fail <- 0.01\nP_impeller_worn <- 0.03\nP_impeller_break <- 0.005\nP_shaft_seize <- 0.008\nP_tank_empty <- 0.05\nP_valve_closed <- 0.01\nP_line_blocked <- 0.02\n\n# Impeller failure (OR gate)\nP_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)\n\n# Mechanical failure (OR gate)\nP_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)\n\n# No fluid available (OR gate)\nP_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)\n\n# Top event: Pump fails (OR gate)\nP_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)\n\ncat(sprintf(\"P(pump fails to deliver flow): %.1f%% per year\\n\", P_top * 100))\ncat(sprintf(\"  P(impeller failure)      %.4f\\n\", P_impeller_fail))\ncat(sprintf(\"  P(mechanical failure)    %.4f\\n\", P_mechanical))\ncat(sprintf(\"  P(no fluid available)    %.4f\\n\", P_no_fluid))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"fta-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Pareto analysis interpretation\ndefects <- data.frame(\n  Defect = c(\"Surface Scratch\", \"Dimensional Error\", \"Burrs\",\n             \"Missing Feature\", \"Wrong Material\", \"Contamination\",\n             \"Color Mismatch\", \"Packaging Damage\"),\n  Count = c(145, 98, 67, 34, 28, 21, 15, 12)\n)\n\ndefects <- defects[order(-defects$Count),]\ndefects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100\n\n# Identify the \"vital few\" (those that contribute to 80%)\nvital_few <- defects[defects$Cumulative_Pct <= 80 |\n                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]\n\ncat(\"Total defects:\", sum(defects$Count), \"\\n\")\ncat(\"\\nVital Few (contributing to ~80% of defects):\\n\")\nprint(vital_few[, c(\"Defect\", \"Count\", \"Cumulative_Pct\")])\ncat(\"\\nFocusing on these\", nrow(vital_few), \"defect types addresses\",\n    round(max(vital_few$Cumulative_Pct), 1), \"% of all defects\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-interpretation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Create and analyze the data\ndefects <- data.frame(\n  Type = c(\"Burrs\", \"Dimensional\", \"Scratches\", \"Surface Dents\",\n           \"Wrinkles\", \"Splits/Cracks\", \"Missing Features\"),\n  Count = c(156, 112, 89, 67, 45, 28, 18)\n)\n\n# Sort by count descending\ndefects <- defects[order(-defects$Count),]\n\n# Calculate percentages\ndefects$Percent <- defects$Count / sum(defects$Count) * 100\ndefects$Cumulative <- cumsum(defects$Percent)\n\n# Display results\nprint(defects)\n\n# Identify vital few\nvital_few <- defects$Type[defects$Cumulative <= 80 |\n                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]\ncat(\"\\nVital Few (contributing to ~80%):\", paste(vital_few, collapse = \", \"))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-practice","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2824,9 +2824,58 @@ The irony is that reactive troubleshooting actually costs more time in the long 
 <p>FTA allows quantitative risk analysis by calculating the probability of the top event:</p>
 <p><strong>OR Gate:</strong> P(output) = 1 - [(1 - P<sub>A</sub>) × (1 - P<sub>B</sub>) × …] <em>Simplified:</em> P(output) ≈ P<sub>A</sub> + P<sub>B</sub> (when probabilities are small)</p>
 <p><strong>AND Gate:</strong> P(output) = P<sub>A</sub> × P<sub>B</sub> × …</p>
-<p>Live cell — try different basic-event probabilities.</p>
+<p>Try it — change the basic-event probabilities below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="fta-calculation" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-sitemap qwebr-calc-icon"></i>
+    <h4 class="anchored">Fault Tree Top-Event Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-fta-calculation-P-breaker-trip">P(breaker trip)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-fta-calculation-P-breaker-trip" data-var="P_breaker_trip" value="0.02" min="0" max="0.2" step="0.005">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-fta-calculation-P-motor-fail">P(motor fail)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-fta-calculation-P-motor-fail" data-var="P_motor_fail" value="0.01" min="0" max="0.2" step="0.005">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-fta-calculation-P-impeller-worn">P(impeller worn) <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-fta-calculation-P-impeller-worn" id="qcalc-fta-calculation-P-impeller-worn-readout">0.03</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-fta-calculation-P-impeller-worn" data-var="P_impeller_worn" value="0.03" min="0" max="0.2" step="0.005">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-fta-calculation-P-tank-empty">P(tank empty)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-fta-calculation-P-tank-empty" data-var="P_tank_empty" value="0.05" min="0" max="0.2" step="0.005">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-fta-calculation-P-valve-closed">P(valve closed)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-fta-calculation-P-valve-closed" data-var="P_valve_closed" value="0.01" min="0" max="0.2" step="0.005">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <hr>
 </section>
 </section>

@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Calculate Load-Distance scores for both layouts\n# From-To data: Receiving->Machining=100, Machining->Assembly=200,\n#               Assembly->Painting=100, Painting->Shipping=150\n\n# Layout A distances (linear): all adjacent = 1 unit\nlayout_A_score <- 100*1 + 200*1 + 100*1 + 150*1\ncat(\"Layout A Total Load-Distance:\", layout_A_score, \"\\n\")\n\n# Layout B distances (compact): most departments closer together\n# Receiving to Machining = 1.12 (diagonal)\n# Machining to Assembly = 1\n# Assembly to Painting = 1.12 (diagonal)\n# Painting to Shipping = 1\nlayout_B_score <- 100*1.12 + 200*1 + 100*1.12 + 150*1\ncat(\"Layout B Total Load-Distance:\", round(layout_B_score, 1), \"\\n\")\n\ncat(\"\\nLayout A is better by:\", round(layout_B_score - layout_A_score, 1), \"units\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"load-distance-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given data\ntotal_task_time <- 40 + 25 + 20 + 35 + 15 + 30  # seconds\ndesired_output <- 60  # pizzas per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate Cycle Time\ncycle_time <- available_time / desired_output\ncat(\"Cycle Time:\", cycle_time, \"seconds per pizza\\n\")\n\n# Step 2: Calculate Theoretical Minimum Stations\nTM <- total_task_time / cycle_time\ncat(\"Theoretical Minimum Stations:\", TM, \"=\", ceiling(TM), \"stations\\n\")\n\n# Step 3: Assign tasks to stations (one possible solution)\ncat(\"\\n--- Workstation Assignments ---\\n\")\ncat(\"Station 1: A (40s) + B (25s) = 65s > 60s ... EXCEEDS!\\n\")\ncat(\"Let's try again:\\n\")\ncat(\"Station 1: A (40s) = 40s [Idle: 20s]\\n\")\ncat(\"Station 2: B (25s) + D (35s) = 60s [Idle: 0s]\\n\")\ncat(\"Station 3: C (20s) + E (15s) + F (30s) = 65s > 60s... EXCEEDS!\\n\")\ncat(\"Revised:\\n\")\ncat(\"Station 3: C (20s) + E (15s) = 35s [Idle: 25s]\\n\")\ncat(\"Station 4: F (30s) = 30s [Idle: 30s]\\n\")\n\n# With 4 stations\nn_stations <- 4\nefficiency <- (total_task_time / (n_stations * cycle_time)) * 100\ncat(\"\\n--- Results ---\\n\")\ncat(\"Number of Stations:\", n_stations, \"\\n\")\ncat(\"Line Efficiency:\", round(efficiency, 1), \"%\\n\")\ncat(\"Balance Delay (Idle Time):\", round(100 - efficiency, 1), \"%\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Example: Worker lifts 35 lb boxes from pallet to conveyor\n# Conditions:\n# - Horizontal distance (H) = 15 inches\n# - Vertical height at start (V) = 10 inches\n# - Vertical travel distance (D) = 20 inches\n# - Asymmetry angle (A) = 30 degrees\n# - Frequency = 4 lifts per minute, 2 hours\n# - Coupling = Fair (handles present)\n\nLC <- 51  # Load constant (lb)\n\n# Calculate multipliers\nHM <- 10 / 15  # Horizontal multiplier\nVM <- 1 - 0.0075 * abs(10 - 30)  # Vertical multiplier\nDM <- 0.82 + (1.8 / 20)  # Distance multiplier\nAM <- 1 - 0.0032 * 30  # Asymmetric multiplier\nFM <- 0.72  # From NIOSH table: 4 lifts/min, 1-2 hours\nCM <- 0.95  # Fair coupling\n\ncat(\"Multiplier Values:\\n\")\ncat(\"  HM (Horizontal):\", round(HM, 3), \"\\n\")\ncat(\"  VM (Vertical):\", round(VM, 3), \"\\n\")\ncat(\"  DM (Distance):\", round(DM, 3), \"\\n\")\ncat(\"  AM (Asymmetry):\", round(AM, 3), \"\\n\")\ncat(\"  FM (Frequency):\", FM, \"\\n\")\ncat(\"  CM (Coupling):\", CM, \"\\n\")\n\n# Calculate RWL\nRWL <- LC * HM * VM * DM * AM * FM * CM\ncat(\"\\nRecommended Weight Limit (RWL):\", round(RWL, 1), \"lb\\n\")\n\n# Calculate Lifting Index\nactual_weight <- 35\nLI <- actual_weight / RWL\ncat(\"Lifting Index (LI):\", round(LI, 2), \"\\n\")\n\nif (LI <= 1.0) {\n  cat(\"\\nRisk Level: LOW - Task is acceptable\\n\")\n} else if (LI <= 3.0) {\n  cat(\"\\nRisk Level: MODERATE - Consider engineering controls\\n\")\n} else {\n  cat(\"\\nRisk Level: HIGH - Immediate redesign required\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"niosh-example-plant","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Calculate Load-Distance scores for both layouts\n# From-To data: Receiving->Machining, Machining->Assembly,\n#               Assembly->Painting, Painting->Shipping\n\nflow_receiving_machining <- 100\nflow_machining_assembly <- 200\nflow_assembly_painting <- 100\nflow_painting_shipping <- 150\n\n# Layout A distances (linear): all adjacent = 1 unit\nlayout_A_score <- flow_receiving_machining*1 + flow_machining_assembly*1 +\n  flow_assembly_painting*1 + flow_painting_shipping*1\n\n# Layout B distances (compact): most departments closer together\n# Receiving to Machining = 1.12 (diagonal), Machining to Assembly = 1,\n# Assembly to Painting = 1.12 (diagonal), Painting to Shipping = 1\nlayout_B_score <- flow_receiving_machining*1.12 + flow_machining_assembly*1 +\n  flow_assembly_painting*1.12 + flow_painting_shipping*1\n\nif (layout_A_score <= layout_B_score) {\n  cat(sprintf(\"Layout A (linear) wins by %.1f units\\n\", layout_B_score - layout_A_score))\n} else {\n  cat(sprintf(\"Layout B (compact) wins by %.1f units\\n\", layout_A_score - layout_B_score))\n}\ncat(sprintf(\"  Layout A (linear)    %.1f\\n\", layout_A_score))\ncat(sprintf(\"  Layout B (compact)   %.1f\\n\", layout_B_score))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"load-distance-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given data\ntotal_task_time <- 40 + 25 + 20 + 35 + 15 + 30  # seconds\ndesired_output <- 60  # pizzas per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate Cycle Time\ncycle_time <- available_time / desired_output\ncat(\"Cycle Time:\", cycle_time, \"seconds per pizza\\n\")\n\n# Step 2: Calculate Theoretical Minimum Stations\nTM <- total_task_time / cycle_time\ncat(\"Theoretical Minimum Stations:\", TM, \"=\", ceiling(TM), \"stations\\n\")\n\n# Step 3: Assign tasks to stations (one possible solution)\ncat(\"\\n--- Workstation Assignments ---\\n\")\ncat(\"Station 1: A (40s) + B (25s) = 65s > 60s ... EXCEEDS!\\n\")\ncat(\"Let's try again:\\n\")\ncat(\"Station 1: A (40s) = 40s [Idle: 20s]\\n\")\ncat(\"Station 2: B (25s) + D (35s) = 60s [Idle: 0s]\\n\")\ncat(\"Station 3: C (20s) + E (15s) + F (30s) = 65s > 60s... EXCEEDS!\\n\")\ncat(\"Revised:\\n\")\ncat(\"Station 3: C (20s) + E (15s) = 35s [Idle: 25s]\\n\")\ncat(\"Station 4: F (30s) = 30s [Idle: 30s]\\n\")\n\n# With 4 stations\nn_stations <- 4\nefficiency <- (total_task_time / (n_stations * cycle_time)) * 100\ncat(\"\\n--- Results ---\\n\")\ncat(\"Number of Stations:\", n_stations, \"\\n\")\ncat(\"Line Efficiency:\", round(efficiency, 1), \"%\\n\")\ncat(\"Balance Delay (Idle Time):\", round(100 - efficiency, 1), \"%\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Example: Worker lifts boxes from pallet to conveyor\n# Conditions: Frequency = 4 lifts per minute, 2 hours; Coupling = Fair (handles present)\n\nLC <- 51  # Load constant (lb)\nH <- 15   # Horizontal distance, hands to ankles (in)\nV <- 10   # Vertical height at origin of lift (in)\nD <- 20   # Vertical travel distance (in)\nA <- 30   # Asymmetry angle (degrees)\nFM <- 0.72  # Frequency multiplier: 4 lifts/min, 1-2 hours, from NIOSH table\nCM <- 0.95  # Coupling multiplier: fair\nactual_weight <- 35  # Actual load weight (lb)\n\n# Calculate multipliers\nHM <- 10 / H  # 10 here is a fixed NIOSH constant, not our V\nVM <- 1 - 0.0075 * abs(V - 30)  # 30 = NIOSH's fixed optimal reference height (in)\nDM <- 0.82 + (1.8 / D)\nAM <- 1 - 0.0032 * A\n\n# Calculate RWL and Lifting Index\nRWL <- LC * HM * VM * DM * AM * FM * CM\nLI <- actual_weight / RWL\n\ncat(sprintf(\"Lifting Index: %.2f (RWL = %.1f lb)\\n\", LI, RWL))\ncat(sprintf(\"  HM (horizontal)   %.3f\\n\", HM))\ncat(sprintf(\"  VM (vertical)     %.3f\\n\", VM))\ncat(sprintf(\"  DM (distance)     %.3f\\n\", DM))\ncat(sprintf(\"  AM (asymmetry)    %.3f\\n\", AM))\nif (LI <= 1.0) {\n  cat(\"  Risk level        Low - task is acceptable\\n\")\n} else if (LI <= 3.0) {\n  cat(\"  Risk level        Moderate - consider engineering controls\\n\")\n} else {\n  cat(\"  Risk level        High - immediate redesign required\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"niosh-example-plant","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2595,9 +2595,51 @@ Challenge Question: Managing a Fixed-Position Layout
 </div>
 </div>
 </div>
-<p>Live cell — try different from-to volumes or layout distances.</p>
+<p>Try it — change the material flow volumes below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="load-distance-calc" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-route qwebr-calc-icon"></i>
+    <h4 class="anchored">Load-Distance Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-load-distance-calc-flow-receiving-machining">Receiving to Machining</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-load-distance-calc-flow-receiving-machining" data-var="flow_receiving_machining" value="100" min="0" max="500" step="10">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-load-distance-calc-flow-machining-assembly">Machining to Assembly <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-load-distance-calc-flow-machining-assembly" id="qcalc-load-distance-calc-flow-machining-assembly-readout">200</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-load-distance-calc-flow-machining-assembly" data-var="flow_machining_assembly" value="200" min="0" max="500" step="10">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-load-distance-calc-flow-assembly-painting">Assembly to Painting</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-load-distance-calc-flow-assembly-painting" data-var="flow_assembly_painting" value="100" min="0" max="500" step="10">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-load-distance-calc-flow-painting-shipping">Painting to Shipping</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-load-distance-calc-flow-painting-shipping" data-var="flow_painting_shipping" value="150" min="0" max="500" step="10">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <details>
 <summary>
 Why does the linear layout win in this case?
@@ -3116,9 +3158,62 @@ Video: Boeing 737 Assembly
 </section>
 <section id="niosh-lifting-example" class="level3" data-number="4.13.3">
 <h3 data-number="4.13.3" class="anchored" data-anchor-id="niosh-lifting-example"><span class="header-section-number">4.13.3</span> NIOSH Lifting Example</h3>
-<p>Also live — try changing the box weight, distances, or lift frequency below and re-running.</p>
+<p>Also live — try changing the box weight, distances, or lift frequency below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="niosh-example-plant" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-weight-hanging qwebr-calc-icon"></i>
+    <h4 class="anchored">NIOSH Lifting Index Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-niosh-example-plant-H">Horizontal distance</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-niosh-example-plant-H" data-var="H" value="15" min="10" max="25" step="1">
+        <span class="qwebr-calc-suffix">in</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-niosh-example-plant-V">Vertical height at origin</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-niosh-example-plant-V" data-var="V" value="10" min="0" max="70" step="1">
+        <span class="qwebr-calc-suffix">in</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-niosh-example-plant-D">Vertical travel distance</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-niosh-example-plant-D" data-var="D" value="20" min="1" max="70" step="1">
+        <span class="qwebr-calc-suffix">in</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-niosh-example-plant-A">Asymmetry angle</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-niosh-example-plant-A" data-var="A" value="30" min="0" max="135" step="5">
+        <span class="qwebr-calc-suffix">deg</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-niosh-example-plant-actual-weight">Box weight <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-niosh-example-plant-actual-weight" id="qcalc-niosh-example-plant-actual-weight-readout">35</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-niosh-example-plant-actual-weight" data-var="actual_weight" value="35" min="5" max="100" step="1">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <details>
 <summary>
 Discussion Question: Reducing the Lifting Index

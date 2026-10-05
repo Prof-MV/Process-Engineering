@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Given data\navailable_time_per_day <- 8 * 60  # 8 hours = 480 minutes\nbreaks_and_meetings <- 60         # 60 minutes for breaks/meetings\ncustomer_demand <- 240            # 240 units per day\n\n# Calculate net available time\nnet_available_time <- available_time_per_day - breaks_and_meetings\ncat(\"Net Available Time:\", net_available_time, \"minutes/day\\n\")\n\n# Calculate Takt Time\ntakt_time <- net_available_time / customer_demand\ncat(\"Takt Time:\", takt_time, \"minutes per unit\\n\")\ncat(\"Takt Time:\", takt_time * 60, \"seconds per unit\\n\")\n\n# Interpretation\ncat(\"\\n--- Interpretation ---\\n\")\ncat(\"To meet customer demand, we must produce 1 unit every\",\n    takt_time, \"minutes (\", takt_time * 60, \"seconds).\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"takt-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Given data\navailable_time_per_day <- 480     # 8 hours = 480 minutes\nbreaks_and_meetings <- 60         # 60 minutes for breaks/meetings\ncustomer_demand <- 240            # 240 units per day\n\n# Calculate net available time\nnet_available_time <- available_time_per_day - breaks_and_meetings\n\n# Calculate Takt Time\ntakt_time <- net_available_time / customer_demand\n\ncat(sprintf(\"Takt time: %.2f min per unit (%.1f sec)\\n\", takt_time, takt_time * 60))\ncat(sprintf(\"  Net available time   %d min/day\\n\", net_available_time))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"takt-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2775,9 +2775,46 @@ Interactive Exercise: Identify the Waste
 </section>
 <section id="interactive-example-calculating-takt-time" class="level3" data-number="7.9.3">
 <h3 data-number="7.9.3" class="anchored" data-anchor-id="interactive-example-calculating-takt-time"><span class="header-section-number">7.9.3</span> Interactive Example: Calculating Takt Time</h3>
-<p>Live cell — try different shift length, breaks, or customer demand.</p>
+<p>Try it — change the shift length, breaks, or customer demand below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="takt-calculation" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-stopwatch qwebr-calc-icon"></i>
+    <h4 class="anchored">Takt Time Calculator</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-takt-calculation-available-time-per-day">Shift length</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-takt-calculation-available-time-per-day" data-var="available_time_per_day" value="480" min="120" max="1440" step="30">
+        <span class="qwebr-calc-suffix">min</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-takt-calculation-breaks-and-meetings">Breaks &amp; meetings</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-takt-calculation-breaks-and-meetings" data-var="breaks_and_meetings" value="60" min="0" max="240" step="10">
+        <span class="qwebr-calc-suffix">min</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-takt-calculation-customer-demand">Customer demand <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-takt-calculation-customer-demand" id="qcalc-takt-calculation-customer-demand-readout">240</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-takt-calculation-customer-demand" data-var="customer_demand" value="240" min="10" max="2000" step="10">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <details>
 <summary>
 Practice Problem: Calculate Your Takt Time
