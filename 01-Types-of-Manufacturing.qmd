@@ -339,44 +339,68 @@ embed_youtube("RMjtmsr3CqA", "Injection Molding Process")
 
 **Examples:** Automotive dashboards, phone cases, medical devices, food containers, toys
 
-Live cell — try different volumes, mold cost, or cycle time.
+Try it — drag the volume slider or change any input below and the chart and cost breakdown update immediately.
+
+```{r calc-injection-molding-cost, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "injection-molding-cost",
+  title = "Injection Molding Cost Calculator",
+  icon = "gears",
+  inputs = list(
+    qwebr_calc_input("mold_cost", "Mold (tooling) cost", value = 50000, min = 5000, max = 300000, step = 1000, prefix = "$"),
+    qwebr_calc_input("material_cost_per_kg", "Material cost", value = 2.50, min = 0.10, max = 20, step = 0.10, prefix = "$", suffix = "/ kg"),
+    qwebr_calc_input("part_weight_kg", "Part weight", value = 0.10, min = 0.01, max = 5, step = 0.01, suffix = "kg"),
+    qwebr_calc_input("cycle_time_sec", "Cycle time", value = 30, min = 2, max = 180, step = 1, suffix = "sec"),
+    qwebr_calc_input("machine_rate_per_hour", "Machine + operator rate", value = 75, min = 10, max = 300, step = 5, prefix = "$", suffix = "/ hr"),
+    qwebr_calc_input("selected_volume", "Production volume", value = 50000, min = 500, max = 500000, step = 500, type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
 
 ```{webr-r}
 #| label: injection-molding-cost
 # Injection Molding Cost Analysis Example
-# Comparing costs at different production volumes
+# Cost per part = tooling cost spread over the run + material + processing time
 
-mold_cost <- 50000  # Typical mold cost in dollars
-material_cost_per_kg <- 2.50  # ABS plastic
-part_weight_kg <- 0.1
-cycle_time_sec <- 30
-machine_rate_per_hour <- 75  # Machine + operator cost
+mold_cost <- 50000             # Steel mold (tooling), one-time cost
+material_cost_per_kg <- 2.50   # ABS plastic, $ per kg
+part_weight_kg <- 0.10         # Mass of one part
+cycle_time_sec <- 30           # Time to mold one part
+machine_rate_per_hour <- 75    # Machine + operator, $ per hour
+selected_volume <- 50000       # Parts to produce this run
 
-# Calculate cost per part at different volumes
-volumes <- c(1000, 10000, 50000, 100000, 500000)
-
-cost_analysis <- data.frame(
-  Volume = volumes,
-  Mold_Per_Part = mold_cost / volumes,
-  Material = part_weight_kg * material_cost_per_kg,
-  Processing = (cycle_time_sec / 3600) * machine_rate_per_hour
-)
-
-cost_analysis$Total_Per_Part <- cost_analysis$Mold_Per_Part +
-                                 cost_analysis$Material +
-                                 cost_analysis$Processing
-
-cat("Injection Molding Cost Breakdown:\n")
-cat("================================\n")
-for(i in 1:nrow(cost_analysis)) {
-  cat(sprintf("At %s parts: $%.2f per part (Tooling: $%.2f, Material: $%.2f, Processing: $%.2f)\n",
-              format(cost_analysis$Volume[i], big.mark = " ", scientific = FALSE),
-              cost_analysis$Total_Per_Part[i],
-              cost_analysis$Mold_Per_Part[i],
-              cost_analysis$Material[i],
-              cost_analysis$Processing[i]))
+cost_per_part <- function(volume) {
+  tooling    <- mold_cost / volume
+  material   <- part_weight_kg * material_cost_per_kg
+  processing <- (cycle_time_sec / 3600) * machine_rate_per_hour
+  tooling + material + processing
 }
+
+volumes <- seq(500, 500000, length.out = 200)
+
+par(mar = c(4, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+plot(volumes, cost_per_part(volumes), type = "l", log = "x", lwd = 4, col = "#2c3e50",
+     xlab = "Production volume (parts, log scale)", ylab = "Cost per part ($)",
+     main = "Cost per Part vs. Production Volume", las = 1, xaxt = "n")
+axis(1, at = c(500, 5000, 50000, 500000),
+     labels = c("500", "5,000", "50,000", "500,000"))
+abline(v = selected_volume, lty = 2, col = "#bdc3c7")
+points(selected_volume, cost_per_part(selected_volume), pch = 19, cex = 2.2, col = "#e74c3c")
+
+cat(sprintf("Cost per part at %s parts: $%.2f\n",
+            format(selected_volume, big.mark = " ", scientific = FALSE),
+            cost_per_part(selected_volume)))
+cat(sprintf("  Tooling      $%.2f\n", mold_cost / selected_volume))
+cat(sprintf("  Material     $%.2f\n", part_weight_kg * material_cost_per_kg))
+cat(sprintf("  Processing   $%.2f\n", (cycle_time_sec / 3600) * machine_rate_per_hour))
 ```
+
+</details>
 
 <details>
 <summary>Discussion: When does injection molding become cost-effective vs. 3D printing?</summary>

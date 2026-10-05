@@ -277,7 +277,24 @@ cat(sprintf("Percent elongation  = %.1f%%\n", pct_elong))
 cat(sprintf("Percent reduction of area = %.1f%%\n", pct_ra))
 ```
 
-Live cell — try changing the loads and final dimensions to see how yield strength, UTS, %EL, and %RA respond. A brittle specimen would show a much smaller `Lf - L0` and `D0 - Df`.
+Try it — change the load and elongation below. A brittle specimen would show a much smaller `Lf - L0` and `D0 - Df`.
+
+```{r calc-modulus, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "testing-modulus-example-live",
+  title = "Modulus of Elasticity Calculator",
+  icon = "ruler-horizontal",
+  inputs = list(
+    qwebr_calc_input("D0", "Original diameter", value = 12.83, min = 5, max = 25, step = 0.01, suffix = "mm"),
+    qwebr_calc_input("L0", "Gauge length", value = 50.0, min = 10, max = 100, step = 1, suffix = "mm"),
+    qwebr_calc_input("P_elastic", "Elastic-region load", value = 15000, min = 1000, max = 50000, step = 500, suffix = "N", type = "slider"),
+    qwebr_calc_input("dL_elastic", "Measured elongation", value = 0.018, min = 0.001, max = 0.100, step = 0.001, suffix = "mm")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: testing-modulus-example-live
@@ -292,14 +309,31 @@ stress_e <- P_elastic / A0
 strain_e <- dL_elastic / L0
 E_modulus <- stress_e / strain_e
 
-cat(sprintf("Stress at this point  = %.1f MPa\n", stress_e))
-cat(sprintf("Strain at this point  = %.5f (%.3f%%)\n", strain_e, strain_e * 100))
-cat(sprintf("Estimated modulus E   = %.0f MPa = %.0f GPa\n", E_modulus, E_modulus / 1000))
-cat("Compare to typical steel: ~200 GPa. A result far off that value usually means\n")
-cat("the extensometer reading or load was taken outside the truly elastic region.\n")
+cat(sprintf("Estimated modulus E: %.0f GPa (compare to ~200 GPa for steel)\n", E_modulus / 1000))
+cat(sprintf("  Stress at this point     %.1f MPa\n", stress_e))
+cat(sprintf("  Strain at this point     %.5f (%.3f%%)\n", strain_e, strain_e * 100))
 ```
 
-Live cell — this specimen breaks well before it necks noticeably. Try small `Lf` and `Df` changes and see how brittle behaviour (low %EL, low %RA) looks compared to the ductile example above.
+</details>
+
+Try it — this specimen breaks well before it necks noticeably. Try small `Lf` and `Df` changes and see how brittle behaviour (low %EL, low %RA) looks compared to the ductile example above.
+
+```{r calc-brittle, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "testing-brittle-example-live",
+  title = "Ductility Calculator (Brittle Specimen)",
+  icon = "ruler-horizontal",
+  inputs = list(
+    qwebr_calc_input("D0", "Original diameter", value = 12.83, min = 5, max = 25, step = 0.01, suffix = "mm"),
+    qwebr_calc_input("L0", "Original length", value = 50.0, min = 10, max = 100, step = 1, suffix = "mm"),
+    qwebr_calc_input("Lf", "Final length", value = 50.9, min = 10, max = 110, step = 0.1, suffix = "mm", type = "slider"),
+    qwebr_calc_input("Df", "Final diameter", value = 12.60, min = 5, max = 25, step = 0.01, suffix = "mm")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: testing-brittle-example-live
@@ -313,11 +347,12 @@ Af <- pi * (Df/2)^2
 pct_elong <- (Lf - L0) / L0 * 100
 pct_ra <- (A0 - Af) / A0 * 100
 
-cat(sprintf("Percent elongation = %.1f%%\n", pct_elong))
-cat(sprintf("Percent reduction of area = %.1f%%\n", pct_ra))
+cat(sprintf("Percent elongation: %.1f%% (%.1f%% reduction of area)\n", pct_elong, pct_ra))
 cat("Low values on both measures, with little visible necking, point to brittle\n")
 cat("behaviour -- e.g. an as-quenched, untempered specimen, or cast iron.\n")
 ```
+
+</details>
 
 ::: {.callout-tip title="Quick check"}
 Looking back at @fig-stress-strain-comparison: which curve would you expect from the **as-quenched (untempered)** specimen you'll encounter conceptually in the hardness lab, if it were pulled in tension instead? *(Answer: highest strength, but the shortest, steepest curve of all — even less strain to failure than the quenched-and-tempered curve shown, since tempering is what restores ductility; see @sec-metallurgy-hardness-toughness.)*
@@ -443,7 +478,23 @@ $$HV = \frac{1.8544 \times 0.5}{0.0631^2} = \frac{0.9272}{0.00398} \approx 233 \
 For a case-hardened specimen, you'd repeat this calculation at each depth of your traverse and plot HV against distance from the surface — exactly the profile you build in the tensile/microhardness lab.
 </details>
 
-Live cell — try different diagonal measurements and loads. Notice how the *same* diagonal size at a higher load gives a lower HV, and vice versa — this is why comparing hardness numbers taken at different loads without converting first is a common source of confusion.
+Try it — change the diagonal measurements and load below. Notice how the *same* diagonal size at a higher load gives a lower HV, and vice versa — this is why comparing hardness numbers taken at different loads without converting first is a common source of confusion.
+
+```{r calc-vickers, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "testing-vickers-live",
+  title = "Vickers Hardness Calculator",
+  icon = "gem",
+  inputs = list(
+    qwebr_calc_input("F_load", "Load", value = 0.3, min = 0.01, max = 5, step = 0.01, suffix = "kgf"),
+    qwebr_calc_input("d1", "Diagonal 1", value = 58.0, min = 10, max = 300, step = 0.5, suffix = "µm"),
+    qwebr_calc_input("d2", "Diagonal 2", value = 60.5, min = 10, max = 300, step = 0.5, suffix = "µm", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: testing-vickers-live
@@ -454,12 +505,27 @@ d2 <- 60.5           # micrometers
 d_mm <- ((d1 + d2) / 2) / 1000
 HV <- 1.8544 * F_load / d_mm^2
 
-cat(sprintf("Mean diagonal = %.4f mm\n", d_mm))
-cat(sprintf("Vickers hardness = %.0f HV\n", HV))
-cat(sprintf("Approximate equivalent UTS (steel only, HB~HV for this range): %.0f MPa\n", 3.45 * HV))
+cat(sprintf("Vickers hardness: %.0f HV (mean diagonal %.4f mm)\n", HV, d_mm))
+cat(sprintf("  Approx. equivalent UTS   %.0f MPa\n", 3.45 * HV))
 ```
 
-Live cell — convert a case-hardened part's Vickers profile toward the Rockwell C scale used to define case depth. (Real conversion requires the ASTM E140 table; this is a simplified linear approximation for illustration only — never use it for a real report.)
+</details>
+
+Try it — convert a case-hardened part's Vickers profile toward the Rockwell C scale used to define case depth. (Real conversion requires the ASTM E140 table; this is a simplified linear approximation for illustration only — never use it for a real report.)
+
+```{r calc-case-depth, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "testing-case-depth-live",
+  title = "HV-to-HRC Estimate Calculator",
+  icon = "layer-group",
+  inputs = list(
+    qwebr_calc_input("HV_reading", "Vickers reading", value = 620, min = 150, max = 900, step = 5, suffix = "HV", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: testing-case-depth-live
@@ -469,11 +535,12 @@ HV_reading <- 620
 
 approx_HRC <- (HV_reading - 100) / 11.9   # rough linear fit, illustrative only
 
-cat(sprintf("Vickers reading: %.0f HV\n", HV_reading))
 cat(sprintf("Rough approximate Rockwell C equivalent: %.0f HRC\n", approx_HRC))
 cat("Effective case depth is read where the profile crosses HRC 50;\n")
 cat("true case depth is read where it crosses HRC 40 (see your lab template).\n")
 ```
+
+</details>
 
 ---
 

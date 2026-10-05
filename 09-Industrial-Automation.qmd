@@ -385,7 +385,24 @@ ggplot() +
   )
 ```
 
-Live cell — try different scan time components.
+Try it — change the scan time components below.
+
+```{r calc-scan-time, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "scan-time-calc",
+  title = "PLC Scan Time Calculator",
+  icon = "microchip",
+  inputs = list(
+    qwebr_calc_input("input_scan_time", "Input scan", value = 1.2, min = 0.1, max = 10, step = 0.1, suffix = "ms"),
+    qwebr_calc_input("program_execution", "Program execution", value = 15.5, min = 1, max = 100, step = 0.5, suffix = "ms", type = "slider"),
+    qwebr_calc_input("output_update", "Output update", value = 1.0, min = 0.1, max = 10, step = 0.1, suffix = "ms"),
+    qwebr_calc_input("housekeeping", "Housekeeping", value = 2.3, min = 0.1, max = 10, step = 0.1, suffix = "ms")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: scan-time-calc
@@ -397,16 +414,14 @@ housekeeping <- 2.3        # ms
 
 total_scan_time <- input_scan_time + program_execution + output_update + housekeeping
 
-cat("PLC Scan Time Calculation:\n")
-cat("─────────────────────────────\n")
-cat("Input Scan:       ", input_scan_time, "ms\n")
-cat("Program Execution:", program_execution, "ms\n")
-cat("Output Update:    ", output_update, "ms\n")
-cat("Housekeeping:     ", housekeeping, "ms\n")
-cat("─────────────────────────────\n")
-cat("Total Scan Time:  ", total_scan_time, "ms\n")
-cat("\nScans per second: ", round(1000/total_scan_time, 0), "\n")
+cat(sprintf("Total scan time: %.1f ms (%.0f scans/sec)\n", total_scan_time, 1000 / total_scan_time))
+cat(sprintf("  Input scan           %.1f ms\n", input_scan_time))
+cat(sprintf("  Program execution    %.1f ms\n", program_execution))
+cat(sprintf("  Output update        %.1f ms\n", output_update))
+cat(sprintf("  Housekeeping         %.1f ms\n", housekeeping))
 ```
+
+</details>
 
 ### PLC Programming Languages (IEC 61131-3)
 
@@ -811,45 +826,60 @@ ggplot() +
   )
 ```
 
-Live cell — try different frequencies or motor parameters.
+Try it — change the motor parameters or drag the frequency slider below.
+
+```{r calc-vfd, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "vfd-calculations",
+  title = "VFD Speed Calculator",
+  icon = "bolt",
+  inputs = list(
+    qwebr_calc_input("poles", "Motor poles", value = 4, min = 2, max = 8, step = 2),
+    qwebr_calc_input("rated_rpm", "Rated speed", value = 1750, min = 500, max = 3600, step = 10, suffix = "RPM"),
+    qwebr_calc_input("rated_voltage", "Rated voltage", value = 460, min = 200, max = 600, step = 10, suffix = "V"),
+    qwebr_calc_input("rated_frequency", "Rated frequency", value = 60, min = 50, max = 60, step = 1, suffix = "Hz"),
+    qwebr_calc_input("selected_frequency", "VFD frequency", value = 30, min = 5, max = 75, step = 1, suffix = "Hz", type = "slider")
+  ),
+  fig_width = 1200, fig_height = 700
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: vfd-calculations
 # VFD Speed and Torque Calculations
 
 # Motor nameplate data
-motor_hp <- 10
 poles <- 4
-rated_voltage <- 460  # V
-rated_frequency <- 60  # Hz
+rated_voltage <- 460      # V
+rated_frequency <- 60     # Hz
 rated_rpm <- 1750
+selected_frequency <- 30  # Hz - frequency to check
+
 slip_rpm <- (120 * rated_frequency / poles) - rated_rpm
-
-# Synchronous speed at rated frequency
-sync_speed_60 <- 120 * rated_frequency / poles
-cat("Motor Data:\n")
-cat("Synchronous speed at 60Hz:", sync_speed_60, "RPM\n")
-cat("Rated speed:", rated_rpm, "RPM\n")
-cat("Slip:", slip_rpm, "RPM (", round(slip_rpm/sync_speed_60*100, 1), "%)\n\n")
-
-# Calculate speed at different frequencies
-frequencies <- c(15, 30, 45, 60, 75)
-speeds <- sapply(frequencies, function(f) {
-  sync <- 120 * f / poles
-  sync - slip_rpm  # Assuming constant slip (approximation)
-})
-
-cat("Speed vs Frequency (V/Hz mode):\n")
-cat("─────────────────────────────\n")
-for(i in seq_along(frequencies)) {
-  cat(sprintf("%2d Hz: %4d RPM\n", frequencies[i], speeds[i]))
-}
-
-# V/Hz ratio
+sync_speed_rated <- 120 * rated_frequency / poles
 vhz_ratio <- rated_voltage / rated_frequency
-cat("\nV/Hz Ratio:", round(vhz_ratio, 2), "V/Hz\n")
-cat("At 30Hz, voltage should be:", 30 * vhz_ratio, "V\n")
+
+speed_at <- function(f) (120 * f / poles) - slip_rpm  # assumes constant slip (approximation)
+
+frequencies <- seq(5, 75, length.out = 150)
+par(mar = c(4, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+plot(frequencies, speed_at(frequencies), type = "l", lwd = 4, col = "#2c3e50",
+     xlab = "Frequency (Hz)", ylab = "Motor speed (RPM)",
+     main = "Motor Speed vs. VFD Frequency", las = 1)
+abline(v = selected_frequency, lty = 2, col = "#bdc3c7")
+points(selected_frequency, speed_at(selected_frequency), pch = 19, cex = 2.2, col = "#e74c3c")
+
+cat(sprintf("At %d Hz: %.0f RPM (voltage should be %.0f V)\n",
+            selected_frequency, speed_at(selected_frequency), selected_frequency * vhz_ratio))
+cat(sprintf("  Synchronous speed @ rated Hz  %.0f RPM\n", sync_speed_rated))
+cat(sprintf("  Slip                          %.0f RPM (%.1f%%)\n", slip_rpm, slip_rpm / sync_speed_rated * 100))
+cat(sprintf("  V/Hz ratio                    %.2f V/Hz\n", vhz_ratio))
 ```
+
+</details>
 
 ### VFD Benefits
 

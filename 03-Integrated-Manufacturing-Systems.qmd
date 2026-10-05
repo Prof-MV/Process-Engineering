@@ -313,7 +313,25 @@ time_metrics %>%
 
 ### Takt Time vs. Cycle Time
 
-Live cell — try different demand, shift length, or downtime figures.
+Try it — change the demand, shift length, downtime, or actual cycle time below.
+
+```{r calc-takt-vs-cycle, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "takt-vs-cycle",
+  title = "Takt Time Calculator",
+  icon = "stopwatch",
+  inputs = list(
+    qwebr_calc_input("shift_length_min", "Shift length", value = 480, min = 240, max = 720, step = 10, suffix = "min"),
+    qwebr_calc_input("breaks_min", "Breaks", value = 30, min = 0, max = 120, step = 5, suffix = "min"),
+    qwebr_calc_input("planned_downtime_min", "Planned downtime", value = 20, min = 0, max = 120, step = 5, suffix = "min"),
+    qwebr_calc_input("actual_cycle_time", "Actual cycle time", value = 7.5, min = 1, max = 20, step = 0.5, suffix = "min"),
+    qwebr_calc_input("customer_demand", "Customer demand", value = 60, min = 5, max = 200, step = 5, type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: takt-vs-cycle
@@ -325,28 +343,25 @@ shift_length_min <- 480      # 8 hours = 480 minutes
 breaks_min <- 30             # Two 15-minute breaks
 planned_downtime_min <- 20   # Changeover, meetings
 customer_demand <- 60        # Cars per shift
+actual_cycle_time <- 7.5     # minutes (current performance)
 
 # Calculate available time
 available_time <- shift_length_min - breaks_min - planned_downtime_min
-cat("Available Production Time:", available_time, "minutes per shift\n")
 
 # Calculate Takt Time
 takt_time <- available_time / customer_demand
-cat("Takt Time:", round(takt_time, 2), "minutes per car\n")
-cat("         =", round(takt_time * 60, 1), "seconds per car\n\n")
 
-# Compare to actual cycle time
-actual_cycle_time <- 7.5  # minutes (current performance)
-cat("Actual Cycle Time:", actual_cycle_time, "minutes per car\n")
-
+cat(sprintf("Takt time: %.2f min per car (%.1f sec)\n", takt_time, takt_time * 60))
+cat(sprintf("  Available time       %d min\n", available_time))
+cat(sprintf("  Actual cycle time    %.1f min\n", actual_cycle_time))
 if (actual_cycle_time <= takt_time) {
-  cat("Status: MEETING DEMAND - Cycle time is within takt time\n")
-  cat("Capacity margin:", round((1 - actual_cycle_time/takt_time) * 100, 1), "%\n")
+  cat(sprintf("  Status               Meeting demand (%.1f%% margin)\n", (1 - actual_cycle_time / takt_time) * 100))
 } else {
-  cat("Status: CANNOT MEET DEMAND - Cycle time exceeds takt time\n")
-  cat("Shortfall:", round((actual_cycle_time/takt_time - 1) * 100, 1), "% over capacity\n")
+  cat(sprintf("  Status               Cannot meet demand (%.1f%% over)\n", (actual_cycle_time / takt_time - 1) * 100))
 }
 ```
+
+</details>
 
 <details>
 <summary>Discussion: What happens when cycle time exceeds takt time?</summary>
@@ -381,7 +396,25 @@ if (actual_cycle_time <= takt_time) {
 
 ### Manufacturing Cycle Time and Efficiency
 
-This one is live — edit the time breakdown and re-run it.
+Try it — edit the time breakdown below.
+
+```{r calc-mct-mce, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "mct-mce",
+  title = "Cycle Efficiency Calculator",
+  icon = "percent",
+  inputs = list(
+    qwebr_calc_input("value_added_time", "Value-added (processing)", value = 3.5, min = 0.1, max = 30, step = 0.1, suffix = "min"),
+    qwebr_calc_input("inspection_time", "Inspection", value = 0.5, min = 0, max = 10, step = 0.1, suffix = "min"),
+    qwebr_calc_input("wait_time", "Waiting", value = 2.5, min = 0, max = 30, step = 0.1, suffix = "min"),
+    qwebr_calc_input("move_time", "Moving", value = 1.5, min = 0, max = 30, step = 0.1, suffix = "min"),
+    qwebr_calc_input("units_produced", "Units produced", value = 60, min = 1, max = 500, step = 1, type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: mct-mce
@@ -393,7 +426,6 @@ units_produced <- 60         # Good units produced
 
 # MCT Calculation
 MCT <- production_time_min / units_produced
-cat("Manufacturing Cycle Time (MCT):", MCT, "minutes per unit\n\n")
 
 # MCE Calculation requires understanding of value-added time
 # Typical breakdown of production time:
@@ -403,19 +435,18 @@ wait_time <- 2.5             # Queuing between operations
 move_time <- 1.5             # Transport between stations
 
 total_time_per_unit <- value_added_time + inspection_time + wait_time + move_time
-cat("Time breakdown per unit:\n")
-cat("  Value-added (processing):", value_added_time, "min\n")
-cat("  Inspection:", inspection_time, "min\n")
-cat("  Waiting:", wait_time, "min\n")
-cat("  Moving:", move_time, "min\n")
-cat("  Total:", total_time_per_unit, "min\n\n")
 
 # MCE Calculation
 MCE <- (value_added_time / total_time_per_unit) * 100
-cat("Manufacturing Cycle Efficiency (MCE):", round(MCE, 1), "%\n")
-cat("\nInterpretation: Only", round(MCE, 1), "% of time adds value.\n")
-cat("Opportunity:", round(100 - MCE, 1), "% of time is waste that could be reduced.\n")
+
+cat(sprintf("Manufacturing Cycle Efficiency: %.1f%%\n", MCE))
+cat(sprintf("  Cycle time (MCT)     %.2f min/unit\n", MCT))
+cat(sprintf("  Total time per unit  %.1f min\n", total_time_per_unit))
+cat(sprintf("  Value-added share    %.1f min of %.1f min\n", value_added_time, total_time_per_unit))
+cat(sprintf("  Waste (non-value)    %.1f%%\n", 100 - MCE))
 ```
+
+</details>
 
 ```{r mce-visual, echo=FALSE, fig.align="center", fig.cap="Manufacturing Cycle Efficiency - Where Does Time Go?", fig.width=9, fig.height=5}
 time_breakdown <- data.frame(

@@ -112,7 +112,24 @@ ggplot(automation_long, aes(x = Metric, y = Score, fill = Type)) +
 - Chemical processing plants
 - Paper manufacturing
 
-Live cell — try different equipment costs, production volumes, or operating costs.
+Try it — change the equipment cost, production volume, or operating cost below.
+
+```{r calc-fixed-automation-economics, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "fixed-automation-economics",
+  title = "Fixed Automation Cost Calculator",
+  icon = "industry",
+  inputs = list(
+    qwebr_calc_input("fixed_automation_cost", "Equipment cost", value = 5000000, min = 500000, max = 20000000, step = 100000, prefix = "$"),
+    qwebr_calc_input("equipment_life_years", "Equipment life", value = 10, min = 1, max = 30, step = 1, suffix = "years"),
+    qwebr_calc_input("fixed_cost_per_part", "Operating cost per part", value = 2.50, min = 0.10, max = 20, step = 0.10, prefix = "$"),
+    qwebr_calc_input("annual_production", "Annual production", value = 500000, min = 10000, max = 2000000, step = 10000, type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
 
 ```{webr-r}
 #| label: fixed-automation-economics
@@ -130,14 +147,13 @@ annual_equipment_cost <- fixed_automation_cost / equipment_life_years
 total_annual_cost <- annual_equipment_cost + (fixed_cost_per_part * annual_production)
 cost_per_part <- total_annual_cost / annual_production
 
-cat("Fixed Automation Analysis:\n")
-cat("==========================\n")
-cat(sprintf("Equipment cost: $%s\n", format(fixed_automation_cost, big.mark = " ", scientific = FALSE)))
-cat(sprintf("Annual production: %s parts\n", format(annual_production, big.mark = " ", scientific = FALSE)))
-cat(sprintf("Operating cost per part: $%.2f\n", fixed_cost_per_part))
-cat(sprintf("Amortized equipment cost per part: $%.2f\n", annual_equipment_cost/annual_production))
 cat(sprintf("Total cost per part: $%.2f\n", cost_per_part))
+cat(sprintf("  Amortized equipment  $%.2f\n", annual_equipment_cost / annual_production))
+cat(sprintf("  Operating cost       $%.2f\n", fixed_cost_per_part))
+cat(sprintf("  Annual production    %s parts\n", format(annual_production, big.mark = " ", scientific = FALSE)))
 ```
+
+</details>
 
 ### Programmable Automation
 
