@@ -134,6 +134,25 @@ hierarchy_detail %>%
 
 </details>
 
+### Try it yourself: rank the controls
+
+The Hierarchy of Controls ranks the ways of dealing with a hazard. Put the five levels in order, most effective first.
+
+```{r tryit-hierarchy-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "hierarchy-order",
+  title = "Hierarchy of Controls, most to least effective",
+  steps = c(
+    "Elimination",
+    "Substitution",
+    "Engineering Controls",
+    "Administrative Controls",
+    "PPE"
+  ),
+  intro = "Move each level up or down. The most effective control goes at the top."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Physical Guarding and Interlocks
@@ -710,6 +729,40 @@ Only a deliberate, controlled **middle hold** allows the robot to move. This is 
 
 </details>
 
+---
+
+## Try it yourself: choose the safeguard
+
+Eight machine situations. Decide which safeguard from the last three sections fits each one best. Ask how often someone needs access, and whether the hazard can be stopped quickly.
+
+```{r tryit-safeguard-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "safeguard-sort",
+  title = "Which safeguard?",
+  bins = c("Fixed guard", "Interlocked guard", "Light curtain", "Two-hand control"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A belt-and-pulley drive that is only opened for maintenance twice a year.",
+  "Fixed guard", "No routine access is needed, so a guard that takes a tool to remove is the simplest and most reliable choice.",
+  "The rotating coupling between a motor and a gearbox.",
+  "Fixed guard", "Nobody needs to reach it during operation.",
+  "A CNC lathe door that the operator opens every cycle to change the part.",
+  "Interlocked guard", "Frequent access: opening the door must stop the hazard.",
+  "An injection molding machine gate that is opened to clear a stuck part.",
+  "Interlocked guard", "Access is needed during production, so the gate is tied into the safety circuit.",
+  "A robot cell with a wide opening where pallets are loaded by forklift.",
+  "Light curtain", "The opening must stay clear for material flow, so presence sensing replaces a physical barrier.",
+  "A press brake where the operator hand-feeds sheet into the die area all shift.",
+  "Light curtain", "Constant access to the point of operation, with a machine that can stop quickly.",
+  "A small manual press where the operator loads a part and then starts the stroke.",
+  "Two-hand control", "Both hands must be on the buttons, and so out of the die, to start the stroke.",
+  "A riveting station started by one operator whose hands must be clear of the tooling.",
+  "Two-hand control", "It protects the one person operating it by keeping both hands occupied."
+  ),
+  intro = "Pick the safeguard that fits each situation best."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Collaborative Robotics (Cobots)
@@ -961,7 +1014,9 @@ qwebr_calc_card(
     qwebr_calc_input("T_device", "Device response time", value = 0.020, min = 0.005, max = 0.200, step = 0.005, suffix = "sec"),
     qwebr_calc_input("T_machine", "Machine stopping time", value = 0.150, min = 0.020, max = 0.500, step = 0.010, suffix = "sec", type = "slider"),
     qwebr_calc_input("C", "Penetration depth", value = 0, min = 0, max = 40, step = 1, suffix = "mm")
-  )
+  ),
+  goal = "The light curtain can be mounted no more than 250 mm from the hazard. Keeping K = 2000 mm/s and the 20 ms device, find a machine stopping time that makes this safe.",
+  goal_test = "S <= 250 && K >= 2000 && T_device >= 0.020"
 )
 ```
 
@@ -1310,6 +1365,58 @@ ggplot(risk_matrix, aes(x = Probability, y = Severity, fill = Risk)) +
   )
 ```
 
+---
+
+### Try it yourself: find the required performance level
+
+Risk estimation leads to a number you can design to. ISO 13849-1 turns three judgements about a hazard into a **required performance level (PLr)** for the safety function that guards it:
+
+| Question | Lower | Higher |
+|:--|:--|:--|
+| **S** — how severe is the injury? | S1: slight, normally reversible | S2: serious, normally irreversible, or death |
+| **F** — how often or how long is someone exposed? | F1: seldom, or for a short time | F2: frequent, or for a long time |
+| **P** — can the person avoid the harm? | P1: possible under specific conditions | P2: scarcely possible |
+
+| S | F | P | PLr |
+|:-:|:-:|:-:|:-:|
+| S1 | F1 | P1 | **a** |
+| S1 | F1 | P2 | **b** |
+| S1 | F2 | P1 | **b** |
+| S1 | F2 | P2 | **c** |
+| S2 | F1 | P1 | **c** |
+| S2 | F1 | P2 | **d** |
+| S2 | F2 | P1 | **d** |
+| S2 | F2 | P2 | **e** |
+
+For each hazard below, decide S, F and P from the description, then read off the PLr.
+
+```{r tryit-plr, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "plr-sort",
+  title = "What performance level is required?",
+  bins = c("PL a", "PL b", "PL c", "PL d", "PL e"),
+  cards = tibble::tribble(
+    ~text, ~bin, ~why,
+    "A slow transfer conveyor can pinch a hand and leave a bruise. Someone reaches near it about once a week, and it moves slowly enough to pull away from.",
+    "PL a", "S1 (reversible), F1 (seldom), P1 (avoidable).",
+    "A heated platen can cause a minor burn. The operator works beside it all shift, and it is clearly marked and easy to keep clear of.",
+    "PL b", "S1 (reversible), F2 (continuous exposure), P1 (avoidable).",
+    "A trimming blade can cause small cuts. The operator handles parts at it all shift, and the blade is hidden behind the part, so contact cannot be anticipated.",
+    "PL c", "S1 (reversible), F2 (continuous exposure), P2 (scarcely avoidable).",
+    "A robot can crush a person against the fence. A technician enters about once a month for teaching, with the robot at reduced speed and an enabling switch in hand.",
+    "PL c", "S2 (irreversible), F1 (seldom), P1 (reduced speed makes escape possible).",
+    "A hydraulic press can amputate a hand. The die area is entered twice a week for a die change, and the ram closes too fast to react to.",
+    "PL d", "S2 (irreversible), F1 (seldom), P2 (scarcely avoidable).",
+    "A slow forming press can crush a hand. The operator loads it by hand every cycle, and the ram closes slowly enough for a trained operator to withdraw.",
+    "PL d", "S2 (irreversible), F2 (every cycle), P1 (avoidable).",
+    "A mechanical power press can amputate a hand. It is hand-fed every cycle, and the stroke takes a fraction of a second.",
+    "PL e", "S2 (irreversible), F2 (every cycle), P2 (scarcely avoidable)."
+  ),
+  intro = "Decide S, F and P for each hazard, then pick the required performance level.",
+  question = "<p>Using the ISO 13849-1 risk graph (S1/S2 severity, F1/F2 frequency of exposure, P1/P2 possibility of avoidance), match each hazard to its required performance level.</p>"
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Summary
@@ -1368,8 +1475,23 @@ The five levels are (from most to least effective):
 
 </details>
 
-<details>
-<summary>Question 2: A light curtain has a response time of 12ms and resolution of 14mm. The machine takes 180ms to stop. Calculate the minimum safety distance for hand approach.</summary>
+**Question 2: A light curtain has a response time of 12ms and resolution of 14mm. The machine takes 180ms to stop. Calculate the minimum safety distance for hand approach.**
+
+```{r tryit-q2, echo=FALSE, results='asis'}
+tryit_number(
+  id = "review-q2",
+  title = "Question 2: minimum safety distance",
+  intro = "Use K = 2000 mm/s (hand approach) and C = 0 mm (14 mm resolution).",
+  answers = list(
+    tryit_answer("Total stopping time T", 0.012 + 0.180, tol = 0.0005, suffix = "s", digits = 3, hint = "Add the device response time and the machine stopping time, in seconds."),
+    tryit_answer("Minimum safety distance S", 2000 * (0.012 + 0.180) + 0, tol = 1, suffix = "mm", digits = 0, hint = "S = (K x T) + C")
+  ),
+  question = "<p>A light curtain has a response time of 12 ms and a resolution of 14 mm. The machine takes 180 ms to stop. Use K = 2000 mm/s for hand approach and C = 0 mm for 14 mm resolution.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Given:**
 - K = 2000 mm/s (hand approach, use higher value for safety)

@@ -1048,6 +1048,38 @@ kable(findings, col.names = c("Finding Type", "Definition", "Example", "Action R
   row_spec(4, background = "#d4edda")
 ```
 
+#### Try it yourself: grade the finding
+
+You are closing out an internal audit. Grade each of these findings.
+
+```{r tryit-finding-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "finding-sort",
+  title = "How serious is the finding?",
+  bins = c("Major Nonconformity", "Minor Nonconformity", "Opportunity for Improvement"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "There is no calibration system at all; none of the gauges on the floor has a record.",
+  "Major Nonconformity", "A required process is absent, so the system cannot assure product quality.",
+  "Nonconforming product was shipped to the customer because the final inspection step was skipped for a week.",
+  "Major Nonconformity", "A breakdown of a control that let bad product reach the customer.",
+  "No internal audits have been carried out for two years.",
+  "Major Nonconformity", "A complete failure to meet a requirement of the standard.",
+  "One of forty training records sampled is missing a signature.",
+  "Minor Nonconformity", "An isolated lapse in a system that otherwise works.",
+  "One torque wrench out of thirty is a week past its calibration due date.",
+  "Minor Nonconformity", "A single lapse; the calibration system itself is in place and effective.",
+  "An obsolete revision of one work instruction is found at a single station.",
+  "Minor Nonconformity", "A document-control slip that is not systemic.",
+  "The requirement is met, but the paper checklist could be replaced by a tablet form to save time.",
+  "Opportunity for Improvement", "Nothing is nonconforming; this is a suggestion.",
+  "Gauges are stored correctly, but a shadow board would make a missing one easier to spot.",
+  "Opportunity for Improvement", "Conforming today, with a better practice available."
+  ),
+  intro = "Grade each audit finding."
+)
+```
+
 ### Auditor Competence
 
 ```{r auditor-competence, echo=FALSE}
@@ -1760,6 +1792,38 @@ ggplot(coq_data, aes(x = Category, y = Cost/1000, fill = Category)) +
     plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
     axis.text.x = element_text(size = 11 * diagram_text_scale)
   )
+```
+
+### Try it yourself: classify the cost
+
+Eight lines from a plant's accounts. Decide which Cost of Quality category each belongs in.
+
+```{r tryit-coq-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "coq-sort",
+  title = "Which Cost of Quality category?",
+  bins = c("Prevention", "Appraisal", "Internal Failure", "External Failure"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "SPC training for 20 operators.",
+  "Prevention", "Spent to stop defects from being made in the first place.",
+  "Engineering time spent on the PFMEA for a new product.",
+  "Prevention", "Quality planning before production.",
+  "Calibration of the CMM and the shop-floor gauges.",
+  "Appraisal", "The cost of being able to measure and check.",
+  "Wages of the final inspectors.",
+  "Appraisal", "Inspection finds defects; it does not prevent them.",
+  "Castings scrapped for porosity found at machining.",
+  "Internal Failure", "A defect found before the product left the plant.",
+  "Overtime to rework a lot that failed final test.",
+  "Internal Failure", "Rework is a failure cost, caught internally.",
+  "Warranty claims on gearboxes that failed in the field.",
+  "External Failure", "The defect reached the customer.",
+  "Premium freight and a sorting crew sent to a customer's plant after a bad shipment.",
+  "External Failure", "Costs incurred after delivery, usually the most expensive kind."
+  ),
+  intro = "Pick the Cost of Quality category for each line."
+)
 ```
 
 ---

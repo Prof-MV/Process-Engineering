@@ -358,7 +358,9 @@ qwebr_calc_card(
     qwebr_calc_input("ideal_cycle_time", "Ideal cycle time", value = 0.5, min = 0.1, max = 5, step = 0.1, suffix = "min/part"),
     qwebr_calc_input("total_parts", "Parts produced", value = 700, min = 50, max = 2000, step = 10, type = "slider"),
     qwebr_calc_input("good_parts", "Good parts", value = 665, min = 0, max = 2000, step = 10)
-  )
+  ),
+  goal = "Reach a world-class OEE of 85% or better. Keep it physically possible: no more good parts than parts made, and no more parts than the run time allows.",
+  goal_test = "oee >= 85 && good_parts <= total_parts && total_parts <= theoretical_output"
 )
 ```
 
@@ -602,6 +604,34 @@ ggplot(losses_data, aes(x = reorder(loss, -percentage), y = percentage, fill = c
   )
 ```
 
+### Try it yourself: which OEE factor takes the hit?
+
+Each of the Six Big Losses reduces one of the three OEE factors. Sort these shift-log entries by the factor they reduce.
+
+```{r tryit-losses-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "losses-sort",
+  title = "Availability, Performance or Quality?",
+  bins = c("Availability", "Performance", "Quality"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A hydraulic hose bursts and the press is down for 50 minutes.",
+  "Availability", "An equipment failure: the machine is not running during planned production time.",
+  "A die change and first-piece adjustment takes 40 minutes.",
+  "Availability", "Setup and adjustment is downtime, even though it is expected.",
+  "Parts jam in the feeder chute a dozen times, each cleared in under a minute.",
+  "Performance", "Minor stops: the machine is 'running' but not producing at rate.",
+  "The line runs at 80% of its rated speed because of a worn spindle bearing.",
+  "Performance", "Reduced speed: a longer cycle time than the ideal.",
+  "The first 25 parts after start-up are scrapped while the process warms up.",
+  "Quality", "Start-up rejects are parts made but not good.",
+  "Three percent of parts are reworked for burrs during steady running.",
+  "Quality", "Production defects, including rework, reduce the quality rate."
+  ),
+  intro = "Pick the OEE factor each loss reduces."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Autonomous Maintenance
@@ -665,6 +695,27 @@ am_steps %>%
                 full_width = knitr::is_html_output(), position = "center") %>%
   row_spec(0, bold = TRUE, background = "#E74C3C", color = "white") %>%
   column_spec(1, bold = TRUE, width = "4em")
+```
+
+#### Try it yourself: order the seven steps
+
+Autonomous maintenance is built up in seven steps, each one resting on the one before. Put them in order.
+
+```{r tryit-am-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "am-order",
+  title = "The seven steps of autonomous maintenance",
+  steps = c(
+    "Initial cleaning: clean to inspect",
+    "Eliminate sources of contamination",
+    "Set cleaning and lubrication standards",
+    "General inspection training",
+    "Autonomous inspection",
+    "Workplace organization",
+    "Full autonomous maintenance"
+  ),
+  intro = "Move each step up or down until the sequence is right."
+)
 ```
 
 ### The AM Tag System
@@ -1453,10 +1504,10 @@ summary_data %>%
 
 ### Calculation Questions
 
-<details>
-<summary>Question 4: Calculate OEE given the following data.</summary>
+**Question 4: Calculate OEE given the following data.**
 
 **Given:**
+
 - Shift length: 480 minutes
 - Breaks: 30 minutes
 - Changeover: 45 minutes
@@ -1464,6 +1515,26 @@ summary_data %>%
 - Ideal cycle time: 30 seconds (0.5 min)
 - Total parts produced: 580
 - Rejected parts: 23
+
+```{r tryit-q4, echo=FALSE, results='asis'}
+q4_planned <- 480 - 30; q4_run <- q4_planned - 45 - 20
+q4_A <- q4_run / q4_planned; q4_P <- 580 / (q4_run / 0.5); q4_Q <- (580 - 23) / 580
+
+tryit_number(
+  id = "review-q4",
+  title = "Question 4: OEE",
+  answers = list(
+    tryit_answer("Availability", q4_A * 100, tol = 0.2, suffix = "%", digits = 1, hint = "Run time / planned production time. Breaks are planned; changeover and breakdown are not."),
+    tryit_answer("Performance", q4_P * 100, tol = 0.2, suffix = "%", digits = 1, hint = "Actual parts / (run time / ideal cycle time)."),
+    tryit_answer("Quality", q4_Q * 100, tol = 0.2, suffix = "%", digits = 1, hint = "Good parts / total parts."),
+    tryit_answer("OEE", q4_A * q4_P * q4_Q * 100, tol = 0.3, suffix = "%", digits = 1, hint = "Multiply the three factors as decimals.")
+  ),
+  question = "<p>A machine runs a 480-minute shift with 30 minutes of breaks. It loses 45 minutes to changeover and 20 minutes to a breakdown. The ideal cycle time is 30 seconds (0.5 min). It produces 580 parts, of which 23 are rejected.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 
@@ -1509,8 +1580,21 @@ Current state:
 
 </details>
 
-<details>
-<summary>Question 6: If current OEE is 60% and target is 85%, what improvement is needed in each component assuming equal improvement?</summary>
+**Question 6: If current OEE is 60% and target is 85%, what improvement is needed in each component assuming equal improvement?**
+
+```{r tryit-q6, echo=FALSE, results='asis'}
+tryit_number(
+  id = "review-q6",
+  title = "Question 6: equal improvement",
+  answers = list(
+    tryit_answer("Value each of the three factors must reach", 0.85^(1/3) * 100, tol = 0.1, suffix = "%", digits = 1, hint = "If all three factors equal x, then x cubed = 0.85.")
+  ),
+  question = "<p>The target OEE is 85%. If Availability, Performance and Quality are all to be equal, what value must each one reach?</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 

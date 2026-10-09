@@ -242,6 +242,67 @@ ggplot() +
 
 </details>
 
+### Try it yourself: run the funnel experiment
+
+Deming's funnel experiment, described above, is easy to run yourself. A marble is dropped through a funnel aimed at a target. It never lands exactly on the target: that scatter is common-cause variation. One operator leaves the funnel alone. A second operator, trying to help, moves the funnel after every drop by the size of the last miss, in the opposite direction.
+
+Before you look at the result, decide: will the second operator's drops be closer to the target, the same, or further away?
+
+```{r calc-funnel-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "funnel-sim",
+  title = "Funnel Experiment: Leave It Alone or Adjust?",
+  icon = "bullseye",
+  inputs = list(
+    qwebr_calc_input("sigma", "Natural scatter of the process (sigma)", value = 1.0, min = 0.2, max = 3, step = 0.1, suffix = "mm"),
+    qwebr_calc_input("n_drops", "Number of drops", value = 200, min = 30, max = 1000, step = 10, type = "slider"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this simulation</summary>
+
+```{webr-r}
+#| label: funnel-sim
+# Deming's funnel experiment: Rule 1 (hands off) against Rule 2 (adjust after every drop)
+sigma <- 1.0      # natural scatter of the process
+n_drops <- 200
+seed <- 1         # run number: same number, same marbles
+
+set.seed(seed)
+scatter <- rnorm(n_drops, mean = 0, sd = sigma)
+
+# Rule 1: the funnel stays aimed at the target (0)
+hands_off <- scatter
+
+# Rule 2: after each drop, move the funnel by the size of the miss, the other way
+adjusted <- numeric(n_drops)
+aim <- 0
+for (i in seq_len(n_drops)) {
+  adjusted[i] <- aim + scatter[i]
+  aim <- aim - adjusted[i]
+}
+
+par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1), cex.main = 1.2, cex.lab = 1.1, cex.axis = 1)
+limits <- range(c(hands_off, adjusted))
+plot(hands_off, pch = 19, col = "#2980b9", ylim = limits, las = 1, xlab = "Drop", ylab = "Miss distance (mm)", main = "Leave it alone")
+abline(h = 0, col = "#27ae60", lwd = 2)
+plot(adjusted, pch = 19, col = "#e74c3c", ylim = limits, las = 1, xlab = "Drop", ylab = "Miss distance (mm)", main = "Adjust after every drop")
+abline(h = 0, col = "#27ae60", lwd = 2)
+
+cat(sprintf("Adjusting made the scatter %.0f%% worse\n", (sd(adjusted) / sd(hands_off) - 1) * 100))
+cat(sprintf("  Leave it alone         standard deviation %.2f mm\n", sd(hands_off)))
+cat(sprintf("  Adjust every drop      standard deviation %.2f mm\n", sd(adjusted)))
+cat(sprintf("  Ratio                  %.2f (theory: 1.41)\n", sd(adjusted) / sd(hands_off)))
+```
+
+</details>
+
+Run it several times. The adjusting operator is never better and is worse by about 40% every time, because each adjustment adds the previous drop's random error to the next drop's own. This is the first of the two mistakes in process control, reacting to common-cause variation as if it were a signal, and it is exactly what a control chart is there to prevent.
+
 ### When is a Process "In Control"?
 
 A process is **in statistical control** when:
@@ -520,6 +581,40 @@ chart_types %>%
 
 </details>
 
+#### Try it yourself: choose the chart
+
+Eight situations from different plants. Decide which control chart fits each one, then check. Ask two things in order: is the data *measured* or *counted*, and how many readings make up one plotted point?
+
+```{r tryit-chart-chooser, echo=FALSE, results='asis'}
+chart_cards <- tibble::tribble(
+  ~text, ~bin, ~why,
+  "Five shaft diameters are measured every hour on a CNC lathe.",
+  "X-bar / R", "Measured data in small subgroups (n = 5).",
+  "Four fill weights are taken from the bottling line every 30 minutes.",
+  "X-bar / R", "Measured data in small subgroups (n = 4).",
+  "One viscosity reading is taken per batch of paint; a batch takes four hours.",
+  "I-MR", "Measured data, but only one value per point.",
+  "A destructive pull test is done on one weld per shift.",
+  "I-MR", "Measured data, and destructive testing limits you to a single reading.",
+  "Each shift records the fraction of bottles rejected for a bad cap; the number inspected changes from shift to shift.",
+  "p chart", "Counted pass/fail units as a proportion, with a varying sample size.",
+  "Each day's lot of circuit boards is tested and the share that fails is recorded.",
+  "p chart", "Counted pass/fail units, plotted as a proportion defective.",
+  "Paint blemishes are counted on every car hood.",
+  "c chart", "A count of defects per item; one hood can have several blemishes.",
+  "Solder defects are counted on one board of the same type each hour.",
+  "c chart", "A count of defects on a constant inspection unit."
+)
+
+tryit_sort(
+  id = "chart-chooser",
+  title = "Which control chart?",
+  bins = c("X-bar / R", "I-MR", "p chart", "c chart"),
+  cards = chart_cards,
+  intro = "Pick the control chart that fits each situation."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Variable Control Charts
@@ -693,6 +788,76 @@ constants %>%
   row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
   row_spec(4, background = "#D5F5E3")  # Highlight n=5 row
 ```
+
+#### Try it yourself: build an X-bar/R chart by hand
+
+Now do the arithmetic yourself on fresh data. A grinding cell measures the diameter of four piston pins (mm) every hour; eight subgroups are shown below. Fill in the mean and range of each subgroup, then the centre lines and control limits. Use the constants for **n = 4** from the table above. Check as often as you like.
+
+```{r tryit-xbar-r, echo=FALSE, results='asis'}
+pins <- data.frame(
+  Subgroup = 1:8,
+  x1 = c(12.02, 12.03, 11.99, 12.00, 12.05, 11.98, 12.01, 11.97),
+  x2 = c(11.98, 12.00, 12.01, 11.96, 12.01, 12.02, 12.03, 12.00),
+  x3 = c(12.01, 11.97, 12.04, 12.01, 12.02, 12.00, 11.99, 12.02),
+  x4 = c(11.99, 12.02, 12.00, 11.99, 12.00, 12.00, 12.01, 11.99)
+)
+pin_readings <- as.matrix(pins[, c("x1", "x2", "x3", "x4")])
+pins$`X-bar` <- rowMeans(pin_readings)
+pins$R <- apply(pin_readings, 1, function(x) max(x) - min(x))
+pins$Subgroup <- as.character(pins$Subgroup)
+
+# Constants for n = 4, read from the constants table above
+pin_n4 <- constants[constants$n == 4, ]
+pin_xbarbar <- mean(pins$`X-bar`)
+pin_rbar <- mean(pins$R)
+pin_ucl_x <- pin_xbarbar + pin_n4$A2 * pin_rbar
+pin_lcl_x <- pin_xbarbar - pin_n4$A2 * pin_rbar
+pin_ucl_r <- pin_n4$D4 * pin_rbar
+pin_lcl_r <- pin_n4$D3 * pin_rbar
+
+tryit_grid(
+  id = "xbar-r-by-hand",
+  title = "X-bar/R chart: piston pin diameter",
+  data = pins,
+  blank = c("X-bar", "R"),
+  tol = c(`X-bar` = 0.001, R = 0.001),
+  hints = c(`X-bar` = "Add the four readings and divide by 4. Keep three decimals.",
+            R = "Largest reading minus smallest reading in that row."),
+  answers = list(
+    tryit_answer("Grand mean (X-double-bar)", pin_xbarbar, tol = 0.001, suffix = "mm",
+                 hint = "Average of the eight subgroup means."),
+    tryit_answer("Average range (R-bar)", pin_rbar, tol = 0.001, suffix = "mm",
+                 hint = "Average of the eight ranges."),
+    tryit_answer("X-bar chart UCL", pin_ucl_x, tol = 0.002, suffix = "mm",
+                 hint = "Grand mean + A2 x R-bar, with A2 for n = 4."),
+    tryit_answer("X-bar chart LCL", pin_lcl_x, tol = 0.002, suffix = "mm",
+                 hint = "Grand mean - A2 x R-bar, with A2 for n = 4."),
+    tryit_answer("R chart UCL", pin_ucl_r, tol = 0.002, suffix = "mm",
+                 hint = "D4 x R-bar, with D4 for n = 4."),
+    tryit_answer("R chart LCL", pin_lcl_r, tol = 0.002, suffix = "mm",
+                 hint = "D3 x R-bar. Look at D3 for n = 4.")
+  ),
+  intro = "Fill in X-bar and R for each subgroup, then the limits. Work to three decimal places.",
+  question = "<p>A grinding cell measures the diameter of four piston pins (mm) every hour. Eight subgroups are shown. Constants for n = 4: A2 = 0.729, D3 = 0, D4 = 2.282.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-xbar-r-solution, echo=FALSE}
+pins %>%
+  kable(digits = c(0, 2, 2, 2, 2, 3, 2), align = "c") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+- Grand mean = `r sprintf("%.4f", pin_xbarbar)` mm, average range = `r sprintf("%.4f", pin_rbar)` mm
+- X-bar chart: UCL = `r sprintf("%.4f", pin_xbarbar)` + `r pin_n4$A2` × `r sprintf("%.4f", pin_rbar)` = **`r sprintf("%.3f", pin_ucl_x)` mm**, LCL = **`r sprintf("%.3f", pin_lcl_x)` mm**
+- R chart: UCL = `r pin_n4$D4` × `r sprintf("%.4f", pin_rbar)` = **`r sprintf("%.3f", pin_ucl_r)` mm**, LCL = `r pin_n4$D3` × `r sprintf("%.4f", pin_rbar)` = **`r sprintf("%.0f", pin_lcl_r)` mm**
+
+Every subgroup mean lies between the X-bar limits and every range is below the R chart UCL, so these eight subgroups show no special cause.
+
+</details>
 
 ### Individual and Moving Range (I-MR) Chart
 
@@ -1093,6 +1258,57 @@ patterns %>%
 
 </details>
 
+### Try it yourself: spot the signal
+
+Six control charts, each with 15 points plotted in standard-deviation units (the dashed lines are at ±1σ, ±2σ and ±3σ). Five of them break exactly one of the four Western Electric rules. One is in control. Decide which is which.
+
+```{r tryit-signals-fig, echo=FALSE, fig.align="center", fig.cap="Six control charts: which rule, if any, does each one break?", fig.width=10, fig.height=7}
+signal_charts <- list(
+  A = c(0.3, -0.6, 0.8, -0.2, 0.5, -0.9, 0.1, 3.4, -0.4, 0.6, -0.7, 0.2, -0.3, 0.7, -0.5),
+  B = c(-0.4, 0.6, -0.8, 0.3, 0.5, 0.2, 0.7, 0.4, 0.6, 0.3, 0.8, -0.5, 0.4, -0.6, 0.2),
+  C = c(0.2, -0.7, 0.5, -0.3, 0.6, -0.9, 2.3, 0.4, 2.5, -0.6, 0.3, -0.4, 0.7, -0.2, 0.1),
+  D = c(-0.5, 0.4, -0.2, 0.6, -0.8, 1.3, 1.6, 0.7, 1.4, 1.2, -0.3, 0.5, -0.6, 0.2, -0.4),
+  E = c(0.4, -0.7, 1.1, -0.3, 0.2, -1.2, 0.6, -0.1, 0.9, -0.5, -0.9, 0.3, 1.4, -0.6, 0.1),
+  F = c(0.5, -0.2, 0.7, -0.6, 0.1, 0.9, -0.4, 0.3, -0.8, 0.6, -0.1, -3.3, 0.4, -0.5, 0.2)
+)
+signal_df <- do.call(rbind, lapply(names(signal_charts), function(chart) {
+  data.frame(chart = paste("Chart", chart), point = seq_along(signal_charts[[chart]]), z = signal_charts[[chart]])
+}))
+
+ggplot(signal_df, aes(x = point, y = z)) +
+  geom_hline(yintercept = c(-3, 3), color = "#E74C3C", linewidth = 0.8) +
+  geom_hline(yintercept = c(-2, -1, 1, 2), color = "#95A5A6", linetype = "dashed", linewidth = 0.4) +
+  geom_hline(yintercept = 0, color = "#27AE60", linewidth = 0.8) +
+  geom_line(color = "#2C3E50", linewidth = 0.6) +
+  geom_point(color = "#2C3E50", size = 2) +
+  facet_wrap(~chart, ncol = 3) +
+  scale_x_continuous(breaks = seq(1, 15, 2)) +
+  scale_y_continuous(breaks = -3:3, limits = c(-3.8, 3.8)) +
+  labs(x = "Sample", y = "Standard deviations from the center line") +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold", size = 11 * diagram_text_scale),
+        panel.grid.minor = element_blank())
+```
+
+```{r tryit-signals, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "signal-spotter",
+  title = "Which rule does each chart break?",
+  bins = c("Rule 1", "Rule 2", "Rule 3", "Rule 4", "In control"),
+  cards = tibble::tribble(
+    ~text, ~bin, ~why,
+    "Chart A", "Rule 1", "Point 8 is above the upper control limit.",
+    "Chart B", "Rule 4", "Points 4 to 11 are eight in a row above the center line, though none is far from it.",
+    "Chart C", "Rule 2", "Points 7 and 9 are both beyond +2 sigma: two out of three consecutive points in Zone A.",
+    "Chart D", "Rule 3", "Points 6, 7, 9 and 10 are beyond +1 sigma: four out of five consecutive points in Zone B or beyond.",
+    "Chart E", "In control", "Points fall on both sides, most within 1 sigma, with no run and nothing near a limit.",
+    "Chart F", "Rule 1", "Point 12 is below the lower control limit. Rule 1 applies on either side."
+  ),
+  intro = "Pick the rule each chart breaks, or 'In control'.",
+  question = NULL
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Process Capability
@@ -1245,7 +1461,9 @@ qwebr_calc_card(
     qwebr_calc_input("USL", "Upper spec limit (USL)", value = 25.15, min = 24.5, max = 26.0, step = 0.01),
     qwebr_calc_input("X_bar_cap", "Process mean", value = 25.03, min = 24.5, max = 25.5, step = 0.01, type = "slider"),
     qwebr_calc_input("sigma_within", "Within-subgroup sigma", value = 0.045, min = 0.01, max = 0.20, step = 0.005)
-  )
+  ),
+  goal = "Make this process capable: reach a Cpk of 1.33 or more without moving the specification limits.",
+  goal_test = "Cpk >= 1.33 && USL == 25.15 && LSL == 24.85"
 )
 ```
 
@@ -1565,10 +1783,10 @@ summary_data %>%
 
 ### Calculation Questions
 
-<details>
-<summary>Question 4: Calculate control limits for an X-bar/R chart given the following data.</summary>
+**Question 4: Calculate control limits for an X-bar/R chart given the following data.**
 
 **Given:**
+
 - 20 subgroups of n = 4 measurements
 - Grand mean (X-double-bar) = 50.25
 - Average range (R-bar) = 2.40
@@ -1576,7 +1794,27 @@ summary_data %>%
 
 **Calculate UCL and LCL for both charts.**
 
-**Solution:**
+```{r tryit-q4, echo=FALSE, results='asis'}
+q4_xbarbar <- 50.25; q4_rbar <- 2.40
+q4_A2 <- 0.729; q4_D3 <- 0; q4_D4 <- 2.282
+
+tryit_number(
+  id = "review-q4",
+  title = "Question 4: X-bar/R control limits",
+  answers = list(
+    tryit_answer("X-bar chart UCL", q4_xbarbar + q4_A2 * q4_rbar, tol = 0.01,
+                 hint = "UCL = X-double-bar + A2 x R-bar"),
+    tryit_answer("X-bar chart LCL", q4_xbarbar - q4_A2 * q4_rbar, tol = 0.01,
+                 hint = "LCL = X-double-bar - A2 x R-bar"),
+    tryit_answer("R chart UCL", q4_D4 * q4_rbar, tol = 0.01, hint = "UCL = D4 x R-bar"),
+    tryit_answer("R chart LCL", q4_D3 * q4_rbar, tol = 0.01, hint = "LCL = D3 x R-bar")
+  ),
+  question = "<p>An X-bar/R chart is built from 20 subgroups of n = 4 measurements. Grand mean (X-double-bar) = 50.25, average range (R-bar) = 2.40. Constants for n = 4: A2 = 0.729, D3 = 0, D4 = 2.282.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **X-bar Chart:**
 ```
@@ -1600,15 +1838,34 @@ CL = 2.40
 
 </details>
 
-<details>
-<summary>Question 5: Calculate Cp and Cpk for a process with the following data.</summary>
+**Question 5: Calculate Cp and Cpk for a process with the following data.**
 
 **Given:**
+
 - Specification: 100 ± 5 (USL = 105, LSL = 95)
 - Process mean = 102
 - Process standard deviation (σ) = 1.5
 
-**Solution:**
+```{r tryit-q5, echo=FALSE, results='asis'}
+q5_usl <- 105; q5_lsl <- 95; q5_mean <- 102; q5_sd <- 1.5
+q5_cpu <- (q5_usl - q5_mean) / (3 * q5_sd)
+q5_cpl <- (q5_mean - q5_lsl) / (3 * q5_sd)
+
+tryit_number(
+  id = "review-q5",
+  title = "Question 5: Cp and Cpk",
+  answers = list(
+    tryit_answer("Cp", (q5_usl - q5_lsl) / (6 * q5_sd), tol = 0.01,
+                 hint = "Cp = (USL - LSL) / (6 x sigma). The mean does not appear in it."),
+    tryit_answer("Cpk", min(q5_cpu, q5_cpl), tol = 0.01,
+                 hint = "Work out Cpu and Cpl separately; Cpk is the smaller of the two.")
+  ),
+  question = "<p>A process has a specification of 100 +/- 5 (USL = 105, LSL = 95), a mean of 102 and a standard deviation of 1.5.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Cp (Potential Capability):**
 ```
@@ -1632,10 +1889,28 @@ Cpk = min(Cpu, Cpl) = min(0.67, 1.56) = 0.67
 
 </details>
 
-<details>
-<summary>Question 6: A p chart has p-bar = 0.04 and sample size n = 200. Calculate control limits.</summary>
+**Question 6: A p chart has p-bar = 0.04 and sample size n = 200. Calculate control limits.**
 
-**Solution:**
+```{r tryit-q6, echo=FALSE, results='asis'}
+q6_pbar <- 0.04; q6_n <- 200
+q6_width <- 3 * sqrt(q6_pbar * (1 - q6_pbar) / q6_n)
+
+tryit_number(
+  id = "review-q6",
+  title = "Question 6: p chart control limits",
+  intro = "Enter the limits as proportions (for example 0.05), not percentages.",
+  answers = list(
+    tryit_answer("UCL", q6_pbar + q6_width, tol = 0.0005,
+                 hint = "UCL = p-bar + 3 x sqrt(p-bar x (1 - p-bar) / n)"),
+    tryit_answer("LCL", max(0, q6_pbar - q6_width), tol = 0.0005,
+                 hint = "A proportion cannot be negative. What do you do when the formula gives a value below zero?")
+  ),
+  question = "<p>A p chart has p-bar = 0.04 and a constant sample size of n = 200. Give each limit as a proportion (for example 0.05), not a percentage.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Center Line:**
 ```

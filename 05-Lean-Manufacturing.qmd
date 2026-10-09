@@ -393,6 +393,40 @@ Some people also use **DOWNTIME** (adding "Non-utilized talent" as an 8th waste)
 
 </details>
 
+---
+
+## Try it yourself: spot the waste
+
+Eight things you might see on a gemba walk. Name the waste in each one.
+
+```{r tryit-waste-spotter, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "waste-spotter",
+  title = "Which of the seven wastes?",
+  bins = c("Transport", "Inventory", "Motion", "Waiting", "Overproduction", "Over-processing", "Defects"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A forklift carries pallets 200 m from the press shop to assembly and returns empty.",
+  "Transport", "Moving material adds cost but no value.",
+  "Three weeks of stamped brackets sit on racks beside the weld cell.",
+  "Inventory", "Stock beyond what the next process needs ties up cash and hides problems.",
+  "An assembler walks to a shared toolbox for a torque wrench on every cycle.",
+  "Motion", "Movement of people, not product. 5S would put the tool at the point of use.",
+  "An operator bends to floor level to pick each part out of a deep bin.",
+  "Motion", "Unnecessary reaching and bending by the person.",
+  "The paint line stands idle for 40 minutes because the upstream washer is being changed over.",
+  "Waiting", "People or machines idle because the previous step has not delivered.",
+  "The press keeps running to stay busy and makes 500 more panels than this week's orders.",
+  "Overproduction", "Making more, or sooner, than the customer asked for. It creates most of the other wastes.",
+  "A hidden bracket surface is polished to a mirror finish that the drawing does not ask for.",
+  "Over-processing", "Work beyond what the customer requires.",
+  "One housing in every twenty is reworked because of flash on the parting line.",
+  "Defects", "Scrap and rework consume material, time and capacity."
+  ),
+  intro = "Name the waste in each observation."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## The 5S Methodology
@@ -473,6 +507,25 @@ five_s_detail %>%
 > "The ability to understand the status of a production area in **5 minutes or less** by simple observation without use of computers or speaking to anyone."
 
 A well-implemented 5S creates a **visual factory** where problems are immediately apparent.
+
+### Try it yourself: put the 5S steps in order
+
+5S only holds if the steps are done in sequence. Put them in order.
+
+```{r tryit-five-s-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "five-s-order",
+  title = "The five S's, first to last",
+  steps = c(
+    "Sort: remove what is not needed",
+    "Set in Order: a place for everything that remains",
+    "Shine: clean, and inspect while cleaning",
+    "Standardize: make the first three routine",
+    "Sustain: audit and keep it going"
+  ),
+  intro = "Move each step up or down until the sequence is right."
+)
+```
 
 ------------------------------------------------------------------------
 
@@ -593,6 +646,82 @@ push_pull %>%
   column_spec(3, background = "#D5F5E3")
 ```
 
+### Try it yourself: push against pull
+
+This is the dice game many lean courses play with poker chips, run for 200 days in a second. Four stations work in series. Each day every station can process between 1 and 6 parts, decided by a roll of a die, so the stations are balanced on average but never on the day.
+
+The **push** line releases four new parts every morning, whatever is happening downstream. The **pull** line releases a part only when the total in the line is below a cap, which is what a kanban limit does. Both lines get the same dice.
+
+```{r calc-push-pull-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "push-pull-sim",
+  title = "Dice Game: Push vs Pull",
+  icon = "dice",
+  inputs = list(
+    qwebr_calc_input("wip_cap", "Pull line: limit on parts in the line", value = 12, min = 4, max = 60, step = 1, type = "slider"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed",
+  goal = "Find a limit that keeps at least 90% of the push line's output while holding less than half of its inventory.",
+  goal_test = "pull_out >= 0.9 * push_out && pull_wip < push_wip / 2"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this simulation</summary>
+
+```{webr-r}
+#| label: push-pull-sim
+# The dice game: four stations in series, 200 days
+wip_cap <- 12    # pull line: most parts allowed in the line at once
+seed <- 1        # run number: same number, same dice
+
+set.seed(seed)
+n_days <- 200
+n_stations <- 4
+dice <- matrix(sample(1:6, n_days * n_stations, replace = TRUE), nrow = n_days)
+
+run_line <- function(limit) {
+  queue <- integer(n_stations)   # parts waiting at each station
+  shipped <- 0
+  wip <- numeric(n_days)
+  for (day in seq_len(n_days)) {
+    # Release work: push sends 4 a day regardless; pull tops the line up to its limit
+    queue[1] <- queue[1] + if (is.finite(limit)) max(0, limit - sum(queue)) else 4
+    for (s in n_stations:1) {
+      moved <- min(queue[s], dice[day, s])
+      queue[s] <- queue[s] - moved
+      if (s < n_stations) queue[s + 1] <- queue[s + 1] + moved else shipped <- shipped + moved
+    }
+    wip[day] <- sum(queue)
+  }
+  list(out = shipped / n_days, wip = wip)
+}
+
+push <- run_line(Inf)
+pull <- run_line(wip_cap)
+push_out <- push$out; push_wip <- mean(push$wip)
+pull_out <- pull$out; pull_wip <- mean(pull$wip)
+
+par(mar = c(4.5, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+plot(push$wip, type = "l", lwd = 3, col = "#e74c3c", las = 1, ylim = c(0, max(push$wip)),
+     xlab = "Day", ylab = "Parts in the line", main = "Inventory in the line, day by day")
+lines(pull$wip, lwd = 3, col = "#2980b9")
+legend("topleft", legend = c("Push", "Pull"), col = c("#e74c3c", "#2980b9"), lwd = 3, bty = "n", cex = 1.2)
+
+cat(sprintf("Pull: %.2f parts/day with %.0f parts in the line\n", pull_out, pull_wip))
+cat(sprintf("  Push output            %.2f parts/day\n", push_out))
+cat(sprintf("  Push inventory         %.0f parts on average, and still rising\n", push_wip))
+cat(sprintf("  Pull output            %.0f%% of push\n", pull_out / push_out * 100))
+cat(sprintf("  Pull inventory         %.0f%% of push\n", pull_wip / push_wip * 100))
+cat(sprintf("  Pull lead time         %.1f days (inventory / output)\n", pull_wip / pull_out))
+cat(sprintf("  Push lead time         %.1f days\n", push_wip / push_out))
+```
+
+</details>
+
+Two things to notice. The push line's inventory never settles: it releases four a day into a line that ships a little over three, and the difference piles up. And a limit that is too tight starves the line, so the skill is in choosing a limit, not in having one.
+
 ### Kanban System
 
 **Kanban** (看板) is Japanese for "signboard" or "billboard." It's a scheduling system for lean and JIT production.
@@ -692,7 +821,9 @@ qwebr_calc_card(
     qwebr_calc_input("available_time_per_day", "Shift length", value = 480, min = 120, max = 1440, step = 30, suffix = "min"),
     qwebr_calc_input("breaks_and_meetings", "Breaks & meetings", value = 60, min = 0, max = 240, step = 10, suffix = "min"),
     qwebr_calc_input("customer_demand", "Customer demand", value = 240, min = 10, max = 2000, step = 10, suffix = "units/day", type = "slider")
-  )
+  ),
+  goal = "Find the daily demand that gives a takt time of exactly 60 seconds.",
+  goal_test = "abs(takt_time - 1) < 1e-9"
 )
 ```
 
@@ -947,6 +1078,65 @@ vsm_metrics %>%
   row_spec(0, bold = TRUE, background = "#16A085", color = "white")
 ```
 
+### Try it yourself: read a value stream map
+
+A supplier makes steering brackets in three steps and ships **500 brackets a day**. The current-state map shows the process time at each step and the inventory waiting in front of it. Convert each inventory triangle into days of demand, then total the timeline.
+
+Days of inventory = pieces waiting ÷ daily demand. Lead time is the sum of those days; process time is the sum of the times in the boxes.
+
+```{r tryit-vsm, echo=FALSE, results='asis'}
+vsm <- data.frame(
+  step = c("Stamping", "Welding", "Assembly", "Shipping"),
+  pt   = c(2, 40, 60, NA),                 # process time, seconds per piece
+  wip  = c(4000, 1500, 2000, 1000),        # pieces waiting in front of the step
+  stringsAsFactors = FALSE
+)
+vsm_demand <- 500
+vsm$days <- vsm$wip / vsm_demand
+
+tryit_diagram(
+  id = "vsm",
+  title = "Current-state map: steering bracket",
+  direction = "right",
+  nodes = lapply(seq_len(nrow(vsm)), function(i) {
+    tryit_node(
+      vsm$step[i], vsm$step[i], i,
+      given = c(if (!is.na(vsm$pt[i])) c("Process time" = paste(vsm$pt[i], "s")),
+                "Inventory ahead" = paste(format(vsm$wip[i], big.mark = " "), "pcs")),
+      blank = list(tryit_answer("Days", vsm$days[i], tol = 0.05, digits = 1,
+                                hint = "Pieces waiting divided by 500 pieces per day."))
+    )
+  }),
+  edges = list(c("Stamping", "Welding"), c("Welding", "Assembly"), c("Assembly", "Shipping")),
+  answers = list(
+    tryit_answer("Total lead time", sum(vsm$days), tol = 0.1, digits = 0, suffix = "days",
+                 hint = "Add the days of inventory along the timeline."),
+    tryit_answer("Total process (value-added) time", sum(vsm$pt, na.rm = TRUE), tol = 0.5, digits = 0, suffix = "sec",
+                 hint = "Add the process times in the three process boxes.")
+  ),
+  intro = "Fill in the days of inventory ahead of each step, then the two totals.",
+  question = "<p>A supplier ships 500 steering brackets per day through three process steps and a shipping stage.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-vsm-solution, echo=FALSE}
+data.frame(Step = vsm$step,
+           `Process time (s)` = ifelse(is.na(vsm$pt), "-", as.character(vsm$pt)),
+           `Inventory ahead (pcs)` = format(vsm$wip, big.mark = " "),
+           `Days of inventory` = vsm$days, check.names = FALSE) %>%
+  kable(align = "lccc") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+Lead time = `r paste(vsm$days, collapse = " + ")` = **`r sum(vsm$days)` days**. Process time = 2 + 40 + 60 = **`r sum(vsm$pt, na.rm = TRUE)` seconds**.
+
+A bracket spends `r sum(vsm$days)` days in the plant and is worked on for under two minutes. That gap is why a value stream map puts the two numbers side by side: the improvement is in the inventory between the boxes, not in making any one process faster.
+
+</details>
+
 ------------------------------------------------------------------------
 
 ## Summary
@@ -1018,8 +1208,22 @@ The seven types of waste (TIMWOOD) are:
 
 </details>
 
-<details>
-<summary>Question 3: Calculate the Takt time for a facility with 450 minutes of available time and demand of 150 units.</summary>
+**Question 3: Calculate the Takt time for a facility with 450 minutes of available time and demand of 150 units.**
+
+```{r tryit-q3, echo=FALSE, results='asis'}
+tryit_number(
+  id = "review-q3",
+  title = "Question 3: takt time",
+  answers = list(
+    tryit_answer("Takt time", 450 / 150, tol = 0.01, suffix = "min/unit", hint = "Available time divided by customer demand."),
+    tryit_answer("Takt time", 450 / 150 * 60, tol = 0.5, suffix = "sec/unit", digits = 0)
+  ),
+  question = "<p>A facility has 450 minutes of available time per day and a demand of 150 units per day.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 $$\text{Takt Time} = \frac{450 \text{ minutes}}{150 \text{ units}} = 3 \text{ minutes per unit}$$
 

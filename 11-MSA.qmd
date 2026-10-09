@@ -972,6 +972,38 @@ gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2)
 
 ---
 
+## Try it yourself: name the measurement error
+
+Seven symptoms from a gauge study. Decide which component of measurement variation each one points to.
+
+```{r tryit-msa-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "msa-sort",
+  title = "Which kind of measurement error?",
+  bins = c("Bias", "Linearity", "Stability", "Repeatability", "Reproducibility"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A micrometer reads 0.02 mm high on a certified gauge block, every time.",
+  "Bias", "A consistent offset between the average reading and the reference value.",
+  "A scale is accurate at 1 kg but reads 0.5 kg low at 50 kg.",
+  "Linearity", "The bias changes across the measuring range.",
+  "A caliper is correct on small parts and increasingly wrong on large ones.",
+  "Linearity", "The accuracy depends on the size being measured.",
+  "A CMM's readings on the same master part drift upward over three months.",
+  "Stability", "The measurement system changes over time.",
+  "One operator measures the same part five times with the same gauge and gets five different readings.",
+  "Repeatability", "Variation with the same operator, part and gauge: equipment variation.",
+  "Three operators measure the same parts with the same gauge and their averages differ.",
+  "Reproducibility", "Variation between operators: appraiser variation.",
+  "The day shift and the night shift get different averages on identical parts.",
+  "Reproducibility", "The difference is between people or their methods, not within one person's readings."
+  ),
+  intro = "Pick the component of measurement variation behind each symptom."
+)
+```
+
+---
+
 ## Attribute Measurement Systems
 
 For pass/fail or categorical measurements (visual inspection, go/no-go gauges), we use **Attribute MSA** or **Attribute Agreement Analysis**.
@@ -1186,7 +1218,9 @@ qwebr_calc_card(
     qwebr_calc_input("tolerance", "Total tolerance", value = 0.100, min = 0.010, max = 1.000, step = 0.010, suffix = "mm"),
     qwebr_calc_input("process_6sigma", "Process 6σ", value = 0.080, min = 0.010, max = 1.000, step = 0.010, suffix = "mm"),
     qwebr_calc_input("gauge_resolution", "Gauge resolution", value = 0.010, min = 0.001, max = 0.050, step = 0.001, suffix = "mm", type = "slider")
-  )
+  ),
+  goal = "Choose a gauge resolution that passes the Rule of Ten against the process spread as well as the tolerance.",
+  goal_test = "ratio_tolerance >= 10 - 1e-9 && ratio_process >= 10 - 1e-9 && process_6sigma <= 0.08 + 1e-9"
 )
 ```
 
@@ -1340,7 +1374,9 @@ qwebr_calc_card(
     qwebr_calc_input("USL", "Upper spec limit", value = 106, min = 100, max = 120, step = 1),
     qwebr_calc_input("true_mean", "True process mean", value = 100, min = 90, max = 110, step = 0.5, type = "slider"),
     qwebr_calc_input("true_sigma", "True process sigma", value = 2.0, min = 0.5, max = 5.0, step = 0.1)
-  )
+  ),
+  goal = "A poor gauge hides a good process. How tight must the true process sigma be before even the poor gauge reports an observed Cpk of 1.33?",
+  goal_test = "observed_Cpk_poor >= 1.33 && USL == 106 && LSL == 94"
 )
 ```
 

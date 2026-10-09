@@ -1,3 +1,12 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
 
 # AI Tools for Manufacturing Engineering {#sec-chap-ml}
 
@@ -338,6 +347,36 @@ Produces a focused, audience-appropriate, length-controlled explanation that the
 :::
 
 ***
+
+#### Try it yourself: take a prompt apart
+
+The seven sentences below make up one R-C-T-C-F prompt. Decide which element each sentence is.
+
+```{r tryit-rctcf-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "rctcf-sort",
+  title = "Which R-C-T-C-F element?",
+  bins = c("Role", "Context", "Task", "Constraints", "Format"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "You are a maintenance planner at a food-packaging plant.",
+  "Role", "It tells the LLM who to act as.",
+  "Our filler line has had four unplanned stops this month, all on the capping head.",
+  "Context", "Background the LLM needs and cannot know.",
+  "The capper is 12 years old and spare parts take three weeks to arrive.",
+  "Context", "More background about the situation.",
+  "Draft a one-page case for replacing the capping head.",
+  "Task", "What you actually want done.",
+  "Use only the downtime figures I paste below; do not invent costs.",
+  "Constraints", "A limit on what the LLM may do, aimed at hallucinated numbers.",
+  "Keep it under 300 words.",
+  "Constraints", "A limit on length.",
+  "Give me a summary paragraph followed by a three-row table: option, cost, downtime avoided.",
+  "Format", "How the output should be laid out."
+  ),
+  intro = "Pick the element each sentence belongs to."
+)
+```
 
 ### Self-Check Questions — Week 1 {#ml-w1-check}
 
@@ -1097,6 +1136,80 @@ A real plant does not care equally about errors in both directions. If you predi
 Specialized loss functions can encode this asymmetry (the original C-MAPSS competition used a custom scoring function that penalized late predictions far more than early ones). Your capstone uses symmetric RMSE for simplicity, but this is a known simplification of the real industrial problem.
 
 ***
+
+### Try It Yourself: Where Do You Set the Alarm? {#ml-w3-tryit}
+
+A predictive-maintenance model does not say "this machine will fail". It gives each machine a risk score between 0 and 1, and someone has to choose the score above which maintenance is called out. Set the threshold low and you catch every failure but send technicians to healthy machines. Set it high and you stop wasting call-outs but miss real failures.
+
+The fleet below has 200 machines, 30 of which really are about to fail. Move the threshold and watch the confusion matrix, precision, recall and total cost change together.
+
+```{r calc-alarm-threshold, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "alarm-threshold",
+  title = "Alarm Threshold: Precision, Recall and Cost",
+  icon = "bell",
+  inputs = list(
+    qwebr_calc_input("threshold", "Alarm threshold (risk score)", value = 0.50, min = 0.05, max = 0.95, step = 0.01, type = "slider"),
+    qwebr_calc_input("cost_false_alarm", "Cost of a false alarm", value = 2000, min = 500, max = 20000, step = 500, prefix = "$"),
+    qwebr_calc_input("cost_missed_failure", "Cost of a missed failure", value = 50000, min = 5000, max = 200000, step = 5000, prefix = "$")
+  ),
+  goal = "Find the threshold with the lowest total cost. Is it where accuracy is highest?",
+  goal_test = "total_cost <= min(cost_curve) + 1e-9"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+```{webr-r}
+#| label: alarm-threshold
+# Choosing the alarm threshold for a predictive-maintenance model
+threshold <- 0.50             # call out maintenance when the risk score is at least this
+cost_false_alarm <- 2000      # an unnecessary inspection
+cost_missed_failure <- 50000  # an unplanned breakdown
+
+# Risk scores from the model for 200 machines: 170 healthy, 30 about to fail.
+# (Evenly spaced points from two overlapping distributions, so results repeat exactly.)
+healthy <- qbeta(ppoints(170), 2, 5)
+failing <- qbeta(ppoints(30), 5, 2)
+
+counts <- function(th) {
+  c(TP = sum(failing >= th), FN = sum(failing < th),
+    FP = sum(healthy >= th), TN = sum(healthy < th))
+}
+cost_of <- function(th) {
+  k <- counts(th)
+  k[["FP"]] * cost_false_alarm + k[["FN"]] * cost_missed_failure
+}
+
+k <- counts(threshold)
+precision <- k[["TP"]] / max(1, k[["TP"]] + k[["FP"]])
+recall <- k[["TP"]] / (k[["TP"]] + k[["FN"]])
+accuracy <- (k[["TP"]] + k[["TN"]]) / 200
+total_cost <- cost_of(threshold)
+
+steps <- seq(0.05, 0.95, by = 0.01)
+cost_curve <- sapply(steps, cost_of)
+
+par(mar = c(4.5, 6, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+plot(steps, cost_curve / 1000, type = "l", lwd = 4, col = "#2c3e50", las = 1,
+     xlab = "Alarm threshold", ylab = "Total cost ($ thousands)", main = "Total cost at every threshold")
+abline(v = threshold, lty = 2, col = "#bdc3c7")
+points(threshold, total_cost / 1000, pch = 19, cex = 2.4, col = "#e74c3c")
+
+cat(sprintf("Total cost: $%s\n", format(total_cost, big.mark = " ", scientific = FALSE)))
+cat(sprintf("  Failures caught (TP)   %d of 30\n", k[["TP"]]))
+cat(sprintf("  Failures missed (FN)   %d\n", k[["FN"]]))
+cat(sprintf("  False alarms (FP)      %d\n", k[["FP"]]))
+cat(sprintf("  Correctly left alone (TN)  %d\n", k[["TN"]]))
+cat(sprintf("  Precision              %.0f%%\n", precision * 100))
+cat(sprintf("  Recall                 %.0f%%\n", recall * 100))
+cat(sprintf("  Accuracy               %.1f%%\n", accuracy * 100))
+```
+
+</details>
+
+Now change the cost of a missed failure to match the cost of a false alarm and find the cheapest threshold again. It moves a long way. The model has not changed; only what its mistakes cost you has. That is why the threshold is an engineering and business decision, and why accuracy alone is the wrong number to optimize.
 
 ### Self-Check Questions — Week 3 {#ml-w3-check}
 

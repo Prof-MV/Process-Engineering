@@ -347,6 +347,40 @@ Think about:
 
 </details>
 
+---
+
+## Try it yourself: name the layout
+
+Eight facilities. Decide which of the four layout types each one uses.
+
+```{r tryit-layout-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "layout-sort",
+  title = "Which layout type?",
+  bins = c("Process", "Product", "Cellular", "Fixed-position"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A job shop with all the lathes in one area, all the mills in another and a separate grinding room.",
+  "Process", "Equipment is grouped by function; each job takes its own route.",
+  "A hospital with radiology, the laboratory and surgery in separate departments.",
+  "Process", "A functional layout: the patient travels to each specialised department.",
+  "An automotive final assembly line building one model at a fixed takt time.",
+  "Product", "Stations follow the sequence of operations for one product.",
+  "A bottling line: rinse, fill, cap, label, pack.",
+  "Product", "High volume, low variety, equipment in the order of the process.",
+  "A U-shaped group of machines dedicated to one family of valve bodies.",
+  "Cellular", "Group technology: dissimilar machines brought together for a part family.",
+  "A plant reorganised so each part family has its own mini-line with cross-trained operators.",
+  "Cellular", "A hybrid: line-like flow inside a cell, variety between cells.",
+  "A ship built in dry dock, with crews and materials brought to the hull.",
+  "Fixed-position", "The product is too large to move, so resources come to it.",
+  "A wide-body aircraft in final assembly in a hangar bay.",
+  "Fixed-position", "The airframe stays put; tools, parts and people move."
+  ),
+  intro = "Pick the layout type each facility uses."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Designing Process Layouts
@@ -491,6 +525,31 @@ In this example, the linear layout (A) wins because the process flow is essentia
 When flow is **sequential**, a **product layout** (linear arrangement) is more efficient. Process layouts are better when there's **varied routing** between departments.
 
 </details>
+
+### Try it yourself: lay out the plant
+
+Six departments have to go into a building that is two bays deep and three bays wide. Material moves between them as shown in the flow table. Put one department in each cell; the table works out the distance each flow travels (rows apart plus columns apart) and the total load-distance score. **Lower is better.**
+
+Start with the heaviest flows: which pairs of departments must be neighbours? Then check your layout against the best possible score. In class, compare scores: there is more than one way to reach the minimum.
+
+```{r tryit-block-plan, echo=FALSE, results='asis'}
+plan_flows <- data.frame(
+  from = c("Receiving", "Receiving", "Machining", "Machining", "Welding", "Painting", "Assembly", "Receiving"),
+  to   = c("Machining", "Welding",   "Welding",   "Assembly",  "Painting", "Assembly", "Shipping", "Shipping"),
+  load = c(60, 30, 25, 45, 40, 50, 80, 10),
+  stringsAsFactors = FALSE
+)
+
+tryit_layout(
+  id = "block-plan",
+  title = "Block plan: lowest load-distance score",
+  departments = c("Receiving", "Machining", "Welding", "Painting", "Assembly", "Shipping"),
+  flows = plan_flows,
+  rows = 2, cols = 3,
+  intro = "Put one department in each cell. Choosing a department that is already placed moves it.",
+  question = "<p>Six departments exchange the daily material flows shown below.</p>"
+)
+```
 
 ### Step 3: Develop Detailed Layout
 
@@ -1123,7 +1182,9 @@ qwebr_calc_card(
     qwebr_calc_input("D", "Vertical travel distance", value = 20, min = 1, max = 70, step = 1, suffix = "in"),
     qwebr_calc_input("A", "Asymmetry angle", value = 30, min = 0, max = 135, step = 5, suffix = "deg"),
     qwebr_calc_input("actual_weight", "Box weight", value = 35, min = 5, max = 100, step = 1, suffix = "lb", type = "slider")
-  )
+  ),
+  goal = "Redesign the lift so that a box of at least 30 lb has a Lifting Index of 1.0 or less.",
+  goal_test = "LI <= 1 && actual_weight >= 30"
 )
 ```
 
@@ -1452,18 +1513,37 @@ ggplot(benefits, aes(x = x, y = y)) +
 
 </details>
 
-<details>
-<summary>Problem 2: Line Balancing</summary>
+**Problem 2: Line Balancing**
 
 **Given:**
+
 - Total task time: 240 seconds
 - Desired output: 30 units per hour
 - Available time: 3600 seconds per hour
 
 **Calculate:**
+
 1. Cycle time
 2. Theoretical minimum number of stations
 3. If you use 3 stations, what is the efficiency?
+
+```{r tryit-p2, echo=FALSE, results='asis'}
+p2_work <- 240; p2_cycle <- 3600 / 30
+
+tryit_number(
+  id = "practice-p2",
+  title = "Problem 2: line balancing",
+  answers = list(
+    tryit_answer("Cycle time", p2_cycle, tol = 0.5, suffix = "sec", digits = 0, hint = "Available time divided by desired output."),
+    tryit_answer("Theoretical minimum number of stations", ceiling(p2_work / p2_cycle), tol = 0, digits = 0, hint = "Total task time divided by cycle time, rounded UP."),
+    tryit_answer("Efficiency with 3 stations", p2_work / (3 * p2_cycle) * 100, tol = 0.1, suffix = "%", hint = "Total task time / (stations x cycle time).")
+  ),
+  question = "<p>A line has a total task time of 240 seconds, a desired output of 30 units per hour, and 3600 seconds available per hour.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 1. Cycle time = 3600 / 30 = **120 seconds**
@@ -1511,12 +1591,12 @@ ggplot(benefits, aes(x = x, y = y)) +
 
 </details>
 
-<details>
-<summary>Question 2: Calculate the Lifting Index for the following scenario</summary>
+**Question 2: Calculate the Lifting Index for the following scenario**
 
 **Scenario:** A worker lifts 25 kg boxes from floor level (V=0) to a shelf at waist height. The horizontal distance is 40 cm, vertical travel is 75 cm, no asymmetry, frequency is 2 lifts per minute for 4 hours, and coupling is poor (no handles).
 
 **Given multipliers:**
+
 - LC = 23 kg
 - HM = 25/H (H in cm)
 - VM = 1 - 0.003|V - 75| (V in cm)
@@ -1524,6 +1604,23 @@ ggplot(benefits, aes(x = x, y = y)) +
 - AM = 1.0 (no asymmetry)
 - FM = 0.65 (from tables)
 - CM = 0.90 (poor coupling)
+
+```{r tryit-q2-niosh, echo=FALSE, results='asis'}
+q2_rwl <- 23 * (25 / 40) * (1 - 0.003 * abs(0 - 75)) * (0.82 + 4.5 / 75) * 1.0 * 0.65 * 0.90
+
+tryit_number(
+  id = "review-q2",
+  title = "Question 2: Lifting Index",
+  answers = list(
+    tryit_answer("Recommended Weight Limit (RWL)", q2_rwl, tol = 0.1, suffix = "kg", digits = 1, hint = "Work out HM, VM and DM first, then multiply all seven terms."),
+    tryit_answer("Lifting Index (LI)", 25 / q2_rwl, tol = 0.1, digits = 1, hint = "Load weight divided by RWL.")
+  ),
+  question = "<p>A worker lifts 25 kg boxes from floor level (V = 0) to a shelf at waist height. Horizontal distance H = 40 cm, vertical travel D = 75 cm, no asymmetry. LC = 23 kg, HM = 25/H, VM = 1 - 0.003|V - 75|, DM = 0.82 + 4.5/D, AM = 1.0, FM = 0.65, CM = 0.90.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 ```

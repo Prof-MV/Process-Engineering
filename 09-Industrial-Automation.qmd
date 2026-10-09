@@ -237,6 +237,40 @@ ggplot(pyramid_levels, aes(x = 0, y = y)) +
 **Key Principle:** Data flows up (process information), commands flow down (control directives).
 </details>
 
+### Try it yourself: place it on the pyramid
+
+Nine pieces of a plant's automation. Place each one on the correct level of the automation pyramid.
+
+```{r tryit-pyramid-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "pyramid-sort",
+  title = "Which level of the automation pyramid?",
+  bins = c("Level 0: Process", "Level 1: Field Devices", "Level 2: Control", "Level 3: Manufacturing Operations", "Level 4: Enterprise"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A 500-litre mixing tank and the product inside it.",
+  "Level 0: Process", "The physical process being controlled.",
+  "A conveyor carrying cartons to the palletizer.",
+  "Level 0: Process", "The equipment and material themselves.",
+  "An inductive proximity sensor detecting a part at a station.",
+  "Level 1: Field Devices", "Sensors measure the process.",
+  "A solenoid valve that opens the filling nozzle.",
+  "Level 1: Field Devices", "Actuators act on the process.",
+  "A PLC running the ladder logic for a packaging machine.",
+  "Level 2: Control", "The controller reads the inputs, runs the logic and commands the outputs.",
+  "A DCS controller holding reactor temperature at setpoint.",
+  "Level 2: Control", "Closed-loop control logic lives at the control level.",
+  "An MES releasing work orders to each line and tracking what was built.",
+  "Level 3: Manufacturing Operations", "Scheduling and tracking production across the plant.",
+  "A SCADA overview screen showing the status of every line in the plant.",
+  "Level 3: Manufacturing Operations", "Plant-wide supervision sits above the individual controllers.",
+  "The ERP system taking a customer order and planning material purchases.",
+  "Level 4: Enterprise", "Business planning and the supply chain."
+  ),
+  intro = "Place each item on its level of the pyramid."
+)
+```
+
 ---
 
 ## Programmable Logic Controllers (PLCs)
@@ -397,7 +431,9 @@ qwebr_calc_card(
     qwebr_calc_input("program_execution", "Program execution", value = 15.5, min = 1, max = 100, step = 0.5, suffix = "ms", type = "slider"),
     qwebr_calc_input("output_update", "Output update", value = 1.0, min = 0.1, max = 10, step = 0.1, suffix = "ms"),
     qwebr_calc_input("housekeeping", "Housekeeping", value = 2.3, min = 0.1, max = 10, step = 0.1, suffix = "ms")
-  )
+  ),
+  goal = "A sensor pulse lasts only 12 ms. Get the total scan time under 12 ms so the PLC cannot miss it.",
+  goal_test = "total_scan_time < 12"
 )
 ```
 
@@ -422,6 +458,24 @@ cat(sprintf("  Housekeeping         %.1f ms\n", housekeeping))
 ```
 
 </details>
+
+#### Try it yourself: order the scan cycle
+
+A PLC repeats the same four steps on every scan. Put them in order, starting with the step that reads the field.
+
+```{r tryit-scan-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "scan-order",
+  title = "The PLC scan cycle",
+  steps = c(
+    "Input scan: read all inputs into memory",
+    "Program execution: solve the logic, rung by rung",
+    "Output update: write the results to the outputs",
+    "Housekeeping: communications and self-diagnostics"
+  ),
+  intro = "Move each step up or down until the cycle is in order."
+)
+```
 
 ### PLC Programming Languages (IEC 61131-3)
 
@@ -545,6 +599,55 @@ ggplot() +
 **This is called a "3-wire control" circuit** - it provides:
 - Low voltage release protection (motor won't restart after power failure)
 - Maintained contact operation (don't need to hold START button)
+</details>
+
+#### Try it yourself: step through the seal-in rung
+
+Be the PLC. The table gives the state of the two pushbuttons at each scan (1 = pressed) for the start/stop rung above. Work out whether the MOTOR output is ON (1) or OFF (0) at the end of every scan. The motor starts OFF.
+
+On each scan the rung is true when STOP is not pressed **and** either START is pressed **or** the motor was already on from the previous scan.
+
+```{r tryit-ladder, echo=FALSE, results='asis'}
+ladder <- data.frame(
+  Scan  = as.character(1:8),
+  START = c(0, 1, 0, 0, 0, 0, 1, 0),
+  STOP  = c(0, 0, 0, 0, 1, 0, 1, 0)
+)
+ladder$MOTOR <- Reduce(function(was_on, i) as.numeric((ladder$START[i] == 1 || was_on == 1) && ladder$STOP[i] == 0),
+                       seq_len(nrow(ladder)), accumulate = TRUE, 0)[-1]
+
+tryit_grid(
+  id = "ladder-scan",
+  title = "Seal-in rung, scan by scan",
+  data = ladder,
+  blank = "MOTOR",
+  tol = 0,
+  digits = 0,
+  hints = c(MOTOR = "Use the motor state from the scan before. In scans 3 and 4 nobody is pressing START, so what keeps the rung true? In scan 7 both buttons are pressed: which one wins?"),
+  intro = "Enter 1 (ON) or 0 (OFF) for the MOTOR output at the end of each scan.",
+  question = "<p>A start/stop seal-in rung energises MOTOR when STOP is not pressed AND (START is pressed OR MOTOR was already on). The motor starts off. The table gives the pushbutton states (1 = pressed) at each scan.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-ladder-solution, echo=FALSE}
+ladder %>%
+  mutate(Why = c("Nothing pressed, motor was off",
+                 "START pressed: rung true",
+                 "START released, but the MOTOR contact seals in",
+                 "Still sealed in",
+                 "STOP pressed: the rung is broken",
+                 "The seal was broken, so the motor stays off",
+                 "Both pressed: STOP is in series, so it wins",
+                 "Motor was off and START is released")) %>%
+  kable(align = "ccccl") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+Scans 3 and 4 are the whole point of the seal-in branch: the operator has let go of START, and the motor's own contact keeps the rung true. Scan 7 shows why STOP is wired in series with everything else. Whatever else is happening, pressing STOP drops the motor out.
+
 </details>
 
 ---
@@ -840,7 +943,9 @@ qwebr_calc_card(
     qwebr_calc_input("rated_frequency", "Rated frequency", value = 60, min = 50, max = 60, step = 1, suffix = "Hz"),
     qwebr_calc_input("selected_frequency", "VFD frequency", value = 30, min = 5, max = 75, step = 1, suffix = "Hz", type = "slider")
   ),
-  fig_width = 1200, fig_height = 700
+  fig_width = 1200, fig_height = 700,
+  goal = "A conveyor needs the motor to run at about 1,000 RPM. Find the VFD frequency that gives it, to within 15 RPM.",
+  goal_test = "abs(speed_at(selected_frequency) - 1000) <= 15"
 )
 ```
 

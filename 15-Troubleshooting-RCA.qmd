@@ -532,6 +532,36 @@ ggplot(categories, aes(x = x, y = 1)) +
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
+#### Try it yourself: hang the cause on the right bone
+
+A team is brainstorming why a CNC lathe is producing out-of-tolerance diameters. Put each suggested cause on the correct bone of the fishbone.
+
+```{r tryit-fishbone-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "fishbone-sort",
+  title = "Which of the 6M categories?",
+  bins = c("Man", "Machine", "Material", "Method", "Measurement", "Mother Nature"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A newly hired operator has not yet been trained on tool offsets.",
+  "Man", "People: skills, training, fatigue.",
+  "The spindle bearing has excessive play.",
+  "Machine", "Equipment condition.",
+  "The chuck jaws are worn and no longer grip concentrically.",
+  "Machine", "Tooling and workholding belong to the machine.",
+  "Bar stock from a new supplier is harder than specified.",
+  "Material", "Incoming material properties.",
+  "The work instruction does not say how often to check the insert for wear.",
+  "Method", "The procedure itself is incomplete.",
+  "The micrometer used at the machine is out of calibration.",
+  "Measurement", "The parts may be fine; the reading is wrong.",
+  "The shop is 12 degrees C warmer in the afternoon and the parts grow before they are measured.",
+  "Mother Nature", "Environment: temperature, humidity, vibration."
+  ),
+  intro = "Put each cause on its bone."
+)
+```
+
 ### Constructing a Fishbone Diagram
 
 ```{r fishbone-example, echo=FALSE, fig.width=14, fig.height=9}
@@ -778,7 +808,9 @@ qwebr_calc_card(
     qwebr_calc_input("P_impeller_worn", "P(impeller worn)", value = 0.03, min = 0, max = 0.2, step = 0.005, type = "slider"),
     qwebr_calc_input("P_tank_empty", "P(tank empty)", value = 0.05, min = 0, max = 0.2, step = 0.005),
     qwebr_calc_input("P_valve_closed", "P(valve closed)", value = 0.01, min = 0, max = 0.2, step = 0.005)
-  )
+  ),
+  goal = "Get the probability of the top event below 10%. Which single basic event gets you there on its own?",
+  goal_test = "P_top < 0.10"
 )
 ```
 
@@ -815,6 +847,59 @@ cat(sprintf("  P(impeller failure)      %.4f\n", P_impeller_fail))
 cat(sprintf("  P(mechanical failure)    %.4f\n", P_mechanical))
 cat(sprintf("  P(no fluid available)    %.4f\n", P_no_fluid))
 ```
+
+</details>
+
+### Try it yourself: work a fault tree by hand
+
+A packaging line's infeed conveyor keeps stopping without warning. The team has drawn the fault tree below and estimated the probability of each basic event per shift. Work upward: fill in the probability of the two intermediate events, then the top event.
+
+Remember the two gate rules. Through an **AND** gate every input must occur, so multiply the probabilities. Through an **OR** gate any one input is enough, so use 1 − (1 − P1)(1 − P2)...
+
+```{r tryit-fault-tree, echo=FALSE, results='asis'}
+ft_motor <- 0.010; ft_gearbox <- 0.005   # either one stops the drive
+ft_mains <- 0.050; ft_ups <- 0.040       # control power is lost only if both fail
+ft_jam <- 0.020                          # a false jam signal stops the line by itself
+
+ft_drive <- 1 - (1 - ft_motor) * (1 - ft_gearbox)
+ft_power <- ft_mains * ft_ups
+ft_top <- 1 - (1 - ft_drive) * (1 - ft_power) * (1 - ft_jam)
+
+tryit_diagram(
+  id = "fault-tree",
+  title = "Fault tree: conveyor stops unexpectedly",
+  direction = "down", arrows = FALSE,
+  nodes = list(
+    tryit_node("top", "Conveyor stops unexpectedly", 1, sub = "OR gate",
+               blank = list(tryit_answer("P", ft_top, tol = 0.0005, digits = 4,
+                                         hint = "An OR gate over three inputs: 1 - (1 - P1)(1 - P2)(1 - P3)."))),
+    tryit_node("drive", "Drive fails", 2, sub = "OR gate",
+               blank = list(tryit_answer("P", ft_drive, tol = 0.0005, digits = 4,
+                                         hint = "Either event is enough: 1 - (1 - 0.010)(1 - 0.005)."))),
+    tryit_node("power", "Control power lost", 2, sub = "AND gate",
+               blank = list(tryit_answer("P", ft_power, tol = 0.0001, digits = 4,
+                                         hint = "Both must fail together: multiply the two probabilities."))),
+    tryit_node("jam", "False jam signal", 2, sub = "Basic event", given = c(P = "0.020")),
+    tryit_node("motor", "Motor burns out", 3, sub = "Basic event", given = c(P = "0.010")),
+    tryit_node("gearbox", "Gearbox seizes", 3, sub = "Basic event", given = c(P = "0.005")),
+    tryit_node("mains", "Mains supply fails", 3, sub = "Basic event", given = c(P = "0.050")),
+    tryit_node("ups", "UPS fails", 3, sub = "Basic event", given = c(P = "0.040"))
+  ),
+  edges = list(c("top", "drive"), c("top", "power"), c("top", "jam"),
+               c("drive", "motor"), c("drive", "gearbox"), c("power", "mains"), c("power", "ups")),
+  intro = "Fill in P for the three gates. Give four decimal places.",
+  question = "<p>A fault tree for 'Conveyor stops unexpectedly' has an OR gate at the top with three inputs: 'Drive fails' (an OR gate over 'Motor burns out' and 'Gearbox seizes'), 'Control power lost' (an AND gate over 'Mains supply fails' and 'UPS fails'), and the basic event 'False jam signal'.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+- **Drive fails** (OR): 1 − (1 − 0.010)(1 − 0.005) = **`r sprintf("%.4f", ft_drive)`**
+- **Control power lost** (AND): 0.050 × 0.040 = **`r sprintf("%.4f", ft_power)`**
+- **Conveyor stops** (OR): 1 − (1 − `r sprintf("%.4f", ft_drive)`)(1 − `r sprintf("%.4f", ft_power)`)(1 − 0.020) = **`r sprintf("%.4f", ft_top)`**, about `r sprintf("%.1f", ft_top * 100)`% of shifts
+
+Look at where the risk comes from. The two power supplies are individually the least reliable items on the tree, yet because both must fail together they contribute almost nothing. The single false jam signal, with no redundancy, is the largest contributor. That is the argument for redundancy in one picture.
 
 </details>
 
@@ -1088,6 +1173,29 @@ kable(d8_detail, col.names = c("Discipline", "Key Activities", "Deliverables"),
       caption = "8D Methodology Detailed Breakdown") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
+```
+
+#### Try it yourself: order the 8D disciplines
+
+The 8D method runs from D0 to D8. Containment comes before root cause for a reason: the customer has to be protected while you investigate. Put the nine disciplines in order.
+
+```{r tryit-eightd-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "eightd-order",
+  title = "The 8D disciplines, D0 to D8",
+  steps = c(
+    "Plan and prepare for the 8D",
+    "Form the team",
+    "Describe the problem",
+    "Contain the problem to protect the customer",
+    "Find and verify the root cause",
+    "Choose the permanent corrective actions",
+    "Implement and validate the corrective actions",
+    "Prevent recurrence",
+    "Close out and recognize the team"
+  ),
+  intro = "Move each discipline up or down until the sequence runs from D0 to D8."
+)
 ```
 
 ### D3: Containment Actions

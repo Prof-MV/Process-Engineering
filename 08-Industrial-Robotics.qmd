@@ -246,6 +246,38 @@ ggplot() +
   )
 ```
 
+### Try it yourself: match the robot to the job
+
+Eight applications. Decide which robot configuration you would shortlist first.
+
+```{r tryit-robot-matcher, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "robot-matcher",
+  title = "Which robot configuration?",
+  bins = c("6-axis articulated", "SCARA", "Delta", "Cartesian / gantry", "Cobot"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "Arc welding a curved seam around a tubular frame.",
+  "6-axis articulated", "The torch has to follow a path at a changing angle, which needs six axes.",
+  "Spray painting car bodies, including inside the door openings.",
+  "6-axis articulated", "Reaching around and into the body needs full freedom of orientation.",
+  "Pressing bearings vertically into housings at high speed.",
+  "SCARA", "Fast in the horizontal plane and rigid in Z, which suits vertical insertion.",
+  "Driving screws into the top face of a flat electronics enclosure.",
+  "SCARA", "A planar task with a vertical tool approach.",
+  "Picking 120 chocolates a minute off a moving belt into trays.",
+  "Delta", "Very light payload and very high pick rate, working from above.",
+  "Loading and unloading four CNC machines along a 12 m row.",
+  "Cartesian / gantry", "A long linear work envelope, scaled by extending an axis.",
+  "Dispensing straight beads of adhesive across a 3 m x 2 m flat panel.",
+  "Cartesian / gantry", "A large rectangular envelope and straight-line moves along X and Y.",
+  "Holding a part while an assembler at the same bench fits the fasteners.",
+  "Cobot", "The person and the robot share the workspace without fencing."
+  ),
+  intro = "Pick the configuration you would shortlist first for each application."
+)
+```
+
 ---
 
 ## Robot Specifications
@@ -360,7 +392,9 @@ qwebr_calc_card(
     qwebr_calc_input("gripper_weight", "Gripper weight", value = 2.5, min = 0.5, max = 10, step = 0.5, suffix = "kg"),
     qwebr_calc_input("safety_factor", "Safety factor", value = 1.2, min = 1.0, max = 2.0, step = 0.05),
     qwebr_calc_input("part_weight", "Part weight", value = 5.0, min = 0.5, max = 30, step = 0.5, suffix = "kg", type = "slider")
-  )
+  ),
+  goal = "The part now weighs 9 kg. Find a robot and gripper combination that carries it with the safety factor still at 1.2 or more.",
+  goal_test = "part_weight >= 9 && safety_factor >= 1.2 && required_capacity <= robot_max_payload"
 )
 ```
 
@@ -599,7 +633,9 @@ qwebr_calc_card(
     qwebr_calc_input("acceleration", "Robot acceleration", value = 15, min = 1, max = 40, step = 1, suffix = "m/s²", type = "slider"),
     qwebr_calc_input("friction_coefficient", "Friction coefficient", value = 0.3, min = 0.05, max = 1.0, step = 0.05),
     qwebr_calc_input("safety_factor", "Safety factor", value = 2.0, min = 1.0, max = 4.0, step = 0.1)
-  )
+  ),
+  goal = "Get the required grip force below 200 N without reducing the part mass or the safety factor.",
+  goal_test = "required_grip < 200 && part_mass >= 3 && safety_factor >= 2"
 )
 ```
 

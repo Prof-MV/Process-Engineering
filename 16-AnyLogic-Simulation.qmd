@@ -1,3 +1,13 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
 # Simulation Modeling with AnyLogic {#chap-17-anylogic}
 
 ```{r setup-17, include=FALSE}
@@ -197,6 +207,34 @@ ggplot() +
 - Supply chain dynamics
 - Policy analysis
 - Long-term trends and forecasting
+
+#### Try it yourself: pick the paradigm
+
+Six questions a plant might want a simulation to answer. Decide which modeling paradigm suits each one best.
+
+```{r tryit-paradigm-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "paradigm-sort",
+  title = "Which simulation paradigm?",
+  bins = c("Discrete-event (DES)", "Agent-based (ABM)", "System dynamics (SD)"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A three-station assembly line with buffers between stations: where is the bottleneck, and what is the throughput?",
+  "Discrete-event (DES)", "Entities flow through a sequence of processes and queues.",
+  "Trucks arrive at a four-door receiving dock: how long does the queue get at peak?",
+  "Discrete-event (DES)", "Arrivals, queues and limited resources are the core of DES.",
+  "Fifty order pickers and AMRs share warehouse aisles, each choosing its own route and avoiding the others.",
+  "Agent-based (ABM)", "The behaviour of the whole emerges from individuals making their own decisions.",
+  "How does word of mouth between individual customers spread adoption of a new product?",
+  "Agent-based (ABM)", "Each customer is an agent influenced by its neighbours.",
+  "How do plant-wide inventory, order backlog and hiring feed back on one another over five years?",
+  "System dynamics (SD)", "Aggregate stocks, flows and feedback loops over a long horizon.",
+  "What does a long-term cut in the maintenance budget do to overall equipment condition and the breakdown rate?",
+  "System dynamics (SD)", "A strategic, aggregate question about accumulations and delays."
+  ),
+  intro = "Pick the paradigm that suits each question best."
+)
+```
 
 ### Choosing the Right Paradigm
 
@@ -579,6 +617,82 @@ ggplot(scenarios, aes(x = Scenario, y = Throughput, fill = Scenario)) +
 ::: {.callout-discussion}
 **Group Discussion:** Based on these results, which improvement option would you recommend? Consider not just throughput but also implementation cost, timeline, and risk. Discuss the trade-offs with your team.
 :::
+
+### Try It Yourself: A Discrete-Event Line in Your Browser
+
+You do not need AnyLogic open to feel how a discrete-event model behaves. The simulation below pushes 3 000 parts through three stations in series. Process times vary from part to part (they are exponentially distributed around the mean you set), and each station has room for a small buffer in front of it. When a buffer is full, the station feeding it is **blocked** and has to wait.
+
+```{r calc-des-line-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "des-line-sim",
+  title = "Three-Station Line: Discrete-Event Simulation",
+  icon = "diagram-project",
+  inputs = list(
+    qwebr_calc_input("mean_time_1", "Station 1 mean process time", value = 50, min = 20, max = 120, step = 1, suffix = "sec"),
+    qwebr_calc_input("mean_time_2", "Station 2 mean process time", value = 65, min = 20, max = 120, step = 1, suffix = "sec", type = "slider"),
+    qwebr_calc_input("mean_time_3", "Station 3 mean process time", value = 55, min = 20, max = 120, step = 1, suffix = "sec"),
+    qwebr_calc_input("buffer_size", "Buffer in front of stations 2 and 3", value = 2, min = 0, max = 20, step = 1, suffix = "parts"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed",
+  goal = "The customer needs 50 parts per hour. Reach it by speeding up one station only, leaving the buffers at 2.",
+  goal_test = "throughput >= 50 && buffer_size == 2 && (mean_time_1 != 50) + (mean_time_2 != 65) + (mean_time_3 != 55) <= 1"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this simulation</summary>
+
+```{webr-r}
+#| label: des-line-sim
+# Three stations in series with limited buffers between them
+mean_time_1 <- 50    # mean process time at each station, seconds
+mean_time_2 <- 65
+mean_time_3 <- 55
+buffer_size <- 2     # parts that can wait in front of stations 2 and 3
+seed <- 1            # run number: same number, same random process times
+
+set.seed(seed)
+n_parts <- 3000
+means <- c(mean_time_1, mean_time_2, mean_time_3)
+process <- sapply(means, function(m) rexp(n_parts, rate = 1 / m))
+
+leave <- matrix(0, n_parts, 3)   # time each part leaves each station
+enter <- numeric(n_parts)        # time each part starts at station 1
+for (part in seq_len(n_parts)) {
+  for (s in 1:3) {
+    # A part starts when it has arrived from upstream AND the station is free
+    start <- max(if (s > 1) leave[part, s - 1] else 0,
+                 if (part > 1) leave[part - 1, s] else 0)
+    if (s == 1) enter[part] <- start
+    finish <- start + process[part, s]
+    # Blocking: it cannot leave until there is room in the next buffer
+    ahead <- part - buffer_size - 1
+    if (s < 3 && ahead >= 1) finish <- max(finish, leave[ahead, s + 1])
+    leave[part, s] <- finish
+  }
+}
+
+total_time <- leave[n_parts, 3]
+throughput <- n_parts / total_time * 3600
+busy <- colSums(process) / total_time * 100
+lead_time <- mean(leave[, 3] - enter)
+
+par(mar = c(4.5, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+bars <- barplot(busy, names.arg = paste("Station", 1:3), ylim = c(0, 100), las = 1,
+                col = ifelse(busy == max(busy), "#e74c3c", "#2980b9"), border = NA,
+                ylab = "Time spent processing (%)", main = "Utilization: the busiest station is the bottleneck")
+text(bars, busy, sprintf("%.0f%%", busy), pos = 3, cex = 1.3)
+
+cat(sprintf("Throughput: %.1f parts per hour\n", throughput))
+cat(sprintf("  Bottleneck             Station %d (%.0f%% busy)\n", which.max(busy), max(busy)))
+cat(sprintf("  If nothing varied      %.1f parts per hour\n", 3600 / max(means)))
+cat(sprintf("  Average time in line   %.0f sec per part\n", lead_time))
+```
+
+</details>
+
+Notice the gap between the simulated throughput and the "if nothing varied" figure. A spreadsheet would give you the second number. The difference is what variability and blocking cost, and it is the reason to simulate at all. After you have met the challenge by speeding up a station, put the times back and try a larger buffer instead: it gets you most of the way without touching a machine.
 
 ------------------------------------------------------------------------
 
@@ -1042,6 +1156,21 @@ A refrigerator assembly plant operates two 8-hour shifts per day with a 30-minut
 a) Calculate the takt time in seconds
 b) If the bottleneck station has a cycle time of 62 seconds, will they meet demand? Why or why not?
 c) Suggest two approaches to resolve the issue
+
+```{r tryit-p1, echo=FALSE, results='asis'}
+p1_available <- 2 * (8 * 60 - 30) * 60   # seconds per day
+p1_takt <- p1_available / 720
+
+tryit_number(
+  id = "practice-p1",
+  title = "Problem 1: check your numbers",
+  answers = list(
+    tryit_answer("Takt time", p1_takt, tol = 0.5, suffix = "sec", digits = 0, hint = "Two shifts, each 8 hours less a 30-minute lunch, divided by daily demand. Work in seconds."),
+    tryit_answer("Spare time per unit at the 62-second bottleneck", p1_takt - 62, tol = 0.5, suffix = "sec", digits = 0, hint = "Takt time minus the bottleneck cycle time. A positive number means demand is met.")
+  ),
+  question = "<p>A refrigerator assembly plant operates two 8-hour shifts per day with a 30-minute lunch break per shift. Customer demand is 720 units per day. The bottleneck station has a cycle time of 62 seconds.</p>"
+)
+```
 
 ### Problem 2: Simulation Model Design
 
