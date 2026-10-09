@@ -520,6 +520,40 @@ chart_types %>%
 
 </details>
 
+#### Try it yourself: choose the chart
+
+Eight situations from different plants. Decide which control chart fits each one, then check. Ask two things in order: is the data *measured* or *counted*, and how many readings make up one plotted point?
+
+```{r tryit-chart-chooser, echo=FALSE, results='asis'}
+chart_cards <- tibble::tribble(
+  ~text, ~bin, ~why,
+  "Five shaft diameters are measured every hour on a CNC lathe.",
+  "X-bar / R", "Measured data in small subgroups (n = 5).",
+  "Four fill weights are taken from the bottling line every 30 minutes.",
+  "X-bar / R", "Measured data in small subgroups (n = 4).",
+  "One viscosity reading is taken per batch of paint; a batch takes four hours.",
+  "I-MR", "Measured data, but only one value per point.",
+  "A destructive pull test is done on one weld per shift.",
+  "I-MR", "Measured data, and destructive testing limits you to a single reading.",
+  "Each shift records the fraction of bottles rejected for a bad cap; the number inspected changes from shift to shift.",
+  "p chart", "Counted pass/fail units as a proportion, with a varying sample size.",
+  "Each day's lot of circuit boards is tested and the share that fails is recorded.",
+  "p chart", "Counted pass/fail units, plotted as a proportion defective.",
+  "Paint blemishes are counted on every car hood.",
+  "c chart", "A count of defects per item; one hood can have several blemishes.",
+  "Solder defects are counted on one board of the same type each hour.",
+  "c chart", "A count of defects on a constant inspection unit."
+)
+
+tryit_sort(
+  id = "chart-chooser",
+  title = "Which control chart?",
+  bins = c("X-bar / R", "I-MR", "p chart", "c chart"),
+  cards = chart_cards,
+  intro = "Pick the control chart that fits each situation."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Variable Control Charts
@@ -693,6 +727,76 @@ constants %>%
   row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
   row_spec(4, background = "#D5F5E3")  # Highlight n=5 row
 ```
+
+#### Try it yourself: build an X-bar/R chart by hand
+
+Now do the arithmetic yourself on fresh data. A grinding cell measures the diameter of four piston pins (mm) every hour; eight subgroups are shown below. Fill in the mean and range of each subgroup, then the centre lines and control limits. Use the constants for **n = 4** from the table above. Check as often as you like.
+
+```{r tryit-xbar-r, echo=FALSE, results='asis'}
+pins <- data.frame(
+  Subgroup = 1:8,
+  x1 = c(12.02, 12.03, 11.99, 12.00, 12.05, 11.98, 12.01, 11.97),
+  x2 = c(11.98, 12.00, 12.01, 11.96, 12.01, 12.02, 12.03, 12.00),
+  x3 = c(12.01, 11.97, 12.04, 12.01, 12.02, 12.00, 11.99, 12.02),
+  x4 = c(11.99, 12.02, 12.00, 11.99, 12.00, 12.00, 12.01, 11.99)
+)
+pin_readings <- as.matrix(pins[, c("x1", "x2", "x3", "x4")])
+pins$`X-bar` <- rowMeans(pin_readings)
+pins$R <- apply(pin_readings, 1, function(x) max(x) - min(x))
+pins$Subgroup <- as.character(pins$Subgroup)
+
+# Constants for n = 4, read from the constants table above
+pin_n4 <- constants[constants$n == 4, ]
+pin_xbarbar <- mean(pins$`X-bar`)
+pin_rbar <- mean(pins$R)
+pin_ucl_x <- pin_xbarbar + pin_n4$A2 * pin_rbar
+pin_lcl_x <- pin_xbarbar - pin_n4$A2 * pin_rbar
+pin_ucl_r <- pin_n4$D4 * pin_rbar
+pin_lcl_r <- pin_n4$D3 * pin_rbar
+
+tryit_grid(
+  id = "xbar-r-by-hand",
+  title = "X-bar/R chart: piston pin diameter",
+  data = pins,
+  blank = c("X-bar", "R"),
+  tol = c(`X-bar` = 0.001, R = 0.001),
+  hints = c(`X-bar` = "Add the four readings and divide by 4. Keep three decimals.",
+            R = "Largest reading minus smallest reading in that row."),
+  answers = list(
+    tryit_answer("Grand mean (X-double-bar)", pin_xbarbar, tol = 0.001, suffix = "mm",
+                 hint = "Average of the eight subgroup means."),
+    tryit_answer("Average range (R-bar)", pin_rbar, tol = 0.001, suffix = "mm",
+                 hint = "Average of the eight ranges."),
+    tryit_answer("X-bar chart UCL", pin_ucl_x, tol = 0.002, suffix = "mm",
+                 hint = "Grand mean + A2 x R-bar, with A2 for n = 4."),
+    tryit_answer("X-bar chart LCL", pin_lcl_x, tol = 0.002, suffix = "mm",
+                 hint = "Grand mean - A2 x R-bar, with A2 for n = 4."),
+    tryit_answer("R chart UCL", pin_ucl_r, tol = 0.002, suffix = "mm",
+                 hint = "D4 x R-bar, with D4 for n = 4."),
+    tryit_answer("R chart LCL", pin_lcl_r, tol = 0.002, suffix = "mm",
+                 hint = "D3 x R-bar. Look at D3 for n = 4.")
+  ),
+  intro = "Fill in X-bar and R for each subgroup, then the limits. Work to three decimal places.",
+  question = "<p>A grinding cell measures the diameter of four piston pins (mm) every hour. Eight subgroups are shown. Constants for n = 4: A2 = 0.729, D3 = 0, D4 = 2.282.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-xbar-r-solution, echo=FALSE}
+pins %>%
+  kable(digits = c(0, 2, 2, 2, 2, 3, 2), align = "c") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+- Grand mean = `r sprintf("%.4f", pin_xbarbar)` mm, average range = `r sprintf("%.4f", pin_rbar)` mm
+- X-bar chart: UCL = `r sprintf("%.4f", pin_xbarbar)` + `r pin_n4$A2` × `r sprintf("%.4f", pin_rbar)` = **`r sprintf("%.3f", pin_ucl_x)` mm**, LCL = **`r sprintf("%.3f", pin_lcl_x)` mm**
+- R chart: UCL = `r pin_n4$D4` × `r sprintf("%.4f", pin_rbar)` = **`r sprintf("%.3f", pin_ucl_r)` mm**, LCL = `r pin_n4$D3` × `r sprintf("%.4f", pin_rbar)` = **`r sprintf("%.0f", pin_lcl_r)` mm**
+
+Every subgroup mean lies between the X-bar limits and every range is below the R chart UCL, so these eight subgroups show no special cause.
+
+</details>
 
 ### Individual and Moving Range (I-MR) Chart
 
@@ -1565,10 +1669,10 @@ summary_data %>%
 
 ### Calculation Questions
 
-<details>
-<summary>Question 4: Calculate control limits for an X-bar/R chart given the following data.</summary>
+**Question 4: Calculate control limits for an X-bar/R chart given the following data.**
 
 **Given:**
+
 - 20 subgroups of n = 4 measurements
 - Grand mean (X-double-bar) = 50.25
 - Average range (R-bar) = 2.40
@@ -1576,7 +1680,27 @@ summary_data %>%
 
 **Calculate UCL and LCL for both charts.**
 
-**Solution:**
+```{r tryit-q4, echo=FALSE, results='asis'}
+q4_xbarbar <- 50.25; q4_rbar <- 2.40
+q4_A2 <- 0.729; q4_D3 <- 0; q4_D4 <- 2.282
+
+tryit_number(
+  id = "review-q4",
+  title = "Question 4: X-bar/R control limits",
+  answers = list(
+    tryit_answer("X-bar chart UCL", q4_xbarbar + q4_A2 * q4_rbar, tol = 0.01,
+                 hint = "UCL = X-double-bar + A2 x R-bar"),
+    tryit_answer("X-bar chart LCL", q4_xbarbar - q4_A2 * q4_rbar, tol = 0.01,
+                 hint = "LCL = X-double-bar - A2 x R-bar"),
+    tryit_answer("R chart UCL", q4_D4 * q4_rbar, tol = 0.01, hint = "UCL = D4 x R-bar"),
+    tryit_answer("R chart LCL", q4_D3 * q4_rbar, tol = 0.01, hint = "LCL = D3 x R-bar")
+  ),
+  question = "<p>An X-bar/R chart is built from 20 subgroups of n = 4 measurements. Grand mean (X-double-bar) = 50.25, average range (R-bar) = 2.40. Constants for n = 4: A2 = 0.729, D3 = 0, D4 = 2.282.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **X-bar Chart:**
 ```
@@ -1600,15 +1724,34 @@ CL = 2.40
 
 </details>
 
-<details>
-<summary>Question 5: Calculate Cp and Cpk for a process with the following data.</summary>
+**Question 5: Calculate Cp and Cpk for a process with the following data.**
 
 **Given:**
+
 - Specification: 100 ± 5 (USL = 105, LSL = 95)
 - Process mean = 102
 - Process standard deviation (σ) = 1.5
 
-**Solution:**
+```{r tryit-q5, echo=FALSE, results='asis'}
+q5_usl <- 105; q5_lsl <- 95; q5_mean <- 102; q5_sd <- 1.5
+q5_cpu <- (q5_usl - q5_mean) / (3 * q5_sd)
+q5_cpl <- (q5_mean - q5_lsl) / (3 * q5_sd)
+
+tryit_number(
+  id = "review-q5",
+  title = "Question 5: Cp and Cpk",
+  answers = list(
+    tryit_answer("Cp", (q5_usl - q5_lsl) / (6 * q5_sd), tol = 0.01,
+                 hint = "Cp = (USL - LSL) / (6 x sigma). The mean does not appear in it."),
+    tryit_answer("Cpk", min(q5_cpu, q5_cpl), tol = 0.01,
+                 hint = "Work out Cpu and Cpl separately; Cpk is the smaller of the two.")
+  ),
+  question = "<p>A process has a specification of 100 +/- 5 (USL = 105, LSL = 95), a mean of 102 and a standard deviation of 1.5.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Cp (Potential Capability):**
 ```
@@ -1632,10 +1775,28 @@ Cpk = min(Cpu, Cpl) = min(0.67, 1.56) = 0.67
 
 </details>
 
-<details>
-<summary>Question 6: A p chart has p-bar = 0.04 and sample size n = 200. Calculate control limits.</summary>
+**Question 6: A p chart has p-bar = 0.04 and sample size n = 200. Calculate control limits.**
 
-**Solution:**
+```{r tryit-q6, echo=FALSE, results='asis'}
+q6_pbar <- 0.04; q6_n <- 200
+q6_width <- 3 * sqrt(q6_pbar * (1 - q6_pbar) / q6_n)
+
+tryit_number(
+  id = "review-q6",
+  title = "Question 6: p chart control limits",
+  intro = "Enter the limits as proportions (for example 0.05), not percentages.",
+  answers = list(
+    tryit_answer("UCL", q6_pbar + q6_width, tol = 0.0005,
+                 hint = "UCL = p-bar + 3 x sqrt(p-bar x (1 - p-bar) / n)"),
+    tryit_answer("LCL", max(0, q6_pbar - q6_width), tol = 0.0005,
+                 hint = "A proportion cannot be negative. What do you do when the formula gives a value below zero?")
+  ),
+  question = "<p>A p chart has p-bar = 0.04 and a constant sample size of n = 200. Give each limit as a proportion (for example 0.05), not a percentage.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Center Line:**
 ```

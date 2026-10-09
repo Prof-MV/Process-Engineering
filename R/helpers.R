@@ -234,3 +234,7 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
 ```
 ', label, fig_width, fig_height, icon, title, input_rows))
 }
+
+# "Try it yourself" exercises (tryit_number(), tryit_grid(), tryit_sort()).
+options(tryit.course = "ENGR3027")
+source("R/tryit.R")
