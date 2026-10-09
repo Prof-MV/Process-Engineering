@@ -532,6 +532,36 @@ ggplot(categories, aes(x = x, y = 1)) +
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
+#### Try it yourself: hang the cause on the right bone
+
+A team is brainstorming why a CNC lathe is producing out-of-tolerance diameters. Put each suggested cause on the correct bone of the fishbone.
+
+```{r tryit-fishbone-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "fishbone-sort",
+  title = "Which of the 6M categories?",
+  bins = c("Man", "Machine", "Material", "Method", "Measurement", "Mother Nature"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A newly hired operator has not yet been trained on tool offsets.",
+  "Man", "People: skills, training, fatigue.",
+  "The spindle bearing has excessive play.",
+  "Machine", "Equipment condition.",
+  "The chuck jaws are worn and no longer grip concentrically.",
+  "Machine", "Tooling and workholding belong to the machine.",
+  "Bar stock from a new supplier is harder than specified.",
+  "Material", "Incoming material properties.",
+  "The work instruction does not say how often to check the insert for wear.",
+  "Method", "The procedure itself is incomplete.",
+  "The micrometer used at the machine is out of calibration.",
+  "Measurement", "The parts may be fine; the reading is wrong.",
+  "The shop is 12 degrees C warmer in the afternoon and the parts grow before they are measured.",
+  "Mother Nature", "Environment: temperature, humidity, vibration."
+  ),
+  intro = "Put each cause on its bone."
+)
+```
+
 ### Constructing a Fishbone Diagram
 
 ```{r fishbone-example, echo=FALSE, fig.width=14, fig.height=9}
@@ -778,7 +808,9 @@ qwebr_calc_card(
     qwebr_calc_input("P_impeller_worn", "P(impeller worn)", value = 0.03, min = 0, max = 0.2, step = 0.005, type = "slider"),
     qwebr_calc_input("P_tank_empty", "P(tank empty)", value = 0.05, min = 0, max = 0.2, step = 0.005),
     qwebr_calc_input("P_valve_closed", "P(valve closed)", value = 0.01, min = 0, max = 0.2, step = 0.005)
-  )
+  ),
+  goal = "Get the probability of the top event below 10%. Which single basic event gets you there on its own?",
+  goal_test = "P_top < 0.10"
 )
 ```
 
@@ -1088,6 +1120,29 @@ kable(d8_detail, col.names = c("Discipline", "Key Activities", "Deliverables"),
       caption = "8D Methodology Detailed Breakdown") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
+```
+
+#### Try it yourself: order the 8D disciplines
+
+The 8D method runs from D0 to D8. Containment comes before root cause for a reason: the customer has to be protected while you investigate. Put the nine disciplines in order.
+
+```{r tryit-eightd-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "eightd-order",
+  title = "The 8D disciplines, D0 to D8",
+  steps = c(
+    "Plan and prepare for the 8D",
+    "Form the team",
+    "Describe the problem",
+    "Contain the problem to protect the customer",
+    "Find and verify the root cause",
+    "Choose the permanent corrective actions",
+    "Implement and validate the corrective actions",
+    "Prevent recurrence",
+    "Close out and recognize the team"
+  ),
+  intro = "Move each discipline up or down until the sequence runs from D0 to D8."
+)
 ```
 
 ### D3: Containment Actions

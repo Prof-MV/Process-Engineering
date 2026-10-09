@@ -321,6 +321,40 @@ terminology %>%
   column_spec(1, bold = TRUE, width = "12em")
 ```
 
+#### Try it yourself: mode, effect or cause?
+
+Mixing up these three is the most common mistake on a PFMEA form. The failure mode is what goes wrong at the operation, the effect is what the customer or the next operation experiences, and the cause is why it happened. Sort these entries from an injection molding and a welding PFMEA.
+
+```{r tryit-mec-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "mec-sort",
+  title = "Failure mode, effect or cause?",
+  bins = c("Failure mode", "Effect", "Cause"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "Short shot: the part is not completely filled.",
+  "Failure mode", "The way the molding operation fails to deliver its intended output.",
+  "Weld nugget undersized.",
+  "Failure mode", "What is wrong with the output of the welding operation.",
+  "Hole drilled off location.",
+  "Failure mode", "The operation's output does not meet its requirement.",
+  "The part will not snap into the mating housing at the customer's assembly line.",
+  "Effect", "The consequence felt by the next user of the part.",
+  "The joint separates in service and the seat comes loose.",
+  "Effect", "What the end customer experiences.",
+  "The customer's line stops and the lot is returned.",
+  "Effect", "A consequence, not a description of the defect.",
+  "Melt temperature set too low.",
+  "Cause", "Why the short shot happens: a process parameter.",
+  "Electrode tips worn beyond their change interval.",
+  "Cause", "Why the nugget is undersized.",
+  "Locating pin worn, so the part sits crooked in the fixture.",
+  "Cause", "Why the hole ends up off location."
+  ),
+  intro = "Decide what each entry is."
+)
+```
+
 ### The PFMEA Form
 
 The PFMEA is documented in a structured form. Here is a simplified template:
@@ -970,6 +1004,32 @@ actions_table %>%
   column_spec(c(2, 9), bold = TRUE)
 ```
 
+---
+
+## Try it yourself: order the ten steps
+
+The ten steps of the PFMEA method build on one another: you cannot rate what you have not yet identified. Put them in order.
+
+```{r tryit-pfmea-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "pfmea-order",
+  title = "The ten steps of a PFMEA",
+  steps = c(
+    "Define the scope and process boundaries",
+    "Map the process and identify functions",
+    "Identify potential failure modes",
+    "Analyze the effects of each failure",
+    "Rate severity",
+    "Identify potential causes",
+    "Rate occurrence",
+    "List current controls and rate detection",
+    "Calculate RPN and prioritize",
+    "Recommend actions and follow up"
+  ),
+  intro = "Move each step up or down until the sequence is right."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Complete PFMEA Example: Injection Molding
@@ -1017,7 +1077,9 @@ qwebr_calc_card(
     qwebr_calc_input("D_current", "Current detection", value = 6, min = 1, max = 10, step = 1, type = "slider"),
     qwebr_calc_input("D_option1", "Improved detection", value = 2, min = 1, max = 10, step = 1),
     qwebr_calc_input("O_option2", "Improved occurrence", value = 2, min = 1, max = 10, step = 1)
-  )
+  ),
+  goal = "Severity is fixed at 7. How far must occurrence and detection be improved for the combined option to reach an RPN of 21 or less?",
+  goal_test = "RPN_option3 <= 21 && S_current == 7"
 )
 ```
 
@@ -1360,7 +1422,9 @@ qwebr_calc_card(
     qwebr_calc_input("D_before", "Detection (before)", value = 5, min = 1, max = 10, step = 1),
     qwebr_calc_input("O_after", "Occurrence (after)", value = 2, min = 1, max = 10, step = 1, type = "slider"),
     qwebr_calc_input("D_after", "Detection (after)", value = 2, min = 1, max = 10, step = 1)
-  )
+  ),
+  goal = "The customer wants the RPN cut by at least 90% from the 'before' state. Find after-ratings that achieve it.",
+  goal_test = "RPN_after <= 0.1 * RPN_before && S_before == 9 && O_before == 4 && D_before == 5"
 )
 ```
 
@@ -1510,8 +1574,22 @@ summary_data %>%
 
 ### Calculation Questions
 
-<details>
-<summary>Question 5: Given S=8, O=6, D=4, calculate RPN. If improved controls reduce detection to 2, what is the new RPN?</summary>
+**Question 5: Given S=8, O=6, D=4, calculate RPN. If improved controls reduce detection to 2, what is the new RPN?**
+
+```{r tryit-q5, echo=FALSE, results='asis'}
+tryit_number(
+  id = "review-q5",
+  title = "Question 5: RPN",
+  answers = list(
+    tryit_answer("Initial RPN", 8 * 6 * 4, tol = 0, digits = 0, hint = "RPN = S x O x D"),
+    tryit_answer("RPN after detection improves to 2", 8 * 6 * 2, tol = 0, digits = 0, hint = "Only D changes. Severity stays at 8.")
+  ),
+  question = "<p>A failure mode is rated S = 8, O = 6, D = 4. Improved controls then reduce detection to 2.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Initial Calculation:**
 ```
