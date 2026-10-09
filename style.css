@@ -286,6 +286,16 @@ input[type="range"].qwebr-calc-slider {
   color: #16a085;
 }
 
+/* A headline/row wraps its verdict in !!...!! (see qwebr-calc-card() /
+   js/qwebr-calculator.js) to flag a failing result — e.g. "Exceeded",
+   "Not capable", "Inadequate". Marked text renders red instead of the
+   default green (headline) or navy (breakdown row); everything else
+   (a passing verdict, or a plain number with no verdict at all) is
+   unaffected. */
+.qwebr-calc-headline.qwebr-calc-bad {
+  color: #c0392b;
+}
+
 .qwebr-calc-breakdown {
   list-style: none;
   margin: 0.75em auto 0;
@@ -305,6 +315,11 @@ input[type="range"].qwebr-calc-slider {
 .qwebr-calc-breakdown li .qwebr-calc-value {
   font-weight: 600;
   color: #2c3e50;
+}
+
+.qwebr-calc-breakdown li .qwebr-calc-value.qwebr-calc-bad,
+.qwebr-calc-breakdown li.qwebr-calc-bad {
+  color: #c0392b;
 }
 
 .qwebr-calc-graph {

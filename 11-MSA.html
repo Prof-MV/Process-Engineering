@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="description" content="Lecture notes accompanying the course.">
 
-<title>11&nbsp; Measurement Systems Analysis – Process Engineering</title>
+<title>5&nbsp; Measurement Systems Analysis – Process Engineering</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -72,15 +72,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./20-Working-with-AI.html" rel="next">
-<link href="./10-SPC.html" rel="prev">
+<link href="./17-Metallurgy-Fundamentals.html" rel="next">
+<link href="./07-Ergnomics.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-95863af46656191e6a2cf1560d98dcd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Bias study calculation\nreference_value <- 50.000  # Certified reference standard\nmeasurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,\n                  50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07)\n\n# Calculate bias\naverage_measured <- mean(measurements)\nbias <- average_measured - reference_value\n\ncat(\"Reference Value:\", reference_value, \"mm\\n\")\ncat(\"Average Measured:\", round(average_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\")\ncat(\"Bias as % of Tolerance (±0.10):\", round(abs(bias) / 0.10 * 100, 1), \"%\\n\")\n\n# Statistical test for significance\nt_test <- t.test(measurements, mu = reference_value)\ncat(\"\\nt-test p-value:\", round(t_test$p.value, 4))\nif(t_test$p.value < 0.05) {\n  cat(\" - Bias is statistically significant\\n\")\n} else {\n  cat(\" - Bias is not statistically significant\\n\")\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"bias-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Linearity calculation\nreference <- c(10, 25, 40, 55, 70)\navg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)\n\n# Fit linear regression\nmodel <- lm(avg_bias ~ reference)\n\n# Calculate linearity\nslope <- coef(model)[2]\nrange_used <- max(reference) - min(reference)\nlinearity <- abs(slope) * range_used\n\ncat(\"Regression equation: Bias =\", round(coef(model)[1], 4), \"+\",\n    round(slope, 5), \"× Reference\\n\")\ncat(\"Linearity (slope × range):\", round(linearity, 4), \"mm\\n\")\ncat(\"As % of tolerance (±0.10):\", round(linearity / 0.10 * 100, 1), \"%\\n\")\n\n# R-squared\ncat(\"R² =\", round(summary(model)$r.squared, 3),\n    \"- indicates\", ifelse(summary(model)$r.squared > 0.7, \"significant\", \"minor\"),\n    \"linearity issue\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"linearity-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Stability monitoring with control chart\nreference <- 25.000\nmeasurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,\n                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)\ndays <- 1:15\n\n# Calculate control limits (based on historical sigma)\nhistorical_sigma <- 0.010\nx_bar <- mean(measurements[1:5])  # Baseline from first 5 days\nUCL <- x_bar + 3 * historical_sigma\nLCL <- x_bar - 3 * historical_sigma\n\ncat(\"Baseline Average:\", round(x_bar, 4), \"\\n\")\ncat(\"UCL:\", round(UCL, 4), \"\\n\")\ncat(\"LCL:\", round(LCL, 4), \"\\n\")\n\n# Check for out-of-control\nout_of_control <- which(measurements > UCL | measurements < LCL)\nif(length(out_of_control) > 0) {\n  cat(\"\\nOut-of-control points on days:\", out_of_control, \"\\n\")\n  cat(\"Drift detected - recalibration recommended\\n\")\n} else {\n  cat(\"\\nNo out-of-control points - measurement system stable\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"stability-control-chart","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Range Method Gauge R&R Calculation\n# Two operators, five parts, two trials each\n\n# Data: Measurements by each operator (2 trials per part)\noperator_a <- matrix(c(\n  0.85, 0.87,  # Part 1\n  0.92, 0.91,  # Part 2\n  0.78, 0.80,  # Part 3\n  0.95, 0.96,  # Part 4\n  0.88, 0.85   # Part 5\n), ncol = 2, byrow = TRUE)\n\noperator_b <- matrix(c(\n  0.86, 0.88,  # Part 1\n  0.93, 0.92,  # Part 2\n  0.80, 0.79,  # Part 3\n  0.94, 0.97,  # Part 4\n  0.87, 0.88   # Part 5\n), ncol = 2, byrow = TRUE)\n\n# Step 1: Calculate ranges for each part-operator combination\nrange_a <- apply(operator_a, 1, function(x) max(x) - min(x))\nrange_b <- apply(operator_b, 1, function(x) max(x) - min(x))\n\n# Step 2: Average range\nR_bar <- mean(c(range_a, range_b))\n\n# Step 3: Calculate Repeatability (EV)\n# d2 for 2 trials = 1.128\nd2_trials <- 1.128\nEV <- R_bar / d2_trials\n\n# Step 4: Calculate part averages by operator\navg_a <- rowMeans(operator_a)\navg_b <- rowMeans(operator_b)\n\n# Step 5: Range of operator averages\nX_diff <- abs(mean(avg_a) - mean(avg_b))\n\n# d2 for 2 operators = 1.128\nd2_operators <- 1.128\nn_parts <- 5\nn_trials <- 2\n\n# Step 6: Reproducibility (AV)\nAV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))\nAV <- sqrt(max(0, AV_squared))\n\n# Step 7: Gauge R&R\nGRR <- sqrt(EV^2 + AV^2)\n\n# Step 8: Express as % of tolerance\ntolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total\n\ncat(\"=== Range Method Gauge R&R Results ===\\n\\n\")\ncat(\"Average Range (R-bar):\", round(R_bar, 4), \"\\n\")\ncat(\"Repeatability (EV):\", round(EV, 4), \"\\n\")\ncat(\"Reproducibility (AV):\", round(AV, 4), \"\\n\")\ncat(\"Gauge R&R (GRR):\", round(GRR, 4), \"\\n\\n\")\ncat(\"%EV (of tolerance):\", round(EV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%AV (of tolerance):\", round(AV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%GRR (of tolerance):\", round(GRR / tolerance * 100 * 5.15, 1), \"%\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"range-method","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Resolution adequacy check\ntolerance <- 0.100  # mm total tolerance\nprocess_6sigma <- 0.080  # 6 sigma of process\ngauge_resolution <- 0.010  # mm (smallest increment)\n\n# Check against tolerance\nratio_tolerance <- tolerance / gauge_resolution\n# Check against process\nratio_process <- process_6sigma / gauge_resolution\n\nif (ratio_tolerance >= 10 && ratio_process >= 10) {\n  cat(\"Gauge resolution is adequate\\n\")\n} else {\n  cat(\"Gauge resolution is inadequate\\n\")\n}\ncat(sprintf(\"  Tolerance / Resolution   %.0f : 1 (%s)\\n\", ratio_tolerance, ifelse(ratio_tolerance >= 10, \"adequate\", \"inadequate\")))\ncat(sprintf(\"  Process 6σ / Resolution   %.0f : 1 (%s)\\n\", ratio_process, ifelse(ratio_process >= 10, \"adequate\", \"inadequate\")))","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"resolution-check","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# True process parameters\ntrue_mean <- 100\ntrue_sigma <- 2.0\nUSL <- 106\nLSL <- 94\ntolerance <- USL - LSL\n\n# True capability\ntrue_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)\n\n# With good measurement system (10% GRR)\ngrr_good <- 0.10 * tolerance / 5.15\nobserved_sigma_good <- sqrt(true_sigma^2 + grr_good^2)\nobserved_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)\n\n# With poor measurement system (50% GRR)\ngrr_poor <- 0.50 * tolerance / 5.15\nobserved_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)\nobserved_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)\n\ncat(sprintf(\"A capable process (true Cpk = %.2f) can appear incapable under poor MSA\\n\", true_Cpk))\ncat(sprintf(\"  True Cpk                 %.2f\\n\", true_Cpk))\ncat(sprintf(\"  Observed Cpk (10%% GRR)   %.2f\\n\", observed_Cpk_good))\ncat(sprintf(\"  Observed Cpk (50%% GRR)   %.2f\\n\", observed_Cpk_poor))","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"msa-capability-effect","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"reference <- 25.000\ntolerance_total <- 0.100  # ±0.050 = 0.100 total\nmeasurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,\n                  25.009, 25.013, 25.010, 25.012, 25.011)\n\n# Calculate bias\nmean_measured <- mean(measurements)\nbias <- mean_measured - reference\n\ncat(\"Reference value:\", reference, \"mm\\n\")\ncat(\"Mean measured:\", round(mean_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\\n\")\n\n# Express as % of tolerance\nbias_pct <- abs(bias) / tolerance_total * 100\ncat(\"Bias as % of tolerance:\", round(bias_pct, 1), \"%\\n\")\n\n# T-test for significance\nt_result <- t.test(measurements, mu = reference)\ncat(\"T-test p-value:\", round(t_result$p.value, 6), \"\\n\\n\")\n\n# Acceptability\ncat(\"Acceptability Assessment:\\n\")\nif(bias_pct < 10) {\n  cat(\"- Bias < 10% of tolerance: ACCEPTABLE\\n\")\n} else if(bias_pct < 25) {\n  cat(\"- Bias 10-25% of tolerance: MARGINAL\\n\")\n} else {\n  cat(\"- Bias > 25% of tolerance: UNACCEPTABLE\\n\")\n}\n\nif(t_result$p.value < 0.05) {\n  cat(\"- Bias is statistically significant (p < 0.05)\\n\")\n  cat(\"- Consider recalibration or technique adjustment\\n\")\n}","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q3-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values from ANOVA table\nMS_part <- 0.03167\nMS_operator <- 0.00125\nMS_interaction <- 0.00050\nMS_error <- 0.00030\n\nn_parts <- 10\nn_operators <- 3\nn_trials <- 3\n\n# Variance components\nvar_repeatability <- MS_error\ncat(\"Var(Repeatability) =\", var_repeatability, \"\\n\")\n\nvar_interaction <- max(0, (MS_interaction - MS_error) / n_trials)\ncat(\"Var(Interaction) =\", round(var_interaction, 6), \"\\n\")\n\nvar_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))\ncat(\"Var(Operator) =\", round(var_operator, 6), \"\\n\")\n\nvar_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))\ncat(\"Var(Part) =\", round(var_part, 6), \"\\n\\n\")\n\n# Reproducibility = Operator + Interaction\nvar_reproducibility <- var_operator + var_interaction\ncat(\"Var(Reproducibility) =\", round(var_reproducibility, 6), \"\\n\")\n\n# Total Gauge R&R\nvar_GRR <- var_repeatability + var_reproducibility\ncat(\"Var(GRR) =\", round(var_GRR, 6), \"\\n\")\n\n# Total variation\nvar_total <- var_part + var_GRR\ncat(\"Var(Total) =\", round(var_total, 6), \"\\n\\n\")\n\n# Calculate %GRR (of total variation)\nsigma_GRR <- sqrt(var_GRR)\nsigma_total <- sqrt(var_total)\npct_GRR <- (sigma_GRR / sigma_total) * 100\n\ncat(\"%GRR (of Total Variation) =\", round(pct_GRR, 1), \"%\\n\\n\")\n\n# ndc\nsigma_part <- sqrt(var_part)\nndc <- 1.41 * (sigma_part / sigma_GRR)\ncat(\"ndc =\", round(ndc, 1), \"\\n\\n\")\n\nif(pct_GRR < 10) {\n  cat(\"Assessment: ACCEPTABLE (< 10%)\\n\")\n} else if(pct_GRR < 30) {\n  cat(\"Assessment: MARGINAL (10-30%)\\n\")\n} else {\n  cat(\"Assessment: UNACCEPTABLE (> 30%)\\n\")\n}","id":8,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q7-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Bias study calculation\nreference_value <- 50.000  # Certified reference standard\nmeasurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,\n                  50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07)\n\n# Calculate bias\naverage_measured <- mean(measurements)\nbias <- average_measured - reference_value\n\ncat(\"Reference Value:\", reference_value, \"mm\\n\")\ncat(\"Average Measured:\", round(average_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\")\ncat(\"Bias as % of Tolerance (±0.10):\", round(abs(bias) / 0.10 * 100, 1), \"%\\n\")\n\n# Statistical test for significance\nt_test <- t.test(measurements, mu = reference_value)\ncat(\"\\nt-test p-value:\", round(t_test$p.value, 4))\nif(t_test$p.value < 0.05) {\n  cat(\" - Bias is statistically significant\\n\")\n} else {\n  cat(\" - Bias is not statistically significant\\n\")\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"bias-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Linearity calculation\nreference <- c(10, 25, 40, 55, 70)\navg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)\n\n# Fit linear regression\nmodel <- lm(avg_bias ~ reference)\n\n# Calculate linearity\nslope <- coef(model)[2]\nrange_used <- max(reference) - min(reference)\nlinearity <- abs(slope) * range_used\n\ncat(\"Regression equation: Bias =\", round(coef(model)[1], 4), \"+\",\n    round(slope, 5), \"× Reference\\n\")\ncat(\"Linearity (slope × range):\", round(linearity, 4), \"mm\\n\")\ncat(\"As % of tolerance (±0.10):\", round(linearity / 0.10 * 100, 1), \"%\\n\")\n\n# R-squared\ncat(\"R² =\", round(summary(model)$r.squared, 3),\n    \"- indicates\", ifelse(summary(model)$r.squared > 0.7, \"significant\", \"minor\"),\n    \"linearity issue\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"linearity-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Stability monitoring with control chart\nreference <- 25.000\nmeasurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,\n                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)\ndays <- 1:15\n\n# Calculate control limits (based on historical sigma)\nhistorical_sigma <- 0.010\nx_bar <- mean(measurements[1:5])  # Baseline from first 5 days\nUCL <- x_bar + 3 * historical_sigma\nLCL <- x_bar - 3 * historical_sigma\n\ncat(\"Baseline Average:\", round(x_bar, 4), \"\\n\")\ncat(\"UCL:\", round(UCL, 4), \"\\n\")\ncat(\"LCL:\", round(LCL, 4), \"\\n\")\n\n# Check for out-of-control\nout_of_control <- which(measurements > UCL | measurements < LCL)\nif(length(out_of_control) > 0) {\n  cat(\"\\nOut-of-control points on days:\", out_of_control, \"\\n\")\n  cat(\"Drift detected - recalibration recommended\\n\")\n} else {\n  cat(\"\\nNo out-of-control points - measurement system stable\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"stability-control-chart","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Range Method Gauge R&R Calculation\n# Two operators, five parts, two trials each\n\n# Data: Measurements by each operator (2 trials per part)\noperator_a <- matrix(c(\n  0.85, 0.87,  # Part 1\n  0.92, 0.91,  # Part 2\n  0.78, 0.80,  # Part 3\n  0.95, 0.96,  # Part 4\n  0.88, 0.85   # Part 5\n), ncol = 2, byrow = TRUE)\n\noperator_b <- matrix(c(\n  0.86, 0.88,  # Part 1\n  0.93, 0.92,  # Part 2\n  0.80, 0.79,  # Part 3\n  0.94, 0.97,  # Part 4\n  0.87, 0.88   # Part 5\n), ncol = 2, byrow = TRUE)\n\n# Step 1: Calculate ranges for each part-operator combination\nrange_a <- apply(operator_a, 1, function(x) max(x) - min(x))\nrange_b <- apply(operator_b, 1, function(x) max(x) - min(x))\n\n# Step 2: Average range\nR_bar <- mean(c(range_a, range_b))\n\n# Step 3: Calculate Repeatability (EV)\n# d2 for 2 trials = 1.128\nd2_trials <- 1.128\nEV <- R_bar / d2_trials\n\n# Step 4: Calculate part averages by operator\navg_a <- rowMeans(operator_a)\navg_b <- rowMeans(operator_b)\n\n# Step 5: Range of operator averages\nX_diff <- abs(mean(avg_a) - mean(avg_b))\n\n# d2 for 2 operators = 1.128\nd2_operators <- 1.128\nn_parts <- 5\nn_trials <- 2\n\n# Step 6: Reproducibility (AV)\nAV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))\nAV <- sqrt(max(0, AV_squared))\n\n# Step 7: Gauge R&R\nGRR <- sqrt(EV^2 + AV^2)\n\n# Step 8: Express as % of tolerance\ntolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total\n\ncat(\"=== Range Method Gauge R&R Results ===\\n\\n\")\ncat(\"Average Range (R-bar):\", round(R_bar, 4), \"\\n\")\ncat(\"Repeatability (EV):\", round(EV, 4), \"\\n\")\ncat(\"Reproducibility (AV):\", round(AV, 4), \"\\n\")\ncat(\"Gauge R&R (GRR):\", round(GRR, 4), \"\\n\\n\")\ncat(\"%EV (of tolerance):\", round(EV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%AV (of tolerance):\", round(AV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%GRR (of tolerance):\", round(GRR / tolerance * 100 * 5.15, 1), \"%\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"range-method","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Resolution adequacy check\ntolerance <- 0.100  # mm total tolerance\nprocess_6sigma <- 0.080  # 6 sigma of process\ngauge_resolution <- 0.010  # mm (smallest increment)\n\n# Check against tolerance\nratio_tolerance <- tolerance / gauge_resolution\n# Check against process\nratio_process <- process_6sigma / gauge_resolution\n\nif (ratio_tolerance >= 10 && ratio_process >= 10) {\n  cat(\"Gauge resolution is adequate\\n\")\n} else {\n  cat(\"Gauge resolution is !!inadequate!!\\n\")\n}\ncat(sprintf(\"  Tolerance / Resolution   %.0f : 1 (%s)\\n\", ratio_tolerance, ifelse(ratio_tolerance >= 10, \"adequate\", \"!!inadequate!!\")))\ncat(sprintf(\"  Process 6σ / Resolution   %.0f : 1 (%s)\\n\", ratio_process, ifelse(ratio_process >= 10, \"adequate\", \"!!inadequate!!\")))","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"resolution-check","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# True process parameters\ntrue_mean <- 100\ntrue_sigma <- 2.0\nUSL <- 106\nLSL <- 94\ntolerance <- USL - LSL\n\n# True capability\ntrue_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)\n\n# With good measurement system (10% GRR)\ngrr_good <- 0.10 * tolerance / 5.15\nobserved_sigma_good <- sqrt(true_sigma^2 + grr_good^2)\nobserved_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)\n\n# With poor measurement system (50% GRR)\ngrr_poor <- 0.50 * tolerance / 5.15\nobserved_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)\nobserved_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)\n\ncat(sprintf(\"A capable process (true Cpk = %.2f) can appear incapable under poor MSA\\n\", true_Cpk))\ncat(sprintf(\"  True Cpk                 %.2f\\n\", true_Cpk))\ncat(sprintf(\"  Observed Cpk (10%% GRR)   %.2f\\n\", observed_Cpk_good))\ncat(sprintf(\"  Observed Cpk (50%% GRR)   %.2f\\n\", observed_Cpk_poor))","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"msa-capability-effect","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"reference <- 25.000\ntolerance_total <- 0.100  # ±0.050 = 0.100 total\nmeasurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,\n                  25.009, 25.013, 25.010, 25.012, 25.011)\n\n# Calculate bias\nmean_measured <- mean(measurements)\nbias <- mean_measured - reference\n\ncat(\"Reference value:\", reference, \"mm\\n\")\ncat(\"Mean measured:\", round(mean_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\\n\")\n\n# Express as % of tolerance\nbias_pct <- abs(bias) / tolerance_total * 100\ncat(\"Bias as % of tolerance:\", round(bias_pct, 1), \"%\\n\")\n\n# T-test for significance\nt_result <- t.test(measurements, mu = reference)\ncat(\"T-test p-value:\", round(t_result$p.value, 6), \"\\n\\n\")\n\n# Acceptability\ncat(\"Acceptability Assessment:\\n\")\nif(bias_pct < 10) {\n  cat(\"- Bias < 10% of tolerance: ACCEPTABLE\\n\")\n} else if(bias_pct < 25) {\n  cat(\"- Bias 10-25% of tolerance: MARGINAL\\n\")\n} else {\n  cat(\"- Bias > 25% of tolerance: UNACCEPTABLE\\n\")\n}\n\nif(t_result$p.value < 0.05) {\n  cat(\"- Bias is statistically significant (p < 0.05)\\n\")\n  cat(\"- Consider recalibration or technique adjustment\\n\")\n}","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q3-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values from ANOVA table\nMS_part <- 0.03167\nMS_operator <- 0.00125\nMS_interaction <- 0.00050\nMS_error <- 0.00030\n\nn_parts <- 10\nn_operators <- 3\nn_trials <- 3\n\n# Variance components\nvar_repeatability <- MS_error\ncat(\"Var(Repeatability) =\", var_repeatability, \"\\n\")\n\nvar_interaction <- max(0, (MS_interaction - MS_error) / n_trials)\ncat(\"Var(Interaction) =\", round(var_interaction, 6), \"\\n\")\n\nvar_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))\ncat(\"Var(Operator) =\", round(var_operator, 6), \"\\n\")\n\nvar_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))\ncat(\"Var(Part) =\", round(var_part, 6), \"\\n\\n\")\n\n# Reproducibility = Operator + Interaction\nvar_reproducibility <- var_operator + var_interaction\ncat(\"Var(Reproducibility) =\", round(var_reproducibility, 6), \"\\n\")\n\n# Total Gauge R&R\nvar_GRR <- var_repeatability + var_reproducibility\ncat(\"Var(GRR) =\", round(var_GRR, 6), \"\\n\")\n\n# Total variation\nvar_total <- var_part + var_GRR\ncat(\"Var(Total) =\", round(var_total, 6), \"\\n\\n\")\n\n# Calculate %GRR (of total variation)\nsigma_GRR <- sqrt(var_GRR)\nsigma_total <- sqrt(var_total)\npct_GRR <- (sigma_GRR / sigma_total) * 100\n\ncat(\"%GRR (of Total Variation) =\", round(pct_GRR, 1), \"%\\n\\n\")\n\n# ndc\nsigma_part <- sqrt(var_part)\nndc <- 1.41 * (sigma_part / sigma_GRR)\ncat(\"ndc =\", round(ndc, 1), \"\\n\\n\")\n\nif(pct_GRR < 10) {\n  cat(\"Assessment: ACCEPTABLE (< 10%)\\n\")\n} else if(pct_GRR < 30) {\n  cat(\"Assessment: MARGINAL (10-30%)\\n\")\n} else {\n  cat(\"Assessment: UNACCEPTABLE (> 30%)\\n\")\n}","id":8,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q7-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1710,7 +1710,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-MSA.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-MSA.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -1764,104 +1764,104 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-MSA.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./20-Working-with-AI.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./21-Machine-Learning.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./17-Metallurgy-Fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./18-Materials-Testing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Working-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21-Machine-Learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -1880,65 +1880,65 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">11.1</span> Learning Objectives</a></li>
-  <li><a href="#introduction-to-measurement-systems-analysis" id="toc-introduction-to-measurement-systems-analysis" class="nav-link" data-scroll-target="#introduction-to-measurement-systems-analysis"><span class="header-section-number">11.2</span> Introduction to Measurement Systems Analysis</a>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">5.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-to-measurement-systems-analysis" id="toc-introduction-to-measurement-systems-analysis" class="nav-link" data-scroll-target="#introduction-to-measurement-systems-analysis"><span class="header-section-number">5.2</span> Introduction to Measurement Systems Analysis</a>
   <ul class="collapse">
-  <li><a href="#why-msa-matters" id="toc-why-msa-matters" class="nav-link" data-scroll-target="#why-msa-matters"><span class="header-section-number">11.2.1</span> Why MSA Matters</a></li>
-  <li><a href="#the-cost-of-poor-measurement" id="toc-the-cost-of-poor-measurement" class="nav-link" data-scroll-target="#the-cost-of-poor-measurement"><span class="header-section-number">11.2.2</span> The Cost of Poor Measurement</a></li>
-  <li><a href="#msa-in-industry-standards" id="toc-msa-in-industry-standards" class="nav-link" data-scroll-target="#msa-in-industry-standards"><span class="header-section-number">11.2.3</span> MSA in Industry Standards</a></li>
+  <li><a href="#why-msa-matters" id="toc-why-msa-matters" class="nav-link" data-scroll-target="#why-msa-matters"><span class="header-section-number">5.2.1</span> Why MSA Matters</a></li>
+  <li><a href="#the-cost-of-poor-measurement" id="toc-the-cost-of-poor-measurement" class="nav-link" data-scroll-target="#the-cost-of-poor-measurement"><span class="header-section-number">5.2.2</span> The Cost of Poor Measurement</a></li>
+  <li><a href="#msa-in-industry-standards" id="toc-msa-in-industry-standards" class="nav-link" data-scroll-target="#msa-in-industry-standards"><span class="header-section-number">5.2.3</span> MSA in Industry Standards</a></li>
   </ul></li>
-  <li><a href="#common-sources-of-measurement-error" id="toc-common-sources-of-measurement-error" class="nav-link" data-scroll-target="#common-sources-of-measurement-error"><span class="header-section-number">11.3</span> Common Sources of Measurement Error</a></li>
-  <li><a href="#components-of-measurement-variation" id="toc-components-of-measurement-variation" class="nav-link" data-scroll-target="#components-of-measurement-variation"><span class="header-section-number">11.4</span> Components of Measurement Variation</a>
+  <li><a href="#common-sources-of-measurement-error" id="toc-common-sources-of-measurement-error" class="nav-link" data-scroll-target="#common-sources-of-measurement-error"><span class="header-section-number">5.3</span> Common Sources of Measurement Error</a></li>
+  <li><a href="#components-of-measurement-variation" id="toc-components-of-measurement-variation" class="nav-link" data-scroll-target="#components-of-measurement-variation"><span class="header-section-number">5.4</span> Components of Measurement Variation</a>
   <ul class="collapse">
-  <li><a href="#the-measurement-system-model" id="toc-the-measurement-system-model" class="nav-link" data-scroll-target="#the-measurement-system-model"><span class="header-section-number">11.4.1</span> The Measurement System Model</a></li>
-  <li><a href="#accuracy-vs.-precision" id="toc-accuracy-vs.-precision" class="nav-link" data-scroll-target="#accuracy-vs.-precision"><span class="header-section-number">11.4.2</span> Accuracy vs.&nbsp;Precision</a></li>
+  <li><a href="#the-measurement-system-model" id="toc-the-measurement-system-model" class="nav-link" data-scroll-target="#the-measurement-system-model"><span class="header-section-number">5.4.1</span> The Measurement System Model</a></li>
+  <li><a href="#accuracy-vs.-precision" id="toc-accuracy-vs.-precision" class="nav-link" data-scroll-target="#accuracy-vs.-precision"><span class="header-section-number">5.4.2</span> Accuracy vs.&nbsp;Precision</a></li>
   </ul></li>
-  <li><a href="#accuracy-studies" id="toc-accuracy-studies" class="nav-link" data-scroll-target="#accuracy-studies"><span class="header-section-number">11.5</span> Accuracy Studies</a>
+  <li><a href="#accuracy-studies" id="toc-accuracy-studies" class="nav-link" data-scroll-target="#accuracy-studies"><span class="header-section-number">5.5</span> Accuracy Studies</a>
   <ul class="collapse">
-  <li><a href="#bias" id="toc-bias" class="nav-link" data-scroll-target="#bias"><span class="header-section-number">11.5.1</span> Bias</a></li>
-  <li><a href="#linearity" id="toc-linearity" class="nav-link" data-scroll-target="#linearity"><span class="header-section-number">11.5.2</span> Linearity</a></li>
-  <li><a href="#stability" id="toc-stability" class="nav-link" data-scroll-target="#stability"><span class="header-section-number">11.5.3</span> Stability</a></li>
-  <li><a href="#stability-control-chart" id="toc-stability-control-chart" class="nav-link" data-scroll-target="#stability-control-chart"><span class="header-section-number">11.5.4</span> Stability Control Chart</a></li>
+  <li><a href="#bias" id="toc-bias" class="nav-link" data-scroll-target="#bias"><span class="header-section-number">5.5.1</span> Bias</a></li>
+  <li><a href="#linearity" id="toc-linearity" class="nav-link" data-scroll-target="#linearity"><span class="header-section-number">5.5.2</span> Linearity</a></li>
+  <li><a href="#stability" id="toc-stability" class="nav-link" data-scroll-target="#stability"><span class="header-section-number">5.5.3</span> Stability</a></li>
+  <li><a href="#stability-control-chart" id="toc-stability-control-chart" class="nav-link" data-scroll-target="#stability-control-chart"><span class="header-section-number">5.5.4</span> Stability Control Chart</a></li>
   </ul></li>
-  <li><a href="#precision-studies-gauge-rr" id="toc-precision-studies-gauge-rr" class="nav-link" data-scroll-target="#precision-studies-gauge-rr"><span class="header-section-number">11.6</span> Precision Studies: Gauge R&amp;R</a>
+  <li><a href="#precision-studies-gauge-rr" id="toc-precision-studies-gauge-rr" class="nav-link" data-scroll-target="#precision-studies-gauge-rr"><span class="header-section-number">5.6</span> Precision Studies: Gauge R&amp;R</a>
   <ul class="collapse">
-  <li><a href="#repeatability-vs.-reproducibility" id="toc-repeatability-vs.-reproducibility" class="nav-link" data-scroll-target="#repeatability-vs.-reproducibility"><span class="header-section-number">11.6.1</span> Repeatability vs.&nbsp;Reproducibility</a></li>
-  <li><a href="#gauge-rr-study-design" id="toc-gauge-rr-study-design" class="nav-link" data-scroll-target="#gauge-rr-study-design"><span class="header-section-number">11.6.2</span> Gauge R&amp;R Study Design</a></li>
-  <li><a href="#range-method-short-form" id="toc-range-method-short-form" class="nav-link" data-scroll-target="#range-method-short-form"><span class="header-section-number">11.6.3</span> Range Method (Short Form)</a></li>
-  <li><a href="#anova-method-full-study" id="toc-anova-method-full-study" class="nav-link" data-scroll-target="#anova-method-full-study"><span class="header-section-number">11.6.4</span> ANOVA Method (Full Study)</a></li>
-  <li><a href="#calculating-grr-and-acceptance-criteria" id="toc-calculating-grr-and-acceptance-criteria" class="nav-link" data-scroll-target="#calculating-grr-and-acceptance-criteria"><span class="header-section-number">11.6.5</span> Calculating %GRR and Acceptance Criteria</a></li>
-  <li><a href="#gauge-rr-acceptance-criteria-summary" id="toc-gauge-rr-acceptance-criteria-summary" class="nav-link" data-scroll-target="#gauge-rr-acceptance-criteria-summary"><span class="header-section-number">11.6.6</span> Gauge R&amp;R Acceptance Criteria Summary</a></li>
-  <li><a href="#visual-analysis-of-gauge-rr" id="toc-visual-analysis-of-gauge-rr" class="nav-link" data-scroll-target="#visual-analysis-of-gauge-rr"><span class="header-section-number">11.6.7</span> Visual Analysis of Gauge R&amp;R</a></li>
+  <li><a href="#repeatability-vs.-reproducibility" id="toc-repeatability-vs.-reproducibility" class="nav-link" data-scroll-target="#repeatability-vs.-reproducibility"><span class="header-section-number">5.6.1</span> Repeatability vs.&nbsp;Reproducibility</a></li>
+  <li><a href="#gauge-rr-study-design" id="toc-gauge-rr-study-design" class="nav-link" data-scroll-target="#gauge-rr-study-design"><span class="header-section-number">5.6.2</span> Gauge R&amp;R Study Design</a></li>
+  <li><a href="#range-method-short-form" id="toc-range-method-short-form" class="nav-link" data-scroll-target="#range-method-short-form"><span class="header-section-number">5.6.3</span> Range Method (Short Form)</a></li>
+  <li><a href="#anova-method-full-study" id="toc-anova-method-full-study" class="nav-link" data-scroll-target="#anova-method-full-study"><span class="header-section-number">5.6.4</span> ANOVA Method (Full Study)</a></li>
+  <li><a href="#calculating-grr-and-acceptance-criteria" id="toc-calculating-grr-and-acceptance-criteria" class="nav-link" data-scroll-target="#calculating-grr-and-acceptance-criteria"><span class="header-section-number">5.6.5</span> Calculating %GRR and Acceptance Criteria</a></li>
+  <li><a href="#gauge-rr-acceptance-criteria-summary" id="toc-gauge-rr-acceptance-criteria-summary" class="nav-link" data-scroll-target="#gauge-rr-acceptance-criteria-summary"><span class="header-section-number">5.6.6</span> Gauge R&amp;R Acceptance Criteria Summary</a></li>
+  <li><a href="#visual-analysis-of-gauge-rr" id="toc-visual-analysis-of-gauge-rr" class="nav-link" data-scroll-target="#visual-analysis-of-gauge-rr"><span class="header-section-number">5.6.7</span> Visual Analysis of Gauge R&amp;R</a></li>
   </ul></li>
-  <li><a href="#attribute-measurement-systems" id="toc-attribute-measurement-systems" class="nav-link" data-scroll-target="#attribute-measurement-systems"><span class="header-section-number">11.7</span> Attribute Measurement Systems</a>
+  <li><a href="#attribute-measurement-systems" id="toc-attribute-measurement-systems" class="nav-link" data-scroll-target="#attribute-measurement-systems"><span class="header-section-number">5.7</span> Attribute Measurement Systems</a>
   <ul class="collapse">
-  <li><a href="#kappa-statistic" id="toc-kappa-statistic" class="nav-link" data-scroll-target="#kappa-statistic"><span class="header-section-number">11.7.1</span> Kappa Statistic</a></li>
-  <li><a href="#attribute-agreement-study-example" id="toc-attribute-agreement-study-example" class="nav-link" data-scroll-target="#attribute-agreement-study-example"><span class="header-section-number">11.7.2</span> Attribute Agreement Study Example</a></li>
-  <li><a href="#calculating-kappa" id="toc-calculating-kappa" class="nav-link" data-scroll-target="#calculating-kappa"><span class="header-section-number">11.7.3</span> Calculating Kappa</a></li>
-  <li><a href="#attribute-msa-best-practices" id="toc-attribute-msa-best-practices" class="nav-link" data-scroll-target="#attribute-msa-best-practices"><span class="header-section-number">11.7.4</span> Attribute MSA Best Practices</a></li>
+  <li><a href="#kappa-statistic" id="toc-kappa-statistic" class="nav-link" data-scroll-target="#kappa-statistic"><span class="header-section-number">5.7.1</span> Kappa Statistic</a></li>
+  <li><a href="#attribute-agreement-study-example" id="toc-attribute-agreement-study-example" class="nav-link" data-scroll-target="#attribute-agreement-study-example"><span class="header-section-number">5.7.2</span> Attribute Agreement Study Example</a></li>
+  <li><a href="#calculating-kappa" id="toc-calculating-kappa" class="nav-link" data-scroll-target="#calculating-kappa"><span class="header-section-number">5.7.3</span> Calculating Kappa</a></li>
+  <li><a href="#attribute-msa-best-practices" id="toc-attribute-msa-best-practices" class="nav-link" data-scroll-target="#attribute-msa-best-practices"><span class="header-section-number">5.7.4</span> Attribute MSA Best Practices</a></li>
   </ul></li>
-  <li><a href="#measurement-system-resolution" id="toc-measurement-system-resolution" class="nav-link" data-scroll-target="#measurement-system-resolution"><span class="header-section-number">11.8</span> Measurement System Resolution</a>
+  <li><a href="#measurement-system-resolution" id="toc-measurement-system-resolution" class="nav-link" data-scroll-target="#measurement-system-resolution"><span class="header-section-number">5.8</span> Measurement System Resolution</a>
   <ul class="collapse">
-  <li><a href="#rule-of-ten" id="toc-rule-of-ten" class="nav-link" data-scroll-target="#rule-of-ten"><span class="header-section-number">11.8.1</span> Rule of Ten</a></li>
-  <li><a href="#resolution-impact-on-gauge-rr" id="toc-resolution-impact-on-gauge-rr" class="nav-link" data-scroll-target="#resolution-impact-on-gauge-rr"><span class="header-section-number">11.8.2</span> Resolution Impact on Gauge R&amp;R</a></li>
+  <li><a href="#rule-of-ten" id="toc-rule-of-ten" class="nav-link" data-scroll-target="#rule-of-ten"><span class="header-section-number">5.8.1</span> Rule of Ten</a></li>
+  <li><a href="#resolution-impact-on-gauge-rr" id="toc-resolution-impact-on-gauge-rr" class="nav-link" data-scroll-target="#resolution-impact-on-gauge-rr"><span class="header-section-number">5.8.2</span> Resolution Impact on Gauge R&amp;R</a></li>
   </ul></li>
-  <li><a href="#msa-and-spc-relationship" id="toc-msa-and-spc-relationship" class="nav-link" data-scroll-target="#msa-and-spc-relationship"><span class="header-section-number">11.9</span> MSA and SPC Relationship</a>
+  <li><a href="#msa-and-spc-relationship" id="toc-msa-and-spc-relationship" class="nav-link" data-scroll-target="#msa-and-spc-relationship"><span class="header-section-number">5.9</span> MSA and SPC Relationship</a>
   <ul class="collapse">
-  <li><a href="#effect-on-control-charts" id="toc-effect-on-control-charts" class="nav-link" data-scroll-target="#effect-on-control-charts"><span class="header-section-number">11.9.1</span> Effect on Control Charts</a></li>
-  <li><a href="#effect-on-capability-studies" id="toc-effect-on-capability-studies" class="nav-link" data-scroll-target="#effect-on-capability-studies"><span class="header-section-number">11.9.2</span> Effect on Capability Studies</a></li>
+  <li><a href="#effect-on-control-charts" id="toc-effect-on-control-charts" class="nav-link" data-scroll-target="#effect-on-control-charts"><span class="header-section-number">5.9.1</span> Effect on Control Charts</a></li>
+  <li><a href="#effect-on-capability-studies" id="toc-effect-on-capability-studies" class="nav-link" data-scroll-target="#effect-on-capability-studies"><span class="header-section-number">5.9.2</span> Effect on Capability Studies</a></li>
   </ul></li>
-  <li><a href="#conducting-an-msa-study-step-by-step" id="toc-conducting-an-msa-study-step-by-step" class="nav-link" data-scroll-target="#conducting-an-msa-study-step-by-step"><span class="header-section-number">11.10</span> Conducting an MSA Study: Step-by-Step</a>
+  <li><a href="#conducting-an-msa-study-step-by-step" id="toc-conducting-an-msa-study-step-by-step" class="nav-link" data-scroll-target="#conducting-an-msa-study-step-by-step"><span class="header-section-number">5.10</span> Conducting an MSA Study: Step-by-Step</a>
   <ul class="collapse">
-  <li><a href="#data-collection-sheet-template" id="toc-data-collection-sheet-template" class="nav-link" data-scroll-target="#data-collection-sheet-template"><span class="header-section-number">11.10.1</span> Data Collection Sheet Template</a></li>
+  <li><a href="#data-collection-sheet-template" id="toc-data-collection-sheet-template" class="nav-link" data-scroll-target="#data-collection-sheet-template"><span class="header-section-number">5.10.1</span> Data Collection Sheet Template</a></li>
   </ul></li>
-  <li><a href="#video-resources" id="toc-video-resources" class="nav-link" data-scroll-target="#video-resources"><span class="header-section-number">11.11</span> Video Resources</a>
+  <li><a href="#video-resources" id="toc-video-resources" class="nav-link" data-scroll-target="#video-resources"><span class="header-section-number">5.11</span> Video Resources</a>
   <ul class="collapse">
-  <li><a href="#understanding-gauge-rr" id="toc-understanding-gauge-rr" class="nav-link" data-scroll-target="#understanding-gauge-rr"><span class="header-section-number">11.11.1</span> Understanding Gauge R&amp;R</a></li>
-  <li><a href="#msa-in-practice" id="toc-msa-in-practice" class="nav-link" data-scroll-target="#msa-in-practice"><span class="header-section-number">11.11.2</span> MSA in Practice</a></li>
+  <li><a href="#understanding-gauge-rr" id="toc-understanding-gauge-rr" class="nav-link" data-scroll-target="#understanding-gauge-rr"><span class="header-section-number">5.11.1</span> Understanding Gauge R&amp;R</a></li>
+  <li><a href="#msa-in-practice" id="toc-msa-in-practice" class="nav-link" data-scroll-target="#msa-in-practice"><span class="header-section-number">5.11.2</span> MSA in Practice</a></li>
   </ul></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">11.12</span> Summary</a></li>
-  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">11.13</span> Review Questions</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">11.14</span> References</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.12</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">5.13</span> Review Questions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">5.14</span> References</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/11-MSA.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -2231,7 +2231,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></h1>
 </div>
 
 
@@ -2249,8 +2249,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 
 
 <hr>
-<section id="learning-objectives" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">11.1</span> Learning Objectives</h2>
+<section id="learning-objectives" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">5.1</span> Learning Objectives</h2>
 <p>After completing this chapter, you will be able to:</p>
 <ol type="1">
 <li>Explain the importance of measurement system quality in process control</li>
@@ -2264,11 +2264,11 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </ol>
 <hr>
 </section>
-<section id="introduction-to-measurement-systems-analysis" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="introduction-to-measurement-systems-analysis"><span class="header-section-number">11.2</span> Introduction to Measurement Systems Analysis</h2>
+<section id="introduction-to-measurement-systems-analysis" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="introduction-to-measurement-systems-analysis"><span class="header-section-number">5.2</span> Introduction to Measurement Systems Analysis</h2>
 <p><strong>Measurement Systems Analysis (MSA)</strong> is the science of evaluating the quality of measurement processes. Before we can trust our data for process control, quality decisions, or capability studies, we must first verify that our measurement system is capable of providing reliable results.</p>
-<section id="why-msa-matters" class="level3" data-number="11.2.1">
-<h3 data-number="11.2.1" class="anchored" data-anchor-id="why-msa-matters"><span class="header-section-number">11.2.1</span> Why MSA Matters</h3>
+<section id="why-msa-matters" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="why-msa-matters"><span class="header-section-number">5.2.1</span> Why MSA Matters</h3>
 <blockquote class="blockquote">
 <p>“You can’t improve what you can’t measure - but you also can’t improve what you measure incorrectly.”</p>
 </blockquote>
@@ -2283,8 +2283,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </section>
-<section id="the-cost-of-poor-measurement" class="level3" data-number="11.2.2">
-<h3 data-number="11.2.2" class="anchored" data-anchor-id="the-cost-of-poor-measurement"><span class="header-section-number">11.2.2</span> The Cost of Poor Measurement</h3>
+<section id="the-cost-of-poor-measurement" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="the-cost-of-poor-measurement"><span class="header-section-number">5.2.2</span> The Cost of Poor Measurement</h3>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -2327,8 +2327,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </section>
-<section id="msa-in-industry-standards" class="level3" data-number="11.2.3">
-<h3 data-number="11.2.3" class="anchored" data-anchor-id="msa-in-industry-standards"><span class="header-section-number">11.2.3</span> MSA in Industry Standards</h3>
+<section id="msa-in-industry-standards" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="msa-in-industry-standards"><span class="header-section-number">5.2.3</span> MSA in Industry Standards</h3>
 <p>MSA is required by multiple quality standards:</p>
 <ul>
 <li><strong>IATF 16949</strong> (Automotive): Requires MSA for all measurement systems referenced in control plans</li>
@@ -2339,8 +2339,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <hr>
 </section>
 </section>
-<section id="common-sources-of-measurement-error" class="level2" data-number="11.3">
-<h2 data-number="11.3" class="anchored" data-anchor-id="common-sources-of-measurement-error"><span class="header-section-number">11.3</span> Common Sources of Measurement Error</h2>
+<section id="common-sources-of-measurement-error" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="common-sources-of-measurement-error"><span class="header-section-number">5.3</span> Common Sources of Measurement Error</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -2398,11 +2398,11 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 <hr>
 </section>
-<section id="components-of-measurement-variation" class="level2" data-number="11.4">
-<h2 data-number="11.4" class="anchored" data-anchor-id="components-of-measurement-variation"><span class="header-section-number">11.4</span> Components of Measurement Variation</h2>
+<section id="components-of-measurement-variation" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="components-of-measurement-variation"><span class="header-section-number">5.4</span> Components of Measurement Variation</h2>
 <p>Total measurement variation comes from multiple sources. Understanding these components is essential for improvement.</p>
-<section id="the-measurement-system-model" class="level3" data-number="11.4.1">
-<h3 data-number="11.4.1" class="anchored" data-anchor-id="the-measurement-system-model"><span class="header-section-number">11.4.1</span> The Measurement System Model</h3>
+<section id="the-measurement-system-model" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="the-measurement-system-model"><span class="header-section-number">5.4.1</span> The Measurement System Model</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -2413,8 +2413,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </section>
-<section id="accuracy-vs.-precision" class="level3" data-number="11.4.2">
-<h3 data-number="11.4.2" class="anchored" data-anchor-id="accuracy-vs.-precision"><span class="header-section-number">11.4.2</span> Accuracy vs.&nbsp;Precision</h3>
+<section id="accuracy-vs.-precision" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="accuracy-vs.-precision"><span class="header-section-number">5.4.2</span> Accuracy vs.&nbsp;Precision</h3>
 <p>These are often confused but are fundamentally different concepts:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2460,11 +2460,11 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <hr>
 </section>
 </section>
-<section id="accuracy-studies" class="level2" data-number="11.5">
-<h2 data-number="11.5" class="anchored" data-anchor-id="accuracy-studies"><span class="header-section-number">11.5</span> Accuracy Studies</h2>
+<section id="accuracy-studies" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="accuracy-studies"><span class="header-section-number">5.5</span> Accuracy Studies</h2>
 <p>Accuracy studies evaluate how well the measurement system indicates the true value.</p>
-<section id="bias" class="level3" data-number="11.5.1">
-<h3 data-number="11.5.1" class="anchored" data-anchor-id="bias"><span class="header-section-number">11.5.1</span> Bias</h3>
+<section id="bias" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="bias"><span class="header-section-number">5.5.1</span> Bias</h3>
 <p><strong>Bias</strong> is the systematic error - the difference between the average of measurements and the true (reference) value.</p>
 <p><span class="math display">\[\text{Bias} = \bar{x}_{observed} - x_{reference}\]</span></p>
 <div class="cell">
@@ -2480,8 +2480,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="linearity" class="level3" data-number="11.5.2">
-<h3 data-number="11.5.2" class="anchored" data-anchor-id="linearity"><span class="header-section-number">11.5.2</span> Linearity</h3>
+<section id="linearity" class="level3" data-number="5.5.2">
+<h3 data-number="5.5.2" class="anchored" data-anchor-id="linearity"><span class="header-section-number">5.5.2</span> Linearity</h3>
 <p><strong>Linearity</strong> measures whether bias changes across the measurement range. A gauge might be accurate at one end of its range but biased at the other.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2496,8 +2496,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="stability" class="level3" data-number="11.5.3">
-<h3 data-number="11.5.3" class="anchored" data-anchor-id="stability"><span class="header-section-number">11.5.3</span> Stability</h3>
+<section id="stability" class="level3" data-number="5.5.3">
+<h3 data-number="5.5.3" class="anchored" data-anchor-id="stability"><span class="header-section-number">5.5.3</span> Stability</h3>
 <p><strong>Stability</strong> (also called drift) measures whether the measurement system’s accuracy changes over time.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2509,19 +2509,19 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </section>
-<section id="stability-control-chart" class="level3" data-number="11.5.4">
-<h3 data-number="11.5.4" class="anchored" data-anchor-id="stability-control-chart"><span class="header-section-number">11.5.4</span> Stability Control Chart</h3>
+<section id="stability-control-chart" class="level3" data-number="5.5.4">
+<h3 data-number="5.5.4" class="anchored" data-anchor-id="stability-control-chart"><span class="header-section-number">5.5.4</span> Stability Control Chart</h3>
 <p>For ongoing stability monitoring, use a control chart. Live cell — try different measurements or a different historical sigma.</p>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 <hr>
 </section>
 </section>
-<section id="precision-studies-gauge-rr" class="level2" data-number="11.6">
-<h2 data-number="11.6" class="anchored" data-anchor-id="precision-studies-gauge-rr"><span class="header-section-number">11.6</span> Precision Studies: Gauge R&amp;R</h2>
+<section id="precision-studies-gauge-rr" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="precision-studies-gauge-rr"><span class="header-section-number">5.6</span> Precision Studies: Gauge R&amp;R</h2>
 <p><strong>Gauge R&amp;R</strong> (Repeatability and Reproducibility) is the most common MSA study. It quantifies precision variation.</p>
-<section id="repeatability-vs.-reproducibility" class="level3" data-number="11.6.1">
-<h3 data-number="11.6.1" class="anchored" data-anchor-id="repeatability-vs.-reproducibility"><span class="header-section-number">11.6.1</span> Repeatability vs.&nbsp;Reproducibility</h3>
+<section id="repeatability-vs.-reproducibility" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="repeatability-vs.-reproducibility"><span class="header-section-number">5.6.1</span> Repeatability vs.&nbsp;Reproducibility</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -2567,8 +2567,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </section>
-<section id="gauge-rr-study-design" class="level3" data-number="11.6.2">
-<h3 data-number="11.6.2" class="anchored" data-anchor-id="gauge-rr-study-design"><span class="header-section-number">11.6.2</span> Gauge R&amp;R Study Design</h3>
+<section id="gauge-rr-study-design" class="level3" data-number="5.6.2">
+<h3 data-number="5.6.2" class="anchored" data-anchor-id="gauge-rr-study-design"><span class="header-section-number">5.6.2</span> Gauge R&amp;R Study Design</h3>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -2616,15 +2616,15 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </section>
-<section id="range-method-short-form" class="level3" data-number="11.6.3">
-<h3 data-number="11.6.3" class="anchored" data-anchor-id="range-method-short-form"><span class="header-section-number">11.6.3</span> Range Method (Short Form)</h3>
+<section id="range-method-short-form" class="level3" data-number="5.6.3">
+<h3 data-number="5.6.3" class="anchored" data-anchor-id="range-method-short-form"><span class="header-section-number">5.6.3</span> Range Method (Short Form)</h3>
 <p>The Range Method is a quick approximation useful for initial screening.</p>
 <p>Live cell — try different measurement data for the two operators.</p>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </section>
-<section id="anova-method-full-study" class="level3" data-number="11.6.4">
-<h3 data-number="11.6.4" class="anchored" data-anchor-id="anova-method-full-study"><span class="header-section-number">11.6.4</span> ANOVA Method (Full Study)</h3>
+<section id="anova-method-full-study" class="level3" data-number="5.6.4">
+<h3 data-number="5.6.4" class="anchored" data-anchor-id="anova-method-full-study"><span class="header-section-number">5.6.4</span> ANOVA Method (Full Study)</h3>
 <p><strong>ANOVA</strong> (Analysis of Variance) is a statistical technique that partitions the total observed variation in a dataset into distinct components, each attributable to a specific source. In the context of Gauge R&amp;R, ANOVA separates the total measurement variation into contributions from:</p>
 <ul>
 <li><strong>Parts</strong> (the actual differences between items being measured)</li>
@@ -2632,13 +2632,13 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <li><strong>Part × Operator interaction</strong> (whether certain operators measure certain parts differently)</li>
 <li><strong>Repeatability</strong> (random error when the same operator measures the same part multiple times)</li>
 </ul>
-<section id="why-use-anova-for-gauge-rr" class="level4" data-number="11.6.4.1">
-<h4 data-number="11.6.4.1" class="anchored" data-anchor-id="why-use-anova-for-gauge-rr"><span class="header-section-number">11.6.4.1</span> Why Use ANOVA for Gauge R&amp;R?</h4>
+<section id="why-use-anova-for-gauge-rr" class="level4" data-number="5.6.4.1">
+<h4 data-number="5.6.4.1" class="anchored" data-anchor-id="why-use-anova-for-gauge-rr"><span class="header-section-number">5.6.4.1</span> Why Use ANOVA for Gauge R&amp;R?</h4>
 <p>The fundamental question in any measurement system analysis is: <em>“How much of the variation I observe comes from my measurement system versus the actual differences between parts?”</em> ANOVA answers this question by statistically decomposing variance—it calculates how much each source contributes to what we observe.</p>
 <p>Consider the alternative: if we simply looked at the spread of all measurements, we wouldn’t know whether a wide spread indicates highly variable parts (good—our gauge can detect differences) or a poor measurement system (bad—we’re adding noise). ANOVA untangles these effects mathematically.</p>
 </section>
-<section id="why-anova-is-the-preferred-method" class="level4" data-number="11.6.4.2">
-<h4 data-number="11.6.4.2" class="anchored" data-anchor-id="why-anova-is-the-preferred-method"><span class="header-section-number">11.6.4.2</span> Why ANOVA is the Preferred Method</h4>
+<section id="why-anova-is-the-preferred-method" class="level4" data-number="5.6.4.2">
+<h4 data-number="5.6.4.2" class="anchored" data-anchor-id="why-anova-is-the-preferred-method"><span class="header-section-number">5.6.4.2</span> Why ANOVA is the Preferred Method</h4>
 <p>While the Range Method provides a quick estimate, ANOVA offers several critical advantages for Gauge R&amp;R studies:</p>
 <table class="caption-top table">
 <colgroup>
@@ -2688,8 +2688,8 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </table>
 <p>The ability to detect <strong>interaction effects</strong> is particularly important. If Operator A consistently measures Part 3 higher than Operator B does (but they agree on other parts), this indicates a training issue or technique difference that the Range Method would miss entirely. ANOVA flags this interaction, enabling targeted corrective action.</p>
 </section>
-<section id="how-anova-works-in-gauge-rr" class="level4" data-number="11.6.4.3">
-<h4 data-number="11.6.4.3" class="anchored" data-anchor-id="how-anova-works-in-gauge-rr"><span class="header-section-number">11.6.4.3</span> How ANOVA Works in Gauge R&amp;R</h4>
+<section id="how-anova-works-in-gauge-rr" class="level4" data-number="5.6.4.3">
+<h4 data-number="5.6.4.3" class="anchored" data-anchor-id="how-anova-works-in-gauge-rr"><span class="header-section-number">5.6.4.3</span> How ANOVA Works in Gauge R&amp;R</h4>
 <p>ANOVA uses the <strong>F-statistic</strong> to test whether variation between groups (e.g., between operators) is significantly larger than variation within groups (repeatability). The mathematical basis is:</p>
 <p><span class="math display">\[F = \frac{\text{Mean Square Between Groups}}{\text{Mean Square Within Groups}} = \frac{MS_{factor}}{MS_{error}}\]</span></p>
 <p>A large F-value indicates that the factor (Part, Operator, or their interaction) contributes meaningfully to the observed variation. The p-value tells us the probability of seeing such an F-value if the factor had no real effect.</p>
@@ -2827,8 +2827,8 @@ Study Variation (5.15σ):
 </div>
 </section>
 </section>
-<section id="calculating-grr-and-acceptance-criteria" class="level3" data-number="11.6.5">
-<h3 data-number="11.6.5" class="anchored" data-anchor-id="calculating-grr-and-acceptance-criteria"><span class="header-section-number">11.6.5</span> Calculating %GRR and Acceptance Criteria</h3>
+<section id="calculating-grr-and-acceptance-criteria" class="level3" data-number="5.6.5">
+<h3 data-number="5.6.5" class="anchored" data-anchor-id="calculating-grr-and-acceptance-criteria"><span class="header-section-number">5.6.5</span> Calculating %GRR and Acceptance Criteria</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate %GRR using both methods</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tolerance <span class="ot">&lt;-</span> <span class="fl">0.30</span>  <span class="co"># Total tolerance</span></span>
@@ -2879,8 +2879,8 @@ ndc ≥ 5: ACCEPTABLE - Adequate discrimination</code></pre>
 </div>
 </div>
 </section>
-<section id="gauge-rr-acceptance-criteria-summary" class="level3" data-number="11.6.6">
-<h3 data-number="11.6.6" class="anchored" data-anchor-id="gauge-rr-acceptance-criteria-summary"><span class="header-section-number">11.6.6</span> Gauge R&amp;R Acceptance Criteria Summary</h3>
+<section id="gauge-rr-acceptance-criteria-summary" class="level3" data-number="5.6.6">
+<h3 data-number="5.6.6" class="anchored" data-anchor-id="gauge-rr-acceptance-criteria-summary"><span class="header-section-number">5.6.6</span> Gauge R&amp;R Acceptance Criteria Summary</h3>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -2928,8 +2928,8 @@ ndc ≥ 5: ACCEPTABLE - Adequate discrimination</code></pre>
 </div>
 </div>
 </section>
-<section id="visual-analysis-of-gauge-rr" class="level3" data-number="11.6.7">
-<h3 data-number="11.6.7" class="anchored" data-anchor-id="visual-analysis-of-gauge-rr"><span class="header-section-number">11.6.7</span> Visual Analysis of Gauge R&amp;R</h3>
+<section id="visual-analysis-of-gauge-rr" class="level3" data-number="5.6.7">
+<h3 data-number="5.6.7" class="anchored" data-anchor-id="visual-analysis-of-gauge-rr"><span class="header-section-number">5.6.7</span> Visual Analysis of Gauge R&amp;R</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -2942,20 +2942,20 @@ ndc ≥ 5: ACCEPTABLE - Adequate discrimination</code></pre>
 <hr>
 </section>
 </section>
-<section id="attribute-measurement-systems" class="level2" data-number="11.7">
-<h2 data-number="11.7" class="anchored" data-anchor-id="attribute-measurement-systems"><span class="header-section-number">11.7</span> Attribute Measurement Systems</h2>
+<section id="attribute-measurement-systems" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="attribute-measurement-systems"><span class="header-section-number">5.7</span> Attribute Measurement Systems</h2>
 <p>For pass/fail or categorical measurements (visual inspection, go/no-go gauges), we use <strong>Attribute MSA</strong> or <strong>Attribute Agreement Analysis</strong>.</p>
-<section id="kappa-statistic" class="level3" data-number="11.7.1">
-<h3 data-number="11.7.1" class="anchored" data-anchor-id="kappa-statistic"><span class="header-section-number">11.7.1</span> Kappa Statistic</h3>
+<section id="kappa-statistic" class="level3" data-number="5.7.1">
+<h3 data-number="5.7.1" class="anchored" data-anchor-id="kappa-statistic"><span class="header-section-number">5.7.1</span> Kappa Statistic</h3>
 <p>When evaluating attribute measurement systems (pass/fail, accept/reject, visual inspection), you might think that <strong>percent agreement</strong> would be sufficient—if two inspectors agree 90% of the time, isn’t that good enough? The problem is that some agreement happens purely by chance, and percent agreement doesn’t account for this.</p>
-<section id="why-percent-agreement-can-be-misleading" class="level4" data-number="11.7.1.1">
-<h4 data-number="11.7.1.1" class="anchored" data-anchor-id="why-percent-agreement-can-be-misleading"><span class="header-section-number">11.7.1.1</span> Why Percent Agreement Can Be Misleading</h4>
+<section id="why-percent-agreement-can-be-misleading" class="level4" data-number="5.7.1.1">
+<h4 data-number="5.7.1.1" class="anchored" data-anchor-id="why-percent-agreement-can-be-misleading"><span class="header-section-number">5.7.1.1</span> Why Percent Agreement Can Be Misleading</h4>
 <p>Consider a visual inspection where 95% of parts are good. If an inspector simply guesses “Accept” for every part (without even looking), they would be “correct” 95% of the time. Two such inspectors would agree 90.5% of the time by pure chance:</p>
 <p><span class="math display">\[P_e = P(\text{both say Accept}) + P(\text{both say Reject}) = 0.95^2 + 0.05^2 = 0.905\]</span></p>
 <p>This is why we need <strong>Cohen’s Kappa</strong> (<span class="math inline">\(\kappa\)</span>)—it measures agreement <em>beyond what we’d expect from chance alone</em>.</p>
 </section>
-<section id="the-kappa-formula" class="level4" data-number="11.7.1.2">
-<h4 data-number="11.7.1.2" class="anchored" data-anchor-id="the-kappa-formula"><span class="header-section-number">11.7.1.2</span> The Kappa Formula</h4>
+<section id="the-kappa-formula" class="level4" data-number="5.7.1.2">
+<h4 data-number="5.7.1.2" class="anchored" data-anchor-id="the-kappa-formula"><span class="header-section-number">5.7.1.2</span> The Kappa Formula</h4>
 <p><span class="math display">\[\kappa = \frac{P_o - P_e}{1 - P_e}\]</span></p>
 <p>Where:</p>
 <ul>
@@ -2991,8 +2991,8 @@ ndc ≥ 5: ACCEPTABLE - Adequate discrimination</code></pre>
 </tbody>
 </table>
 </section>
-<section id="when-to-use-kappa" class="level4" data-number="11.7.1.3">
-<h4 data-number="11.7.1.3" class="anchored" data-anchor-id="when-to-use-kappa"><span class="header-section-number">11.7.1.3</span> When to Use Kappa</h4>
+<section id="when-to-use-kappa" class="level4" data-number="5.7.1.3">
+<h4 data-number="5.7.1.3" class="anchored" data-anchor-id="when-to-use-kappa"><span class="header-section-number">5.7.1.3</span> When to Use Kappa</h4>
 <p>Use Kappa when evaluating:</p>
 <ul>
 <li><strong>Inspector vs.&nbsp;Reference</strong>: Does the operator match the known correct answer? (Most important for MSA)</li>
@@ -3048,8 +3048,8 @@ ndc ≥ 5: ACCEPTABLE - Adequate discrimination</code></pre>
 </div>
 </section>
 </section>
-<section id="attribute-agreement-study-example" class="level3" data-number="11.7.2">
-<h3 data-number="11.7.2" class="anchored" data-anchor-id="attribute-agreement-study-example"><span class="header-section-number">11.7.2</span> Attribute Agreement Study Example</h3>
+<section id="attribute-agreement-study-example" class="level3" data-number="5.7.2">
+<h3 data-number="5.7.2" class="anchored" data-anchor-id="attribute-agreement-study-example"><span class="header-section-number">5.7.2</span> Attribute Agreement Study Example</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Attribute Agreement Analysis</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 operators inspect 30 samples, 2 trials each</span></span>
@@ -3128,8 +3128,8 @@ All Operators Agreement:
 </div>
 </div>
 </section>
-<section id="calculating-kappa" class="level3" data-number="11.7.3">
-<h3 data-number="11.7.3" class="anchored" data-anchor-id="calculating-kappa"><span class="header-section-number">11.7.3</span> Calculating Kappa</h3>
+<section id="calculating-kappa" class="level3" data-number="5.7.3">
+<h3 data-number="5.7.3" class="anchored" data-anchor-id="calculating-kappa"><span class="header-section-number">5.7.3</span> Calculating Kappa</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Kappa for Operator 1 vs Reference</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create confusion matrix for trial 1</span></span>
@@ -3180,8 +3180,8 @@ Interpretation: Substantial agreement</code></pre>
 </div>
 </div>
 </section>
-<section id="attribute-msa-best-practices" class="level3" data-number="11.7.4">
-<h3 data-number="11.7.4" class="anchored" data-anchor-id="attribute-msa-best-practices"><span class="header-section-number">11.7.4</span> Attribute MSA Best Practices</h3>
+<section id="attribute-msa-best-practices" class="level3" data-number="5.7.4">
+<h3 data-number="5.7.4" class="anchored" data-anchor-id="attribute-msa-best-practices"><span class="header-section-number">5.7.4</span> Attribute MSA Best Practices</h3>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -3224,11 +3224,11 @@ Interpretation: Substantial agreement</code></pre>
 <hr>
 </section>
 </section>
-<section id="measurement-system-resolution" class="level2" data-number="11.8">
-<h2 data-number="11.8" class="anchored" data-anchor-id="measurement-system-resolution"><span class="header-section-number">11.8</span> Measurement System Resolution</h2>
+<section id="measurement-system-resolution" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="measurement-system-resolution"><span class="header-section-number">5.8</span> Measurement System Resolution</h2>
 <p><strong>Resolution</strong> (also called discrimination) is the smallest increment a measurement system can detect.</p>
-<section id="rule-of-ten" class="level3" data-number="11.8.1">
-<h3 data-number="11.8.1" class="anchored" data-anchor-id="rule-of-ten"><span class="header-section-number">11.8.1</span> Rule of Ten</h3>
+<section id="rule-of-ten" class="level3" data-number="5.8.1">
+<h3 data-number="5.8.1" class="anchored" data-anchor-id="rule-of-ten"><span class="header-section-number">5.8.1</span> Rule of Ten</h3>
 <p>The <strong>Rule of Ten</strong> states that measurement resolution should be at least 1/10 of: - The tolerance, OR - The process variation (6σ)</p>
 <p>Whichever is smaller.</p>
 <p>Try it — change the tolerance, process spread, or gauge resolution below.</p>
@@ -3272,8 +3272,8 @@ Show the live R code behind this calculator
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </details>
 </section>
-<section id="resolution-impact-on-gauge-rr" class="level3" data-number="11.8.2">
-<h3 data-number="11.8.2" class="anchored" data-anchor-id="resolution-impact-on-gauge-rr"><span class="header-section-number">11.8.2</span> Resolution Impact on Gauge R&amp;R</h3>
+<section id="resolution-impact-on-gauge-rr" class="level3" data-number="5.8.2">
+<h3 data-number="5.8.2" class="anchored" data-anchor-id="resolution-impact-on-gauge-rr"><span class="header-section-number">5.8.2</span> Resolution Impact on Gauge R&amp;R</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -3286,11 +3286,11 @@ Show the live R code behind this calculator
 <hr>
 </section>
 </section>
-<section id="msa-and-spc-relationship" class="level2" data-number="11.9">
-<h2 data-number="11.9" class="anchored" data-anchor-id="msa-and-spc-relationship"><span class="header-section-number">11.9</span> MSA and SPC Relationship</h2>
+<section id="msa-and-spc-relationship" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="msa-and-spc-relationship"><span class="header-section-number">5.9</span> MSA and SPC Relationship</h2>
 <p>Poor measurement systems directly impact SPC effectiveness.</p>
-<section id="effect-on-control-charts" class="level3" data-number="11.9.1">
-<h3 data-number="11.9.1" class="anchored" data-anchor-id="effect-on-control-charts"><span class="header-section-number">11.9.1</span> Effect on Control Charts</h3>
+<section id="effect-on-control-charts" class="level3" data-number="5.9.1">
+<h3 data-number="5.9.1" class="anchored" data-anchor-id="effect-on-control-charts"><span class="header-section-number">5.9.1</span> Effect on Control Charts</h3>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -3301,8 +3301,8 @@ Show the live R code behind this calculator
 </div>
 </div>
 </section>
-<section id="effect-on-capability-studies" class="level3" data-number="11.9.2">
-<h3 data-number="11.9.2" class="anchored" data-anchor-id="effect-on-capability-studies"><span class="header-section-number">11.9.2</span> Effect on Capability Studies</h3>
+<section id="effect-on-capability-studies" class="level3" data-number="5.9.2">
+<h3 data-number="5.9.2" class="anchored" data-anchor-id="effect-on-capability-studies"><span class="header-section-number">5.9.2</span> Effect on Capability Studies</h3>
 <p>Try it — change the process mean, sigma, or spec limits below.</p>
 <script src="js/qwebr-calculator.js"></script>
 
@@ -3351,8 +3351,8 @@ Show the live R code behind this calculator
 <hr>
 </section>
 </section>
-<section id="conducting-an-msa-study-step-by-step" class="level2" data-number="11.10">
-<h2 data-number="11.10" class="anchored" data-anchor-id="conducting-an-msa-study-step-by-step"><span class="header-section-number">11.10</span> Conducting an MSA Study: Step-by-Step</h2>
+<section id="conducting-an-msa-study-step-by-step" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="conducting-an-msa-study-step-by-step"><span class="header-section-number">5.10</span> Conducting an MSA Study: Step-by-Step</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -3362,8 +3362,8 @@ Show the live R code behind this calculator
 </div>
 </div>
 </div>
-<section id="data-collection-sheet-template" class="level3" data-number="11.10.1">
-<h3 data-number="11.10.1" class="anchored" data-anchor-id="data-collection-sheet-template"><span class="header-section-number">11.10.1</span> Data Collection Sheet Template</h3>
+<section id="data-collection-sheet-template" class="level3" data-number="5.10.1">
+<h3 data-number="5.10.1" class="anchored" data-anchor-id="data-collection-sheet-template"><span class="header-section-number">5.10.1</span> Data Collection Sheet Template</h3>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
@@ -3456,22 +3456,22 @@ Show the live R code behind this calculator
 <hr>
 </section>
 </section>
-<section id="video-resources" class="level2" data-number="11.11">
-<h2 data-number="11.11" class="anchored" data-anchor-id="video-resources"><span class="header-section-number">11.11</span> Video Resources</h2>
-<section id="understanding-gauge-rr" class="level3" data-number="11.11.1">
-<h3 data-number="11.11.1" class="anchored" data-anchor-id="understanding-gauge-rr"><span class="header-section-number">11.11.1</span> Understanding Gauge R&amp;R</h3>
+<section id="video-resources" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="video-resources"><span class="header-section-number">5.11</span> Video Resources</h2>
+<section id="understanding-gauge-rr" class="level3" data-number="5.11.1">
+<h3 data-number="5.11.1" class="anchored" data-anchor-id="understanding-gauge-rr"><span class="header-section-number">5.11.1</span> Understanding Gauge R&amp;R</h3>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CkLEmiKFnTw" title="Gauge R&amp;R Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
 </iframe>
 </section>
-<section id="msa-in-practice" class="level3" data-number="11.11.2">
-<h3 data-number="11.11.2" class="anchored" data-anchor-id="msa-in-practice"><span class="header-section-number">11.11.2</span> MSA in Practice</h3>
+<section id="msa-in-practice" class="level3" data-number="5.11.2">
+<h3 data-number="5.11.2" class="anchored" data-anchor-id="msa-in-practice"><span class="header-section-number">5.11.2</span> MSA in Practice</h3>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/N1mK_6Hxk48" title="Measurement System Analysis" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
 </iframe>
 <hr>
 </section>
 </section>
-<section id="summary" class="level2" data-number="11.12">
-<h2 data-number="11.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">11.12</span> Summary</h2>
+<section id="summary" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.12</span> Summary</h2>
 <p>Measurement Systems Analysis ensures that your data can be trusted for process control and decision-making:</p>
 <ol type="1">
 <li><strong>Before SPC, do MSA</strong> - Garbage in, garbage out; verify measurement quality first</li>
@@ -3487,8 +3487,8 @@ Show the live R code behind this calculator
 </blockquote>
 <hr>
 </section>
-<section id="review-questions" class="level2" data-number="11.13">
-<h2 data-number="11.13" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">11.13</span> Review Questions</h2>
+<section id="review-questions" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">5.13</span> Review Questions</h2>
 <details>
 <summary>
 <strong>Question 1</strong>: A gauge R&amp;R study yields %GRR = 45% and ndc = 2. What does this mean and what should be done?
@@ -3755,8 +3755,8 @@ Required resolution ≤ 0.008 mm</code></pre>
 </details>
 <hr>
 </section>
-<section id="references" class="level2" data-number="11.14">
-<h2 data-number="11.14" class="anchored" data-anchor-id="references"><span class="header-section-number">11.14</span> References</h2>
+<section id="references" class="level2" data-number="5.14">
+<h2 data-number="5.14" class="anchored" data-anchor-id="references"><span class="header-section-number">5.14</span> References</h2>
 <ol type="1">
 <li><p>AIAG. (2010). <em>Measurement Systems Analysis Reference Manual</em> (4th ed.). Automotive Industry Action Group.</p></li>
 <li><p>Wheeler, D.J. (2006). <em>EMP III: Evaluating the Measurement Process</em> (3rd ed.). SPC Press.</p></li>
@@ -4176,13 +4176,13 @@ Required resolution ≤ 0.008 mm</code></pre>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./10-SPC.html" class="pagination-link" aria-label="Statistical Process Control (SPC)">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span>
+      <a href="./07-Ergnomics.html" class="pagination-link" aria-label="Ergonomics in Automated Manufacturing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./20-Working-with-AI.html" class="pagination-link" aria-label="Working Effectively with AI">
-        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./17-Metallurgy-Fundamentals.html" class="pagination-link" aria-label="Introduction to Metallurgy: Structure and Heat Treatment">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

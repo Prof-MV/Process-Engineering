@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -37,7 +37,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./04-Plant-Layout.html" rel="next">
+<link href="./07-Ergnomics.html" rel="next">
 <link href="./02-Process-and-Design.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-95863af46656191e6a2cf1560d98dcd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Payload Calculation Example\nrobot_max_payload <- 10  # kg\ngripper_weight <- 2.5    # kg\npart_weight <- 5.0       # kg\nsafety_factor <- 1.2     # 20% safety margin\n\ntotal_load <- gripper_weight + part_weight          # what the robot actually carries\nrequired_capacity <- total_load * safety_factor      # total load, with margin applied\nremaining_margin <- robot_max_payload - total_load   # headroom before the safety factor\n\nif (required_capacity <= robot_max_payload) {\n  cat(sprintf(\"Required capacity: %.1f kg - Acceptable\\n\", required_capacity))\n} else {\n  cat(sprintf(\"Required capacity: %.1f kg - Exceeded\\n\", required_capacity))\n}\ncat(sprintf(\"  Total load           %.1f kg\\n\", total_load))\ncat(sprintf(\"  Remaining margin     %.1f kg (%.0f%%)\\n\", remaining_margin, 100 * remaining_margin / robot_max_payload))\ncat(sprintf(\"  Moment at wrist      %.2f kg m (at 0.3 m from flange)\\n\", part_weight * 0.3))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"payload-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Gripper Force Calculation\npart_mass <- 3.0        # kg\nacceleration <- 15      # m/s² (robot acceleration)\ngravity <- 9.81         # m/s²\nsafety_factor <- 2.0    # Minimum safety factor\nfriction_coefficient <- 0.3  # Steel on rubber\n\n# Calculate forces\nweight_force <- part_mass * gravity\ninertia_force <- part_mass * acceleration\ntotal_force <- sqrt(weight_force^2 + inertia_force^2)\n\n# Required grip force (friction gripper)\nrequired_grip <- total_force / friction_coefficient * safety_factor\n\ncat(sprintf(\"Required grip force: %.1f N (select ≥ %.0f N)\\n\", required_grip, ceiling(required_grip / 10) * 10))\ncat(sprintf(\"  Weight force         %.1f N\\n\", weight_force))\ncat(sprintf(\"  Inertia force        %.1f N\\n\", inertia_force))\ncat(sprintf(\"  Combined force       %.1f N\\n\", total_force))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"gripper-selection","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values\nmass <- 2.0            # kg\nacceleration <- 10     # m/s²\ngravity <- 9.81        # m/s²\nfriction_coef <- 0.4   # Coefficient of friction\nsafety_factor <- 2.0   # Safety factor\n\n# Calculate forces\n# Weight force (vertical)\nF_gravity <- mass * gravity\n\n# Inertia force (from acceleration)\nF_inertia <- mass * acceleration\n\n# Combined force (vector sum for worst case)\n# Worst case: acceleration horizontal while holding against gravity\nF_combined <- sqrt(F_gravity^2 + F_inertia^2)\n\n# Required friction force to hold part\n# F_friction = μ × F_normal\n# F_normal = Grip force\n# F_friction must overcome F_combined\n\n# Without safety factor:\nF_grip_min <- F_combined / friction_coef\n\n# With safety factor:\nF_grip_required <- F_grip_min * safety_factor\n\ncat(\"Gripper Force Calculation:\\n\")\ncat(\"═══════════════════════════════════════\\n\\n\")\ncat(\"Input Parameters:\\n\")\ncat(\"  Part mass:\", mass, \"kg\\n\")\ncat(\"  Robot acceleration:\", acceleration, \"m/s²\\n\")\ncat(\"  Friction coefficient:\", friction_coef, \"\\n\")\ncat(\"  Safety factor:\", safety_factor, \"\\n\\n\")\n\ncat(\"Force Analysis:\\n\")\ncat(\"  Gravity force: F_g = m × g =\", mass, \"×\", gravity, \"=\",\n    round(F_gravity, 1), \"N\\n\")\ncat(\"  Inertia force: F_i = m × a =\", mass, \"×\", acceleration, \"=\",\n    round(F_inertia, 1), \"N\\n\")\ncat(\"  Combined force: F_c = √(F_g² + F_i²) =\", round(F_combined, 1), \"N\\n\\n\")\n\ncat(\"Grip Force Calculation:\\n\")\ncat(\"  F_friction = μ × F_grip ≥ F_combined\\n\")\ncat(\"  F_grip ≥ F_combined / μ =\", round(F_combined, 1), \"/\", friction_coef,\n    \"=\", round(F_grip_min, 1), \"N\\n\")\ncat(\"  With safety factor:\", round(F_grip_min, 1), \"×\", safety_factor,\n    \"=\", round(F_grip_required, 1), \"N\\n\\n\")\n\ncat(\"═══════════════════════════════════════\\n\")\ncat(\"REQUIRED GRIPPER FORCE:\", ceiling(F_grip_required), \"N minimum\\n\")\ncat(\"Select gripper rated for ≥\", ceiling(F_grip_required/10)*10, \"N\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q5-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Payload Calculation Example\nrobot_max_payload <- 10  # kg\ngripper_weight <- 2.5    # kg\npart_weight <- 5.0       # kg\nsafety_factor <- 1.2     # 20% safety margin\n\ntotal_load <- gripper_weight + part_weight          # what the robot actually carries\nrequired_capacity <- total_load * safety_factor      # total load, with margin applied\nremaining_margin <- robot_max_payload - total_load   # headroom before the safety factor\n\nif (required_capacity <= robot_max_payload) {\n  cat(sprintf(\"Required capacity: %.1f kg - Acceptable\\n\", required_capacity))\n} else {\n  cat(sprintf(\"Required capacity: %.1f kg - !!Exceeded!!\\n\", required_capacity))\n}\ncat(sprintf(\"  Total load           %.1f kg\\n\", total_load))\ncat(sprintf(\"  Remaining margin     %.1f kg (%.0f%%)\\n\", remaining_margin, 100 * remaining_margin / robot_max_payload))\ncat(sprintf(\"  Moment at wrist      %.2f kg m (at 0.3 m from flange)\\n\", part_weight * 0.3))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"payload-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Gripper Force Calculation\npart_mass <- 3.0        # kg\nacceleration <- 15      # m/s² (robot acceleration)\ngravity <- 9.81         # m/s²\nsafety_factor <- 2.0    # Minimum safety factor\nfriction_coefficient <- 0.3  # Steel on rubber\n\n# Calculate forces\nweight_force <- part_mass * gravity\ninertia_force <- part_mass * acceleration\ntotal_force <- sqrt(weight_force^2 + inertia_force^2)\n\n# Required grip force (friction gripper)\nrequired_grip <- total_force / friction_coefficient * safety_factor\n\ncat(sprintf(\"Required grip force: %.1f N (select ≥ %.0f N)\\n\", required_grip, ceiling(required_grip / 10) * 10))\ncat(sprintf(\"  Weight force         %.1f N\\n\", weight_force))\ncat(sprintf(\"  Inertia force        %.1f N\\n\", inertia_force))\ncat(sprintf(\"  Combined force       %.1f N\\n\", total_force))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"gripper-selection","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values\nmass <- 2.0            # kg\nacceleration <- 10     # m/s²\ngravity <- 9.81        # m/s²\nfriction_coef <- 0.4   # Coefficient of friction\nsafety_factor <- 2.0   # Safety factor\n\n# Calculate forces\n# Weight force (vertical)\nF_gravity <- mass * gravity\n\n# Inertia force (from acceleration)\nF_inertia <- mass * acceleration\n\n# Combined force (vector sum for worst case)\n# Worst case: acceleration horizontal while holding against gravity\nF_combined <- sqrt(F_gravity^2 + F_inertia^2)\n\n# Required friction force to hold part\n# F_friction = μ × F_normal\n# F_normal = Grip force\n# F_friction must overcome F_combined\n\n# Without safety factor:\nF_grip_min <- F_combined / friction_coef\n\n# With safety factor:\nF_grip_required <- F_grip_min * safety_factor\n\ncat(\"Gripper Force Calculation:\\n\")\ncat(\"═══════════════════════════════════════\\n\\n\")\ncat(\"Input Parameters:\\n\")\ncat(\"  Part mass:\", mass, \"kg\\n\")\ncat(\"  Robot acceleration:\", acceleration, \"m/s²\\n\")\ncat(\"  Friction coefficient:\", friction_coef, \"\\n\")\ncat(\"  Safety factor:\", safety_factor, \"\\n\\n\")\n\ncat(\"Force Analysis:\\n\")\ncat(\"  Gravity force: F_g = m × g =\", mass, \"×\", gravity, \"=\",\n    round(F_gravity, 1), \"N\\n\")\ncat(\"  Inertia force: F_i = m × a =\", mass, \"×\", acceleration, \"=\",\n    round(F_inertia, 1), \"N\\n\")\ncat(\"  Combined force: F_c = √(F_g² + F_i²) =\", round(F_combined, 1), \"N\\n\\n\")\n\ncat(\"Grip Force Calculation:\\n\")\ncat(\"  F_friction = μ × F_grip ≥ F_combined\\n\")\ncat(\"  F_grip ≥ F_combined / μ =\", round(F_combined, 1), \"/\", friction_coef,\n    \"=\", round(F_grip_min, 1), \"N\\n\")\ncat(\"  With safety factor:\", round(F_grip_min, 1), \"×\", safety_factor,\n    \"=\", round(F_grip_required, 1), \"N\\n\\n\")\n\ncat(\"═══════════════════════════════════════\\n\")\ncat(\"REQUIRED GRIPPER FORCE:\", ceiling(F_grip_required), \"N minimum\\n\")\ncat(\"Select gripper rated for ≥\", ceiling(F_grip_required/10)*10, \"N\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q5-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1700,104 +1700,104 @@ globalThis.qwebrExecuteCode = async function (
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./07-Ergnomics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-MSA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./20-Working-with-AI.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./21-Machine-Learning.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./17-Metallurgy-Fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./18-Materials-Testing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Working-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21-Machine-Learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -4073,8 +4073,8 @@ MoveJ pPlaceApproach, v1000, z50, tool1  ! Joint move - fast</code></pre>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./04-Plant-Layout.html" class="pagination-link" aria-label="Plant Layout and Facility Design">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./07-Ergnomics.html" class="pagination-link" aria-label="Ergonomics in Automated Manufacturing">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

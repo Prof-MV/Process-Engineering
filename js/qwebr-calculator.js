@@ -24,6 +24,10 @@
 //     or more spaces (e.g. "  Tooling      $1.00", "  Efficiency  87.3%") is
 //     shown as a right-aligned breakdown row; any line without that shape is
 //     shown as plain text
+//   - wrap a failing verdict in !!...!! (e.g. "Required capacity: 12 kg -
+//     !!Exceeded!!", or a breakdown row "  Risk level   !!High!!") to render
+//     it red instead of the default headline green / breakdown navy — a
+//     passing verdict, or a line with no verdict at all, needs no markers
 //   - any graphics device output becomes a canvas image under the card
 
 (function (global) {
@@ -49,6 +53,15 @@
     return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
+  // Strips a !!...!! verdict marker out of a string, reporting whether one
+  // was present. Only the marker characters are removed; the text inside
+  // them is kept (unmarked) so it still reads normally once rendered red.
+  function extractVerdict(str) {
+    const match = str.match(/!!(.*?)!!/);
+    if (!match) return { text: str, bad: false };
+    return { text: str.replace(/!!(.*?)!!/g, "$1"), bad: true };
+  }
+
   function renderText(container, text) {
     if (!container) return;
 
@@ -59,17 +72,24 @@
       return;
     }
 
-    const [headline, ...rest] = lines;
-    let html = `<div class="qwebr-calc-headline">${escapeHtml(headline)}</div>`;
+    const [headlineRaw, ...rest] = lines;
+    const headline = extractVerdict(headlineRaw);
+    const headlineClass = "qwebr-calc-headline" + (headline.bad ? " qwebr-calc-bad" : "");
+    let html = `<div class="${headlineClass}">${escapeHtml(headline.text)}</div>`;
 
     if (rest.length > 0) {
       html += '<ul class="qwebr-calc-breakdown">';
       rest.forEach((line) => {
         const match = line.match(/^(\S.*?)\s{2,}(\S.*)$/);
         if (match) {
-          html += `<li><span class="qwebr-calc-label">${escapeHtml(match[1].trim())}</span><span class="qwebr-calc-value">${escapeHtml(match[2])}</span></li>`;
+          const value = extractVerdict(match[2]);
+          const valueClass = "qwebr-calc-value" + (value.bad ? " qwebr-calc-bad" : "");
+          html += `<li><span class="qwebr-calc-label">${escapeHtml(match[1].trim())}</span><span class="${valueClass}">${escapeHtml(value.text)}</span></li>`;
         } else {
-          html += `<li>${escapeHtml(line)}</li>`;
+          const plain = extractVerdict(line);
+          html += plain.bad
+            ? `<li class="qwebr-calc-bad">${escapeHtml(plain.text)}</li>`
+            : `<li>${escapeHtml(plain.text)}</li>`;
         }
       });
       html += "</ul>";
