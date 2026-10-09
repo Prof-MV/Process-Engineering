@@ -375,7 +375,7 @@ tryit_order <- function(id, title, steps, intro = NULL, question = intro,
     # chapter's random-number stream.
     listed <- order(steps)
     cat(sprintf("\n\n**%s**\n\n", title))
-    if (!is.null(intro)) cat(intro, "\n\n")
+    # The intro describes the on-screen buttons, so it is not printed.
     cat("Number these in the correct order:\n\n")
     cat(sprintf("- \\_\\_\\_\\_ %s\n", steps[listed]), sep = "")
     if (print_key) {

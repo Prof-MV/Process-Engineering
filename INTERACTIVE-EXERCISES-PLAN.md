@@ -3,8 +3,9 @@
 Scope: this book (Process Engineering). The reusable, book-agnostic version of
 this work is `INTERACTIVE-EXERCISES-PROMPT.md`.
 
-Status: **Phase 0 (library and chapter 10 pilot) is built on branch
-`interactive-exercises`, awaiting review in a browser. Phases 1–4 not started.**
+Status: **Phases 0 and 1 are built on branch `interactive-exercises`
+(53 exercises and 21 calculator challenges across all 20 chapters; see
+section 6). Phases 2–4 not started.**
 
 ---
 
@@ -43,7 +44,8 @@ to 20 chapters, so the plan starts with a small shared library.
 Nine widget types cover every idea in section 3. The library is called
 `tryit`: `R/tryit.R`, `js/tryit.js`, `.tryit-*` CSS classes, and section
 headings of the form "Try it yourself: …" (the wording the Sustainability book
-already uses). Types A, B and D exist; the rest are added as phases need them.
+already uses). Types A, B, D, E and G exist; the rest are added as phases need
+them.
 
 | # | Type | What the student does | Generalises |
 |---|---|---|---|
@@ -273,11 +275,12 @@ chapter 10: X-bar/R by hand (B), chart chooser (D), Review Questions 4–6
 checked (A). Review the pilot in a browser before going further; the API is
 cheapest to change now.
 
-**Phase 1 — Broad, cheap pass.**
-Types A, D and E across all chapters: checked calculation questions, plus the
-sorters and orderings in section 3. Add type G to the calculator runtime and
-one goal per existing card. This reaches every chapter, including the four with
-no calculator today.
+**Phase 1 — Broad, cheap pass. (Built.)**
+Types A, D and E across all chapters: checked calculation questions, plus
+sorters and orderings. Type G added to the calculator runtime
+(`goal`/`goal_test` on `qwebr_calc_card()`), with a challenge on 21 of the 26
+cards. Every chapter now has at least one exercise, including the four that
+had no calculator. Section 6 lists what was built.
 
 **Phase 2 — Diagram exercises.**
 Add type C. Build the line balancing board (03, reused in 04), fault tree (15),
@@ -310,3 +313,56 @@ Working rules for every phase:
    here. In the Sustainability book the hand-written AON exercise should be
    re-expressed as a type C declaration once that type exists.
 4. **Live polling.** Done in Brightspace; nothing to build.
+
+## 6. Built so far
+
+| Chapter | Exercises | Challenges |
+|---|---|---|
+| 01 Types of Manufacturing | Process-family sorter; checked Q2 (break-even) | Injection molding cost |
+| 02 Process and Design | Project-phase ordering; instrument-tag sorter | Fixed automation cost |
+| 03 Integrated Manufacturing | Production-system sorter; checked Q1–Q3 | Takt vs cycle; cycle efficiency |
+| 04 Plant Layout | Layout-type sorter; checked Problem 2 and Q2 | NIOSH lifting index |
+| 05 Lean | Seven-wastes sorter; 5S ordering; checked Q3 | Takt time |
+| 06 Machine Guarding | Hierarchy-of-controls ordering; safeguard sorter; checked Q2 | Safety distance |
+| 07 Ergonomics | Risk-factor sorter; checked Q4 | NIOSH lifting index |
+| 08 Robotics | Robot-configuration sorter | Payload; gripper force |
+| 09 Automation | Automation-pyramid sorter; scan-cycle ordering | Scan time; VFD speed |
+| 10 SPC | Chart chooser; X-bar/R by hand; checked Q4–Q6 | Process capability |
+| 11 MSA | Measurement-error sorter | Gauge resolution; MSA and capability |
+| 12 TPM | Six-losses sorter; seven-steps ordering; checked Q4 and Q6 | OEE |
+| 13 Quality Systems | Audit-finding sorter; cost-of-quality sorter | — |
+| 14 PFMEA | Mode/effect/cause sorter; ten-steps ordering; checked Q5 | RPN improvement; before/after RPN |
+| 15 Troubleshooting | Fishbone sorter; 8D ordering | Fault tree |
+| 16 AnyLogic | Paradigm sorter; checked Problem 1 | — |
+| 17 Metallurgy | Steel classification sorter; checked Problems 1 and 3 | Lever rule |
+| 18 Materials Testing | Tensile-test ordering; fracture sorter; metallography ordering; checked Problems 1, 2 and 4 | Modulus of elasticity |
+| 20 Working with AI | Rate-the-prompts sorter; four-steps ordering | — |
+| 21 Machine Learning | R-C-T-C-F sorter | — |
+
+Not given a challenge: the load-distance card (04), the ergonomics ROI card
+(07), and the ductility, Vickers and HV-to-HRC cards (18).
+
+How each piece was checked:
+
+- Every exercise: the rendered page is loaded headlessly; the answer key must
+  be accepted (exact and as a student would round it), a wrong answer must be
+  flagged, and Reset must clear everything.
+- Every challenge: its webR cell is run in R with the default inputs (the goal
+  must not already be met) and with one known solution (the goal must be met).
+- Two challenges were also driven in a real browser with webR running.
+- The print fallback was knitted in PDF mode for chapters 10, 12 and 18 and
+  converted to LaTeX. No PDF was compiled (no LaTeX on this machine), and the
+  Brightspace CSVs have not been imported.
+
+Content issues noticed while writing exercises, left unchanged:
+
+1. **18, modulus calculator.** The default inputs give E of about 322 GPa
+   against the "compare to ~200 GPa" in its own output; an elongation of
+   0.029 mm rather than 0.018 mm gives 200 GPa. The new challenge asks the
+   student to find that value.
+2. **18, Practice Problem 3.** The answer assigns the sharp yield point to the
+   cold-rolled specimen. A sharp yield point is normally the mark of
+   hot-rolled (annealed) low-carbon steel, so the two cues in the problem pull
+   in opposite directions.
+3. **04, load-distance calculator.** Layout B's distances are never shorter
+   than Layout A's, so B cannot win whatever flows are entered.

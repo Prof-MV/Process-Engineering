@@ -191,12 +191,15 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
 
   render_input <- function(inp) {
     input_id <- paste0(card_id, "-", sanitize(inp$var))
+    # Plain decimals, never scientific notation: a field showing "5e+06" is
+    # unreadable, and "1e+05" is not something a student would type back in.
+    plain <- function(x) format(x, scientific = FALSE, trim = TRUE)
     attrs <- sprintf(
       'id="%s" data-var="%s" value="%s"%s%s%s',
-      input_id, inp$var, inp$value,
-      if (!is.null(inp$min)) sprintf(' min="%s"', inp$min) else "",
-      if (!is.null(inp$max)) sprintf(' max="%s"', inp$max) else "",
-      if (!is.null(inp$step)) sprintf(' step="%s"', inp$step) else ""
+      input_id, inp$var, plain(inp$value),
+      if (!is.null(inp$min)) sprintf(' min="%s"', plain(inp$min)) else "",
+      if (!is.null(inp$max)) sprintf(' max="%s"', plain(inp$max)) else "",
+      if (!is.null(inp$step)) sprintf(' step="%s"', plain(inp$step)) else ""
     )
 
     if (inp$type == "slider") {

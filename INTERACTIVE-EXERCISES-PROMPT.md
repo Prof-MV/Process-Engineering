@@ -58,7 +58,10 @@ Find out, from the repository itself:
 - Any `CLAUDE.md`, README or planning notes that record conventions.
 
 My books share one exercise library, called `tryit`: `R/tryit.R`,
-`js/tryit.js` and the `.tryit-*` section of `style.css`. Its home is the
+`js/tryit.js` and the `.tryit-*` section of `style.css`. It currently provides
+`tryit_number()`, `tryit_grid()`, `tryit_sort()` and `tryit_order()`, plus
+`goal`/`goal_test` arguments on `qwebr_calc_card()` (in `R/helpers.R` and
+`js/qwebr-calculator.js`) that turn a calculator into a challenge. Its home is the
 Process Engineering book, which is usually a sibling folder of this one
 (`../ProcessEngineering`) and otherwise the GitHub repository above. If this
 repository does not have the library, copy it from there and keep its
@@ -173,8 +176,30 @@ answer, rejects a wrong one, and resets, and that the console is clean. If you
 cannot run a browser, test the checking logic directly and tell me that the
 visual check is still mine to do. Render the print format once per phase.
 
-Do not commit rendered output unless this repository already does. Do not push
-or deploy; I will do that.
+Three checks have caught real mistakes and are worth automating once, then
+running on every chapter:
+
+- Load each rendered page in a headless DOM, feed every exercise its own
+  answer key (exact, and rounded the way a student would enter it), and
+  require all-correct; then feed one wrong answer and require it to be
+  flagged.
+- For every calculator challenge, run the cell in plain R with the default
+  inputs and require the goal to be unmet, then with one solution you have
+  worked out and require it to be met. A challenge that is already met, or
+  that cannot be met within the input ranges, is a defect.
+- Recompute every answer you put in a checked review question from the
+  question's own givens, and compare it with the book's printed solution. If
+  they differ, tell me; do not silently pick one.
+
+While writing exercises you will read worked examples closely. If you find an
+example whose numbers are implausible or an answer that looks wrong, leave it
+as it is and list it in your report.
+
+Do not commit rendered output unless this repository already does. Stage files
+by name, not with `git add -A`: a failed render can leave intermediate files
+(`*.knit.md`, a stray `.html`) in the project root. If a render fails with a
+file-access error, delete those leftovers and retry before investigating. Do
+not push or deploy; I will do that.
 
 ## What to tell me
 
