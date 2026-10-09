@@ -1365,6 +1365,58 @@ ggplot(risk_matrix, aes(x = Probability, y = Severity, fill = Risk)) +
   )
 ```
 
+---
+
+### Try it yourself: find the required performance level
+
+Risk estimation leads to a number you can design to. ISO 13849-1 turns three judgements about a hazard into a **required performance level (PLr)** for the safety function that guards it:
+
+| Question | Lower | Higher |
+|:--|:--|:--|
+| **S** — how severe is the injury? | S1: slight, normally reversible | S2: serious, normally irreversible, or death |
+| **F** — how often or how long is someone exposed? | F1: seldom, or for a short time | F2: frequent, or for a long time |
+| **P** — can the person avoid the harm? | P1: possible under specific conditions | P2: scarcely possible |
+
+| S | F | P | PLr |
+|:-:|:-:|:-:|:-:|
+| S1 | F1 | P1 | **a** |
+| S1 | F1 | P2 | **b** |
+| S1 | F2 | P1 | **b** |
+| S1 | F2 | P2 | **c** |
+| S2 | F1 | P1 | **c** |
+| S2 | F1 | P2 | **d** |
+| S2 | F2 | P1 | **d** |
+| S2 | F2 | P2 | **e** |
+
+For each hazard below, decide S, F and P from the description, then read off the PLr.
+
+```{r tryit-plr, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "plr-sort",
+  title = "What performance level is required?",
+  bins = c("PL a", "PL b", "PL c", "PL d", "PL e"),
+  cards = tibble::tribble(
+    ~text, ~bin, ~why,
+    "A slow transfer conveyor can pinch a hand and leave a bruise. Someone reaches near it about once a week, and it moves slowly enough to pull away from.",
+    "PL a", "S1 (reversible), F1 (seldom), P1 (avoidable).",
+    "A heated platen can cause a minor burn. The operator works beside it all shift, and it is clearly marked and easy to keep clear of.",
+    "PL b", "S1 (reversible), F2 (continuous exposure), P1 (avoidable).",
+    "A trimming blade can cause small cuts. The operator handles parts at it all shift, and the blade is hidden behind the part, so contact cannot be anticipated.",
+    "PL c", "S1 (reversible), F2 (continuous exposure), P2 (scarcely avoidable).",
+    "A robot can crush a person against the fence. A technician enters about once a month for teaching, with the robot at reduced speed and an enabling switch in hand.",
+    "PL c", "S2 (irreversible), F1 (seldom), P1 (reduced speed makes escape possible).",
+    "A hydraulic press can amputate a hand. The die area is entered twice a week for a die change, and the ram closes too fast to react to.",
+    "PL d", "S2 (irreversible), F1 (seldom), P2 (scarcely avoidable).",
+    "A slow forming press can crush a hand. The operator loads it by hand every cycle, and the ram closes slowly enough for a trained operator to withdraw.",
+    "PL d", "S2 (irreversible), F2 (every cycle), P1 (avoidable).",
+    "A mechanical power press can amputate a hand. It is hand-fed every cycle, and the stroke takes a fraction of a second.",
+    "PL e", "S2 (irreversible), F2 (every cycle), P2 (scarcely avoidable)."
+  ),
+  intro = "Decide S, F and P for each hazard, then pick the required performance level.",
+  question = "<p>Using the ISO 13849-1 risk graph (S1/S2 severity, F1/F2 frequency of exposure, P1/P2 possibility of avoidance), match each hazard to its required performance level.</p>"
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Summary

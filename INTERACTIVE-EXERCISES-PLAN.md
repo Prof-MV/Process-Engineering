@@ -3,9 +3,10 @@
 Scope: this book (Process Engineering). The reusable, book-agnostic version of
 this work is `INTERACTIVE-EXERCISES-PROMPT.md`.
 
-Status: **Phases 0 and 1 are built on branch `interactive-exercises`
-(53 exercises and 21 calculator challenges across all 20 chapters; see
-section 6). Phases 2–4 not started.**
+Status: **Phases 0, 1 and 2 are built on branch `interactive-exercises`, plus
+three items from phase 3 (61 exercises and 21 calculator challenges across all
+20 chapters; see section 6). The REBA scorer, the figure-labelling exercises
+and phase 4 (simulations, team seeds) are not started.**
 
 ---
 
@@ -44,8 +45,12 @@ to 20 chapters, so the plan starts with a small shared library.
 Nine widget types cover every idea in section 3. The library is called
 `tryit`: `R/tryit.R`, `js/tryit.js`, `.tryit-*` CSS classes, and section
 headings of the form "Try it yourself: …" (the wording the Sustainability book
-already uses). Types A, B, D, E and G exist; the rest are added as phases need
-them.
+already uses). Types A to E and G exist. Type C turned out to be three
+helpers: `tryit_diagram()` (fill in values on boxes joined by lines),
+`tryit_balance()` (assign tasks to stations, checked against the rules) and
+`tryit_layout()` (place departments on a grid, scored against the best
+possible). Diagram exercises widen past the text column on a large screen and
+scroll sideways, with a note, on a small one. Types F, H and I are not built.
 
 | # | Type | What the student does | Generalises |
 |---|---|---|---|
@@ -282,13 +287,16 @@ sorters and orderings. Type G added to the calculator runtime
 cards. Every chapter now has at least one exercise, including the four that
 had no calculator. Section 6 lists what was built.
 
-**Phase 2 — Diagram exercises.**
-Add type C. Build the line balancing board (03, reused in 04), fault tree (15),
-VSM timeline (05), then the block-plan board (04) and ladder stepper (09).
+**Phase 2 — Diagram exercises. (Built.)**
+Line balancing board (03), block-plan board (04), fault tree (15), value
+stream map (05) and ladder-logic scan table (09). The pizza line in 04 was not
+converted; it would repeat the chapter 03 board.
 
-**Phase 3 — Scorers and figures.**
-Add types F and I. REBA scorer (07), PLr walker (06), rate-and-rank (14),
-signal spotter (10), read-the-curve (18), phase diagram reader (17).
+**Phase 3 — Scorers and figures. (Partly built.)**
+Built with the existing types: required performance level (06), RPN
+rate-and-rank (14), control-chart signal spotter (10). Still to do, and
+needing types F and I: REBA scorer (07), read-the-curve (18), phase diagram
+reader (17).
 
 **Phase 4 — Sandboxes and class mode.**
 Add type H and team seeds. Station-failure line (03), push vs pull (05),
@@ -320,19 +328,19 @@ Working rules for every phase:
 |---|---|---|
 | 01 Types of Manufacturing | Process-family sorter; checked Q2 (break-even) | Injection molding cost |
 | 02 Process and Design | Project-phase ordering; instrument-tag sorter | Fixed automation cost |
-| 03 Integrated Manufacturing | Production-system sorter; checked Q1–Q3 | Takt vs cycle; cycle efficiency |
-| 04 Plant Layout | Layout-type sorter; checked Problem 2 and Q2 | NIOSH lifting index |
-| 05 Lean | Seven-wastes sorter; 5S ordering; checked Q3 | Takt time |
-| 06 Machine Guarding | Hierarchy-of-controls ordering; safeguard sorter; checked Q2 | Safety distance |
+| 03 Integrated Manufacturing | Production-system sorter; **line balancing board**; checked Q1–Q3 | Takt vs cycle; cycle efficiency |
+| 04 Plant Layout | Layout-type sorter; **block-plan board**; checked Problem 2 and Q2 | NIOSH lifting index |
+| 05 Lean | Seven-wastes sorter; 5S ordering; **value stream map**; checked Q3 | Takt time |
+| 06 Machine Guarding | Hierarchy-of-controls ordering; safeguard sorter; required performance level sorter; checked Q2 | Safety distance |
 | 07 Ergonomics | Risk-factor sorter; checked Q4 | NIOSH lifting index |
 | 08 Robotics | Robot-configuration sorter | Payload; gripper force |
-| 09 Automation | Automation-pyramid sorter; scan-cycle ordering | Scan time; VFD speed |
-| 10 SPC | Chart chooser; X-bar/R by hand; checked Q4–Q6 | Process capability |
+| 09 Automation | Automation-pyramid sorter; scan-cycle ordering; **seal-in rung scan table** | Scan time; VFD speed |
+| 10 SPC | Chart chooser; X-bar/R by hand; signal spotter (six charts); checked Q4–Q6 | Process capability |
 | 11 MSA | Measurement-error sorter | Gauge resolution; MSA and capability |
 | 12 TPM | Six-losses sorter; seven-steps ordering; checked Q4 and Q6 | OEE |
 | 13 Quality Systems | Audit-finding sorter; cost-of-quality sorter | — |
-| 14 PFMEA | Mode/effect/cause sorter; ten-steps ordering; checked Q5 | RPN improvement; before/after RPN |
-| 15 Troubleshooting | Fishbone sorter; 8D ordering | Fault tree |
+| 14 PFMEA | Mode/effect/cause sorter; ten-steps ordering; RPN rate-and-rank; checked Q5 | RPN improvement; before/after RPN |
+| 15 Troubleshooting | Fishbone sorter; 8D ordering; **fault tree by hand** | Fault tree |
 | 16 AnyLogic | Paradigm sorter; checked Problem 1 | — |
 | 17 Metallurgy | Steel classification sorter; checked Problems 1 and 3 | Lever rule |
 | 18 Materials Testing | Tensile-test ordering; fracture sorter; metallography ordering; checked Problems 1, 2 and 4 | Modulus of elasticity |
@@ -350,6 +358,11 @@ How each piece was checked:
 - Every challenge: its webR cell is run in R with the default inputs (the goal
   must not already be met) and with one known solution (the goal must be met).
 - Two challenges were also driven in a real browser with webR running.
+- The line balancing board is tested with an overloaded, a one-task-per-station,
+  a precedence-breaking and a best-possible assignment; the block-plan board
+  with its best and worst arrangements, found by an independent search that
+  must agree with the page. The diagram exercises were screenshotted in a real
+  browser at desktop and phone widths.
 - The print fallback was knitted in PDF mode for chapters 10, 12 and 18 and
   converted to LaTeX. No PDF was compiled (no LaTeX on this machine), and the
   Brightspace CSVs have not been imported.

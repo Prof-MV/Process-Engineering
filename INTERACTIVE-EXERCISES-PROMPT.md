@@ -59,7 +59,8 @@ Find out, from the repository itself:
 
 My books share one exercise library, called `tryit`: `R/tryit.R`,
 `js/tryit.js` and the `.tryit-*` section of `style.css`. It currently provides
-`tryit_number()`, `tryit_grid()`, `tryit_sort()` and `tryit_order()`, plus
+`tryit_number()`, `tryit_grid()`, `tryit_sort()`, `tryit_order()`,
+`tryit_diagram()`, `tryit_balance()` and `tryit_layout()`, plus
 `goal`/`goal_test` arguments on `qwebr_calc_card()` (in `R/helpers.R` and
 `js/qwebr-calculator.js`) that turn a calculator into a challenge. Its home is the
 Process Engineering book, which is usually a sibling folder of this one
