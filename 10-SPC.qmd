@@ -242,6 +242,67 @@ ggplot() +
 
 </details>
 
+### Try it yourself: run the funnel experiment
+
+Deming's funnel experiment, described above, is easy to run yourself. A marble is dropped through a funnel aimed at a target. It never lands exactly on the target: that scatter is common-cause variation. One operator leaves the funnel alone. A second operator, trying to help, moves the funnel after every drop by the size of the last miss, in the opposite direction.
+
+Before you look at the result, decide: will the second operator's drops be closer to the target, the same, or further away?
+
+```{r calc-funnel-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "funnel-sim",
+  title = "Funnel Experiment: Leave It Alone or Adjust?",
+  icon = "bullseye",
+  inputs = list(
+    qwebr_calc_input("sigma", "Natural scatter of the process (sigma)", value = 1.0, min = 0.2, max = 3, step = 0.1, suffix = "mm"),
+    qwebr_calc_input("n_drops", "Number of drops", value = 200, min = 30, max = 1000, step = 10, type = "slider"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this simulation</summary>
+
+```{webr-r}
+#| label: funnel-sim
+# Deming's funnel experiment: Rule 1 (hands off) against Rule 2 (adjust after every drop)
+sigma <- 1.0      # natural scatter of the process
+n_drops <- 200
+seed <- 1         # run number: same number, same marbles
+
+set.seed(seed)
+scatter <- rnorm(n_drops, mean = 0, sd = sigma)
+
+# Rule 1: the funnel stays aimed at the target (0)
+hands_off <- scatter
+
+# Rule 2: after each drop, move the funnel by the size of the miss, the other way
+adjusted <- numeric(n_drops)
+aim <- 0
+for (i in seq_len(n_drops)) {
+  adjusted[i] <- aim + scatter[i]
+  aim <- aim - adjusted[i]
+}
+
+par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1), cex.main = 1.2, cex.lab = 1.1, cex.axis = 1)
+limits <- range(c(hands_off, adjusted))
+plot(hands_off, pch = 19, col = "#2980b9", ylim = limits, las = 1, xlab = "Drop", ylab = "Miss distance (mm)", main = "Leave it alone")
+abline(h = 0, col = "#27ae60", lwd = 2)
+plot(adjusted, pch = 19, col = "#e74c3c", ylim = limits, las = 1, xlab = "Drop", ylab = "Miss distance (mm)", main = "Adjust after every drop")
+abline(h = 0, col = "#27ae60", lwd = 2)
+
+cat(sprintf("Adjusting made the scatter %.0f%% worse\n", (sd(adjusted) / sd(hands_off) - 1) * 100))
+cat(sprintf("  Leave it alone         standard deviation %.2f mm\n", sd(hands_off)))
+cat(sprintf("  Adjust every drop      standard deviation %.2f mm\n", sd(adjusted)))
+cat(sprintf("  Ratio                  %.2f (theory: 1.41)\n", sd(adjusted) / sd(hands_off)))
+```
+
+</details>
+
+Run it several times. The adjusting operator is never better and is worse by about 40% every time, because each adjustment adds the previous drop's random error to the next drop's own. This is the first of the two mistakes in process control, reacting to common-cause variation as if it were a signal, and it is exactly what a control chart is there to prevent.
+
 ### When is a Process "In Control"?
 
 A process is **in statistical control** when:

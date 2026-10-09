@@ -646,6 +646,82 @@ push_pull %>%
   column_spec(3, background = "#D5F5E3")
 ```
 
+### Try it yourself: push against pull
+
+This is the dice game many lean courses play with poker chips, run for 200 days in a second. Four stations work in series. Each day every station can process between 1 and 6 parts, decided by a roll of a die, so the stations are balanced on average but never on the day.
+
+The **push** line releases four new parts every morning, whatever is happening downstream. The **pull** line releases a part only when the total in the line is below a cap, which is what a kanban limit does. Both lines get the same dice.
+
+```{r calc-push-pull-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "push-pull-sim",
+  title = "Dice Game: Push vs Pull",
+  icon = "dice",
+  inputs = list(
+    qwebr_calc_input("wip_cap", "Pull line: limit on parts in the line", value = 12, min = 4, max = 60, step = 1, type = "slider"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed",
+  goal = "Find a limit that keeps at least 90% of the push line's output while holding less than half of its inventory.",
+  goal_test = "pull_out >= 0.9 * push_out && pull_wip < push_wip / 2"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this simulation</summary>
+
+```{webr-r}
+#| label: push-pull-sim
+# The dice game: four stations in series, 200 days
+wip_cap <- 12    # pull line: most parts allowed in the line at once
+seed <- 1        # run number: same number, same dice
+
+set.seed(seed)
+n_days <- 200
+n_stations <- 4
+dice <- matrix(sample(1:6, n_days * n_stations, replace = TRUE), nrow = n_days)
+
+run_line <- function(limit) {
+  queue <- integer(n_stations)   # parts waiting at each station
+  shipped <- 0
+  wip <- numeric(n_days)
+  for (day in seq_len(n_days)) {
+    # Release work: push sends 4 a day regardless; pull tops the line up to its limit
+    queue[1] <- queue[1] + if (is.finite(limit)) max(0, limit - sum(queue)) else 4
+    for (s in n_stations:1) {
+      moved <- min(queue[s], dice[day, s])
+      queue[s] <- queue[s] - moved
+      if (s < n_stations) queue[s + 1] <- queue[s + 1] + moved else shipped <- shipped + moved
+    }
+    wip[day] <- sum(queue)
+  }
+  list(out = shipped / n_days, wip = wip)
+}
+
+push <- run_line(Inf)
+pull <- run_line(wip_cap)
+push_out <- push$out; push_wip <- mean(push$wip)
+pull_out <- pull$out; pull_wip <- mean(pull$wip)
+
+par(mar = c(4.5, 5, 2, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+plot(push$wip, type = "l", lwd = 3, col = "#e74c3c", las = 1, ylim = c(0, max(push$wip)),
+     xlab = "Day", ylab = "Parts in the line", main = "Inventory in the line, day by day")
+lines(pull$wip, lwd = 3, col = "#2980b9")
+legend("topleft", legend = c("Push", "Pull"), col = c("#e74c3c", "#2980b9"), lwd = 3, bty = "n", cex = 1.2)
+
+cat(sprintf("Pull: %.2f parts/day with %.0f parts in the line\n", pull_out, pull_wip))
+cat(sprintf("  Push output            %.2f parts/day\n", push_out))
+cat(sprintf("  Push inventory         %.0f parts on average, and still rising\n", push_wip))
+cat(sprintf("  Pull output            %.0f%% of push\n", pull_out / push_out * 100))
+cat(sprintf("  Pull inventory         %.0f%% of push\n", pull_wip / push_wip * 100))
+cat(sprintf("  Pull lead time         %.1f days (inventory / output)\n", pull_wip / pull_out))
+cat(sprintf("  Push lead time         %.1f days\n", push_wip / push_out))
+```
+
+</details>
+
+Two things to notice. The push line's inventory never settles: it releases four a day into a line that ships a little over three, and the difference piles up. And a limit that is too tight starves the line, so the skill is in choosing a limit, not in having one.
+
 ### Kanban System
 
 **Kanban** (看板) is Japanese for "signboard" or "billboard." It's a scheduling system for lean and JIT production.

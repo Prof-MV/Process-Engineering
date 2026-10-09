@@ -574,6 +574,45 @@ The **AISI/SAE** designation system lets you read approximate composition straig
 **Answer:** It's a plain carbon steel (10xx series) with approximately 0.30% carbon — hypoeutectoid, roughly midway in carbon content between 1018 (0.18%) and 1045 (0.45%). You'd expect it to harden more than 1018 but less than 1045-1060 grades, and to have intermediate as-rolled strength and ductility.
 </details>
 
+### Try it yourself: how much pearlite?
+
+Four plain carbon steels are cooled slowly to room temperature. Use the lever rule, with 0.02% C for ferrite and 0.76% C for the eutectoid, to find how much of each microstructure is pearlite and how much is proeutectoid ferrite.
+
+```{r tryit-phase-fractions, echo=FALSE, results='asis'}
+phase_steels <- data.frame(
+  Steel = c("AISI 1010", "AISI 1030", "AISI 1050", "AISI 1070"),
+  `Carbon (%)` = c(0.10, 0.30, 0.50, 0.70),
+  check.names = FALSE, stringsAsFactors = FALSE
+)
+phase_steels$`Pearlite (%)` <- (phase_steels$`Carbon (%)` - 0.02) / (0.76 - 0.02) * 100
+phase_steels$`Ferrite (%)` <- 100 - phase_steels$`Pearlite (%)`
+
+tryit_grid(
+  id = "phase-fractions",
+  title = "Lever rule: ferrite and pearlite",
+  data = phase_steels,
+  blank = c("Pearlite (%)", "Ferrite (%)"),
+  tol = 1,
+  hints = c(`Pearlite (%)` = "(carbon - 0.02) / (0.76 - 0.02), as a percentage.",
+            `Ferrite (%)` = "Whatever is not pearlite is proeutectoid ferrite."),
+  intro = "Fill in both columns, to the nearest percent.",
+  question = "<p>Four plain carbon steels are cooled slowly to room temperature. Use the lever rule with 0.02% C for ferrite and 0.76% C for the eutectoid composition.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-phase-fractions-solution, echo=FALSE}
+phase_steels %>%
+  kable(digits = c(0, 2, 0, 0), align = "lccc") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+The pearlite fraction rises almost in step with carbon: every 0.1% C adds about 13.5 points of pearlite. Since pearlite is the hard constituent and ferrite the soft one, this table is also a rough ranking of strength, from 1010 (soft, very formable) to 1070 (nearly all pearlite, used for springs and wear parts).
+
+</details>
+
 ### Try it yourself: classify the steel
 
 Read the carbon content from each designation, compare it with the eutectoid composition (about 0.76% C), and classify the steel.

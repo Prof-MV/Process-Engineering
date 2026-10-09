@@ -181,9 +181,15 @@ qwebr_calc_input <- function(var, label, value, min = NULL, max = NULL, step = N
 #'   variables that is TRUE once the goal is reached, e.g.
 #'   `"cost_per_part < 4"`. It is evaluated after the cell on every run. It
 #'   must be FALSE at the default inputs, or there is nothing to solve.
+#' @param rerun For a cell that simulates with random numbers: the name of
+#'   the cell's seed variable (e.g. `"seed"`). The card gets a "Run again"
+#'   button that moves that input on by one, so the student sees how much the
+#'   result changes from run to run. The seed must also be one of `inputs`,
+#'   and the cell must call `set.seed()` with it. In class, teams can each
+#'   enter their team number as the run number to get different data.
 qwebr_calc_card <- function(label, title, icon = "gears", inputs,
                              fig_width = 1200, fig_height = 700,
-                             goal = NULL, goal_test = NULL) {
+                             goal = NULL, goal_test = NULL, rerun = NULL) {
   if (!knitr::is_html_output(excludes = "epub")) return(invisible(NULL))
 
   sanitize <- function(x) gsub("[^a-zA-Z0-9]+", "-", x)
@@ -228,6 +234,12 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
 
   input_rows <- paste(vapply(inputs, render_input, character(1)), collapse = "\n")
 
+  rerun_row <- if (is.null(rerun)) "" else {
+    stopifnot(rerun %in% vapply(inputs, function(inp) inp$var, character(1)))
+    sprintf('
+    <button type="button" class="qwebr-calc-rerun" data-seed-var="%s">Run again with new random numbers</button>', rerun)
+  }
+
   stopifnot(is.null(goal) == is.null(goal_test))
   goal_row <- if (is.null(goal)) "" else sprintf('
   <div class="qwebr-calc-goal" data-goal-test="%s">
@@ -244,13 +256,13 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
     <i class="fa-solid fa-%s qwebr-calc-icon"></i>
     <h4>%s</h4>
   </div>
-  <div class="qwebr-calc-inputs">%s
+  <div class="qwebr-calc-inputs">%s%s
   </div>
   <div class="qwebr-calc-results"></div>%s
   <div class="qwebr-calc-graph"></div>
 </div>
 ```
-', label, fig_width, fig_height, icon, title, input_rows, goal_row))
+', label, fig_width, fig_height, icon, title, input_rows, rerun_row, goal_row))
 }
 
 # "Try it yourself" exercises (tryit_number(), tryit_grid(), tryit_sort()).

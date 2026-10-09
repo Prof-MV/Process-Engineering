@@ -1652,6 +1652,62 @@ Risk Level: HIGH - Action necessary soon
 
 </details>
 
+### Try it yourself: score a job with REBA
+
+Now run the method yourself on a different job. An operator loads castings into a machining fixture. An ergonomist has already scored the individual body parts from a photograph:
+
+| Group A | Score | | Group B | Score |
+|:--|:-:|:-:|:--|:-:|
+| Trunk (bent forward 30°) | 3 | | Upper arm (raised 60°, shoulder lifted) | 4 |
+| Neck (bent forward more than 20°) | 2 | | Lower arm (reaching, beyond 100°) | 2 |
+| Legs (weight on one leg) | 2 | | Wrist (bent more than 15°) | 2 |
+| Load/force (casting weighs 8 kg) | +1 | | Coupling (fair: no proper handle) | +1 |
+
+The task is repeated more than four times a minute, which adds an **activity score of +1**. Use Tables A, B and C above to finish the assessment.
+
+```{r tryit-reba, echo=FALSE, results='asis'}
+# Looked up in the chapter's own tables, so the key cannot drift from them
+reba_a <- table_a[table_a$Trunk == 3 & table_a$Neck == 2, ][["Legs 2"]]
+reba_score_a <- reba_a + 1
+reba_b <- table_b[table_b$`Upper Arm` == 4 & table_b$`Lower Arm` == 2, ][["Wrist 2"]]
+reba_score_b <- reba_b + 1
+reba_c <- table_c[table_c$`Score A` == reba_score_a, ][[paste0("B=", reba_score_b)]]
+reba_final <- reba_c + 1
+
+tryit_number(
+  id = "reba-scorer",
+  title = "REBA: loading castings into a fixture",
+  intro = "Work down the list in order. Each line uses the one before it.",
+  answers = list(
+    tryit_answer("Table A score (trunk 3, neck 2, legs 2)", reba_a, tol = 0, digits = 0,
+                 hint = "Find the row for Trunk 3 and Neck 2, then read across to the Legs 2 column."),
+    tryit_answer("Score A (add load/force)", reba_score_a, tol = 0, digits = 0,
+                 hint = "Table A score plus the load/force score of 1."),
+    tryit_answer("Table B score (upper arm 4, lower arm 2, wrist 2)", reba_b, tol = 0, digits = 0,
+                 hint = "Find the row for Upper Arm 4 and Lower Arm 2, then read across to the Wrist 2 column."),
+    tryit_answer("Score B (add coupling)", reba_score_b, tol = 0, digits = 0,
+                 hint = "Table B score plus the coupling score of 1."),
+    tryit_answer("Table C score", reba_c, tol = 0, digits = 0,
+                 hint = "Use your Score A for the row and your Score B for the column."),
+    tryit_answer("Final REBA score (add activity)", reba_final, tol = 0, digits = 0,
+                 hint = "Table C score plus the activity score of 1.")
+  ),
+  question = "<p>A REBA assessment gives these component scores: trunk 3, neck 2, legs 2, load/force +1; upper arm 4, lower arm 2, wrist 2, coupling +1; activity +1. Use REBA Tables A, B and C.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+- Table A (trunk 3, neck 2, legs 2) = **`r reba_a`**; Score A = `r reba_a` + 1 = **`r reba_score_a`**
+- Table B (upper arm 4, lower arm 2, wrist 2) = **`r reba_b`**; Score B = `r reba_b` + 1 = **`r reba_score_b`**
+- Table C (Score A = `r reba_score_a`, Score B = `r reba_score_b`) = **`r reba_c`**
+- REBA score = `r reba_c` + 1 = **`r reba_final`**
+
+A score of `r reba_final` falls in the 8 to 10 band: **high risk, action necessary soon**. The largest single contributor is the raised, reaching arm. Raising the fixture or bringing the castings closer to the operator would lower the upper-arm and trunk scores together.
+
+</details>
+
 ### NIOSH Lifting Equation
 
 The **NIOSH Lifting Equation** calculates a **Recommended Weight Limit (RWL)** for lifting tasks.

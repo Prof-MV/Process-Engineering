@@ -3,10 +3,10 @@
 Scope: this book (Process Engineering). The reusable, book-agnostic version of
 this work is `INTERACTIVE-EXERCISES-PROMPT.md`.
 
-Status: **Phases 0, 1 and 2 are built on branch `interactive-exercises`, plus
-three items from phase 3 (61 exercises and 21 calculator challenges across all
-20 chapters; see section 6). The REBA scorer, the figure-labelling exercises
-and phase 4 (simulations, team seeds) are not started.**
+Status: **All four phases are built on branch `interactive-exercises`: 64
+exercises, 5 simulations and 25 calculator challenges across all 20 chapters
+(see section 6). What was planned and not built is listed at the end of
+section 4.**
 
 ---
 
@@ -50,7 +50,14 @@ helpers: `tryit_diagram()` (fill in values on boxes joined by lines),
 `tryit_balance()` (assign tasks to stations, checked against the rules) and
 `tryit_layout()` (place departments on a grid, scored against the best
 possible). Diagram exercises widen past the text column on a large screen and
-scroll sideways, with a note, on a small one. Types F, H and I are not built.
+scroll sideways, with a note, on a small one.
+
+Types F, H and I did not need widgets of their own. A simulation (H) is a
+calculator card whose cell calls `set.seed()`, with `rerun = "seed"` adding a
+"Run again" button; the run number doubles as a team number in class. A scorer
+(I) is `tryit_number()` with one answer per step, looked up from the chapter's
+own tables. Figure reading (F) is an R figure followed by a sorter or numeric
+answers.
 
 | # | Type | What the student does | Generalises |
 |---|---|---|---|
@@ -292,16 +299,24 @@ Line balancing board (03), block-plan board (04), fault tree (15), value
 stream map (05) and ladder-logic scan table (09). The pizza line in 04 was not
 converted; it would repeat the chapter 03 board.
 
-**Phase 3 — Scorers and figures. (Partly built.)**
-Built with the existing types: required performance level (06), RPN
-rate-and-rank (14), control-chart signal spotter (10). Still to do, and
-needing types F and I: REBA scorer (07), read-the-curve (18), phase diagram
-reader (17).
+**Phase 3 — Scorers and figures. (Built.)**
+Required performance level (06), RPN rate-and-rank (14), control-chart signal
+spotter (10), REBA scorer (07), read-the-curve (18), lever-rule table (17).
 
-**Phase 4 — Sandboxes and class mode.**
-Add type H and team seeds. Station-failure line (03), push vs pull (05),
-tampering funnel (10), class GRR (11), three-station line (16), threshold
-slider and leakage demo (21).
+**Phase 4 — Simulations and class mode. (Built.)**
+Breakdowns and buffers (03), push vs pull dice game (05), funnel experiment
+(10), three-station discrete-event line (16), alarm threshold (21). Chapters
+16 and 21 now load webR for these.
+
+**Planned and not built:**
+
+- Class Gauge R&R (11): the chapter already has an editable range-method cell
+  that a class can paste readings into.
+- Train/test leakage demo (21).
+- Pizza line balancing (04): it would repeat the chapter 03 board.
+- Several small sorters and orderings from section 3, where a chapter already
+  had three or four exercises.
+- A projector toggle and a predict-first lock.
 
 Working rules for every phase:
 
@@ -328,24 +343,24 @@ Working rules for every phase:
 |---|---|---|
 | 01 Types of Manufacturing | Process-family sorter; checked Q2 (break-even) | Injection molding cost |
 | 02 Process and Design | Project-phase ordering; instrument-tag sorter | Fixed automation cost |
-| 03 Integrated Manufacturing | Production-system sorter; **line balancing board**; checked Q1–Q3 | Takt vs cycle; cycle efficiency |
+| 03 Integrated Manufacturing | Production-system sorter; **line balancing board**; checked Q1–Q3; *simulation: breakdowns and buffers* | Takt vs cycle; cycle efficiency; simulation |
 | 04 Plant Layout | Layout-type sorter; **block-plan board**; checked Problem 2 and Q2 | NIOSH lifting index |
-| 05 Lean | Seven-wastes sorter; 5S ordering; **value stream map**; checked Q3 | Takt time |
+| 05 Lean | Seven-wastes sorter; 5S ordering; **value stream map**; checked Q3; *simulation: push vs pull* | Takt time; simulation |
 | 06 Machine Guarding | Hierarchy-of-controls ordering; safeguard sorter; required performance level sorter; checked Q2 | Safety distance |
-| 07 Ergonomics | Risk-factor sorter; checked Q4 | NIOSH lifting index |
+| 07 Ergonomics | Risk-factor sorter; REBA scorer; checked Q4 | NIOSH lifting index |
 | 08 Robotics | Robot-configuration sorter | Payload; gripper force |
 | 09 Automation | Automation-pyramid sorter; scan-cycle ordering; **seal-in rung scan table** | Scan time; VFD speed |
-| 10 SPC | Chart chooser; X-bar/R by hand; signal spotter (six charts); checked Q4–Q6 | Process capability |
+| 10 SPC | Chart chooser; X-bar/R by hand; signal spotter (six charts); checked Q4–Q6; *simulation: funnel experiment* | Process capability |
 | 11 MSA | Measurement-error sorter | Gauge resolution; MSA and capability |
 | 12 TPM | Six-losses sorter; seven-steps ordering; checked Q4 and Q6 | OEE |
 | 13 Quality Systems | Audit-finding sorter; cost-of-quality sorter | — |
 | 14 PFMEA | Mode/effect/cause sorter; ten-steps ordering; RPN rate-and-rank; checked Q5 | RPN improvement; before/after RPN |
 | 15 Troubleshooting | Fishbone sorter; 8D ordering; **fault tree by hand** | Fault tree |
-| 16 AnyLogic | Paradigm sorter; checked Problem 1 | — |
-| 17 Metallurgy | Steel classification sorter; checked Problems 1 and 3 | Lever rule |
-| 18 Materials Testing | Tensile-test ordering; fracture sorter; metallography ordering; checked Problems 1, 2 and 4 | Modulus of elasticity |
+| 16 AnyLogic | Paradigm sorter; checked Problem 1; *simulation: three-station line* | Simulation |
+| 17 Metallurgy | Steel classification sorter; lever-rule table; checked Problems 1 and 3 | Lever rule |
+| 18 Materials Testing | Read-the-curve; tensile-test ordering; fracture sorter; metallography ordering; checked Problems 1, 2 and 4 | Modulus of elasticity |
 | 20 Working with AI | Rate-the-prompts sorter; four-steps ordering | — |
-| 21 Machine Learning | R-C-T-C-F sorter | — |
+| 21 Machine Learning | R-C-T-C-F sorter; *alarm threshold card* | Alarm threshold |
 
 Not given a challenge: the load-distance card (04), the ergonomics ROI card
 (07), and the ductility, Vickers and HV-to-HRC cards (18).
@@ -358,6 +373,10 @@ How each piece was checked:
 - Every challenge: its webR cell is run in R with the default inputs (the goal
   must not already be met) and with one known solution (the goal must be met).
 - Two challenges were also driven in a real browser with webR running.
+- All five simulation cards were driven in a real browser: results and plot
+  appear, "Run again" changes the result, and the challenge flips to Reached.
+  The three seeded challenges were also checked in R across ten run numbers,
+  so no team gets an unreachable goal.
 - The line balancing board is tested with an overloaded, a one-task-per-station,
   a precedence-breaking and a best-possible assignment; the block-plan board
   with its best and worst arrangements, found by an independent search that

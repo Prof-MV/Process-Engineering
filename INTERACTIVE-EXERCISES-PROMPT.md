@@ -61,8 +61,10 @@ My books share one exercise library, called `tryit`: `R/tryit.R`,
 `js/tryit.js` and the `.tryit-*` section of `style.css`. It currently provides
 `tryit_number()`, `tryit_grid()`, `tryit_sort()`, `tryit_order()`,
 `tryit_diagram()`, `tryit_balance()` and `tryit_layout()`, plus
-`goal`/`goal_test` arguments on `qwebr_calc_card()` (in `R/helpers.R` and
-`js/qwebr-calculator.js`) that turn a calculator into a challenge. Its home is the
+`goal`/`goal_test` and `rerun` arguments on `qwebr_calc_card()` (in
+`R/helpers.R` and `js/qwebr-calculator.js`). A goal turns a calculator into a
+challenge. `rerun` turns one whose cell uses random numbers into a simulation
+with a "Run again" button; build simulations this way, not as new widgets. Its home is the
 Process Engineering book, which is usually a sibling folder of this one
 (`../ProcessEngineering`) and otherwise the GitHub repository above. If this
 repository does not have the library, copy it from there and keep its
@@ -187,7 +189,11 @@ running on every chapter:
 - For every calculator challenge, run the cell in plain R with the default
   inputs and require the goal to be unmet, then with one solution you have
   worked out and require it to be met. A challenge that is already met, or
-  that cannot be met within the input ranges, is a defect.
+  that cannot be met within the input ranges, is a defect. For a simulation,
+  repeat the check over ten or so seeds, since every team must be able to
+  reach the goal with its own run number.
+- Drive at least one card of each new kind in a real browser. Plain R cannot
+  show a card that never runs because of a wiring mistake in the page.
 - Recompute every answer you put in a checked review question from the
   question's own givens, and compare it with the book's printed solution. If
   they differ, tell me; do not silently pick one.

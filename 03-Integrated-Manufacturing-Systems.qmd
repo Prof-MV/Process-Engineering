@@ -823,6 +823,96 @@ ggplot(buffer_effect, aes(x = Buffer_Size, y = Line_Availability * 100)) +
   ylim(75, 100)
 ```
 
+### Try it yourself: what does a buffer buy you?
+
+The formulas above give the average. A simulation shows what happens cycle by cycle. This one runs a six-station automated line for 2 000 cycles. Each station that is working has a small chance of breaking down, and a breakdown lasts several cycles. With no buffers the stations are rigidly linked, so one stoppage stops them all. With buffers, a station can keep working from the stock in front of it and into the space behind it.
+
+Change the buffer size and watch the efficiency. Then press **Run again** a few times: the answer moves, because breakdowns are random. In class, each team can enter its team number as the run number and compare.
+
+```{r calc-line-buffer-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "line-buffer-sim",
+  title = "Line Simulation: Breakdowns and Buffers",
+  icon = "industry",
+  inputs = list(
+    qwebr_calc_input("n_stations", "Stations", value = 6, min = 2, max = 10, step = 1),
+    qwebr_calc_input("fail_pct", "Breakdown chance per cycle", value = 4, min = 0, max = 15, step = 0.5, suffix = "%"),
+    qwebr_calc_input("repair_cycles", "Repair time", value = 5, min = 1, max = 20, step = 1, suffix = "cycles"),
+    qwebr_calc_input("buffer_size", "Buffer between stations", value = 0, min = 0, max = 30, step = 1, type = "slider"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed",
+  goal = "Reach 65% line efficiency using buffers alone: leave the stations, breakdown chance and repair time as they are. What is the smallest buffer that does it?",
+  goal_test = "efficiency >= 65 && n_stations == 6 && fail_pct == 4 && repair_cycles == 5"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this simulation</summary>
+
+```{webr-r}
+#| label: line-buffer-sim
+# A serial production line with random breakdowns
+n_stations <- 6       # stations in the line
+fail_pct <- 4         # chance (%) that a working station breaks down in a cycle
+repair_cycles <- 5    # cycles a breakdown lasts
+buffer_size <- 0      # parts of storage between neighbouring stations (0 = rigid line)
+seed <- 1             # run number: same number, same breakdowns
+
+run_line <- function(buffer) {
+  set.seed(seed)
+  n_cycles <- 2000
+  down <- integer(n_stations)      # cycles of repair left at each station
+  stock <- integer(n_stations - 1) # parts waiting in each buffer
+  made <- 0
+
+  for (cycle in seq_len(n_cycles)) {
+    down <- pmax(down - 1, 0)
+    up <- down == 0
+    breaks <- runif(n_stations) < fail_pct / 100   # would this station break if it ran?
+
+    if (buffer == 0) {
+      # Rigid line: every station is tied to its neighbours
+      if (all(up)) {
+        if (any(breaks)) down[breaks] <- repair_cycles else made <- made + 1
+      }
+    } else {
+      for (i in n_stations:1) {    # last station first, so it frees space behind it
+        has_part  <- i == 1 || stock[i - 1] > 0
+        has_space <- i == n_stations || stock[i] < buffer
+        if (up[i] && has_part && has_space) {
+          if (breaks[i]) {
+            down[i] <- repair_cycles
+          } else {
+            if (i > 1) stock[i - 1] <- stock[i - 1] - 1
+            if (i < n_stations) stock[i] <- stock[i] + 1 else made <- made + 1
+          }
+        }
+      }
+    }
+  }
+  made / n_cycles * 100
+}
+
+efficiency <- run_line(buffer_size)
+
+# The same line at a range of buffer sizes, for comparison
+sizes <- c(0, 1, 2, 3, 5, 8, 12, 20, 30)
+curve <- sapply(sizes, run_line)
+par(mar = c(4.5, 5, 3.5, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)
+plot(sizes, curve, type = "b", lwd = 3, pch = 19, col = "#2c3e50", ylim = c(0, 100), las = 1,
+     xlab = "Buffer between stations (parts)", ylab = "Line efficiency (%)",
+     main = "Each extra part of buffer buys less than the one before")
+points(buffer_size, efficiency, pch = 19, cex = 2.6, col = "#e74c3c")
+
+cat(sprintf("Line efficiency: %.1f%%\n", efficiency))
+cat(sprintf("  Parts made             %.0f in 2000 cycles\n", efficiency * 20))
+cat(sprintf("  Buffer between stations  %d parts\n", buffer_size))
+cat(sprintf("  Work-in-process allowed  up to %d parts\n", buffer_size * (n_stations - 1)))
+```
+
+</details>
+
 ------------------------------------------------------------------------
 
 ## Cellular Manufacturing

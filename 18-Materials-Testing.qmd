@@ -360,6 +360,64 @@ cat("behaviour -- e.g. an as-quenched, untempered specimen, or cast iron.\n")
 Looking back at @fig-stress-strain-comparison: which curve would you expect from the **as-quenched (untempered)** specimen you'll encounter conceptually in the hardness lab, if it were pulled in tension instead? *(Answer: highest strength, but the shortest, steepest curve of all — even less strain to failure than the quenched-and-tempered curve shown, since tempering is what restores ductility; see @sec-metallurgy-hardness-toughness.)*
 :::
 
+### Try it yourself: read a stress-strain curve
+
+The curve below is from a tensile test on a low-carbon steel specimen with a **50 mm gauge length**. Read the values off the graph; each small grid square is 20 MPa by 1% strain.
+
+```{r tryit-curve-fig, echo=FALSE, fig.align="center", fig.cap="Engineering stress-strain curve for the exercise", fig.width=10, fig.height=6}
+curve_yield <- 340; curve_uts <- 520; curve_fracture <- 440
+curve_e_uts <- 18; curve_e_frac <- 28      # strain in percent
+curve_e_yield <- curve_yield / 200000 * 100
+
+curve_strain <- c(0, curve_e_yield, seq(curve_e_yield, curve_e_uts, length.out = 80)[-1],
+                  seq(curve_e_uts, curve_e_frac, length.out = 40)[-1])
+curve_stress <- ifelse(
+  curve_strain <= curve_e_yield, curve_strain / 100 * 200000,
+  ifelse(curve_strain <= curve_e_uts,
+         curve_yield + (curve_uts - curve_yield) * (1 - ((curve_e_uts - curve_strain) / (curve_e_uts - curve_e_yield))^2),
+         curve_uts - (curve_uts - curve_fracture) * ((curve_strain - curve_e_uts) / (curve_e_frac - curve_e_uts))^2))
+
+ggplot(data.frame(strain = curve_strain, stress = curve_stress), aes(strain, stress)) +
+  geom_line(color = "#2C3E50", linewidth = 1.2) +
+  annotate("point", x = curve_e_frac, y = curve_fracture, shape = 4, size = 5, stroke = 1.5, color = "#E74C3C") +
+  scale_x_continuous(breaks = seq(0, 30, 5), minor_breaks = 0:30, limits = c(0, 30), expand = c(0, 0)) +
+  scale_y_continuous(breaks = seq(0, 600, 100), minor_breaks = seq(0, 600, 20), limits = c(0, 600), expand = c(0, 0)) +
+  labs(x = "Engineering strain (%)", y = "Engineering stress (MPa)") +
+  theme_minimal() +
+  theme(panel.grid.major = element_line(color = "#95A5A6", linewidth = 0.5),
+        panel.grid.minor = element_line(color = "#D5DBDB", linewidth = 0.3),
+        plot.margin = margin(10, 20, 10, 10))
+```
+
+```{r tryit-curve, echo=FALSE, results='asis'}
+tryit_number(
+  id = "read-the-curve",
+  title = "Read the stress-strain curve",
+  answers = list(
+    tryit_answer("Yield strength (where the straight line ends)", curve_yield, tol = 15, digits = 0, suffix = "MPa",
+                 hint = "Find the knee where the steep straight line gives way to the curve, and read across to the stress axis."),
+    tryit_answer("Ultimate tensile strength", curve_uts, tol = 10, digits = 0, suffix = "MPa",
+                 hint = "The highest point on the curve."),
+    tryit_answer("Strain at fracture", curve_e_frac, tol = 1, digits = 0, suffix = "%",
+                 hint = "Read down from the X that marks fracture."),
+    tryit_answer("Extension of the 50 mm gauge length at fracture", curve_e_frac / 100 * 50, tol = 0.6, digits = 0, suffix = "mm",
+                 hint = "Strain = extension / original length, so extension = strain x 50 mm. Use the strain as a decimal.")
+  )
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+- **Yield strength:** the straight elastic line ends at about **`r curve_yield` MPa**. On this scale the elastic line is almost vertical, because a strain of only `r sprintf("%.2f", curve_e_yield)`% is enough to reach yield.
+- **Ultimate tensile strength:** the curve peaks at **`r curve_uts` MPa**, at about `r curve_e_uts`% strain. Necking starts here.
+- **Strain at fracture:** the X is at **`r curve_e_frac`%**, and the stress has fallen to about `r curve_fracture` MPa.
+- **Extension at fracture:** 0.`r curve_e_frac` × 50 mm = **`r curve_e_frac / 100 * 50` mm**.
+
+The engineering stress falls after the UTS even though the metal itself is still getting stronger. The load is being divided by the *original* area, while the real cross-section in the neck is shrinking fast.
+
+</details>
+
 ### Try it yourself: walk along the curve
 
 A ductile steel specimen is pulled to failure. Put what happens in order, from the first newton of load to the two broken halves.

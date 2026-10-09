@@ -311,6 +311,18 @@
       });
     });
 
+    // "Run again" on a simulation card: move the seed input on by one.
+    const rerun = card.querySelector(".qwebr-calc-rerun");
+    if (rerun) {
+      rerun.addEventListener("click", function () {
+        // (the button names the seed input in data-seed-var, not data-var, so it
+        // is not itself picked up as one of the card's inputs)
+        const seed = card.querySelector(`[data-var="${rerun.dataset.seedVar}"]`);
+        seed.value = (parseInt(seed.value, 10) || 0) + 1;
+        run();
+      });
+    }
+
     whenReady(run);
   }
 
