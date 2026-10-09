@@ -339,6 +339,36 @@ Produces a focused, audience-appropriate, length-controlled explanation that the
 
 ***
 
+#### Try it yourself: take a prompt apart
+
+The seven sentences below make up one R-C-T-C-F prompt. Decide which element each sentence is.
+
+```{r tryit-rctcf-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "rctcf-sort",
+  title = "Which R-C-T-C-F element?",
+  bins = c("Role", "Context", "Task", "Constraints", "Format"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "You are a maintenance planner at a food-packaging plant.",
+  "Role", "It tells the LLM who to act as.",
+  "Our filler line has had four unplanned stops this month, all on the capping head.",
+  "Context", "Background the LLM needs and cannot know.",
+  "The capper is 12 years old and spare parts take three weeks to arrive.",
+  "Context", "More background about the situation.",
+  "Draft a one-page case for replacing the capping head.",
+  "Task", "What you actually want done.",
+  "Use only the downtime figures I paste below; do not invent costs.",
+  "Constraints", "A limit on what the LLM may do, aimed at hallucinated numbers.",
+  "Keep it under 300 words.",
+  "Constraints", "A limit on length.",
+  "Give me a summary paragraph followed by a three-row table: option, cost, downtime avoided.",
+  "Format", "How the output should be laid out."
+  ),
+  intro = "Pick the element each sentence belongs to."
+)
+```
+
 ### Self-Check Questions — Week 1 {#ml-w1-check}
 
 Work through these in your own words before the Week 2 lecture. If you find yourself looking answers up in these notes rather than recalling them, re-read the relevant section.

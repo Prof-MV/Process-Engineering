@@ -289,7 +289,9 @@ qwebr_calc_card(
     qwebr_calc_input("L0", "Gauge length", value = 50.0, min = 10, max = 100, step = 1, suffix = "mm"),
     qwebr_calc_input("P_elastic", "Elastic-region load", value = 15000, min = 1000, max = 50000, step = 500, suffix = "N", type = "slider"),
     qwebr_calc_input("dL_elastic", "Measured elongation", value = 0.018, min = 0.001, max = 0.100, step = 0.001, suffix = "mm")
-  )
+  ),
+  goal = "This specimen is steel, so E should come out near 200 GPa. Leaving the load and dimensions alone, what elongation should the extensometer have read to give 195 to 205 GPa?",
+  goal_test = "E_modulus >= 195000 && E_modulus <= 205000 && P_elastic == 15000 && D0 == 12.83 && L0 == 50"
 )
 ```
 
@@ -357,6 +359,58 @@ cat("behaviour -- e.g. an as-quenched, untempered specimen, or cast iron.\n")
 ::: {.callout-tip title="Quick check"}
 Looking back at @fig-stress-strain-comparison: which curve would you expect from the **as-quenched (untempered)** specimen you'll encounter conceptually in the hardness lab, if it were pulled in tension instead? *(Answer: highest strength, but the shortest, steepest curve of all — even less strain to failure than the quenched-and-tempered curve shown, since tempering is what restores ductility; see @sec-metallurgy-hardness-toughness.)*
 :::
+
+### Try it yourself: walk along the curve
+
+A ductile steel specimen is pulled to failure. Put what happens in order, from the first newton of load to the two broken halves.
+
+```{r tryit-curve-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "curve-order",
+  title = "A tensile test, start to finish",
+  steps = c(
+    "Elastic deformation: stress is proportional to strain and fully recoverable",
+    "Yield: permanent deformation begins",
+    "Strain hardening: stress keeps rising as the specimen deforms uniformly",
+    "Ultimate tensile strength: the maximum load is reached",
+    "Necking: deformation concentrates in one place and the engineering stress falls",
+    "Fracture"
+  ),
+  intro = "Move each stage up or down until the sequence is right."
+)
+```
+
+### Try it yourself: ductile or brittle?
+
+Eight observations made after a tensile or Charpy test. Decide which kind of fracture each one points to.
+
+```{r tryit-fracture-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "fracture-sort",
+  title = "Ductile or brittle fracture?",
+  bins = c("Ductile", "Brittle"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A cup-and-cone fracture surface.",
+  "Ductile", "The classic shape left by necking followed by shear at the rim.",
+  "A dull, fibrous-looking fracture surface.",
+  "Ductile", "Plastic tearing leaves a rough, light-absorbing surface.",
+  "The specimen necked visibly before it broke.",
+  "Ductile", "Necking is large local plastic deformation.",
+  "Percent elongation of 30%.",
+  "Ductile", "A large permanent stretch before fracture.",
+  "A flat fracture surface at right angles to the load.",
+  "Brittle", "Cleavage runs straight across with almost no plastic deformation.",
+  "A bright, granular, faceted fracture surface.",
+  "Brittle", "Cleavage facets reflect light.",
+  "The two halves fit back together almost perfectly.",
+  "Brittle", "Nothing stretched or necked, so the original shape is kept.",
+  "Very little energy absorbed in a Charpy test.",
+  "Brittle", "A crack that runs easily takes little energy."
+  ),
+  intro = "Decide what kind of fracture each observation points to."
+)
+```
 
 ---
 
@@ -787,6 +841,26 @@ gridExtra::grid.arrange(p_annealed, p_normalized, p_quenched, ncol = 3)
 **Answer:** Annealed: coarsest pearlite + ferrite, most relaxed-looking grain structure. Normalized: finer, more uniform pearlite + ferrite than annealed. Quenched (untempered): acicular (needle-like) martensite, visually the most different from the other two — no pearlite lamellae at all if fully martensitic. This visual ranking should match the hardness ranking from the Part A practice problem in @sec-metallurgy-low-carbon-hardening.
 </details>
 
+### Try it yourself: prepare the specimen
+
+A metallographic specimen has to be prepared in a fixed order, because each step removes the damage left by the one before. Put the steps in order.
+
+```{r tryit-metallography-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "metallography-order",
+  title = "Metallographic preparation",
+  steps = c(
+    "Sectioning: cut a small sample from the part",
+    "Mounting: embed the sample so it can be handled",
+    "Grinding: remove the cut surface with successively finer papers",
+    "Polishing: remove the grinding scratches to a mirror finish",
+    "Etching: attack the surface chemically to reveal the microstructure",
+    "Examination under the microscope"
+  ),
+  intro = "Move each step up or down until the sequence is right."
+)
+```
+
 ---
 
 ## How Other Materials Behave {#sec-testing-other-materials}
@@ -906,18 +980,52 @@ kableExtra::kable(comparison, caption = "Relative behaviour of common engineerin
 
 ## Practice Problems {#sec-testing-practice}
 
-<details>
-<summary>Problem 1 (calculation): stress and strain</summary>
+**Problem 1 (calculation): stress and strain**
 
 **Problem:** A round tensile specimen, 10.0 mm original diameter and 50.0 mm original gauge length, is loaded to 35 000 N and stretches by 0.15 mm at that load (still elastic). Calculate the engineering stress and strain at that point, and estimate the modulus of elasticity.
+
+```{r tryit-p1, echo=FALSE, results='asis'}
+p1_A0 <- pi * (10.0 / 2)^2
+p1_stress <- 35000 / p1_A0; p1_strain <- 0.15 / 50.0
+
+tryit_number(
+  id = "practice-p1",
+  title = "Problem 1: stress, strain and modulus",
+  answers = list(
+    tryit_answer("Engineering stress", p1_stress, tol = 1, suffix = "MPa", digits = 0, hint = "Force divided by the ORIGINAL cross-sectional area, pi x (d/2)^2."),
+    tryit_answer("Engineering strain", p1_strain, tol = 0.0001, digits = 4, hint = "Change in length divided by the original gauge length. It has no units."),
+    tryit_answer("Modulus of elasticity", p1_stress / p1_strain / 1000, tol = 2, suffix = "GPa", digits = 0, hint = "E = stress / strain, then convert MPa to GPa.")
+  ),
+  question = "<p>A round tensile specimen, 10.0 mm original diameter and 50.0 mm original gauge length, is loaded to 35 000 N and stretches by 0.15 mm at that load (still elastic). Calculate the engineering stress and strain, and estimate the modulus of elasticity.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Answer:** $A_0 = \pi(5.0)^2 = 78.5$ mm². $\sigma = 35000/78.5 = 446$ MPa. $\varepsilon = 0.15/50.0 = 0.0030$. $E = \sigma/\varepsilon = 446/0.0030 \approx 149\,000$ MPa $\approx 149$ GPa (somewhat lower than the ~200 GPa typical of steel — in a real test this gap would prompt a check of the extensometer/load reading, since E should be close to 200 GPa for any steel regardless of grade or heat treatment).
 </details>
 
-<details>
-<summary>Problem 2 (calculation): ductility measures</summary>
+**Problem 2 (calculation): ductility measures**
 
 **Problem:** The specimen from Problem 1 fractures at $L_f = 66.5$ mm and a minimum diameter of 6.2 mm. Calculate %EL and %RA.
+
+```{r tryit-p2, echo=FALSE, results='asis'}
+p2_A0 <- pi * (10.0 / 2)^2; p2_Af <- pi * (6.2 / 2)^2
+
+tryit_number(
+  id = "practice-p2",
+  title = "Problem 2: ductility",
+  answers = list(
+    tryit_answer("Percent elongation (%EL)", (66.5 - 50.0) / 50.0 * 100, tol = 0.5, suffix = "%", digits = 0, hint = "(Lf - L0) / L0 x 100"),
+    tryit_answer("Percent reduction of area (%RA)", (p2_A0 - p2_Af) / p2_A0 * 100, tol = 1, suffix = "%", digits = 0, hint = "(A0 - Af) / A0 x 100. Work out both areas from the diameters.")
+  ),
+  question = "<p>A round tensile specimen with a 10.0 mm original diameter and a 50.0 mm original gauge length fractures at a final length of 66.5 mm and a minimum diameter of 6.2 mm. Calculate %EL and %RA.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Answer:** %EL = (66.5 − 50.0)/50.0 × 100 = 33%. $A_f = \pi(3.1)^2 = 30.2$ mm². %RA = (78.5 − 30.2)/78.5 × 100 ≈ 62%. Both values indicate a quite ductile material.
 </details>
@@ -930,10 +1038,26 @@ kableExtra::kable(comparison, caption = "Relative behaviour of common engineerin
 **Answer:** The sharp-yield, lower-elongation, (implied) higher-strength specimen is more likely **cold-rolled** — recall @sec-metallurgy-hrs-crs, cold work raises strength and lowers ductility. The smooth-yielding, higher-elongation, lower-UTS specimen is more likely **hot-rolled/annealed**.
 </details>
 
-<details>
-<summary>Problem 4 (calculation): Vickers hardness</summary>
+**Problem 4 (calculation): Vickers hardness**
 
 **Problem:** A Vickers test at 1 kgf produces a mean diagonal of 0.085 mm. Calculate HV, and estimate the equivalent tensile strength using @eq-hardness-uts (treat HV ≈ HB for this estimate — a simplification, not exact for all hardness ranges).
+
+```{r tryit-p4, echo=FALSE, results='asis'}
+p4_HV <- 1.8544 * 1 / 0.085^2
+
+tryit_number(
+  id = "practice-p4",
+  title = "Problem 4: Vickers hardness",
+  answers = list(
+    tryit_answer("Vickers hardness", p4_HV, tol = 2, suffix = "HV", digits = 0, hint = "HV = 1.8544 x F / d^2, with F in kgf and d in mm."),
+    tryit_answer("Estimated tensile strength", 3.45 * p4_HV, tol = 8, suffix = "MPa", digits = 0, hint = "UTS is roughly 3.45 x HB; treat HV as HB here.")
+  ),
+  question = "<p>A Vickers test at 1 kgf produces a mean diagonal of 0.085 mm. Calculate HV, then estimate the tensile strength from UTS = 3.45 x HB, treating HV as approximately equal to HB.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Answer:** $HV = 1.8544(1)/0.085^2 = 1.8544/0.007225 \approx 257$ HV. Estimated UTS $\approx 3.45 \times 257 \approx 887$ MPa.
 </details>

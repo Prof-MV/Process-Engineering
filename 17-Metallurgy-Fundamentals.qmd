@@ -529,7 +529,9 @@ qwebr_calc_card(
     qwebr_calc_input("C_ferrite", "Ferrite solvus (C)", value = 0.02, min = 0.00, max = 0.10, step = 0.01, suffix = "% C"),
     qwebr_calc_input("C_eutectoid", "Eutectoid composition", value = 0.76, min = 0.60, max = 0.90, step = 0.01, suffix = "% C"),
     qwebr_calc_input("C_alloy", "Alloy carbon content", value = 0.20, min = 0.05, max = 0.76, step = 0.01, suffix = "% C", type = "slider")
-  )
+  ),
+  goal = "Find the carbon content that gives a microstructure of half ferrite and half pearlite (within 2 points).",
+  goal_test = "abs(frac_pearlite - 0.5) <= 0.02 && C_ferrite == 0.02 && C_eutectoid == 0.76"
 )
 ```
 
@@ -571,6 +573,36 @@ The **AISI/SAE** designation system lets you read approximate composition straig
 
 **Answer:** It's a plain carbon steel (10xx series) with approximately 0.30% carbon — hypoeutectoid, roughly midway in carbon content between 1018 (0.18%) and 1045 (0.45%). You'd expect it to harden more than 1018 but less than 1045-1060 grades, and to have intermediate as-rolled strength and ductility.
 </details>
+
+### Try it yourself: classify the steel
+
+Read the carbon content from each designation, compare it with the eutectoid composition (about 0.76% C), and classify the steel.
+
+```{r tryit-steel-class-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "steel-class-sort",
+  title = "Hypoeutectoid, eutectoid or hypereutectoid?",
+  bins = c("Hypoeutectoid", "Eutectoid", "Hypereutectoid"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "AISI 1018",
+  "Hypoeutectoid", "The last two digits give 0.18% C, well below 0.76%: ferrite plus a little pearlite.",
+  "AISI 1020",
+  "Hypoeutectoid", "0.20% C: mostly proeutectoid ferrite.",
+  "AISI 1045",
+  "Hypoeutectoid", "0.45% C: roughly half ferrite, half pearlite.",
+  "AISI 1060",
+  "Hypoeutectoid", "0.60% C is still below the eutectoid: mostly pearlite with some ferrite.",
+  "A plain carbon steel with 0.76% C",
+  "Eutectoid", "At the eutectoid composition the structure is essentially all pearlite.",
+  "AISI 1095",
+  "Hypereutectoid", "0.95% C: pearlite with proeutectoid cementite at the grain boundaries.",
+  "A plain carbon tool steel with 1.2% C",
+  "Hypereutectoid", "Above 0.76% C: cementite forms first on slow cooling."
+  ),
+  intro = "Classify each steel by its carbon content."
+)
+```
 
 ---
 
@@ -852,10 +884,24 @@ Summary of the five heat treatments: process, resulting microstructure, and rela
 
 ## Practice Problems {#sec-metallurgy-practice}
 
-<details>
-<summary>Problem 1 (calculation): Hall-Petch</summary>
+**Problem 1 (calculation): Hall-Petch**
 
 **Problem:** A steel has $\sigma_0 = 70$ MPa and $k = 18$ MPa·mm$^{0.5}$. Estimate its yield strength for a grain size of (a) 0.10 mm and (b) 0.01 mm.
+
+```{r tryit-p1, echo=FALSE, results='asis'}
+tryit_number(
+  id = "practice-p1",
+  title = "Problem 1: Hall-Petch",
+  answers = list(
+    tryit_answer("(a) Yield strength at d = 0.10 mm", 70 + 18 * 0.10^-0.5, tol = 1, suffix = "MPa", digits = 0, hint = "Yield strength = sigma_0 + k x d^(-1/2)"),
+    tryit_answer("(b) Yield strength at d = 0.01 mm", 70 + 18 * 0.01^-0.5, tol = 1, suffix = "MPa", digits = 0, hint = "0.01^(-1/2) = 10")
+  ),
+  question = "<p>A steel has sigma_0 = 70 MPa and k = 18 MPa.mm^0.5 in the Hall-Petch relationship. Estimate its yield strength for a grain size of (a) 0.10 mm and (b) 0.01 mm.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Answer:** (a) $\sigma_y = 70 + 18(0.10)^{-0.5} = 70 + 18(3.16) = 70 + 57 \approx 127$ MPa. (b) $\sigma_y = 70 + 18(0.01)^{-0.5} = 70 + 18(10) = 70 + 180 = 250$ MPa. Refining the grain size by a factor of 10 roughly doubled the yield strength.
 </details>
@@ -868,10 +914,26 @@ Summary of the five heat treatments: process, resulting microstructure, and rela
 **Answer:** 0.80% C is just above the eutectoid composition (~0.76–0.8%), so 1080 is essentially eutectoid to very slightly hypereutectoid. At exactly the eutectoid composition it would form almost 100% pearlite with no proeutectoid phase; if treated as very slightly hypereutectoid, a small amount of proeutectoid cementite would form at grain boundaries before the eutectoid reaction.
 </details>
 
-<details>
-<summary>Problem 3 (phase diagram reading): lever rule</summary>
+**Problem 3 (phase diagram reading): lever rule**
 
 **Problem:** Estimate the fraction of proeutectoid ferrite in slowly-cooled AISI 1020 (0.20% C).
+
+```{r tryit-p3, echo=FALSE, results='asis'}
+p3_pearlite <- (0.20 - 0.02) / (0.76 - 0.02)
+
+tryit_number(
+  id = "practice-p3",
+  title = "Problem 3: lever rule",
+  answers = list(
+    tryit_answer("Proeutectoid ferrite", (1 - p3_pearlite) * 100, tol = 1, suffix = "%", digits = 0, hint = "Find the pearlite fraction first: (C_alloy - 0.02) / (0.76 - 0.02). Ferrite is the rest."),
+    tryit_answer("Pearlite", p3_pearlite * 100, tol = 1, suffix = "%", digits = 0)
+  ),
+  question = "<p>Using the lever rule with a ferrite solvus of 0.02% C and a eutectoid composition of 0.76% C, estimate the percentages of proeutectoid ferrite and pearlite in slowly cooled AISI 1020 (0.20% C).</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Answer:** Fraction pearlite = (0.20 − 0.02)/(0.76 − 0.02) = 0.18/0.74 ≈ 0.24. Fraction proeutectoid ferrite ≈ 1 − 0.24 = 0.76, i.e. about 76% ferrite, 24% pearlite — consistent with 1020 being a low-carbon, mostly-ferritic, relatively soft and ductile steel.
 </details>

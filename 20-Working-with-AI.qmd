@@ -384,6 +384,33 @@ kable(rate_these, col.names = c("#", "Prompt", "Your Rating (B/M/G)", "Justifica
   column_spec(4, width = if (knitr::is_html_output()) "25%" else NULL)
 ```
 
+#### Try it yourself: rate the five prompts
+
+Rate the five prompts from the table, then check. Use the table's last column to note your reasons before you look at the feedback.
+
+```{r tryit-rate-prompts, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "rate-prompts",
+  title = "Bad, Medium or Good?",
+  bins = c("Bad", "Medium", "Good"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "How do I wire a motor?",
+  "Bad", "No motor type, voltage, starter or application. Any answer has to guess, and a wrong guess here is a safety problem.",
+  "Explain the difference between VFD and soft starter for a 50HP motor application in a cement plant with high dust.",
+  "Medium", "It gives the motor size and the environment, but not what decision is being made or what form the answer should take.",
+  "Write code for Arduino.",
+  "Bad", "No task, no hardware and no requirements.",
+  "Design a sensor network for predictive maintenance on a CNC machine. Include vibration, temperature, and current sensors with sampling rates and communication protocol recommendations.",
+  "Good", "A specific task, a defined scope and a clear statement of what the answer must contain.",
+  "Help with my project.",
+  "Bad", "Nothing for the AI to work with."
+  ),
+  intro = "Rate each prompt."
+)
+```
+
+
 ---
 
 ## The Four Steps of Effective AI Use
@@ -508,6 +535,24 @@ AI is not appropriate when:
 **Rule of thumb**: If a human expert would need to be physically present, AI cannot substitute.
 
 </details>
+
+### Try it yourself: order the four steps
+
+Put the four steps of effective AI use in order.
+
+```{r tryit-four-steps-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "four-steps-order",
+  title = "The four steps of effective AI use",
+  steps = c(
+    "Define the task",
+    "Prompt with context",
+    "Iterate and refine",
+    "Validate and apply"
+  ),
+  intro = "Move each step up or down until the sequence is right."
+)
+```
 
 ---
 

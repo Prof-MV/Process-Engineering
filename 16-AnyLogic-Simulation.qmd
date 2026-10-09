@@ -198,6 +198,34 @@ ggplot() +
 - Policy analysis
 - Long-term trends and forecasting
 
+#### Try it yourself: pick the paradigm
+
+Six questions a plant might want a simulation to answer. Decide which modeling paradigm suits each one best.
+
+```{r tryit-paradigm-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "paradigm-sort",
+  title = "Which simulation paradigm?",
+  bins = c("Discrete-event (DES)", "Agent-based (ABM)", "System dynamics (SD)"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A three-station assembly line with buffers between stations: where is the bottleneck, and what is the throughput?",
+  "Discrete-event (DES)", "Entities flow through a sequence of processes and queues.",
+  "Trucks arrive at a four-door receiving dock: how long does the queue get at peak?",
+  "Discrete-event (DES)", "Arrivals, queues and limited resources are the core of DES.",
+  "Fifty order pickers and AMRs share warehouse aisles, each choosing its own route and avoiding the others.",
+  "Agent-based (ABM)", "The behaviour of the whole emerges from individuals making their own decisions.",
+  "How does word of mouth between individual customers spread adoption of a new product?",
+  "Agent-based (ABM)", "Each customer is an agent influenced by its neighbours.",
+  "How do plant-wide inventory, order backlog and hiring feed back on one another over five years?",
+  "System dynamics (SD)", "Aggregate stocks, flows and feedback loops over a long horizon.",
+  "What does a long-term cut in the maintenance budget do to overall equipment condition and the breakdown rate?",
+  "System dynamics (SD)", "A strategic, aggregate question about accumulations and delays."
+  ),
+  intro = "Pick the paradigm that suits each question best."
+)
+```
+
 ### Choosing the Right Paradigm
 
 ```{r fig-paradigm-selection, echo=FALSE, fig.cap="Decision framework for selecting simulation paradigm", fig.align='center', fig.width=10, fig.height=6}
@@ -1042,6 +1070,21 @@ A refrigerator assembly plant operates two 8-hour shifts per day with a 30-minut
 a) Calculate the takt time in seconds
 b) If the bottleneck station has a cycle time of 62 seconds, will they meet demand? Why or why not?
 c) Suggest two approaches to resolve the issue
+
+```{r tryit-p1, echo=FALSE, results='asis'}
+p1_available <- 2 * (8 * 60 - 30) * 60   # seconds per day
+p1_takt <- p1_available / 720
+
+tryit_number(
+  id = "practice-p1",
+  title = "Problem 1: check your numbers",
+  answers = list(
+    tryit_answer("Takt time", p1_takt, tol = 0.5, suffix = "sec", digits = 0, hint = "Two shifts, each 8 hours less a 30-minute lunch, divided by daily demand. Work in seconds."),
+    tryit_answer("Spare time per unit at the 62-second bottleneck", p1_takt - 62, tol = 0.5, suffix = "sec", digits = 0, hint = "Takt time minus the bottleneck cycle time. A positive number means demand is met.")
+  ),
+  question = "<p>A refrigerator assembly plant operates two 8-hour shifts per day with a 30-minute lunch break per shift. Customer demand is 720 units per day. The bottleneck station has a cycle time of 62 seconds.</p>"
+)
+```
 
 ### Problem 2: Simulation Model Design
 
