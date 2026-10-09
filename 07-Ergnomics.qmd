@@ -369,6 +369,36 @@ ggplot(force_data, aes(x = reorder(factor, impact), y = impact)) +
 
 </details>
 
+### Try it yourself: name the risk factor
+
+Seven observations from a plant walk-through. Name the main ergonomic risk factor in each.
+
+```{r tryit-risk-factor-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "risk-factor-sort",
+  title = "Which ergonomic risk factor?",
+  bins = c("Awkward postures", "Repetition", "Force", "Static positions", "Contact stress", "Vibration", "Environmental factors"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "An assembler works with both arms above shoulder height to fit a headliner.",
+  "Awkward postures", "The joints are far from their neutral position.",
+  "A packer makes the same wrist motion 12 times a minute for the whole shift.",
+  "Repetition", "The same tissues are loaded again and again with no recovery time.",
+  "An operator pushes a 300 kg cart over a floor joint by hand.",
+  "Force", "High muscular effort in a single exertion.",
+  "An inspector stands in one spot, looking down at a microscope, for two hours.",
+  "Static positions", "Muscles held in one position without movement fatigue quickly.",
+  "A worker rests a forearm on the sharp edge of a bench while using a hand tool.",
+  "Contact stress", "A hard edge presses on soft tissue and restricts blood flow.",
+  "A fettler grinds castings with a hand-held grinder for most of the shift.",
+  "Vibration", "Hand-arm vibration from a powered tool.",
+  "Order pickers work in a freezer at -20 degrees C.",
+  "Environmental factors", "Cold reduces dexterity and blood flow, which raises the risk from every other factor."
+  ),
+  intro = "Name the main risk factor in each observation."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Musculoskeletal Disorders (MSDs)
@@ -1693,7 +1723,9 @@ qwebr_calc_card(
     qwebr_calc_input("D", "Vertical travel distance", value = 60, min = 10, max = 150, step = 5, suffix = "cm"),
     qwebr_calc_input("A", "Asymmetry angle", value = 30, min = 0, max = 135, step = 5, suffix = "deg"),
     qwebr_calc_input("actual_weight", "Actual load weight", value = 15, min = 5, max = 50, step = 1, suffix = "kg", type = "slider")
-  )
+  ),
+  goal = "Redesign the lift so that the Lifting Index is 1.0 or less. The load has to stay at 15 kg or more.",
+  goal_test = "LI <= 1 && actual_weight >= 15"
 )
 ```
 
@@ -2238,10 +2270,10 @@ The seven ergonomic risk factors are:
 
 </details>
 
-<details>
-<summary>Question 4: Calculate the NIOSH Lifting Index for the following task and determine if intervention is needed.</summary>
+**Question 4: Calculate the NIOSH Lifting Index for the following task and determine if intervention is needed.**
 
 **Task Parameters:**
+
 - Horizontal distance (H): 35 cm
 - Vertical height (V): 80 cm
 - Travel distance (D): 50 cm
@@ -2249,6 +2281,24 @@ The seven ergonomic risk factors are:
 - Frequency: 4 lifts/minute for 1 hour
 - Coupling: Good (handles)
 - Actual load: 18 kg
+
+```{r tryit-q4, echo=FALSE, results='asis'}
+q4_rwl <- 23 * (25 / 35) * (1 - 0.003 * abs(80 - 75)) * (0.82 + 4.5 / 50) * (1 - 0.0032 * 0) * 0.75 * 1.0
+
+tryit_number(
+  id = "review-q4",
+  title = "Question 4: NIOSH Lifting Index",
+  intro = "From the tables: FM = 0.75 (4 lifts/min, 1 hour) and CM = 1.0 (good coupling).",
+  answers = list(
+    tryit_answer("Recommended Weight Limit (RWL)", q4_rwl, tol = 0.1, suffix = "kg", digits = 1, hint = "RWL = LC x HM x VM x DM x AM x FM x CM, with LC = 23 kg."),
+    tryit_answer("Lifting Index (LI)", 18 / q4_rwl, tol = 0.03, digits = 2, hint = "Actual load divided by RWL.")
+  ),
+  question = "<p>A lifting task has horizontal distance H = 35 cm, vertical height V = 80 cm, travel distance D = 50 cm and no asymmetry. The actual load is 18 kg. From the tables, FM = 0.75 (4 lifts/min for 1 hour) and CM = 1.0 (good coupling). LC = 23 kg.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 ```
