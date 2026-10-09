@@ -557,11 +557,11 @@ write_lab("ergonomics-reba", "Ergonomics in Automated Manufacturing (REBA)",
     "least three sources of error or disagreement</b> a REBA score is exposed to "
     "(e.g. which moment is scored as \"worst\", joint-angle estimation by eye, "
     "coupling/activity judgement calls, inter-rater variation). Reference the "
-    "Chapter 7 risk factors. Give one advantage and one limitation of the manual "
+    "Chapter 4 risk factors. Give one advantage and one limitation of the manual "
     "method, and <b>propose one change to the scoring procedure</b> (e.g. scoring "
     "from a recorded video, a second independent rater, a standardised checklist) "
     "that would make the score more repeatable.</p>",
-    4, 3, "At least three specific sources of error/disagreement + one advantage and one limitation, tied to Ch.7 + one proposed improvement.",
+    4, 3, "At least three specific sources of error/disagreement + one advantage and one limitation, tied to Ch.4 + one proposed improvement.",
     "Sources of error are specific to REBA scoring, not generic; advantage/limitation are specific, not generic; proposed improvement is plausible and specific."),
   q("Conclusion and recommended controls (1 mark)",
     "<p>In a short paragraph: why does ergonomics matter in an automated "
@@ -665,7 +665,7 @@ write_lab("ml-week1-ai-literacy", "Machine Learning Week 1: AI Literacy and Prom
     3, 3, "Five rewrites, each with all five labelled elements + a two-sentence reflection.",
     "All five R-C-T-C-F elements present and meaningful for each prompt; reflection describes a real difference in output."),
   q("Exercise 2 - FMEA summarisation at three audiences (2 marks)",
-    "<p>Using the CNC Cell 3 FMEA from Chapter 21 (Week 1), craft and run three "
+    "<p>Using the CNC Cell 3 FMEA from Chapter 10 (Week 1), craft and run three "
     "prompts that summarise it for: (a) plant manager Sophie Tran -- top business "
     "risks in one paragraph; (b) a quality engineer -- top 5 risks by RPN with "
     "mitigation status; (c) a new operator -- a plain-language 'what to watch for' "
@@ -906,7 +906,7 @@ write_lab("ml-week5-deploy", "Machine Learning Week 5: Deploying the App",
   "Google Colab. Create the accounts as PREP, not in the lab.",
   "Files from FOL: streamlit_app.py starter (with TODO markers). Bring "
   "rul_model.pkl and feature_cols.pkl from ML Week 4.",
-  "If the take-home Robotic Work-Cell Design lab is assigned, it is released this week -- read its brief.",
+  "If the take-home Robotic Work-Cell Design lab is assigned, check its due date.",
   "AI use: REQUIRED -- you must be able to explain every line."],
  [DECL,
   q("Task 1 - Run the Streamlit app locally (3 marks)",
@@ -1095,7 +1095,7 @@ write_lab("tpm-oee-rca", "TPM/OEE, Root Cause and a New Dataset",
 
 # ----------------------------------------------------------------------------- robodk-work-cell
 write_lab("robodk-work-cell", "Robotic Work-Cell Design in RoboDK for Web (take-home)",
- ["TAKE-HOME lab: released in week 11, due at the end of week 14, done on your own "
+ ["TAKE-HOME lab: released in week 12, due at the end of week 15, done on your own "
   "computer. Individual work.",
   "Tool: RoboDK for Web (web.robodk.com/simulation) -- no install, no licence "
   "key. Plus a screen-recording tool (Windows Xbox Game Bar Win+G, macOS "
@@ -1115,7 +1115,7 @@ write_lab("robodk-work-cell", "Robotic Work-Cell Design in RoboDK for Web (take-
     "coordinates.</p>"
     "<p>Drive it toward a <b>wrist singularity</b> and toward a <b>joint limit</b> "
     "and <b>record what the simulator does in each case</b>. Relate this to the "
-    "block-programming work in the Logic Thinking (Rocksi) lab and to the Chapter 8 coordinate systems.</p>",
+    "block-programming work in the Logic Thinking (Rocksi) lab and to the Chapter 3 coordinate systems.</p>",
     1, 3, "Arm named + jog in all three frames + singularity and joint-limit behaviour recorded.",
     "Distinguishes the three jog frames; describes the specific simulator behaviour at a singularity and at a joint limit."),
   q("Task 2 - Build the kitting cell (2 marks)",
@@ -1148,10 +1148,10 @@ write_lab("robodk-work-cell", "Robotic Work-Cell Design in RoboDK for Web (take-
     3, 4, "Lean-lab takt stated + meet/miss before optimisation + optimised cycle time + gap quantified + real-cell mitigation.",
     "Uses the student's Lean-lab takt; before/after cycle times; optimisation changes are physically plausible (no joint speeds past limits); gap quantified."),
   q("Task 5 - Safeguarding distance (1 mark)",
-    "<p>Using the Chapter 6 minimum-distance / safeguarding-distance formula, "
+    "<p>Using the Chapter 13 minimum-distance / safeguarding-distance formula, "
     "<b>compute the minimum guarding distance</b> from an assumed robot-plus-sensor "
     "stopping time (<b>state your assumption</b>).</p>"
-    "<p>State <b>which Chapter 6 safeguard you would specify</b> for this cell "
+    "<p>State <b>which Chapter 13 safeguard you would specify</b> for this cell "
     "(fixed guard, interlocked gate, light curtain, area scanner, two-hand "
     "control) and <b>why</b>.</p>",
     1, 3, "Minimum distance computed with a stated stopping time + a specific safeguard chosen and justified.",
@@ -1448,7 +1448,7 @@ write_lab("variable-charts", "Variable Control Charts: X-bar, R and S",
   "subgroups of ten (the bearings are tapered -- do not measure diameter).",
   "Constants for n = 10: A2 = 0.308, B3 = 0.284, B4 = 1.716, D3 = 0.223, D4 = 1.777. "
   "Use the corrected worksheet: LabInstructions/Quality_Labs/fixed/Variable "
-  "Control Charts - fixed.xlsx (out-of-control rules aligned with Chapter 10).",
+  "Control Charts - fixed.xlsx (out-of-control rules aligned with Chapter 11).",
   "AI use: not permitted -- the measurements, calculations and charts must be your own."],
  [HANDS_DECL(),
   q("Task 1 - Collect the data (2 marks)",

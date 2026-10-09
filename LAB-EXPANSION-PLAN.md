@@ -133,24 +133,25 @@ The current chapter order breaks two labs badly:
 - **Ch 20 + 21 (AI, ML) are last, but the ML labs run weeks 7–12**, and Ch 21
   is explicitly a six-week module of "2 h theory + 2 h lab per week".
 
-Target grid — every lab's prerequisite chapter now precedes it:
+**Superseded for the current semester** (chapters renumbered 1–15 in teaching order; Lean, TPM/OEE-RCA and Ch 16–20 move to the next course). Target grid — every lab's prerequisite chapter now precedes it:
 
 | Wk | Lecture | Lab |
 |---|---|---|
-| 1 | Ch 1 Types of Manufacturing | Lab 1 LightBot & Rocksi |
-| 2 | Ch 2 Process & Design · Ch 8 Industrial Robotics | Lab 2 Design Documentation |
-| 3 | Ch 4 Plant Layout · Ch 16 AnyLogic Simulation | Lab 3 Facility Design & Simulation |
-| 4 | Ch 3 Integrated Mfg Systems · Ch 5 Lean | **Lab 4 Lean VSM** |
-| 5 | Ch 7 Ergonomics · Ch 6 Guarding & Safety pt 1 | Lab 5 Ergonomics |
-| 6 | Ch 10 SPC · Ch 11 MSA | **Lab 6 SPC & Gauge R&R** |
-| 7 | **Midterm** · Ch 20 Working with AI | Lab 7 ML W1 |
-| 8 | Ch 21 Weeks 1–2 | Lab 8 ML W2 |
-| 9 | Ch 21 Week 3 · Ch 12 TPM | Lab 9 ML W3 |
-| 10 | Ch 21 Week 4 · Ch 15 Troubleshooting & RCA | Lab 10 ML W4 |
-| 11 | Ch 21 Week 5 · Ch 6 Safety pt 2 · Ch 9 Automation | Lab 11 ML W5 — **release Lab 14** |
-| 12 | Ch 21 Week 6 · Ch 13 Quality Systems | Lab 12 ML Capstone |
-| 13 | Ch 14 PFMEA | **Lab 13 TPM/OEE & RCA** |
-| 14 | **Final Test** · review | **Lab 14 RoboDK due** |
+| 1 | Ch 1 Types of Manufacturing | Logic Thinking (Rocksi) |
+| 2 | Ch 2 Process & Design · Ch 3 Industrial Robotics | Engineering Design Process Documentation |
+| 3 | Ch 4 Ergonomics & Automated Manufacturing · Ch 5 Measurement Systems Analysis | Ergonomics (REBA) |
+| 4 | Ch 6 Metallurgy · Ch 7 Materials Testing | Repeatability and Reproducibility (Gauge R&R), bar stock |
+| 5 | Ch 8 Plant Layout · Ch 9 Working with AI | Materials-testing rotation, week 1 of 3 |
+| 6 | Ch 10 AI Tools, Weeks 1–2 | Materials-testing rotation, week 2 of 3 |
+| 7 | **Midterm Test** (Midterm) | Materials-testing rotation, week 3 of 3 |
+| 8 | Ch 11 SPC | Facility Design & Simulation (AnyLogic) |
+| 9 | Ch 10 Week 3 · Ch 12 TPM | SPC & Gauge R&R: the Virtual Caliper |
+| 10 | Ch 10 Week 4 · Ch 13 Machine Guarding & Functional Safety | ML Week 1: AI Literacy & Prompt Engineering |
+| 11 | Ch 10 Week 5 · Ch 14 Quality Management Systems | ML Week 2: Manufacturing Data & SPC |
+| 12 | Ch 10 Week 6 · Ch 15 PFMEA | ML Week 3: The C-MAPSS Dataset · **release Robotic Work-Cell Design** |
+| 13 | Review and catch-up | ML Week 4: Building the Model |
+| 14 | Review and catch-up | ML Week 5: Deploying the App |
+| 15 | **Final Test** · review | ML Week 6: Capstone Presentations · Robotic Work-Cell Design (RoboDK) **due** |
 
 > **Caveat for the instructor, not a blocker.** This grid is inferred. The 25F
 > course plan has only 7 units while the book has 18 chapters, so the
@@ -161,12 +162,13 @@ Reorder `_quarto.yml`'s `chapters:` list to:
 
 ```
 index.qmd, 01-Types-of-Manufacturing.qmd, 02-Process-and-Design.qmd,
-08-Industrial-Robotics.qmd, 04-Plant-Layout.qmd, 16-AnyLogic-Simulation.qmd,
-03-Integrated-Manufacturing-Systems.qmd, 05-Lean-Manufacturing.qmd,
-07-Ergnomics.qmd, 06-Machine-Guarding-and-Safety.qmd, 10-SPC.qmd, 11-MSA.qmd,
-20-Working-with-AI.qmd, 21-Machine-Learning.qmd, 12-TPM.qmd,
-15-Troubleshooting-RCA.qmd, 09-Industrial-Automation.qmd,
-13-Quality-Systems.qmd, 14-PFMEA.qmd, 30-Labs.qmd
+08-Industrial-Robotics.qmd, 07-Ergnomics.qmd, 11-MSA.qmd,
+17-Metallurgy-Fundamentals.qmd, 18-Materials-Testing.qmd, 04-Plant-Layout.qmd,
+20-Working-with-AI.qmd, 21-Machine-Learning.qmd, 10-SPC.qmd, 12-TPM.qmd,
+06-Machine-Guarding-and-Safety.qmd, 13-Quality-Systems.qmd, 14-PFMEA.qmd,
+16-AnyLogic-Simulation.qmd, 03-Integrated-Manufacturing-Systems.qmd,
+05-Lean-Manufacturing.qmd, 15-Troubleshooting-RCA.qmd,
+09-Industrial-Automation.qmd, 30-Labs.qmd
 ```
 
 **Do NOT rename the files.** Quarto cross-references are label-based
