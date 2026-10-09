@@ -174,8 +174,16 @@ qwebr_calc_input <- function(var, label, value, min = NULL, max = NULL, step = N
 #' @param inputs A list of `qwebr_calc_input()` calls, top to bottom.
 #' @param fig_width,fig_height Pixel size for the captured plot (if the cell
 #'   produces one); scales to fit the card via CSS either way.
+#' @param goal Optional challenge shown under the results, e.g. "Get the cost
+#'   per part below $4.00 without changing the equipment cost." Turns the
+#'   card from "explore" into "solve".
+#' @param goal_test An R expression (as a string) over the cell's own
+#'   variables that is TRUE once the goal is reached, e.g.
+#'   `"cost_per_part < 4"`. It is evaluated after the cell on every run. It
+#'   must be FALSE at the default inputs, or there is nothing to solve.
 qwebr_calc_card <- function(label, title, icon = "gears", inputs,
-                             fig_width = 1200, fig_height = 700) {
+                             fig_width = 1200, fig_height = 700,
+                             goal = NULL, goal_test = NULL) {
   if (!knitr::is_html_output(excludes = "epub")) return(invisible(NULL))
 
   sanitize <- function(x) gsub("[^a-zA-Z0-9]+", "-", x)
@@ -217,6 +225,13 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
 
   input_rows <- paste(vapply(inputs, render_input, character(1)), collapse = "\n")
 
+  stopifnot(is.null(goal) == is.null(goal_test))
+  goal_row <- if (is.null(goal)) "" else sprintf('
+  <div class="qwebr-calc-goal" data-goal-test="%s">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> %s</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>', htmltools::htmlEscape(goal_test, attribute = TRUE), goal)
+
   cat(sprintf('
 ```{=html}
 <script src="js/qwebr-calculator.js"></script>
@@ -228,11 +243,11 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
   </div>
   <div class="qwebr-calc-inputs">%s
   </div>
-  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-results"></div>%s
   <div class="qwebr-calc-graph"></div>
 </div>
 ```
-', label, fig_width, fig_height, icon, title, input_rows))
+', label, fig_width, fig_height, icon, title, input_rows, goal_row))
 }
 
 # "Try it yourself" exercises (tryit_number(), tryit_grid(), tryit_sort()).

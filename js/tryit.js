@@ -9,6 +9,7 @@
 //   grid    a table whose blank cells the student fills in, marked per cell
 //   sort    cards the student assigns to categories (click, not drag, so it
 //           works by keyboard and on a touch screen)
+//   order   steps the student moves up and down into the right sequence
 //
 // Every widget has Check and Reset buttons, allows unlimited attempts, marks
 // each item with a tick or cross as well as a colour, and shows a hint under
@@ -132,8 +133,9 @@
     const total = states.length;
     const right = states.filter((s) => s === "ok").length;
     const blank = states.filter((s) => s === "blank").length;
-    if (right === total) return `All ${total} ${noun} correct.`;
-    let text = `${right} of ${total} ${noun} correct.`;
+    const suffix = /right place$/.test(noun) ? "" : " correct";
+    if (right === total) return `All ${total} ${noun}${suffix}.`;
+    let text = `${right} of ${total} ${noun}${suffix}.`;
     if (blank > 0) text += ` ${blank} left blank.`;
     if (total - right - blank > 0) text += " Fix the ones marked ✗ and check again.";
     return text;
@@ -265,7 +267,68 @@
     };
   }
 
-  const builders = { number: buildNumber, grid: buildGrid, sort: buildSort };
+  function buildOrder(spec, body) {
+    const list = el("ol", { class: "tryit-steps" });
+    const steps = spec.steps.map((text, position) => {
+      const item = el("li", { class: "tryit-step" });
+      const mark = el("span", { class: "tryit-mark", "aria-hidden": "true" });
+      const up = el("button", { type: "button", class: "tryit-move", "aria-label": `Move up: ${text}` }, ["▲"]);
+      const down = el("button", { type: "button", class: "tryit-move", "aria-label": `Move down: ${text}` }, ["▼"]);
+      item.appendChild(el("span", { class: "tryit-step-moves" }, [up, down]));
+      item.appendChild(el("span", { class: "tryit-step-text" }, [text]));
+      item.appendChild(mark);
+      return { item, mark, up, down, position };
+    });
+
+    function clear() {
+      steps.forEach(({ item, mark }) => {
+        item.classList.remove("tryit-ok", "tryit-no");
+        mark.textContent = "";
+      });
+    }
+
+    function move(step, direction, button) {
+      const neighbour = direction < 0 ? step.item.previousElementSibling : step.item.nextElementSibling;
+      if (!neighbour) return;
+      if (direction < 0) list.insertBefore(step.item, neighbour);
+      else list.insertBefore(neighbour, step.item);
+      clear();
+      button.focus(); // moving the node drops focus; keep it for repeated presses
+    }
+
+    steps.forEach((step) => {
+      step.up.addEventListener("click", () => move(step, -1, step.up));
+      step.down.addEventListener("click", () => move(step, 1, step.down));
+    });
+
+    // Start from a shuffle that is not already the right answer.
+    function scramble() {
+      let mixed;
+      do {
+        mixed = shuffle(steps);
+      } while (mixed.every((step, i) => step.position === i));
+      mixed.forEach((step) => list.appendChild(step.item));
+      clear();
+    }
+    scramble();
+    body.appendChild(list);
+
+    return {
+      check() {
+        const shown = Array.from(list.children);
+        const states = steps.map((step) => {
+          const ok = shown.indexOf(step.item) === step.position;
+          step.item.classList.add(ok ? "tryit-ok" : "tryit-no");
+          step.mark.textContent = ok ? "✓" : "✗";
+          return ok ? "ok" : "no";
+        });
+        return { states, message: summarise(states, "steps in the right place") };
+      },
+      reset: scramble,
+    };
+  }
+
+  const builders = { number: buildNumber, grid: buildGrid, sort: buildSort, order: buildOrder };
 
   // The worked solution, if the chapter put one directly after the exercise.
   function findSolution(root) {

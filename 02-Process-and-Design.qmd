@@ -124,7 +124,9 @@ qwebr_calc_card(
     qwebr_calc_input("equipment_life_years", "Equipment life", value = 10, min = 1, max = 30, step = 1, suffix = "years"),
     qwebr_calc_input("fixed_cost_per_part", "Operating cost per part", value = 2.50, min = 0.10, max = 20, step = 0.10, prefix = "$"),
     qwebr_calc_input("annual_production", "Annual production", value = 500000, min = 10000, max = 2000000, step = 10000, type = "slider")
-  )
+  ),
+  goal = "Get the total cost per part down to $3.00 or less.",
+  goal_test = "cost_per_part <= 3"
 )
 ```
 
@@ -339,6 +341,28 @@ ggplot() +
     plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)
   ) +
   ylim(-0.1, 2)
+```
+
+### Try it yourself: put the project phases in order
+
+A plant project passes through eight phases, with gate reviews between them. Put the phases in the order they happen.
+
+```{r tryit-phase-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "phase-order",
+  title = "Project phases, first to last",
+  steps = c(
+    "Concept",
+    "Front-End Engineering Design (FEED)",
+    "Detailed design",
+    "Procurement and fabrication",
+    "Construction",
+    "Commissioning",
+    "Start-up",
+    "Operation"
+  ),
+  intro = "Move each phase up or down until the sequence runs from first to last."
+)
 ```
 
 ### Phase 1: Concept Development
@@ -624,6 +648,39 @@ instrument_tags %>%
 4. **LCV-402** = Level Control Valve (loop 402)
 
 </details>
+
+#### Try it yourself: read the first letter
+
+The first letter of an instrument tag tells you what is being measured. Sort these tags by measured variable.
+
+```{r tryit-tag-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "tag-sort",
+  title = "What does each instrument measure?",
+  bins = c("Flow", "Level", "Pressure", "Temperature"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "FT-110",
+  "Flow", "F = flow; T = transmitter.",
+  "FIC-115",
+  "Flow", "F = flow; IC = indicating controller.",
+  "LIC-220",
+  "Level", "L = level; IC = indicating controller.",
+  "LAH-240",
+  "Level", "L = level; AH = alarm, high.",
+  "PI-305",
+  "Pressure", "P = pressure; I = indicator.",
+  "PSV-330",
+  "Pressure", "P = pressure; SV = safety valve.",
+  "TE-410",
+  "Temperature", "T = temperature; E = element (the sensor itself).",
+  "TT-420",
+  "Temperature", "T = temperature; the second T = transmitter."
+  ),
+  intro = "Sort each tag by the variable it measures."
+)
+```
+
 
 ------------------------------------------------------------------------
 

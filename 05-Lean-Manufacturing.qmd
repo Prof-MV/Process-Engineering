@@ -393,6 +393,40 @@ Some people also use **DOWNTIME** (adding "Non-utilized talent" as an 8th waste)
 
 </details>
 
+---
+
+## Try it yourself: spot the waste
+
+Eight things you might see on a gemba walk. Name the waste in each one.
+
+```{r tryit-waste-spotter, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "waste-spotter",
+  title = "Which of the seven wastes?",
+  bins = c("Transport", "Inventory", "Motion", "Waiting", "Overproduction", "Over-processing", "Defects"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A forklift carries pallets 200 m from the press shop to assembly and returns empty.",
+  "Transport", "Moving material adds cost but no value.",
+  "Three weeks of stamped brackets sit on racks beside the weld cell.",
+  "Inventory", "Stock beyond what the next process needs ties up cash and hides problems.",
+  "An assembler walks to a shared toolbox for a torque wrench on every cycle.",
+  "Motion", "Movement of people, not product. 5S would put the tool at the point of use.",
+  "An operator bends to floor level to pick each part out of a deep bin.",
+  "Motion", "Unnecessary reaching and bending by the person.",
+  "The paint line stands idle for 40 minutes because the upstream washer is being changed over.",
+  "Waiting", "People or machines idle because the previous step has not delivered.",
+  "The press keeps running to stay busy and makes 500 more panels than this week's orders.",
+  "Overproduction", "Making more, or sooner, than the customer asked for. It creates most of the other wastes.",
+  "A hidden bracket surface is polished to a mirror finish that the drawing does not ask for.",
+  "Over-processing", "Work beyond what the customer requires.",
+  "One housing in every twenty is reworked because of flash on the parting line.",
+  "Defects", "Scrap and rework consume material, time and capacity."
+  ),
+  intro = "Name the waste in each observation."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## The 5S Methodology
@@ -473,6 +507,25 @@ five_s_detail %>%
 > "The ability to understand the status of a production area in **5 minutes or less** by simple observation without use of computers or speaking to anyone."
 
 A well-implemented 5S creates a **visual factory** where problems are immediately apparent.
+
+### Try it yourself: put the 5S steps in order
+
+5S only holds if the steps are done in sequence. Put them in order.
+
+```{r tryit-five-s-order, echo=FALSE, results='asis'}
+tryit_order(
+  id = "five-s-order",
+  title = "The five S's, first to last",
+  steps = c(
+    "Sort: remove what is not needed",
+    "Set in Order: a place for everything that remains",
+    "Shine: clean, and inspect while cleaning",
+    "Standardize: make the first three routine",
+    "Sustain: audit and keep it going"
+  ),
+  intro = "Move each step up or down until the sequence is right."
+)
+```
 
 ------------------------------------------------------------------------
 
@@ -692,7 +745,9 @@ qwebr_calc_card(
     qwebr_calc_input("available_time_per_day", "Shift length", value = 480, min = 120, max = 1440, step = 30, suffix = "min"),
     qwebr_calc_input("breaks_and_meetings", "Breaks & meetings", value = 60, min = 0, max = 240, step = 10, suffix = "min"),
     qwebr_calc_input("customer_demand", "Customer demand", value = 240, min = 10, max = 2000, step = 10, suffix = "units/day", type = "slider")
-  )
+  ),
+  goal = "Find the daily demand that gives a takt time of exactly 60 seconds.",
+  goal_test = "abs(takt_time - 1) < 1e-9"
 )
 ```
 
@@ -1018,8 +1073,22 @@ The seven types of waste (TIMWOOD) are:
 
 </details>
 
-<details>
-<summary>Question 3: Calculate the Takt time for a facility with 450 minutes of available time and demand of 150 units.</summary>
+**Question 3: Calculate the Takt time for a facility with 450 minutes of available time and demand of 150 units.**
+
+```{r tryit-q3, echo=FALSE, results='asis'}
+tryit_number(
+  id = "review-q3",
+  title = "Question 3: takt time",
+  answers = list(
+    tryit_answer("Takt time", 450 / 150, tol = 0.01, suffix = "min/unit", hint = "Available time divided by customer demand."),
+    tryit_answer("Takt time", 450 / 150 * 60, tol = 0.5, suffix = "sec/unit", digits = 0)
+  ),
+  question = "<p>A facility has 450 minutes of available time per day and a demand of 150 units per day.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 $$\text{Takt Time} = \frac{450 \text{ minutes}}{150 \text{ units}} = 3 \text{ minutes per unit}$$
 

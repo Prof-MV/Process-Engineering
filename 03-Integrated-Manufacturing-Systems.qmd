@@ -326,7 +326,9 @@ qwebr_calc_card(
     qwebr_calc_input("planned_downtime_min", "Planned downtime", value = 20, min = 0, max = 120, step = 5, suffix = "min"),
     qwebr_calc_input("actual_cycle_time", "Actual cycle time", value = 7.5, min = 1, max = 20, step = 0.5, suffix = "min"),
     qwebr_calc_input("customer_demand", "Customer demand", value = 60, min = 5, max = 200, step = 5, type = "slider")
-  )
+  ),
+  goal = "Demand rises to 80 cars per shift. Find a cycle time that still meets it.",
+  goal_test = "customer_demand >= 80 && actual_cycle_time <= takt_time"
 )
 ```
 
@@ -409,7 +411,9 @@ qwebr_calc_card(
     qwebr_calc_input("wait_time", "Waiting", value = 2.5, min = 0, max = 30, step = 0.1, suffix = "min"),
     qwebr_calc_input("move_time", "Moving", value = 1.5, min = 0, max = 30, step = 0.1, suffix = "min"),
     qwebr_calc_input("units_produced", "Units produced", value = 60, min = 1, max = 500, step = 1, type = "slider")
-  )
+  ),
+  goal = "Raise the cycle efficiency above 60% without changing the value-added time.",
+  goal_test = "MCE > 60 && value_added_time == 3.5"
 )
 ```
 
@@ -925,6 +929,40 @@ fms_apps %>%
   column_spec(1, bold = TRUE, background = "#E8DAEF", width = "12em")
 ```
 
+---
+
+## Try it yourself: match the system to the job
+
+Eight production situations. Decide which type of system from this chapter suits each one. Think about volume, variety, and how much of the work a person must do.
+
+```{r tryit-system-match, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "system-match",
+  title = "Which production system?",
+  bins = c("Manual assembly line", "Automated transfer line", "Manufacturing cell", "FMS"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A dashboard needs wiring harnesses routed and clipped by hand; 400 vehicles a day.",
+  "Manual assembly line", "High volume, but the dexterity needed keeps people on the line.",
+  "Laptops are assembled in a fixed task sequence that is balanced to takt time.",
+  "Manual assembly line", "Paced, sequential manual work is what line balancing is for.",
+  "One engine block design, 300,000 a year, machined at 20 stations in sequence.",
+  "Automated transfer line", "One product at very high volume justifies dedicated, linked stations.",
+  "Beverage cans are formed, washed, coated and printed at 2,000 a minute.",
+  "Automated transfer line", "Fixed automation: extreme volume and no product variety.",
+  "Twelve similar shaft part numbers are grouped as a family and made on a U-shaped group of machines.",
+  "Manufacturing cell", "Group technology: a part family and a dedicated machine group.",
+  "Two cross-trained operators run five machines arranged in a U for one family of brackets.",
+  "Manufacturing cell", "Cellular manufacturing relies on multi-skilled operators and short travel.",
+  "CNC machining centres linked by an automated pallet system make 40 part numbers in any order, lights-out.",
+  "FMS", "Computer control, automated handling and mid-volume, mid-variety work.",
+  "A central computer routes pallets between machines and changes part programs with almost no changeover loss.",
+  "FMS", "Flexible routing under computer control is the defining feature of an FMS."
+  ),
+  intro = "Pick the system that suits each situation."
+)
+```
+
 ------------------------------------------------------------------------
 
 ## Modern Manufacturing Concepts
@@ -1114,10 +1152,26 @@ industry_apps %>%
 
 ## Review Questions
 
-<details>
-<summary>Question 1: Takt Time Calculation</summary>
+**Question 1: Takt Time Calculation**
 
 **A plant operates 8-hour shifts with 30 minutes of breaks. Daily demand is 400 units. Calculate the takt time.**
+
+```{r tryit-q1, echo=FALSE, results='asis'}
+q1_available <- 8 * 60 - 30; q1_demand <- 400
+
+tryit_number(
+  id = "review-q1",
+  title = "Question 1: takt time",
+  answers = list(
+    tryit_answer("Takt time", q1_available / q1_demand, tol = 0.005, suffix = "min/unit", hint = "Available time = shift minus breaks. Takt = available time / demand."),
+    tryit_answer("Takt time", q1_available / q1_demand * 60, tol = 0.1, suffix = "sec/unit", hint = "Multiply minutes by 60.")
+  ),
+  question = "<p>A plant operates 8-hour shifts with 30 minutes of breaks. Daily demand is 400 units.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 
@@ -1129,10 +1183,27 @@ If actual cycle time is 60 seconds, the plant has (67.5 - 60)/67.5 = **11% capac
 
 </details>
 
-<details>
-<summary>Question 2: Line Efficiency</summary>
+**Question 2: Line Efficiency**
 
 **A 6-station assembly line has a cycle time of 2 minutes. The task times at each station are: 1.8, 1.9, 2.0, 1.7, 1.6, and 1.5 minutes. Calculate the line efficiency.**
+
+```{r tryit-q2, echo=FALSE, results='asis'}
+q2_times <- c(1.8, 1.9, 2.0, 1.7, 1.6, 1.5); q2_cycle <- 2
+q2_eff <- sum(q2_times) / (length(q2_times) * q2_cycle) * 100
+
+tryit_number(
+  id = "review-q2",
+  title = "Question 2: line efficiency",
+  answers = list(
+    tryit_answer("Line efficiency", q2_eff, tol = 0.1, suffix = "%", hint = "Total work content divided by (stations x cycle time)."),
+    tryit_answer("Balance delay", 100 - q2_eff, tol = 0.1, suffix = "%", hint = "Whatever is not efficiency is idle time.")
+  ),
+  question = "<p>A 6-station assembly line has a cycle time of 2 minutes. The task times at the stations are 1.8, 1.9, 2.0, 1.7, 1.6 and 1.5 minutes.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 
@@ -1144,10 +1215,28 @@ Balance delay (idle time) = 100% - 87.5% = **12.5%**
 
 </details>
 
-<details>
-<summary>Question 3: Downtime Impact</summary>
+**Question 3: Downtime Impact**
 
 **An automated line has 8 stations, each with 3% failure probability per cycle and 8-minute average repair time. The ideal cycle time is 0.5 minutes. What is the actual production rate?**
+
+```{r tryit-q3, echo=FALSE, results='asis'}
+q3_p_line <- 1 - (1 - 0.03)^8
+q3_cycle <- 0.5 + q3_p_line * 8
+
+tryit_number(
+  id = "review-q3",
+  title = "Question 3: downtime impact",
+  answers = list(
+    tryit_answer("Line failure probability per cycle", q3_p_line * 100, tol = 0.2, suffix = "%", hint = "The line stops if ANY station fails: 1 - (1 - p)^n."),
+    tryit_answer("Actual cycle time", q3_cycle, tol = 0.02, suffix = "min", hint = "Ideal cycle time + line failure probability x repair time."),
+    tryit_answer("Actual production rate", 60 / q3_cycle, tol = 0.3, suffix = "parts/hr", hint = "60 minutes divided by the actual cycle time.", digits = 1)
+  ),
+  question = "<p>An automated line has 8 stations, each with a 3% failure probability per cycle and an 8-minute average repair time. The ideal cycle time is 0.5 minutes.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
 
 **Solution:**
 

@@ -9,6 +9,7 @@
 #   tryit_number()  one or more numeric answers, each marked against a tolerance
 #   tryit_grid()    a table with blank cells to fill in, marked cell by cell
 #   tryit_sort()    cards to assign to categories
+#   tryit_order()   steps to put in the right sequence
 #
 # How it fits together:
 #   - The helper serialises the exercise (including its answer key) to JSON
@@ -334,6 +335,52 @@ tryit_sort <- function(id, title, bins, cards, intro = NULL, question = intro,
     if (print_key) {
       cat(sprintf("\n*Answers: %s.*\n\n",
                   paste(sprintf("%d %s", seq_len(nrow(cards)), cards$bin), collapse = "; ")))
+    }
+  }
+}
+
+#---- tryit_order --------------------------------------------------------------
+
+#' Steps the student puts in the right sequence
+#'
+#' @param id Unique within the chapter.
+#' @param title Card heading.
+#' @param steps Character vector of steps IN THE CORRECT ORDER. The page
+#'   shuffles them; the student moves each one up or down.
+#' @param intro,question,show As for `tryit_number()`. The twin is a single
+#'   Ordering question; `question` defaults to the intro.
+#' @param print_key Print the answer key under the worksheet in PDF/EPUB.
+tryit_order <- function(id, title, steps, intro = NULL, question = intro,
+                        show = TRUE, print_key = TRUE) {
+  stopifnot(is.character(steps), length(steps) >= 2, !anyDuplicated(steps))
+
+  if (!is.null(question)) {
+    tryit_export(c(
+      list(c("NewQuestion", "O"),
+           c("ID", tryit_qid(id, 1)),
+           c("Title", title),
+           c("QuestionText", question, "HTML"),
+           c("Points", as.character(length(steps))),
+           c("Difficulty", "2"),
+           c("Scoring", "EquallyWeighted")),
+      lapply(steps, function(step) c("Item", step, "NOT HTML"))
+    ))
+  }
+  if (!show) return(invisible(NULL))
+
+  if (tryit_html()) {
+    tryit_emit("order", id, list(title = title, intro = intro, steps = as.list(steps)))
+  } else {
+    # Alphabetical rather than random, so printing never touches the
+    # chapter's random-number stream.
+    listed <- order(steps)
+    cat(sprintf("\n\n**%s**\n\n", title))
+    if (!is.null(intro)) cat(intro, "\n\n")
+    cat("Number these in the correct order:\n\n")
+    cat(sprintf("- \\_\\_\\_\\_ %s\n", steps[listed]), sep = "")
+    if (print_key) {
+      cat(sprintf("\n*Answers, in the order listed: %s.*\n\n",
+                  paste(listed, collapse = ", ")))
     }
   }
 }
