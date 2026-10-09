@@ -601,6 +601,55 @@ ggplot() +
 - Maintained contact operation (don't need to hold START button)
 </details>
 
+#### Try it yourself: step through the seal-in rung
+
+Be the PLC. The table gives the state of the two pushbuttons at each scan (1 = pressed) for the start/stop rung above. Work out whether the MOTOR output is ON (1) or OFF (0) at the end of every scan. The motor starts OFF.
+
+On each scan the rung is true when STOP is not pressed **and** either START is pressed **or** the motor was already on from the previous scan.
+
+```{r tryit-ladder, echo=FALSE, results='asis'}
+ladder <- data.frame(
+  Scan  = as.character(1:8),
+  START = c(0, 1, 0, 0, 0, 0, 1, 0),
+  STOP  = c(0, 0, 0, 0, 1, 0, 1, 0)
+)
+ladder$MOTOR <- Reduce(function(was_on, i) as.numeric((ladder$START[i] == 1 || was_on == 1) && ladder$STOP[i] == 0),
+                       seq_len(nrow(ladder)), accumulate = TRUE, 0)[-1]
+
+tryit_grid(
+  id = "ladder-scan",
+  title = "Seal-in rung, scan by scan",
+  data = ladder,
+  blank = "MOTOR",
+  tol = 0,
+  digits = 0,
+  hints = c(MOTOR = "Use the motor state from the scan before. In scans 3 and 4 nobody is pressing START, so what keeps the rung true? In scan 7 both buttons are pressed: which one wins?"),
+  intro = "Enter 1 (ON) or 0 (OFF) for the MOTOR output at the end of each scan.",
+  question = "<p>A start/stop seal-in rung energises MOTOR when STOP is not pressed AND (START is pressed OR MOTOR was already on). The motor starts off. The table gives the pushbutton states (1 = pressed) at each scan.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-ladder-solution, echo=FALSE}
+ladder %>%
+  mutate(Why = c("Nothing pressed, motor was off",
+                 "START pressed: rung true",
+                 "START released, but the MOTOR contact seals in",
+                 "Still sealed in",
+                 "STOP pressed: the rung is broken",
+                 "The seal was broken, so the motor stays off",
+                 "Both pressed: STOP is in series, so it wins",
+                 "Motor was off and START is released")) %>%
+  kable(align = "ccccl") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+Scans 3 and 4 are the whole point of the seal-in branch: the operator has let go of START, and the motor's own contact keeps the rung true. Scan 7 shows why STOP is wired in series with everything else. Whatever else is happening, pressing STOP drops the motor out.
+
+</details>
+
 ---
 
 ## Industrial Sensors

@@ -1002,6 +1002,65 @@ vsm_metrics %>%
   row_spec(0, bold = TRUE, background = "#16A085", color = "white")
 ```
 
+### Try it yourself: read a value stream map
+
+A supplier makes steering brackets in three steps and ships **500 brackets a day**. The current-state map shows the process time at each step and the inventory waiting in front of it. Convert each inventory triangle into days of demand, then total the timeline.
+
+Days of inventory = pieces waiting ÷ daily demand. Lead time is the sum of those days; process time is the sum of the times in the boxes.
+
+```{r tryit-vsm, echo=FALSE, results='asis'}
+vsm <- data.frame(
+  step = c("Stamping", "Welding", "Assembly", "Shipping"),
+  pt   = c(2, 40, 60, NA),                 # process time, seconds per piece
+  wip  = c(4000, 1500, 2000, 1000),        # pieces waiting in front of the step
+  stringsAsFactors = FALSE
+)
+vsm_demand <- 500
+vsm$days <- vsm$wip / vsm_demand
+
+tryit_diagram(
+  id = "vsm",
+  title = "Current-state map: steering bracket",
+  direction = "right",
+  nodes = lapply(seq_len(nrow(vsm)), function(i) {
+    tryit_node(
+      vsm$step[i], vsm$step[i], i,
+      given = c(if (!is.na(vsm$pt[i])) c("Process time" = paste(vsm$pt[i], "s")),
+                "Inventory ahead" = paste(format(vsm$wip[i], big.mark = " "), "pcs")),
+      blank = list(tryit_answer("Days", vsm$days[i], tol = 0.05, digits = 1,
+                                hint = "Pieces waiting divided by 500 pieces per day."))
+    )
+  }),
+  edges = list(c("Stamping", "Welding"), c("Welding", "Assembly"), c("Assembly", "Shipping")),
+  answers = list(
+    tryit_answer("Total lead time", sum(vsm$days), tol = 0.1, digits = 0, suffix = "days",
+                 hint = "Add the days of inventory along the timeline."),
+    tryit_answer("Total process (value-added) time", sum(vsm$pt, na.rm = TRUE), tol = 0.5, digits = 0, suffix = "sec",
+                 hint = "Add the process times in the three process boxes.")
+  ),
+  intro = "Fill in the days of inventory ahead of each step, then the two totals.",
+  question = "<p>A supplier ships 500 steering brackets per day through three process steps and a shipping stage.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r tryit-vsm-solution, echo=FALSE}
+data.frame(Step = vsm$step,
+           `Process time (s)` = ifelse(is.na(vsm$pt), "-", as.character(vsm$pt)),
+           `Inventory ahead (pcs)` = format(vsm$wip, big.mark = " "),
+           `Days of inventory` = vsm$days, check.names = FALSE) %>%
+  kable(align = "lccc") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+```
+
+Lead time = `r paste(vsm$days, collapse = " + ")` = **`r sum(vsm$days)` days**. Process time = 2 + 40 + 60 = **`r sum(vsm$pt, na.rm = TRUE)` seconds**.
+
+A bracket spends `r sum(vsm$days)` days in the plant and is worked on for under two minutes. That gap is why a value stream map puts the two numbers side by side: the improvement is in the inventory between the boxes, not in making any one process faster.
+
+</details>
+
 ------------------------------------------------------------------------
 
 ## Summary

@@ -620,6 +620,48 @@ With parallelism at Station 2, effective cycle time stays at 55s (Station 3 bott
 
 </details>
 
+### Try it yourself: balance a bicycle assembly line
+
+The electronics example above was worked for you. This one is yours. A line assembles bicycles from eight tasks, and demand sets the cycle time at **60 seconds**. Assign every task to a station by choosing from the list in its box.
+
+Three rules decide whether your balance is valid: every task needs a station, no task may sit at an earlier station than a task it depends on (follow the arrows), and no station may hold more than 60 seconds of work. The table under the diagram totals each station as you go. A valid balance is the start; the real question is how few stations you need.
+
+```{r tryit-line-balance, echo=FALSE, results='asis'}
+bike_tasks <- data.frame(
+  id    = LETTERS[1:8],
+  label = c("Clamp frame in fixture", "Install fork", "Fit bottom bracket", "Mount crankset",
+            "Install wheels", "Fit chain", "Adjust brakes", "Final inspection"),
+  time  = c(25, 30, 20, 35, 30, 15, 40, 20),
+  pred  = c("", "A", "A", "C", "B", "D,E", "E", "F,G"),
+  stringsAsFactors = FALSE
+)
+
+tryit_balance(
+  id = "line-balance",
+  title = "Line balancing: bicycle assembly",
+  tasks = bike_tasks,
+  cycle = 60,
+  intro = "Choose a station for each task. Arrows show which tasks must come first.",
+  question = "<p>A bicycle assembly line has the eight tasks below.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show one good balance</summary>
+
+The theoretical minimum is `r sum(bike_tasks$time)` / 60 = `r round(sum(bike_tasks$time) / 60, 2)`, which rounds up to `r ceiling(sum(bike_tasks$time) / 60)` stations, and `r tryit_min_stations(bike_tasks, 60)` stations can in fact be reached:
+
+| Station | Tasks | Time | Idle |
+|:-:|:--|:-:|:-:|
+| 1 | A, B | 55 s | 5 s |
+| 2 | C, D | 55 s | 5 s |
+| 3 | E, F | 45 s | 15 s |
+| 4 | G, H | 60 s | 0 s |
+
+Line efficiency = `r sum(bike_tasks$time)` / (4 × 60) = `r sprintf("%.1f", sum(bike_tasks$time) / 240 * 100)`%. This is not the only four-station answer: A, C / B, E / D, F / G, H also works. What every four-station answer has in common is that G (40 s) and H (20 s) share the last station; put anything else with G and you need a fifth.
+
+</details>
+
 ------------------------------------------------------------------------
 
 ## Automated Production Lines

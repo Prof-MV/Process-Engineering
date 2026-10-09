@@ -526,6 +526,31 @@ When flow is **sequential**, a **product layout** (linear arrangement) is more e
 
 </details>
 
+### Try it yourself: lay out the plant
+
+Six departments have to go into a building that is two bays deep and three bays wide. Material moves between them as shown in the flow table. Put one department in each cell; the table works out the distance each flow travels (rows apart plus columns apart) and the total load-distance score. **Lower is better.**
+
+Start with the heaviest flows: which pairs of departments must be neighbours? Then check your layout against the best possible score. In class, compare scores: there is more than one way to reach the minimum.
+
+```{r tryit-block-plan, echo=FALSE, results='asis'}
+plan_flows <- data.frame(
+  from = c("Receiving", "Receiving", "Machining", "Machining", "Welding", "Painting", "Assembly", "Receiving"),
+  to   = c("Machining", "Welding",   "Welding",   "Assembly",  "Painting", "Assembly", "Shipping", "Shipping"),
+  load = c(60, 30, 25, 45, 40, 50, 80, 10),
+  stringsAsFactors = FALSE
+)
+
+tryit_layout(
+  id = "block-plan",
+  title = "Block plan: lowest load-distance score",
+  departments = c("Receiving", "Machining", "Welding", "Painting", "Assembly", "Shipping"),
+  flows = plan_flows,
+  rows = 2, cols = 3,
+  intro = "Put one department in each cell. Choosing a department that is already placed moves it.",
+  question = "<p>Six departments exchange the daily material flows shown below.</p>"
+)
+```
+
 ### Step 3: Develop Detailed Layout
 
 Once the block plan is selected:
