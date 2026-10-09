@@ -1828,6 +1828,7 @@ globalThis.qwebrExecuteCode = async function (
   <li><a href="#common-robot-types" id="toc-common-robot-types" class="nav-link" data-scroll-target="#common-robot-types"><span class="header-section-number">3.3.1</span> Common Robot Types</a></li>
   <li><a href="#detailed-configuration-comparison" id="toc-detailed-configuration-comparison" class="nav-link" data-scroll-target="#detailed-configuration-comparison"><span class="header-section-number">3.3.2</span> Detailed Configuration Comparison</a></li>
   <li><a href="#degrees-of-freedom" id="toc-degrees-of-freedom" class="nav-link" data-scroll-target="#degrees-of-freedom"><span class="header-section-number">3.3.3</span> Degrees of Freedom</a></li>
+  <li><a href="#try-it-yourself-match-the-robot-to-the-job" id="toc-try-it-yourself-match-the-robot-to-the-job" class="nav-link" data-scroll-target="#try-it-yourself-match-the-robot-to-the-job"><span class="header-section-number">3.3.4</span> Try it yourself: match the robot to the job</a></li>
   </ul></li>
   <li><a href="#robot-specifications" id="toc-robot-specifications" class="nav-link" data-scroll-target="#robot-specifications"><span class="header-section-number">3.4</span> Robot Specifications</a>
   <ul class="collapse">
@@ -2380,6 +2381,14 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 </div>
+</section>
+<section id="try-it-yourself-match-the-robot-to-the-job" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="try-it-yourself-match-the-robot-to-the-job"><span class="header-section-number">3.3.4</span> Try it yourself: match the robot to the job</h3>
+<p>Eight applications. Decide which robot configuration you would shortlist first.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-robot-matcher" data-tryit="sort">
+<script type="application/json">{"title":"Which robot configuration?","intro":"Pick the configuration you would shortlist first for each application.","bins":["6-axis articulated","SCARA","Delta","Cartesian / gantry","Cobot"],"cards":[{"text":"Arc welding a curved seam around a tubular frame.","bin":0,"why":"The torch has to follow a path at a changing angle, which needs six axes."},{"text":"Spray painting car bodies, including inside the door openings.","bin":0,"why":"Reaching around and into the body needs full freedom of orientation."},{"text":"Pressing bearings vertically into housings at high speed.","bin":1,"why":"Fast in the horizontal plane and rigid in Z, which suits vertical insertion."},{"text":"Driving screws into the top face of a flat electronics enclosure.","bin":1,"why":"A planar task with a vertical tool approach."},{"text":"Picking 120 chocolates a minute off a moving belt into trays.","bin":2,"why":"Very light payload and very high pick rate, working from above."},{"text":"Loading and unloading four CNC machines along a 12 m row.","bin":3,"why":"A long linear work envelope, scaled by extending an axis."},{"text":"Dispensing straight beads of adhesive across a 3 m x 2 m flat panel.","bin":3,"why":"A large rectangular envelope and straight-line moves along X and Y."},{"text":"Holding a part while an assembler at the same bench fits the fasteners.","bin":4,"why":"The person and the robot share the workspace without fencing."}]}</script>
+</div>
 <hr>
 </section>
 </section>
@@ -2507,6 +2516,10 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="part_weight >= 9 &amp;&amp; safety_factor >= 1.2 &amp;&amp; required_capacity <= robot_max_payload">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> The part now weighs 9 kg. Find a robot and gripper combination that carries it with the safety factor still at 1.2 or more.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2662,6 +2675,10 @@ Show the live R code behind this calculator
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="required_grip < 200 &amp;&amp; part_mass >= 3 &amp;&amp; safety_factor >= 2">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Get the required grip force below 200 N without reducing the part mass or the safety factor.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">

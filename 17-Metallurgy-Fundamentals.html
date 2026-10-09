@@ -77,6 +77,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/editor/editor.main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   
@@ -1866,6 +1868,8 @@ window.Quarto = {
   <li><a href="#sec-metallurgy-eutectoid" id="toc-sec-metallurgy-eutectoid" class="nav-link" data-scroll-target="#sec-metallurgy-eutectoid"><span class="header-section-number">6.5.3</span> The Eutectoid Point, A1/A3 Lines, and Hypo/Hypereutectoid Steels</a></li>
   <li><a href="#sec-metallurgy-1045-walkthrough" id="toc-sec-metallurgy-1045-walkthrough" class="nav-link" data-scroll-target="#sec-metallurgy-1045-walkthrough"><span class="header-section-number">6.5.4</span> Walking Through the Slow Cooling of AISI 1045</a></li>
   <li><a href="#sec-metallurgy-steel-numbers" id="toc-sec-metallurgy-steel-numbers" class="nav-link" data-scroll-target="#sec-metallurgy-steel-numbers"><span class="header-section-number">6.5.5</span> Reading Carbon Content from the Steel Numbering System</a></li>
+  <li><a href="#try-it-yourself-how-much-pearlite" id="toc-try-it-yourself-how-much-pearlite" class="nav-link" data-scroll-target="#try-it-yourself-how-much-pearlite"><span class="header-section-number">6.5.6</span> Try it yourself: how much pearlite?</a></li>
+  <li><a href="#try-it-yourself-classify-the-steel" id="toc-try-it-yourself-classify-the-steel" class="nav-link" data-scroll-target="#try-it-yourself-classify-the-steel"><span class="header-section-number">6.5.7</span> Try it yourself: classify the steel</a></li>
   </ul></li>
   <li><a href="#sec-metallurgy-heat-treatment" id="toc-sec-metallurgy-heat-treatment" class="nav-link" data-scroll-target="#sec-metallurgy-heat-treatment"><span class="header-section-number">6.6</span> Heat Treatment</a>
   <ul class="collapse">
@@ -2684,6 +2688,10 @@ So a slowly-cooled 1045 specimen should be roughly <strong>58% pearlite and 42% 
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="abs(frac_pearlite - 0.5) <= 0.02 &amp;&amp; C_ferrite == 0.02 &amp;&amp; C_eutectoid == 0.76">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Find the carbon content that gives a microstructure of half ferrite and half pearlite (within 2 points).</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2723,6 +2731,68 @@ Quick check: decoding a grade
 <p><strong>Question:</strong> A supplier ships you round bar stamped “AISI 1030.” Without looking anything else up, what do you already know about it?</p>
 <strong>Answer:</strong> It’s a plain carbon steel (10xx series) with approximately 0.30% carbon — hypoeutectoid, roughly midway in carbon content between 1018 (0.18%) and 1045 (0.45%). You’d expect it to harden more than 1018 but less than 1045-1060 grades, and to have intermediate as-rolled strength and ductility.
 </details>
+</section>
+<section id="try-it-yourself-how-much-pearlite" class="level3" data-number="6.5.6">
+<h3 data-number="6.5.6" class="anchored" data-anchor-id="try-it-yourself-how-much-pearlite"><span class="header-section-number">6.5.6</span> Try it yourself: how much pearlite?</h3>
+<p>Four plain carbon steels are cooled slowly to room temperature. Use the lever rule, with 0.02% C for ferrite and 0.76% C for the eutectoid, to find how much of each microstructure is pearlite and how much is proeutectoid ferrite.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-phase-fractions" data-tryit="grid">
+<script type="application/json">{"title":"Lever rule: ferrite and pearlite","intro":"Fill in both columns, to the nearest percent.","columns":[{"label":"Steel","blank":false,"tol":null,"hint":null},{"label":"Carbon (%)","blank":false,"tol":null,"hint":null},{"label":"Pearlite (%)","blank":true,"tol":1,"hint":"(carbon - 0.02) / (0.76 - 0.02), as a percentage."},{"label":"Ferrite (%)","blank":true,"tol":1,"hint":"Whatever is not pearlite is proeutectoid ferrite."}],"rows":[["AISI 1010","0.10",10.8108108108108,89.1891891891892],["AISI 1030","0.30",37.8378378378378,62.1621621621622],["AISI 1050","0.50",64.8648648648649,35.1351351351351],["AISI 1070","0.70",91.8918918918919,8.10810810810811]],"answers":[]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-condensed caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Steel</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Carbon (%)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Pearlite (%)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Ferrite (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AISI 1010</td>
+<td style="text-align: center;">0.1</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">89</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AISI 1030</td>
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">38</td>
+<td style="text-align: center;">62</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AISI 1050</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AISI 1070</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">92</td>
+<td style="text-align: center;">8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The pearlite fraction rises almost in step with carbon: every 0.1% C adds about 13.5 points of pearlite. Since pearlite is the hard constituent and ferrite the soft one, this table is also a rough ranking of strength, from 1010 (soft, very formable) to 1070 (nearly all pearlite, used for springs and wear parts).</p>
+</details>
+</section>
+<section id="try-it-yourself-classify-the-steel" class="level3" data-number="6.5.7">
+<h3 data-number="6.5.7" class="anchored" data-anchor-id="try-it-yourself-classify-the-steel"><span class="header-section-number">6.5.7</span> Try it yourself: classify the steel</h3>
+<p>Read the carbon content from each designation, compare it with the eutectoid composition (about 0.76% C), and classify the steel.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-steel-class-sort" data-tryit="sort">
+<script type="application/json">{"title":"Hypoeutectoid, eutectoid or hypereutectoid?","intro":"Classify each steel by its carbon content.","bins":["Hypoeutectoid","Eutectoid","Hypereutectoid"],"cards":[{"text":"AISI 1018","bin":0,"why":"The last two digits give 0.18% C, well below 0.76%: ferrite plus a little pearlite."},{"text":"AISI 1020","bin":0,"why":"0.20% C: mostly proeutectoid ferrite."},{"text":"AISI 1045","bin":0,"why":"0.45% C: roughly half ferrite, half pearlite."},{"text":"AISI 1060","bin":0,"why":"0.60% C is still below the eutectoid: mostly pearlite with some ferrite."},{"text":"A plain carbon steel with 0.76% C","bin":1,"why":"At the eutectoid composition the structure is essentially all pearlite."},{"text":"AISI 1095","bin":2,"why":"0.95% C: pearlite with proeutectoid cementite at the grain boundaries."},{"text":"A plain carbon tool steel with 1.2% C","bin":2,"why":"Above 0.76% C: cementite forms first on slow cooling."}]}</script>
+</div>
 <hr>
 </section>
 </section>
@@ -3119,11 +3189,16 @@ Practice: connect this to the hardness lab
 </section>
 <section id="sec-metallurgy-practice" class="level2" data-number="6.9">
 <h2 data-number="6.9" class="anchored" data-anchor-id="sec-metallurgy-practice"><span class="header-section-number">6.9</span> Practice Problems</h2>
-<details>
-<summary>
-Problem 1 (calculation): Hall-Petch
-</summary>
+<p><strong>Problem 1 (calculation): Hall-Petch</strong></p>
 <p><strong>Problem:</strong> A steel has <span class="math inline">\(\sigma_0 = 70\)</span> MPa and <span class="math inline">\(k = 18\)</span> MPa·mm<span class="math inline">\(^{0.5}\)</span>. Estimate its yield strength for a grain size of (a) 0.10 mm and (b) 0.01 mm.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-practice-p1" data-tryit="number">
+<script type="application/json">{"title":"Problem 1: Hall-Petch","intro":null,"answers":[{"label":"(a) Yield strength at d = 0.10 mm","answer":126.920997883031,"tol":1,"tolPct":null,"prefix":"","suffix":"MPa","hint":"Yield strength = sigma_0 + k x d^(-1/2)","digits":0},{"label":"(b) Yield strength at d = 0.01 mm","answer":250,"tol":1,"tolPct":null,"prefix":"","suffix":"MPa","hint":"0.01^(-1/2) = 10","digits":0}]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
 <strong>Answer:</strong> (a) <span class="math inline">\(\sigma_y = 70 + 18(0.10)^{-0.5} = 70 + 18(3.16) = 70 + 57 \approx 127\)</span> MPa. (b) <span class="math inline">\(\sigma_y = 70 + 18(0.01)^{-0.5} = 70 + 18(10) = 70 + 180 = 250\)</span> MPa. Refining the grain size by a factor of 10 roughly doubled the yield strength.
 </details>
 <details>
@@ -3133,11 +3208,16 @@ Problem 2 (phase diagram reading): classify the steel
 <p><strong>Problem:</strong> Using <a href="#fig-fe-c-diagram" class="quarto-xref">Figure&nbsp;<span>6.6</span></a>, classify AISI 1080 (0.80% C) as hypoeutectoid, eutectoid, or hypereutectoid, and state which proeutectoid phase (if any) forms on slow cooling.</p>
 <strong>Answer:</strong> 0.80% C is just above the eutectoid composition (~0.76–0.8%), so 1080 is essentially eutectoid to very slightly hypereutectoid. At exactly the eutectoid composition it would form almost 100% pearlite with no proeutectoid phase; if treated as very slightly hypereutectoid, a small amount of proeutectoid cementite would form at grain boundaries before the eutectoid reaction.
 </details>
-<details>
-<summary>
-Problem 3 (phase diagram reading): lever rule
-</summary>
+<p><strong>Problem 3 (phase diagram reading): lever rule</strong></p>
 <p><strong>Problem:</strong> Estimate the fraction of proeutectoid ferrite in slowly-cooled AISI 1020 (0.20% C).</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-practice-p3" data-tryit="number">
+<script type="application/json">{"title":"Problem 3: lever rule","intro":null,"answers":[{"label":"Proeutectoid ferrite","answer":75.6756756756757,"tol":1,"tolPct":null,"prefix":"","suffix":"%","hint":"Find the pearlite fraction first: (C_alloy - 0.02) / (0.76 - 0.02). Ferrite is the rest.","digits":0},{"label":"Pearlite","answer":24.3243243243243,"tol":1,"tolPct":null,"prefix":"","suffix":"%","hint":null,"digits":0}]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
 <strong>Answer:</strong> Fraction pearlite = (0.20 − 0.02)/(0.76 − 0.02) = 0.18/0.74 ≈ 0.24. Fraction proeutectoid ferrite ≈ 1 − 0.24 = 0.76, i.e.&nbsp;about 76% ferrite, 24% pearlite — consistent with 1020 being a low-carbon, mostly-ferritic, relatively soft and ductile steel.
 </details>
 <details>

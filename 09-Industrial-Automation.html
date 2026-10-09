@@ -1861,6 +1861,7 @@ globalThis.qwebrExecuteCode = async function (
   <ul class="collapse">
   <li><a href="#automation-classification" id="toc-automation-classification" class="nav-link" data-scroll-target="#automation-classification"><span class="header-section-number">20.3.1</span> Automation Classification</a></li>
   <li><a href="#the-automation-pyramid" id="toc-the-automation-pyramid" class="nav-link" data-scroll-target="#the-automation-pyramid"><span class="header-section-number">20.3.2</span> The Automation Pyramid</a></li>
+  <li><a href="#try-it-yourself-place-it-on-the-pyramid" id="toc-try-it-yourself-place-it-on-the-pyramid" class="nav-link" data-scroll-target="#try-it-yourself-place-it-on-the-pyramid"><span class="header-section-number">20.3.3</span> Try it yourself: place it on the pyramid</a></li>
   </ul></li>
   <li><a href="#programmable-logic-controllers-plcs" id="toc-programmable-logic-controllers-plcs" class="nav-link" data-scroll-target="#programmable-logic-controllers-plcs"><span class="header-section-number">20.4</span> Programmable Logic Controllers (PLCs)</a>
   <ul class="collapse">
@@ -2440,6 +2441,14 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <p><strong>Level 4 - Enterprise:</strong> ERP systems, business intelligence, supply chain management, financial systems. Makes business decisions based on plant floor data.</p>
 <strong>Key Principle:</strong> Data flows up (process information), commands flow down (control directives).
 </details>
+</section>
+<section id="try-it-yourself-place-it-on-the-pyramid" class="level3" data-number="20.3.3">
+<h3 data-number="20.3.3" class="anchored" data-anchor-id="try-it-yourself-place-it-on-the-pyramid"><span class="header-section-number">20.3.3</span> Try it yourself: place it on the pyramid</h3>
+<p>Nine pieces of a plant’s automation. Place each one on the correct level of the automation pyramid.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-pyramid-sort" data-tryit="sort">
+<script type="application/json">{"title":"Which level of the automation pyramid?","intro":"Place each item on its level of the pyramid.","bins":["Level 0: Process","Level 1: Field Devices","Level 2: Control","Level 3: Manufacturing Operations","Level 4: Enterprise"],"cards":[{"text":"A 500-litre mixing tank and the product inside it.","bin":0,"why":"The physical process being controlled."},{"text":"A conveyor carrying cartons to the palletizer.","bin":0,"why":"The equipment and material themselves."},{"text":"An inductive proximity sensor detecting a part at a station.","bin":1,"why":"Sensors measure the process."},{"text":"A solenoid valve that opens the filling nozzle.","bin":1,"why":"Actuators act on the process."},{"text":"A PLC running the ladder logic for a packaging machine.","bin":2,"why":"The controller reads the inputs, runs the logic and commands the outputs."},{"text":"A DCS controller holding reactor temperature at setpoint.","bin":2,"why":"Closed-loop control logic lives at the control level."},{"text":"An MES releasing work orders to each line and tracking what was built.","bin":3,"why":"Scheduling and tracking production across the plant."},{"text":"A SCADA overview screen showing the status of every line in the plant.","bin":3,"why":"Plant-wide supervision sits above the individual controllers."},{"text":"The ERP system taking a customer order and planning material purchases.","bin":4,"why":"Business planning and the supply chain."}]}</script>
+</div>
 <hr>
 </section>
 </section>
@@ -2558,6 +2567,10 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="total_scan_time < 12">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> A sensor pulse lasts only 12 ms. Get the total scan time under 12 ms so the PLC cannot miss it.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2567,6 +2580,14 @@ Show the live R code behind this calculator
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
 </details>
+<section id="try-it-yourself-order-the-scan-cycle" class="level4" data-number="20.4.3.1">
+<h4 data-number="20.4.3.1" class="anchored" data-anchor-id="try-it-yourself-order-the-scan-cycle"><span class="header-section-number">20.4.3.1</span> Try it yourself: order the scan cycle</h4>
+<p>A PLC repeats the same four steps on every scan. Put them in order, starting with the step that reads the field.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-scan-order" data-tryit="order">
+<script type="application/json">{"title":"The PLC scan cycle","intro":"Move each step up or down until the cycle is in order.","steps":["Input scan: read all inputs into memory","Program execution: solve the logic, rung by rung","Output update: write the results to the outputs","Housekeeping: communications and self-diagnostics"]}</script>
+</div>
+</section>
 </section>
 <section id="plc-programming-languages-iec-61131-3" class="level3" data-number="20.4.4">
 <h3 data-number="20.4.4" class="anchored" data-anchor-id="plc-programming-languages-iec-61131-3"><span class="header-section-number">20.4.4</span> PLC Programming Languages (IEC 61131-3)</h3>
@@ -2637,7 +2658,95 @@ Show the live R code behind this calculator
 <p><strong>Rung 2 - Run Indicator:</strong> 1. When MOTOR coil is energized, the MOTOR contact closes 2. This allows power to flow to the RUN LIGHT output 3. Light is ON whenever motor is running</p>
 <strong>This is called a “3-wire control” circuit</strong> - it provides: - Low voltage release protection (motor won’t restart after power failure) - Maintained contact operation (don’t need to hold START button)
 </details>
+<section id="try-it-yourself-step-through-the-seal-in-rung" class="level4" data-number="20.4.5.1">
+<h4 data-number="20.4.5.1" class="anchored" data-anchor-id="try-it-yourself-step-through-the-seal-in-rung"><span class="header-section-number">20.4.5.1</span> Try it yourself: step through the seal-in rung</h4>
+<p>Be the PLC. The table gives the state of the two pushbuttons at each scan (1 = pressed) for the start/stop rung above. Work out whether the MOTOR output is ON (1) or OFF (0) at the end of every scan. The motor starts OFF.</p>
+<p>On each scan the rung is true when STOP is not pressed <strong>and</strong> either START is pressed <strong>or</strong> the motor was already on from the previous scan.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-ladder-scan" data-tryit="grid">
+<script type="application/json">{"title":"Seal-in rung, scan by scan","intro":"Enter 1 (ON) or 0 (OFF) for the MOTOR output at the end of each scan.","columns":[{"label":"Scan","blank":false,"tol":null,"hint":null},{"label":"START","blank":false,"tol":null,"hint":null},{"label":"STOP","blank":false,"tol":null,"hint":null},{"label":"MOTOR","blank":true,"tol":0,"hint":"Use the motor state from the scan before. In scans 3 and 4 nobody is pressing START, so what keeps the rung true? In scan 7 both buttons are pressed: which one wins?"}],"rows":[["1","0","0",0],["2","1","0",1],["3","0","0",1],["4","0","0",1],["5","0","1",0],["6","0","0",0],["7","1","1",0],["8","0","0",0]],"answers":[]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-condensed caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: center;" data-quarto-table-cell-role="th">Scan</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">START</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">STOP</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">MOTOR</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">Nothing pressed, motor was off</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">START pressed: rung true</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">START released, but the MOTOR contact seals in</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Still sealed in</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">STOP pressed: the rung is broken</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">The seal was broken, so the motor stays off</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">Both pressed: STOP is in series, so it wins</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">Motor was off and START is released</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Scans 3 and 4 are the whole point of the seal-in branch: the operator has let go of START, and the motor’s own contact keeps the rung true. Scan 7 shows why STOP is wired in series with everything else. Whatever else is happening, pressing STOP drops the motor out.</p>
+</details>
 <hr>
+</section>
 </section>
 </section>
 <section id="industrial-sensors" class="level2" data-number="20.5">
@@ -2881,6 +2990,10 @@ Show the live R code behind this calculator
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="abs(speed_at(selected_frequency) - 1000) <= 15">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> A conveyor needs the motor to run at about 1,000 RPM. Find the VFD frequency that gives it, to within 15 RPM.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">

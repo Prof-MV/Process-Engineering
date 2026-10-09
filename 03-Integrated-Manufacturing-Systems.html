@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Takt Time Calculation Example\n# Automotive assembly plant\n\n# Given data\nshift_length_min <- 480      # 8 hours = 480 minutes\nbreaks_min <- 30             # Two 15-minute breaks\nplanned_downtime_min <- 20   # Changeover, meetings\ncustomer_demand <- 60        # Cars per shift\nactual_cycle_time <- 7.5     # minutes (current performance)\n\n# Calculate available time\navailable_time <- shift_length_min - breaks_min - planned_downtime_min\n\n# Calculate Takt Time\ntakt_time <- available_time / customer_demand\n\ncat(sprintf(\"Takt time: %.2f min per car (%.1f sec)\\n\", takt_time, takt_time * 60))\ncat(sprintf(\"  Available time       %d min\\n\", available_time))\ncat(sprintf(\"  Actual cycle time    %.1f min\\n\", actual_cycle_time))\nif (actual_cycle_time <= takt_time) {\n  cat(sprintf(\"  Status               Meeting demand (%.1f%% margin)\\n\", (1 - actual_cycle_time / takt_time) * 100))\n} else {\n  cat(sprintf(\"  Status               !!Cannot meet demand (%.1f%% over)!!\\n\", (actual_cycle_time / takt_time - 1) * 100))\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"takt-vs-cycle","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example\n\n# Given production data\nproduction_time_min <- 480   # Total time equipment ran\nunits_produced <- 60         # Good units produced\n\n# MCT Calculation\nMCT <- production_time_min / units_produced\n\n# MCE Calculation requires understanding of value-added time\n# Typical breakdown of production time:\nvalue_added_time <- 3.5      # Actual processing time (minutes)\ninspection_time <- 0.5       # Quality checks\nwait_time <- 2.5             # Queuing between operations\nmove_time <- 1.5             # Transport between stations\n\ntotal_time_per_unit <- value_added_time + inspection_time + wait_time + move_time\n\n# MCE Calculation\nMCE <- (value_added_time / total_time_per_unit) * 100\n\ncat(sprintf(\"Manufacturing Cycle Efficiency: %.1f%%\\n\", MCE))\ncat(sprintf(\"  Cycle time (MCT)     %.2f min/unit\\n\", MCT))\ncat(sprintf(\"  Total time per unit  %.1f min\\n\", total_time_per_unit))\ncat(sprintf(\"  Value-added share    %.1f min of %.1f min\\n\", value_added_time, total_time_per_unit))\ncat(sprintf(\"  Waste (non-value)    %.1f%%\\n\", 100 - MCE))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"mct-mce","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Line Balancing Example: Tablet Computer Assembly\n\n# Task data\ntasks <- data.frame(\n  Task = c(\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\"),\n  Description = c(\"Install battery\", \"Mount display\", \"Connect cables\",\n                  \"Install motherboard\", \"Add memory\", \"Install camera\",\n                  \"Attach case back\", \"Final test\"),\n  Time_sec = c(30, 45, 20, 55, 15, 25, 35, 40),\n  Predecessors = c(\"-\", \"A\", \"A\", \"B,C\", \"D\", \"D\", \"E,F\", \"G\")\n)\n\n# Display task data\ncat(\"Assembly Tasks:\\n\")\nprint(tasks[, c(\"Task\", \"Description\", \"Time_sec\", \"Predecessors\")])\n\n# Calculate metrics\ntotal_work_content <- sum(tasks$Time_sec)\ncat(\"\\nTotal Work Content:\", total_work_content, \"seconds\\n\")\n\n# Production requirements\ndesired_output <- 45  # units per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate cycle time\ncycle_time <- available_time / desired_output\ncat(\"\\nStep 1 - Cycle Time:\")\ncat(\"\\n  Required output:\", desired_output, \"units/hour\")\ncat(\"\\n  Cycle time = 3600 /\", desired_output, \"=\", cycle_time, \"seconds\\n\")\n\n# Step 2: Calculate theoretical minimum stations\nTM <- total_work_content / cycle_time\ncat(\"\\nStep 2 - Theoretical Minimum Stations:\")\ncat(\"\\n  TM =\", total_work_content, \"/\", cycle_time, \"=\", round(TM, 2))\ncat(\"\\n  Minimum stations required:\", ceiling(TM), \"\\n\")\n\n# Step 3: Assign tasks to stations (using largest task time rule)\ncat(\"\\nStep 3 - Station Assignments (respecting precedence):\\n\")\ncat(\"  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s... EXCEEDS\\n\")\ncat(\"  Let's try: A (30s) + C (20s) = 50s [30s idle]\\n\")\ncat(\"  Station 2: B (45s) + E (15s) = 60s... wait, E needs D\\n\")\ncat(\"  Station 2: B (45s) + D (55s) = 100s > 80s... EXCEEDS\\n\")\ncat(\"  Station 2: B (45s) = 45s [35s idle]\\n\")\ncat(\"  Station 3: D (55s) = 55s [25s idle]\\n\")\ncat(\"  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]\\n\")\ncat(\"  Station 5: H (40s) = 40s [40s idle]\\n\")\n\nn_stations <- 5\nefficiency <- (total_work_content / (n_stations * cycle_time)) * 100\nbalance_delay <- 100 - efficiency\n\ncat(\"\\nStep 4 - Results:\")\ncat(\"\\n  Number of stations:\", n_stations)\ncat(\"\\n  Line efficiency:\", round(efficiency, 1), \"%\")\ncat(\"\\n  Balance delay (idle time):\", round(balance_delay, 1), \"%\")\ncat(\"\\n\\n  This is poor balance - consider redesigning tasks or adding parallel stations.\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Automated Line Performance Analysis\n\n# Line parameters\nideal_cycle_time <- 1.0    # minutes per part (ideal)\nn_stations <- 10           # Number of stations\n\n# Scenario comparison\nscenarios <- data.frame(\n  Scenario = c(\"World Class\", \"Good\", \"Average\", \"Poor\"),\n  Failure_Prob = c(0.005, 0.02, 0.05, 0.10),  # Per station per cycle\n  Repair_Time = c(2, 5, 10, 15)  # Minutes average\n)\n\n# Calculate line performance for each scenario\ncat(\"Automated Line Performance Analysis\\n\")\ncat(\"===================================\\n\")\ncat(\"Ideal cycle time:\", ideal_cycle_time, \"min/part\\n\")\ncat(\"Number of stations:\", n_stations, \"\\n\")\ncat(\"Ideal production rate:\", 60/ideal_cycle_time, \"parts/hour\\n\\n\")\n\nfor(i in 1:nrow(scenarios)) {\n  p <- scenarios$Failure_Prob[i]\n  T <- scenarios$Repair_Time[i]\n\n  # Line failure probability (any station)\n  p_line <- 1 - (1 - p)^n_stations\n\n  # Actual cycle time\n  Tp <- ideal_cycle_time + p_line * T\n\n  # Actual production rate\n  Rp <- 60 / Tp\n\n  # Efficiency\n  efficiency <- (ideal_cycle_time / Tp) * 100\n\n  cat(sprintf(\"%s Performance:\\n\", scenarios$Scenario[i]))\n  cat(sprintf(\"  Station failure prob: %.1f%%\\n\", p * 100))\n  cat(sprintf(\"  Line failure prob: %.1f%%\\n\", p_line * 100))\n  cat(sprintf(\"  Average repair time: %d min\\n\", T))\n  cat(sprintf(\"  Actual cycle time: %.2f min\\n\", Tp))\n  cat(sprintf(\"  Actual production: %.1f parts/hour\\n\", Rp))\n  cat(sprintf(\"  Line efficiency: %.1f%%\\n\\n\", efficiency))\n}","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"downtime-analysis","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Takt Time Calculation Example\n# Automotive assembly plant\n\n# Given data\nshift_length_min <- 480      # 8 hours = 480 minutes\nbreaks_min <- 30             # Two 15-minute breaks\nplanned_downtime_min <- 20   # Changeover, meetings\ncustomer_demand <- 60        # Cars per shift\nactual_cycle_time <- 7.5     # minutes (current performance)\n\n# Calculate available time\navailable_time <- shift_length_min - breaks_min - planned_downtime_min\n\n# Calculate Takt Time\ntakt_time <- available_time / customer_demand\n\ncat(sprintf(\"Takt time: %.2f min per car (%.1f sec)\\n\", takt_time, takt_time * 60))\ncat(sprintf(\"  Available time       %d min\\n\", available_time))\ncat(sprintf(\"  Actual cycle time    %.1f min\\n\", actual_cycle_time))\nif (actual_cycle_time <= takt_time) {\n  cat(sprintf(\"  Status               Meeting demand (%.1f%% margin)\\n\", (1 - actual_cycle_time / takt_time) * 100))\n} else {\n  cat(sprintf(\"  Status               !!Cannot meet demand (%.1f%% over)!!\\n\", (actual_cycle_time / takt_time - 1) * 100))\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"takt-vs-cycle","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Manufacturing Cycle Time (MCT) and Efficiency (MCE) Example\n\n# Given production data\nproduction_time_min <- 480   # Total time equipment ran\nunits_produced <- 60         # Good units produced\n\n# MCT Calculation\nMCT <- production_time_min / units_produced\n\n# MCE Calculation requires understanding of value-added time\n# Typical breakdown of production time:\nvalue_added_time <- 3.5      # Actual processing time (minutes)\ninspection_time <- 0.5       # Quality checks\nwait_time <- 2.5             # Queuing between operations\nmove_time <- 1.5             # Transport between stations\n\ntotal_time_per_unit <- value_added_time + inspection_time + wait_time + move_time\n\n# MCE Calculation\nMCE <- (value_added_time / total_time_per_unit) * 100\n\ncat(sprintf(\"Manufacturing Cycle Efficiency: %.1f%%\\n\", MCE))\ncat(sprintf(\"  Cycle time (MCT)     %.2f min/unit\\n\", MCT))\ncat(sprintf(\"  Total time per unit  %.1f min\\n\", total_time_per_unit))\ncat(sprintf(\"  Value-added share    %.1f min of %.1f min\\n\", value_added_time, total_time_per_unit))\ncat(sprintf(\"  Waste (non-value)    %.1f%%\\n\", 100 - MCE))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"mct-mce","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Line Balancing Example: Tablet Computer Assembly\n\n# Task data\ntasks <- data.frame(\n  Task = c(\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\"),\n  Description = c(\"Install battery\", \"Mount display\", \"Connect cables\",\n                  \"Install motherboard\", \"Add memory\", \"Install camera\",\n                  \"Attach case back\", \"Final test\"),\n  Time_sec = c(30, 45, 20, 55, 15, 25, 35, 40),\n  Predecessors = c(\"-\", \"A\", \"A\", \"B,C\", \"D\", \"D\", \"E,F\", \"G\")\n)\n\n# Display task data\ncat(\"Assembly Tasks:\\n\")\nprint(tasks[, c(\"Task\", \"Description\", \"Time_sec\", \"Predecessors\")])\n\n# Calculate metrics\ntotal_work_content <- sum(tasks$Time_sec)\ncat(\"\\nTotal Work Content:\", total_work_content, \"seconds\\n\")\n\n# Production requirements\ndesired_output <- 45  # units per hour\navailable_time <- 3600  # seconds per hour\n\n# Step 1: Calculate cycle time\ncycle_time <- available_time / desired_output\ncat(\"\\nStep 1 - Cycle Time:\")\ncat(\"\\n  Required output:\", desired_output, \"units/hour\")\ncat(\"\\n  Cycle time = 3600 /\", desired_output, \"=\", cycle_time, \"seconds\\n\")\n\n# Step 2: Calculate theoretical minimum stations\nTM <- total_work_content / cycle_time\ncat(\"\\nStep 2 - Theoretical Minimum Stations:\")\ncat(\"\\n  TM =\", total_work_content, \"/\", cycle_time, \"=\", round(TM, 2))\ncat(\"\\n  Minimum stations required:\", ceiling(TM), \"\\n\")\n\n# Step 3: Assign tasks to stations (using largest task time rule)\ncat(\"\\nStep 3 - Station Assignments (respecting precedence):\\n\")\ncat(\"  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s... EXCEEDS\\n\")\ncat(\"  Let's try: A (30s) + C (20s) = 50s [30s idle]\\n\")\ncat(\"  Station 2: B (45s) + E (15s) = 60s... wait, E needs D\\n\")\ncat(\"  Station 2: B (45s) + D (55s) = 100s > 80s... EXCEEDS\\n\")\ncat(\"  Station 2: B (45s) = 45s [35s idle]\\n\")\ncat(\"  Station 3: D (55s) = 55s [25s idle]\\n\")\ncat(\"  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]\\n\")\ncat(\"  Station 5: H (40s) = 40s [40s idle]\\n\")\n\nn_stations <- 5\nefficiency <- (total_work_content / (n_stations * cycle_time)) * 100\nbalance_delay <- 100 - efficiency\n\ncat(\"\\nStep 4 - Results:\")\ncat(\"\\n  Number of stations:\", n_stations)\ncat(\"\\n  Line efficiency:\", round(efficiency, 1), \"%\")\ncat(\"\\n  Balance delay (idle time):\", round(balance_delay, 1), \"%\")\ncat(\"\\n\\n  This is poor balance - consider redesigning tasks or adding parallel stations.\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-balance-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Automated Line Performance Analysis\n\n# Line parameters\nideal_cycle_time <- 1.0    # minutes per part (ideal)\nn_stations <- 10           # Number of stations\n\n# Scenario comparison\nscenarios <- data.frame(\n  Scenario = c(\"World Class\", \"Good\", \"Average\", \"Poor\"),\n  Failure_Prob = c(0.005, 0.02, 0.05, 0.10),  # Per station per cycle\n  Repair_Time = c(2, 5, 10, 15)  # Minutes average\n)\n\n# Calculate line performance for each scenario\ncat(\"Automated Line Performance Analysis\\n\")\ncat(\"===================================\\n\")\ncat(\"Ideal cycle time:\", ideal_cycle_time, \"min/part\\n\")\ncat(\"Number of stations:\", n_stations, \"\\n\")\ncat(\"Ideal production rate:\", 60/ideal_cycle_time, \"parts/hour\\n\\n\")\n\nfor(i in 1:nrow(scenarios)) {\n  p <- scenarios$Failure_Prob[i]\n  T <- scenarios$Repair_Time[i]\n\n  # Line failure probability (any station)\n  p_line <- 1 - (1 - p)^n_stations\n\n  # Actual cycle time\n  Tp <- ideal_cycle_time + p_line * T\n\n  # Actual production rate\n  Rp <- 60 / Tp\n\n  # Efficiency\n  efficiency <- (ideal_cycle_time / Tp) * 100\n\n  cat(sprintf(\"%s Performance:\\n\", scenarios$Scenario[i]))\n  cat(sprintf(\"  Station failure prob: %.1f%%\\n\", p * 100))\n  cat(sprintf(\"  Line failure prob: %.1f%%\\n\", p_line * 100))\n  cat(sprintf(\"  Average repair time: %d min\\n\", T))\n  cat(sprintf(\"  Actual cycle time: %.2f min\\n\", Tp))\n  cat(sprintf(\"  Actual production: %.1f parts/hour\\n\", Rp))\n  cat(sprintf(\"  Line efficiency: %.1f%%\\n\\n\", efficiency))\n}","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"downtime-analysis","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# A serial production line with random breakdowns\nn_stations <- 6       # stations in the line\nfail_pct <- 4         # chance (%) that a working station breaks down in a cycle\nrepair_cycles <- 5    # cycles a breakdown lasts\nbuffer_size <- 0      # parts of storage between neighbouring stations (0 = rigid line)\nseed <- 1             # run number: same number, same breakdowns\n\nrun_line <- function(buffer) {\n  set.seed(seed)\n  n_cycles <- 2000\n  down <- integer(n_stations)      # cycles of repair left at each station\n  stock <- integer(n_stations - 1) # parts waiting in each buffer\n  made <- 0\n\n  for (cycle in seq_len(n_cycles)) {\n    down <- pmax(down - 1, 0)\n    up <- down == 0\n    breaks <- runif(n_stations) < fail_pct / 100   # would this station break if it ran?\n\n    if (buffer == 0) {\n      # Rigid line: every station is tied to its neighbours\n      if (all(up)) {\n        if (any(breaks)) down[breaks] <- repair_cycles else made <- made + 1\n      }\n    } else {\n      for (i in n_stations:1) {    # last station first, so it frees space behind it\n        has_part  <- i == 1 || stock[i - 1] > 0\n        has_space <- i == n_stations || stock[i] < buffer\n        if (up[i] && has_part && has_space) {\n          if (breaks[i]) {\n            down[i] <- repair_cycles\n          } else {\n            if (i > 1) stock[i - 1] <- stock[i - 1] - 1\n            if (i < n_stations) stock[i] <- stock[i] + 1 else made <- made + 1\n          }\n        }\n      }\n    }\n  }\n  made / n_cycles * 100\n}\n\nefficiency <- run_line(buffer_size)\n\n# The same line at a range of buffer sizes, for comparison\nsizes <- c(0, 1, 2, 3, 5, 8, 12, 20, 30)\ncurve <- sapply(sizes, run_line)\npar(mar = c(4.5, 5, 3.5, 1), cex.main = 1.3, cex.lab = 1.2, cex.axis = 1.1)\nplot(sizes, curve, type = \"b\", lwd = 3, pch = 19, col = \"#2c3e50\", ylim = c(0, 100), las = 1,\n     xlab = \"Buffer between stations (parts)\", ylab = \"Line efficiency (%)\",\n     main = \"Each extra part of buffer buys less than the one before\")\npoints(buffer_size, efficiency, pch = 19, cex = 2.6, col = \"#e74c3c\")\n\ncat(sprintf(\"Line efficiency: %.1f%%\\n\", efficiency))\ncat(sprintf(\"  Parts made             %.0f in 2000 cycles\\n\", efficiency * 20))\ncat(sprintf(\"  Buffer between stations  %d parts\\n\", buffer_size))\ncat(sprintf(\"  Work-in-process allowed  up to %d parts\\n\", buffer_size * (n_stations - 1)))","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"line-buffer-sim","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -1861,11 +1861,13 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#line-balancing" id="toc-line-balancing" class="nav-link" data-scroll-target="#line-balancing"><span class="header-section-number">17.5.1</span> Line Balancing</a></li>
   <li><a href="#line-balancing-example-electronics-assembly" id="toc-line-balancing-example-electronics-assembly" class="nav-link" data-scroll-target="#line-balancing-example-electronics-assembly"><span class="header-section-number">17.5.2</span> Line Balancing Example: Electronics Assembly</a></li>
+  <li><a href="#try-it-yourself-balance-a-bicycle-assembly-line" id="toc-try-it-yourself-balance-a-bicycle-assembly-line" class="nav-link" data-scroll-target="#try-it-yourself-balance-a-bicycle-assembly-line"><span class="header-section-number">17.5.3</span> Try it yourself: balance a bicycle assembly line</a></li>
   </ul></li>
   <li><a href="#automated-production-lines" id="toc-automated-production-lines" class="nav-link" data-scroll-target="#automated-production-lines"><span class="header-section-number">17.6</span> Automated Production Lines</a>
   <ul class="collapse">
   <li><a href="#impact-of-station-failures" id="toc-impact-of-station-failures" class="nav-link" data-scroll-target="#impact-of-station-failures"><span class="header-section-number">17.6.1</span> Impact of Station Failures</a></li>
   <li><a href="#buffer-sizing" id="toc-buffer-sizing" class="nav-link" data-scroll-target="#buffer-sizing"><span class="header-section-number">17.6.2</span> Buffer Sizing</a></li>
+  <li><a href="#try-it-yourself-what-does-a-buffer-buy-you" id="toc-try-it-yourself-what-does-a-buffer-buy-you" class="nav-link" data-scroll-target="#try-it-yourself-what-does-a-buffer-buy-you"><span class="header-section-number">17.6.3</span> Try it yourself: what does a buffer buy you?</a></li>
   </ul></li>
   <li><a href="#cellular-manufacturing" id="toc-cellular-manufacturing" class="nav-link" data-scroll-target="#cellular-manufacturing"><span class="header-section-number">17.7</span> Cellular Manufacturing</a>
   <ul class="collapse">
@@ -1875,24 +1877,25 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#fms-components" id="toc-fms-components" class="nav-link" data-scroll-target="#fms-components"><span class="header-section-number">17.8.1</span> FMS Components</a></li>
   </ul></li>
-  <li><a href="#modern-manufacturing-concepts" id="toc-modern-manufacturing-concepts" class="nav-link" data-scroll-target="#modern-manufacturing-concepts"><span class="header-section-number">17.9</span> Modern Manufacturing Concepts</a>
+  <li><a href="#try-it-yourself-match-the-system-to-the-job" id="toc-try-it-yourself-match-the-system-to-the-job" class="nav-link" data-scroll-target="#try-it-yourself-match-the-system-to-the-job"><span class="header-section-number">17.9</span> Try it yourself: match the system to the job</a></li>
+  <li><a href="#modern-manufacturing-concepts" id="toc-modern-manufacturing-concepts" class="nav-link" data-scroll-target="#modern-manufacturing-concepts"><span class="header-section-number">17.10</span> Modern Manufacturing Concepts</a>
   <ul class="collapse">
-  <li><a href="#smed-single-minute-exchange-of-die" id="toc-smed-single-minute-exchange-of-die" class="nav-link" data-scroll-target="#smed-single-minute-exchange-of-die"><span class="header-section-number">17.9.1</span> SMED (Single-Minute Exchange of Die)</a></li>
-  <li><a href="#agv-and-amr-systems" id="toc-agv-and-amr-systems" class="nav-link" data-scroll-target="#agv-and-amr-systems"><span class="header-section-number">17.9.2</span> AGV and AMR Systems</a></li>
-  <li><a href="#digital-twin" id="toc-digital-twin" class="nav-link" data-scroll-target="#digital-twin"><span class="header-section-number">17.9.3</span> Digital Twin</a></li>
+  <li><a href="#smed-single-minute-exchange-of-die" id="toc-smed-single-minute-exchange-of-die" class="nav-link" data-scroll-target="#smed-single-minute-exchange-of-die"><span class="header-section-number">17.10.1</span> SMED (Single-Minute Exchange of Die)</a></li>
+  <li><a href="#agv-and-amr-systems" id="toc-agv-and-amr-systems" class="nav-link" data-scroll-target="#agv-and-amr-systems"><span class="header-section-number">17.10.2</span> AGV and AMR Systems</a></li>
+  <li><a href="#digital-twin" id="toc-digital-twin" class="nav-link" data-scroll-target="#digital-twin"><span class="header-section-number">17.10.3</span> Digital Twin</a></li>
   </ul></li>
-  <li><a href="#industry-applications" id="toc-industry-applications" class="nav-link" data-scroll-target="#industry-applications"><span class="header-section-number">17.10</span> Industry Applications</a></li>
-  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">17.11</span> Review Questions</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">17.12</span> Summary</a>
+  <li><a href="#industry-applications" id="toc-industry-applications" class="nav-link" data-scroll-target="#industry-applications"><span class="header-section-number">17.11</span> Industry Applications</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">17.12</span> Review Questions</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">17.13</span> Summary</a>
   <ul class="collapse">
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">17.12.1</span> Key Takeaways</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">17.13.1</span> Key Takeaways</a></li>
   </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">17.13</span> References</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">17.14</span> References</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/03-Integrated-Manufacturing-Systems.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/loader.js"></script>
 <script type="module" id="qwebr-monaco-editor-init">
 
@@ -2501,6 +2504,10 @@ What causes blocking and starving in production lines?
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="customer_demand >= 80 &amp;&amp; actual_cycle_time <= takt_time">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Demand rises to 80 cars per shift. Find a cycle time that still meets it.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2594,6 +2601,10 @@ Discussion: What happens when cycle time exceeds takt time?
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="MCE > 60 &amp;&amp; value_added_time == 3.5">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Raise the cycle efficiency above 60% without changing the value-added time.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2616,7 +2627,7 @@ Show the live R code behind this calculator
 <hr>
 </section>
 </section>
-<section id="manual-assembly-lines" class="level2" data-number="17.5">
+<section id="manual-assembly-lines" class="level2 page-columns page-full" data-number="17.5">
 <h2 data-number="17.5" class="anchored" data-anchor-id="manual-assembly-lines"><span class="header-section-number">17.5</span> Manual Assembly Lines</h2>
 <p>Manual assembly lines use human workers at each station. The efficiency depends on how well work is balanced across stations.</p>
 <section id="line-balancing" class="level3" data-number="17.5.1">
@@ -2651,6 +2662,60 @@ Try It: Can you find a better balance?
 <p><strong>Hints:</strong> - Can task A be split into two smaller tasks? - Could parallel workstations handle the bottleneck task D? - What if we allow 85 seconds per station (slower line, fewer stations)?</p>
 <p><strong>One solution with parallel stations:</strong> - Station 1: A + C = 50s - Station 2a: B = 45s (parallel) - Station 2b: B = 45s (parallel) - Station 3: D = 55s - Station 4: E + F = 40s - Station 5: G + H = 75s</p>
 <p>With parallelism at Station 2, effective cycle time stays at 55s (Station 3 bottleneck), but we can now achieve higher throughput.</p>
+</details>
+</section>
+<section id="try-it-yourself-balance-a-bicycle-assembly-line" class="level3 page-columns page-full" data-number="17.5.3">
+<h3 data-number="17.5.3" class="anchored" data-anchor-id="try-it-yourself-balance-a-bicycle-assembly-line"><span class="header-section-number">17.5.3</span> Try it yourself: balance a bicycle assembly line</h3>
+<p>The electronics example above was worked for you. This one is yours. A line assembles bicycles from eight tasks, and demand sets the cycle time at <strong>60 seconds</strong>. Assign every task to a station by choosing from the list in its box.</p>
+<p>Three rules decide whether your balance is valid: every task needs a station, no task may sit at an earlier station than a task it depends on (follow the arrows), and no station may hold more than 60 seconds of work. The table under the diagram totals each station as you go. A valid balance is the start; the real question is how few stations you need.</p>
+<div class="column-body-outset">
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-line-balance" data-tryit="balance">
+<script type="application/json">{"title":"Line balancing: bicycle assembly","intro":"Choose a station for each task. Arrows show which tasks must come first.","cycle":60,"unit":"s","best":4,"stations":8,"tasks":[{"id":"A","label":"Clamp frame in fixture","time":25,"pred":[],"layer":1},{"id":"B","label":"Install fork","time":30,"pred":["A"],"layer":2},{"id":"C","label":"Fit bottom bracket","time":20,"pred":["A"],"layer":2},{"id":"D","label":"Mount crankset","time":35,"pred":["C"],"layer":3},{"id":"E","label":"Install wheels","time":30,"pred":["B"],"layer":3},{"id":"F","label":"Fit chain","time":15,"pred":["D","E"],"layer":4},{"id":"G","label":"Adjust brakes","time":40,"pred":["E"],"layer":4},{"id":"H","label":"Final inspection","time":20,"pred":["F","G"],"layer":5}]}</script>
+</div>
+</div>
+<details class="tryit-solution">
+<summary>
+Show one good balance
+</summary>
+<p>The theoretical minimum is 215 / 60 = 3.58, which rounds up to 4 stations, and 4 stations can in fact be reached:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Station</th>
+<th style="text-align: left;">Tasks</th>
+<th style="text-align: center;">Time</th>
+<th style="text-align: center;">Idle</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">A, B</td>
+<td style="text-align: center;">55 s</td>
+<td style="text-align: center;">5 s</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">C, D</td>
+<td style="text-align: center;">55 s</td>
+<td style="text-align: center;">5 s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">E, F</td>
+<td style="text-align: center;">45 s</td>
+<td style="text-align: center;">15 s</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">G, H</td>
+<td style="text-align: center;">60 s</td>
+<td style="text-align: center;">0 s</td>
+</tr>
+</tbody>
+</table>
+<p>Line efficiency = 215 / (4 × 60) = 89.6%. This is not the only four-station answer: A, C / B, E / D, F / G, H also works. What every four-station answer has in common is that G (40 s) and H (20 s) share the last station; put anything else with G and you need a fifth.</p>
 </details>
 <hr>
 </section>
@@ -2699,6 +2764,69 @@ Discussion: Why is preventive maintenance critical for automated lines?
 </div>
 </div>
 </div>
+</section>
+<section id="try-it-yourself-what-does-a-buffer-buy-you" class="level3" data-number="17.6.3">
+<h3 data-number="17.6.3" class="anchored" data-anchor-id="try-it-yourself-what-does-a-buffer-buy-you"><span class="header-section-number">17.6.3</span> Try it yourself: what does a buffer buy you?</h3>
+<p>The formulas above give the average. A simulation shows what happens cycle by cycle. This one runs a six-station automated line for 2 000 cycles. Each station that is working has a small chance of breaking down, and a breakdown lasts several cycles. With no buffers the stations are rigidly linked, so one stoppage stops them all. With buffers, a station can keep working from the stock in front of it and into the space behind it.</p>
+<p>Change the buffer size and watch the efficiency. Then press <strong>Run again</strong> a few times: the answer moves, because breakdowns are random. In class, each team can enter its team number as the run number and compare.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="line-buffer-sim" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-industry qwebr-calc-icon"></i>
+    <h4 class="anchored">Line Simulation: Breakdowns and Buffers</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-line-buffer-sim-n-stations">Stations</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-line-buffer-sim-n-stations" data-var="n_stations" value="6" min="2" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-line-buffer-sim-fail-pct">Breakdown chance per cycle</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-line-buffer-sim-fail-pct" data-var="fail_pct" value="4" min="0" max="15" step="0.5">
+        <span class="qwebr-calc-suffix">%</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-line-buffer-sim-repair-cycles">Repair time</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-line-buffer-sim-repair-cycles" data-var="repair_cycles" value="5" min="1" max="20" step="1">
+        <span class="qwebr-calc-suffix">cycles</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-line-buffer-sim-buffer-size">Buffer between stations <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-line-buffer-sim-buffer-size" id="qcalc-line-buffer-sim-buffer-size-readout">0</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-line-buffer-sim-buffer-size" data-var="buffer_size" value="0" min="0" max="30" step="1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-line-buffer-sim-seed">Run number</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-line-buffer-sim-seed" data-var="seed" value="1" min="1" max="999" step="1">
+      </div>
+    </div>
+    <button type="button" class="qwebr-calc-rerun" data-seed-var="seed">Run again with new random numbers</button>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="efficiency >= 65 &amp;&amp; n_stations == 6 &amp;&amp; fail_pct == 4 &amp;&amp; repair_cycles == 5">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Reach 65% line efficiency using buffers alone: leave the stations, breakdown chance and repair time as they are. What is the smallest buffer that does it?</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this simulation
+</summary>
+<div id="qwebr-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <hr>
 </section>
 </section>
@@ -2840,10 +2968,19 @@ Discussion: Why is preventive maintenance critical for automated lines?
 <hr>
 </section>
 </section>
-<section id="modern-manufacturing-concepts" class="level2" data-number="17.9">
-<h2 data-number="17.9" class="anchored" data-anchor-id="modern-manufacturing-concepts"><span class="header-section-number">17.9</span> Modern Manufacturing Concepts</h2>
-<section id="smed-single-minute-exchange-of-die" class="level3" data-number="17.9.1">
-<h3 data-number="17.9.1" class="anchored" data-anchor-id="smed-single-minute-exchange-of-die"><span class="header-section-number">17.9.1</span> SMED (Single-Minute Exchange of Die)</h3>
+<section id="try-it-yourself-match-the-system-to-the-job" class="level2" data-number="17.9">
+<h2 data-number="17.9" class="anchored" data-anchor-id="try-it-yourself-match-the-system-to-the-job"><span class="header-section-number">17.9</span> Try it yourself: match the system to the job</h2>
+<p>Eight production situations. Decide which type of system from this chapter suits each one. Think about volume, variety, and how much of the work a person must do.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-system-match" data-tryit="sort">
+<script type="application/json">{"title":"Which production system?","intro":"Pick the system that suits each situation.","bins":["Manual assembly line","Automated transfer line","Manufacturing cell","FMS"],"cards":[{"text":"A dashboard needs wiring harnesses routed and clipped by hand; 400 vehicles a day.","bin":0,"why":"High volume, but the dexterity needed keeps people on the line."},{"text":"Laptops are assembled in a fixed task sequence that is balanced to takt time.","bin":0,"why":"Paced, sequential manual work is what line balancing is for."},{"text":"One engine block design, 300,000 a year, machined at 20 stations in sequence.","bin":1,"why":"One product at very high volume justifies dedicated, linked stations."},{"text":"Beverage cans are formed, washed, coated and printed at 2,000 a minute.","bin":1,"why":"Fixed automation: extreme volume and no product variety."},{"text":"Twelve similar shaft part numbers are grouped as a family and made on a U-shaped group of machines.","bin":2,"why":"Group technology: a part family and a dedicated machine group."},{"text":"Two cross-trained operators run five machines arranged in a U for one family of brackets.","bin":2,"why":"Cellular manufacturing relies on multi-skilled operators and short travel."},{"text":"CNC machining centres linked by an automated pallet system make 40 part numbers in any order, lights-out.","bin":3,"why":"Computer control, automated handling and mid-volume, mid-variety work."},{"text":"A central computer routes pallets between machines and changes part programs with almost no changeover loss.","bin":3,"why":"Flexible routing under computer control is the defining feature of an FMS."}]}</script>
+</div>
+<hr>
+</section>
+<section id="modern-manufacturing-concepts" class="level2" data-number="17.10">
+<h2 data-number="17.10" class="anchored" data-anchor-id="modern-manufacturing-concepts"><span class="header-section-number">17.10</span> Modern Manufacturing Concepts</h2>
+<section id="smed-single-minute-exchange-of-die" class="level3" data-number="17.10.1">
+<h3 data-number="17.10.1" class="anchored" data-anchor-id="smed-single-minute-exchange-of-die"><span class="header-section-number">17.10.1</span> SMED (Single-Minute Exchange of Die)</h3>
 <p><strong>SMED</strong> is a lean manufacturing technique to reduce changeover time to under 10 minutes (“single digit minutes”).</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2958,8 +3095,8 @@ Case Study: Injection Molding Changeover
 <p><strong>Results:</strong> - Total changeover: 25 minutes (72% reduction) - Additional capacity: +15 changeovers/week possible - Smaller batch sizes now economical</p>
 </details>
 </section>
-<section id="agv-and-amr-systems" class="level3" data-number="17.9.2">
-<h3 data-number="17.9.2" class="anchored" data-anchor-id="agv-and-amr-systems"><span class="header-section-number">17.9.2</span> AGV and AMR Systems</h3>
+<section id="agv-and-amr-systems" class="level3" data-number="17.10.2">
+<h3 data-number="17.10.2" class="anchored" data-anchor-id="agv-and-amr-systems"><span class="header-section-number">17.10.2</span> AGV and AMR Systems</h3>
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
   <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/7Pq-S557XQU" title="AGV vs AMR Comparison" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
   </iframe>
@@ -3016,8 +3153,8 @@ Case Study: Injection Molding Changeover
 </div>
 </div>
 </section>
-<section id="digital-twin" class="level3" data-number="17.9.3">
-<h3 data-number="17.9.3" class="anchored" data-anchor-id="digital-twin"><span class="header-section-number">17.9.3</span> Digital Twin</h3>
+<section id="digital-twin" class="level3" data-number="17.10.3">
+<h3 data-number="17.10.3" class="anchored" data-anchor-id="digital-twin"><span class="header-section-number">17.10.3</span> Digital Twin</h3>
 <p>A <strong>digital twin</strong> is a virtual representation of a physical manufacturing system that is updated in real-time with sensor data.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -3033,8 +3170,8 @@ Case Study: Injection Molding Changeover
 <hr>
 </section>
 </section>
-<section id="industry-applications" class="level2" data-number="17.10">
-<h2 data-number="17.10" class="anchored" data-anchor-id="industry-applications"><span class="header-section-number">17.10</span> Industry Applications</h2>
+<section id="industry-applications" class="level2" data-number="17.11">
+<h2 data-number="17.11" class="anchored" data-anchor-id="industry-applications"><span class="header-section-number">17.11</span> Industry Applications</h2>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover table-bordered caption-top table-sm small">
@@ -3084,33 +3221,48 @@ Case Study: Injection Molding Changeover
 </div>
 <hr>
 </section>
-<section id="review-questions" class="level2" data-number="17.11">
-<h2 data-number="17.11" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">17.11</span> Review Questions</h2>
-<details>
-<summary>
-Question 1: Takt Time Calculation
-</summary>
+<section id="review-questions" class="level2" data-number="17.12">
+<h2 data-number="17.12" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">17.12</span> Review Questions</h2>
+<p><strong>Question 1: Takt Time Calculation</strong></p>
 <p><strong>A plant operates 8-hour shifts with 30 minutes of breaks. Daily demand is 400 units. Calculate the takt time.</strong></p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-review-q1" data-tryit="number">
+<script type="application/json">{"title":"Question 1: takt time","intro":null,"answers":[{"label":"Takt time","answer":1.125,"tol":0.005,"tolPct":null,"prefix":"","suffix":"min/unit","hint":"Available time = shift minus breaks. Takt = available time / demand.","digits":3},{"label":"Takt time","answer":67.5,"tol":0.1,"tolPct":null,"prefix":"","suffix":"sec/unit","hint":"Multiply minutes by 60.","digits":1}]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
 <p><strong>Solution:</strong></p>
 <p>Available time = 8 hours × 60 min - 30 min = 450 minutes</p>
 <p>Takt time = 450 min / 400 units = <strong>1.125 minutes per unit</strong> = 67.5 seconds</p>
 <p>If actual cycle time is 60 seconds, the plant has (67.5 - 60)/67.5 = <strong>11% capacity margin</strong>.</p>
 </details>
-<details>
-<summary>
-Question 2: Line Efficiency
-</summary>
+<p><strong>Question 2: Line Efficiency</strong></p>
 <p><strong>A 6-station assembly line has a cycle time of 2 minutes. The task times at each station are: 1.8, 1.9, 2.0, 1.7, 1.6, and 1.5 minutes. Calculate the line efficiency.</strong></p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-review-q2" data-tryit="number">
+<script type="application/json">{"title":"Question 2: line efficiency","intro":null,"answers":[{"label":"Line efficiency","answer":87.5,"tol":0.1,"tolPct":null,"prefix":"","suffix":"%","hint":"Total work content divided by (stations x cycle time).","digits":1},{"label":"Balance delay","answer":12.5,"tol":0.1,"tolPct":null,"prefix":"","suffix":"%","hint":"Whatever is not efficiency is idle time.","digits":1}]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
 <p><strong>Solution:</strong></p>
 <p>Total work content = 1.8 + 1.9 + 2.0 + 1.7 + 1.6 + 1.5 = 10.5 minutes</p>
 <p>Line efficiency = (10.5) / (6 × 2.0) × 100% = 10.5/12 × 100% = <strong>87.5%</strong></p>
 <p>Balance delay (idle time) = 100% - 87.5% = <strong>12.5%</strong></p>
 </details>
-<details>
-<summary>
-Question 3: Downtime Impact
-</summary>
+<p><strong>Question 3: Downtime Impact</strong></p>
 <p><strong>An automated line has 8 stations, each with 3% failure probability per cycle and 8-minute average repair time. The ideal cycle time is 0.5 minutes. What is the actual production rate?</strong></p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-review-q3" data-tryit="number">
+<script type="application/json">{"title":"Question 3: downtime impact","intro":null,"answers":[{"label":"Line failure probability per cycle","answer":21.6256640562304,"tol":0.2,"tolPct":null,"prefix":"","suffix":"%","hint":"The line stops if ANY station fails: 1 - (1 - p)^n.","digits":1},{"label":"Actual cycle time","answer":2.23005312449843,"tol":0.02,"tolPct":null,"prefix":"","suffix":"min","hint":"Ideal cycle time + line failure probability x repair time.","digits":2},{"label":"Actual production rate","answer":26.9051886436538,"tol":0.3,"tolPct":null,"prefix":"","suffix":"parts/hr","hint":"60 minutes divided by the actual cycle time.","digits":1}]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
 <p><strong>Solution:</strong></p>
 <p>Line failure probability = 1 - (1 - 0.03)^8 = 1 - 0.97^8 = 1 - 0.784 = <strong>21.6%</strong></p>
 <p>Actual cycle time = 0.5 + (0.216 × 8) = 0.5 + 1.73 = <strong>2.23 minutes</strong></p>
@@ -3145,8 +3297,8 @@ Question 5: SMED Application
 </details>
 <hr>
 </section>
-<section id="summary" class="level2" data-number="17.12">
-<h2 data-number="17.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">17.12</span> Summary</h2>
+<section id="summary" class="level2" data-number="17.13">
+<h2 data-number="17.13" class="anchored" data-anchor-id="summary"><span class="header-section-number">17.13</span> Summary</h2>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover table-bordered caption-top table-sm small">
@@ -3190,8 +3342,8 @@ Question 5: SMED Application
 </table>
 </div>
 </div>
-<section id="key-takeaways" class="level3" data-number="17.12.1">
-<h3 data-number="17.12.1" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">17.12.1</span> Key Takeaways</h3>
+<section id="key-takeaways" class="level3" data-number="17.13.1">
+<h3 data-number="17.13.1" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">17.13.1</span> Key Takeaways</h3>
 <ol type="1">
 <li><strong>Match system to product</strong> - Volume and variety determine optimal manufacturing system</li>
 <li><strong>Takt time sets the pace</strong> - Everything should be designed to meet customer demand rate</li>
@@ -3203,8 +3355,8 @@ Question 5: SMED Application
 <hr>
 </section>
 </section>
-<section id="references" class="level2" data-number="17.13">
-<h2 data-number="17.13" class="anchored" data-anchor-id="references"><span class="header-section-number">17.13</span> References</h2>
+<section id="references" class="level2" data-number="17.14">
+<h2 data-number="17.14" class="anchored" data-anchor-id="references"><span class="header-section-number">17.14</span> References</h2>
 <ol type="1">
 <li>Groover, M.P. (2020). <em>Automation, Production Systems, and Computer-Integrated Manufacturing</em> (5th ed.). Pearson.</li>
 <li>Liker, J.K. (2004). <em>The Toyota Way</em>. McGraw-Hill.</li>

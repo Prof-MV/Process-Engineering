@@ -1889,6 +1889,7 @@ globalThis.qwebrExecuteCode = async function (
   <li><a href="#fta-symbols" id="toc-fta-symbols" class="nav-link" data-scroll-target="#fta-symbols"><span class="header-section-number">19.7.1</span> FTA Symbols</a></li>
   <li><a href="#fta-example-pump-fails-to-deliver-flow" id="toc-fta-example-pump-fails-to-deliver-flow" class="nav-link" data-scroll-target="#fta-example-pump-fails-to-deliver-flow"><span class="header-section-number">19.7.2</span> FTA Example: Pump Fails to Deliver Flow</a></li>
   <li><a href="#calculating-probability-with-fta" id="toc-calculating-probability-with-fta" class="nav-link" data-scroll-target="#calculating-probability-with-fta"><span class="header-section-number">19.7.3</span> Calculating Probability with FTA</a></li>
+  <li><a href="#try-it-yourself-work-a-fault-tree-by-hand" id="toc-try-it-yourself-work-a-fault-tree-by-hand" class="nav-link" data-scroll-target="#try-it-yourself-work-a-fault-tree-by-hand"><span class="header-section-number">19.7.4</span> Try it yourself: work a fault tree by hand</a></li>
   </ul></li>
   <li><a href="#pareto-analysis" id="toc-pareto-analysis" class="nav-link" data-scroll-target="#pareto-analysis"><span class="header-section-number">19.8</span> Pareto Analysis</a>
   <ul class="collapse">
@@ -1942,7 +1943,7 @@ globalThis.qwebrExecuteCode = async function (
 <div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/15-Troubleshooting-RCA.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/loader.js"></script>
 <script type="module" id="qwebr-monaco-editor-init">
 
@@ -2686,6 +2687,14 @@ The irony is that reactive troubleshooting actually costs more time in the long 
 </div>
 </div>
 </div>
+<section id="try-it-yourself-hang-the-cause-on-the-right-bone" class="level4" data-number="19.6.1.1">
+<h4 data-number="19.6.1.1" class="anchored" data-anchor-id="try-it-yourself-hang-the-cause-on-the-right-bone"><span class="header-section-number">19.6.1.1</span> Try it yourself: hang the cause on the right bone</h4>
+<p>A team is brainstorming why a CNC lathe is producing out-of-tolerance diameters. Put each suggested cause on the correct bone of the fishbone.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-fishbone-sort" data-tryit="sort">
+<script type="application/json">{"title":"Which of the 6M categories?","intro":"Put each cause on its bone.","bins":["Man","Machine","Material","Method","Measurement","Mother Nature"],"cards":[{"text":"A newly hired operator has not yet been trained on tool offsets.","bin":0,"why":"People: skills, training, fatigue."},{"text":"The spindle bearing has excessive play.","bin":1,"why":"Equipment condition."},{"text":"The chuck jaws are worn and no longer grip concentrically.","bin":1,"why":"Tooling and workholding belong to the machine."},{"text":"Bar stock from a new supplier is harder than specified.","bin":2,"why":"Incoming material properties."},{"text":"The work instruction does not say how often to check the insert for wear.","bin":3,"why":"The procedure itself is incomplete."},{"text":"The micrometer used at the machine is out of calibration.","bin":4,"why":"The parts may be fine; the reading is wrong."},{"text":"The shop is 12 degrees C warmer in the afternoon and the parts grow before they are measured.","bin":5,"why":"Environment: temperature, humidity, vibration."}]}</script>
+</div>
+</section>
 </section>
 <section id="constructing-a-fishbone-diagram" class="level3" data-number="19.6.2">
 <h3 data-number="19.6.2" class="anchored" data-anchor-id="constructing-a-fishbone-diagram"><span class="header-section-number">19.6.2</span> Constructing a Fishbone Diagram</h3>
@@ -2748,7 +2757,7 @@ The irony is that reactive troubleshooting actually costs more time in the long 
 <hr>
 </section>
 </section>
-<section id="fault-tree-analysis-fta" class="level2" data-number="19.7">
+<section id="fault-tree-analysis-fta" class="level2 page-columns page-full" data-number="19.7">
 <h2 data-number="19.7" class="anchored" data-anchor-id="fault-tree-analysis-fta"><span class="header-section-number">19.7</span> Fault Tree Analysis (FTA)</h2>
 <p><strong>Fault Tree Analysis</strong> is a top-down, deductive analysis method that uses Boolean logic to analyze undesired events. Originally developed for the aerospace industry, FTA is particularly useful for complex systems with multiple potential failure paths.</p>
 <section id="fta-symbols" class="level3" data-number="19.7.1">
@@ -2867,6 +2876,10 @@ The irony is that reactive troubleshooting actually costs more time in the long 
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="P_top < 0.10">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Get the probability of the top event below 10%. Which single basic event gets you there on its own?</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2875,6 +2888,28 @@ Show the live R code behind this calculator
 </summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
+</section>
+<section id="try-it-yourself-work-a-fault-tree-by-hand" class="level3 page-columns page-full" data-number="19.7.4">
+<h3 data-number="19.7.4" class="anchored" data-anchor-id="try-it-yourself-work-a-fault-tree-by-hand"><span class="header-section-number">19.7.4</span> Try it yourself: work a fault tree by hand</h3>
+<p>A packaging line’s infeed conveyor keeps stopping without warning. The team has drawn the fault tree below and estimated the probability of each basic event per shift. Work upward: fill in the probability of the two intermediate events, then the top event.</p>
+<p>Remember the two gate rules. Through an <strong>AND</strong> gate every input must occur, so multiply the probabilities. Through an <strong>OR</strong> gate any one input is enough, so use 1 − (1 − P1)(1 − P2)…</p>
+<div class="column-body-outset">
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-fault-tree" data-tryit="diagram">
+<script type="application/json">{"title":"Fault tree: conveyor stops unexpectedly","intro":"Fill in P for the three gates. Give four decimal places.","direction":"down","arrows":false,"nodes":[{"id":"top","label":"Conveyor stops unexpectedly","layer":1,"sub":"OR gate","given":[],"blank":[{"label":"P","answer":0.036581698,"tol":0.0005,"tolPct":null,"prefix":"","suffix":"","hint":"An OR gate over three inputs: 1 - (1 - P1)(1 - P2)(1 - P3).","digits":4}]},{"id":"drive","label":"Drive fails","layer":2,"sub":"OR gate","given":[],"blank":[{"label":"P","answer":0.01495,"tol":0.0005,"tolPct":null,"prefix":"","suffix":"","hint":"Either event is enough: 1 - (1 - 0.010)(1 - 0.005).","digits":4}]},{"id":"power","label":"Control power lost","layer":2,"sub":"AND gate","given":[],"blank":[{"label":"P","answer":0.002,"tol":0.0001,"tolPct":null,"prefix":"","suffix":"","hint":"Both must fail together: multiply the two probabilities.","digits":4}]},{"id":"jam","label":"False jam signal","layer":2,"sub":"Basic event","given":[{"label":"P","value":"0.020"}],"blank":[]},{"id":"motor","label":"Motor burns out","layer":3,"sub":"Basic event","given":[{"label":"P","value":"0.010"}],"blank":[]},{"id":"gearbox","label":"Gearbox seizes","layer":3,"sub":"Basic event","given":[{"label":"P","value":"0.005"}],"blank":[]},{"id":"mains","label":"Mains supply fails","layer":3,"sub":"Basic event","given":[{"label":"P","value":"0.050"}],"blank":[]},{"id":"ups","label":"UPS fails","layer":3,"sub":"Basic event","given":[{"label":"P","value":"0.040"}],"blank":[]}],"edges":[["top","drive"],["top","power"],["top","jam"],["drive","motor"],["drive","gearbox"],["power","mains"],["power","ups"]],"answers":[]}</script>
+</div>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
+<ul>
+<li><strong>Drive fails</strong> (OR): 1 − (1 − 0.010)(1 − 0.005) = <strong>0.0150</strong></li>
+<li><strong>Control power lost</strong> (AND): 0.050 × 0.040 = <strong>0.0020</strong></li>
+<li><strong>Conveyor stops</strong> (OR): 1 − (1 − 0.0150)(1 − 0.0020)(1 − 0.020) = <strong>0.0366</strong>, about 3.7% of shifts</li>
+</ul>
+<p>Look at where the risk comes from. The two power supplies are individually the least reliable items on the tree, yet because both must fail together they contribute almost nothing. The single false jam signal, with no redundancy, is the largest contributor. That is the argument for redundancy in one picture.</p>
 </details>
 <hr>
 </section>
@@ -3083,6 +3118,14 @@ Show the live R code behind this calculator
 </table>
 </div>
 </div>
+<section id="try-it-yourself-order-the-8d-disciplines" class="level4" data-number="19.10.1.1">
+<h4 data-number="19.10.1.1" class="anchored" data-anchor-id="try-it-yourself-order-the-8d-disciplines"><span class="header-section-number">19.10.1.1</span> Try it yourself: order the 8D disciplines</h4>
+<p>The 8D method runs from D0 to D8. Containment comes before root cause for a reason: the customer has to be protected while you investigate. Put the nine disciplines in order.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-eightd-order" data-tryit="order">
+<script type="application/json">{"title":"The 8D disciplines, D0 to D8","intro":"Move each discipline up or down until the sequence runs from D0 to D8.","steps":["Plan and prepare for the 8D","Form the team","Describe the problem","Contain the problem to protect the customer","Find and verify the root cause","Choose the permanent corrective actions","Implement and validate the corrective actions","Prevent recurrence","Close out and recognize the team"]}</script>
+</div>
+</section>
 </section>
 <section id="d3-containment-actions" class="level3" data-number="19.10.2">
 <h3 data-number="19.10.2" class="anchored" data-anchor-id="d3-containment-actions"><span class="header-section-number">19.10.2</span> D3: Containment Actions</h3>

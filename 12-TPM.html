@@ -1870,6 +1870,7 @@ globalThis.qwebrExecuteCode = async function (
   <li><a href="#the-six-big-losses" id="toc-the-six-big-losses" class="nav-link" data-scroll-target="#the-six-big-losses"><span class="header-section-number">12.5</span> The Six Big Losses</a>
   <ul class="collapse">
   <li><a href="#typical-loss-distribution" id="toc-typical-loss-distribution" class="nav-link" data-scroll-target="#typical-loss-distribution"><span class="header-section-number">12.5.1</span> Typical Loss Distribution</a></li>
+  <li><a href="#try-it-yourself-which-oee-factor-takes-the-hit" id="toc-try-it-yourself-which-oee-factor-takes-the-hit" class="nav-link" data-scroll-target="#try-it-yourself-which-oee-factor-takes-the-hit"><span class="header-section-number">12.5.2</span> Try it yourself: which OEE factor takes the hit?</a></li>
   </ul></li>
   <li><a href="#autonomous-maintenance" id="toc-autonomous-maintenance" class="nav-link" data-scroll-target="#autonomous-maintenance"><span class="header-section-number">12.6</span> Autonomous Maintenance</a>
   <ul class="collapse">
@@ -2587,6 +2588,10 @@ Question: Why involve operators in maintenance?
     </div>
   </div>
   <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="oee >= 85 &amp;&amp; good_parts <= total_parts &amp;&amp; total_parts <= theoretical_output">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> Reach a world-class OEE of 85% or better. Keep it physically possible: no more good parts than parts made, and no more parts than the run time allows.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
   <div class="qwebr-calc-graph"></div>
 </div>
 <details class="qwebr-calc-source">
@@ -2769,6 +2774,14 @@ OEE = 88.6% × 89.7% × 96.0% = 76.3%</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="try-it-yourself-which-oee-factor-takes-the-hit" class="level3" data-number="12.5.2">
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="try-it-yourself-which-oee-factor-takes-the-hit"><span class="header-section-number">12.5.2</span> Try it yourself: which OEE factor takes the hit?</h3>
+<p>Each of the Six Big Losses reduces one of the three OEE factors. Sort these shift-log entries by the factor they reduce.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-losses-sort" data-tryit="sort">
+<script type="application/json">{"title":"Availability, Performance or Quality?","intro":"Pick the OEE factor each loss reduces.","bins":["Availability","Performance","Quality"],"cards":[{"text":"A hydraulic hose bursts and the press is down for 50 minutes.","bin":0,"why":"An equipment failure: the machine is not running during planned production time."},{"text":"A die change and first-piece adjustment takes 40 minutes.","bin":0,"why":"Setup and adjustment is downtime, even though it is expected."},{"text":"Parts jam in the feeder chute a dozen times, each cleared in under a minute.","bin":1,"why":"Minor stops: the machine is 'running' but not producing at rate."},{"text":"The line runs at 80% of its rated speed because of a worn spindle bearing.","bin":1,"why":"Reduced speed: a longer cycle time than the ideal."},{"text":"The first 25 parts after start-up are scrapped while the process warms up.","bin":2,"why":"Start-up rejects are parts made but not good."},{"text":"Three percent of parts are reworked for burrs during steady running.","bin":2,"why":"Production defects, including rework, reduce the quality rate."}]}</script>
+</div>
 <hr>
 </section>
 </section>
@@ -2846,6 +2859,14 @@ OEE = 88.6% × 89.7% × 96.0% = 76.3%</code></pre>
 </table>
 </div>
 </div>
+<section id="try-it-yourself-order-the-seven-steps" class="level4" data-number="12.6.1.1">
+<h4 data-number="12.6.1.1" class="anchored" data-anchor-id="try-it-yourself-order-the-seven-steps"><span class="header-section-number">12.6.1.1</span> Try it yourself: order the seven steps</h4>
+<p>Autonomous maintenance is built up in seven steps, each one resting on the one before. Put them in order.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-am-order" data-tryit="order">
+<script type="application/json">{"title":"The seven steps of autonomous maintenance","intro":"Move each step up or down until the sequence is right.","steps":["Initial cleaning: clean to inspect","Eliminate sources of contamination","Set cleaning and lubrication standards","General inspection training","Autonomous inspection","Workplace organization","Full autonomous maintenance"]}</script>
+</div>
+</section>
 </section>
 <section id="the-am-tag-system" class="level3" data-number="12.6.2">
 <h3 data-number="12.6.2" class="anchored" data-anchor-id="the-am-tag-system"><span class="header-section-number">12.6.2</span> The AM Tag System</h3>
@@ -3856,11 +3877,25 @@ Question 3: What is the difference between autonomous maintenance and planned ma
 </section>
 <section id="calculation-questions" class="level3" data-number="12.12.2">
 <h3 data-number="12.12.2" class="anchored" data-anchor-id="calculation-questions"><span class="header-section-number">12.12.2</span> Calculation Questions</h3>
-<details>
+<p><strong>Question 4: Calculate OEE given the following data.</strong></p>
+<p><strong>Given:</strong></p>
+<ul>
+<li>Shift length: 480 minutes</li>
+<li>Breaks: 30 minutes</li>
+<li>Changeover: 45 minutes</li>
+<li>Breakdown: 20 minutes</li>
+<li>Ideal cycle time: 30 seconds (0.5 min)</li>
+<li>Total parts produced: 580</li>
+<li>Rejected parts: 23</li>
+</ul>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-review-q4" data-tryit="number">
+<script type="application/json">{"title":"Question 4: OEE","intro":null,"answers":[{"label":"Availability","answer":85.5555555555556,"tol":0.2,"tolPct":null,"prefix":"","suffix":"%","hint":"Run time / planned production time. Breaks are planned; changeover and breakdown are not.","digits":1},{"label":"Performance","answer":75.3246753246753,"tol":0.2,"tolPct":null,"prefix":"","suffix":"%","hint":"Actual parts / (run time / ideal cycle time).","digits":1},{"label":"Quality","answer":96.0344827586207,"tol":0.2,"tolPct":null,"prefix":"","suffix":"%","hint":"Good parts / total parts.","digits":1},{"label":"OEE","answer":61.8888888888889,"tol":0.3,"tolPct":null,"prefix":"","suffix":"%","hint":"Multiply the three factors as decimals.","digits":1}]}</script>
+</div>
+<details class="tryit-solution">
 <summary>
-Question 4: Calculate OEE given the following data.
+Show the worked solution
 </summary>
-<p><strong>Given:</strong> - Shift length: 480 minutes - Breaks: 30 minutes - Changeover: 45 minutes - Breakdown: 20 minutes - Ideal cycle time: 30 seconds (0.5 min) - Total parts produced: 580 - Rejected parts: 23</p>
 <p><strong>Solution:</strong></p>
 <pre><code>Planned Production Time = 480 - 30 = 450 minutes
 Run Time = 450 - 45 - 20 = 385 minutes
@@ -3889,9 +3924,14 @@ Question 5: A machine has OEE of 65% with Availability 90%, Performance 80%, Qua
 </ol>
 <p><strong>Investigation areas for performance:</strong> - Minor stops (jams, blockages, sensor trips) - Reduced speed operation - Idling and waiting - Operator pace</p>
 </details>
-<details>
+<p><strong>Question 6: If current OEE is 60% and target is 85%, what improvement is needed in each component assuming equal improvement?</strong></p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-review-q6" data-tryit="number">
+<script type="application/json">{"title":"Question 6: equal improvement","intro":null,"answers":[{"label":"Value each of the three factors must reach","answer":94.726823718591,"tol":0.1,"tolPct":null,"prefix":"","suffix":"%","hint":"If all three factors equal x, then x cubed = 0.85.","digits":1}]}</script>
+</div>
+<details class="tryit-solution">
 <summary>
-Question 6: If current OEE is 60% and target is 85%, what improvement is needed in each component assuming equal improvement?
+Show the worked solution
 </summary>
 <p><strong>Solution:</strong></p>
 <p>Current: 60% = A × P × Q</p>
