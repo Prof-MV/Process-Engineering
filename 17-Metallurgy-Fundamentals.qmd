@@ -132,7 +132,7 @@ plot_list <- lapply(structures, function(s) {
     coord_fixed() +
     labs(title = s) +
     theme_void() +
-    theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5))
+    theme(plot.title = element_text(size = 12 * chart_text_scale, face = "bold", hjust = 0.5))
 })
 
 gridExtra::grid.arrange(grobs = plot_list, ncol = 3)
@@ -175,9 +175,9 @@ ggplot(hp_data, aes(x = inv_sqrt_d, y = sigma_y)) +
        x = expression(d^{-1/2}~(mm^{-1/2})),
        y = "Yield Strength (MPa)") +
   theme_minimal() +
-  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
 ```
 
 Grain refinement is one of the very few ways to make a metal **both** stronger **and** tougher at the same time — most other strengthening methods (like cold work or alloying) trade some ductility away. That's why grain refinement shows up constantly in real processing: controlled rolling, normalizing, and rapid cooling are all partly about keeping grains small.
@@ -248,9 +248,9 @@ make_grain_field <- function(seed, nx, ny, xlim, ylim,
 }
 
 grain_theme <- theme_void() +
-  theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5),
-        legend.text = element_text(size = 9.5 * diagram_text_scale),
-        legend.title = element_text(size = 10 * diagram_text_scale),
+  theme(plot.title = element_text(size = 12 * chart_text_scale, face = "bold", hjust = 0.5),
+        legend.text = element_text(size = 9.5 * chart_text_scale),
+        legend.title = element_text(size = 10 * chart_text_scale),
         legend.position = "bottom",
         plot.background = element_rect(fill = "white", color = "grey70"))
 ```
@@ -467,9 +467,9 @@ ggplot() +
   labs(title = "Iron-Carbon Phase Diagram (Steel Region)",
        x = "Carbon Content (wt% C)", y = "Temperature (deg C)") +
   theme_minimal() +
-  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale),
+  theme(plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale),
         panel.grid.minor = element_blank())
 ```
 
@@ -716,9 +716,9 @@ ggplot(temper_data, aes(x = temp, y = hrc)) +
   labs(title = "Hardness vs. Tempering Temperature",
        x = "Tempering Temperature (deg C)", y = "Hardness (HRC)") +
   theme_minimal() +
-  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
 ```
 
 ### The Hardness/Toughness Trade-Off {#sec-metallurgy-hardness-toughness}
@@ -809,9 +809,9 @@ ggplot(profile_data, aes(x = depth, y = C)) +
   labs(title = "Carbon Concentration vs. Depth After Carburizing",
        x = "Depth Below Surface (mm)", y = "Carbon Content (wt% C)") +
   theme_minimal() +
-  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
 ```
 
 **After diffusion, quench.** Once the furnace cycle has built the carbon gradient shown in @fig-carburizing-profile, the part is quenched while still (or after being reheated to be) fully austenitic. The high-carbon case has plenty of carbon to form hard martensite; the low-carbon core — recall the opening of this section — barely hardens even though it was quenched too, because it never had the carbon to begin with. The result is one part with two microstructures: a hard, wear-resistant martensitic case over a tough, crack-resistant low-carbon core, exactly the hardness-vs-depth profile you'll traverse with the Vickers microhardness tester in @sec-testing-hardness.

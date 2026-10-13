@@ -95,11 +95,11 @@ ggplot(curves, aes(x = strain * 100, y = stress, color = material)) +
        x = "Engineering Strain (%)", y = "Engineering Stress (MPa)", color = "Material") +
   guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
   theme_minimal() +
-  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale),
-        legend.text = element_text(size = 9.5 * diagram_text_scale),
-        legend.title = element_text(size = 10.5 * diagram_text_scale),
+  theme(plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale),
+        legend.text = element_text(size = 9.5 * chart_text_scale),
+        legend.title = element_text(size = 10.5 * chart_text_scale),
         legend.position = "bottom")
 ```
 
@@ -146,7 +146,7 @@ ggplot(specimen) +
   coord_fixed(xlim = c(-6, 6), ylim = c(-2.0, 2.0), expand = FALSE) +
   labs(title = "Localized Necking Just Before Fracture") +
   theme_void() +
-  theme(plot.title = element_text(size = 13 * diagram_text_scale, face = "bold", hjust = 0.5))
+  theme(plot.title = element_text(size = 13 * chart_text_scale, face = "bold", hjust = 0.5))
 ```
 
 ### Percent Elongation and Reduction of Area {#sec-testing-ductility-measures}
@@ -193,7 +193,7 @@ make_disc <- function(r, n = 100, center = c(0, 0)) {
 }
 
 fracture_panel_theme <- theme_void() +
-  theme(plot.title = element_text(size = 13 * diagram_text_scale, face = "bold", hjust = 0.5),
+  theme(plot.title = element_text(size = 13 * chart_text_scale, face = "bold", hjust = 0.5),
         plot.background = element_rect(fill = "white", color = "grey70"))
 
 lims <- c(-2.3, 2.3)
@@ -515,7 +515,7 @@ make_ball_panel <- function(title) {
     coord_fixed(xlim = c(-1.3, 1.3), ylim = c(-0.15, 1.6)) +
     labs(title = title) +
     theme_void() +
-    theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5))
+    theme(plot.title = element_text(size = 12 * chart_text_scale, face = "bold", hjust = 0.5))
 }
 
 make_point_panel <- function(title, half_angle_deg, height, angle_label) {
@@ -531,7 +531,7 @@ make_point_panel <- function(title, half_angle_deg, height, angle_label) {
     coord_fixed(xlim = c(-1.3, 1.3), ylim = c(-0.15, 1.6)) +
     labs(title = title) +
     theme_void() +
-    theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5))
+    theme(plot.title = element_text(size = 12 * chart_text_scale, face = "bold", hjust = 0.5))
 }
 
 panels <- list(
@@ -705,10 +705,10 @@ ggplot(charpy_data, aes(x = temp, y = energy, color = material)) +
   labs(title = "Charpy Absorbed Energy vs. Temperature",
        x = "Test Temperature (deg C)", y = "Absorbed Energy (J)", color = NULL) +
   theme_minimal() +
-  theme(plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale),
-        legend.text = element_text(size = 10 * diagram_text_scale),
+  theme(plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale),
+        legend.text = element_text(size = 10 * chart_text_scale),
         legend.position = "bottom")
 ```
 
@@ -822,9 +822,9 @@ make_needle_field <- function(seed, n, xlim, ylim, len = 0.35) {
 }
 
 grain_theme <- theme_void() +
-  theme(plot.title = element_text(size = 12 * diagram_text_scale, face = "bold", hjust = 0.5),
-        legend.text = element_text(size = 9.5 * diagram_text_scale),
-        legend.title = element_text(size = 10 * diagram_text_scale),
+  theme(plot.title = element_text(size = 12 * chart_text_scale, face = "bold", hjust = 0.5),
+        legend.text = element_text(size = 9.5 * chart_text_scale),
+        legend.title = element_text(size = 10 * chart_text_scale),
         legend.position = "bottom",
         plot.background = element_rect(fill = "white", color = "grey70"))
 ```

@@ -103,10 +103,10 @@ ggplot(evolution_long, aes(x = Era, y = Score, fill = Metric)) +
        x = "Manufacturing Era", y = "Performance Level") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     legend.position = "bottom",
-    axis.text = element_text(size = 10 * diagram_text_scale),
+    axis.text = element_text(size = 10 * chart_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -163,22 +163,25 @@ The most influential lean manufacturing model is the **Toyota Production System 
 ### Historical Context
 
 ```{r tps-timeline, echo=FALSE, fig.align="center", fig.cap="Toyota's Journey to Lean Excellence", fig.width=10, fig.height=4}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 timeline_data <- data.frame(
   year = c(1949, 1950, 1960, 1970, 1980, 1990),
   event = c("Toyota near\nbankruptcy", "Ohno begins\nJIT development",
             "Kanban system\nimplemented", "TPS refined\nand documented",
             "TPS studied\nby West", "\"Lean\" term\ncoined"),
-  y = rep(0, 6)
+  y = rep(0, 6),
+  vy = c(-4.5, -1.2, -2.5, -2.5, -2.5, -2.5),
+  ve = c(2.5, 5.5, 2.5, 2.5, 2.5, 2.5)
 )
 
 ggplot(timeline_data, aes(x = year, y = y)) +
   geom_hline(yintercept = 0, color = "#2C3E50", linewidth = 2) +
   geom_point(size = 8, color = "#E74C3C") +
-  geom_text(aes(label = year), vjust = -2.5, fontface = "bold", size = 4 * diagram_text_scale) +
-  geom_text(aes(label = event), vjust = 2.5, size = 3 * diagram_text_scale, lineheight = 0.8) +
+  geom_text(aes(label = year, vjust = vy), fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(label = event, vjust = ve), size = 3 * diagram_text_scale, lineheight = 0.8) +
   theme_void() +
   labs(title = "The Evolution of Toyota Production System") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(-1.5, 1.5) +
   xlim(1945, 1995)
 ```
@@ -212,7 +215,7 @@ ggplot() +
            fontface = "bold", size = 3.5 * diagram_text_scale, color = "white") +
   theme_void() +
   labs(title = "The House of Toyota Production System") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   xlim(-0.5, 8.5) + ylim(-0.5, 6.5)
 ```
 
@@ -256,7 +259,7 @@ ggplot(ms_data, aes(x = x, y = y)) +
   scale_color_manual(values = c("MUDA" = "#E74C3C", "MURA" = "#F39C12", "MURI" = "#9B59B6")) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   labs(title = "The 3 M's of Lean") +
   xlim(0.3, 3.7) + ylim(0.5, 1.5)
 ```
@@ -313,9 +316,9 @@ ggplot(wastes, aes(x = reorder(waste, -impact), y = impact)) +
        x = "Type of Waste", y = "Typical Impact") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 10 * diagram_text_scale, face = "bold"),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10 * chart_text_scale, face = "bold"),
     panel.grid.minor = element_blank()
   )
 ```
@@ -434,6 +437,7 @@ tryit_sort(
 **5S** is a workplace organization methodology that creates a clean, efficient, and safe working environment.
 
 ```{r five-s-viz, echo=FALSE, fig.align="center", fig.cap="The 5S Methodology", fig.width=10, fig.height=6}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 # Create 5S circular visualization
 five_s <- data.frame(
   step = 1:5,
@@ -469,10 +473,10 @@ ggplot(five_s) +
                                 "Shitsuke" = "#9B59B6")) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   labs(title = "The 5S Methodology for Workplace Organization") +
   coord_fixed() +
-  xlim(-4.5, 4.5) + ylim(-4.5, 4.5)
+  xlim(-5, 5) + ylim(-4.5, 4.5)
 ```
 
 ```{r five-s-table, echo=FALSE}
@@ -537,6 +541,7 @@ tryit_order(
 > — Ohno and Shingo
 
 ```{r jit-concept, echo=FALSE, fig.align="center", fig.cap="Just-in-Time: The Right Everything", fig.width=9, fig.height=5}
+diagram_text_scale <- 0.7  # fit labels to their shapes
 jit_elements <- data.frame(
   element = c("Right Part", "Right Quantity", "Right Quality",
               "Right Place", "Right Time"),
@@ -552,7 +557,7 @@ ggplot(jit_elements, aes(x = x, y = y)) +
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1.5) +
   # Circles
   geom_point(size = 20, color = "#3498DB") +
-  geom_text(aes(label = element), size = 3 * diagram_text_scale, fontface = "bold", color = "white",
+  geom_text(aes(label = gsub(" ", "\n", element)), size = 3 * diagram_text_scale, fontface = "bold", color = "white",
             lineheight = 0.8) +
   # Final output
   annotate("point", x = 6.5, y = 1, size = 25, color = "#2ECC71") +
@@ -562,7 +567,7 @@ ggplot(jit_elements, aes(x = x, y = y)) +
            arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", linewidth = 2) +
   theme_void() +
   labs(title = "Just-in-Time: Delivering Value to the Customer") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   xlim(0.3, 7.2)
 ```
 
@@ -619,8 +624,8 @@ ggplot(combined, aes(x = x, y = y)) +
   theme_void() +
   labs(title = "Push vs. Pull: A Visual Comparison",
        subtitle = "Circle size represents inventory level at each station") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-0.2, 5.5) + ylim(0.2, 2.8)
 ```
 
@@ -754,7 +759,7 @@ ggplot() +
   annotate("text", x = 5.9, y = 2.3, label = "|||||||||||", size = 5 * diagram_text_scale) +
   theme_void() +
   labs(title = "Sample Production Kanban Card") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12 * chart_text_scale))
 ```
 
 ------------------------------------------------------------------------
@@ -790,7 +795,7 @@ ggplot() +
            color = "#2ECC71", fontface = "bold") +
   theme_void() +
   labs(title = "Understanding Time Metrics in Manufacturing") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(-0.2, 4)
 ```
 
@@ -879,6 +884,7 @@ Takt time = 540 / 300 = 1.8 minutes = 108 seconds per unit
 ### The SMED Concept
 
 ```{r smed-viz, echo=FALSE, fig.align="center", fig.cap="SMED: Internal vs External Setup", fig.width=10, fig.height=5}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Before SMED
 before <- data.frame(
   activity = c("Get tools", "Remove old die", "Install new die", "Adjust settings", "Get materials", "First article"),
@@ -904,7 +910,7 @@ ggplot() +
   geom_rect(data = before, aes(xmin = x_start, xmax = x_end, ymin = 1.6, ymax = 2,
                                 fill = type), color = "black") +
   geom_text(data = before, aes(x = (x_start + x_end)/2, y = 1.8, label = activity),
-            size = 2.5 * diagram_text_scale, angle = 0) +
+            size = 2.5 * diagram_text_scale, angle = 0, check_overlap = TRUE) +
   # After SMED bars
   geom_rect(data = after, aes(xmin = x_start, xmax = x_end, ymin = 0.6, ymax = 1,
                                fill = type), color = "black") +
@@ -921,8 +927,8 @@ ggplot() +
   theme_void() +
   labs(title = "SMED: From 130 Minutes to 50 Minutes",
        subtitle = "External activities moved to run during production") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
         legend.position = "bottom") +
   xlim(-55, 135)
 ```
@@ -988,6 +994,7 @@ smed_steps %>%
 ### Kaizen Principles
 
 ```{r kaizen-cycle, echo=FALSE, fig.align="center", fig.cap="The Kaizen Continuous Improvement Cycle", fig.width=8, fig.height=8}
+diagram_text_scale <- 0.65  # fit labels to their shapes
 # Create PDCA cycle
 pdca <- data.frame(
   step = c("PLAN", "DO", "CHECK", "ACT"),
@@ -1001,11 +1008,11 @@ pdca$y <- 2 * sin(pdca$angle * pi / 180)
 
 ggplot(pdca) +
   # Center
-  annotate("point", x = 0, y = 0, size = 30, color = "#2C3E50") +
+  annotate("point", x = 0, y = 0, size = 36, color = "#2C3E50") +
   annotate("text", x = 0, y = 0, label = "KAIZEN\n改善", size = 6 * diagram_text_scale, color = "white",
            fontface = "bold", lineheight = 0.8) +
   # Outer circles
-  geom_point(aes(x = x, y = y, color = step), size = 25, alpha = 0.9) +
+  geom_point(aes(x = x, y = y, color = step), size = 32, alpha = 0.9) +
   geom_text(aes(x = x, y = y + 0.1, label = step), size = 5 * diagram_text_scale, fontface = "bold", color = "white") +
   geom_text(aes(x = x, y = y - 0.25, label = description), size = 3 * diagram_text_scale, color = "white", lineheight = 0.8) +
   # Arrows
@@ -1021,7 +1028,7 @@ ggplot(pdca) +
                                 "CHECK" = "#F39C12", "ACT" = "#E74C3C")) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   labs(title = "Plan-Do-Check-Act: The Engine of Kaizen") +
   coord_fixed() +
   xlim(-3.5, 3.5) + ylim(-3.5, 3.5)

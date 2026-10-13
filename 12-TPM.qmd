@@ -65,8 +65,8 @@ ggplot() +
   theme_void() +
   labs(title = "Total Productive Maintenance: Breaking Down the Name",
        subtitle = "A company-wide approach to equipment effectiveness") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ### History of TPM
@@ -105,6 +105,7 @@ history %>%
 TPM aims to achieve **zero** targets:
 
 ```{r tpm-goals, echo=FALSE, fig.align="center", fig.cap="TPM Zero Targets", fig.width=9, fig.height=5}
+diagram_text_scale <- 0.7  # fit labels to their shapes
 goals <- data.frame(
   goal = c("Zero\nBreakdowns", "Zero\nDefects", "Zero\nAccidents"),
   impact = c("Maximum\nAvailability", "Maximum\nQuality", "Maximum\nSafety"),
@@ -120,7 +121,7 @@ ggplot(goals, aes(x = x, y = 1)) +
   annotate("text", x = 2, y = 0.5, label = "= Maximum OEE", color = "#27AE60", fontface = "bold", size = 4 * diagram_text_scale) +
   theme_void() +
   labs(title = "TPM Zero Targets") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(0, 1.5)
 ```
 
@@ -179,6 +180,7 @@ comparison %>%
 TPM is built on **eight pillars**, each addressing a specific aspect of equipment management and organizational culture.
 
 ```{r eight-pillars, echo=FALSE, fig.align="center", fig.cap="The Eight Pillars of TPM", fig.width=10, fig.height=7}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 ggplot() +
   # Foundation
   annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 1, fill = "#2C3E50", color = "black") +
@@ -186,7 +188,7 @@ ggplot() +
            color = "white", fontface = "bold", size = 4.5 * diagram_text_scale) +
   # Roof
   annotate("polygon", x = c(-0.5, 5, 10.5), y = c(5.2, 6.5, 5.2), fill = "#C0392B", color = "black") +
-  annotate("text", x = 5, y = 5.7, label = "ZERO LOSSES: Zero Breakdowns • Zero Defects • Zero Accidents",
+  annotate("text", x = 5, y = 5.7, label = "ZERO LOSSES: Breakdowns, Defects, Accidents",
            color = "white", fontface = "bold", size = 4.5 * diagram_text_scale) +
 
   # Pillar 1
@@ -224,7 +226,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "The House of TPM: Eight Pillars Built on 5S Foundation") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(-0.5, 7)
 ```
 
@@ -310,7 +312,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "OEE: The TPM Scorecard") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * chart_text_scale)) +
   ylim(1, 6)
 ```
 
@@ -430,8 +432,8 @@ ggplot(waterfall, aes(x = category)) +
        x = "", y = "Minutes") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale),
     legend.position = "none",
     axis.text.x = element_text(angle = 30, hjust = 1)
   )
@@ -541,7 +543,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "The Six Big Losses: Targets for TPM Improvement") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * chart_text_scale)) +
   ylim(3.5, 7)
 ```
 
@@ -589,6 +591,7 @@ losses_data <- data.frame(
 )
 
 ggplot(losses_data, aes(x = reorder(loss, -percentage), y = percentage, fill = category)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   geom_bar(stat = "identity", color = "black", width = 0.7) +
   geom_text(aes(label = paste0(percentage, "%")), vjust = -0.5, fontface = "bold") +
   scale_fill_manual(values = c("Availability" = "#3498DB", "Performance" = "#27AE60", "Quality" = "#E74C3C")) +
@@ -597,8 +600,8 @@ ggplot(losses_data, aes(x = reorder(loss, -percentage), y = percentage, fill = c
        x = "", y = "Time Loss (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     legend.position = "bottom",
     axis.text.x = element_text(angle = 30, hjust = 1)
   )
@@ -662,7 +665,7 @@ ggplot(steps, aes(x = 1, y = y)) +
            color = "#27AE60", size = 4 * diagram_text_scale) +
   theme_void() +
   labs(title = "Seven Steps of Autonomous Maintenance") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   xlim(-0.5, 5.5)
 ```
 
@@ -741,7 +744,7 @@ ggplot() +
            color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
   theme_void() +
   labs(title = "AM Tag System: Identifying and Tracking Abnormalities") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale))
 ```
 
 ### Example: AM Cleaning and Inspection Checklist
@@ -805,7 +808,7 @@ ggplot() +
   annotate("text", x = 5, y = -0.8, label = "Increasing Maturity →", fontface = "bold") +
   theme_void() +
   labs(title = "Evolution of Maintenance Strategy") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * chart_text_scale)) +
   ylim(-1.2, 3.5)
 ```
 
@@ -863,6 +866,7 @@ pdm_tech %>%
 The **P-F Curve** illustrates the concept of detecting potential failure (P) before functional failure (F).
 
 ```{r pf-curve, echo=FALSE, fig.align="center", fig.cap="The P-F Curve: Detecting Failure Early", fig.width=12, fig.height=7}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create P-F curve with gradual decline then steeper drop
 x <- seq(0, 10, 0.01)
 # Curve: starts flat, gradual decline, then steeper toward failure
@@ -894,14 +898,12 @@ ggplot(pf_data, aes(x = x, y = y)) +
            color = "#922B21", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   # P point
   annotate("point", x = p_x, y = pf_data$y[which.min(abs(pf_data$x - p_x))], size = 4, color = "#2C3E50") +
-  annotate("text", x = p_x, y = 100, label = "P", fontface = "bold", color = "#2C3E50", size = 6 * diagram_text_scale) +
-  annotate("text", x = p_x, y = 96, label = "oint of failure\ndetection", hjust = 0,
-           color = "#2C3E50", size = 3 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = p_x, y = 110, label = "P: Point of failure detection", hjust = 0.5,
+           color = "#2C3E50", fontface = "bold", size = 3.5 * diagram_text_scale) +
   # F point
   annotate("point", x = f_x, y = pf_data$y[which.min(abs(pf_data$x - f_x))], size = 4, color = "#C0392B") +
-  annotate("text", x = f_x, y = 100, label = "F", fontface = "bold", color = "#C0392B", size = 6 * diagram_text_scale) +
-  annotate("text", x = f_x, y = 96, label = "unctional failure", hjust = 0,
-           color = "#C0392B", size = 3 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = f_x, y = 110, label = "F: Functional failure", hjust = 0.5,
+           color = "#C0392B", fontface = "bold", size = 3.5 * diagram_text_scale) +
   # Detection methods along curve (angled text)
   annotate("text", x = 0.3, y = 100, label = "Installation", angle = 55, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
@@ -932,7 +934,7 @@ ggplot(pf_data, aes(x = x, y = y)) +
   theme_minimal() +
   theme(
     plot.title = element_blank(),
-    axis.title = element_text(face = "bold", size = 11 * diagram_text_scale),
+    axis.title = element_text(face = "bold", size = 11 * chart_text_scale),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.grid = element_blank()
@@ -1009,7 +1011,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "Focused Improvement (Kobetsu Kaizen) Process") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(0.5, 3)
 ```
 
@@ -1183,7 +1185,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "SMED: Reducing Changeover Time") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(0.5, 3)
 ```
 
@@ -1410,12 +1412,11 @@ ggplot(case_data, aes(x = component, y = value, fill = period)) +
             vjust = -0.5, size = 3.5 * diagram_text_scale) +
   scale_fill_manual(values = c("Before TPM" = "#E74C3C", "After TPM" = "#27AE60")) +
   geom_hline(yintercept = 85, linetype = "dashed", color = "#F39C12", linewidth = 1) +
-  annotate("text", x = 4.5, y = 87, label = "World Class", color = "#F39C12", fontface = "bold") +
-  labs(title = "OEE Improvement Through TPM",
+  labs(title = "OEE Improvement Through TPM", subtitle = "Dashed line = world-class OEE (85%)",
        x = "", y = "Percentage (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     legend.position = "bottom"
   ) +
   ylim(0, 105)

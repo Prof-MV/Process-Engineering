@@ -55,8 +55,8 @@ ggplot(process_categories, aes(x = x_pos, y = 1)) +
        subtitle = "Each category contains multiple specific processes for different applications") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale),
     legend.position = "none"
   )
 ```
@@ -123,8 +123,8 @@ ggplot(selection_data, aes(x = Volume, y = Complexity, color = Category)) +
        subtitle = "Choose processes based on volume requirements and part complexity") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale),
     axis.title = element_text(face = "bold"),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
@@ -461,6 +461,7 @@ Though involving metal, powder metallurgy uses molding principles. Metal powders
 **Forming** uses mechanical forces (compression, tension, shear) to shape material without removing any material. This preserves material grain structure and can improve mechanical properties.
 
 ```{r forming-forces, echo=FALSE, fig.align="center", fig.cap="Types of Forming Forces", fig.width=9, fig.height=4}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Visualization of forming force types
 force_data <- data.frame(
   Type = c("Compression", "Tension", "Shear", "Bending"),
@@ -471,12 +472,12 @@ force_data <- data.frame(
 ggplot(force_data, aes(x = x, y = 1)) +
   geom_tile(aes(fill = Type), width = 0.8, height = 0.5, color = "black") +
   geom_text(aes(label = Type), y = 1.1, fontface = "bold", size = 4 * diagram_text_scale) +
-  geom_text(aes(label = Process), y = 0.9, size = 3 * diagram_text_scale, color = "gray30") +
+  geom_text(aes(label = Process), y = 0.9, size = 3.5 * diagram_text_scale, color = "black") +
   scale_fill_manual(values = c("#E74C3C", "#F39C12", "#3498DB", "#2ECC71")) +
   labs(title = "Forming Process Classification by Primary Force Type") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     legend.position = "none"
   )
 ```

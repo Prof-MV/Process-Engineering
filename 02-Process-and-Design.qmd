@@ -89,7 +89,7 @@ ggplot(automation_long, aes(x = Metric, y = Score, fill = Type)) +
        x = "", y = "Rating") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     plot.subtitle = element_text(hjust = 0.5),
     axis.text.x = element_text(angle = 20, hjust = 1),
     legend.position = "bottom"
@@ -338,7 +338,7 @@ ggplot() +
   labs(title = "Project Development Phases with Stage-Gate Reviews") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)
   ) +
   ylim(-0.1, 2)
 ```
@@ -583,6 +583,7 @@ P&IDs are the detailed "roadmap" of the process, showing all equipment, piping, 
 
 
 ```{r pid-symbols, echo=FALSE, fig.align="center", fig.cap="Common P&ID Symbols (Simplified)", fig.width=12, fig.height=8}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 # Create a simplified P&ID symbol reference
 symbols <- data.frame(
   Category = c(rep("Valves", 4), rep("Instruments", 4), rep("Equipment", 4)),
@@ -606,9 +607,9 @@ ggplot(symbols, aes(x = x, y = y)) +
        subtitle = "Standard symbols per ISA-5.1") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     plot.subtitle = element_text(hjust = 0.5),
-    legend.position = "bottom"
+    legend.position = "top"
   )
 ```
 
@@ -1025,7 +1026,7 @@ ggplot(timeline) +
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     axis.text.y = element_blank(),
     panel.grid.major.y = element_blank(),
     panel.grid.minor = element_blank()

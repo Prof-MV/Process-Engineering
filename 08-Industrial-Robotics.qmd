@@ -69,8 +69,8 @@ ggplot(benefits, aes(x = reorder(Benefit, Impact), y = Impact, fill = Benefit)) 
        x = "", y = "Impact Score") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-    axis.text.y = element_text(size = 11 * diagram_text_scale, face = "bold")
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    axis.text.y = element_text(size = 11 * chart_text_scale, face = "bold")
   )
 ```
 
@@ -93,7 +93,7 @@ ggplot(market_data, aes(x = Year, y = Installations)) +
        subtitle = "Annual installations in thousands of units (IFR data)",
        x = "Year", y = "Units Installed (thousands)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale))
 ```
 
 ### Industries Using Robots
@@ -129,6 +129,7 @@ Industrial robots come in various mechanical configurations, each suited to diff
 ### Common Robot Types
 
 ```{r robot-types, echo=FALSE, fig.width=14, fig.height=10}
+diagram_text_scale <- 0.85  # fit labels to their shapes
 robot_types <- data.frame(
   Type = c("Articulated\n(6-axis)", "SCARA", "Delta\n(Parallel)", "Cartesian\n(Gantry)",
            "Cylindrical", "Collaborative\n(Cobot)"),
@@ -154,9 +155,9 @@ robot_types <- data.frame(
 
 ggplot(robot_types, aes(x = x, y = y)) +
   geom_tile(aes(fill = Type), width = 0.95, height = 0.9, color = "white", linewidth = 2) +
-  geom_text(aes(label = Type), fontface = "bold", vjust = -2, size = 4 * diagram_text_scale, color = "white") +
-  geom_text(aes(label = Characteristics), vjust = 0, size = 2.8 * diagram_text_scale, color = "white", lineheight = 0.85) +
-  geom_text(aes(label = Applications), vjust = 3.5, size = 2.5 * diagram_text_scale, color = "white",
+  geom_text(aes(y = y + 0.28, label = Type), fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Characteristics), size = 2.8 * diagram_text_scale, color = "white", lineheight = 0.85) +
+  geom_text(aes(y = y - 0.3, label = Applications), size = 2.5 * diagram_text_scale, color = "white",
             fontface = "italic", lineheight = 0.85) +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
@@ -164,7 +165,7 @@ ggplot(robot_types, aes(x = x, y = y)) +
        subtitle = "Different types optimized for specific applications") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -241,7 +242,7 @@ ggplot() +
        subtitle = "Each joint provides one degree of freedom") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -332,6 +333,7 @@ kable(specs, caption = "Key Robot Specifications Explained") %>%
 The **work envelope** (or workspace) is the three-dimensional space the robot can reach.
 
 ```{r work-envelope, echo=FALSE, fig.width=11, fig.height=7}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Simulate 6-axis robot work envelope (simplified 2D view)
 theta <- seq(0, 2*pi, length.out = 100)
 r_max <- 1800  # mm reach
@@ -353,14 +355,14 @@ ggplot() +
                aes(x = x, y = y), fill = "white", color = "#e74c3c", linetype = "dashed") +
   # Robot base
   annotate("point", x = 0, y = 0, size = 8, color = "#34495e") +
-  annotate("text", x = 0, y = -200, label = "Robot Base", fontface = "bold") +
+  annotate("text", x = 0, y = -250, label = "Robot Base", fontface = "bold", size = 3.5 * diagram_text_scale) +
   # Annotations
   annotate("segment", x = 0, xend = 1800, y = 0, yend = 0,
            arrow = arrow(ends = "both", length = unit(0.2, "cm")), color = "black") +
-  annotate("text", x = 900, y = 100, label = "Max Reach: 1800mm", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 1000, y = -430, label = "Max Reach: 1800mm", size = 3.5 * diagram_text_scale) +
   annotate("segment", x = 0, xend = 400, y = 300, yend = 300,
            arrow = arrow(ends = "both", length = unit(0.15, "cm")), color = "#e74c3c") +
-  annotate("text", x = 200, y = 450, label = "Dead Zone\n(Min Reach: 400mm)",
+  annotate("text", x = 250, y = 560, label = "Dead Zone\n(Min Reach: 400mm)",
            size = 3 * diagram_text_scale, color = "#e74c3c", lineheight = 0.9) +
   # Work area example
   annotate("rect", xmin = 800, xmax = 1400, ymin = -300, ymax = 300,
@@ -373,7 +375,7 @@ ggplot() +
        x = "X Position (mm)", y = "Y Position (mm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -469,7 +471,7 @@ ggplot(scenarios, aes(x = x, y = y)) +
        x = "X Error (mm)", y = "Y Error (mm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
     strip.text = element_text(face = "bold")
   )
 ```
@@ -501,6 +503,7 @@ A complete robotic system consists of several integrated components.
 ### System Architecture
 
 ```{r robot-system, echo=FALSE, fig.width=14, fig.height=9}
+diagram_text_scale <- 0.85  # fit labels to their shapes
 ggplot() +
   # Manipulator
   annotate("rect", xmin = 0.5, xmax = 3, ymin = 4, ymax = 7,
@@ -559,7 +562,7 @@ ggplot() +
            arrow = arrow(ends = "both", length = unit(0.2, "cm")), linewidth = 1) +
   annotate("segment", x = 6, xend = 7, y = 5.5, yend = 5.5,
            arrow = arrow(ends = "both", length = unit(0.2, "cm")), linewidth = 1) +
-  annotate("segment", x = 3, xend = 7, y = 2.75, yend = 2.75,
+  annotate("segment", x = 3, xend = 7, y = 3.25, yend = 3.25,
            arrow = arrow(ends = "both", length = unit(0.2, "cm")), linewidth = 1, linetype = "dashed") +
 
   coord_cartesian(xlim = c(0, 10.5), ylim = c(0.5, 7.5)) +
@@ -567,7 +570,7 @@ ggplot() +
        subtitle = "Integrated system of manipulator, controller, teach pendant, and peripherals") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -728,7 +731,7 @@ ggplot() +
        subtitle = "Different reference frames for programming and motion") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -806,7 +809,7 @@ ggplot(paths, aes(x = x, y = y, color = Type)) +
        x = "X Position", y = "Y Position") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
     legend.position = "none",
     strip.text = element_text(face = "bold")
   )
@@ -846,7 +849,7 @@ ggplot(auto_apps, aes(x = x, y = y)) +
        subtitle = "Common applications in automotive manufacturing") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -1064,7 +1067,7 @@ ggplot() +
        subtitle = "Multiple layers of protection for personnel safety") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```

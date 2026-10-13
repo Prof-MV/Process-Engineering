@@ -79,8 +79,8 @@ ggplot(hierarchy_data, aes(x = 0, y = y)) +
                                "PPE" = "#E74C3C")) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   labs(title = "The Hierarchy of Controls",
        subtitle = "Always start at the top and work down") +
   xlim(-5.5, 7)
@@ -186,9 +186,9 @@ ggplot(guard_long, aes(x = type, y = value, fill = metric)) +
        x = "Guard Type", y = "Rating") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
-    axis.text.x = element_text(angle = 20, hjust = 1, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
+    axis.text.x = element_text(angle = 20, hjust = 1, size = 10 * chart_text_scale),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
   )
@@ -254,8 +254,8 @@ ggplot() +
   theme_void() +
   labs(title = "Interlocked Guard System",
        subtitle = "Opening the guard door breaks the safety circuit") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ### Stop Categories
@@ -314,8 +314,8 @@ ggplot(loto_steps, aes(x = x, y = 1)) +
   theme_void() +
   labs(title = "Trapped Key System: Ensuring Safe Access",
        subtitle = "Machine cannot restart until key is returned") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   ylim(0, 2.2)
 ```
 
@@ -373,8 +373,8 @@ ggplot(sensing_long, aes(x = device, y = value, fill = metric)) +
        x = "Device Type", y = "Rating") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    axis.text.x = element_text(size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    axis.text.x = element_text(size = 10 * chart_text_scale),
     legend.position = "bottom",
     panel.grid.minor = element_blank()
   )
@@ -424,8 +424,8 @@ ggplot() +
   theme_void() +
   labs(title = "Light Curtain: Detection Through Beam Interruption",
        subtitle = "Any object larger than the resolution will trigger a stop") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-1.5, 8.5) + ylim(-1.5, 6)
 ```
 
@@ -453,6 +453,7 @@ lc_specs %>%
 **Laser area scanners** use LiDAR technology to monitor a 2D plane. They are highly flexible and allow for programmable zones.
 
 ```{r area-scanner-diagram, echo=FALSE, fig.align="center", fig.cap="Laser Area Scanner Zones", fig.width=10, fig.height=8}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create polar plot for scanner zones
 angles <- seq(0, 270, length.out = 100)
 warning_r <- 3
@@ -477,7 +478,7 @@ ggplot() +
            fill = "#E74C3C", alpha = 0.4) +
   # Scanner unit
   annotate("point", x = 0, y = 0, size = 8, color = "#2C3E50") +
-  annotate("text", x = 0, y = -0.5, label = "Scanner", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 0.15, y = -0.4, hjust = 0, label = "Scanner", fontface = "bold", size = 3 * diagram_text_scale) +
   # Zone labels
   annotate("text", x = 2.5, y = 2.5, label = "WARNING ZONE\n(Machine slows/alarms)",
            color = "#F39C12", fontface = "bold", size = 3.5 * diagram_text_scale) +
@@ -502,8 +503,8 @@ ggplot() +
   coord_fixed() +
   labs(title = "Laser Area Scanner: Programmable Safety Zones",
        subtitle = "270° scanning field with configurable warning and safety zones") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-3, 4) + ylim(-2.5, 4)
 ```
 
@@ -569,8 +570,8 @@ ggplot() +
   theme_void() +
   labs(title = "Pressure-Sensitive Safety Mat",
        subtitle = "When stepped on, conductive plates make contact and complete the circuit") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   ylim(-0.3, 2)
 ```
 
@@ -642,8 +643,8 @@ ggplot() +
   theme_void() +
   labs(title = "Two-Hand Control: Both Hands Must Be on Buttons",
        subtitle = "Ensures operator's hands are away from the danger zone during machine cycle") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   ylim(-3, 4.5)
 ```
 
@@ -712,8 +713,8 @@ ggplot() +
   theme_void() +
   labs(title = "Three-Position Enable Switch",
        subtitle = "Only the middle position allows robot motion") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   ylim(-0.5, 3.5)
 ```
 
@@ -807,8 +808,8 @@ ggplot() +
   theme_void() +
   labs(title = "Traditional vs. Collaborative Robots",
        subtitle = "Cobots enable human-robot collaboration without physical barriers") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-1, 10)
 ```
 
@@ -955,8 +956,8 @@ ggplot() +
   theme_void() +
   labs(title = "Safety Distance: Ensuring Time to Stop",
        subtitle = "The device must be far enough that the machine stops before the person reaches the hazard") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-2.5, 8.5) + ylim(-1.5, 5.5)
 ```
 
@@ -1077,6 +1078,7 @@ The light curtain must be installed at least **474mm** from the nearest hazard p
 The **Emergency Stop** is the "last resort" — it is not a safety device but a **complementary protective measure**. It must be available to stop the machine when all other measures have failed.
 
 ```{r estop-design, echo=FALSE, fig.align="center", fig.cap="E-Stop Design Requirements", fig.width=10, fig.height=6}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 ggplot() +
   # E-Stop button
   annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 5,
@@ -1101,11 +1103,12 @@ ggplot() +
   annotate("segment", x = 3.5, xend = 1.5, y = 2.5, yend = 1.5, color = "#2C3E50") +
   annotate("label", x = 1, y = 1.5, label = "Manual reset\n(twist or key)",
            size = 3, fill = "#FADBD8") +
+  coord_cartesian(xlim = c(-1.5, 11), clip = "off") +
   theme_void() +
   labs(title = "Emergency Stop Button Design Requirements",
        subtitle = "IEC 60204-1 / NFPA 79 Standards") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ```{r estop-requirements, echo=FALSE}
@@ -1158,8 +1161,8 @@ ggplot() +
   theme_void() +
   labs(title = "E-Stop Pull Cord: Full-Length Coverage",
        subtitle = "Worker can trigger emergency stop from any position along the conveyor") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   ylim(-0.5, 3.5)
 ```
 
@@ -1258,7 +1261,7 @@ ggplot(rel_data, aes(x = x, y = sil)) +
        y = "Approximate SIL Equivalent") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -1287,6 +1290,7 @@ ggplot(rel_data, aes(x = x, y = sil)) +
 Before selecting any safety device, a **risk assessment** must be performed. This is required by ISO 12100.
 
 ```{r risk-assessment-process, echo=FALSE, fig.align="center", fig.cap="Risk Assessment Process (ISO 12100)", fig.width=10, fig.height=7}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 steps <- data.frame(
   step = 1:5,
   label = c("Determine\nLimits", "Identify\nHazards", "Estimate\nRisk",
@@ -1300,7 +1304,7 @@ ggplot(steps, aes(x = 3, y = y)) +
   geom_text(aes(label = paste0("Step ", step, ": ", label)),
             color = "white", fontface = "bold", size = 4 * diagram_text_scale, lineheight = 0.8) +
   # Arrows
-  geom_segment(data = steps[1:4,], aes(x = 3, xend = 3, y = y - 0.5, yend = y - 0.9),
+  geom_segment(data = steps[1:4,], aes(x = 3, xend = 3, y = y - 0.41, yend = y - 0.59),
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1) +
   # Iteration arrow
   annotate("curve", x = 5.5, xend = 5.5, y = 1, yend = 5,
@@ -1322,8 +1326,8 @@ ggplot(steps, aes(x = 3, y = y)) +
   theme_void() +
   labs(title = "Risk Assessment Process",
        subtitle = "Systematic approach to identifying and reducing machine hazards") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-0.5, 7)
 ```
 
@@ -1358,9 +1362,9 @@ ggplot(risk_matrix, aes(x = Probability, y = Severity, fill = Risk)) +
        y = "Severity of Harm") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     legend.position = "bottom",
-    axis.text = element_text(size = 10 * diagram_text_scale, face = "bold"),
+    axis.text = element_text(size = 10 * chart_text_scale, face = "bold"),
     panel.grid = element_blank()
   )
 ```

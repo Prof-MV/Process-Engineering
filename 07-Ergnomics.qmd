@@ -42,6 +42,7 @@ By the end of this chapter, you will be able to:
 **Ergonomics** (from Greek *ergon* = work, *nomos* = laws) is the scientific discipline focused on understanding the interactions between humans and other elements of a system, with the goal of optimizing human well-being and overall system performance.
 
 ```{r ergonomics-definition, echo=FALSE, fig.align="center", fig.cap="The Three Domains of Ergonomics", fig.width=10, fig.height=6}
+diagram_text_scale <- 0.7  # fit labels to their shapes
 # Create Venn-like diagram for ergonomics domains
 ggplot() +
   # Physical domain
@@ -58,13 +59,13 @@ ggplot() +
   annotate("text", x = 2, y = 0.8, label = "ORGANIZATIONAL", fontface = "bold", size = 5 * diagram_text_scale, color = "#2C3E50") +
   annotate("text", x = 2, y = 0.2, label = "Work systems\nTeamwork\nScheduling", size = 3 * diagram_text_scale, lineheight = 0.9) +
   # Center - Human
-  annotate("point", x = 2, y = 1.5, size = 20, color = "#F39C12") +
-  annotate("text", x = 2, y = 1.5, label = "HUMAN", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
+  annotate("point", x = 2, y = 1.5, size = 26, color = "#F39C12") +
+  annotate("text", x = 2, y = 1.5, label = "HUMAN", fontface = "bold", size = 3.2 * diagram_text_scale, color = "white") +
   theme_void() +
   labs(title = "The Three Domains of Ergonomics",
        subtitle = "Ergonomics considers the whole human experience at work") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-0.5, 4.5) + ylim(-0.8, 3.5)
 ```
 
@@ -112,8 +113,8 @@ ggplot(benefits, aes(x = reorder(category, improvement), y = improvement, fill =
        x = "", y = "Improvement (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     legend.position = "none",
     panel.grid.minor = element_blank()
   )
@@ -187,8 +188,8 @@ ggplot(risk_factors, aes(x = x, y = risk_level, fill = factor)) +
        x = "Risk Factor Number", y = "Risk Level") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     legend.position = "none",
     panel.grid.minor = element_blank()
   )
@@ -259,8 +260,8 @@ ggplot() +
   theme_void() +
   labs(title = "Posture Risk Zones: Traffic Light System",
        subtitle = "Design workstations to keep workers in the green zone") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ```{r neutral-postures, echo=FALSE}
@@ -339,7 +340,7 @@ ggplot(force_data, aes(x = reorder(factor, impact), y = impact)) +
        x = "", y = "Relative Impact") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -463,8 +464,8 @@ ggplot() +
   theme_void() +
   labs(title = "Common MSDs in Manufacturing",
        subtitle = "Red dots indicate high-risk body regions") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(-1, 11) + ylim(0, 10)
 ```
 
@@ -505,6 +506,7 @@ msd_detail %>%
 MSDs typically develop gradually through a predictable cycle:
 
 ```{r msd-cycle, echo=FALSE, fig.align="center", fig.cap="The MSD Development Cycle", fig.width=10, fig.height=6}
+diagram_text_scale <- 0.6  # fit labels to their shapes
 cycle_data <- data.frame(
   stage = c("Exposure", "Fatigue", "Discomfort", "Pain", "Injury", "Disability"),
   x = c(1, 2, 3, 4, 5, 6),
@@ -515,7 +517,7 @@ cycle_data <- data.frame(
 
 ggplot(cycle_data, aes(x = x, y = severity)) +
   geom_line(linewidth = 2, color = "#2C3E50") +
-  geom_point(aes(color = stage), size = 15) +
+  geom_point(aes(color = stage), size = 22) +
   geom_text(aes(label = stage), color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
   geom_text(aes(y = severity - 0.8, label = recovery), size = 3 * diagram_text_scale, fontface = "italic") +
   scale_color_manual(values = c("Exposure" = "#27AE60", "Fatigue" = "#2ECC71",
@@ -529,8 +531,8 @@ ggplot(cycle_data, aes(x = x, y = severity)) +
        x = "Progression", y = "Severity") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     legend.position = "none",
     axis.text.x = element_blank(),
     panel.grid = element_blank()
@@ -589,7 +591,7 @@ ggplot(prevention, aes(x = 0, y = y)) +
            angle = 90, fontface = "bold", size = 4 * diagram_text_scale) +
   theme_void() +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   labs(title = "MSD Prevention: Hierarchy of Controls") +
   xlim(-4.5, 7)
 ```
@@ -665,7 +667,7 @@ ggplot() +
            size = 3 * diagram_text_scale, lineheight = 0.9, hjust = 0.5) +
   theme_void() +
   labs(title = "The Four Steps of Safe Lifting") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale))
 ```
 
 ```{=html}
@@ -703,8 +705,8 @@ ggplot(principles, aes(x = x, y = y)) +
   theme_void() +
   labs(title = "Eight Core Ergonomic Design Principles",
        subtitle = "Apply these principles to every workstation design") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   ylim(0.3, 2.7)
 ```
 
@@ -745,6 +747,7 @@ principles_detail %>%
 **Anthropometry** is the scientific study of human body measurements. Workstations must accommodate the range of workers who will use them.
 
 ```{r anthropometry-viz, echo=FALSE, fig.align="center", fig.cap="Anthropometric Design Considerations", fig.width=10, fig.height=6}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create percentile visualization
 ggplot() +
   # Distribution curve
@@ -755,11 +758,11 @@ ggplot() +
   geom_vline(xintercept = 170, linetype = "dashed", color = "#F39C12", linewidth = 1) +
   geom_vline(xintercept = 186.5, linetype = "dashed", color = "#27AE60", linewidth = 1) +
   # Labels
-  annotate("text", x = 153.5, y = 0.035, label = "5th\npercentile",
+  annotate("text", x = 153.5, y = 0.03, label = "5th\npercentile",
            size = 3 * diagram_text_scale, color = "#E74C3C", vjust = 0) +
-  annotate("text", x = 170, y = 0.042, label = "50th\npercentile",
+  annotate("text", x = 170, y = 0.044, label = "50th\npercentile",
            size = 3 * diagram_text_scale, color = "#F39C12", vjust = 0) +
-  annotate("text", x = 186.5, y = 0.035, label = "95th\npercentile",
+  annotate("text", x = 186.5, y = 0.03, label = "95th\npercentile",
            size = 3 * diagram_text_scale, color = "#27AE60", vjust = 0) +
   # Design range
   annotate("segment", x = 153.5, xend = 186.5, y = -0.002, yend = -0.002,
@@ -768,13 +771,14 @@ ggplot() +
   annotate("text", x = 170, y = -0.005, label = "Design Range (90% of population)",
            color = "#9B59B6", fontface = "bold", size = 3.5 * diagram_text_scale) +
   scale_x_continuous(breaks = seq(140, 200, 10)) +
+  coord_cartesian(ylim = c(-0.007, 0.05)) +
   labs(title = "Anthropometric Distribution: Stature Example",
        subtitle = "Design should accommodate 5th to 95th percentile",
        x = "Height (cm)", y = "Probability Density") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)
   )
 ```
 
@@ -836,14 +840,14 @@ ggplot() +
   annotate("text", x = 3.7, y = 105, label = "Elbow Height\n(standing)",
            hjust = 0, size = 3 * diagram_text_scale, color = "#E74C3C") +
   scale_y_continuous(breaks = seq(60, 120, 10), limits = c(60, 120)) +
-  scale_x_continuous(breaks = 1:3, labels = c("Precision", "Light Assembly", "Heavy Work")) +
+  scale_x_continuous(breaks = 1:3, labels = c("Precision", "Light Assembly", "Heavy Work"), limits = c(0.4, 4.7)) +
   labs(title = "Optimal Standing Work Surface Heights by Task Type",
        subtitle = "Heights in cm from floor - adjust based on worker height",
        x = "Task Type", y = "Height (cm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -946,8 +950,8 @@ ggplot() +
   theme_void() +
   labs(title = "REBA Assessment Structure",
        subtitle = "Combines posture scores with load, coupling, and activity factors") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ### REBA Scoring Tables
@@ -1330,6 +1334,7 @@ Let's work through a complete REBA assessment for a manufacturing worker perform
 **Scenario:** A worker stands at a packaging station, bending forward to pick up items from a low bin and placing them into boxes on a conveyor. The task is performed continuously for 4-hour shifts.
 
 ```{r reba-detailed-example, echo=FALSE, fig.align="center", fig.cap="REBA Assessment Scenario: Packaging Worker", fig.width=10, fig.height=6}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 ggplot() +
   # Worker body representation
   annotate("rect", xmin = 4, xmax = 6, ymin = 2, ymax = 6, fill = "#F5CBA7", color = "black") +
@@ -1350,20 +1355,20 @@ ggplot() +
   annotate("text", x = 5.8, y = 7, label = "Neck: 25°\nflexion", size = 2.5 * diagram_text_scale, color = "#E74C3C", hjust = 0) +
   annotate("curve", x = 5, y = 4, xend = 4.5, yend = 2.5, curvature = -0.3,
            arrow = arrow(length = unit(0.15, "cm")), color = "#E74C3C") +
-  annotate("text", x = 3.5, y = 3, label = "Trunk: 40°\nflexion", size = 2.5 * diagram_text_scale, color = "#E74C3C") +
-  annotate("text", x = 2, y = 4.5, label = "Upper arm:\n50° flexion", size = 2.5 * diagram_text_scale, color = "#3498DB") +
+  annotate("text", x = 6.3, y = 2.2, hjust = 0, label = "Trunk: 40°\nflexion", size = 2.5 * diagram_text_scale, color = "#E74C3C") +
+  annotate("text", x = 1.6, y = 4.3, label = "Upper arm:\n50° flexion", size = 2.5 * diagram_text_scale, color = "#3498DB") +
   # Title and info boxes
-  annotate("rect", xmin = 0.5, xmax = 4, ymin = 5.5, ymax = 8, fill = "#FADBD8", alpha = 0.8) +
-  annotate("text", x = 2.25, y = 7.5, label = "GROUP A (Blue)", fontface = "bold", size = 3 * diagram_text_scale) +
-  annotate("text", x = 2.25, y = 6.5, label = "Trunk + Neck + Legs", size = 2.5 * diagram_text_scale) +
-  annotate("rect", xmin = 6, xmax = 9.5, ymin = 5.5, ymax = 8, fill = "#D6EAF8", alpha = 0.8) +
-  annotate("text", x = 7.75, y = 7.5, label = "GROUP B (Red)", fontface = "bold", size = 3 * diagram_text_scale) +
-  annotate("text", x = 7.75, y = 6.5, label = "Arms + Wrist", size = 2.5 * diagram_text_scale) +
+  annotate("rect", xmin = 0.5, xmax = 3.4, ymin = 5.5, ymax = 8, fill = "#FADBD8", alpha = 0.8) +
+  annotate("text", x = 1.95, y = 7.5, label = "GROUP A (Blue)", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 1.95, y = 6.5, label = "Trunk + Neck + Legs", size = 2.5 * diagram_text_scale) +
+  annotate("rect", xmin = 7, xmax = 9.8, ymin = 5.5, ymax = 8, fill = "#D6EAF8", alpha = 0.8) +
+  annotate("text", x = 8.4, y = 7.5, label = "GROUP B (Red)", fontface = "bold", size = 3 * diagram_text_scale) +
+  annotate("text", x = 8.4, y = 6.5, label = "Arms + Wrist", size = 2.5 * diagram_text_scale) +
   theme_void() +
   labs(title = "REBA Assessment: Packaging Station Worker",
        subtitle = "Worker reaches into low bin and transfers items to conveyor") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
   xlim(0, 10) + ylim(0, 8.5)
 ```
 
@@ -1912,8 +1917,8 @@ ggplot() +
   theme_void() +
   labs(title = "AI-Powered Ergonomic Assessment Pipeline",
        subtitle = "From video input to automated risk assessment") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ```{r ai-tools-table, echo=FALSE}
@@ -1973,7 +1978,7 @@ ggplot(comparison_long, aes(x = metric, y = value, fill = method)) +
        x = "", y = "Value (scale varies by metric)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     axis.text.x = element_text(angle = 20, hjust = 1),
     legend.position = "bottom"
   )
@@ -2034,8 +2039,8 @@ ggplot() +
   theme_void() +
   labs(title = "Human-Automation Interaction Points",
        subtitle = "Each interaction point requires ergonomic design consideration") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ```{r automation-ergo, echo=FALSE}
@@ -2222,8 +2227,8 @@ ggplot(results_long, aes(x = metric, y = change)) +
        x = "", y = "Change (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     axis.text.x = element_text(angle = 20, hjust = 1)
   )
 ```

@@ -68,8 +68,8 @@ ggplot() +
   theme_void() +
   labs(title = "The Shift from Inspection to Prevention",
        subtitle = "SPC enables real-time process monitoring and early intervention") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 ### Brief History of SPC
@@ -118,8 +118,8 @@ ggplot(benefits, aes(x = reorder(benefit, improvement), y = improvement)) +
        x = "", y = "Improvement (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     panel.grid.minor = element_blank()
   )
 ```
@@ -158,9 +158,9 @@ ggplot(df, aes(x = sample, y = value)) +
        x = "Sample Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
-    strip.text = element_text(face = "bold", size = 11 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
+    strip.text = element_text(face = "bold", size = 11 * chart_text_scale)
   )
 ```
 
@@ -217,8 +217,8 @@ ggplot() +
   theme_void() +
   labs(title = "Two Mistakes That Waste Resources and Reduce Quality",
        subtitle = "Control charts help us avoid both mistakes") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
 ```
 
 <details>
@@ -339,8 +339,8 @@ ggplot(combined, aes(x = x, y = y)) +
        x = "Sample Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    strip.text = element_text(face = "bold", size = 11 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    strip.text = element_text(face = "bold", size = 11 * chart_text_scale)
   )
 ```
 
@@ -395,8 +395,8 @@ ggplot(data, aes(x = subgroup, y = value)) +
        x = "Subgroup Number", y = "Measured Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)
   ) +
   xlim(-1, 29)
 ```
@@ -459,8 +459,8 @@ ggplot(df, aes(x = x, y = y)) +
        x = "Standard Deviations from Mean", y = "Probability Density") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)
   )
 ```
 
@@ -522,7 +522,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "Selecting the Right Control Chart") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   xlim(-1, 12) + ylim(2, 8)
 ```
 
@@ -703,9 +703,9 @@ p1 <- ggplot(plot_data, aes(x = subgroup, y = xbar)) +
   geom_hline(yintercept = X_double_bar, color = "#27AE60", linewidth = 1) +
   geom_hline(yintercept = c(UCL_xbar, LCL_xbar), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
   scale_color_manual(values = c("FALSE" = "#3498DB", "TRUE" = "#E74C3C"), guide = "none") +
-  annotate("text", x = 26, y = UCL_xbar, label = paste("UCL =", round(UCL_xbar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
-  annotate("text", x = 26, y = X_double_bar, label = paste("CL =", round(X_double_bar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
-  annotate("text", x = 26, y = LCL_xbar, label = paste("LCL =", round(LCL_xbar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = UCL_xbar, label = paste("UCL =", round(UCL_xbar, 3)), hjust = 0, vjust = -0.4, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = X_double_bar, label = paste("CL =", round(X_double_bar, 3)), hjust = 0, vjust = -0.4, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = LCL_xbar, label = paste("LCL =", round(LCL_xbar, 3)), hjust = 0, vjust = -0.4, size = 3 * diagram_text_scale) +
   labs(title = "X-bar Chart (Process Average)", x = "", y = "X-bar (mm)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
@@ -718,9 +718,9 @@ p2 <- ggplot(plot_data, aes(x = subgroup, y = R)) +
   geom_hline(yintercept = R_bar, color = "#27AE60", linewidth = 1) +
   geom_hline(yintercept = c(UCL_R, LCL_R), color = "#E74C3C", linetype = "dashed", linewidth = 1) +
   scale_color_manual(values = c("FALSE" = "#F39C12", "TRUE" = "#E74C3C"), guide = "none") +
-  annotate("text", x = 26, y = UCL_R, label = paste("UCL =", round(UCL_R, 3)), hjust = 0, size = 3 * diagram_text_scale) +
-  annotate("text", x = 26, y = R_bar, label = paste("CL =", round(R_bar, 3)), hjust = 0, size = 3 * diagram_text_scale) +
-  annotate("text", x = 26, y = LCL_R, label = "LCL = 0", hjust = 0, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = UCL_R, label = paste("UCL =", round(UCL_R, 3)), hjust = 0, vjust = -0.4, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = R_bar, label = paste("CL =", round(R_bar, 3)), hjust = 0, vjust = -0.4, size = 3 * diagram_text_scale) +
+  annotate("text", x = 26, y = LCL_R, label = "LCL = 0", hjust = 0, vjust = -0.4, size = 3 * diagram_text_scale) +
   labs(title = "R Chart (Process Spread)", x = "Subgroup Number", y = "Range (mm)") +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
@@ -1079,8 +1079,8 @@ ggplot(p_data, aes(x = day)) +
        x = "Day", y = "Proportion Defective") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)
   )
 ```
 
@@ -1176,7 +1176,7 @@ ggplot(c_data, aes(x = sample, y = defects)) +
   labs(title = "c Chart: Defects per Car Body",
        x = "Sample Number", y = "Number of Defects") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   xlim(0, 29)
 ```
 
@@ -1325,7 +1325,7 @@ ggplot(rules_data, aes(x = x, y = y)) +
        x = "Sample Number", y = "Standardized Value") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     strip.text = element_text(face = "bold")
   )
 ```
@@ -1404,7 +1404,7 @@ ggplot(signal_df, aes(x = point, y = z)) +
   scale_y_continuous(breaks = -3:3, limits = c(-3.8, 3.8)) +
   labs(x = "Sample", y = "Standard deviations from the center line") +
   theme_minimal() +
-  theme(strip.text = element_text(face = "bold", size = 11 * diagram_text_scale),
+  theme(strip.text = element_text(face = "bold", size = 11 * chart_text_scale),
         panel.grid.minor = element_blank())
 ```
 
@@ -1455,7 +1455,7 @@ ggplot(data.frame(x, y), aes(x, y)) +
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     axis.text = element_blank(),
     axis.ticks = element_blank()
   )
@@ -1514,8 +1514,8 @@ ggplot(df, aes(x = x, y = y)) +
        x = "", y = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 10 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale),
     strip.text = element_text(face = "bold"),
     axis.text = element_blank()
   )
@@ -1709,7 +1709,7 @@ ggplot() +
 
   theme_void() +
   labs(title = "Out-of-Control Response Procedure") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   ylim(2.5, 5.5)
 ```
 

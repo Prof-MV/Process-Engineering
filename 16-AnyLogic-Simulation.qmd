@@ -71,9 +71,9 @@ cost_data <- data.frame(
 ggplot(cost_data, aes(x = Phase, y = Cost)) +
   geom_col(fill = "#E74C3C", alpha = 0.8) +
   geom_text(aes(label = paste0("$", Cost, "x")), vjust = -0.5, size = 4 * diagram_text_scale, fontface = "bold") +
-  annotate("text", x = 3, y = 600,
+  annotate("text", x = 0.6, y = 330, hjust = 0,
            label = "Simulation catches problems HERE\nwhen changes cost $1-$10",
-           color = "#27AE60", size = 4 * diagram_text_scale, fontface = "bold") +
+           color = "#27AE60", size = 3.6 * diagram_text_scale, fontface = "bold") +
   annotate("segment", x = 1.5, xend = 1.5, y = 50, yend = 200,
            arrow = arrow(length = unit(0.3, "cm")), color = "#27AE60", linewidth = 1.5) +
   scale_y_log10(labels = scales::label_comma(big.mark = " ")) +
@@ -85,8 +85,8 @@ ggplot(cost_data, aes(x = Phase, y = Cost)) +
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-    axis.text.x = element_text(size = 10 * diagram_text_scale)
+    plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+    axis.text.x = element_text(size = 10 * chart_text_scale)
   )
 ```
 
@@ -140,6 +140,7 @@ In DES, entities (products, orders, customers) flow through a series of processe
 - Call centers and order processing
 
 ```{r fig-des-flow, echo=FALSE, fig.cap="Discrete-event simulation flow diagram", fig.align='center', fig.width=10, fig.height=4}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create a simple process flow visualization
 library(ggplot2)
 
@@ -152,8 +153,8 @@ steps <- data.frame(
 )
 
 arrows <- data.frame(
-  x = c(1.3, 3.3, 5.3, 7.3),
-  xend = c(2.7, 4.7, 6.7, 8.7),
+  x = c(1.55, 3.55, 5.55, 7.55),
+  xend = c(2.45, 4.45, 6.45, 8.45),
   y = rep(0, 4),
   yend = rep(0, 4)
 )
@@ -181,7 +182,8 @@ ggplot() +
            size = 4 * diagram_text_scale, fontface = "italic") +
   coord_cartesian(xlim = c(0, 10), ylim = c(-0.5, 1.2)) +
   theme_void() +
-  labs(title = "Discrete-Event Simulation: Entities Flow Through Processes")
+  labs(title = "Discrete-Event Simulation: Entities Flow Through Processes") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale))
 ```
 
 ### Agent-Based Modeling (ABM)
@@ -598,8 +600,9 @@ scenarios <- data.frame(
 ggplot(scenarios, aes(x = Scenario, y = Throughput, fill = Scenario)) +
   geom_col() +
   geom_hline(yintercept = 480, linetype = "dashed", color = "red", linewidth = 1) +
-  geom_text(aes(label = Throughput), vjust = -0.5, fontface = "bold") +
-  annotate("text", x = 5, y = 485, label = "Target: 480", color = "red") +
+  geom_text(aes(label = Throughput), vjust = 1.5, fontface = "bold", color = "white") +
+  annotate("text", x = 0.55, y = 492, hjust = 0, label = "Target: 480", color = "red", fontface = "bold") +
+  scale_y_continuous(limits = c(0, 520)) +
   scale_fill_brewer(palette = "Set2") +
   labs(
     title = "Throughput by Improvement Scenario",
@@ -790,10 +793,11 @@ ggplot(travel_data, aes(x = Strategy, y = Distance, fill = Strategy)) +
   geom_boxplot(alpha = 0.7) +
   geom_hline(yintercept = mean(velocity_storage), linetype = "dashed", color = "#2ECC71") +
   stat_summary(fun = mean, geom = "point", shape = 18, size = 4, color = "red") +
-  annotate("text", x = 3.35, y = mean(velocity_storage),
+  annotate("text", x = 3.45, y = mean(velocity_storage), hjust = 0,
            label = paste0("Best: ", round(mean(velocity_storage)), " ft"),
            color = "#2ECC71", size = 4 * diagram_text_scale, fontface = "bold") +
   scale_fill_manual(values = c("#E74C3C", "#F39C12", "#2ECC71")) +
+  scale_x_discrete(expand = expansion(add = c(0.6, 1.4))) +
   labs(
     title = "Picker Travel Distance by Storage Strategy",
     subtitle = "Red diamond = mean; Velocity-based storage reduces travel by 47%",
@@ -1044,7 +1048,7 @@ p2 <- ggplot(tutorial_long, aes(x = Time, y = Length, color = Queue)) +
                      labels = c("Before Station 1", "Before Station 2", "Before Station 3")) +
   labs(title = "Queue Lengths", x = "Time (min)", y = "Parts Waiting") +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom", legend.direction = "vertical")
 
 gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
@@ -1106,7 +1110,7 @@ ggplot(opt_data, aes(x = Iteration)) +
   geom_point(aes(y = Throughput), alpha = 0.5, color = "#3498DB") +
   geom_line(aes(y = Best), color = "#E74C3C", linewidth = 1.2) +
   geom_hline(yintercept = 455, linetype = "dashed", color = "#2ECC71") +
-  annotate("text", x = 45, y = 460, label = "Optimal: 7 staff, 455 parts",
+  annotate("text", x = 30, y = 385, label = "Optimal: 7 staff, 455 parts (dashed line)",
            color = "#2ECC71", fontface = "bold") +
   labs(
     title = "Optimization Experiment: Finding Optimal Staffing",

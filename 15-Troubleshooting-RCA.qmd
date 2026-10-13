@@ -65,8 +65,8 @@ ggplot(industry_data, aes(x = reorder(Industry, Cost_Per_Hour), y = Cost_Per_Hou
        y = "Cost per Hour (USD)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14 * diagram_text_scale, face = "bold"),
-    axis.text = element_text(size = 11 * diagram_text_scale)
+    plot.title = element_text(size = 14 * chart_text_scale, face = "bold"),
+    axis.text = element_text(size = 11 * chart_text_scale)
   )
 ```
 
@@ -112,6 +112,7 @@ Effective troubleshooting follows a structured approach rather than random trial
 ### The DMAIC Troubleshooting Framework
 
 ```{r troubleshooting-flow, echo=FALSE, fig.width=12, fig.height=8}
+diagram_text_scale <- 0.85  # fit labels to their shapes
 # Create troubleshooting process flow
 steps <- data.frame(
   step = 1:6,
@@ -128,6 +129,8 @@ steps <- data.frame(
   y = rep(1, 6)
 )
 
+steps$description <- vapply(strwrap(steps$description, 13, simplify = FALSE), paste, character(1), collapse = "\n")
+
 ggplot(steps, aes(x = x, y = y)) +
   geom_segment(aes(x = x, xend = x + 0.8, y = y, yend = y),
                arrow = arrow(length = unit(0.3, "cm")),
@@ -142,7 +145,7 @@ ggplot(steps, aes(x = x, y = y)) +
   scale_y_continuous(limits = c(0.5, 1.5)) +
   labs(title = "Systematic Troubleshooting Process") +
   theme_void() +
-  theme(plot.title = element_text(size = 16 * diagram_text_scale, face = "bold", hjust = 0.5))
+  theme(plot.title = element_text(size = 16 * chart_text_scale, face = "bold", hjust = 0.5))
 ```
 
 ### Step 1: Define the Problem
@@ -241,6 +244,7 @@ Many problems are caused by changes. Ask:
 - New products or recipes running?
 
 ```{r change-timeline, echo=FALSE, fig.width=11, fig.height=5}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create a change timeline visualization
 timeline_data <- data.frame(
   event = c("New lubricant\nsupplier", "Operator\ntraining", "PM\ncompleted",
@@ -255,11 +259,11 @@ ggplot(timeline_data, aes(x = date, y = 0)) +
   geom_hline(yintercept = 0, color = "gray50", linewidth = 1) +
   geom_segment(aes(xend = date, yend = y), color = "gray70") +
   geom_point(aes(y = y, color = type), size = 8) +
-  geom_text(aes(y = y, label = event), vjust = ifelse(timeline_data$y > 0, -1, 2),
+  geom_text(aes(y = y, label = paste0(event, "\n", format(date, "%b %d"))), vjust = ifelse(timeline_data$y > 0, -1, 2),
             size = 3 * diagram_text_scale) +
-  geom_text(aes(label = format(date, "%b %d")), vjust = 2, size = 2.5 * diagram_text_scale) +
   scale_color_manual(values = c("Change" = "steelblue", "Problem" = "red")) +
   scale_y_continuous(limits = c(-2, 2)) +
+  scale_x_date(expand = expansion(mult = 0.1)) +
   labs(title = "Change Timeline Analysis",
        subtitle = "Map changes against problem occurrence to identify correlations",
        x = "", y = "") +
@@ -269,7 +273,7 @@ ggplot(timeline_data, aes(x = date, y = 0)) +
     axis.ticks.y = element_blank(),
     panel.grid = element_blank(),
     legend.position = "bottom",
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale)
   )
 ```
 
@@ -319,7 +323,7 @@ ggplot(levels, aes(x = 0, y = y)) +
   labs(title = "Causation Hierarchy",
        subtitle = "Dig deeper to find the root cause - don't stop at symptoms") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -391,8 +395,8 @@ ggplot(whys, aes(x = 1, y = y)) +
   labs(title = "5 Whys Analysis: Production Line Stoppage",
        subtitle = "Each 'Why?' digs deeper toward the root cause") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale))
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale))
 ```
 
 ### 5 Whys Template
@@ -425,6 +429,7 @@ kable(template, col.names = c("Step", "Description", "Typical Cause Type"),
 Sometimes a problem has multiple causes. When you encounter this, branch your analysis:
 
 ```{r branching-whys, echo=FALSE, fig.width=12, fig.height=7}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 # Create branching 5 whys diagram
 nodes <- data.frame(
   id = 1:9,
@@ -464,8 +469,9 @@ ggplot() +
            fontface = "bold", size = 3.5 * diagram_text_scale, color = "#27ae60") +
   labs(title = "Branching 5 Whys Analysis",
        subtitle = "When multiple causes exist, analyze each branch separately") +
+  scale_x_continuous(limits = c(-5.2, 4.7)) +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -528,7 +534,7 @@ ggplot(categories, aes(x = x, y = 1)) +
   labs(title = "The 6M Categories for Cause Analysis",
        subtitle = "Standard categories for organizing potential causes in manufacturing") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -633,7 +639,7 @@ ggplot() +
   labs(title = "Fishbone Diagram: Parts Have Surface Scratches",
        subtitle = "Brainstorming potential causes organized by 6M categories") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, margin = margin(b = 20)))
 ```
 
@@ -708,6 +714,7 @@ kable(symbols, caption = "Fault Tree Analysis Symbols") %>%
 ### FTA Example: Pump Fails to Deliver Flow
 
 ```{r fta-example, echo=FALSE, fig.width=14, fig.height=10}
+diagram_text_scale <- 0.7  # fit labels to their shapes
 # Create FTA diagram nodes
 fta_nodes <- data.frame(
   id = 1:13,
@@ -761,14 +768,14 @@ ggplot() +
            label = "OR", size = 2 * diagram_text_scale, fontface = "bold") +
   # Intermediate events (rectangles)
   geom_tile(data = fta_nodes[fta_nodes$type == "intermediate",],
-            aes(x = x, y = y), width = 2.3, height = 1.2,
+            aes(x = x, y = y), width = 1.9, height = 1.2,
             fill = "#3498db", color = "black") +
   geom_text(data = fta_nodes[fta_nodes$type == "intermediate",],
             aes(x = x, y = y, label = label),
             color = "white", size = 2.8 * diagram_text_scale, fontface = "bold") +
   # Basic events (circles)
   geom_point(data = fta_nodes[fta_nodes$type == "basic",],
-             aes(x = x, y = y), size = 15, color = "black", fill = "#27ae60", shape = 21) +
+             aes(x = x, y = y), size = 22, color = "black", fill = "#27ae60", shape = 21) +
   geom_text(data = fta_nodes[fta_nodes$type == "basic",],
             aes(x = x, y = y, label = label),
             color = "white", size = 2.5 * diagram_text_scale) +
@@ -782,7 +789,7 @@ ggplot() +
   labs(title = "Fault Tree Analysis: Pump Fails to Deliver Flow",
        subtitle = "OR gates mean any single path can cause the top event") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -952,7 +959,7 @@ ggplot(defects, aes(x = Defect_Type)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
     axis.title.y.right = element_text(color = "#e74c3c")
   )
 ```
@@ -1049,7 +1056,7 @@ ggplot(scratch_causes, aes(x = Cause)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale)
   )
 ```
 
@@ -1154,7 +1161,7 @@ d8_steps <- data.frame(
 
 ggplot(d8_steps, aes(x = 1, y = y)) +
   geom_tile(aes(fill = y), width = 6, height = 0.85, color = "white", linewidth = 1) +
-  geom_text(aes(x = -1.5, label = D), fontface = "bold", size = 6 * diagram_text_scale, color = "steelblue") +
+  geom_text(aes(x = -1.5, label = D), fontface = "bold", size = 6 * diagram_text_scale, color = "white") +
   geom_text(aes(x = -0.5, label = Name), fontface = "bold", size = 4 * diagram_text_scale, hjust = 0) +
   geom_text(aes(x = 1.3, label = Description), size = 3.2 * diagram_text_scale, hjust = 0) +
   scale_fill_gradient(low = "#27ae60", high = "#3498db", guide = "none") +
@@ -1162,7 +1169,7 @@ ggplot(d8_steps, aes(x = 1, y = y)) +
   labs(title = "The 8D Problem-Solving Methodology",
        subtitle = "A structured approach for complex problems requiring cross-functional teams") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5))
 ```
 
@@ -1268,6 +1275,7 @@ Effective corrective actions address the root cause and prevent recurrence.
 ### Types of Corrective Actions
 
 ```{r corrective-action-hierarchy, echo=FALSE, fig.width=11, fig.height=7}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 ca_types <- data.frame(
   level = 1:5,
   type = c("Eliminate", "Substitute", "Engineering Controls",
@@ -1294,17 +1302,17 @@ ca_types <- data.frame(
 ggplot(ca_types, aes(x = reorder(type, reliability), y = reliability)) +
   geom_bar(stat = "identity", aes(fill = color), width = 0.7) +
   geom_text(aes(label = paste0(reliability, "%")), hjust = -0.2, size = 4 * diagram_text_scale) +
-  geom_text(aes(y = 5, label = example), hjust = 0, size = 3 * diagram_text_scale, color = "white") +
+  geom_text(aes(y = reliability + 14, label = example), hjust = 0, size = 3 * diagram_text_scale, color = "gray20") +
   scale_fill_identity() +
   coord_flip() +
-  scale_y_continuous(limits = c(0, 110)) +
+  scale_y_continuous(limits = c(0, 175)) +
   labs(title = "Corrective Action Hierarchy",
        subtitle = "Higher-level controls are more reliable and effective",
        x = "", y = "Reliability (% effective in preventing recurrence)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-    axis.text.y = element_text(size = 11 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    axis.text.y = element_text(size = 11 * chart_text_scale)
   )
 ```
 
@@ -1427,7 +1435,7 @@ ggplot(effectiveness_data, aes(x = Date, y = Defect_Rate)) +
        x = "", y = "Defect Rate (%)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
     legend.position = "bottom"
   )
 ```

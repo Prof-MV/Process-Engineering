@@ -123,8 +123,8 @@ ggplot(stations, aes(x = x, y = y)) +
        subtitle = "Cycle time determined by slowest station (bottleneck): 55 seconds") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
   ) +
   xlim(-0.2, 6.2)
 ```
@@ -208,7 +208,7 @@ ggplot(transport_viz, aes(x = x, y = y)) +
              aes(x = x, y = y), shape = 21, fill = "white", size = 4, stroke = 1.5) +
   labs(title = "Comparison of Work Transport Systems") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale)) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
   xlim(-0.3, 6)
 ```
 
@@ -466,6 +466,7 @@ ggplot(time_breakdown, aes(x = reorder(Activity, -Time), y = Time, fill = Catego
   labs(title = "Time Breakdown per Unit - Identifying Improvement Opportunities",
        subtitle = "MCE = Value-Added Time / Total Time = 43.75%",
        x = "", y = "Time (minutes)") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5, face = "bold"),
@@ -593,6 +594,7 @@ abline(h = cycle_time, lty = 2, lwd = 2, col = "#C0392B")
 </details>
 
 ```{r precedence-diagram, echo=FALSE, fig.align="center", fig.cap="Precedence Diagram for Tablet Assembly", fig.width=10, fig.height=5}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create precedence diagram
 nodes <- data.frame(
   task = c("A", "B", "C", "D", "E", "F", "G", "H"),
@@ -611,17 +613,17 @@ edges <- data.frame(
 ggplot() +
   geom_segment(data = edges, aes(x = x + 0.15, y = y, xend = xend - 0.15, yend = yend),
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1) +
-  geom_point(data = nodes, aes(x = x, y = y), size = 16, color = "#3498DB") +
-  geom_text(data = nodes, aes(x = x, y = y + 0.08, label = task),
+  geom_point(data = nodes, aes(x = x, y = y), size = 24, color = "#3498DB") +
+  geom_text(data = nodes, aes(x = x, y = y + 0.1, label = task),
             color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
-  geom_text(data = nodes, aes(x = x, y = y - 0.12, label = paste0(time, "s")),
+  geom_text(data = nodes, aes(x = x, y = y - 0.1, label = paste0(time, "s")),
             color = "white", size = 3.5 * diagram_text_scale) +
   labs(title = "Precedence Diagram: Tablet Assembly",
        subtitle = "Arrows indicate task sequence requirements") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
   ) +
   xlim(0.5, 6.5) + ylim(1, 3)
 ```
@@ -1052,11 +1054,12 @@ An **FMS** is a highly automated cell consisting of CNC machines interconnected 
 ### FMS Components
 
 ```{r fms-components, echo=FALSE, fig.align="center", fig.cap="Flexible Manufacturing System Components", fig.width=11, fig.height=6}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 # FMS schematic
 fms_data <- data.frame(
   Component = c("CNC\nMachine 1", "CNC\nMachine 2", "CNC\nMachine 3",
                 "CNC\nMachine 4", "Load/Unload\nStation", "Central\nComputer"),
-  x = c(2, 4, 6, 4, 1, 4),
+  x = c(2.3, 4, 5.7, 4, 0.7, 4),
   y = c(2, 3, 2, 1, 2, 2),
   type = c(rep("Machine", 4), "Station", "Computer"),
   color = c(rep("#3498DB", 4), "#F39C12", "#9B59B6")
@@ -1083,8 +1086,8 @@ ggplot(fms_data, aes(x = x, y = y)) +
        subtitle = "CNC machines connected by AGV with central computer control") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
-    plot.subtitle = element_text(hjust = 0.5, size = 11 * diagram_text_scale)
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
   ) +
   xlim(0, 7) + ylim(0, 4)
 ```
@@ -1278,7 +1281,7 @@ ggplot(dt_data, aes(x = x, y = y)) +
        subtitle = "Real-time connection between physical and virtual systems") +
   theme_void() +
   theme(
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * diagram_text_scale),
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
     plot.subtitle = element_text(hjust = 0.5)
   ) +
   ylim(0.2, 1.5)

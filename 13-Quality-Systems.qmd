@@ -42,6 +42,7 @@ A **Quality Management System (QMS)** is a formalized system that documents proc
 ### Why Implement a QMS?
 
 ```{r qms-benefits, echo=FALSE, fig.width=12, fig.height=7}
+diagram_text_scale <- 1.1  # fit labels to their shapes
 benefits <- data.frame(
   Category = c("Customer", "Operational", "Financial", "Strategic", "Regulatory", "Cultural"),
   Benefit = c("Customer Satisfaction", "Process Consistency", "Cost Reduction",
@@ -57,6 +58,8 @@ benefits <- data.frame(
   Impact = c(90, 85, 80, 88, 75, 70)
 )
 
+benefits$Description <- vapply(strwrap(benefits$Description, 28, simplify = FALSE), paste, character(1), collapse = "\n")
+
 ggplot(benefits, aes(x = reorder(Category, Impact), y = Impact, fill = Category)) +
   geom_bar(stat = "identity", width = 0.7) +
   geom_text(aes(label = paste0(Benefit, "\n", Description)),
@@ -64,14 +67,14 @@ ggplot(benefits, aes(x = reorder(Category, Impact), y = Impact, fill = Category)
   coord_flip() +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
                                "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
-  scale_y_continuous(limits = c(0, 160), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0, 200), expand = c(0, 0)) +
   labs(title = "Benefits of Implementing a Quality Management System",
        subtitle = "Key drivers for QMS adoption",
        x = "", y = "Relative Impact Score") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-    axis.text.y = element_text(size = 11 * diagram_text_scale, face = "bold")
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    axis.text.y = element_text(size = 11 * chart_text_scale, face = "bold")
   )
 ```
 
@@ -106,6 +109,7 @@ kable(evolution, col.names = c("Era", "Approach", "Focus", "Key Figures/Standard
 ISO 9000 defines seven quality management principles that form the foundation of all QMS standards:
 
 ```{r qm-principles, echo=FALSE, fig.width=12, fig.height=8}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 principles <- data.frame(
   principle = c("Customer Focus", "Leadership", "Engagement of People",
                 "Process Approach", "Improvement", "Evidence-based\nDecision Making",
@@ -127,26 +131,27 @@ principles <- data.frame(
 ggplot(principles, aes(x = x, y = y)) +
   geom_point(size = 22, color = "#3498db") +
   geom_text(aes(label = number), color = "white", size = 10 * diagram_text_scale, fontface = "bold") +
-  geom_text(aes(label = principle, y = y - 0.7), size = 5 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
+  geom_label(aes(label = principle, y = y - 0.7), size = 5 * diagram_text_scale, fontface = "bold", lineheight = 0.9,
+             fill = "white", label.size = 0) +
   # Customer focus at top
-  annotate("segment", x = 4, xend = 1, y = 3.5, yend = 2.8,
+  annotate("segment", x = 4, xend = 1, y = 3.0, yend = 2.8,
            arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 7, y = 3.5, yend = 2.8,
+  annotate("segment", x = 4, xend = 7, y = 3.0, yend = 2.8,
            arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 2.5, y = 3.5, yend = 1.5,
+  annotate("segment", x = 4, xend = 2.5, y = 3.0, yend = 1.5,
            arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 5.5, y = 3.5, yend = 1.5,
+  annotate("segment", x = 4, xend = 5.5, y = 3.0, yend = 1.5,
            arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 2.5, y = 3.5, yend = 0,
+  annotate("segment", x = 4, xend = 2.5, y = 3.0, yend = 0,
            arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 5.5, y = 3.5, yend = 0,
+  annotate("segment", x = 4, xend = 5.5, y = 3.0, yend = 0,
            arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
   coord_cartesian(xlim = c(0, 8), ylim = c(-1.5, 5)) +
   labs(title = "Seven Quality Management Principles (ISO 9000:2015)",
        subtitle = "Customer Focus is the primary principle; others support it") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 16 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -160,6 +165,7 @@ ggplot(principles, aes(x = x, y = y)) +
 ### The Ten Clauses
 
 ```{r iso-clauses, echo=FALSE, fig.width=12, fig.height=9}
+diagram_text_scale <- 0.85  # fit labels to their shapes
 clauses <- data.frame(
   clause = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
   title = c("Scope", "Normative References", "Terms and Definitions",
@@ -193,7 +199,7 @@ ggplot(clauses, aes(x = 1, y = y)) +
        subtitle = "Clauses 4-10 contain the auditable requirements") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 16 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -203,6 +209,7 @@ ggplot(clauses, aes(x = 1, y = y)) +
 ISO 9001:2015 emphasizes the **process approach** combined with the **Plan-Do-Check-Act (PDCA)** cycle:
 
 ```{r pdca-cycle, echo=FALSE, fig.width=11, fig.height=9}
+diagram_text_scale <- 1.0  # fit labels to their shapes
 # PDCA positioned clockwise: Plan (top), Do (right), Check (bottom), Act (left)
 ggplot() +
   # Circular arrow path (clockwise)
@@ -250,13 +257,13 @@ ggplot() +
   # Center label
   annotate("text", x = 5, y = 5, label = "QMS", fontface = "bold", size = 8 * diagram_text_scale) +
 
-  coord_cartesian(xlim = c(-1, 11), ylim = c(-0.5, 10.5)) +
+  coord_cartesian(xlim = c(-3, 13), ylim = c(-0.5, 10.5)) +
   labs(title = "PDCA Cycle and ISO 9001:2015 Clauses",
        subtitle = "The continuous improvement cycle embedded in the standard") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(size = 12 * diagram_text_scale, hjust = 0.5)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(size = 12 * chart_text_scale, hjust = 0.5)
   )
 ```
 
@@ -318,6 +325,7 @@ Different industries have developed standards that build upon ISO 9001 with addi
 ### Comparison of Major Standards
 
 ```{r standards-comparison, echo=FALSE, fig.width=12, fig.height=7}
+diagram_text_scale <- 0.85  # fit labels to their shapes
 standards <- data.frame(
   Standard = c("ISO 9001:2015", "IATF 16949:2016", "AS9100D", "ISO 22000:2018"),
   Industry = c("General", "Automotive", "Aerospace/Defense", "Food Safety"),
@@ -325,6 +333,8 @@ standards <- data.frame(
   x = c(1, 2, 3, 4),
   y = c(1, 1, 1, 1)
 )
+
+standards$Base <- vapply(strwrap(standards$Base, 14, simplify = FALSE), paste, character(1), collapse = "\n")
 
 ggplot(standards, aes(x = x, y = y)) +
   geom_tile(aes(fill = Standard), width = 0.9, height = 1.5, color = "white", linewidth = 2) +
@@ -336,7 +346,7 @@ ggplot(standards, aes(x = x, y = y)) +
        subtitle = "Industry-specific standards build upon ISO 9001") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 16 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -376,6 +386,7 @@ kable(iatf_requirements, col.names = c("Requirement Area", "ISO 9001", "IATF 169
 IATF 16949 requires the use of **five core tools**:
 
 ```{r core-tools, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 core_tools <- data.frame(
   tool = c("APQP", "PPAP", "FMEA", "MSA", "SPC"),
   name = c("Advanced Product\nQuality Planning",
@@ -391,19 +402,21 @@ core_tools <- data.frame(
   x = 1:5
 )
 
+core_tools$purpose <- vapply(strwrap(core_tools$purpose, 15, simplify = FALSE), paste, character(1), collapse = "\n")
+
 ggplot(core_tools, aes(x = x, y = 1)) +
   geom_tile(aes(fill = tool), width = 0.85, height = 1.5, color = "white", linewidth = 1.5) +
   geom_text(aes(label = tool), fontface = "bold", size = 8 * diagram_text_scale, color = "white", vjust = -1) +
   geom_text(aes(label = name), size = 6 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  geom_text(aes(label = purpose, y = 0.3), size = 5 * diagram_text_scale, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = purpose, y = 0.6), size = 5 * diagram_text_scale, color = "white", lineheight = 0.9) +
   scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12", "#9b59b6"),
                     guide = "none") +
   labs(title = "AIAG Automotive Core Tools",
        subtitle = "Five essential tools required by IATF 16949") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -412,6 +425,7 @@ ggplot(core_tools, aes(x = x, y = 1)) +
 **APQP** is a structured framework for developing products that ensures customer requirements are met through careful planning and defined milestones.
 
 ```{r apqp-phases, echo=FALSE, fig.width=12, fig.height=5}
+diagram_text_scale <- 0.7  # fit labels to their shapes
 apqp_phases <- data.frame(
   phase = c("1", "2", "3", "4", "5"),
   name = c("Plan & Define", "Product Design", "Process Design",
@@ -441,8 +455,8 @@ ggplot(apqp_phases, aes(x = x, y = 1)) +
        subtitle = "Structured product development from concept to launch") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -570,6 +584,7 @@ kable(fmea_example, caption = "Process FMEA Structure and Example") %>%
 **Action Priority Based on RPN:**
 
 ```{r rpn-priority, echo=FALSE, fig.width=10, fig.height=3}
+diagram_text_scale <- 0.85  # fit labels to their shapes
 rpn_data <- data.frame(
   range = c("1-50", "51-100", "101-200", "201-1000"),
   priority = c("Low", "Medium", "High", "Critical"),
@@ -577,6 +592,8 @@ rpn_data <- data.frame(
   color = c("#27ae60", "#f1c40f", "#e67e22", "#e74c3c"),
   x = 1:4
 )
+
+rpn_data$action <- vapply(strwrap(rpn_data$action, 13, simplify = FALSE), paste, character(1), collapse = "\n")
 
 ggplot(rpn_data, aes(x = x, y = 1)) +
   geom_tile(aes(fill = color), width = 0.9, height = 1) +
@@ -588,7 +605,7 @@ ggplot(rpn_data, aes(x = x, y = 1)) +
   coord_cartesian(ylim = c(0.2, 1.8)) +
   labs(title = "RPN-Based Action Priority") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5))
+  theme(plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5))
 ```
 
 ::: {.example-box}
@@ -606,6 +623,7 @@ ggplot(rpn_data, aes(x = x, y = 1)) +
 **MSA** ensures that measurement systems provide reliable data for decision-making. Poor measurement systems can cause good parts to be rejected (false rejects) or bad parts to be accepted (false accepts).
 
 ```{r msa-components, echo=FALSE, fig.width=12, fig.height=5}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 msa_data <- data.frame(
   component = c("Bias", "Linearity", "Stability", "Repeatability", "Reproducibility"),
   definition = c("Difference between\nmeasured and true value",
@@ -626,8 +644,8 @@ ggplot(msa_data, aes(x = x, y = y)) +
        subtitle = "All must be assessed for a complete MSA study") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -666,6 +684,7 @@ A supplier conducts a Gage R&R study for a micrometer used to measure shaft diam
 **SPC** uses control charts to monitor process stability and capability, distinguishing between common cause variation (inherent to the process) and special cause variation (assignable causes requiring investigation).
 
 ```{r spc-chart-example, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 set.seed(42)
 n <- 30
 subgroup_size <- 5
@@ -691,10 +710,10 @@ ggplot(xbar_data, aes(x = subgroup, y = xbar)) +
   geom_line(color = "#3498db", linewidth = 0.8) +
   geom_point(aes(color = status), size = 4) +
   scale_color_manual(values = c("In Control" = "#3498db", "Out of Control" = "#e74c3c")) +
-  annotate("text", x = 31, y = ucl, label = paste0("UCL = ", round(ucl, 2)), hjust = 0, size = 5 * diagram_text_scale) +
-  annotate("text", x = 31, y = lcl, label = paste0("LCL = ", round(lcl, 2)), hjust = 0, size = 5 * diagram_text_scale) +
-  annotate("text", x = 31, y = cl, label = paste0("CL = ", cl), hjust = 0, size = 5 * diagram_text_scale) +
-  annotate("text", x = 16, y = 51.5, label = "Special cause!\nInvestigate", color = "#e74c3c",
+  annotate("text", x = 31, y = ucl, label = paste0("UCL = ", round(ucl, 2)), hjust = 0, vjust = -0.5, size = 5 * diagram_text_scale) +
+  annotate("text", x = 31, y = lcl, label = paste0("LCL = ", round(lcl, 2)), hjust = 0, vjust = -0.5, size = 5 * diagram_text_scale) +
+  annotate("text", x = 31, y = cl, label = paste0("CL = ", cl), hjust = 0, vjust = -0.5, size = 5 * diagram_text_scale) +
+  annotate("text", x = 17.5, y = 51.1, hjust = 0, label = "Special cause!\nInvestigate", color = "#e74c3c",
            fontface = "bold", size = 6 * diagram_text_scale) +
   scale_x_continuous(breaks = seq(0, 30, 5), limits = c(0, 35)) +
   labs(title = "X-bar Control Chart Example",
@@ -702,13 +721,13 @@ ggplot(xbar_data, aes(x = subgroup, y = xbar)) +
        x = "Subgroup Number", y = "Subgroup Mean (mm)") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale),
-    plot.subtitle = element_text(size = 12 * diagram_text_scale),
-    axis.title = element_text(size = 12 * diagram_text_scale),
-    axis.text = element_text(size = 11 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale),
+    plot.subtitle = element_text(size = 12 * chart_text_scale),
+    axis.title = element_text(size = 12 * chart_text_scale),
+    axis.text = element_text(size = 11 * chart_text_scale),
     legend.position = "bottom",
     legend.title = element_blank(),
-    legend.text = element_text(size = 11 * diagram_text_scale)
+    legend.text = element_text(size = 11 * chart_text_scale)
   )
 ```
 
@@ -824,6 +843,7 @@ A QMS requires documented information to ensure consistency, provide evidence, a
 ### Documentation Hierarchy
 
 ```{r doc-hierarchy, echo=FALSE, fig.width=12, fig.height=9}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 ggplot() +
   # Level 1 - Policy
   annotate("polygon", x = c(5, 3, 7), y = c(7, 5.5, 5.5),
@@ -834,38 +854,38 @@ ggplot() +
   # Level 2 - Manual/Procedures
   annotate("polygon", x = c(5, 2, 8), y = c(5.3, 3.5, 3.5),
            fill = "#f39c12", color = "black") +
-  annotate("text", x = 5, y = 4.3, label = "Level 2\nQuality Manual & Procedures\nWhat we do and who is responsible",
+  annotate("text", x = 5, y = 4.3, label = "Level 2\nQuality Manual &\nProcedures",
            color = "white", fontface = "bold", size = 5 * diagram_text_scale, lineheight = 0.9) +
 
   # Level 3 - Work Instructions
   annotate("polygon", x = c(5, 1, 9), y = c(3.3, 1.5, 1.5),
            fill = "#3498db", color = "black") +
-  annotate("text", x = 5, y = 2.3, label = "Level 3\nWork Instructions, SOPs, Specifications\nHow we do it - step by step details",
+  annotate("text", x = 5, y = 2.3, label = "Level 3\nWork Instructions,\nSOPs, Specifications",
            color = "white", fontface = "bold", size = 5 * diagram_text_scale, lineheight = 0.9) +
 
   # Level 4 - Records
   annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0.3, ymax = 1.3,
            fill = "#27ae60", color = "black") +
-  annotate("text", x = 5, y = 0.8, label = "Level 4: Records & Forms - Evidence that we did it",
+  annotate("text", x = 5, y = 0.8, label = "Level 4: Records & Forms (evidence that we did it)",
            color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
 
   # Examples on the right
-  annotate("text", x = 9, y = 6.2, label = "• Quality Policy statement\n• Quality objectives",
+  annotate("text", x = 9.8, y = 6.2, label = "• Quality Policy statement\n• Quality objectives",
            hjust = 0, size = 5 * diagram_text_scale, lineheight = 0.9) +
-  annotate("text", x = 9, y = 4.3, label = "• Document control procedure\n• Corrective action procedure\n• Internal audit procedure",
+  annotate("text", x = 9.8, y = 4.3, label = "• Document control procedure\n• Corrective action procedure\n• Internal audit procedure",
            hjust = 0, size = 5 * diagram_text_scale, lineheight = 0.9) +
-  annotate("text", x = 9, y = 2.3, label = "• Setup instructions\n• Inspection checklists\n• Calibration procedures",
+  annotate("text", x = 9.8, y = 2.3, label = "• Setup instructions\n• Inspection checklists\n• Calibration procedures",
            hjust = 0, size = 5 * diagram_text_scale, lineheight = 0.9) +
-  annotate("text", x = 9, y = 0.8, label = "• Inspection records • Training records • Audit reports",
+  annotate("text", x = 9.8, y = 0.8, label = "• Inspection records\n• Training records\n• Audit reports",
            hjust = 0, size = 5 * diagram_text_scale) +
 
-  coord_cartesian(xlim = c(0, 14), ylim = c(0, 7.5)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, 7.5)) +
   labs(title = "Quality Documentation Hierarchy",
        subtitle = "From policy (strategic) to records (evidence)") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -949,6 +969,7 @@ kable(mandatory, caption = "Documented Information Required by ISO 9001:2015") %
 ### The Audit Process
 
 ```{r audit-process, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 audit_steps <- data.frame(
   step = 1:7,
   name = c("Planning", "Preparation", "Opening Meeting",
@@ -965,6 +986,8 @@ audit_steps <- data.frame(
   x = 1:7
 )
 
+audit_steps$description <- vapply(strwrap(audit_steps$description, 18, simplify = FALSE), paste, character(1), collapse = "\n")
+
 ggplot(audit_steps, aes(x = x, y = 1)) +
   geom_point(size = 20, color = "#3498db") +
   geom_text(aes(label = step), color = "white", fontface = "bold", size = 8 * diagram_text_scale) +
@@ -974,13 +997,13 @@ ggplot(audit_steps, aes(x = x, y = 1)) +
                data = audit_steps[1:6,],
                arrow = arrow(length = unit(0.3, "cm")), color = "gray50", linewidth = 1) +
   scale_x_continuous(limits = c(0.3, 7.7)) +
-  scale_y_continuous(limits = c(-0.1, 2.2)) +
+  scale_y_continuous(limits = c(-0.7, 2.5)) +
   labs(title = "Internal Audit Process Flow",
        subtitle = "Systematic approach to evaluating QMS effectiveness") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -1118,6 +1141,7 @@ kable(auditor_skills, caption = "Internal Auditor Competency Requirements") %>%
 ### The CAPA Process
 
 ```{r capa-process, echo=FALSE, fig.width=12, fig.height=8}
+diagram_text_scale <- 0.8  # fit labels to their shapes
 capa_steps <- data.frame(
   step = 1:8,
   name = c("Identification", "Evaluation", "Investigation",
@@ -1138,25 +1162,25 @@ capa_steps <- data.frame(
 )
 
 ggplot(capa_steps, aes(x = x, y = y)) +
-  geom_tile(aes(fill = step), width = 0.9, height = 1.7, color = "white", linewidth = 1) +
+  geom_tile(aes(fill = step), width = 0.8, height = 1.7, color = "white", linewidth = 1) +
   geom_text(aes(label = paste0(step, ". ", name)), fontface = "bold",
             size = 5 * diagram_text_scale, color = "white", vjust = -0.5) +
   geom_text(aes(label = description), size = 5 * diagram_text_scale, color = "white",
             vjust = 1, lineheight = 0.85) +
   # Arrows showing flow
-  annotate("segment", x = 1.5, xend = 1.9, y = 4, yend = 4,
+  annotate("segment", x = 1.42, xend = 1.58, y = 4, yend = 4,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 2.5, xend = 2.9, y = 4, yend = 4,
+  annotate("segment", x = 2.42, xend = 2.58, y = 4, yend = 4,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 3.5, xend = 3.9, y = 4, yend = 4,
+  annotate("segment", x = 3.42, xend = 3.58, y = 4, yend = 4,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
   annotate("segment", x = 4, xend = 4, y = 3.1, yend = 2.9,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 3.5, xend = 3.1, y = 2, yend = 2,
+  annotate("segment", x = 3.58, xend = 3.42, y = 2, yend = 2,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 2.5, xend = 2.1, y = 2, yend = 2,
+  annotate("segment", x = 2.58, xend = 2.42, y = 2, yend = 2,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 1.5, xend = 1.1, y = 2, yend = 2,
+  annotate("segment", x = 1.58, xend = 1.42, y = 2, yend = 2,
            arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
   scale_fill_gradient(low = "#27ae60", high = "#3498db", guide = "none") +
   coord_cartesian(xlim = c(0.3, 4.7), ylim = c(0.8, 5.2)) +
@@ -1164,8 +1188,8 @@ ggplot(capa_steps, aes(x = x, y = y)) +
        subtitle = "Eight-step process for effective corrective and preventive action") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -1277,6 +1301,7 @@ kable(investigation, col.names = c("Data Type", "Examples", "Collection Method")
 Determine the fundamental cause(s) of the problem using structured analysis tools:
 
 ```{r rca-tools, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 0.9  # fit labels to their shapes
 rca_tools <- data.frame(
   tool = c("5 Whys", "Fishbone\n(Ishikawa)", "Fault Tree\nAnalysis", "Is/Is Not\nAnalysis", "Pareto\nAnalysis"),
   best_for = c("Simple problems;\nquick analysis",
@@ -1300,8 +1325,8 @@ ggplot(rca_tools, aes(x = x, y = 1)) +
        subtitle = "Select the appropriate tool based on problem complexity") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
 
@@ -1510,12 +1535,12 @@ ggplot(capa_long, aes(x = Month, y = Count, fill = Metric)) +
        x = "", y = "Number of CAPAs", fill = "") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 18 * diagram_text_scale),
-    plot.subtitle = element_text(size = 12 * diagram_text_scale),
-    axis.title = element_text(size = 12 * diagram_text_scale),
-    axis.text = element_text(size = 11 * diagram_text_scale),
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale),
+    plot.subtitle = element_text(size = 12 * chart_text_scale),
+    axis.title = element_text(size = 12 * chart_text_scale),
+    axis.text = element_text(size = 11 * chart_text_scale),
     legend.position = "bottom",
-    legend.text = element_text(size = 11 * diagram_text_scale)
+    legend.text = element_text(size = 11 * chart_text_scale)
   )
 ```
 
@@ -1599,10 +1624,10 @@ objectives <- data.frame(
 p1 <- ggplot(objectives, aes(x = x)) +
   geom_bar(aes(y = Target), stat = "identity", fill = "gray80", width = 0.4, position = position_nudge(x = -0.2)) +
   geom_bar(aes(y = Actual), stat = "identity", fill = "#27ae60", width = 0.4, position = position_nudge(x = 0.2)) +
-  geom_text(aes(y = 0, label = Objective), vjust = 1.5, size = 5 * diagram_text_scale, lineheight = 0.8) +
+  scale_x_continuous(breaks = 1:4, labels = objectives$Objective) +
   labs(title = "Quality Objectives: Target vs Actual", x = "", y = "") +
   theme_minimal() +
-  theme(axis.text.x = element_blank(), plot.title = element_text(face = "bold", size = 14 * diagram_text_scale))
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale))
 
 # Customer Satisfaction Trend
 satisfaction <- data.frame(
@@ -1618,9 +1643,9 @@ p2 <- ggplot(satisfaction, aes(x = Quarter, y = Score, group = 1)) +
   scale_y_continuous(limits = c(3.5, 5)) +
   labs(title = "Customer Satisfaction Trend", x = "", y = "Score (1-5)") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
 
 # Audit Findings
 audit_data <- data.frame(
@@ -1631,14 +1656,15 @@ audit_data <- data.frame(
 p3 <- ggplot(audit_data, aes(x = Type, y = Count, fill = Type)) +
   geom_bar(stat = "identity", width = 0.6) +
   geom_text(aes(label = Count), vjust = -0.5, size = 6 * diagram_text_scale) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   scale_fill_manual(values = c("Major NC" = "#e74c3c", "Minor NC" = "#f39c12",
                                "Observations" = "#3498db", "OFIs" = "#27ae60"),
                     guide = "none") +
   labs(title = "Internal Audit Findings (YTD)", x = "", y = "Count") +
   theme_minimal() +
-  theme(plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-        axis.title = element_text(size = 11 * diagram_text_scale),
-        axis.text = element_text(size = 10 * diagram_text_scale))
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
 
 # CAPA Status
 capa_status <- data.frame(
@@ -1654,7 +1680,7 @@ p4 <- ggplot(capa_status, aes(x = "", y = Count, fill = Status)) +
   scale_fill_manual(values = c("#e74c3c", "#f39c12", "#3498db", "#27ae60")) +
   labs(title = "CAPA Status Distribution", fill = "") +
   theme_void() +
-  theme(plot.title = element_text(face = "bold", size = 11 * diagram_text_scale, hjust = 0.5))
+  theme(plot.title = element_text(face = "bold", size = 11 * chart_text_scale, hjust = 0.5))
 
 gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2,
                         top = grid::textGrob("Management Review Dashboard",
@@ -1789,8 +1815,8 @@ ggplot(coq_data, aes(x = Category, y = Cost/1000, fill = Category)) +
        x = "", y = "Cost") +
   theme_minimal() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale),
-    axis.text.x = element_text(size = 11 * diagram_text_scale)
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    axis.text.x = element_text(size = 11 * chart_text_scale)
   )
 ```
 
@@ -1887,7 +1913,7 @@ ggplot(tools_map, aes(x = x, y = y)) +
        subtitle = "Each tool connects to specific ISO 9001 requirements") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
@@ -1933,6 +1959,7 @@ Organizations can seek **third-party certification** to demonstrate QMS conforma
 ### The Certification Journey
 
 ```{r certification-process, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 1.3  # fit labels to their shapes
 cert_steps <- data.frame(
   step = 1:8,
   name = c("Gap Analysis", "Implementation", "Internal Audit",
@@ -1949,12 +1976,13 @@ ggplot(cert_steps, aes(x = x, y = 1)) +
   geom_text(aes(label = step), color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
   geom_text(aes(label = name, y = 1.4), size = 3 * diagram_text_scale, fontface = "bold", angle = 45, hjust = 0) +
   geom_text(aes(label = duration, y = 0.6), size = 2.5 * diagram_text_scale, color = "gray50") +
-  scale_y_continuous(limits = c(0.3, 2)) +
+  scale_y_continuous(limits = c(0.3, 2.2)) +
+  scale_x_continuous(limits = c(0.5, 9.6)) +
   labs(title = "Path to ISO 9001 Certification",
        subtitle = "Typical timeline: 6-18 months depending on organization readiness") +
   theme_void() +
   theme(
-    plot.title = element_text(face = "bold", size = 14 * diagram_text_scale, hjust = 0.5),
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
     plot.subtitle = element_text(hjust = 0.5)
   )
 ```
