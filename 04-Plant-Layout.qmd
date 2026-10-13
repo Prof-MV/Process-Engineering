@@ -108,7 +108,7 @@ ggplot(layout_viz, aes(x = Volume, y = Variety, label = Layout)) +
 In a **process layout**, similar resources (machines, equipment, workers with similar skills) are grouped together. Work flows between departments based on the specific requirements of each job.
 
 ```{r process-layout-diagram, echo=FALSE, fig.align="center", fig.cap="Example Process Layout - Machine Shop", fig.width=9, fig.height=6}
-diagram_text_scale <- 0.85  # fit labels to their shapes
+diagram_text_scale <- 1.16  # fit labels to their shapes
 # Create a simple process layout visualization
 library(ggplot2)
 
@@ -434,6 +434,7 @@ Where:
 ### Interactive Example: Comparing Two Layouts
 
 ```{r layout-comparison, echo=FALSE, fig.align="center", fig.width=10, fig.height=5, fig.cap="Comparing Two Process Layout Alternatives"}
+diagram_text_scale <- 1.05
 # Layout A
 layout_A <- data.frame(
   dept = c("Receiving", "Machining", "Assembly", "Painting", "Shipping"),
@@ -610,6 +611,7 @@ pizza_tasks %>%
 ```
 
 ```{r pizza-precedence, echo=FALSE, fig.align="center", fig.cap="Precedence Diagram for Pizza Assembly", fig.width=9, fig.height=4}
+diagram_text_scale <- 1.05
 # Create precedence diagram
 nodes <- data.frame(
   task = c("A", "B", "C", "D", "E", "F"),
@@ -734,7 +736,7 @@ Warehouse layouts are a special case of process layouts focused on **minimizing 
    - **C items** (50% of SKUs, 5% of picks): Remote locations
 
 ```{r warehouse-viz, echo=FALSE, fig.align="center", fig.cap="Warehouse Layout: ABC Storage Strategy", fig.width=9, fig.height=5}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 0.88  # fit labels to their shapes
 warehouse <- data.frame(
   zone = c(rep("A Items", 4), rep("B Items", 6), rep("C Items", 10)),
   x = c(1:4, 1:6, 1:10),
@@ -891,7 +893,7 @@ ggplot(decisions, aes(x = x, y = y)) +
 Food processing facilities have unique layout requirements due to food safety, hygiene, and regulatory compliance.
 
 ```{r food-processing-layout, echo=FALSE, fig.align="center", fig.cap="Food Processing Plant Layout Example", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.8  # fit labels to their shapes
+diagram_text_scale <- 1.09  # fit labels to their shapes
 # Create a food processing plant layout
 food_zones <- data.frame(
   zone = c("Receiving\n(Raw Materials)", "Cold Storage", "Preparation",
@@ -979,7 +981,7 @@ food_principles %>%
 Aerospace facilities often use **fixed-position layouts** combined with **process layouts** for component fabrication.
 
 ```{r aerospace-layout, echo=FALSE, fig.align="center", fig.cap="Aerospace Assembly Facility Layout", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.85  # fit labels to their shapes
+diagram_text_scale <- 0.84  # fit labels to their shapes
 # Aerospace facility layout
 aero_areas <- data.frame(
   area = c("Component\nFabrication", "Subassembly", "Wing\nAssembly", "Fuselage\nAssembly",
@@ -1052,6 +1054,7 @@ Watch how Boeing uses a moving assembly line for high-volume aircraft production
 ### Case Study 3: Automotive Supplier - Hybrid Cell Layout
 
 ```{r auto-supplier-layout, echo=FALSE, fig.align="center", fig.cap="Automotive Supplier Facility with Cellular Layout", fig.width=10, fig.height=6}
+diagram_text_scale <- 1.05
 # Automotive supplier with cells
 cells <- data.frame(
   cell = c(rep("Machining Cell 1\n(Brackets)", 3),
@@ -1283,7 +1286,7 @@ if (LI <= 1.0) {
 ### Ergonomic Workstation Design
 
 ```{r ergonomic-zones, echo=FALSE, fig.align="center", fig.cap="Ergonomic Work Zones for Standing Operations", fig.width=8, fig.height=6}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 0.88  # fit labels to their shapes
 # Work zone diagram
 zones <- data.frame(
   zone = c("Primary\nWork Zone", "Secondary\nWork Zone", "Tertiary\n(Occasional)"),
@@ -1472,6 +1475,7 @@ software %>%
 ### Simulation Benefits
 
 ```{r simulation-benefits, echo=FALSE, fig.align="center", fig.cap="Benefits of Layout Simulation", fig.width=8, fig.height=5}
+diagram_text_scale <- 1.05
 benefits <- data.frame(
   benefit = c("Reduce\nCosts", "Minimize\nRisk", "Optimize\nFlow", "Validate\nCapacity", "Improve\nBuy-in"),
   x = 1:5,

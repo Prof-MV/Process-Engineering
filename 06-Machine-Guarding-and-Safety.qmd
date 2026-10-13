@@ -43,6 +43,7 @@ By the end of this chapter, you will be able to:
 In process engineering, safety is not merely a feature added at the end of a project; it is a **fundamental design constraint**. Before deploying safety devices, the engineer must apply the **Hierarchy of Controls** — a systematic approach to eliminating or reducing workplace hazards.
 
 ```{r hierarchy-controls-viz, echo=FALSE, fig.align="center", fig.cap="The Hierarchy of Controls (Most to Least Effective)", fig.width=9, fig.height=7}
+diagram_text_scale <- 1.05
 # Create pyramid visualization
 hierarchy_data <- data.frame(
   level = factor(c("Elimination", "Substitution", "Engineering Controls",
@@ -288,6 +289,7 @@ stop_cat %>%
 **Trapped key systems** use a mechanical sequence to ensure that a machine cannot be energized unless all access keys are returned to the control panel.
 
 ```{r loto-sequence, echo=FALSE, fig.align="center", fig.cap="Trapped Key System Sequence", fig.width=10, fig.height=4}
+diagram_text_scale <- 1.05
 loto_steps <- data.frame(
   step = 1:5,
   action = c("Turn off\nmachine", "Lock out\npower", "Remove key\nfrom panel",
@@ -385,6 +387,7 @@ ggplot(sensing_long, aes(x = device, y = value, fill = metric)) +
 **Light curtains** use a transmitter and receiver to create an array of infrared beams. If any beam is broken, the safety circuit is interrupted.
 
 ```{r light-curtain-diagram, echo=FALSE, fig.align="center", fig.cap="Light Curtain Operating Principle", fig.width=10, fig.height=6}
+diagram_text_scale <- 1.05
 ggplot() +
   # Transmitter
   annotate("rect", xmin = 0, xmax = 0.5, ymin = 0, ymax = 5,
@@ -453,7 +456,7 @@ lc_specs %>%
 **Laser area scanners** use LiDAR technology to monitor a 2D plane. They are highly flexible and allow for programmable zones.
 
 ```{r area-scanner-diagram, echo=FALSE, fig.align="center", fig.cap="Laser Area Scanner Zones", fig.width=10, fig.height=8}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 # Create polar plot for scanner zones
 angles <- seq(0, 270, length.out = 100)
 warning_r <- 3
@@ -771,6 +774,7 @@ tryit_sort(
 **Collaborative robots (cobots)** represent a shift from "separation" to "collaboration." They rely on sophisticated internal sensors rather than external cages, allowing humans and robots to work in the same space.
 
 ```{r cobot-comparison-guarding, echo=FALSE, fig.align="center", fig.cap="Traditional Robot vs. Collaborative Robot", fig.width=10, fig.height=6}
+diagram_text_scale <- 1.05
 ggplot() +
   # Traditional Robot
   annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 5,
@@ -919,6 +923,7 @@ Where:
 - **$C$**: The "penetration depth" (how far a hand can reach through before being detected)
 
 ```{r safety-distance-viz, echo=FALSE, fig.align="center", fig.cap="Safety Distance Components", fig.width=10, fig.height=5}
+diagram_text_scale <- 1.05
 ggplot() +
   # Light curtain
   annotate("rect", xmin = 0, xmax = 0.3, ymin = 0, ymax = 4,
@@ -1078,7 +1083,7 @@ The light curtain must be installed at least **474mm** from the nearest hazard p
 The **Emergency Stop** is the "last resort" — it is not a safety device but a **complementary protective measure**. It must be available to stop the machine when all other measures have failed.
 
 ```{r estop-design, echo=FALSE, fig.align="center", fig.cap="E-Stop Design Requirements", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 ggplot() +
   # E-Stop button
   annotate("rect", xmin = 3, xmax = 7, ymin = 1, ymax = 5,
@@ -1290,7 +1295,7 @@ ggplot(rel_data, aes(x = x, y = sil)) +
 Before selecting any safety device, a **risk assessment** must be performed. This is required by ISO 12100.
 
 ```{r risk-assessment-process, echo=FALSE, fig.align="center", fig.cap="Risk Assessment Process (ISO 12100)", fig.width=10, fig.height=7}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 steps <- data.frame(
   step = 1:5,
   label = c("Determine\nLimits", "Identify\nHazards", "Estimate\nRisk",

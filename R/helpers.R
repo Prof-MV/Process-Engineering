@@ -26,7 +26,17 @@ inject_jquery <- function() {
 #' chunk. Every geom_text()/geom_label()/annotate("text", ...)/element_text()
 #' call in the book's .qmd files multiplies its size by this value.
 #' @export
-diagram_text_scale <- 1.1
+diagram_text_scale <- 1.5
+
+# A chunk may lower diagram_text_scale for its own figure, but the assignment
+# would otherwise leak into every later chunk of the chapter. Reset it to the
+# book default before each chunk runs.
+.diagram_text_scale_default <- diagram_text_scale
+knitr::opts_chunk$set(reset_diagram_scale = TRUE)
+knitr::opts_hooks$set(reset_diagram_scale = function(options) {
+  assign("diagram_text_scale", .diagram_text_scale_default, envir = globalenv())
+  options
+})
 
 #' Text scale for axes, titles, legends and chart value labels (theme text).
 #' Text drawn INSIDE boxes/shapes of hand-built diagrams uses the smaller

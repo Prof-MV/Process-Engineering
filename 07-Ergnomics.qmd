@@ -42,7 +42,7 @@ By the end of this chapter, you will be able to:
 **Ergonomics** (from Greek *ergon* = work, *nomos* = laws) is the scientific discipline focused on understanding the interactions between humans and other elements of a system, with the goal of optimizing human well-being and overall system performance.
 
 ```{r ergonomics-definition, echo=FALSE, fig.align="center", fig.cap="The Three Domains of Ergonomics", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.7  # fit labels to their shapes
+diagram_text_scale <- 0.95  # fit labels to their shapes
 # Create Venn-like diagram for ergonomics domains
 ggplot() +
   # Physical domain
@@ -165,6 +165,7 @@ ggplot(benefits, aes(x = reorder(category, improvement), y = improvement, fill =
 The **Initial Ergonomic Risk Assessment (INERA)** identifies seven primary risk factors that contribute to musculoskeletal disorders. Understanding these factors is the first step in prevention.
 
 ```{r risk-factors-viz, echo=FALSE, fig.align="center", fig.cap="The Seven Ergonomic Risk Factors", fig.width=10, fig.height=8}
+diagram_text_scale <- 1.05
 risk_factors <- data.frame(
   factor = c("Awkward\nPostures", "Repetition", "Force", "Static\nPositions",
              "Contact\nStress", "Vibration", "Environmental\nFactors"),
@@ -506,7 +507,7 @@ msd_detail %>%
 MSDs typically develop gradually through a predictable cycle:
 
 ```{r msd-cycle, echo=FALSE, fig.align="center", fig.cap="The MSD Development Cycle", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.6  # fit labels to their shapes
+diagram_text_scale <- 0.82  # fit labels to their shapes
 cycle_data <- data.frame(
   stage = c("Exposure", "Fatigue", "Discomfort", "Pain", "Injury", "Disability"),
   x = c(1, 2, 3, 4, 5, 6),
@@ -567,6 +568,7 @@ ggplot(cycle_data, aes(x = x, y = severity)) +
 Prevention is far more effective and less costly than treatment. Here are evidence-based strategies for MSD prevention:
 
 ```{r prevention-hierarchy, echo=FALSE, fig.align="center", fig.cap="MSD Prevention Hierarchy", fig.width=10, fig.height=6}
+diagram_text_scale <- 1.05
 prevention <- data.frame(
   level = factor(c("Engineering Controls", "Administrative Controls", "Work Practice Controls"),
                  levels = c("Work Practice Controls", "Administrative Controls", "Engineering Controls")),
@@ -690,6 +692,7 @@ ggplot() +
 Effective ergonomic design follows established principles that account for human capabilities and limitations.
 
 ```{r design-principles, echo=FALSE, fig.align="center", fig.cap="Ergonomic Design Principles", fig.width=10, fig.height=8}
+diagram_text_scale <- 1.05
 principles <- data.frame(
   principle = c("Neutral Posture", "Anthropometry", "Reduce Force",
                 "Reduce Motion", "Work Height", "Minimize Static Load",
@@ -747,7 +750,7 @@ principles_detail %>%
 **Anthropometry** is the scientific study of human body measurements. Workstations must accommodate the range of workers who will use them.
 
 ```{r anthropometry-viz, echo=FALSE, fig.align="center", fig.cap="Anthropometric Design Considerations", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 # Create percentile visualization
 ggplot() +
   # Distribution curve
@@ -1334,7 +1337,7 @@ Let's work through a complete REBA assessment for a manufacturing worker perform
 **Scenario:** A worker stands at a packaging station, bending forward to pick up items from a low bin and placing them into boxes on a conveyor. The task is performed continuously for 4-hour shifts.
 
 ```{r reba-detailed-example, echo=FALSE, fig.align="center", fig.cap="REBA Assessment Scenario: Packaging Worker", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.8  # fit labels to their shapes
+diagram_text_scale <- 1.09  # fit labels to their shapes
 ggplot() +
   # Worker body representation
   annotate("rect", xmin = 4, xmax = 6, ymin = 2, ymax = 6, fill = "#F5CBA7", color = "black") +
@@ -1890,6 +1893,7 @@ if (LI <= 1.0) {
 Artificial intelligence is revolutionizing ergonomic assessment by enabling **real-time, automated analysis** of worker postures without disrupting operations.
 
 ```{r ai-tools-viz, echo=FALSE, fig.align="center", fig.cap="AI Ergonomics Assessment Pipeline", fig.width=10, fig.height=5}
+diagram_text_scale <- 1.05
 ggplot() +
   # Input
   annotate("rect", xmin = 0, xmax = 2, ymin = 1, ymax = 3, fill = "#3498DB", color = "black") +

@@ -42,7 +42,7 @@ A **Quality Management System (QMS)** is a formalized system that documents proc
 ### Why Implement a QMS?
 
 ```{r qms-benefits, echo=FALSE, fig.width=12, fig.height=7}
-diagram_text_scale <- 1.1  # fit labels to their shapes
+diagram_text_scale <- 1.5  # fit labels to their shapes
 benefits <- data.frame(
   Category = c("Customer", "Operational", "Financial", "Strategic", "Regulatory", "Cultural"),
   Benefit = c("Customer Satisfaction", "Process Consistency", "Cost Reduction",
@@ -109,7 +109,7 @@ kable(evolution, col.names = c("Era", "Approach", "Focus", "Key Figures/Standard
 ISO 9000 defines seven quality management principles that form the foundation of all QMS standards:
 
 ```{r qm-principles, echo=FALSE, fig.width=12, fig.height=8}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 principles <- data.frame(
   principle = c("Customer Focus", "Leadership", "Engagement of People",
                 "Process Approach", "Improvement", "Evidence-based\nDecision Making",
@@ -165,7 +165,7 @@ ggplot(principles, aes(x = x, y = y)) +
 ### The Ten Clauses
 
 ```{r iso-clauses, echo=FALSE, fig.width=12, fig.height=9}
-diagram_text_scale <- 0.85  # fit labels to their shapes
+diagram_text_scale <- 1.16  # fit labels to their shapes
 clauses <- data.frame(
   clause = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
   title = c("Scope", "Normative References", "Terms and Definitions",
@@ -209,7 +209,7 @@ ggplot(clauses, aes(x = 1, y = y)) +
 ISO 9001:2015 emphasizes the **process approach** combined with the **Plan-Do-Check-Act (PDCA)** cycle:
 
 ```{r pdca-cycle, echo=FALSE, fig.width=11, fig.height=9}
-diagram_text_scale <- 1.0  # fit labels to their shapes
+diagram_text_scale <- 1.36  # fit labels to their shapes
 # PDCA positioned clockwise: Plan (top), Do (right), Check (bottom), Act (left)
 ggplot() +
   # Circular arrow path (clockwise)
@@ -325,7 +325,7 @@ Different industries have developed standards that build upon ISO 9001 with addi
 ### Comparison of Major Standards
 
 ```{r standards-comparison, echo=FALSE, fig.width=12, fig.height=7}
-diagram_text_scale <- 0.85  # fit labels to their shapes
+diagram_text_scale <- 1.16  # fit labels to their shapes
 standards <- data.frame(
   Standard = c("ISO 9001:2015", "IATF 16949:2016", "AS9100D", "ISO 22000:2018"),
   Industry = c("General", "Automotive", "Aerospace/Defense", "Food Safety"),
@@ -386,7 +386,7 @@ kable(iatf_requirements, col.names = c("Requirement Area", "ISO 9001", "IATF 169
 IATF 16949 requires the use of **five core tools**:
 
 ```{r core-tools, echo=FALSE, fig.width=12, fig.height=6}
-diagram_text_scale <- 0.8  # fit labels to their shapes
+diagram_text_scale <- 0.78  # fit labels to their shapes
 core_tools <- data.frame(
   tool = c("APQP", "PPAP", "FMEA", "MSA", "SPC"),
   name = c("Advanced Product\nQuality Planning",
@@ -425,7 +425,7 @@ ggplot(core_tools, aes(x = x, y = 1)) +
 **APQP** is a structured framework for developing products that ensures customer requirements are met through careful planning and defined milestones.
 
 ```{r apqp-phases, echo=FALSE, fig.width=12, fig.height=5}
-diagram_text_scale <- 0.7  # fit labels to their shapes
+diagram_text_scale <- 0.95  # fit labels to their shapes
 apqp_phases <- data.frame(
   phase = c("1", "2", "3", "4", "5"),
   name = c("Plan & Define", "Product Design", "Process Design",
@@ -584,7 +584,7 @@ kable(fmea_example, caption = "Process FMEA Structure and Example") %>%
 **Action Priority Based on RPN:**
 
 ```{r rpn-priority, echo=FALSE, fig.width=10, fig.height=3}
-diagram_text_scale <- 0.85  # fit labels to their shapes
+diagram_text_scale <- 0.84  # fit labels to their shapes
 rpn_data <- data.frame(
   range = c("1-50", "51-100", "101-200", "201-1000"),
   priority = c("Low", "Medium", "High", "Critical"),
@@ -623,7 +623,7 @@ ggplot(rpn_data, aes(x = x, y = 1)) +
 **MSA** ensures that measurement systems provide reliable data for decision-making. Poor measurement systems can cause good parts to be rejected (false rejects) or bad parts to be accepted (false accepts).
 
 ```{r msa-components, echo=FALSE, fig.width=12, fig.height=5}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 msa_data <- data.frame(
   component = c("Bias", "Linearity", "Stability", "Repeatability", "Reproducibility"),
   definition = c("Difference between\nmeasured and true value",
@@ -684,7 +684,7 @@ A supplier conducts a Gage R&R study for a micrometer used to measure shaft diam
 **SPC** uses control charts to monitor process stability and capability, distinguishing between common cause variation (inherent to the process) and special cause variation (assignable causes requiring investigation).
 
 ```{r spc-chart-example, echo=FALSE, fig.width=12, fig.height=6}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 set.seed(42)
 n <- 30
 subgroup_size <- 5
@@ -843,7 +843,7 @@ A QMS requires documented information to ensure consistency, provide evidence, a
 ### Documentation Hierarchy
 
 ```{r doc-hierarchy, echo=FALSE, fig.width=12, fig.height=9}
-diagram_text_scale <- 0.8  # fit labels to their shapes
+diagram_text_scale <- 0.78  # fit labels to their shapes
 ggplot() +
   # Level 1 - Policy
   annotate("polygon", x = c(5, 3, 7), y = c(7, 5.5, 5.5),
@@ -969,7 +969,7 @@ kable(mandatory, caption = "Documented Information Required by ISO 9001:2015") %
 ### The Audit Process
 
 ```{r audit-process, echo=FALSE, fig.width=12, fig.height=6}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 audit_steps <- data.frame(
   step = 1:7,
   name = c("Planning", "Preparation", "Opening Meeting",
@@ -1141,7 +1141,7 @@ kable(auditor_skills, caption = "Internal Auditor Competency Requirements") %>%
 ### The CAPA Process
 
 ```{r capa-process, echo=FALSE, fig.width=12, fig.height=8}
-diagram_text_scale <- 0.8  # fit labels to their shapes
+diagram_text_scale <- 0.78  # fit labels to their shapes
 capa_steps <- data.frame(
   step = 1:8,
   name = c("Identification", "Evaluation", "Investigation",
@@ -1301,7 +1301,7 @@ kable(investigation, col.names = c("Data Type", "Examples", "Collection Method")
 Determine the fundamental cause(s) of the problem using structured analysis tools:
 
 ```{r rca-tools, echo=FALSE, fig.width=12, fig.height=6}
-diagram_text_scale <- 0.9  # fit labels to their shapes
+diagram_text_scale <- 1.22  # fit labels to their shapes
 rca_tools <- data.frame(
   tool = c("5 Whys", "Fishbone\n(Ishikawa)", "Fault Tree\nAnalysis", "Is/Is Not\nAnalysis", "Pareto\nAnalysis"),
   best_for = c("Simple problems;\nquick analysis",
@@ -1959,7 +1959,7 @@ Organizations can seek **third-party certification** to demonstrate QMS conforma
 ### The Certification Journey
 
 ```{r certification-process, echo=FALSE, fig.width=12, fig.height=6}
-diagram_text_scale <- 1.3  # fit labels to their shapes
+diagram_text_scale <- 1.77  # fit labels to their shapes
 cert_steps <- data.frame(
   step = 1:8,
   name = c("Gap Analysis", "Implementation", "Internal Audit",
