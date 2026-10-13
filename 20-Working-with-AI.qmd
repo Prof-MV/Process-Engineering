@@ -146,16 +146,16 @@ Which question would get better help from a human expert? The same principle app
 ```{r prompt-rules, echo=FALSE, fig.width=14, fig.height=10}
 diagram_text_scale <- 0.7  # fit labels to their shapes
 rules <- data.frame(
-  Rule = c("1. Be Specific\n& Structured", "2. Use\nRole-Playing", "3. Break Down\nComplex Tasks",
-           "4. Include\nExamples", "5. Request\nReasoning", "6. Avoid\nAmbiguity", "7. Add Ethical\nGuardrails"),
+  Rule = c("1. Be Specific<br>& Structured", "2. Use<br>Role-Playing", "3. Break Down<br>Complex Tasks",
+           "4. Include<br>Examples", "5. Request<br>Reasoning", "6. Avoid<br>Ambiguity", "7. Add Ethical<br>Guardrails"),
   Description = c(
-    "Provide clear context,\nconstraints, and\ndesired output format",
-    "Assign the AI a persona\n(e.g., 'Act as an\nexperienced engineer')",
-    "Decompose problems\ninto steps to leverage\nAI's strengths",
-    "Provide sample\ninputs/outputs to\nguide AI behavior",
-    "Ask for step-by-step\nreasoning or\nalternative solutions",
-    "Use precise language;\ndefine technical\nterms if needed",
-    "Include safety,\nregulation, and\nbias considerations"
+    "Provide clear context,<br>constraints, and<br>desired output format",
+    "Assign the AI a persona<br>(e.g., 'Act as an<br>experienced engineer')",
+    "Decompose problems<br>into steps to leverage<br>AI's strengths",
+    "Provide sample<br>inputs/outputs to<br>guide AI behavior",
+    "Ask for step-by-step<br>reasoning or<br>alternative solutions",
+    "Use precise language;<br>define technical<br>terms if needed",
+    "Include safety,<br>regulation, and<br>bias considerations"
   ),
   x = c(1, 2, 3, 4, 1, 2, 3),
   y = c(2, 2, 2, 2, 1, 1, 1)
@@ -195,7 +195,7 @@ motor_prompts <- data.frame(
 
     "I need to select a motor for a conveyor system. The conveyor moves boxes that weigh up to 50kg. What motor should I use?",
 
-    "Act as a senior electromechanical engineer. I need to select an AC induction motor for a conveyor belt system with the following specifications:\\n- Load: cardboard boxes up to 50kg each\\n- Belt speed: 0.5 m/s\\n- Belt length: 10m, width: 0.6m\\n- Incline: 5 degrees\\n- Operating environment: food processing plant (IP65 required)\\n- Power supply: 480V 3-phase\\n\\nPlease provide:\\n1. Required torque calculation\\n2. Motor power recommendation with 25% safety factor\\n3. Recommended motor specifications (frame size, efficiency class)\\n4. Three specific motor models from major manufacturers\\n5. Mounting considerations\\n\\nFormat as a technical memo with calculations shown."
+    "Act as a senior electromechanical engineer. I need to select an AC induction motor for a conveyor belt system with the following specifications:\<br>- Load: cardboard boxes up to 50kg each\<br>- Belt speed: 0.5 m/s\<br>- Belt length: 10m, width: 0.6m\<br>- Incline: 5 degrees\<br>- Operating environment: food processing plant (IP65 required)\<br>- Power supply: 480V 3-phase\<br>\<br>Please provide:\<br>1. Required torque calculation\<br>2. Motor power recommendation with 25% safety factor\<br>3. Recommended motor specifications (frame size, efficiency class)\<br>4. Three specific motor models from major manufacturers\<br>5. Mounting considerations\<br>\<br>Format as a technical memo with calculations shown."
   ),
   Expected_Response = c(
     "Generic motor types list with no specific guidance. AI cannot determine application, size, or requirements.",
@@ -206,7 +206,7 @@ motor_prompts <- data.frame(
   )
 )
 
-kable(motor_prompts, col.names = c("Quality Level", "Prompt", "Expected AI Response"),
+kable(motor_prompts, col.names = c("Quality Level", "Prompt", "Expected AI Response"), escape = FALSE,
       caption = "Motor Selection Prompt Comparison") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
@@ -225,7 +225,7 @@ plc_prompts <- data.frame(
 
     "I have an Allen-Bradley PLC that's showing a fault. The output for a motor starter isn't turning on even though the program shows it should be. What could be wrong?",
 
-    "Act as an experienced automation technician troubleshooting a control system issue.\\n\\nSystem: Allen-Bradley CompactLogix L33ER\\nProblem: Output O:2/5 (motor starter for pump P-101) fails to energize\\n\\nObservations:\\n- Rung logic in RSLogix shows OTE instruction is TRUE\\n- Output status LED on I/O module is OFF\\n- Motor starter coil tests good (24VDC, 85 ohms)\\n- Other outputs on same module work correctly\\n- Problem started after yesterday's power outage\\n\\nPlease provide:\\n1. Systematic troubleshooting steps in order of likelihood\\n2. How to test each potential failure point\\n3. Safety precautions for each test\\n4. Possible root causes ranked by probability\\n5. Preventive measures to avoid recurrence\\n\\nFormat as a troubleshooting checklist I can use in the field."
+    "Act as an experienced automation technician troubleshooting a control system issue.\<br>\<br>System: Allen-Bradley CompactLogix L33ER\<br>Problem: Output O:2/5 (motor starter for pump P-101) fails to energize\<br>\<br>Observations:\<br>- Rung logic in RSLogix shows OTE instruction is TRUE\<br>- Output status LED on I/O module is OFF\<br>- Motor starter coil tests good (24VDC, 85 ohms)\<br>- Other outputs on same module work correctly\<br>- Problem started after yesterday's power outage\<br>\<br>Please provide:\<br>1. Systematic troubleshooting steps in order of likelihood\<br>2. How to test each potential failure point\<br>3. Safety precautions for each test\<br>4. Possible root causes ranked by probability\<br>5. Preventive measures to avoid recurrence\<br>\<br>Format as a troubleshooting checklist I can use in the field."
   ),
   Why_It_Works = c(
     "No context: What PLC? What's the symptom? What have you tried? AI will give generic advice that wastes time.",
@@ -236,7 +236,7 @@ plc_prompts <- data.frame(
   )
 )
 
-kable(plc_prompts, col.names = c("Quality Level", "Prompt", "Why This Works (or Doesn't)"),
+kable(plc_prompts, col.names = c("Quality Level", "Prompt", "Why This Works (or Doesn't)"), escape = FALSE,
       caption = "PLC Troubleshooting Prompt Comparison") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
@@ -255,7 +255,7 @@ safety_prompts <- data.frame(
 
     "I have a robotic welding cell. What safety features does it need?",
 
-    "Act as a certified machine safety engineer (TUV or equivalent).\\n\\nI need to perform a risk assessment for a new robotic welding cell with the following configuration:\\n- Robot: FANUC ArcMate 100iD, 12kg payload\\n- Process: MIG welding, automotive brackets\\n- Cell size: 4m x 4m\\n- Operator tasks: Load/unload parts every 45 seconds\\n- Adjacent to manual assembly line (2m clearance)\\n\\nPlease provide:\\n1. Hazard identification using ISO 12100 categories\\n2. Risk assessment matrix for top 5 hazards\\n3. Required safeguarding per OSHA and ISO 10218-2\\n4. Recommended safety system architecture\\n5. Validation testing requirements\\n\\nReference applicable standards (ISO, ANSI/RIA, CSA) for each recommendation."
+    "Act as a certified machine safety engineer (TUV or equivalent).\<br>\<br>I need to perform a risk assessment for a new robotic welding cell with the following configuration:\<br>- Robot: FANUC ArcMate 100iD, 12kg payload\<br>- Process: MIG welding, automotive brackets\<br>- Cell size: 4m x 4m\<br>- Operator tasks: Load/unload parts every 45 seconds\<br>- Adjacent to manual assembly line (2m clearance)\<br>\<br>Please provide:\<br>1. Hazard identification using ISO 12100 categories\<br>2. Risk assessment matrix for top 5 hazards\<br>3. Required safeguarding per OSHA and ISO 10218-2\<br>4. Recommended safety system architecture\<br>5. Validation testing requirements\<br>\<br>Reference applicable standards (ISO, ANSI/RIA, CSA) for each recommendation."
   ),
   Risk_Level = c(
     "DANGEROUS: Vague prompts about safety can lead to incomplete analysis and missed hazards. Never acceptable for safety-critical work.",
@@ -266,7 +266,7 @@ safety_prompts <- data.frame(
   )
 )
 
-kable(safety_prompts, col.names = c("Quality Level", "Prompt", "Risk Assessment"),
+kable(safety_prompts, col.names = c("Quality Level", "Prompt", "Risk Assessment"), escape = FALSE,
       caption = "Safety Analysis Prompt Comparison - Critical Application") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
@@ -422,12 +422,12 @@ The research shows that effectively working with AI follows a consistent four-st
 ```{r four-steps, echo=FALSE, fig.width=14, fig.height=8}
 diagram_text_scale <- 0.85  # fit labels to their shapes
 steps_data <- data.frame(
-  Step = c("1. DEFINE\nthe Task", "2. PROMPT\nwith Context", "3. ITERATE\nand Refine", "4. VALIDATE\nand Apply"),
+  Step = c("1. DEFINE<br>the Task", "2. PROMPT<br>with Context", "3. ITERATE<br>and Refine", "4. VALIDATE<br>and Apply"),
   Description = c(
-    "Break complex problems\ninto AI-manageable tasks.\nIdentify what you need\nand what AI can help with.",
-    "Write structured prompts\nusing the seven rules.\nInclude role, context,\nconstraints, and deliverables.",
-    "Review AI output critically.\nAsk follow-up questions.\nRefine through multiple\nconversation turns.",
-    "Verify accuracy against\nstandards and expertise.\nApply human judgment.\nIntegrate into final work."
+    "Break complex problems<br>into AI-manageable tasks.<br>Identify what you need<br>and what AI can help with.",
+    "Write structured prompts<br>using the seven rules.<br>Include role, context,<br>constraints, and deliverables.",
+    "Review AI output critically.<br>Ask follow-up questions.<br>Refine through multiple<br>conversation turns.",
+    "Verify accuracy against<br>standards and expertise.<br>Apply human judgment.<br>Integrate into final work."
   ),
   Key_Action = c(
     "Task decomposition",
@@ -559,21 +559,21 @@ Different AI tools serve different purposes. Understanding when to use each tool
 
 ```{r ai-tools-comparison, echo=FALSE, fig.width=14, fig.height=10}
 tools_data <- data.frame(
-  Tool = c("Chat Interfaces\n(Claude.ai, ChatGPT,\nGemini)",
-           "NotebookLM\n(Google)",
-           "Claude Code\n(CLI Tool)",
-           "Browser Extensions\n(Claude, etc.)"),
+  Tool = c("Chat Interfaces<br>(Claude.ai, ChatGPT,<br>Gemini)",
+           "NotebookLM<br>(Google)",
+           "Claude Code<br>(CLI Tool)",
+           "Browser Extensions<br>(Claude, etc.)"),
   Best_For = c(
-    "General Q&A\nDrafting documents\nExplaining concepts\nBrainstorming",
-    "Research synthesis\nSource-grounded answers\nPodcast generation\nMulti-document analysis",
-    "Code development\nFile operations\nProject automation\nTechnical implementation",
-    "Web page analysis\nQuick questions\nContent summarization\nIn-context assistance"
+    "General Q&A<br>Drafting documents<br>Explaining concepts<br>Brainstorming",
+    "Research synthesis<br>Source-grounded answers<br>Podcast generation<br>Multi-document analysis",
+    "Code development<br>File operations<br>Project automation<br>Technical implementation",
+    "Web page analysis<br>Quick questions<br>Content summarization<br>In-context assistance"
   ),
   Strengths = c(
-    "Flexible, conversational\nGood for exploration\nEasy to iterate",
-    "Cites sources directly\nReduces hallucination\nGreat for learning",
-    "Edits real files\nRuns commands\nProject-aware context",
-    "Works in browser\nNo context switching\nImmediate access"
+    "Flexible, conversational<br>Good for exploration<br>Easy to iterate",
+    "Cites sources directly<br>Reduces hallucination<br>Great for learning",
+    "Edits real files<br>Runs commands<br>Project-aware context",
+    "Works in browser<br>No context switching<br>Immediate access"
   ),
   x = c(1, 2, 3, 4),
   y = c(1, 1, 1, 1)
@@ -831,15 +831,15 @@ Complex engineering problems are rarely solved in a single prompt. The iterative
 
 ```{r iteration-cycle, echo=FALSE, fig.width=12, fig.height=8}
 cycle_data <- data.frame(
-  Step = c("1. Initial\nPrompt", "2. Review\nResponse", "3. Identify\nGaps",
-           "4. Refine &\nExpand", "5. Validate\nResults", "6. Synthesize\nFinal Output"),
+  Step = c("1. Initial<br>Prompt", "2. Review<br>Response", "3. Identify<br>Gaps",
+           "4. Refine &<br>Expand", "5. Validate<br>Results", "6. Synthesize<br>Final Output"),
   Description = c(
-    "Start with your\nbest attempt at\na complete prompt",
-    "Read critically:\nWhat's useful?\nWhat's wrong?",
-    "Note missing info,\nerrors, or areas\nneeding depth",
-    "Ask follow-up\nquestions to fill\ngaps and correct",
-    "Cross-check with\nstandards, calculations,\nand expertise",
-    "Combine iterations\ninto final\ndeliverable"
+    "Start with your<br>best attempt at<br>a complete prompt",
+    "Read critically:<br>What's useful?<br>What's wrong?",
+    "Note missing info,<br>errors, or areas<br>needing depth",
+    "Ask follow-up<br>questions to fill<br>gaps and correct",
+    "Cross-check with<br>standards, calculations,<br>and expertise",
+    "Combine iterations<br>into final<br>deliverable"
   ),
   x = c(1, 2, 3, 4, 5, 6),
   y = c(1, 1, 1, 1, 1, 1)
@@ -1268,14 +1268,14 @@ You are tasked with designing an automated inspection station for a food packagi
 
 ```{r summary-visual, echo=FALSE, fig.width=12, fig.height=6}
 summary_data <- data.frame(
-  Principle = c("Foundation\nFirst", "Structure\nMatters", "Iterate\nRelentlessly",
-                "Verify\nEverything", "Know the\nLimits"),
+  Principle = c("Foundation<br>First", "Structure<br>Matters", "Iterate<br>Relentlessly",
+                "Verify<br>Everything", "Know the<br>Limits"),
   Key_Point = c(
-    "Your expertise\ndetermines AI's\nusefulness",
-    "Good prompts =\nGood responses",
-    "Complex problems\nrequire multiple\nturns",
-    "Never trust\nAI output\nblindly",
-    "Human judgment\nis irreplaceable\nfor critical tasks"
+    "Your expertise<br>determines AI's<br>usefulness",
+    "Good prompts =<br>Good responses",
+    "Complex problems<br>require multiple<br>turns",
+    "Never trust<br>AI output<br>blindly",
+    "Human judgment<br>is irreplaceable<br>for critical tasks"
   ),
   x = c(1, 2, 3, 4, 5),
   y = c(1, 1, 1, 1, 1)
