@@ -961,6 +961,26 @@ ggplot(defects, aes(x = Defect_Type)) +
 
 Live cell — try different defect counts.
 
+```{r calc-pareto-interpretation, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "pareto-interpretation",
+  title = "Pareto: Find the Vital Few",
+  icon = "chart-column",
+  tables = list(qwebr_calc_table(
+    frame = "defects", add_rows = TRUE,
+    columns = list(
+      qwebr_calc_col("Defect", c("Surface Scratch", "Dimensional Error", "Burrs", "Missing Feature",
+                                 "Wrong Material", "Contamination", "Color Mismatch", "Packaging Damage"),
+                     type = "text", label = "Defect type"),
+      qwebr_calc_col("Count", c(145, 98, 67, 34, 28, 21, 15, 12), label = "Count", min = 0, step = 1)),
+    note = "Counts need not be in order; the card sorts them.")),
+  fig_height = 800
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: pareto-interpretation
 # Pareto analysis interpretation
@@ -978,12 +998,20 @@ defects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100
 vital_few <- defects[defects$Cumulative_Pct <= 80 |
                       c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]
 
-cat("Total defects:", sum(defects$Count), "\n")
-cat("\nVital Few (contributing to ~80% of defects):\n")
-print(vital_few[, c("Defect", "Count", "Cumulative_Pct")])
-cat("\nFocusing on these", nrow(vital_few), "defect types addresses",
-    round(max(vital_few$Cumulative_Pct), 1), "% of all defects")
+cat(sprintf("Vital few: %g defect types address %.1f%% of all defects\n",
+            nrow(vital_few), max(vital_few$Cumulative_Pct)))
+cat(sprintf("  Total defects  %g\n", sum(defects$Count)))
+for (i in seq_len(nrow(vital_few))) {
+  cat(sprintf("  %s  %g (%.1f%% cumulative)\n", vital_few$Defect[i], vital_few$Count[i], vital_few$Cumulative_Pct[i]))
+}
+
+par(mar = c(5, 5, 3, 1))
+barplot(defects$Count, names.arg = defects$Defect, cex.names = 0.55,
+        col = ifelse(defects$Defect %in% vital_few$Defect, "#C0392B", "#95A5A6"),
+        ylab = "Count", main = "Pareto chart (red = vital few)")
 ```
+
+</details>
 
 ### Stratified Pareto Analysis
 
@@ -1737,6 +1765,26 @@ Fixing the root cause (implementing tool life tracking) prevents the problem fro
 
 **Answer:** (live — try your own defect counts)
 
+```{r calc-pareto-practice, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "pareto-practice",
+  title = "Stamping Defects: Pareto",
+  icon = "chart-column",
+  tables = list(qwebr_calc_table(
+    frame = "defects", add_rows = TRUE,
+    columns = list(
+      qwebr_calc_col("Type", c("Burrs", "Dimensional", "Scratches", "Surface Dents",
+                               "Wrinkles", "Splits/Cracks", "Missing Features"),
+                     type = "text", label = "Defect type"),
+      qwebr_calc_col("Count", c(156, 112, 89, 67, 45, 28, 18), label = "Count", min = 0, step = 1)),
+    note = "Counts need not be in order; the card sorts them.")),
+  fig_height = 800
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: pareto-practice
 # Create and analyze the data
@@ -1753,14 +1801,23 @@ defects <- defects[order(-defects$Count),]
 defects$Percent <- defects$Count / sum(defects$Count) * 100
 defects$Cumulative <- cumsum(defects$Percent)
 
-# Display results
-print(defects)
-
 # Identify vital few
 vital_few <- defects$Type[defects$Cumulative <= 80 |
                            c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]
-cat("\nVital Few (contributing to ~80%):", paste(vital_few, collapse = ", "))
+
+cat(sprintf("Vital few (about 80%%): %s\n", paste(vital_few, collapse = ", ")))
+for (i in seq_len(nrow(defects))) {
+  cat(sprintf("  %s  %g (%.1f%%, cumulative %.1f%%)\n", defects$Type[i], defects$Count[i],
+              defects$Percent[i], defects$Cumulative[i]))
+}
+
+par(mar = c(5, 5, 3, 1))
+barplot(defects$Count, names.arg = defects$Type, cex.names = 0.55,
+        col = ifelse(defects$Type %in% vital_few, "#C0392B", "#95A5A6"),
+        ylab = "Count", main = "Pareto chart (red = vital few)")
 ```
+
+</details>
 
 The **vital few** are Burrs, Dimensional errors, and Scratches - addressing these three defect types would address approximately 69% of all defects. Adding Surface Dents would bring the total to 82%.
 </details>

@@ -733,6 +733,31 @@ gridExtra::grid.arrange(p1, p2, ncol = 1)
 
 Live cell — enter your own subgroup means and ranges (or change `A2`/`D3`/`D4` for a different subgroup size) and see the control limits recalculate.
 
+```{r calc-xbar-r-live, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "xbar-r-live",
+  title = "X-bar and R Chart Limits",
+  icon = "chart-line",
+  inputs = list(
+    qwebr_calc_input("A2", "A2 (for your subgroup size)", value = 0.577, min = 0, max = 2, step = 0.001),
+    qwebr_calc_input("D3", "D3", value = 0, min = 0, max = 1, step = 0.001),
+    qwebr_calc_input("D4", "D4", value = 2.114, min = 1, max = 4, step = 0.001)
+  ),
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("subgroup", 1:10, type = "label", label = "Subgroup"),
+      qwebr_calc_col("xbar", c(25.01, 24.99, 25.02, 25.00, 25.03, 25.01, 25.12, 25.02, 24.98, 25.00),
+                     var = "xbar", label = "Mean (X-bar)", step = 0.01),
+      qwebr_calc_col("R", c(0.08, 0.11, 0.07, 0.09, 0.10, 0.08, 0.09, 0.12, 0.07, 0.10),
+                     var = "R", label = "Range (R)", min = 0, step = 0.01)),
+    note = "Enter the mean and range of each subgroup. The constants above are for n = 5.")),
+  fig_height = 1000
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: xbar-r-live
 # Subgroup averages (X-bar) and ranges (R) for 10 subgroups
@@ -752,23 +777,34 @@ LCL_xbar <- X_double_bar - A2 * R_bar
 UCL_R <- D4 * R_bar
 LCL_R <- D3 * R_bar
 
-cat("X-bar Chart:\n")
-cat("  UCL =", round(UCL_xbar, 4), "\n")
-cat("  CL  =", round(X_double_bar, 4), "\n")
-cat("  LCL =", round(LCL_xbar, 4), "\n\n")
-
-cat("R Chart:\n")
-cat("  UCL =", round(UCL_R, 4), "\n")
-cat("  CL  =", round(R_bar, 4), "\n")
-cat("  LCL =", round(LCL_R, 4), "\n\n")
-
 out_of_control <- which(xbar > UCL_xbar | xbar < LCL_xbar)
 if (length(out_of_control) > 0) {
-  cat("Out-of-control subgroup(s):", out_of_control, "\n")
+  cat(sprintf("!!Out-of-control subgroup(s): %s!!\n", paste(out_of_control, collapse = ", ")))
 } else {
-  cat("All subgroups within control limits.\n")
+  cat("All subgroups within control limits\n")
 }
+
+cat(sprintf("  X-bar chart UCL  %.4f\n", UCL_xbar))
+cat(sprintf("  X-bar chart CL  %.4f\n", X_double_bar))
+cat(sprintf("  X-bar chart LCL  %.4f\n", LCL_xbar))
+cat(sprintf("  R chart UCL  %.4f\n", UCL_R))
+cat(sprintf("  R chart CL  %.4f\n", R_bar))
+cat(sprintf("  R chart LCL  %.4f\n", LCL_R))
+
+par(mfrow = c(2, 1), mar = c(5, 5, 3, 1))
+plot(xbar, type = "b", pch = 19, ylim = range(xbar, UCL_xbar, LCL_xbar),
+     xlab = "Subgroup", ylab = "X-bar", main = "X-bar chart")
+abline(h = c(UCL_xbar, X_double_bar, LCL_xbar), lty = c(2, 1, 2),
+       col = c("#C0392B", "#27AE60", "#C0392B"))
+points(out_of_control, xbar[out_of_control], pch = 19, cex = 1.6, col = "#C0392B")
+plot(R, type = "b", pch = 19, ylim = range(0, R, UCL_R),
+     xlab = "Subgroup", ylab = "Range", main = "R chart")
+abline(h = c(UCL_R, R_bar, LCL_R), lty = c(2, 1, 2),
+       col = c("#C0392B", "#27AE60", "#C0392B"))
+par(mfrow = c(1, 1))
 ```
+
+</details>
 
 ### Control Chart Constants
 
@@ -924,6 +960,24 @@ gridExtra::grid.arrange(p1, p2, ncol = 1)
 
 Live cell — enter your own individual measurements and see the I-MR limits and moving ranges recalculate.
 
+```{r calc-imr-live, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "imr-live",
+  title = "I-MR Chart Limits",
+  icon = "chart-line",
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("obs", 1:12, type = "label", label = "Observation"),
+      qwebr_calc_col("individuals", c(100.2, 99.8, 100.5, 100.1, 99.6, 100.3, 100.0, 99.9, 100.4, 106.1, 105.8, 106.3),
+                     var = "individuals", label = "Measurement", step = 0.1)),
+    note = "Enter individual measurements in time order.")),
+  fig_height = 1000
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: imr-live
 individuals <- c(100.2, 99.8, 100.5, 100.1, 99.6, 100.3, 100.0, 99.9,
@@ -938,23 +992,32 @@ UCL_I <- X_bar + 2.66 * MR_bar
 LCL_I <- X_bar - 2.66 * MR_bar
 UCL_MR <- 3.267 * MR_bar
 
-cat("I Chart:\n")
-cat("  UCL =", round(UCL_I, 3), "\n")
-cat("  CL  =", round(X_bar, 3), "\n")
-cat("  LCL =", round(LCL_I, 3), "\n\n")
-
-cat("MR Chart:\n")
-cat("  UCL =", round(UCL_MR, 3), "\n")
-cat("  CL  =", round(MR_bar, 3), "\n")
-cat("  LCL = 0\n\n")
-
 out_of_control <- which(individuals > UCL_I | individuals < LCL_I)
 if (length(out_of_control) > 0) {
-  cat("Out-of-control observation(s):", out_of_control, "\n")
+  cat(sprintf("!!Out-of-control observation(s): %s!!\n", paste(out_of_control, collapse = ", ")))
 } else {
-  cat("All observations within control limits.\n")
+  cat("All observations within control limits\n")
 }
+
+cat(sprintf("  I chart UCL  %.3f\n", UCL_I))
+cat(sprintf("  I chart CL  %.3f\n", X_bar))
+cat(sprintf("  I chart LCL  %.3f\n", LCL_I))
+cat(sprintf("  MR chart UCL  %.3f\n", UCL_MR))
+cat(sprintf("  MR chart CL  %.3f\n", MR_bar))
+cat("  MR chart LCL  0\n")
+
+par(mfrow = c(2, 1), mar = c(5, 5, 3, 1))
+plot(individuals, type = "b", pch = 19, ylim = range(individuals, UCL_I, LCL_I),
+     xlab = "Observation", ylab = "Measurement", main = "Individuals (I) chart")
+abline(h = c(UCL_I, X_bar, LCL_I), lty = c(2, 1, 2), col = c("#C0392B", "#27AE60", "#C0392B"))
+points(out_of_control, individuals[out_of_control], pch = 19, cex = 1.6, col = "#C0392B")
+plot(MR, type = "b", pch = 19, ylim = range(0, MR, UCL_MR, na.rm = TRUE),
+     xlab = "Observation", ylab = "Moving range", main = "Moving range (MR) chart")
+abline(h = c(UCL_MR, MR_bar), lty = c(2, 1), col = c("#C0392B", "#27AE60"))
+par(mfrow = c(1, 1))
 ```
+
+</details>
 
 ------------------------------------------------------------------------
 
@@ -1023,6 +1086,26 @@ ggplot(p_data, aes(x = day)) +
 
 Live cell — try different defect counts and sample sizes and see p-bar and the control limits recalculate.
 
+```{r calc-p-chart-live, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "p-chart-live",
+  title = "p Chart (Proportion Defective)",
+  icon = "chart-line",
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("day", 1:10, type = "label", label = "Day"),
+      qwebr_calc_col("sample_sizes", c(100, 95, 110, 105, 90, 100, 115, 100, 95, 108),
+                     var = "sample_sizes", label = "Sample size", min = 1, step = 1),
+      qwebr_calc_col("defectives", c(4, 5, 6, 3, 4, 5, 15, 4, 6, 5),
+                     var = "defectives", label = "Defectives", min = 0, step = 1)),
+    note = "Defectives cannot exceed the sample size.")),
+  fig_height = 800
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: p-chart-live
 sample_sizes <- c(100, 95, 110, 105, 90, 100, 115, 100, 95, 108)
@@ -1031,23 +1114,32 @@ defectives   <- c(4, 5, 6, 3, 4, 5, 15, 4, 6, 5)
 p <- defectives / sample_sizes
 p_bar <- sum(defectives) / sum(sample_sizes)
 
-cat("p-bar (average proportion defective):", round(p_bar, 4), "\n\n")
-
 UCL_p <- p_bar + 3 * sqrt(p_bar * (1 - p_bar) / sample_sizes)
 LCL_p <- pmax(0, p_bar - 3 * sqrt(p_bar * (1 - p_bar) / sample_sizes))
 
-cat("Day  n     p       UCL      LCL\n")
-for (i in seq_along(p)) {
-  cat(sprintf("%3d  %3d  %.4f  %.4f  %.4f\n", i, sample_sizes[i], p[i], UCL_p[i], LCL_p[i]))
-}
-
 out_of_control <- which(p > UCL_p | p < LCL_p)
 if (length(out_of_control) > 0) {
-  cat("\nOut-of-control day(s):", out_of_control, "\n")
+  cat(sprintf("!!Out-of-control day(s): %s!!\n", paste(out_of_control, collapse = ", ")))
 } else {
-  cat("\nAll days within control limits.\n")
+  cat("All days within control limits\n")
 }
+
+cat(sprintf("  p-bar (average proportion defective)  %.4f\n", p_bar))
+for (i in seq_along(p)) {
+  cat(sprintf("  Day %g (n = %g)  p = %.4f, limits %.4f to %.4f\n",
+              i, sample_sizes[i], p[i], LCL_p[i], UCL_p[i]))
+}
+
+par(mar = c(5, 5, 3, 1))
+plot(p, type = "b", pch = 19, ylim = range(0, p, UCL_p),
+     xlab = "Day", ylab = "Proportion defective", main = "p chart")
+lines(UCL_p, type = "s", lty = 2, col = "#C0392B")
+lines(LCL_p, type = "s", lty = 2, col = "#C0392B")
+abline(h = p_bar, col = "#27AE60")
+points(out_of_control, p[out_of_control], pch = 19, cex = 1.6, col = "#C0392B")
 ```
+
+</details>
 
 ### c Chart (Count of Defects)
 
@@ -1090,6 +1182,24 @@ ggplot(c_data, aes(x = sample, y = defects)) +
 
 Live cell — try different defect counts and see the c chart limits recalculate.
 
+```{r calc-c-chart-live, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "c-chart-live",
+  title = "c Chart (Count of Defects)",
+  icon = "chart-line",
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("sample", 1:12, type = "label", label = "Sample"),
+      qwebr_calc_col("defects", c(7, 9, 6, 8, 10, 7, 8, 9, 6, 19, 8, 7),
+                     var = "defects", label = "Defects found", min = 0, step = 1)),
+    note = "Each sample is the same size (same area of opportunity).")),
+  fig_height = 800
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: c-chart-live
 defects <- c(7, 9, 6, 8, 10, 7, 8, 9, 6, 19, 8, 7)
@@ -1098,17 +1208,25 @@ c_bar <- mean(defects)
 UCL_c <- c_bar + 3 * sqrt(c_bar)
 LCL_c <- max(0, c_bar - 3 * sqrt(c_bar))
 
-cat("c-bar (average defects per unit):", round(c_bar, 2), "\n")
-cat("UCL =", round(UCL_c, 2), "\n")
-cat("LCL =", round(LCL_c, 2), "\n\n")
-
 out_of_control <- which(defects > UCL_c | defects < LCL_c)
 if (length(out_of_control) > 0) {
-  cat("Out-of-control sample(s):", out_of_control, "\n")
+  cat(sprintf("!!Out-of-control sample(s): %s!!\n", paste(out_of_control, collapse = ", ")))
 } else {
-  cat("All samples within control limits.\n")
+  cat("All samples within control limits\n")
 }
+
+cat(sprintf("  c-bar (average defects per unit)  %.2f\n", c_bar))
+cat(sprintf("  UCL  %.2f\n", UCL_c))
+cat(sprintf("  LCL  %.2f\n", LCL_c))
+
+par(mar = c(5, 5, 3, 1))
+plot(defects, type = "b", pch = 19, ylim = range(0, defects, UCL_c),
+     xlab = "Sample", ylab = "Defects", main = "c chart")
+abline(h = c(UCL_c, c_bar, LCL_c), lty = c(2, 1, 2), col = c("#C0392B", "#27AE60", "#C0392B"))
+points(out_of_control, defects[out_of_control], pch = 19, cex = 1.6, col = "#C0392B")
 ```
+
+</details>
 
 ```{r attribute-formulas, echo=FALSE}
 attr_formulas <- tibble(

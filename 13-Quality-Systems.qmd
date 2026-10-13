@@ -2246,6 +2246,24 @@ Annual revenue: $8,000,000
 
 **Answer:** (live — change the cost figures to check your own version)
 
+```{r calc-q6-answer, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "q6-answer",
+  title = "Cost of Quality",
+  icon = "dollar-sign",
+  inputs = list(
+    qwebr_calc_input("prevention", "Prevention (planning + training)", value = 60000, min = 0, max = 500000, step = 5000, prefix = "$"),
+    qwebr_calc_input("appraisal", "Appraisal (inspections)", value = 125000, min = 0, max = 500000, step = 5000, prefix = "$"),
+    qwebr_calc_input("internal_failure", "Internal failure (scrap + rework)", value = 150000, min = 0, max = 500000, step = 5000, prefix = "$"),
+    qwebr_calc_input("external_failure", "External failure (warranty + returns)", value = 165000, min = 0, max = 500000, step = 5000, prefix = "$"),
+    qwebr_calc_input("revenue", "Annual revenue", value = 8000000, min = 1000000, max = 20000000, step = 500000, prefix = "$", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: q6-answer
 # Cost of Quality Analysis
@@ -2257,34 +2275,33 @@ external_failure <- 120000 + 45000  # Warranty + Returns
 total_coq <- prevention + appraisal + internal_failure + external_failure
 revenue <- 8000000
 
-cat("Cost of Quality Breakdown:\n")
-cat("─────────────────────────────\n")
-cat("Prevention:       $", format(prevention, big.mark = " ", scientific = FALSE),
-    "(", round(prevention/total_coq*100, 1), "%)\n")
-cat("Appraisal:        $", format(appraisal, big.mark = " ", scientific = FALSE),
-    "(", round(appraisal/total_coq*100, 1), "%)\n")
-cat("Internal Failure: $", format(internal_failure, big.mark = " ", scientific = FALSE),
-    "(", round(internal_failure/total_coq*100, 1), "%)\n")
-cat("External Failure: $", format(external_failure, big.mark = " ", scientific = FALSE),
-    "(", round(external_failure/total_coq*100, 1), "%)\n")
-cat("─────────────────────────────\n")
-cat("Total COQ:        $", format(total_coq, big.mark = " ", scientific = FALSE), "\n")
-cat("COQ % of Revenue:", round(total_coq/revenue*100, 1), "%\n\n")
-
 conformance <- prevention + appraisal
 nonconformance <- internal_failure + external_failure
 
-cat("Conformance Costs:    $", format(conformance, big.mark = " ", scientific = FALSE),
-    "(", round(conformance/total_coq*100, 1), "%)\n")
-cat("Nonconformance Costs: $", format(nonconformance, big.mark = " ", scientific = FALSE),
-    "(", round(nonconformance/total_coq*100, 1), "%)\n")
+money <- function(x) format(x, big.mark = " ", scientific = FALSE)
+
+cat(sprintf("Total cost of quality: $%s (%.1f%% of revenue)\n", money(total_coq), total_coq / revenue * 100))
+cat(sprintf("  Prevention  $%s (%.1f%%)\n", money(prevention), prevention / total_coq * 100))
+cat(sprintf("  Appraisal  $%s (%.1f%%)\n", money(appraisal), appraisal / total_coq * 100))
+cat(sprintf("  Internal failure  $%s (%.1f%%)\n", money(internal_failure), internal_failure / total_coq * 100))
+cat(sprintf("  External failure  $%s (%.1f%%)\n", money(external_failure), external_failure / total_coq * 100))
+cat(sprintf("  Conformance costs  $%s (%.1f%%)\n", money(conformance), conformance / total_coq * 100))
+cat(sprintf("  Nonconformance costs  $%s (%.1f%%)\n", money(nonconformance), nonconformance / total_coq * 100))
+
+par(mar = c(5, 5, 3, 1))
+barplot(c(prevention, appraisal, internal_failure, external_failure) / 1000,
+        names.arg = c("Prevention", "Appraisal", "Internal\nfailure", "External\nfailure"),
+        col = c("#27AE60", "#2980B9", "#E67E22", "#C0392B"),
+        ylab = "Cost ($ thousand)", main = "Cost of quality by category")
 ```
 
+</details>
+
 **Analysis:**
-- COQ at 7.5% of revenue is HIGH (target <3%)
-- External failure costs are the largest category (27.5%)
-- Nonconformance costs (60.8%) greatly exceed conformance (39.2%)
-- Prevention is only 10% of COQ - very low
+- COQ at 6.25% of revenue is HIGH (target <3%)
+- External failure costs are the largest category (33%)
+- Nonconformance costs (63%) greatly exceed conformance (37%)
+- Prevention is only 12% of COQ - very low
 
 **Recommendations:**
 1. **Increase Prevention Investment:**

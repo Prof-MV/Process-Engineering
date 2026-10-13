@@ -145,6 +145,41 @@ qwebr_calc_input <- function(var, label, value, min = NULL, max = NULL, step = N
        type = type, prefix = prefix, suffix = suffix)
 }
 
+#' One column of an editable table for qwebr_calc_card()
+#'
+#' @param name R column name (used when the table rebuilds a data frame).
+#' @param values The default values, one per row.
+#' @param var For a table of parallel vectors (no `frame`): the R variable in
+#'   the cell that this column stands for, e.g. `"mass_g"`. The calculator
+#'   rebuilds that `var <- c(...)` line from the column.
+#' @param type `"number"`, `"text"`, `"select"` (needs `options`) or `"label"`
+#'   (shown, not editable).
+#' @param label Column heading (defaults to `name`).
+#' @param options Choices for a `"select"` column.
+#' @param min,max,step Passed to the `<input>` of a `"number"` column.
+qwebr_calc_col <- function(name, values, var = NULL, type = c("number", "text", "select", "label"),
+                           label = NULL, options = NULL, min = NULL, max = NULL, step = NULL) {
+  type <- match.arg(type)
+  if (type == "select") stopifnot(!is.null(options))
+  list(name = name, label = if (is.null(label)) name else label, values = as.list(values),
+       var = var, type = type, options = as.list(options), min = min, max = max, step = step)
+}
+
+#' An editable table for qwebr_calc_card()
+#'
+#' Stands in for a data frame (`frame = "name"`: the cell's whole
+#' `name <- data.frame(...)` is rebuilt from the table) or for a set of
+#' parallel vectors (each column carries its own `var`). Use it for the
+#' "edit your own data" cells that are tables rather than a few numbers.
+#'
+#' @param columns A list of `qwebr_calc_col()` calls.
+#' @param frame Name of the data frame in the cell, or NULL for vector mode.
+#' @param add_rows Show "Add row" / "Remove last row" buttons.
+#' @param note Optional hint shown under the table.
+qwebr_calc_table <- function(columns, frame = NULL, add_rows = FALSE, note = NULL) {
+  list(columns = columns, frame = frame, add_rows = add_rows, note = note)
+}
+
 #' Render an interactive "calculator" card in front of a {webr-r} cell
 #'
 #' Emits a styled card (see `style.css`, `.qwebr-calc-*` rules) with one row
@@ -172,6 +207,8 @@ qwebr_calc_input <- function(var, label, value, min = NULL, max = NULL, step = N
 #'   `"flask"`, `"bolt"`) — Font Awesome is already loaded on every page by
 #'   quarto-webr itself.
 #' @param inputs A list of `qwebr_calc_input()` calls, top to bottom.
+#' @param tables Optional list of `qwebr_calc_table()` calls: editable data
+#'   tables (a data frame, or parallel vectors) shown above the results.
 #' @param fig_width,fig_height Pixel size for the captured plot (if the cell
 #'   produces one); scales to fit the card via CSS either way.
 #' @param goal Optional challenge shown under the results, e.g. "Get the cost
@@ -187,7 +224,7 @@ qwebr_calc_input <- function(var, label, value, min = NULL, max = NULL, step = N
 #'   result changes from run to run. The seed must also be one of `inputs`,
 #'   and the cell must call `set.seed()` with it. In class, teams can each
 #'   enter their team number as the run number to get different data.
-qwebr_calc_card <- function(label, title, icon = "gears", inputs,
+qwebr_calc_card <- function(label, title, icon = "gears", inputs = list(), tables = list(),
                              fig_width = 1200, fig_height = 700,
                              goal = NULL, goal_test = NULL, rerun = NULL) {
   if (!knitr::is_html_output(excludes = "epub")) return(invisible(NULL))
@@ -234,6 +271,18 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
 
   input_rows <- paste(vapply(inputs, render_input, character(1)), collapse = "\n")
 
+  render_table <- function(tbl) {
+    spec <- list(
+      frame = tbl$frame, addRows = isTRUE(tbl$add_rows),
+      columns = lapply(tbl$columns, function(col) col[!vapply(col, is.null, logical(1))]))
+    json <- jsonlite::toJSON(spec, auto_unbox = TRUE, null = "null")
+    sprintf('
+    <div class="qwebr-calc-table" data-spec="%s"></div>%s',
+      htmltools::htmlEscape(json, attribute = TRUE),
+      if (is.null(tbl$note)) "" else sprintf('\n    <p class="qwebr-calc-table-note">%s</p>', tbl$note))
+  }
+  table_rows <- paste(vapply(tables, render_table, character(1)), collapse = "\n")
+
   rerun_row <- if (is.null(rerun)) "" else {
     stopifnot(rerun %in% vapply(inputs, function(inp) inp$var, character(1)))
     sprintf('
@@ -256,13 +305,13 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs,
     <i class="fa-solid fa-%s qwebr-calc-icon"></i>
     <h4>%s</h4>
   </div>
-  <div class="qwebr-calc-inputs">%s%s
+  <div class="qwebr-calc-inputs">%s%s%s
   </div>
   <div class="qwebr-calc-results"></div>%s
   <div class="qwebr-calc-graph"></div>
 </div>
 ```
-', label, fig_width, fig_height, icon, title, input_rows, rerun_row, goal_row))
+', label, fig_width, fig_height, icon, title, input_rows, table_rows, rerun_row, goal_row))
 }
 
 # "Try it yourself" exercises (tryit_number(), tryit_grid(), tryit_sort()).

@@ -1511,6 +1511,24 @@ For most industrial applications, ±0.05 mm repeatability is far more valuable t
 
 **Answer:** (live — change the numbers to check your own version)
 
+```{r calc-q5-answer, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "q5-answer",
+  title = "Required Gripper Force",
+  icon = "hand",
+  inputs = list(
+    qwebr_calc_input("mass", "Part mass", value = 2, min = 0.1, max = 20, step = 0.1, type = "slider", suffix = "kg"),
+    qwebr_calc_input("acceleration", "Robot acceleration", value = 10, min = 0, max = 50, step = 1, suffix = "m/s²"),
+    qwebr_calc_input("friction_coef", "Friction coefficient", value = 0.4, min = 0.05, max = 1, step = 0.05),
+    qwebr_calc_input("safety_factor", "Safety factor", value = 2, min = 1, max = 5, step = 0.5),
+    qwebr_calc_input("gravity", "Gravity", value = 9.81, min = 1, max = 20, step = 0.01, suffix = "m/s²")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: q5-answer
 # Given values
@@ -1542,32 +1560,16 @@ F_grip_min <- F_combined / friction_coef
 # With safety factor:
 F_grip_required <- F_grip_min * safety_factor
 
-cat("Gripper Force Calculation:\n")
-cat("═══════════════════════════════════════\n\n")
-cat("Input Parameters:\n")
-cat("  Part mass:", mass, "kg\n")
-cat("  Robot acceleration:", acceleration, "m/s²\n")
-cat("  Friction coefficient:", friction_coef, "\n")
-cat("  Safety factor:", safety_factor, "\n\n")
-
-cat("Force Analysis:\n")
-cat("  Gravity force: F_g = m × g =", mass, "×", gravity, "=",
-    round(F_gravity, 1), "N\n")
-cat("  Inertia force: F_i = m × a =", mass, "×", acceleration, "=",
-    round(F_inertia, 1), "N\n")
-cat("  Combined force: F_c = √(F_g² + F_i²) =", round(F_combined, 1), "N\n\n")
-
-cat("Grip Force Calculation:\n")
-cat("  F_friction = μ × F_grip ≥ F_combined\n")
-cat("  F_grip ≥ F_combined / μ =", round(F_combined, 1), "/", friction_coef,
-    "=", round(F_grip_min, 1), "N\n")
-cat("  With safety factor:", round(F_grip_min, 1), "×", safety_factor,
-    "=", round(F_grip_required, 1), "N\n\n")
-
-cat("═══════════════════════════════════════\n")
-cat("REQUIRED GRIPPER FORCE:", ceiling(F_grip_required), "N minimum\n")
-cat("Select gripper rated for ≥", ceiling(F_grip_required/10)*10, "N\n")
+cat(sprintf("Required gripper force: %g N minimum\n", ceiling(F_grip_required)))
+cat(sprintf("  Select a gripper rated for at least  %g N\n", ceiling(F_grip_required / 10) * 10))
+cat(sprintf("  Gravity force (m x g)  %.1f N\n", F_gravity))
+cat(sprintf("  Inertia force (m x a)  %.1f N\n", F_inertia))
+cat(sprintf("  Combined force (vector sum)  %.1f N\n", F_combined))
+cat(sprintf("  Grip force without safety factor  %.1f N\n", F_grip_min))
+cat(sprintf("  Grip force with safety factor  %.1f N\n", F_grip_required))
 ```
+
+</details>
 </details>
 
 <details><summary>**Question 6**: List and describe five safety devices used to protect personnel around industrial robots.</summary>

@@ -1371,6 +1371,41 @@ ggplot() +
 
 Live cell — try different posture, load, or coupling scores.
 
+```{r calc-reba-step-by-step, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "reba-step-by-step",
+  title = "REBA: Packaging Station Worker",
+  icon = "person",
+  inputs = list(
+    qwebr_calc_input("neck_base", "Neck: base score", value = 2, min = 1, max = 2, step = 1),
+    qwebr_calc_input("neck_twist", "Neck: twist / side-bend", value = 0, min = 0, max = 1, step = 1),
+    qwebr_calc_input("trunk_base", "Trunk: base score", value = 3, min = 1, max = 4, step = 1),
+    qwebr_calc_input("trunk_twist", "Trunk: twist / side-bend", value = 1, min = 0, max = 1, step = 1),
+    qwebr_calc_input("legs_base", "Legs: base score", value = 1, min = 1, max = 2, step = 1),
+    qwebr_calc_input("legs_knee", "Legs: knee flexion adjustment", value = 0, min = 0, max = 2, step = 1),
+    qwebr_calc_input("table_a_score", "Table A lookup", value = 5, min = 1, max = 9, step = 1),
+    qwebr_calc_input("load_force", "Load / force", value = 1, min = 0, max = 2, step = 1),
+    qwebr_calc_input("shock_force", "Shock / rapid build-up", value = 0, min = 0, max = 1, step = 1),
+    qwebr_calc_input("upper_arm_base", "Upper arm: base score", value = 3, min = 1, max = 4, step = 1),
+    qwebr_calc_input("shoulder_raised", "Upper arm: shoulder raised", value = 0, min = 0, max = 1, step = 1),
+    qwebr_calc_input("arm_abducted", "Upper arm: abducted", value = 0, min = 0, max = 1, step = 1),
+    qwebr_calc_input("arm_support", "Upper arm: supported (-1)", value = 0, min = -1, max = 0, step = 1),
+    qwebr_calc_input("lower_arm_score", "Lower arm", value = 1, min = 1, max = 2, step = 1),
+    qwebr_calc_input("wrist_base", "Wrist: base score", value = 2, min = 1, max = 2, step = 1),
+    qwebr_calc_input("wrist_twist", "Wrist: twist", value = 0, min = 0, max = 1, step = 1),
+    qwebr_calc_input("table_b_score", "Table B lookup", value = 4, min = 1, max = 9, step = 1),
+    qwebr_calc_input("coupling_score", "Coupling", value = 1, min = 0, max = 3, step = 1),
+    qwebr_calc_input("table_c_score", "Table C lookup", value = 7, min = 1, max = 12, step = 1, type = "slider"),
+    qwebr_calc_input("static_posture", "Static posture > 1 min", value = 0, min = 0, max = 1, step = 1),
+    qwebr_calc_input("repeated_actions", "Repeated actions > 4x/min", value = 1, min = 0, max = 1, step = 1),
+    qwebr_calc_input("rapid_changes", "Rapid large posture changes", value = 0, min = 0, max = 1, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: reba-step-by-step
 # =============================================================
@@ -1380,55 +1415,41 @@ Live cell — try different posture, load, or coupling scores.
 # Items weigh approximately 7 kg each
 # Task performed continuously with repetitive motions
 
-cat("========== GROUP A: TRUNK, NECK, LEGS ==========\n\n")
+# ---------- GROUP A: TRUNK, NECK, LEGS ----------
 
 # Step 1: Neck Score
 # Worker looks down into bin - approximately 25° flexion
 neck_base <- 2       # >20° flexion
 neck_twist <- 0      # No twist or side-bending
 neck_score <- neck_base + neck_twist
-cat("Step 1 - Neck Score:", neck_score, "\n")
-cat("  Position: >20° flexion (looking down into bin)\n")
-cat("  Base score: 2, Twist adjustment: 0\n\n")
 
 # Step 2: Trunk Score
 # Worker bends forward approximately 40° to reach bin
 trunk_base <- 3      # 20-60° flexion
 trunk_twist <- 1     # Slight twist when reaching
 trunk_score <- trunk_base + trunk_twist
-cat("Step 2 - Trunk Score:", trunk_score, "\n")
-cat("  Position: 40° forward flexion with slight twist\n")
-cat("  Base score: 3, Twist adjustment: +1\n\n")
 
 # Step 3: Legs Score
 # Worker stands with weight distributed evenly
 legs_base <- 1       # Bilateral weight bearing
 legs_knee <- 0       # Knees not flexed significantly
 legs_score <- legs_base + legs_knee
-cat("Step 3 - Legs Score:", legs_score, "\n")
-cat("  Position: Standing, bilateral weight bearing\n")
-cat("  Base score: 1, Knee adjustment: 0\n\n")
 
 # Step 4: Table A Lookup
 # Trunk = 4, Neck = 2, Legs = 1
 # From Table A: Score = 5
 table_a_score <- 5
-cat("Step 4 - Table A Score:", table_a_score, "\n")
-cat("  Lookup: Trunk=4, Neck=2, Legs=1 → Table A = 5\n\n")
 
 # Step 5: Load/Force Score
 # Items weigh approximately 7 kg
 load_force <- 1      # 5-10 kg
 shock_force <- 0     # No shock/rapid buildup
 load_score <- load_force + shock_force
-cat("Step 5 - Load/Force Score:", load_score, "\n")
-cat("  Load: 7 kg (in 5-10 kg range) = 1\n\n")
 
 # SCORE A CALCULATION
 score_a <- table_a_score + load_score
-cat(">>> SCORE A = Table A + Load/Force =", table_a_score, "+", load_score, "=", score_a, "\n\n")
 
-cat("========== GROUP B: UPPER ARM, LOWER ARM, WRIST ==========\n\n")
+# ---------- GROUP B: UPPER ARM, LOWER ARM, WRIST ----------
 
 # Step 6: Upper Arm Score
 # Arms reaching forward/down approximately 50° flexion
@@ -1437,50 +1458,35 @@ shoulder_raised <- 0 # Not raised
 arm_abducted <- 0    # Not abducted
 arm_support <- 0     # Not supported
 upper_arm_score <- upper_arm_base + shoulder_raised + arm_abducted + arm_support
-cat("Step 6 - Upper Arm Score:", upper_arm_score, "\n")
-cat("  Position: 50° flexion reaching into bin\n")
-cat("  Base score: 3, No adjustments needed\n\n")
 
 # Step 7: Lower Arm Score
 # Elbow bent approximately 70° (in optimal range)
 lower_arm_score <- 1  # 60-100° flexion
-cat("Step 7 - Lower Arm Score:", lower_arm_score, "\n")
-cat("  Position: 70° elbow flexion (optimal range)\n\n")
 
 # Step 8: Wrist Score
 # Wrist in moderate flexion to grasp items
 wrist_base <- 2      # >15° flexion
 wrist_twist <- 0     # No significant twist
 wrist_score <- wrist_base + wrist_twist
-cat("Step 8 - Wrist Score:", wrist_score, "\n")
-cat("  Position: ~20° wrist flexion when grasping\n")
-cat("  Base score: 2, Twist adjustment: 0\n\n")
 
 # Step 9: Table B Lookup
 # Upper Arm = 3, Lower Arm = 1, Wrist = 2
 # From Table B: Score = 4
 table_b_score <- 4
-cat("Step 9 - Table B Score:", table_b_score, "\n")
-cat("  Lookup: Upper Arm=3, Lower Arm=1, Wrist=2 → Table B = 4\n\n")
 
 # Step 10: Coupling Score
 # Worker grasps boxes - acceptable grip but not ideal handles
 coupling_score <- 1   # Fair coupling
-cat("Step 10 - Coupling Score:", coupling_score, "\n")
-cat("  Coupling: Fair - hand hold acceptable but not ideal\n\n")
 
 # SCORE B CALCULATION
 score_b <- table_b_score + coupling_score
-cat(">>> SCORE B = Table B + Coupling =", table_b_score, "+", coupling_score, "=", score_b, "\n\n")
 
-cat("========== FINAL REBA SCORE CALCULATION ==========\n\n")
+# ---------- FINAL REBA SCORE ----------
 
 # Step 11: Table C Lookup
 # Score A = 6, Score B = 5
 # From Table C: Score = 7
 table_c_score <- 7
-cat("Step 11 - Table C Score:", table_c_score, "\n")
-cat("  Lookup: Score A=6, Score B=5 → Table C = 7\n\n")
 
 # Step 12: Activity Score
 # Check all three conditions:
@@ -1488,38 +1494,39 @@ static_posture <- 0   # Body parts not held >1 minute
 repeated_actions <- 1 # Repeated small range actions (continuous picking)
 rapid_changes <- 0    # No rapid large range changes
 activity_score <- static_posture + repeated_actions + rapid_changes
-cat("Step 12 - Activity Score:", activity_score, "\n")
-cat("  Static posture >1 min: No (+0)\n")
-cat("  Repeated actions >4×/min: Yes (+1)\n")
-cat("  Rapid large changes: No (+0)\n\n")
 
 # FINAL REBA SCORE
 reba_final <- table_c_score + activity_score
-cat("╔═══════════════════════════════════════════════════╗\n")
-cat("║       FINAL REBA SCORE:", reba_final, "                       ║\n")
-cat("╚═══════════════════════════════════════════════════╝\n\n")
 
 # Interpretation
-cat("INTERPRETATION:\n")
-cat("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 if (reba_final == 1) {
-  cat("Risk Level: NEGLIGIBLE\n")
-  cat("Action: None necessary\n")
+  risk <- "NEGLIGIBLE"; action <- "None necessary"
 } else if (reba_final <= 3) {
-  cat("Risk Level: LOW\n")
-  cat("Action: May be necessary\n")
+  risk <- "LOW"; action <- "May be necessary"
 } else if (reba_final <= 7) {
-  cat("Risk Level: MEDIUM\n")
-  cat("Action: Necessary\n")
+  risk <- "MEDIUM"; action <- "Necessary"
 } else if (reba_final <= 10) {
-  cat("Risk Level: HIGH\n")
-  cat("Action: Necessary soon\n")
+  risk <- "HIGH"; action <- "Necessary soon"
 } else {
-  cat("Risk Level: VERY HIGH\n")
-  cat("Action: Necessary NOW - Stop task immediately\n")
+  risk <- "VERY HIGH"; action <- "Necessary NOW - stop task immediately"
 }
-cat("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+
+headline <- sprintf("Final REBA score: %g - %s risk", reba_final, risk)
+if (reba_final > 7) headline <- paste0("!!", headline, "!!")
+cat(headline, "\n")
+cat(sprintf("  Action level  %s\n", action))
+cat(sprintf("  Neck  %g\n", neck_score))
+cat(sprintf("  Trunk  %g\n", trunk_score))
+cat(sprintf("  Legs  %g\n", legs_score))
+cat(sprintf("  Table A + load/force  %g + %g = Score A %g\n", table_a_score, load_score, score_a))
+cat(sprintf("  Upper arm  %g\n", upper_arm_score))
+cat(sprintf("  Lower arm  %g\n", lower_arm_score))
+cat(sprintf("  Wrist  %g\n", wrist_score))
+cat(sprintf("  Table B + coupling  %g + %g = Score B %g\n", table_b_score, coupling_score, score_b))
+cat(sprintf("  Table C + activity  %g + %g = %g\n", table_c_score, activity_score, reba_final))
 ```
+
+</details>
 
 #### Recommendations for This Assessment
 
@@ -1548,6 +1555,31 @@ recommendations %>%
 
 Live cell — plug in your own posture scores and re-run.
 
+```{r calc-reba-example, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "reba-example",
+  title = "REBA: Assembly Worker",
+  icon = "person",
+  inputs = list(
+    qwebr_calc_input("trunk_score", "Trunk", value = 3, min = 1, max = 5, step = 1),
+    qwebr_calc_input("neck_score", "Neck", value = 2, min = 1, max = 3, step = 1),
+    qwebr_calc_input("legs_score", "Legs", value = 1, min = 1, max = 4, step = 1),
+    qwebr_calc_input("table_a_score", "Table A lookup", value = 4, min = 1, max = 9, step = 1),
+    qwebr_calc_input("load_force", "Load / force", value = 1, min = 0, max = 3, step = 1),
+    qwebr_calc_input("upper_arm_score", "Upper arm", value = 3, min = 1, max = 6, step = 1),
+    qwebr_calc_input("lower_arm_score", "Lower arm", value = 2, min = 1, max = 2, step = 1),
+    qwebr_calc_input("wrist_score", "Wrist", value = 2, min = 1, max = 3, step = 1),
+    qwebr_calc_input("table_b_score", "Table B lookup", value = 5, min = 1, max = 9, step = 1),
+    qwebr_calc_input("coupling", "Coupling", value = 1, min = 0, max = 3, step = 1),
+    qwebr_calc_input("score_c", "Table C lookup", value = 8, min = 1, max = 12, step = 1, type = "slider"),
+    qwebr_calc_input("activity", "Activity score", value = 1, min = 0, max = 3, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: reba-example
 # REBA Assessment Example: Assembly Worker
@@ -1566,7 +1598,6 @@ load_force <- 1       # 5-10 kg intermittent
 
 # Score A with load
 score_a <- table_a_score + load_force
-cat("Score A (posture + load):", score_a, "\n")
 
 # Group B Scores (Upper arm, Lower arm, Wrist)
 upper_arm_score <- 3  # 45-90° flexion
@@ -1582,7 +1613,6 @@ coupling <- 1         # Acceptable grip
 
 # Score B with coupling
 score_b <- table_b_score + coupling
-cat("Score B (posture + coupling):", score_b, "\n")
 
 # Look up Table C (Score A × Score B)
 # For Score A = 5 and Score B = 6: Score C = 8
@@ -1593,22 +1623,32 @@ activity <- 1         # One or more body parts static >1 min
 
 # Final REBA Score
 reba_final <- score_c + activity
-cat("\n=== FINAL REBA SCORE:", reba_final, "===\n")
 
 # Interpretation
-cat("\nInterpretation:\n")
 if (reba_final <= 1) {
-  cat("Risk Level: Negligible - No action necessary\n")
+  risk <- "Negligible - no action necessary"
 } else if (reba_final <= 3) {
-  cat("Risk Level: Low - Action may be necessary\n")
+  risk <- "Low - action may be necessary"
 } else if (reba_final <= 7) {
-  cat("Risk Level: Medium - Action necessary\n")
+  risk <- "Medium - action necessary"
 } else if (reba_final <= 10) {
-  cat("Risk Level: High - Action necessary soon\n")
+  risk <- "High - action necessary soon"
 } else {
-  cat("Risk Level: Very High - Action necessary NOW\n")
+  risk <- "Very high - action necessary NOW"
 }
+
+headline <- sprintf("Final REBA score: %g", reba_final)
+if (reba_final > 7) headline <- paste0("!!", headline, "!!")
+cat(headline, "\n")
+cat(sprintf("  Risk level  %s\n", risk))
+cat(sprintf("  Trunk, neck, legs  %g, %g, %g\n", trunk_score, neck_score, legs_score))
+cat(sprintf("  Score A (Table A lookup + load)  %g + %g = %g\n", table_a_score, load_force, score_a))
+cat(sprintf("  Upper arm, lower arm, wrist  %g, %g, %g\n", upper_arm_score, lower_arm_score, wrist_score))
+cat(sprintf("  Score B (Table B lookup + coupling)  %g + %g = %g\n", table_b_score, coupling, score_b))
+cat(sprintf("  Table C + activity  %g + %g = %g\n", score_c, activity, reba_final))
 ```
+
+</details>
 
 <details>
 <summary>Practice Problem: REBA Assessment</summary>

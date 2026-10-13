@@ -504,6 +504,32 @@ Where:
 
 Live cell — try different task times or a different desired output rate.
 
+```{r calc-line-balance-example, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "line-balance-example",
+  title = "Line Balancing: Tablet Assembly",
+  icon = "industry",
+  inputs = list(
+    qwebr_calc_input("desired_output", "Desired output", value = 45, min = 10, max = 90, step = 5, type = "slider", suffix = "units/h"),
+    qwebr_calc_input("available_time", "Available time per hour", value = 3600, min = 600, max = 3600, step = 600, suffix = "s"),
+    qwebr_calc_input("n_stations", "Number of stations", value = 5, min = 1, max = 8, step = 1)
+  ),
+  tables = list(qwebr_calc_table(
+    frame = "tasks",
+    columns = list(
+      qwebr_calc_col("Task", c("A", "B", "C", "D", "E", "F", "G", "H"), type = "label", label = "Task"),
+      qwebr_calc_col("Description", c("Install battery", "Mount display", "Connect cables",
+                                       "Install motherboard", "Add memory", "Install camera",
+                                       "Attach case back", "Final test"), type = "label", label = "Description"),
+      qwebr_calc_col("Time_sec", c(30, 45, 20, 55, 15, 25, 35, 40), label = "Time (s)", min = 1, step = 5),
+      qwebr_calc_col("Predecessors", c("-", "A", "A", "B,C", "D", "D", "E,F", "G"), type = "label", label = "Predecessors")),
+    note = "Edit the task times. The precedence relationships are fixed."))
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: line-balance-example
 # Line Balancing Example: Tablet Computer Assembly
@@ -518,51 +544,53 @@ tasks <- data.frame(
   Predecessors = c("-", "A", "A", "B,C", "D", "D", "E,F", "G")
 )
 
-# Display task data
-cat("Assembly Tasks:\n")
-print(tasks[, c("Task", "Description", "Time_sec", "Predecessors")])
-
-# Calculate metrics
-total_work_content <- sum(tasks$Time_sec)
-cat("\nTotal Work Content:", total_work_content, "seconds\n")
-
 # Production requirements
 desired_output <- 45  # units per hour
 available_time <- 3600  # seconds per hour
 
-# Step 1: Calculate cycle time
+# Step 1: Total work content and cycle time
+total_work_content <- sum(tasks$Time_sec)
 cycle_time <- available_time / desired_output
-cat("\nStep 1 - Cycle Time:")
-cat("\n  Required output:", desired_output, "units/hour")
-cat("\n  Cycle time = 3600 /", desired_output, "=", cycle_time, "seconds\n")
 
-# Step 2: Calculate theoretical minimum stations
+# Step 2: Theoretical minimum stations
 TM <- total_work_content / cycle_time
-cat("\nStep 2 - Theoretical Minimum Stations:")
-cat("\n  TM =", total_work_content, "/", cycle_time, "=", round(TM, 2))
-cat("\n  Minimum stations required:", ceiling(TM), "\n")
 
-# Step 3: Assign tasks to stations (using largest task time rule)
-cat("\nStep 3 - Station Assignments (respecting precedence):\n")
-cat("  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s... EXCEEDS\n")
-cat("  Let's try: A (30s) + C (20s) = 50s [30s idle]\n")
-cat("  Station 2: B (45s) + E (15s) = 60s... wait, E needs D\n")
-cat("  Station 2: B (45s) + D (55s) = 100s > 80s... EXCEEDS\n")
+# Step 3: Assign tasks to stations (see the worked assignment below), then
+# measure how well the line is balanced
+n_stations <- 5
+efficiency <- (total_work_content / (n_stations * cycle_time)) * 100
+balance_delay <- 100 - efficiency
+
+cat(sprintf("Line efficiency: %.1f%% with %g stations\n", efficiency, n_stations))
+cat(sprintf("  Total work content  %g s\n", total_work_content))
+cat(sprintf("  Cycle time  %.1f s\n", cycle_time))
+cat(sprintf("  Theoretical minimum stations  %.2f\n", TM))
+cat(sprintf("  Minimum stations required  %g\n", ceiling(TM)))
+cat(sprintf("  Balance delay (idle time)  %.1f%%\n", balance_delay))
+if (n_stations < ceiling(TM)) {
+  cat(sprintf("  Check  !!Too few stations: at least %g needed!!\n", ceiling(TM)))
+}
+if (efficiency < 85) {
+  cat("!!Poor balance: consider redesigning tasks or adding parallel stations.!!\n")
+}
+
+cat("Worked assignment for the default 80 s cycle time:\n")
+cat("  Station 1: A (30s) + C (20s) + B (45s) = 95s > 80s ... !!EXCEEDS!!\n")
+cat("  Station 1, try again: A (30s) + C (20s) = 50s [30s idle]\n")
+cat("  Station 2: B (45s) + D (55s) = 100s > 80s ... !!EXCEEDS!!\n")
 cat("  Station 2: B (45s) = 45s [35s idle]\n")
 cat("  Station 3: D (55s) = 55s [25s idle]\n")
 cat("  Station 4: E (15s) + F (25s) + G (35s) = 75s [5s idle]\n")
 cat("  Station 5: H (40s) = 40s [40s idle]\n")
 
-n_stations <- 5
-efficiency <- (total_work_content / (n_stations * cycle_time)) * 100
-balance_delay <- 100 - efficiency
-
-cat("\nStep 4 - Results:")
-cat("\n  Number of stations:", n_stations)
-cat("\n  Line efficiency:", round(efficiency, 1), "%")
-cat("\n  Balance delay (idle time):", round(balance_delay, 1), "%")
-cat("\n\n  This is poor balance - consider redesigning tasks or adding parallel stations.")
+par(mar = c(5, 5, 3, 1))
+barplot(tasks$Time_sec, names.arg = tasks$Task, col = "#3498DB",
+        ylim = c(0, max(tasks$Time_sec, cycle_time) * 1.1),
+        xlab = "Task", ylab = "Task time (s)", main = "Task times vs cycle time (dashed line)")
+abline(h = cycle_time, lty = 2, lwd = 2, col = "#C0392B")
 ```
+
+</details>
 
 ```{r precedence-diagram, echo=FALSE, fig.align="center", fig.cap="Precedence Diagram for Tablet Assembly", fig.width=10, fig.height=5}
 # Create precedence diagram
@@ -685,6 +713,28 @@ Where:
 
 Live cell — try adding a scenario or changing the number of stations.
 
+```{r calc-downtime-analysis, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "downtime-analysis",
+  title = "Automated Line: Impact of Failures",
+  icon = "triangle-exclamation",
+  inputs = list(
+    qwebr_calc_input("n_stations", "Number of stations", value = 10, min = 1, max = 40, step = 1, type = "slider"),
+    qwebr_calc_input("ideal_cycle_time", "Ideal cycle time", value = 1, min = 0.2, max = 5, step = 0.1, suffix = "min/part")
+  ),
+  tables = list(qwebr_calc_table(
+    frame = "scenarios", add_rows = TRUE,
+    columns = list(
+      qwebr_calc_col("Scenario", c("World Class", "Good", "Average", "Poor"), type = "text", label = "Scenario"),
+      qwebr_calc_col("Failure_Prob", c(0.005, 0.02, 0.05, 0.10), label = "Failure prob. per station per cycle", min = 0, max = 1, step = 0.005),
+      qwebr_calc_col("Repair_Time", c(2, 5, 10, 15), label = "Average repair time (min)", min = 0, step = 1)),
+    note = "Failure probability is per station per cycle, between 0 and 1."))
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: downtime-analysis
 # Automated Line Performance Analysis
@@ -701,37 +751,37 @@ scenarios <- data.frame(
 )
 
 # Calculate line performance for each scenario
-cat("Automated Line Performance Analysis\n")
-cat("===================================\n")
-cat("Ideal cycle time:", ideal_cycle_time, "min/part\n")
-cat("Number of stations:", n_stations, "\n")
-cat("Ideal production rate:", 60/ideal_cycle_time, "parts/hour\n\n")
-
+p_line <- Tp <- Rp <- efficiency <- numeric(nrow(scenarios))
 for(i in 1:nrow(scenarios)) {
   p <- scenarios$Failure_Prob[i]
   T <- scenarios$Repair_Time[i]
 
   # Line failure probability (any station)
-  p_line <- 1 - (1 - p)^n_stations
+  p_line[i] <- 1 - (1 - p)^n_stations
 
   # Actual cycle time
-  Tp <- ideal_cycle_time + p_line * T
+  Tp[i] <- ideal_cycle_time + p_line[i] * T
 
   # Actual production rate
-  Rp <- 60 / Tp
+  Rp[i] <- 60 / Tp[i]
 
   # Efficiency
-  efficiency <- (ideal_cycle_time / Tp) * 100
-
-  cat(sprintf("%s Performance:\n", scenarios$Scenario[i]))
-  cat(sprintf("  Station failure prob: %.1f%%\n", p * 100))
-  cat(sprintf("  Line failure prob: %.1f%%\n", p_line * 100))
-  cat(sprintf("  Average repair time: %d min\n", T))
-  cat(sprintf("  Actual cycle time: %.2f min\n", Tp))
-  cat(sprintf("  Actual production: %.1f parts/hour\n", Rp))
-  cat(sprintf("  Line efficiency: %.1f%%\n\n", efficiency))
+  efficiency[i] <- (ideal_cycle_time / Tp[i]) * 100
 }
+
+cat(sprintf("Ideal production rate: %g parts/hour\n", 60 / ideal_cycle_time))
+for(i in 1:nrow(scenarios)) {
+  cat(sprintf("  %s: actual production  %.1f parts/hour\n", scenarios$Scenario[i], Rp[i]))
+  cat(sprintf("  %s: line efficiency  %.1f%%\n", scenarios$Scenario[i], efficiency[i]))
+  cat(sprintf("  %s: line failure probability  %.1f%%\n", scenarios$Scenario[i], p_line[i] * 100))
+}
+
+par(mar = c(5, 5, 3, 1))
+barplot(efficiency, names.arg = scenarios$Scenario, ylim = c(0, 100), cex.names = 0.9,
+        col = "#2980B9", ylab = "Line efficiency (%)", main = "Line efficiency by scenario")
 ```
+
+</details>
 
 ```{r downtime-visual, echo=FALSE, fig.align="center", fig.cap="Impact of Station Failures on Production Rate", fig.width=10, fig.height=6}
 # Create visualization of failure impact

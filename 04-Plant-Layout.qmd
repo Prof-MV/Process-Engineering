@@ -642,6 +642,23 @@ ggplot() +
 
 This one is live — edit the numbers and re-run it to see how the results change.
 
+```{r calc-line-balance-calc, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "line-balance-calc",
+  title = "Line Balancing: Pizza Assembly",
+  icon = "industry",
+  inputs = list(
+    qwebr_calc_input("desired_output", "Desired output", value = 60, min = 20, max = 120, step = 5, type = "slider", suffix = "pizzas/h"),
+    qwebr_calc_input("total_task_time", "Total task time", value = 165, min = 20, max = 400, step = 5, suffix = "s"),
+    qwebr_calc_input("available_time", "Available time per hour", value = 3600, min = 600, max = 3600, step = 600, suffix = "s"),
+    qwebr_calc_input("n_stations", "Number of stations", value = 4, min = 1, max = 8, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: line-balance-calc
 # Given data
@@ -651,31 +668,34 @@ available_time <- 3600  # seconds per hour
 
 # Step 1: Calculate Cycle Time
 cycle_time <- available_time / desired_output
-cat("Cycle Time:", cycle_time, "seconds per pizza\n")
 
 # Step 2: Calculate Theoretical Minimum Stations
 TM <- total_task_time / cycle_time
-cat("Theoretical Minimum Stations:", TM, "=", ceiling(TM), "stations\n")
 
-# Step 3: Assign tasks to stations (one possible solution)
-cat("\n--- Workstation Assignments ---\n")
-cat("Station 1: A (40s) + B (25s) = 65s > 60s ... EXCEEDS!\n")
-cat("Let's try again:\n")
-cat("Station 1: A (40s) = 40s [Idle: 20s]\n")
-cat("Station 2: B (25s) + D (35s) = 60s [Idle: 0s]\n")
-cat("Station 3: C (20s) + E (15s) + F (30s) = 65s > 60s... EXCEEDS!\n")
-cat("Revised:\n")
-cat("Station 3: C (20s) + E (15s) = 35s [Idle: 25s]\n")
-cat("Station 4: F (30s) = 30s [Idle: 30s]\n")
-
-# With 4 stations
+# Step 3: Efficiency of the line with the stations you choose
 n_stations <- 4
 efficiency <- (total_task_time / (n_stations * cycle_time)) * 100
-cat("\n--- Results ---\n")
-cat("Number of Stations:", n_stations, "\n")
-cat("Line Efficiency:", round(efficiency, 1), "%\n")
-cat("Balance Delay (Idle Time):", round(100 - efficiency, 1), "%\n")
+
+cat(sprintf("Line efficiency: %.1f%% with %g stations\n", efficiency, n_stations))
+cat(sprintf("  Cycle time  %g s per pizza\n", cycle_time))
+cat(sprintf("  Theoretical minimum stations  %.2f\n", TM))
+cat(sprintf("  Minimum stations required  %g\n", ceiling(TM)))
+cat(sprintf("  Balance delay (idle time)  %.1f%%\n", 100 - efficiency))
+if (n_stations < ceiling(TM)) {
+  cat(sprintf("  Check  !!Too few stations: at least %g needed!!\n", ceiling(TM)))
+}
+
+# Workstation assignments (one possible solution, for the default 60 s cycle time)
+cat("Workstation assignments at the default 60 s cycle time:\n")
+cat("  Station 1: A (40s) + B (25s) = 65s > 60s ... !!EXCEEDS!!\n")
+cat("  Station 1, try again: A (40s) = 40s [Idle: 20s]\n")
+cat("  Station 2: B (25s) + D (35s) = 60s [Idle: 0s]\n")
+cat("  Station 3: C (20s) + E (15s) + F (30s) = 65s > 60s ... !!EXCEEDS!!\n")
+cat("  Station 3, revised: C (20s) + E (15s) = 35s [Idle: 25s]\n")
+cat("  Station 4: F (30s) = 30s [Idle: 30s]\n")
 ```
+
+</details>
 
 <details>
 <summary>Try It Yourself: Can you find a better balance?</summary>

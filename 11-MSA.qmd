@@ -363,6 +363,28 @@ ggplot(bias_data, aes(x = measurement, y = value)) +
 
 Live cell — try different reference and measured values.
 
+```{r calc-bias-calculation, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "bias-calculation",
+  title = "Bias Study",
+  icon = "ruler",
+  inputs = list(
+    qwebr_calc_input("reference_value", "Certified reference value", value = 50, min = 0, max = 200, step = 0.001, suffix = "mm")
+  ),
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("reading", 1:15, type = "label", label = "Reading"),
+      qwebr_calc_col("measurements", c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,
+                                       50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07),
+                     var = "measurements", label = "Measured (mm)", step = 0.01)),
+    note = "Needs at least 2 readings that are not all identical, or the t-test cannot run.")
+)
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: bias-calculation
 # Bias study calculation
@@ -374,20 +396,27 @@ measurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,
 average_measured <- mean(measurements)
 bias <- average_measured - reference_value
 
-cat("Reference Value:", reference_value, "mm\n")
-cat("Average Measured:", round(average_measured, 4), "mm\n")
-cat("Bias:", round(bias, 4), "mm\n")
-cat("Bias as % of Tolerance (±0.10):", round(abs(bias) / 0.10 * 100, 1), "%\n")
-
 # Statistical test for significance
 t_test <- t.test(measurements, mu = reference_value)
-cat("\nt-test p-value:", round(t_test$p.value, 4))
+
+cat(sprintf("Bias: %.4f mm (%.1f%% of the ±0.10 tolerance)\n", bias, abs(bias) / 0.10 * 100))
+cat(sprintf("  Reference value  %g mm\n", reference_value))
+cat(sprintf("  Average measured  %.4f mm\n", average_measured))
+cat(sprintf("  t-test p-value  %.4f\n", t_test$p.value))
 if(t_test$p.value < 0.05) {
-  cat(" - Bias is statistically significant\n")
+  cat("  Verdict  !!Bias is statistically significant!!\n")
 } else {
-  cat(" - Bias is not statistically significant\n")
+  cat("  Verdict  Bias is not statistically significant\n")
 }
+
+par(mar = c(5, 5, 3, 1))
+plot(measurements, pch = 19, ylim = range(measurements, reference_value),
+     xlab = "Measurement number", ylab = "Measured value (mm)", main = "Readings vs reference")
+abline(h = reference_value, lwd = 2, col = "#27AE60")
+abline(h = average_measured, lwd = 2, lty = 2, col = "#C0392B")
 ```
+
+</details>
 
 ### Linearity
 
@@ -431,6 +460,26 @@ ggplot(linearity_data, aes(x = Reference, y = Bias)) +
 
 Live cell — try a different set of reference points and biases.
 
+```{r calc-linearity-calc, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "linearity-calc",
+  title = "Linearity Study",
+  icon = "ruler",
+  tables = list(qwebr_calc_table(
+    add_rows = TRUE,
+    columns = list(
+      qwebr_calc_col("reference", c(10, 25, 40, 55, 70), var = "reference",
+                     label = "Reference value (mm)", step = 5),
+      qwebr_calc_col("avg_bias", c(0.020, 0.008, -0.002, -0.018, -0.048), var = "avg_bias",
+                     label = "Average bias (mm)", step = 0.001)),
+    note = "Needs at least 3 reference points at different sizes.")
+)
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: linearity-calc
 # Linearity calculation
@@ -444,17 +493,25 @@ model <- lm(avg_bias ~ reference)
 slope <- coef(model)[2]
 range_used <- max(reference) - min(reference)
 linearity <- abs(slope) * range_used
+r_squared <- summary(model)$r.squared
 
-cat("Regression equation: Bias =", round(coef(model)[1], 4), "+",
-    round(slope, 5), "× Reference\n")
-cat("Linearity (slope × range):", round(linearity, 4), "mm\n")
-cat("As % of tolerance (±0.10):", round(linearity / 0.10 * 100, 1), "%\n")
+cat(sprintf("Linearity: %.4f mm (%.1f%% of the ±0.10 tolerance)\n", linearity, linearity / 0.10 * 100))
+cat(sprintf("  Regression  Bias = %.4f + %.5f x Reference\n", coef(model)[1], slope))
+cat(sprintf("  R-squared  %.3f\n", r_squared))
+if (r_squared > 0.7) {
+  cat("  Verdict  !!Significant linearity issue!!\n")
+} else {
+  cat("  Verdict  Minor linearity issue\n")
+}
 
-# R-squared
-cat("R² =", round(summary(model)$r.squared, 3),
-    "- indicates", ifelse(summary(model)$r.squared > 0.7, "significant", "minor"),
-    "linearity issue\n")
+par(mar = c(5, 5, 3, 1))
+plot(reference, avg_bias, pch = 19, xlab = "Reference value (mm)", ylab = "Average bias (mm)",
+     main = "Bias across the operating range")
+abline(model, lwd = 2, col = "#C0392B")
+abline(h = 0, lty = 2, col = "gray50")
 ```
+
+</details>
 
 ### Stability
 
@@ -494,6 +551,29 @@ ggplot(stability_data, aes(x = Day, y = Bias)) +
 
 For ongoing stability monitoring, use a control chart. Live cell — try different measurements or a different historical sigma.
 
+```{r calc-stability-control-chart, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "stability-control-chart",
+  title = "Stability Control Chart",
+  icon = "chart-line",
+  inputs = list(
+    qwebr_calc_input("historical_sigma", "Historical sigma", value = 0.01, min = 0.001, max = 0.1, step = 0.001, suffix = "mm"),
+    qwebr_calc_input("reference", "Reference value", value = 25, min = 0, max = 200, step = 0.001, suffix = "mm")
+  ),
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("day", 1:15, type = "label", label = "Day"),
+      qwebr_calc_col("measurements", c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,
+                                       25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039),
+                     var = "measurements", label = "Measured (mm)", step = 0.001)),
+    note = "The baseline (centre line) is the average of the first 5 days.")
+)
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: stability-control-chart
 # Stability monitoring with control chart
@@ -508,19 +588,28 @@ x_bar <- mean(measurements[1:5])  # Baseline from first 5 days
 UCL <- x_bar + 3 * historical_sigma
 LCL <- x_bar - 3 * historical_sigma
 
-cat("Baseline Average:", round(x_bar, 4), "\n")
-cat("UCL:", round(UCL, 4), "\n")
-cat("LCL:", round(LCL, 4), "\n")
-
 # Check for out-of-control
 out_of_control <- which(measurements > UCL | measurements < LCL)
 if(length(out_of_control) > 0) {
-  cat("\nOut-of-control points on days:", out_of_control, "\n")
-  cat("Drift detected - recalibration recommended\n")
+  cat(sprintf("!!Drift detected on day(s) %s: recalibration recommended!!\n", paste(out_of_control, collapse = ", ")))
 } else {
-  cat("\nNo out-of-control points - measurement system stable\n")
+  cat("No out-of-control points: measurement system stable\n")
 }
+
+cat(sprintf("  Baseline average  %.4f mm\n", x_bar))
+cat(sprintf("  UCL  %.4f mm\n", UCL))
+cat(sprintf("  LCL  %.4f mm\n", LCL))
+cat(sprintf("  Reference value  %.4f mm\n", reference))
+
+par(mar = c(5, 5, 3, 1))
+plot(days, measurements, type = "b", pch = 19, ylim = range(measurements, UCL, LCL, reference),
+     xlab = "Day", ylab = "Measured value (mm)", main = "Stability control chart")
+abline(h = c(UCL, x_bar, LCL), lty = c(2, 1, 2), col = c("#C0392B", "#27AE60", "#C0392B"))
+abline(h = reference, lty = 3, col = "gray50")
+points(days[out_of_control], measurements[out_of_control], pch = 19, cex = 1.6, col = "#C0392B")
 ```
+
+</details>
 
 ---
 
@@ -627,27 +716,43 @@ The Range Method is a quick approximation useful for initial screening.
 
 Live cell — try different measurement data for the two operators.
 
+```{r calc-range-method, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "range-method",
+  title = "Range Method Gauge R&R",
+  icon = "scale-balanced",
+  inputs = list(
+    qwebr_calc_input("tolerance", "Total tolerance", value = 0.3, min = 0.01, max = 2, step = 0.01, suffix = "mm")
+  ),
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("part", 1:5, type = "label", label = "Part"),
+      qwebr_calc_col("a_trial1", c(0.85, 0.92, 0.78, 0.95, 0.88), var = "a_trial1", label = "A trial 1", step = 0.01),
+      qwebr_calc_col("a_trial2", c(0.87, 0.91, 0.80, 0.96, 0.85), var = "a_trial2", label = "A trial 2", step = 0.01),
+      qwebr_calc_col("b_trial1", c(0.86, 0.93, 0.80, 0.94, 0.87), var = "b_trial1", label = "B trial 1", step = 0.01),
+      qwebr_calc_col("b_trial2", c(0.88, 0.92, 0.79, 0.97, 0.88), var = "b_trial2", label = "B trial 2", step = 0.01)),
+    note = "Five parts, two operators (A and B), two trials each. A tolerance of ±0.15 mm is 0.30 mm total.")
+)
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: range-method
 # Range Method Gauge R&R Calculation
 # Two operators, five parts, two trials each
 
-# Data: Measurements by each operator (2 trials per part)
-operator_a <- matrix(c(
-  0.85, 0.87,  # Part 1
-  0.92, 0.91,  # Part 2
-  0.78, 0.80,  # Part 3
-  0.95, 0.96,  # Part 4
-  0.88, 0.85   # Part 5
-), ncol = 2, byrow = TRUE)
+# Data: Measurements by each operator, one vector per trial (one value per part)
+a_trial1 <- c(0.85, 0.92, 0.78, 0.95, 0.88)
+a_trial2 <- c(0.87, 0.91, 0.80, 0.96, 0.85)
+b_trial1 <- c(0.86, 0.93, 0.80, 0.94, 0.87)
+b_trial2 <- c(0.88, 0.92, 0.79, 0.97, 0.88)
 
-operator_b <- matrix(c(
-  0.86, 0.88,  # Part 1
-  0.93, 0.92,  # Part 2
-  0.80, 0.79,  # Part 3
-  0.94, 0.97,  # Part 4
-  0.87, 0.88   # Part 5
-), ncol = 2, byrow = TRUE)
+# One row per part, one column per trial
+operator_a <- cbind(a_trial1, a_trial2)
+operator_b <- cbind(b_trial1, b_trial2)
 
 # Step 1: Calculate ranges for each part-operator combination
 range_a <- apply(operator_a, 1, function(x) max(x) - min(x))
@@ -683,15 +788,21 @@ GRR <- sqrt(EV^2 + AV^2)
 # Step 8: Express as % of tolerance
 tolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total
 
-cat("=== Range Method Gauge R&R Results ===\n\n")
-cat("Average Range (R-bar):", round(R_bar, 4), "\n")
-cat("Repeatability (EV):", round(EV, 4), "\n")
-cat("Reproducibility (AV):", round(AV, 4), "\n")
-cat("Gauge R&R (GRR):", round(GRR, 4), "\n\n")
-cat("%EV (of tolerance):", round(EV / tolerance * 100 * 5.15, 1), "%\n")
-cat("%AV (of tolerance):", round(AV / tolerance * 100 * 5.15, 1), "%\n")
-cat("%GRR (of tolerance):", round(GRR / tolerance * 100 * 5.15, 1), "%\n")
+pct_GRR <- GRR / tolerance * 100 * 5.15
+verdict <- if (pct_GRR < 10) "Acceptable" else if (pct_GRR < 30) "Marginal" else "!!Unacceptable!!"
+
+cat(sprintf("%%GRR (of tolerance): %.1f%%\n", pct_GRR))
+cat(sprintf("  Assessment  %s\n", verdict))
+cat("AIAG: below 10% acceptable, 10-30% marginal, above 30% unacceptable\n")
+cat(sprintf("  Average range (R-bar)  %.4f\n", R_bar))
+cat(sprintf("  Repeatability (EV)  %.4f\n", EV))
+cat(sprintf("  Reproducibility (AV)  %.4f\n", AV))
+cat(sprintf("  Gauge R&R (GRR)  %.4f\n", GRR))
+cat(sprintf("  %%EV (of tolerance)  %.1f%%\n", EV / tolerance * 100 * 5.15))
+cat(sprintf("  %%AV (of tolerance)  %.1f%%\n", AV / tolerance * 100 * 5.15))
 ```
+
+</details>
 
 ### ANOVA Method (Full Study)
 
@@ -1571,6 +1682,28 @@ This measurement system is **unacceptable**:
 
 Live cell — check your own version by changing the numbers.
 
+```{r calc-q3-answer, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "q3-answer",
+  title = "Is the Bias Acceptable?",
+  icon = "ruler",
+  inputs = list(
+    qwebr_calc_input("reference", "Reference value", value = 25, min = 0, max = 200, step = 0.001, suffix = "mm"),
+    qwebr_calc_input("tolerance_total", "Total tolerance (± band x 2)", value = 0.1, min = 0.001, max = 2, step = 0.001, suffix = "mm")
+  ),
+  tables = list(qwebr_calc_table(
+    columns = list(
+      qwebr_calc_col("reading", 1:10, type = "label", label = "Reading"),
+      qwebr_calc_col("measurements", c(25.012, 25.015, 25.008, 25.011, 25.014, 25.009, 25.013, 25.010, 25.012, 25.011),
+                     var = "measurements", label = "Measured (mm)", step = 0.001)),
+    note = "Needs at least 2 readings that are not all identical, or the t-test cannot run.")
+)
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: q3-answer
 reference <- 25.000
@@ -1582,33 +1715,35 @@ measurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,
 mean_measured <- mean(measurements)
 bias <- mean_measured - reference
 
-cat("Reference value:", reference, "mm\n")
-cat("Mean measured:", round(mean_measured, 4), "mm\n")
-cat("Bias:", round(bias, 4), "mm\n\n")
-
 # Express as % of tolerance
 bias_pct <- abs(bias) / tolerance_total * 100
-cat("Bias as % of tolerance:", round(bias_pct, 1), "%\n")
 
 # T-test for significance
 t_result <- t.test(measurements, mu = reference)
-cat("T-test p-value:", round(t_result$p.value, 6), "\n\n")
 
 # Acceptability
-cat("Acceptability Assessment:\n")
 if(bias_pct < 10) {
-  cat("- Bias < 10% of tolerance: ACCEPTABLE\n")
+  assessment <- "ACCEPTABLE (bias < 10% of tolerance)"
 } else if(bias_pct < 25) {
-  cat("- Bias 10-25% of tolerance: MARGINAL\n")
+  assessment <- "MARGINAL (bias 10-25% of tolerance)"
 } else {
-  cat("- Bias > 25% of tolerance: UNACCEPTABLE\n")
+  assessment <- "!!UNACCEPTABLE (bias > 25% of tolerance)!!"
 }
 
+cat(sprintf("Bias: %.4f mm (%.1f%% of tolerance)\n", bias, bias_pct))
+cat(sprintf("  Assessment  %s\n", assessment))
+cat(sprintf("  Reference value  %g mm\n", reference))
+cat(sprintf("  Mean measured  %.4f mm\n", mean_measured))
+cat(sprintf("  T-test p-value  %.6f\n", t_result$p.value))
 if(t_result$p.value < 0.05) {
-  cat("- Bias is statistically significant (p < 0.05)\n")
-  cat("- Consider recalibration or technique adjustment\n")
+  cat("  Significance  !!Bias is statistically significant (p < 0.05)!!\n")
+  cat("Consider recalibration or technique adjustment\n")
+} else {
+  cat("  Significance  Bias is not statistically significant\n")
 }
 ```
+
+</details>
 
 The bias of 0.0115 mm (11.5% of tolerance) is **marginally acceptable** and statistically significant. Recalibration should be considered.
 </details>
@@ -1742,6 +1877,26 @@ Study design: 10 parts, 3 operators, 3 trials
 
 Live cell — check your own version by changing the ANOVA table values.
 
+```{r calc-q7-answer, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "q7-answer",
+  title = "ANOVA Gauge R&R",
+  icon = "scale-balanced",
+  inputs = list(
+    qwebr_calc_input("MS_part", "MS Part", value = 0.03167, min = 0, max = 1, step = 0.00001),
+    qwebr_calc_input("MS_operator", "MS Operator", value = 0.00125, min = 0, max = 1, step = 0.00001),
+    qwebr_calc_input("MS_interaction", "MS Part x Operator", value = 0.0005, min = 0, max = 1, step = 0.00001),
+    qwebr_calc_input("MS_error", "MS Repeatability (error)", value = 0.0003, min = 0.00001, max = 1, step = 0.00001),
+    qwebr_calc_input("n_parts", "Number of parts", value = 10, min = 2, max = 30, step = 1),
+    qwebr_calc_input("n_operators", "Number of operators", value = 3, min = 2, max = 10, step = 1),
+    qwebr_calc_input("n_trials", "Number of trials", value = 3, min = 2, max = 10, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: q7-answer
 # Given values from ANOVA table
@@ -1756,49 +1911,49 @@ n_trials <- 3
 
 # Variance components
 var_repeatability <- MS_error
-cat("Var(Repeatability) =", var_repeatability, "\n")
-
 var_interaction <- max(0, (MS_interaction - MS_error) / n_trials)
-cat("Var(Interaction) =", round(var_interaction, 6), "\n")
-
 var_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))
-cat("Var(Operator) =", round(var_operator, 6), "\n")
-
 var_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))
-cat("Var(Part) =", round(var_part, 6), "\n\n")
 
 # Reproducibility = Operator + Interaction
 var_reproducibility <- var_operator + var_interaction
-cat("Var(Reproducibility) =", round(var_reproducibility, 6), "\n")
 
 # Total Gauge R&R
 var_GRR <- var_repeatability + var_reproducibility
-cat("Var(GRR) =", round(var_GRR, 6), "\n")
 
 # Total variation
 var_total <- var_part + var_GRR
-cat("Var(Total) =", round(var_total, 6), "\n\n")
 
 # Calculate %GRR (of total variation)
 sigma_GRR <- sqrt(var_GRR)
 sigma_total <- sqrt(var_total)
 pct_GRR <- (sigma_GRR / sigma_total) * 100
 
-cat("%GRR (of Total Variation) =", round(pct_GRR, 1), "%\n\n")
-
 # ndc
 sigma_part <- sqrt(var_part)
 ndc <- 1.41 * (sigma_part / sigma_GRR)
-cat("ndc =", round(ndc, 1), "\n\n")
 
 if(pct_GRR < 10) {
-  cat("Assessment: ACCEPTABLE (< 10%)\n")
+  assessment <- "ACCEPTABLE (< 10%)"
 } else if(pct_GRR < 30) {
-  cat("Assessment: MARGINAL (10-30%)\n")
+  assessment <- "MARGINAL (10-30%)"
 } else {
-  cat("Assessment: UNACCEPTABLE (> 30%)\n")
+  assessment <- "!!UNACCEPTABLE (> 30%)!!"
 }
+
+cat(sprintf("%%GRR (of total variation): %.1f%%\n", pct_GRR))
+cat(sprintf("  Assessment  %s\n", assessment))
+cat(sprintf("  Number of distinct categories (ndc)  %.1f\n", ndc))
+cat(sprintf("  Var(Repeatability)  %.6f\n", var_repeatability))
+cat(sprintf("  Var(Interaction)  %.6f\n", var_interaction))
+cat(sprintf("  Var(Operator)  %.6f\n", var_operator))
+cat(sprintf("  Var(Part)  %.6f\n", var_part))
+cat(sprintf("  Var(Reproducibility)  %.6f\n", var_reproducibility))
+cat(sprintf("  Var(GRR)  %.6f\n", var_GRR))
+cat(sprintf("  Var(Total)  %.6f\n", var_total))
 ```
+
+</details>
 </details>
 
 <details><summary>**Question 8**: What actions would you take if a Gauge R&R study showed high repeatability (EV) but low reproducibility (AV)?</summary>

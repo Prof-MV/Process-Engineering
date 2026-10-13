@@ -762,6 +762,29 @@ DFA systematically evaluates assembly operations to identify improvement opportu
 
 This one is live — try changing the part list or handling/insertion times and re-running.
 
+```{r calc-dfa-example, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "dfa-example",
+  title = "DFA: Assembly Efficiency",
+  icon = "screwdriver-wrench",
+  tables = list(qwebr_calc_table(
+    frame = "parts", add_rows = TRUE,
+    columns = list(
+      qwebr_calc_col("Part", c("Base", "PCB", "Cover", "Screw 1", "Screw 2", "Screw 3", "Screw 4", "Label"),
+                     type = "text", label = "Part"),
+      qwebr_calc_col("Handling_Time", c(2.5, 3.0, 2.5, 3.5, 3.5, 3.5, 3.5, 4.0),
+                     label = "Handling (s)", min = 0, step = 0.5),
+      qwebr_calc_col("Insertion_Time", c(3.0, 4.0, 3.5, 6.0, 6.0, 6.0, 6.0, 2.0),
+                     label = "Insertion (s)", min = 0, step = 0.5),
+      qwebr_calc_col("Theoretically_Necessary", c(1, 1, 1, 0, 0, 0, 0, 0),
+                     label = "Necessary? (1 = yes, 0 = no)", min = 0, max = 1, step = 1)),
+    note = "Necessary = 1 if the part must be separate (it moves, is a different material, or must come apart for service). 0 means it could be combined or eliminated."))
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: dfa-example
 # DFA Analysis Example: Simple Assembly
@@ -783,15 +806,21 @@ ideal_time <- min_parts * 3  # 3 seconds is theoretical minimum per part
 
 efficiency <- (ideal_time / total_time) * 100
 
-cat("DFA Analysis Results:\n")
-cat("=====================\n")
-cat(sprintf("Total parts: %d\n", total_parts))
-cat(sprintf("Theoretically minimum parts: %d\n", min_parts))
-cat(sprintf("Total assembly time: %.1f seconds\n", total_time))
-cat(sprintf("Ideal assembly time: %.1f seconds\n", ideal_time))
-cat(sprintf("Design Efficiency: %.1f%%\n", efficiency))
-cat("\nOpportunity: Combine 4 screws into snap-fit design\n")
+cat(sprintf("Design efficiency: %.1f%%\n", efficiency))
+cat(sprintf("  Total parts  %g\n", total_parts))
+cat(sprintf("  Theoretically minimum parts  %g\n", min_parts))
+cat(sprintf("  Parts that could be combined or eliminated  %g\n", total_parts - min_parts))
+cat(sprintf("  Total assembly time  %.1f s\n", total_time))
+cat(sprintf("  Ideal assembly time  %.1f s\n", ideal_time))
+
+par(mar = c(5, 5, 3, 1))
+barplot(parts$Handling_Time + parts$Insertion_Time, names.arg = parts$Part, cex.names = 0.8,
+        col = ifelse(parts$Theoretically_Necessary == 1, "#27AE60", "#E67E22"),
+        ylab = "Handling + insertion time (s)",
+        main = "Assembly time per part (green = necessary)")
 ```
+
+</details>
 
 <details>
 <summary>Case Study: Redesigning for DFM/DFA</summary>

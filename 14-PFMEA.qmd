@@ -822,6 +822,28 @@ $$\text{RPN} = \text{Severity (S)} \times \text{Occurrence (O)} \times \text{Det
 
 Live cell — try different Severity, Occurrence, and Detection ratings.
 
+```{r calc-rpn-calculation, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "rpn-calculation",
+  title = "RPN Ranking",
+  icon = "triangle-exclamation",
+  inputs = list(
+    qwebr_calc_input("S1", "Short shot: Severity", value = 7, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O1", "Short shot: Occurrence", value = 5, min = 1, max = 10, step = 1),
+    qwebr_calc_input("D1", "Short shot: Detection", value = 6, min = 1, max = 10, step = 1),
+    qwebr_calc_input("S2", "Flash: Severity", value = 4, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O2", "Flash: Occurrence", value = 6, min = 1, max = 10, step = 1),
+    qwebr_calc_input("D2", "Flash: Detection", value = 3, min = 1, max = 10, step = 1),
+    qwebr_calc_input("S3", "Contamination: Severity", value = 9, min = 1, max = 10, step = 1),
+    qwebr_calc_input("O3", "Contamination: Occurrence", value = 3, min = 1, max = 10, step = 1),
+    qwebr_calc_input("D3", "Contamination: Detection", value = 7, min = 1, max = 10, step = 1)
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
 ```{webr-r}
 #| label: rpn-calculation
 # Example RPN Calculations
@@ -832,7 +854,6 @@ O1 <- 5    # Occurrence: Occasional
 D1 <- 6    # Detection: Moderate (visual inspection)
 
 RPN1 <- S1 * O1 * D1
-cat("Short shot RPN:", RPN1, "\n")
 
 # Failure Mode 2: Flash
 S2 <- 4    # Severity: Appearance issue
@@ -840,7 +861,6 @@ O2 <- 6    # Occurrence: Regular
 D2 <- 3    # Detection: High (easy to see)
 
 RPN2 <- S2 * O2 * D2
-cat("Flash RPN:", RPN2, "\n")
 
 # Failure Mode 3: Contamination
 S3 <- 9    # Severity: Safety concern (medical device)
@@ -848,14 +868,26 @@ O3 <- 3    # Occurrence: Low
 D3 <- 7    # Detection: Low (internal contamination)
 
 RPN3 <- S3 * O3 * D3
-cat("Contamination RPN:", RPN3, "\n")
 
 # Comparison
-cat("\n--- Priority Order by RPN ---\n")
-cat("1. Short shot (RPN =", RPN1, ")\n")
-cat("2. Contamination (RPN =", RPN3, ")\n")
-cat("3. Flash (RPN =", RPN2, ")\n")
+modes <- c("Short shot", "Flash", "Contamination")
+rpn <- c(RPN1, RPN2, RPN3)
+ranking <- order(-rpn)
+
+cat(sprintf("Highest priority: %s (RPN %g)\n", modes[ranking[1]], rpn[ranking[1]]))
+cat("Priority order by RPN:\n")
+for (k in seq_along(ranking)) {
+  j <- ranking[k]
+  value <- if (rpn[j] > 200) sprintf("!!%g!!", rpn[j]) else sprintf("%g", rpn[j])
+  cat(sprintf("  %g. %s  RPN %s\n", k, modes[j], value))
+}
+
+par(mar = c(5, 5, 3, 1))
+barplot(rpn, names.arg = modes, col = ifelse(rpn > 200, "#C0392B", "#2980B9"),
+        ylab = "RPN", main = "RPN by failure mode (red = above 200)")
 ```
+
+</details>
 
 **RPN Action Thresholds (Traditional):**
 
