@@ -439,7 +439,7 @@ tryit_sort(
 **5S** is a workplace organization methodology that creates a clean, efficient, and safe working environment.
 
 ```{r five-s-viz, echo=FALSE, fig.align="center", fig.cap="The 5S Methodology", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.78  # fit labels to their shapes
+diagram_text_scale <- 1.0  # fit labels to their shapes
 # Create 5S circular visualization
 five_s <- data.frame(
   step = 1:5,
@@ -466,10 +466,10 @@ ggplot(five_s) +
   geom_text(aes(x = x, y = y - 0.15, label = japanese),
             size = 3.5 * diagram_text_scale, color = "white") +
   # Labels outside
-  geom_text(aes(x = x * 1.6, y = y * 1.6, label = english),
-            size = 4 * diagram_text_scale, fontface = "bold") +
-  geom_text(aes(x = x * 1.9, y = y * 1.9, label = action),
-            size = 3 * diagram_text_scale, lineheight = 0.8) +
+  geom_text(aes(x = x * 1.45, y = y * 1.45 + ifelse(y > 1.5, 0.25, ifelse(y < -1, -0.3, 0)),
+                label = paste0(english, "\n", action),
+                hjust = ifelse(x > 0.1, 0, ifelse(x < -0.1, 1, 0.5))),
+            size = 4 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
   scale_color_manual(values = c("Seiri" = "#E74C3C", "Seiton" = "#F39C12",
                                 "Seiso" = "#2ECC71", "Seiketsu" = "#3498DB",
                                 "Shitsuke" = "#9B59B6")) +
@@ -542,8 +542,8 @@ tryit_order(
 > "Deliver the right material, in the exact quantity, with perfect quality, in the right place, just before it is needed."
 > — Ohno and Shingo
 
-```{r jit-concept, echo=FALSE, fig.align="center", fig.cap="Just-in-Time: The Right Everything", fig.width=9, fig.height=5}
-diagram_text_scale <- 0.68  # fit labels to their shapes
+```{r jit-concept, echo=FALSE, fig.align="center", fig.cap="Just-in-Time: The Right Everything", fig.width=11, fig.height=4.5}
+diagram_text_scale <- 1.0  # fit labels to their shapes
 jit_elements <- data.frame(
   element = c("Right Part", "Right Quantity", "Right Quality",
               "Right Place", "Right Time"),
@@ -558,14 +558,14 @@ ggplot(jit_elements, aes(x = x, y = y)) +
                data = jit_elements[1:4,],
                arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1.5) +
   # Circles
-  geom_point(size = 20, color = "#3498DB") +
+  geom_point(size = 30, color = "#3498DB") +
   geom_text(aes(label = gsub(" ", "\n", element)), size = 3 * diagram_text_scale, fontface = "bold", color = "white",
             lineheight = 0.8) +
   # Final output
-  annotate("point", x = 6.5, y = 1, size = 25, color = "#2ECC71") +
+  annotate("point", x = 6.5, y = 1, size = 38, color = "#2ECC71") +
   annotate("text", x = 6.5, y = 1, label = "CUSTOMER\nSATISFACTION",
-           size = 3.5 * diagram_text_scale, fontface = "bold", color = "white", lineheight = 0.9) +
-  annotate("segment", x = 5.4, xend = 5.9, y = 1, yend = 1,
+           size = 3.2 * diagram_text_scale, fontface = "bold", color = "white", lineheight = 0.9) +
+  annotate("segment", x = 5.5, xend = 5.85, y = 1, yend = 1,
            arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", linewidth = 2) +
   theme_void() +
   labs(title = "Just-in-Time: Delivering Value to the Customer") +
@@ -887,10 +887,10 @@ Takt time = 540 / 300 = 1.8 minutes = 108 seconds per unit
 ### The SMED Concept
 
 ```{r smed-viz, echo=FALSE, fig.align="center", fig.cap="SMED: Internal vs External Setup", fig.width=10, fig.height=5}
-diagram_text_scale <- 0.88  # fit labels to their shapes
+diagram_text_scale <- 1.0  # fit labels to their shapes
 # Before SMED
 before <- data.frame(
-  activity = c("Get tools", "Remove old die", "Install new die", "Adjust settings", "Get materials", "First article"),
+  activity = c("Get tools", "Remove old die", "Install new die", "Adjust", "Materials", "First art."),
   time = c(15, 30, 45, 20, 10, 10),
   type = c("External", "Internal", "Internal", "Internal", "External", "Internal"),
   x_start = c(0, 15, 45, 90, 110, 120),
@@ -900,7 +900,7 @@ before$x_end <- before$x_start + before$time
 
 # After SMED
 after <- data.frame(
-  activity = c("Install new die", "Adjust settings", "First article"),
+  activity = c("Install new die", "Adjust", "First art."),
   time = c(30, 15, 5),
   type = c("Internal", "Internal", "Internal"),
   x_start = c(0, 30, 45),
@@ -997,7 +997,7 @@ smed_steps %>%
 ### Kaizen Principles
 
 ```{r kaizen-cycle, echo=FALSE, fig.align="center", fig.cap="The Kaizen Continuous Improvement Cycle", fig.width=8, fig.height=8}
-diagram_text_scale <- 0.63  # fit labels to their shapes
+diagram_text_scale <- 0.9  # fit labels to their shapes
 # Create PDCA cycle
 pdca <- data.frame(
   step = c("PLAN", "DO", "CHECK", "ACT"),
@@ -1019,14 +1019,14 @@ ggplot(pdca) +
   geom_text(aes(x = x, y = y + 0.1, label = step), size = 5 * diagram_text_scale, fontface = "bold", color = "white") +
   geom_text(aes(x = x, y = y - 0.25, label = description), size = 3 * diagram_text_scale, color = "white", lineheight = 0.8) +
   # Arrows
-  annotate("curve", x = 1.5, xend = 1.5, y = 2, yend = -0.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
-  annotate("curve", x = 1.5, xend = -1.5, y = -2, yend = -1.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
-  annotate("curve", x = -1.5, xend = -1.5, y = -2, yend = 0.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
-  annotate("curve", x = -1.5, xend = 1.5, y = 2, yend = 1.5,
-           arrow = arrow(length = unit(0.3, "cm")), curvature = 0.5, color = "#2C3E50", linewidth = 1) +
+  annotate("curve", x = 2.4, xend = 2.4, y = 0.8, yend = -0.8,
+           arrow = arrow(length = unit(0.3, "cm")), curvature = -0.3, color = "#2C3E50", linewidth = 1) +
+  annotate("curve", x = 0.8, xend = -0.8, y = -2.4, yend = -2.4,
+           arrow = arrow(length = unit(0.3, "cm")), curvature = -0.3, color = "#2C3E50", linewidth = 1) +
+  annotate("curve", x = -2.4, xend = -2.4, y = -0.8, yend = 0.8,
+           arrow = arrow(length = unit(0.3, "cm")), curvature = -0.3, color = "#2C3E50", linewidth = 1) +
+  annotate("curve", x = -0.8, xend = 0.8, y = 2.4, yend = 2.4,
+           arrow = arrow(length = unit(0.3, "cm")), curvature = -0.3, color = "#2C3E50", linewidth = 1) +
   scale_color_manual(values = c("PLAN" = "#3498DB", "DO" = "#2ECC71",
                                 "CHECK" = "#F39C12", "ACT" = "#E74C3C")) +
   theme_void() +

@@ -735,7 +735,7 @@ Warehouse layouts are a special case of process layouts focused on **minimizing 
    - **B items** (30% of SKUs, 15% of picks): Secondary locations
    - **C items** (50% of SKUs, 5% of picks): Remote locations
 
-```{r warehouse-viz, echo=FALSE, fig.align="center", fig.cap="Warehouse Layout: ABC Storage Strategy", fig.width=9, fig.height=5}
+```{r warehouse-viz, echo=FALSE, fig.align="center", fig.cap="Warehouse Layout: ABC Storage Strategy", fig.width=10, fig.height=4}
 diagram_text_scale <- 0.88  # fit labels to their shapes
 warehouse <- data.frame(
   zone = c(rep("A Items", 4), rep("B Items", 6), rep("C Items", 10)),
@@ -749,9 +749,10 @@ ggplot(warehouse, aes(x = x, y = y)) +
   scale_fill_identity() +
   annotate("rect", xmin = 0, xmax = 11, ymin = -0.2, ymax = 0.3, fill = "#95A5A6") +
   annotate("text", x = 5.5, y = 0.05, label = "SHIPPING/RECEIVING DOCK", fontface = "bold", size = 4 * diagram_text_scale) +
-  annotate("text", x = 2.5, y = 1, label = "A Items (Fast Moving)", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 3.5, y = 2, label = "B Items (Medium)", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 5.5, y = 3, label = "C Items (Slow Moving)", color = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 4.7, y = 1, label = "A Items (Fast Moving)", hjust = 0, fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 6.7, y = 2, label = "B Items (Medium)", hjust = 0, fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 10.7, y = 3, label = "C Items (Slow Moving)", hjust = 0, fontface = "bold", size = 3.5 * diagram_text_scale) +
+  xlim(-0.2, 15.5) +
   labs(title = "Warehouse Layout: ABC Storage Strategy",
        subtitle = "High-frequency items placed closest to the dock") +
   theme_void() +

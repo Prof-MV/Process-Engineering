@@ -598,10 +598,10 @@ rpn_data$action <- vapply(strwrap(rpn_data$action, 13, simplify = FALSE), paste,
 ggplot(rpn_data, aes(x = x, y = 1)) +
   geom_tile(aes(fill = color), width = 0.9, height = 1) +
   scale_fill_identity() +
-  geom_text(aes(label = paste0("RPN: ", range)), fontface = "bold",
-            color = "white", size = 6 * diagram_text_scale, vjust = -1) +
-  geom_text(aes(label = priority), color = "white", size = 8 * diagram_text_scale, fontface = "bold") +
-  geom_text(aes(label = action), color = "white", size = 5 * diagram_text_scale, vjust = 2) +
+  geom_text(aes(y = 1.32, label = paste0("RPN: ", range)), fontface = "bold",
+            color = "white", size = 6 * diagram_text_scale) +
+  geom_text(aes(y = 1.08, label = priority), color = "white", size = 8 * diagram_text_scale, fontface = "bold") +
+  geom_text(aes(y = 0.75, label = action), color = "white", size = 4.5 * diagram_text_scale, lineheight = 0.9) +
   coord_cartesian(ylim = c(0.2, 1.8)) +
   labs(title = "RPN-Based Action Priority") +
   theme_void() +
