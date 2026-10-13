@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# =============================================================\n# REBA Assessment: Packaging Station Worker\n# =============================================================\n# Worker bends forward to pick items from low bin and place on conveyor\n# Items weigh approximately 7 kg each\n# Task performed continuously with repetitive motions\n\ncat(\"========== GROUP A: TRUNK, NECK, LEGS ==========\\n\\n\")\n\n# Step 1: Neck Score\n# Worker looks down into bin - approximately 25° flexion\nneck_base <- 2       # >20° flexion\nneck_twist <- 0      # No twist or side-bending\nneck_score <- neck_base + neck_twist\ncat(\"Step 1 - Neck Score:\", neck_score, \"\\n\")\ncat(\"  Position: >20° flexion (looking down into bin)\\n\")\ncat(\"  Base score: 2, Twist adjustment: 0\\n\\n\")\n\n# Step 2: Trunk Score\n# Worker bends forward approximately 40° to reach bin\ntrunk_base <- 3      # 20-60° flexion\ntrunk_twist <- 1     # Slight twist when reaching\ntrunk_score <- trunk_base + trunk_twist\ncat(\"Step 2 - Trunk Score:\", trunk_score, \"\\n\")\ncat(\"  Position: 40° forward flexion with slight twist\\n\")\ncat(\"  Base score: 3, Twist adjustment: +1\\n\\n\")\n\n# Step 3: Legs Score\n# Worker stands with weight distributed evenly\nlegs_base <- 1       # Bilateral weight bearing\nlegs_knee <- 0       # Knees not flexed significantly\nlegs_score <- legs_base + legs_knee\ncat(\"Step 3 - Legs Score:\", legs_score, \"\\n\")\ncat(\"  Position: Standing, bilateral weight bearing\\n\")\ncat(\"  Base score: 1, Knee adjustment: 0\\n\\n\")\n\n# Step 4: Table A Lookup\n# Trunk = 4, Neck = 2, Legs = 1\n# From Table A: Score = 5\ntable_a_score <- 5\ncat(\"Step 4 - Table A Score:\", table_a_score, \"\\n\")\ncat(\"  Lookup: Trunk=4, Neck=2, Legs=1 → Table A = 5\\n\\n\")\n\n# Step 5: Load/Force Score\n# Items weigh approximately 7 kg\nload_force <- 1      # 5-10 kg\nshock_force <- 0     # No shock/rapid buildup\nload_score <- load_force + shock_force\ncat(\"Step 5 - Load/Force Score:\", load_score, \"\\n\")\ncat(\"  Load: 7 kg (in 5-10 kg range) = 1\\n\\n\")\n\n# SCORE A CALCULATION\nscore_a <- table_a_score + load_score\ncat(\">>> SCORE A = Table A + Load/Force =\", table_a_score, \"+\", load_score, \"=\", score_a, \"\\n\\n\")\n\ncat(\"========== GROUP B: UPPER ARM, LOWER ARM, WRIST ==========\\n\\n\")\n\n# Step 6: Upper Arm Score\n# Arms reaching forward/down approximately 50° flexion\nupper_arm_base <- 3  # 45-90° flexion\nshoulder_raised <- 0 # Not raised\narm_abducted <- 0    # Not abducted\narm_support <- 0     # Not supported\nupper_arm_score <- upper_arm_base + shoulder_raised + arm_abducted + arm_support\ncat(\"Step 6 - Upper Arm Score:\", upper_arm_score, \"\\n\")\ncat(\"  Position: 50° flexion reaching into bin\\n\")\ncat(\"  Base score: 3, No adjustments needed\\n\\n\")\n\n# Step 7: Lower Arm Score\n# Elbow bent approximately 70° (in optimal range)\nlower_arm_score <- 1  # 60-100° flexion\ncat(\"Step 7 - Lower Arm Score:\", lower_arm_score, \"\\n\")\ncat(\"  Position: 70° elbow flexion (optimal range)\\n\\n\")\n\n# Step 8: Wrist Score\n# Wrist in moderate flexion to grasp items\nwrist_base <- 2      # >15° flexion\nwrist_twist <- 0     # No significant twist\nwrist_score <- wrist_base + wrist_twist\ncat(\"Step 8 - Wrist Score:\", wrist_score, \"\\n\")\ncat(\"  Position: ~20° wrist flexion when grasping\\n\")\ncat(\"  Base score: 2, Twist adjustment: 0\\n\\n\")\n\n# Step 9: Table B Lookup\n# Upper Arm = 3, Lower Arm = 1, Wrist = 2\n# From Table B: Score = 4\ntable_b_score <- 4\ncat(\"Step 9 - Table B Score:\", table_b_score, \"\\n\")\ncat(\"  Lookup: Upper Arm=3, Lower Arm=1, Wrist=2 → Table B = 4\\n\\n\")\n\n# Step 10: Coupling Score\n# Worker grasps boxes - acceptable grip but not ideal handles\ncoupling_score <- 1   # Fair coupling\ncat(\"Step 10 - Coupling Score:\", coupling_score, \"\\n\")\ncat(\"  Coupling: Fair - hand hold acceptable but not ideal\\n\\n\")\n\n# SCORE B CALCULATION\nscore_b <- table_b_score + coupling_score\ncat(\">>> SCORE B = Table B + Coupling =\", table_b_score, \"+\", coupling_score, \"=\", score_b, \"\\n\\n\")\n\ncat(\"========== FINAL REBA SCORE CALCULATION ==========\\n\\n\")\n\n# Step 11: Table C Lookup\n# Score A = 6, Score B = 5\n# From Table C: Score = 7\ntable_c_score <- 7\ncat(\"Step 11 - Table C Score:\", table_c_score, \"\\n\")\ncat(\"  Lookup: Score A=6, Score B=5 → Table C = 7\\n\\n\")\n\n# Step 12: Activity Score\n# Check all three conditions:\nstatic_posture <- 0   # Body parts not held >1 minute\nrepeated_actions <- 1 # Repeated small range actions (continuous picking)\nrapid_changes <- 0    # No rapid large range changes\nactivity_score <- static_posture + repeated_actions + rapid_changes\ncat(\"Step 12 - Activity Score:\", activity_score, \"\\n\")\ncat(\"  Static posture >1 min: No (+0)\\n\")\ncat(\"  Repeated actions >4×/min: Yes (+1)\\n\")\ncat(\"  Rapid large changes: No (+0)\\n\\n\")\n\n# FINAL REBA SCORE\nreba_final <- table_c_score + activity_score\ncat(\"╔═══════════════════════════════════════════════════╗\\n\")\ncat(\"║       FINAL REBA SCORE:\", reba_final, \"                       ║\\n\")\ncat(\"╚═══════════════════════════════════════════════════╝\\n\\n\")\n\n# Interpretation\ncat(\"INTERPRETATION:\\n\")\ncat(\"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\")\nif (reba_final == 1) {\n  cat(\"Risk Level: NEGLIGIBLE\\n\")\n  cat(\"Action: None necessary\\n\")\n} else if (reba_final <= 3) {\n  cat(\"Risk Level: LOW\\n\")\n  cat(\"Action: May be necessary\\n\")\n} else if (reba_final <= 7) {\n  cat(\"Risk Level: MEDIUM\\n\")\n  cat(\"Action: Necessary\\n\")\n} else if (reba_final <= 10) {\n  cat(\"Risk Level: HIGH\\n\")\n  cat(\"Action: Necessary soon\\n\")\n} else {\n  cat(\"Risk Level: VERY HIGH\\n\")\n  cat(\"Action: Necessary NOW - Stop task immediately\\n\")\n}\ncat(\"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"reba-step-by-step","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# REBA Assessment Example: Assembly Worker\n\n# Group A Scores (Trunk, Neck, Legs)\ntrunk_score <- 3      # 20-60° forward bend\nneck_score <- 2       # >20° flexion\nlegs_score <- 1       # Bilateral weight bearing\n\n# Look up Table A score (trunk + neck + legs)\n# For this combination: Score A = 4\ntable_a_score <- 4\n\n# Load/Force Score\nload_force <- 1       # 5-10 kg intermittent\n\n# Score A with load\nscore_a <- table_a_score + load_force\ncat(\"Score A (posture + load):\", score_a, \"\\n\")\n\n# Group B Scores (Upper arm, Lower arm, Wrist)\nupper_arm_score <- 3  # 45-90° flexion\nlower_arm_score <- 2  # <60° or >100° flexion\nwrist_score <- 2      # >15° flexion/extension\n\n# Look up Table B score\n# For this combination: Score B = 5\ntable_b_score <- 5\n\n# Coupling Score\ncoupling <- 1         # Acceptable grip\n\n# Score B with coupling\nscore_b <- table_b_score + coupling\ncat(\"Score B (posture + coupling):\", score_b, \"\\n\")\n\n# Look up Table C (Score A × Score B)\n# For Score A = 5 and Score B = 6: Score C = 8\nscore_c <- 8\n\n# Activity Score\nactivity <- 1         # One or more body parts static >1 min\n\n# Final REBA Score\nreba_final <- score_c + activity\ncat(\"\\n=== FINAL REBA SCORE:\", reba_final, \"===\\n\")\n\n# Interpretation\ncat(\"\\nInterpretation:\\n\")\nif (reba_final <= 1) {\n  cat(\"Risk Level: Negligible - No action necessary\\n\")\n} else if (reba_final <= 3) {\n  cat(\"Risk Level: Low - Action may be necessary\\n\")\n} else if (reba_final <= 7) {\n  cat(\"Risk Level: Medium - Action necessary\\n\")\n} else if (reba_final <= 10) {\n  cat(\"Risk Level: High - Action necessary soon\\n\")\n} else {\n  cat(\"Risk Level: Very High - Action necessary NOW\\n\")\n}","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"reba-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# NIOSH Lifting Equation Example\n\n# Task parameters\nH <- 40    # Horizontal distance (cm)\nV <- 30    # Vertical height at start (cm)\nD <- 60    # Vertical travel distance (cm)\nA <- 30    # Asymmetry angle (degrees)\n\n# Constants\nLC <- 23   # Load constant (kg)\n\n# Calculate multipliers\nHM <- 25 / H\nVM <- 1 - 0.003 * abs(V - 75)\nDM <- 0.82 + 4.5 / D\nAM <- 1 - 0.0032 * A\n\n# Frequency multiplier (from table, for 2 lifts/min, 2 hours, V<75cm)\nFM <- 0.84\n\n# Coupling multiplier (assume \"fair\" coupling)\nCM <- 0.95\n\n# Calculate RWL\nRWL <- LC * HM * VM * DM * AM * FM * CM\n\n# Calculate Lifting Index for actual load\nactual_weight <- 15  # kg\nLI <- actual_weight / RWL\n\ncat(sprintf(\"Lifting Index: %.2f (RWL = %.1f kg)\\n\", LI, RWL))\ncat(sprintf(\"  HM (horizontal)   %.3f\\n\", HM))\ncat(sprintf(\"  VM (vertical)     %.3f\\n\", VM))\ncat(sprintf(\"  DM (distance)     %.3f\\n\", DM))\ncat(sprintf(\"  AM (asymmetry)    %.3f\\n\", AM))\nif (LI <= 1.0) {\n  cat(\"  Risk level        Low - task acceptable\\n\")\n} else if (LI <= 2.0) {\n  cat(\"  Risk level        Moderate - consider changes\\n\")\n} else if (LI <= 3.0) {\n  cat(\"  Risk level        !!High - changes recommended!!\\n\")\n} else {\n  cat(\"  Risk level        !!Very high - immediate changes required!!\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"niosh-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Investment\nequipment_cost <- 150000  # Lift assists, fixtures, cobots\ntraining_cost <- 15000\ntotal_investment <- equipment_cost + training_cost\n\n# Annual Savings\ninjury_reduction <- 220000     # (15 - 4 injuries avoided) x $20,000 avg cost per injury\nproductivity_gain <- 90000     # 18% improvement on $500,000 labor cost\nquality_improvement <- 17500   # 35% defect reduction on $50,000 cost\n\nannual_savings <- injury_reduction + productivity_gain + quality_improvement\n\ncat(sprintf(\"5-year ROI: %.0f%%\\n\", (annual_savings * 5 - total_investment) / total_investment * 100))\ncat(sprintf(\"  Total investment     $%s\\n\", format(total_investment, big.mark = \" \", scientific = FALSE)))\ncat(sprintf(\"  Annual savings       $%s\\n\", format(annual_savings, big.mark = \" \", scientific = FALSE)))\ncat(sprintf(\"  Payback period       %.1f years\\n\", total_investment / annual_savings))","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"roi-analysis","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# =============================================================\n# REBA Assessment: Packaging Station Worker\n# =============================================================\n# Worker bends forward to pick items from low bin and place on conveyor\n# Items weigh approximately 7 kg each\n# Task performed continuously with repetitive motions\n\n# ---------- GROUP A: TRUNK, NECK, LEGS ----------\n\n# Step 1: Neck Score\n# Worker looks down into bin - approximately 25° flexion\nneck_base <- 2       # >20° flexion\nneck_twist <- 0      # No twist or side-bending\nneck_score <- neck_base + neck_twist\n\n# Step 2: Trunk Score\n# Worker bends forward approximately 40° to reach bin\ntrunk_base <- 3      # 20-60° flexion\ntrunk_twist <- 1     # Slight twist when reaching\ntrunk_score <- trunk_base + trunk_twist\n\n# Step 3: Legs Score\n# Worker stands with weight distributed evenly\nlegs_base <- 1       # Bilateral weight bearing\nlegs_knee <- 0       # Knees not flexed significantly\nlegs_score <- legs_base + legs_knee\n\n# Step 4: Table A Lookup\n# Trunk = 4, Neck = 2, Legs = 1\n# From Table A: Score = 5\ntable_a_score <- 5\n\n# Step 5: Load/Force Score\n# Items weigh approximately 7 kg\nload_force <- 1      # 5-10 kg\nshock_force <- 0     # No shock/rapid buildup\nload_score <- load_force + shock_force\n\n# SCORE A CALCULATION\nscore_a <- table_a_score + load_score\n\n# ---------- GROUP B: UPPER ARM, LOWER ARM, WRIST ----------\n\n# Step 6: Upper Arm Score\n# Arms reaching forward/down approximately 50° flexion\nupper_arm_base <- 3  # 45-90° flexion\nshoulder_raised <- 0 # Not raised\narm_abducted <- 0    # Not abducted\narm_support <- 0     # Not supported\nupper_arm_score <- upper_arm_base + shoulder_raised + arm_abducted + arm_support\n\n# Step 7: Lower Arm Score\n# Elbow bent approximately 70° (in optimal range)\nlower_arm_score <- 1  # 60-100° flexion\n\n# Step 8: Wrist Score\n# Wrist in moderate flexion to grasp items\nwrist_base <- 2      # >15° flexion\nwrist_twist <- 0     # No significant twist\nwrist_score <- wrist_base + wrist_twist\n\n# Step 9: Table B Lookup\n# Upper Arm = 3, Lower Arm = 1, Wrist = 2\n# From Table B: Score = 4\ntable_b_score <- 4\n\n# Step 10: Coupling Score\n# Worker grasps boxes - acceptable grip but not ideal handles\ncoupling_score <- 1   # Fair coupling\n\n# SCORE B CALCULATION\nscore_b <- table_b_score + coupling_score\n\n# ---------- FINAL REBA SCORE ----------\n\n# Step 11: Table C Lookup\n# Score A = 6, Score B = 5\n# From Table C: Score = 7\ntable_c_score <- 7\n\n# Step 12: Activity Score\n# Check all three conditions:\nstatic_posture <- 0   # Body parts not held >1 minute\nrepeated_actions <- 1 # Repeated small range actions (continuous picking)\nrapid_changes <- 0    # No rapid large range changes\nactivity_score <- static_posture + repeated_actions + rapid_changes\n\n# FINAL REBA SCORE\nreba_final <- table_c_score + activity_score\n\n# Interpretation\nif (reba_final == 1) {\n  risk <- \"NEGLIGIBLE\"; action <- \"None necessary\"\n} else if (reba_final <= 3) {\n  risk <- \"LOW\"; action <- \"May be necessary\"\n} else if (reba_final <= 7) {\n  risk <- \"MEDIUM\"; action <- \"Necessary\"\n} else if (reba_final <= 10) {\n  risk <- \"HIGH\"; action <- \"Necessary soon\"\n} else {\n  risk <- \"VERY HIGH\"; action <- \"Necessary NOW - stop task immediately\"\n}\n\nheadline <- sprintf(\"Final REBA score: %g - %s risk\", reba_final, risk)\nif (reba_final > 7) headline <- paste0(\"!!\", headline, \"!!\")\ncat(headline, \"\\n\")\ncat(sprintf(\"  Action level  %s\\n\", action))\ncat(sprintf(\"  Neck  %g\\n\", neck_score))\ncat(sprintf(\"  Trunk  %g\\n\", trunk_score))\ncat(sprintf(\"  Legs  %g\\n\", legs_score))\ncat(sprintf(\"  Table A + load/force  %g + %g = Score A %g\\n\", table_a_score, load_score, score_a))\ncat(sprintf(\"  Upper arm  %g\\n\", upper_arm_score))\ncat(sprintf(\"  Lower arm  %g\\n\", lower_arm_score))\ncat(sprintf(\"  Wrist  %g\\n\", wrist_score))\ncat(sprintf(\"  Table B + coupling  %g + %g = Score B %g\\n\", table_b_score, coupling_score, score_b))\ncat(sprintf(\"  Table C + activity  %g + %g = %g\\n\", table_c_score, activity_score, reba_final))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"reba-step-by-step","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# REBA Assessment Example: Assembly Worker\n\n# Group A Scores (Trunk, Neck, Legs)\ntrunk_score <- 3      # 20-60° forward bend\nneck_score <- 2       # >20° flexion\nlegs_score <- 1       # Bilateral weight bearing\n\n# Look up Table A score (trunk + neck + legs)\n# For this combination: Score A = 4\ntable_a_score <- 4\n\n# Load/Force Score\nload_force <- 1       # 5-10 kg intermittent\n\n# Score A with load\nscore_a <- table_a_score + load_force\n\n# Group B Scores (Upper arm, Lower arm, Wrist)\nupper_arm_score <- 3  # 45-90° flexion\nlower_arm_score <- 2  # <60° or >100° flexion\nwrist_score <- 2      # >15° flexion/extension\n\n# Look up Table B score\n# For this combination: Score B = 5\ntable_b_score <- 5\n\n# Coupling Score\ncoupling <- 1         # Acceptable grip\n\n# Score B with coupling\nscore_b <- table_b_score + coupling\n\n# Look up Table C (Score A × Score B)\n# For Score A = 5 and Score B = 6: Score C = 8\nscore_c <- 8\n\n# Activity Score\nactivity <- 1         # One or more body parts static >1 min\n\n# Final REBA Score\nreba_final <- score_c + activity\n\n# Interpretation\nif (reba_final <= 1) {\n  risk <- \"Negligible - no action necessary\"\n} else if (reba_final <= 3) {\n  risk <- \"Low - action may be necessary\"\n} else if (reba_final <= 7) {\n  risk <- \"Medium - action necessary\"\n} else if (reba_final <= 10) {\n  risk <- \"High - action necessary soon\"\n} else {\n  risk <- \"Very high - action necessary NOW\"\n}\n\nheadline <- sprintf(\"Final REBA score: %g\", reba_final)\nif (reba_final > 7) headline <- paste0(\"!!\", headline, \"!!\")\ncat(headline, \"\\n\")\ncat(sprintf(\"  Risk level  %s\\n\", risk))\ncat(sprintf(\"  Trunk, neck, legs  %g, %g, %g\\n\", trunk_score, neck_score, legs_score))\ncat(sprintf(\"  Score A (Table A lookup + load)  %g + %g = %g\\n\", table_a_score, load_force, score_a))\ncat(sprintf(\"  Upper arm, lower arm, wrist  %g, %g, %g\\n\", upper_arm_score, lower_arm_score, wrist_score))\ncat(sprintf(\"  Score B (Table B lookup + coupling)  %g + %g = %g\\n\", table_b_score, coupling, score_b))\ncat(sprintf(\"  Table C + activity  %g + %g = %g\\n\", score_c, activity, reba_final))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"reba-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# NIOSH Lifting Equation Example\n\n# Task parameters\nH <- 40    # Horizontal distance (cm)\nV <- 30    # Vertical height at start (cm)\nD <- 60    # Vertical travel distance (cm)\nA <- 30    # Asymmetry angle (degrees)\n\n# Constants\nLC <- 23   # Load constant (kg)\n\n# Calculate multipliers\nHM <- 25 / H\nVM <- 1 - 0.003 * abs(V - 75)\nDM <- 0.82 + 4.5 / D\nAM <- 1 - 0.0032 * A\n\n# Frequency multiplier (from table, for 2 lifts/min, 2 hours, V<75cm)\nFM <- 0.84\n\n# Coupling multiplier (assume \"fair\" coupling)\nCM <- 0.95\n\n# Calculate RWL\nRWL <- LC * HM * VM * DM * AM * FM * CM\n\n# Calculate Lifting Index for actual load\nactual_weight <- 15  # kg\nLI <- actual_weight / RWL\n\ncat(sprintf(\"Lifting Index: %.2f (RWL = %.1f kg)\\n\", LI, RWL))\ncat(sprintf(\"  HM (horizontal)   %.3f\\n\", HM))\ncat(sprintf(\"  VM (vertical)     %.3f\\n\", VM))\ncat(sprintf(\"  DM (distance)     %.3f\\n\", DM))\ncat(sprintf(\"  AM (asymmetry)    %.3f\\n\", AM))\nif (LI <= 1.0) {\n  cat(\"  Risk level        Low - task acceptable\\n\")\n} else if (LI <= 2.0) {\n  cat(\"  Risk level        Moderate - consider changes\\n\")\n} else if (LI <= 3.0) {\n  cat(\"  Risk level        !!High - changes recommended!!\\n\")\n} else {\n  cat(\"  Risk level        !!Very high - immediate changes required!!\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"niosh-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Investment\nequipment_cost <- 150000  # Lift assists, fixtures, cobots\ntraining_cost <- 15000\ntotal_investment <- equipment_cost + training_cost\n\n# Annual Savings\ninjury_reduction <- 220000     # (15 - 4 injuries avoided) x $20,000 avg cost per injury\nproductivity_gain <- 90000     # 18% improvement on $500,000 labor cost\nquality_improvement <- 17500   # 35% defect reduction on $50,000 cost\n\nannual_savings <- injury_reduction + productivity_gain + quality_improvement\n\ncat(sprintf(\"5-year ROI: %.0f%%\\n\", (annual_savings * 5 - total_investment) / total_investment * 100))\ncat(sprintf(\"  Total investment     $%s\\n\", format(total_investment, big.mark = \" \", scientific = FALSE)))\ncat(sprintf(\"  Annual savings       $%s\\n\", format(annual_savings, big.mark = \" \", scientific = FALSE)))\ncat(sprintf(\"  Payback period       %.1f years\\n\", total_investment / annual_savings))","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"roi-analysis","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -3934,8 +3934,176 @@ Discussion: Why Different Heights for Different Tasks?
 <section id="step-by-step-assessment" class="level4" data-number="4.7.4.1">
 <h4 data-number="4.7.4.1" class="anchored" data-anchor-id="step-by-step-assessment"><span class="header-section-number">4.7.4.1</span> Step-by-Step Assessment</h4>
 <p>Live cell — try different posture, load, or coupling scores.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="reba-step-by-step" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-person qwebr-calc-icon"></i>
+    <h4 class="anchored">REBA: Packaging Station Worker</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-neck-base">Neck: base score</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-neck-base" data-var="neck_base" value="2" min="1" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-neck-twist">Neck: twist / side-bend</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-neck-twist" data-var="neck_twist" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-trunk-base">Trunk: base score</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-trunk-base" data-var="trunk_base" value="3" min="1" max="4" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-trunk-twist">Trunk: twist / side-bend</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-trunk-twist" data-var="trunk_twist" value="1" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-legs-base">Legs: base score</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-legs-base" data-var="legs_base" value="1" min="1" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-legs-knee">Legs: knee flexion adjustment</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-legs-knee" data-var="legs_knee" value="0" min="0" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-table-a-score">Table A lookup</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-table-a-score" data-var="table_a_score" value="5" min="1" max="9" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-load-force">Load / force</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-load-force" data-var="load_force" value="1" min="0" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-shock-force">Shock / rapid build-up</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-shock-force" data-var="shock_force" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-upper-arm-base">Upper arm: base score</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-upper-arm-base" data-var="upper_arm_base" value="3" min="1" max="4" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-shoulder-raised">Upper arm: shoulder raised</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-shoulder-raised" data-var="shoulder_raised" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-arm-abducted">Upper arm: abducted</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-arm-abducted" data-var="arm_abducted" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-arm-support">Upper arm: supported (-1)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-arm-support" data-var="arm_support" value="0" min="-1" max="0" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-lower-arm-score">Lower arm</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-lower-arm-score" data-var="lower_arm_score" value="1" min="1" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-wrist-base">Wrist: base score</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-wrist-base" data-var="wrist_base" value="2" min="1" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-wrist-twist">Wrist: twist</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-wrist-twist" data-var="wrist_twist" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-table-b-score">Table B lookup</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-table-b-score" data-var="table_b_score" value="4" min="1" max="9" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-coupling-score">Coupling</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-coupling-score" data-var="coupling_score" value="1" min="0" max="3" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-reba-step-by-step-table-c-score">Table C lookup <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-reba-step-by-step-table-c-score" id="qcalc-reba-step-by-step-table-c-score-readout">7</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-reba-step-by-step-table-c-score" data-var="table_c_score" value="7" min="1" max="12" step="1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-static-posture">Static posture &gt; 1 min</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-static-posture" data-var="static_posture" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-repeated-actions">Repeated actions &gt; 4x/min</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-repeated-actions" data-var="repeated_actions" value="1" min="0" max="1" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-step-by-step-rapid-changes">Rapid large posture changes</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-step-by-step-rapid-changes" data-var="rapid_changes" value="0" min="0" max="1" step="1">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="recommendations-for-this-assessment" class="level4" data-number="4.7.4.2">
 <h4 data-number="4.7.4.2" class="anchored" data-anchor-id="recommendations-for-this-assessment"><span class="header-section-number">4.7.4.2</span> Recommendations for This Assessment</h4>
@@ -3986,8 +4154,106 @@ Discussion: Why Different Heights for Different Tasks?
 <section id="reba-example-calculation" class="level3" data-number="4.7.5">
 <h3 data-number="4.7.5" class="anchored" data-anchor-id="reba-example-calculation"><span class="header-section-number">4.7.5</span> REBA Example Calculation</h3>
 <p>Live cell — plug in your own posture scores and re-run.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="reba-example" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-person qwebr-calc-icon"></i>
+    <h4 class="anchored">REBA: Assembly Worker</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-trunk-score">Trunk</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-trunk-score" data-var="trunk_score" value="3" min="1" max="5" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-neck-score">Neck</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-neck-score" data-var="neck_score" value="2" min="1" max="3" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-legs-score">Legs</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-legs-score" data-var="legs_score" value="1" min="1" max="4" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-table-a-score">Table A lookup</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-table-a-score" data-var="table_a_score" value="4" min="1" max="9" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-load-force">Load / force</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-load-force" data-var="load_force" value="1" min="0" max="3" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-upper-arm-score">Upper arm</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-upper-arm-score" data-var="upper_arm_score" value="3" min="1" max="6" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-lower-arm-score">Lower arm</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-lower-arm-score" data-var="lower_arm_score" value="2" min="1" max="2" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-wrist-score">Wrist</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-wrist-score" data-var="wrist_score" value="2" min="1" max="3" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-table-b-score">Table B lookup</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-table-b-score" data-var="table_b_score" value="5" min="1" max="9" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-coupling">Coupling</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-coupling" data-var="coupling" value="1" min="0" max="3" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-reba-example-score-c">Table C lookup <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-reba-example-score-c" id="qcalc-reba-example-score-c-readout">8</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-reba-example-score-c" data-var="score_c" value="8" min="1" max="12" step="1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-reba-example-activity">Activity score</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-reba-example-activity" data-var="activity" value="1" min="0" max="3" step="1">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <details>
 <summary>
 Practice Problem: REBA Assessment

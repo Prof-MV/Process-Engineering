@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Example: Calculate top event probability\n# Basic event probabilities (annual failure rates)\nP_breaker_trip <- 0.02\nP_motor_fail <- 0.01\nP_impeller_worn <- 0.03\nP_impeller_break <- 0.005\nP_shaft_seize <- 0.008\nP_tank_empty <- 0.05\nP_valve_closed <- 0.01\nP_line_blocked <- 0.02\n\n# Impeller failure (OR gate)\nP_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)\n\n# Mechanical failure (OR gate)\nP_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)\n\n# No fluid available (OR gate)\nP_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)\n\n# Top event: Pump fails (OR gate)\nP_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)\n\ncat(sprintf(\"P(pump fails to deliver flow): %.1f%% per year\\n\", P_top * 100))\ncat(sprintf(\"  P(impeller failure)      %.4f\\n\", P_impeller_fail))\ncat(sprintf(\"  P(mechanical failure)    %.4f\\n\", P_mechanical))\ncat(sprintf(\"  P(no fluid available)    %.4f\\n\", P_no_fluid))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"fta-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Pareto analysis interpretation\ndefects <- data.frame(\n  Defect = c(\"Surface Scratch\", \"Dimensional Error\", \"Burrs\",\n             \"Missing Feature\", \"Wrong Material\", \"Contamination\",\n             \"Color Mismatch\", \"Packaging Damage\"),\n  Count = c(145, 98, 67, 34, 28, 21, 15, 12)\n)\n\ndefects <- defects[order(-defects$Count),]\ndefects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100\n\n# Identify the \"vital few\" (those that contribute to 80%)\nvital_few <- defects[defects$Cumulative_Pct <= 80 |\n                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]\n\ncat(\"Total defects:\", sum(defects$Count), \"\\n\")\ncat(\"\\nVital Few (contributing to ~80% of defects):\\n\")\nprint(vital_few[, c(\"Defect\", \"Count\", \"Cumulative_Pct\")])\ncat(\"\\nFocusing on these\", nrow(vital_few), \"defect types addresses\",\n    round(max(vital_few$Cumulative_Pct), 1), \"% of all defects\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-interpretation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Create and analyze the data\ndefects <- data.frame(\n  Type = c(\"Burrs\", \"Dimensional\", \"Scratches\", \"Surface Dents\",\n           \"Wrinkles\", \"Splits/Cracks\", \"Missing Features\"),\n  Count = c(156, 112, 89, 67, 45, 28, 18)\n)\n\n# Sort by count descending\ndefects <- defects[order(-defects$Count),]\n\n# Calculate percentages\ndefects$Percent <- defects$Count / sum(defects$Count) * 100\ndefects$Cumulative <- cumsum(defects$Percent)\n\n# Display results\nprint(defects)\n\n# Identify vital few\nvital_few <- defects$Type[defects$Cumulative <= 80 |\n                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]\ncat(\"\\nVital Few (contributing to ~80%):\", paste(vital_few, collapse = \", \"))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-practice","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Example: Calculate top event probability\n# Basic event probabilities (annual failure rates)\nP_breaker_trip <- 0.02\nP_motor_fail <- 0.01\nP_impeller_worn <- 0.03\nP_impeller_break <- 0.005\nP_shaft_seize <- 0.008\nP_tank_empty <- 0.05\nP_valve_closed <- 0.01\nP_line_blocked <- 0.02\n\n# Impeller failure (OR gate)\nP_impeller_fail <- 1 - (1 - P_impeller_worn) * (1 - P_impeller_break)\n\n# Mechanical failure (OR gate)\nP_mechanical <- 1 - (1 - P_motor_fail) * (1 - P_impeller_fail) * (1 - P_shaft_seize)\n\n# No fluid available (OR gate)\nP_no_fluid <- 1 - (1 - P_tank_empty) * (1 - P_valve_closed) * (1 - P_line_blocked)\n\n# Top event: Pump fails (OR gate)\nP_top <- 1 - (1 - P_breaker_trip) * (1 - P_mechanical) * (1 - P_no_fluid)\n\ncat(sprintf(\"P(pump fails to deliver flow): %.1f%% per year\\n\", P_top * 100))\ncat(sprintf(\"  P(impeller failure)      %.4f\\n\", P_impeller_fail))\ncat(sprintf(\"  P(mechanical failure)    %.4f\\n\", P_mechanical))\ncat(sprintf(\"  P(no fluid available)    %.4f\\n\", P_no_fluid))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"fta-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Pareto analysis interpretation\ndefects <- data.frame(\n  Defect = c(\"Surface Scratch\", \"Dimensional Error\", \"Burrs\",\n             \"Missing Feature\", \"Wrong Material\", \"Contamination\",\n             \"Color Mismatch\", \"Packaging Damage\"),\n  Count = c(145, 98, 67, 34, 28, 21, 15, 12)\n)\n\ndefects <- defects[order(-defects$Count),]\ndefects$Cumulative_Pct <- cumsum(defects$Count) / sum(defects$Count) * 100\n\n# Identify the \"vital few\" (those that contribute to 80%)\nvital_few <- defects[defects$Cumulative_Pct <= 80 |\n                      c(TRUE, defects$Cumulative_Pct[-nrow(defects)] < 80),]\n\ncat(sprintf(\"Vital few: %g defect types address %.1f%% of all defects\\n\",\n            nrow(vital_few), max(vital_few$Cumulative_Pct)))\ncat(sprintf(\"  Total defects  %g\\n\", sum(defects$Count)))\nfor (i in seq_len(nrow(vital_few))) {\n  cat(sprintf(\"  %s  %g (%.1f%% cumulative)\\n\", vital_few$Defect[i], vital_few$Count[i], vital_few$Cumulative_Pct[i]))\n}\n\npar(mar = c(5, 5, 3, 1))\nbarplot(defects$Count, names.arg = defects$Defect, cex.names = 0.55,\n        col = ifelse(defects$Defect %in% vital_few$Defect, \"#C0392B\", \"#95A5A6\"),\n        ylab = \"Count\", main = \"Pareto chart (red = vital few)\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-interpretation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Create and analyze the data\ndefects <- data.frame(\n  Type = c(\"Burrs\", \"Dimensional\", \"Scratches\", \"Surface Dents\",\n           \"Wrinkles\", \"Splits/Cracks\", \"Missing Features\"),\n  Count = c(156, 112, 89, 67, 45, 28, 18)\n)\n\n# Sort by count descending\ndefects <- defects[order(-defects$Count),]\n\n# Calculate percentages\ndefects$Percent <- defects$Count / sum(defects$Count) * 100\ndefects$Cumulative <- cumsum(defects$Percent)\n\n# Identify vital few\nvital_few <- defects$Type[defects$Cumulative <= 80 |\n                           c(TRUE, defects$Cumulative[-nrow(defects)] < 80)]\n\ncat(sprintf(\"Vital few (about 80%%): %s\\n\", paste(vital_few, collapse = \", \")))\nfor (i in seq_len(nrow(defects))) {\n  cat(sprintf(\"  %s  %g (%.1f%%, cumulative %.1f%%)\\n\", defects$Type[i], defects$Count[i],\n              defects$Percent[i], defects$Cumulative[i]))\n}\n\npar(mar = c(5, 5, 3, 1))\nbarplot(defects$Count, names.arg = defects$Type, cex.names = 0.55,\n        col = ifelse(defects$Type %in% vital_few, \"#C0392B\", \"#95A5A6\"),\n        ylab = \"Count\", main = \"Pareto chart (red = vital few)\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"pareto-practice","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2932,8 +2932,27 @@ Show the worked solution
 <section id="interpreting-pareto-analysis" class="level3" data-number="19.8.2">
 <h3 data-number="19.8.2" class="anchored" data-anchor-id="interpreting-pareto-analysis"><span class="header-section-number">19.8.2</span> Interpreting Pareto Analysis</h3>
 <p>Live cell — try different defect counts.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="pareto-interpretation" data-fig-width="1200" data-fig-height="800">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-chart-column qwebr-calc-icon"></i>
+    <h4 class="anchored">Pareto: Find the Vital Few</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:&quot;defects&quot;,&quot;addRows&quot;:true,&quot;columns&quot;:[{&quot;name&quot;:&quot;Defect&quot;,&quot;label&quot;:&quot;Defect type&quot;,&quot;values&quot;:[&quot;Surface Scratch&quot;,&quot;Dimensional Error&quot;,&quot;Burrs&quot;,&quot;Missing Feature&quot;,&quot;Wrong Material&quot;,&quot;Contamination&quot;,&quot;Color Mismatch&quot;,&quot;Packaging Damage&quot;],&quot;type&quot;:&quot;text&quot;,&quot;options&quot;:[]},{&quot;name&quot;:&quot;Count&quot;,&quot;label&quot;:&quot;Count&quot;,&quot;values&quot;:[145,98,67,34,28,21,15,12],&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;min&quot;:0,&quot;step&quot;:1}]}"></div>
+    <p class="qwebr-calc-table-note">Counts need not be in order; the card sorts them.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="stratified-pareto-analysis" class="level3" data-number="19.8.3">
 <h3 data-number="19.8.3" class="anchored" data-anchor-id="stratified-pareto-analysis"><span class="header-section-number">19.8.3</span> Stratified Pareto Analysis</h3>
@@ -3825,8 +3844,27 @@ Fixing the root cause (implementing tool life tracking) prevents the problem fro
 </tbody>
 </table>
 <p><strong>Answer:</strong> (live — try your own defect counts)</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="pareto-practice" data-fig-width="1200" data-fig-height="800">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-chart-column qwebr-calc-icon"></i>
+    <h4 class="anchored">Stamping Defects: Pareto</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:&quot;defects&quot;,&quot;addRows&quot;:true,&quot;columns&quot;:[{&quot;name&quot;:&quot;Type&quot;,&quot;label&quot;:&quot;Defect type&quot;,&quot;values&quot;:[&quot;Burrs&quot;,&quot;Dimensional&quot;,&quot;Scratches&quot;,&quot;Surface Dents&quot;,&quot;Wrinkles&quot;,&quot;Splits/Cracks&quot;,&quot;Missing Features&quot;],&quot;type&quot;:&quot;text&quot;,&quot;options&quot;:[]},{&quot;name&quot;:&quot;Count&quot;,&quot;label&quot;:&quot;Count&quot;,&quot;values&quot;:[156,112,89,67,45,28,18],&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;min&quot;:0,&quot;step&quot;:1}]}"></div>
+    <p class="qwebr-calc-table-note">Counts need not be in order; the card sorts them.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 The <strong>vital few</strong> are Burrs, Dimensional errors, and Scratches - addressing these three defect types would address approximately 69% of all defects. Adding Surface Dents would bring the total to 82%.
 </details>
 <details>

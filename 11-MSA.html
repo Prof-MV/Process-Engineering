@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Bias study calculation\nreference_value <- 50.000  # Certified reference standard\nmeasurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,\n                  50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07)\n\n# Calculate bias\naverage_measured <- mean(measurements)\nbias <- average_measured - reference_value\n\ncat(\"Reference Value:\", reference_value, \"mm\\n\")\ncat(\"Average Measured:\", round(average_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\")\ncat(\"Bias as % of Tolerance (±0.10):\", round(abs(bias) / 0.10 * 100, 1), \"%\\n\")\n\n# Statistical test for significance\nt_test <- t.test(measurements, mu = reference_value)\ncat(\"\\nt-test p-value:\", round(t_test$p.value, 4))\nif(t_test$p.value < 0.05) {\n  cat(\" - Bias is statistically significant\\n\")\n} else {\n  cat(\" - Bias is not statistically significant\\n\")\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"bias-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Linearity calculation\nreference <- c(10, 25, 40, 55, 70)\navg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)\n\n# Fit linear regression\nmodel <- lm(avg_bias ~ reference)\n\n# Calculate linearity\nslope <- coef(model)[2]\nrange_used <- max(reference) - min(reference)\nlinearity <- abs(slope) * range_used\n\ncat(\"Regression equation: Bias =\", round(coef(model)[1], 4), \"+\",\n    round(slope, 5), \"× Reference\\n\")\ncat(\"Linearity (slope × range):\", round(linearity, 4), \"mm\\n\")\ncat(\"As % of tolerance (±0.10):\", round(linearity / 0.10 * 100, 1), \"%\\n\")\n\n# R-squared\ncat(\"R² =\", round(summary(model)$r.squared, 3),\n    \"- indicates\", ifelse(summary(model)$r.squared > 0.7, \"significant\", \"minor\"),\n    \"linearity issue\\n\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"linearity-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Stability monitoring with control chart\nreference <- 25.000\nmeasurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,\n                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)\ndays <- 1:15\n\n# Calculate control limits (based on historical sigma)\nhistorical_sigma <- 0.010\nx_bar <- mean(measurements[1:5])  # Baseline from first 5 days\nUCL <- x_bar + 3 * historical_sigma\nLCL <- x_bar - 3 * historical_sigma\n\ncat(\"Baseline Average:\", round(x_bar, 4), \"\\n\")\ncat(\"UCL:\", round(UCL, 4), \"\\n\")\ncat(\"LCL:\", round(LCL, 4), \"\\n\")\n\n# Check for out-of-control\nout_of_control <- which(measurements > UCL | measurements < LCL)\nif(length(out_of_control) > 0) {\n  cat(\"\\nOut-of-control points on days:\", out_of_control, \"\\n\")\n  cat(\"Drift detected - recalibration recommended\\n\")\n} else {\n  cat(\"\\nNo out-of-control points - measurement system stable\\n\")\n}","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"stability-control-chart","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Range Method Gauge R&R Calculation\n# Two operators, five parts, two trials each\n\n# Data: Measurements by each operator (2 trials per part)\noperator_a <- matrix(c(\n  0.85, 0.87,  # Part 1\n  0.92, 0.91,  # Part 2\n  0.78, 0.80,  # Part 3\n  0.95, 0.96,  # Part 4\n  0.88, 0.85   # Part 5\n), ncol = 2, byrow = TRUE)\n\noperator_b <- matrix(c(\n  0.86, 0.88,  # Part 1\n  0.93, 0.92,  # Part 2\n  0.80, 0.79,  # Part 3\n  0.94, 0.97,  # Part 4\n  0.87, 0.88   # Part 5\n), ncol = 2, byrow = TRUE)\n\n# Step 1: Calculate ranges for each part-operator combination\nrange_a <- apply(operator_a, 1, function(x) max(x) - min(x))\nrange_b <- apply(operator_b, 1, function(x) max(x) - min(x))\n\n# Step 2: Average range\nR_bar <- mean(c(range_a, range_b))\n\n# Step 3: Calculate Repeatability (EV)\n# d2 for 2 trials = 1.128\nd2_trials <- 1.128\nEV <- R_bar / d2_trials\n\n# Step 4: Calculate part averages by operator\navg_a <- rowMeans(operator_a)\navg_b <- rowMeans(operator_b)\n\n# Step 5: Range of operator averages\nX_diff <- abs(mean(avg_a) - mean(avg_b))\n\n# d2 for 2 operators = 1.128\nd2_operators <- 1.128\nn_parts <- 5\nn_trials <- 2\n\n# Step 6: Reproducibility (AV)\nAV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))\nAV <- sqrt(max(0, AV_squared))\n\n# Step 7: Gauge R&R\nGRR <- sqrt(EV^2 + AV^2)\n\n# Step 8: Express as % of tolerance\ntolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total\n\ncat(\"=== Range Method Gauge R&R Results ===\\n\\n\")\ncat(\"Average Range (R-bar):\", round(R_bar, 4), \"\\n\")\ncat(\"Repeatability (EV):\", round(EV, 4), \"\\n\")\ncat(\"Reproducibility (AV):\", round(AV, 4), \"\\n\")\ncat(\"Gauge R&R (GRR):\", round(GRR, 4), \"\\n\\n\")\ncat(\"%EV (of tolerance):\", round(EV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%AV (of tolerance):\", round(AV / tolerance * 100 * 5.15, 1), \"%\\n\")\ncat(\"%GRR (of tolerance):\", round(GRR / tolerance * 100 * 5.15, 1), \"%\\n\")","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"range-method","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Resolution adequacy check\ntolerance <- 0.100  # mm total tolerance\nprocess_6sigma <- 0.080  # 6 sigma of process\ngauge_resolution <- 0.010  # mm (smallest increment)\n\n# Check against tolerance\nratio_tolerance <- tolerance / gauge_resolution\n# Check against process\nratio_process <- process_6sigma / gauge_resolution\n\nif (ratio_tolerance >= 10 && ratio_process >= 10) {\n  cat(\"Gauge resolution is adequate\\n\")\n} else {\n  cat(\"Gauge resolution is !!inadequate!!\\n\")\n}\ncat(sprintf(\"  Tolerance / Resolution   %.0f : 1 (%s)\\n\", ratio_tolerance, ifelse(ratio_tolerance >= 10, \"adequate\", \"!!inadequate!!\")))\ncat(sprintf(\"  Process 6σ / Resolution   %.0f : 1 (%s)\\n\", ratio_process, ifelse(ratio_process >= 10, \"adequate\", \"!!inadequate!!\")))","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"resolution-check","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# True process parameters\ntrue_mean <- 100\ntrue_sigma <- 2.0\nUSL <- 106\nLSL <- 94\ntolerance <- USL - LSL\n\n# True capability\ntrue_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)\n\n# With good measurement system (10% GRR)\ngrr_good <- 0.10 * tolerance / 5.15\nobserved_sigma_good <- sqrt(true_sigma^2 + grr_good^2)\nobserved_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)\n\n# With poor measurement system (50% GRR)\ngrr_poor <- 0.50 * tolerance / 5.15\nobserved_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)\nobserved_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)\n\ncat(sprintf(\"A capable process (true Cpk = %.2f) can appear incapable under poor MSA\\n\", true_Cpk))\ncat(sprintf(\"  True Cpk                 %.2f\\n\", true_Cpk))\ncat(sprintf(\"  Observed Cpk (10%% GRR)   %.2f\\n\", observed_Cpk_good))\ncat(sprintf(\"  Observed Cpk (50%% GRR)   %.2f\\n\", observed_Cpk_poor))","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"msa-capability-effect","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"reference <- 25.000\ntolerance_total <- 0.100  # ±0.050 = 0.100 total\nmeasurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,\n                  25.009, 25.013, 25.010, 25.012, 25.011)\n\n# Calculate bias\nmean_measured <- mean(measurements)\nbias <- mean_measured - reference\n\ncat(\"Reference value:\", reference, \"mm\\n\")\ncat(\"Mean measured:\", round(mean_measured, 4), \"mm\\n\")\ncat(\"Bias:\", round(bias, 4), \"mm\\n\\n\")\n\n# Express as % of tolerance\nbias_pct <- abs(bias) / tolerance_total * 100\ncat(\"Bias as % of tolerance:\", round(bias_pct, 1), \"%\\n\")\n\n# T-test for significance\nt_result <- t.test(measurements, mu = reference)\ncat(\"T-test p-value:\", round(t_result$p.value, 6), \"\\n\\n\")\n\n# Acceptability\ncat(\"Acceptability Assessment:\\n\")\nif(bias_pct < 10) {\n  cat(\"- Bias < 10% of tolerance: ACCEPTABLE\\n\")\n} else if(bias_pct < 25) {\n  cat(\"- Bias 10-25% of tolerance: MARGINAL\\n\")\n} else {\n  cat(\"- Bias > 25% of tolerance: UNACCEPTABLE\\n\")\n}\n\nif(t_result$p.value < 0.05) {\n  cat(\"- Bias is statistically significant (p < 0.05)\\n\")\n  cat(\"- Consider recalibration or technique adjustment\\n\")\n}","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q3-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values from ANOVA table\nMS_part <- 0.03167\nMS_operator <- 0.00125\nMS_interaction <- 0.00050\nMS_error <- 0.00030\n\nn_parts <- 10\nn_operators <- 3\nn_trials <- 3\n\n# Variance components\nvar_repeatability <- MS_error\ncat(\"Var(Repeatability) =\", var_repeatability, \"\\n\")\n\nvar_interaction <- max(0, (MS_interaction - MS_error) / n_trials)\ncat(\"Var(Interaction) =\", round(var_interaction, 6), \"\\n\")\n\nvar_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))\ncat(\"Var(Operator) =\", round(var_operator, 6), \"\\n\")\n\nvar_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))\ncat(\"Var(Part) =\", round(var_part, 6), \"\\n\\n\")\n\n# Reproducibility = Operator + Interaction\nvar_reproducibility <- var_operator + var_interaction\ncat(\"Var(Reproducibility) =\", round(var_reproducibility, 6), \"\\n\")\n\n# Total Gauge R&R\nvar_GRR <- var_repeatability + var_reproducibility\ncat(\"Var(GRR) =\", round(var_GRR, 6), \"\\n\")\n\n# Total variation\nvar_total <- var_part + var_GRR\ncat(\"Var(Total) =\", round(var_total, 6), \"\\n\\n\")\n\n# Calculate %GRR (of total variation)\nsigma_GRR <- sqrt(var_GRR)\nsigma_total <- sqrt(var_total)\npct_GRR <- (sigma_GRR / sigma_total) * 100\n\ncat(\"%GRR (of Total Variation) =\", round(pct_GRR, 1), \"%\\n\\n\")\n\n# ndc\nsigma_part <- sqrt(var_part)\nndc <- 1.41 * (sigma_part / sigma_GRR)\ncat(\"ndc =\", round(ndc, 1), \"\\n\\n\")\n\nif(pct_GRR < 10) {\n  cat(\"Assessment: ACCEPTABLE (< 10%)\\n\")\n} else if(pct_GRR < 30) {\n  cat(\"Assessment: MARGINAL (10-30%)\\n\")\n} else {\n  cat(\"Assessment: UNACCEPTABLE (> 30%)\\n\")\n}","id":8,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q7-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Bias study calculation\nreference_value <- 50.000  # Certified reference standard\nmeasurements <- c(50.08, 50.07, 50.09, 50.08, 50.06, 50.10, 50.07, 50.08,\n                  50.09, 50.08, 50.07, 50.11, 50.08, 50.09, 50.07)\n\n# Calculate bias\naverage_measured <- mean(measurements)\nbias <- average_measured - reference_value\n\n# Statistical test for significance\nt_test <- t.test(measurements, mu = reference_value)\n\ncat(sprintf(\"Bias: %.4f mm (%.1f%% of the ±0.10 tolerance)\\n\", bias, abs(bias) / 0.10 * 100))\ncat(sprintf(\"  Reference value  %g mm\\n\", reference_value))\ncat(sprintf(\"  Average measured  %.4f mm\\n\", average_measured))\ncat(sprintf(\"  t-test p-value  %.4f\\n\", t_test$p.value))\nif(t_test$p.value < 0.05) {\n  cat(\"  Verdict  !!Bias is statistically significant!!\\n\")\n} else {\n  cat(\"  Verdict  Bias is not statistically significant\\n\")\n}\n\npar(mar = c(5, 5, 3, 1))\nplot(measurements, pch = 19, ylim = range(measurements, reference_value),\n     xlab = \"Measurement number\", ylab = \"Measured value (mm)\", main = \"Readings vs reference\")\nabline(h = reference_value, lwd = 2, col = \"#27AE60\")\nabline(h = average_measured, lwd = 2, lty = 2, col = \"#C0392B\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"bias-calculation","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Linearity calculation\nreference <- c(10, 25, 40, 55, 70)\navg_bias <- c(0.020, 0.008, -0.002, -0.018, -0.048)\n\n# Fit linear regression\nmodel <- lm(avg_bias ~ reference)\n\n# Calculate linearity\nslope <- coef(model)[2]\nrange_used <- max(reference) - min(reference)\nlinearity <- abs(slope) * range_used\nr_squared <- summary(model)$r.squared\n\ncat(sprintf(\"Linearity: %.4f mm (%.1f%% of the ±0.10 tolerance)\\n\", linearity, linearity / 0.10 * 100))\ncat(sprintf(\"  Regression  Bias = %.4f + %.5f x Reference\\n\", coef(model)[1], slope))\ncat(sprintf(\"  R-squared  %.3f\\n\", r_squared))\nif (r_squared > 0.7) {\n  cat(\"  Verdict  !!Significant linearity issue!!\\n\")\n} else {\n  cat(\"  Verdict  Minor linearity issue\\n\")\n}\n\npar(mar = c(5, 5, 3, 1))\nplot(reference, avg_bias, pch = 19, xlab = \"Reference value (mm)\", ylab = \"Average bias (mm)\",\n     main = \"Bias across the operating range\")\nabline(model, lwd = 2, col = \"#C0392B\")\nabline(h = 0, lty = 2, col = \"gray50\")","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"linearity-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Stability monitoring with control chart\nreference <- 25.000\nmeasurements <- c(25.012, 25.008, 25.015, 25.018, 25.022, 25.019, 25.025,\n                  25.028, 25.031, 25.026, 25.033, 25.038, 25.035, 25.041, 25.039)\ndays <- 1:15\n\n# Calculate control limits (based on historical sigma)\nhistorical_sigma <- 0.010\nx_bar <- mean(measurements[1:5])  # Baseline from first 5 days\nUCL <- x_bar + 3 * historical_sigma\nLCL <- x_bar - 3 * historical_sigma\n\n# Check for out-of-control\nout_of_control <- which(measurements > UCL | measurements < LCL)\nif(length(out_of_control) > 0) {\n  cat(sprintf(\"!!Drift detected on day(s) %s: recalibration recommended!!\\n\", paste(out_of_control, collapse = \", \")))\n} else {\n  cat(\"No out-of-control points: measurement system stable\\n\")\n}\n\ncat(sprintf(\"  Baseline average  %.4f mm\\n\", x_bar))\ncat(sprintf(\"  UCL  %.4f mm\\n\", UCL))\ncat(sprintf(\"  LCL  %.4f mm\\n\", LCL))\ncat(sprintf(\"  Reference value  %.4f mm\\n\", reference))\n\npar(mar = c(5, 5, 3, 1))\nplot(days, measurements, type = \"b\", pch = 19, ylim = range(measurements, UCL, LCL, reference),\n     xlab = \"Day\", ylab = \"Measured value (mm)\", main = \"Stability control chart\")\nabline(h = c(UCL, x_bar, LCL), lty = c(2, 1, 2), col = c(\"#C0392B\", \"#27AE60\", \"#C0392B\"))\nabline(h = reference, lty = 3, col = \"gray50\")\npoints(days[out_of_control], measurements[out_of_control], pch = 19, cex = 1.6, col = \"#C0392B\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"stability-control-chart","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Range Method Gauge R&R Calculation\n# Two operators, five parts, two trials each\n\n# Data: Measurements by each operator, one vector per trial (one value per part)\na_trial1 <- c(0.85, 0.92, 0.78, 0.95, 0.88)\na_trial2 <- c(0.87, 0.91, 0.80, 0.96, 0.85)\nb_trial1 <- c(0.86, 0.93, 0.80, 0.94, 0.87)\nb_trial2 <- c(0.88, 0.92, 0.79, 0.97, 0.88)\n\n# One row per part, one column per trial\noperator_a <- cbind(a_trial1, a_trial2)\noperator_b <- cbind(b_trial1, b_trial2)\n\n# Step 1: Calculate ranges for each part-operator combination\nrange_a <- apply(operator_a, 1, function(x) max(x) - min(x))\nrange_b <- apply(operator_b, 1, function(x) max(x) - min(x))\n\n# Step 2: Average range\nR_bar <- mean(c(range_a, range_b))\n\n# Step 3: Calculate Repeatability (EV)\n# d2 for 2 trials = 1.128\nd2_trials <- 1.128\nEV <- R_bar / d2_trials\n\n# Step 4: Calculate part averages by operator\navg_a <- rowMeans(operator_a)\navg_b <- rowMeans(operator_b)\n\n# Step 5: Range of operator averages\nX_diff <- abs(mean(avg_a) - mean(avg_b))\n\n# d2 for 2 operators = 1.128\nd2_operators <- 1.128\nn_parts <- 5\nn_trials <- 2\n\n# Step 6: Reproducibility (AV)\nAV_squared <- (X_diff / d2_operators)^2 - (EV^2 / (n_parts * n_trials))\nAV <- sqrt(max(0, AV_squared))\n\n# Step 7: Gauge R&R\nGRR <- sqrt(EV^2 + AV^2)\n\n# Step 8: Express as % of tolerance\ntolerance <- 0.30  # Example tolerance of ±0.15 = 0.30 total\n\npct_GRR <- GRR / tolerance * 100 * 5.15\nverdict <- if (pct_GRR < 10) \"Acceptable\" else if (pct_GRR < 30) \"Marginal\" else \"!!Unacceptable!!\"\n\ncat(sprintf(\"%%GRR (of tolerance): %.1f%%\\n\", pct_GRR))\ncat(sprintf(\"  Assessment  %s\\n\", verdict))\ncat(\"AIAG: below 10% acceptable, 10-30% marginal, above 30% unacceptable\\n\")\ncat(sprintf(\"  Average range (R-bar)  %.4f\\n\", R_bar))\ncat(sprintf(\"  Repeatability (EV)  %.4f\\n\", EV))\ncat(sprintf(\"  Reproducibility (AV)  %.4f\\n\", AV))\ncat(sprintf(\"  Gauge R&R (GRR)  %.4f\\n\", GRR))\ncat(sprintf(\"  %%EV (of tolerance)  %.1f%%\\n\", EV / tolerance * 100 * 5.15))\ncat(sprintf(\"  %%AV (of tolerance)  %.1f%%\\n\", AV / tolerance * 100 * 5.15))","id":4,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"range-method","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Resolution adequacy check\ntolerance <- 0.100  # mm total tolerance\nprocess_6sigma <- 0.080  # 6 sigma of process\ngauge_resolution <- 0.010  # mm (smallest increment)\n\n# Check against tolerance\nratio_tolerance <- tolerance / gauge_resolution\n# Check against process\nratio_process <- process_6sigma / gauge_resolution\n\nif (ratio_tolerance >= 10 && ratio_process >= 10) {\n  cat(\"Gauge resolution is adequate\\n\")\n} else {\n  cat(\"Gauge resolution is !!inadequate!!\\n\")\n}\ncat(sprintf(\"  Tolerance / Resolution   %.0f : 1 (%s)\\n\", ratio_tolerance, ifelse(ratio_tolerance >= 10, \"adequate\", \"!!inadequate!!\")))\ncat(sprintf(\"  Process 6σ / Resolution   %.0f : 1 (%s)\\n\", ratio_process, ifelse(ratio_process >= 10, \"adequate\", \"!!inadequate!!\")))","id":5,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"resolution-check","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# True process parameters\ntrue_mean <- 100\ntrue_sigma <- 2.0\nUSL <- 106\nLSL <- 94\ntolerance <- USL - LSL\n\n# True capability\ntrue_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)\n\n# With good measurement system (10% GRR)\ngrr_good <- 0.10 * tolerance / 5.15\nobserved_sigma_good <- sqrt(true_sigma^2 + grr_good^2)\nobserved_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)\n\n# With poor measurement system (50% GRR)\ngrr_poor <- 0.50 * tolerance / 5.15\nobserved_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)\nobserved_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)\n\ncat(sprintf(\"A capable process (true Cpk = %.2f) can appear incapable under poor MSA\\n\", true_Cpk))\ncat(sprintf(\"  True Cpk                 %.2f\\n\", true_Cpk))\ncat(sprintf(\"  Observed Cpk (10%% GRR)   %.2f\\n\", observed_Cpk_good))\ncat(sprintf(\"  Observed Cpk (50%% GRR)   %.2f\\n\", observed_Cpk_poor))","id":6,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"msa-capability-effect","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"reference <- 25.000\ntolerance_total <- 0.100  # ±0.050 = 0.100 total\nmeasurements <- c(25.012, 25.015, 25.008, 25.011, 25.014,\n                  25.009, 25.013, 25.010, 25.012, 25.011)\n\n# Calculate bias\nmean_measured <- mean(measurements)\nbias <- mean_measured - reference\n\n# Express as % of tolerance\nbias_pct <- abs(bias) / tolerance_total * 100\n\n# T-test for significance\nt_result <- t.test(measurements, mu = reference)\n\n# Acceptability\nif(bias_pct < 10) {\n  assessment <- \"ACCEPTABLE (bias < 10% of tolerance)\"\n} else if(bias_pct < 25) {\n  assessment <- \"MARGINAL (bias 10-25% of tolerance)\"\n} else {\n  assessment <- \"!!UNACCEPTABLE (bias > 25% of tolerance)!!\"\n}\n\ncat(sprintf(\"Bias: %.4f mm (%.1f%% of tolerance)\\n\", bias, bias_pct))\ncat(sprintf(\"  Assessment  %s\\n\", assessment))\ncat(sprintf(\"  Reference value  %g mm\\n\", reference))\ncat(sprintf(\"  Mean measured  %.4f mm\\n\", mean_measured))\ncat(sprintf(\"  T-test p-value  %.6f\\n\", t_result$p.value))\nif(t_result$p.value < 0.05) {\n  cat(\"  Significance  !!Bias is statistically significant (p < 0.05)!!\\n\")\n  cat(\"Consider recalibration or technique adjustment\\n\")\n} else {\n  cat(\"  Significance  Bias is not statistically significant\\n\")\n}","id":7,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q3-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values from ANOVA table\nMS_part <- 0.03167\nMS_operator <- 0.00125\nMS_interaction <- 0.00050\nMS_error <- 0.00030\n\nn_parts <- 10\nn_operators <- 3\nn_trials <- 3\n\n# Variance components\nvar_repeatability <- MS_error\nvar_interaction <- max(0, (MS_interaction - MS_error) / n_trials)\nvar_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))\nvar_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))\n\n# Reproducibility = Operator + Interaction\nvar_reproducibility <- var_operator + var_interaction\n\n# Total Gauge R&R\nvar_GRR <- var_repeatability + var_reproducibility\n\n# Total variation\nvar_total <- var_part + var_GRR\n\n# Calculate %GRR (of total variation)\nsigma_GRR <- sqrt(var_GRR)\nsigma_total <- sqrt(var_total)\npct_GRR <- (sigma_GRR / sigma_total) * 100\n\n# ndc\nsigma_part <- sqrt(var_part)\nndc <- 1.41 * (sigma_part / sigma_GRR)\n\nif(pct_GRR < 10) {\n  assessment <- \"ACCEPTABLE (< 10%)\"\n} else if(pct_GRR < 30) {\n  assessment <- \"MARGINAL (10-30%)\"\n} else {\n  assessment <- \"!!UNACCEPTABLE (> 30%)!!\"\n}\n\ncat(sprintf(\"%%GRR (of total variation): %.1f%%\\n\", pct_GRR))\ncat(sprintf(\"  Assessment  %s\\n\", assessment))\ncat(sprintf(\"  Number of distinct categories (ndc)  %.1f\\n\", ndc))\ncat(sprintf(\"  Var(Repeatability)  %.6f\\n\", var_repeatability))\ncat(sprintf(\"  Var(Interaction)  %.6f\\n\", var_interaction))\ncat(sprintf(\"  Var(Operator)  %.6f\\n\", var_operator))\ncat(sprintf(\"  Var(Part)  %.6f\\n\", var_part))\ncat(sprintf(\"  Var(Reproducibility)  %.6f\\n\", var_reproducibility))\ncat(sprintf(\"  Var(GRR)  %.6f\\n\", var_GRR))\ncat(sprintf(\"  Var(Total)  %.6f\\n\", var_total))","id":8,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q7-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -2478,8 +2478,34 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 <p>Live cell — try different reference and measured values.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="bias-calculation" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-ruler qwebr-calc-icon"></i>
+    <h4 class="anchored">Bias Study</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-bias-calculation-reference-value">Certified reference value</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-bias-calculation-reference-value" data-var="reference_value" value="50" min="0" max="200" step="0.001">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:null,&quot;addRows&quot;:false,&quot;columns&quot;:[{&quot;name&quot;:&quot;reading&quot;,&quot;label&quot;:&quot;Reading&quot;,&quot;values&quot;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&quot;type&quot;:&quot;label&quot;,&quot;options&quot;:[]},{&quot;name&quot;:&quot;measurements&quot;,&quot;label&quot;:&quot;Measured (mm)&quot;,&quot;values&quot;:[50.08,50.07,50.09,50.08,50.06,50.1,50.07,50.08,50.09,50.08,50.07,50.11,50.08,50.09,50.07],&quot;var&quot;:&quot;measurements&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.01}]}"></div>
+    <p class="qwebr-calc-table-note">Needs at least 2 readings that are not all identical, or the t-test cannot run.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="linearity" class="level3" data-number="5.5.2">
 <h3 data-number="5.5.2" class="anchored" data-anchor-id="linearity"><span class="header-section-number">5.5.2</span> Linearity</h3>
@@ -2494,8 +2520,27 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 </div>
 </div>
 <p>Live cell — try a different set of reference points and biases.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="linearity-calc" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-ruler qwebr-calc-icon"></i>
+    <h4 class="anchored">Linearity Study</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:null,&quot;addRows&quot;:true,&quot;columns&quot;:[{&quot;name&quot;:&quot;reference&quot;,&quot;label&quot;:&quot;Reference value (mm)&quot;,&quot;values&quot;:[10,25,40,55,70],&quot;var&quot;:&quot;reference&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:5},{&quot;name&quot;:&quot;avg_bias&quot;,&quot;label&quot;:&quot;Average bias (mm)&quot;,&quot;values&quot;:[0.02,0.008,-0.002,-0.018,-0.048],&quot;var&quot;:&quot;avg_bias&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.001}]}"></div>
+    <p class="qwebr-calc-table-note">Needs at least 3 reference points at different sizes.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-2"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="stability" class="level3" data-number="5.5.3">
 <h3 data-number="5.5.3" class="anchored" data-anchor-id="stability"><span class="header-section-number">5.5.3</span> Stability</h3>
@@ -2513,8 +2558,42 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <section id="stability-control-chart" class="level3" data-number="5.5.4">
 <h3 data-number="5.5.4" class="anchored" data-anchor-id="stability-control-chart"><span class="header-section-number">5.5.4</span> Stability Control Chart</h3>
 <p>For ongoing stability monitoring, use a control chart. Live cell — try different measurements or a different historical sigma.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="stability-control-chart" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-chart-line qwebr-calc-icon"></i>
+    <h4 class="anchored">Stability Control Chart</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-stability-control-chart-historical-sigma">Historical sigma</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-stability-control-chart-historical-sigma" data-var="historical_sigma" value="0.01" min="0.001" max="0.1" step="0.001">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-stability-control-chart-reference">Reference value</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-stability-control-chart-reference" data-var="reference" value="25" min="0" max="200" step="0.001">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:null,&quot;addRows&quot;:false,&quot;columns&quot;:[{&quot;name&quot;:&quot;day&quot;,&quot;label&quot;:&quot;Day&quot;,&quot;values&quot;:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],&quot;type&quot;:&quot;label&quot;,&quot;options&quot;:[]},{&quot;name&quot;:&quot;measurements&quot;,&quot;label&quot;:&quot;Measured (mm)&quot;,&quot;values&quot;:[25.012,25.008,25.015,25.018,25.022,25.019,25.025,25.028,25.031,25.026,25.033,25.038,25.035,25.041,25.039],&quot;var&quot;:&quot;measurements&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.001}]}"></div>
+    <p class="qwebr-calc-table-note">The baseline (centre line) is the average of the first 5 days.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 <hr>
 </section>
 </section>
@@ -2621,8 +2700,34 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <h3 data-number="5.6.3" class="anchored" data-anchor-id="range-method-short-form"><span class="header-section-number">5.6.3</span> Range Method (Short Form)</h3>
 <p>The Range Method is a quick approximation useful for initial screening.</p>
 <p>Live cell — try different measurement data for the two operators.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="range-method" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-scale-balanced qwebr-calc-icon"></i>
+    <h4 class="anchored">Range Method Gauge R&amp;R</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-range-method-tolerance">Total tolerance</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-range-method-tolerance" data-var="tolerance" value="0.3" min="0.01" max="2" step="0.01">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:null,&quot;addRows&quot;:false,&quot;columns&quot;:[{&quot;name&quot;:&quot;part&quot;,&quot;label&quot;:&quot;Part&quot;,&quot;values&quot;:[1,2,3,4,5],&quot;type&quot;:&quot;label&quot;,&quot;options&quot;:[]},{&quot;name&quot;:&quot;a_trial1&quot;,&quot;label&quot;:&quot;A trial 1&quot;,&quot;values&quot;:[0.85,0.92,0.78,0.95,0.88],&quot;var&quot;:&quot;a_trial1&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.01},{&quot;name&quot;:&quot;a_trial2&quot;,&quot;label&quot;:&quot;A trial 2&quot;,&quot;values&quot;:[0.87,0.91,0.8,0.96,0.85],&quot;var&quot;:&quot;a_trial2&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.01},{&quot;name&quot;:&quot;b_trial1&quot;,&quot;label&quot;:&quot;B trial 1&quot;,&quot;values&quot;:[0.86,0.93,0.8,0.94,0.87],&quot;var&quot;:&quot;b_trial1&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.01},{&quot;name&quot;:&quot;b_trial2&quot;,&quot;label&quot;:&quot;B trial 2&quot;,&quot;values&quot;:[0.88,0.92,0.79,0.97,0.88],&quot;var&quot;:&quot;b_trial2&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.01}]}"></div>
+    <p class="qwebr-calc-table-note">Five parts, two operators (A and B), two trials each. A tolerance of ±0.15 mm is 0.30 mm total.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-4"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </section>
 <section id="anova-method-full-study" class="level3" data-number="5.6.4">
 <h3 data-number="5.6.4" class="anchored" data-anchor-id="anova-method-full-study"><span class="header-section-number">5.6.4</span> ANOVA Method (Full Study)</h3>
@@ -3545,8 +3650,42 @@ Show the live R code behind this calculator
 </summary>
 <p><strong>Answer:</strong></p>
 <p>Live cell — check your own version by changing the numbers.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="q3-answer" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-ruler qwebr-calc-icon"></i>
+    <h4 class="anchored">Is the Bias Acceptable?</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q3-answer-reference">Reference value</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q3-answer-reference" data-var="reference" value="25" min="0" max="200" step="0.001">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q3-answer-tolerance-total">Total tolerance (± band x 2)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q3-answer-tolerance-total" data-var="tolerance_total" value="0.1" min="0.001" max="2" step="0.001">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+    <div class="qwebr-calc-table" data-spec="{&quot;frame&quot;:null,&quot;addRows&quot;:false,&quot;columns&quot;:[{&quot;name&quot;:&quot;reading&quot;,&quot;label&quot;:&quot;Reading&quot;,&quot;values&quot;:[1,2,3,4,5,6,7,8,9,10],&quot;type&quot;:&quot;label&quot;,&quot;options&quot;:[]},{&quot;name&quot;:&quot;measurements&quot;,&quot;label&quot;:&quot;Measured (mm)&quot;,&quot;values&quot;:[25.012,25.015,25.008,25.011,25.014,25.009,25.013,25.01,25.012,25.011],&quot;var&quot;:&quot;measurements&quot;,&quot;type&quot;:&quot;number&quot;,&quot;options&quot;:[],&quot;step&quot;:0.001}]}"></div>
+    <p class="qwebr-calc-table-note">Needs at least 2 readings that are not all identical, or the t-test cannot run.</p>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-7"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 The bias of 0.0115 mm (11.5% of tolerance) is <strong>marginally acceptable</strong> and statistically significant. Recalibration should be considered.
 </details>
 <details>
@@ -3687,8 +3826,73 @@ Required resolution ≤ 0.008 mm</code></pre>
 <p>Study design: 10 parts, 3 operators, 3 trials</p>
 <p><strong>Answer:</strong></p>
 <p>Live cell — check your own version by changing the ANOVA table values.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="q7-answer" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-scale-balanced qwebr-calc-icon"></i>
+    <h4 class="anchored">ANOVA Gauge R&amp;R</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-MS-part">MS Part</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-MS-part" data-var="MS_part" value="0.03167" min="0" max="1" step="0.00001">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-MS-operator">MS Operator</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-MS-operator" data-var="MS_operator" value="0.00125" min="0" max="1" step="0.00001">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-MS-interaction">MS Part x Operator</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-MS-interaction" data-var="MS_interaction" value="0.0005" min="0" max="1" step="0.00001">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-MS-error">MS Repeatability (error)</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-MS-error" data-var="MS_error" value="0.0003" min="0.00001" max="1" step="0.00001">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-n-parts">Number of parts</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-n-parts" data-var="n_parts" value="10" min="2" max="30" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-n-operators">Number of operators</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-n-operators" data-var="n_operators" value="3" min="2" max="10" step="1">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q7-answer-n-trials">Number of trials</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q7-answer-n-trials" data-var="n_trials" value="3" min="2" max="10" step="1">
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-8"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </details>
 <details>
 <summary>

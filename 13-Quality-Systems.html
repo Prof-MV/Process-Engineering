@@ -414,7 +414,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Cost of Quality Analysis\nprevention <- 35000 + 25000  # Planning + Training\nappraisal <- 40000 + 55000 + 30000  # Inspections\ninternal_failure <- 85000 + 65000  # Scrap + Rework\nexternal_failure <- 120000 + 45000  # Warranty + Returns\n\ntotal_coq <- prevention + appraisal + internal_failure + external_failure\nrevenue <- 8000000\n\ncat(\"Cost of Quality Breakdown:\\n\")\ncat(\"─────────────────────────────\\n\")\ncat(\"Prevention:       $\", format(prevention, big.mark = \" \", scientific = FALSE),\n    \"(\", round(prevention/total_coq*100, 1), \"%)\\n\")\ncat(\"Appraisal:        $\", format(appraisal, big.mark = \" \", scientific = FALSE),\n    \"(\", round(appraisal/total_coq*100, 1), \"%)\\n\")\ncat(\"Internal Failure: $\", format(internal_failure, big.mark = \" \", scientific = FALSE),\n    \"(\", round(internal_failure/total_coq*100, 1), \"%)\\n\")\ncat(\"External Failure: $\", format(external_failure, big.mark = \" \", scientific = FALSE),\n    \"(\", round(external_failure/total_coq*100, 1), \"%)\\n\")\ncat(\"─────────────────────────────\\n\")\ncat(\"Total COQ:        $\", format(total_coq, big.mark = \" \", scientific = FALSE), \"\\n\")\ncat(\"COQ % of Revenue:\", round(total_coq/revenue*100, 1), \"%\\n\\n\")\n\nconformance <- prevention + appraisal\nnonconformance <- internal_failure + external_failure\n\ncat(\"Conformance Costs:    $\", format(conformance, big.mark = \" \", scientific = FALSE),\n    \"(\", round(conformance/total_coq*100, 1), \"%)\\n\")\ncat(\"Nonconformance Costs: $\", format(nonconformance, big.mark = \" \", scientific = FALSE),\n    \"(\", round(nonconformance/total_coq*100, 1), \"%)\\n\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q6-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Cost of Quality Analysis\nprevention <- 35000 + 25000  # Planning + Training\nappraisal <- 40000 + 55000 + 30000  # Inspections\ninternal_failure <- 85000 + 65000  # Scrap + Rework\nexternal_failure <- 120000 + 45000  # Warranty + Returns\n\ntotal_coq <- prevention + appraisal + internal_failure + external_failure\nrevenue <- 8000000\n\nconformance <- prevention + appraisal\nnonconformance <- internal_failure + external_failure\n\nmoney <- function(x) format(x, big.mark = \" \", scientific = FALSE)\n\ncat(sprintf(\"Total cost of quality: $%s (%.1f%% of revenue)\\n\", money(total_coq), total_coq / revenue * 100))\ncat(sprintf(\"  Prevention  $%s (%.1f%%)\\n\", money(prevention), prevention / total_coq * 100))\ncat(sprintf(\"  Appraisal  $%s (%.1f%%)\\n\", money(appraisal), appraisal / total_coq * 100))\ncat(sprintf(\"  Internal failure  $%s (%.1f%%)\\n\", money(internal_failure), internal_failure / total_coq * 100))\ncat(sprintf(\"  External failure  $%s (%.1f%%)\\n\", money(external_failure), external_failure / total_coq * 100))\ncat(sprintf(\"  Conformance costs  $%s (%.1f%%)\\n\", money(conformance), conformance / total_coq * 100))\ncat(sprintf(\"  Nonconformance costs  $%s (%.1f%%)\\n\", money(nonconformance), nonconformance / total_coq * 100))\n\npar(mar = c(5, 5, 3, 1))\nbarplot(c(prevention, appraisal, internal_failure, external_failure) / 1000,\n        names.arg = c(\"Prevention\", \"Appraisal\", \"Internal\\nfailure\", \"External\\nfailure\"),\n        col = c(\"#27AE60\", \"#2980B9\", \"#E67E22\", \"#C0392B\"),\n        ylab = \"Cost ($ thousand)\", main = \"Cost of quality by category\")","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q6-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -4667,9 +4667,62 @@ Removed 1 row containing missing values or values outside the scale range
 </table>
 <p>Annual revenue: $8,000,000</p>
 <p><strong>Answer:</strong> (live — change the cost figures to check your own version)</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="q6-answer" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-dollar-sign qwebr-calc-icon"></i>
+    <h4 class="anchored">Cost of Quality</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q6-answer-prevention">Prevention (planning + training)</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-q6-answer-prevention" data-var="prevention" value="60000" min="0" max="500000" step="5000">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q6-answer-appraisal">Appraisal (inspections)</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-q6-answer-appraisal" data-var="appraisal" value="125000" min="0" max="500000" step="5000">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q6-answer-internal-failure">Internal failure (scrap + rework)</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-q6-answer-internal-failure" data-var="internal_failure" value="150000" min="0" max="500000" step="5000">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q6-answer-external-failure">External failure (warranty + returns)</label>
+      <div class="qwebr-calc-field">
+        <span class="qwebr-calc-prefix">$</span>
+        <input type="number" id="qcalc-q6-answer-external-failure" data-var="external_failure" value="165000" min="0" max="500000" step="5000">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-q6-answer-revenue">Annual revenue <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-q6-answer-revenue" id="qcalc-q6-answer-revenue-readout">8 000 000</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-q6-answer-revenue" data-var="revenue" value="8000000" min="1000000" max="20000000" step="500000">
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-1"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<p><strong>Analysis:</strong> - COQ at 7.5% of revenue is HIGH (target &lt;3%) - External failure costs are the largest category (27.5%) - Nonconformance costs (60.8%) greatly exceed conformance (39.2%) - Prevention is only 10% of COQ - very low</p>
+</details>
+<p><strong>Analysis:</strong> - COQ at 6.25% of revenue is HIGH (target &lt;3%) - External failure costs are the largest category (33%) - Nonconformance costs (63%) greatly exceed conformance (37%) - Prevention is only 12% of COQ - very low</p>
 <p><strong>Recommendations:</strong> 1. <strong>Increase Prevention Investment:</strong> - Implement SPC on critical processes to reduce defects - Enhance operator training on quality standards - Apply PFMEA to identify and control failure modes</p>
 <ol start="2" type="1">
 <li><strong>Reduce External Failures:</strong>

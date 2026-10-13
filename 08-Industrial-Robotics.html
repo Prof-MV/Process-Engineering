@@ -379,7 +379,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"code":"# Payload Calculation Example\nrobot_max_payload <- 10  # kg\ngripper_weight <- 2.5    # kg\npart_weight <- 5.0       # kg\nsafety_factor <- 1.2     # 20% safety margin\n\ntotal_load <- gripper_weight + part_weight          # what the robot actually carries\nrequired_capacity <- total_load * safety_factor      # total load, with margin applied\nremaining_margin <- robot_max_payload - total_load   # headroom before the safety factor\n\nif (required_capacity <= robot_max_payload) {\n  cat(sprintf(\"Required capacity: %.1f kg - Acceptable\\n\", required_capacity))\n} else {\n  cat(sprintf(\"Required capacity: %.1f kg - !!Exceeded!!\\n\", required_capacity))\n}\ncat(sprintf(\"  Total load           %.1f kg\\n\", total_load))\ncat(sprintf(\"  Remaining margin     %.1f kg (%.0f%%)\\n\", remaining_margin, 100 * remaining_margin / robot_max_payload))\ncat(sprintf(\"  Moment at wrist      %.2f kg m (at 0.3 m from flange)\\n\", part_weight * 0.3))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"payload-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Gripper Force Calculation\npart_mass <- 3.0        # kg\nacceleration <- 15      # m/s² (robot acceleration)\ngravity <- 9.81         # m/s²\nsafety_factor <- 2.0    # Minimum safety factor\nfriction_coefficient <- 0.3  # Steel on rubber\n\n# Calculate forces\nweight_force <- part_mass * gravity\ninertia_force <- part_mass * acceleration\ntotal_force <- sqrt(weight_force^2 + inertia_force^2)\n\n# Required grip force (friction gripper)\nrequired_grip <- total_force / friction_coefficient * safety_factor\n\ncat(sprintf(\"Required grip force: %.1f N (select ≥ %.0f N)\\n\", required_grip, ceiling(required_grip / 10) * 10))\ncat(sprintf(\"  Weight force         %.1f N\\n\", weight_force))\ncat(sprintf(\"  Inertia force        %.1f N\\n\", inertia_force))\ncat(sprintf(\"  Combined force       %.1f N\\n\", total_force))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"gripper-selection","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values\nmass <- 2.0            # kg\nacceleration <- 10     # m/s²\ngravity <- 9.81        # m/s²\nfriction_coef <- 0.4   # Coefficient of friction\nsafety_factor <- 2.0   # Safety factor\n\n# Calculate forces\n# Weight force (vertical)\nF_gravity <- mass * gravity\n\n# Inertia force (from acceleration)\nF_inertia <- mass * acceleration\n\n# Combined force (vector sum for worst case)\n# Worst case: acceleration horizontal while holding against gravity\nF_combined <- sqrt(F_gravity^2 + F_inertia^2)\n\n# Required friction force to hold part\n# F_friction = μ × F_normal\n# F_normal = Grip force\n# F_friction must overcome F_combined\n\n# Without safety factor:\nF_grip_min <- F_combined / friction_coef\n\n# With safety factor:\nF_grip_required <- F_grip_min * safety_factor\n\ncat(\"Gripper Force Calculation:\\n\")\ncat(\"═══════════════════════════════════════\\n\\n\")\ncat(\"Input Parameters:\\n\")\ncat(\"  Part mass:\", mass, \"kg\\n\")\ncat(\"  Robot acceleration:\", acceleration, \"m/s²\\n\")\ncat(\"  Friction coefficient:\", friction_coef, \"\\n\")\ncat(\"  Safety factor:\", safety_factor, \"\\n\\n\")\n\ncat(\"Force Analysis:\\n\")\ncat(\"  Gravity force: F_g = m × g =\", mass, \"×\", gravity, \"=\",\n    round(F_gravity, 1), \"N\\n\")\ncat(\"  Inertia force: F_i = m × a =\", mass, \"×\", acceleration, \"=\",\n    round(F_inertia, 1), \"N\\n\")\ncat(\"  Combined force: F_c = √(F_g² + F_i²) =\", round(F_combined, 1), \"N\\n\\n\")\n\ncat(\"Grip Force Calculation:\\n\")\ncat(\"  F_friction = μ × F_grip ≥ F_combined\\n\")\ncat(\"  F_grip ≥ F_combined / μ =\", round(F_combined, 1), \"/\", friction_coef,\n    \"=\", round(F_grip_min, 1), \"N\\n\")\ncat(\"  With safety factor:\", round(F_grip_min, 1), \"×\", safety_factor,\n    \"=\", round(F_grip_required, 1), \"N\\n\\n\")\n\ncat(\"═══════════════════════════════════════\\n\")\ncat(\"REQUIRED GRIPPER FORCE:\", ceiling(F_grip_required), \"N minimum\\n\")\ncat(\"Select gripper rated for ≥\", ceiling(F_grip_required/10)*10, \"N\\n\")","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q5-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+globalThis.qwebrCellDetails = [{"code":"# Payload Calculation Example\nrobot_max_payload <- 10  # kg\ngripper_weight <- 2.5    # kg\npart_weight <- 5.0       # kg\nsafety_factor <- 1.2     # 20% safety margin\n\ntotal_load <- gripper_weight + part_weight          # what the robot actually carries\nrequired_capacity <- total_load * safety_factor      # total load, with margin applied\nremaining_margin <- robot_max_payload - total_load   # headroom before the safety factor\n\nif (required_capacity <= robot_max_payload) {\n  cat(sprintf(\"Required capacity: %.1f kg - Acceptable\\n\", required_capacity))\n} else {\n  cat(sprintf(\"Required capacity: %.1f kg - !!Exceeded!!\\n\", required_capacity))\n}\ncat(sprintf(\"  Total load           %.1f kg\\n\", total_load))\ncat(sprintf(\"  Remaining margin     %.1f kg (%.0f%%)\\n\", remaining_margin, 100 * remaining_margin / robot_max_payload))\ncat(sprintf(\"  Moment at wrist      %.2f kg m (at 0.3 m from flange)\\n\", part_weight * 0.3))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"payload-calc","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Gripper Force Calculation\npart_mass <- 3.0        # kg\nacceleration <- 15      # m/s² (robot acceleration)\ngravity <- 9.81         # m/s²\nsafety_factor <- 2.0    # Minimum safety factor\nfriction_coefficient <- 0.3  # Steel on rubber\n\n# Calculate forces\nweight_force <- part_mass * gravity\ninertia_force <- part_mass * acceleration\ntotal_force <- sqrt(weight_force^2 + inertia_force^2)\n\n# Required grip force (friction gripper)\nrequired_grip <- total_force / friction_coefficient * safety_factor\n\ncat(sprintf(\"Required grip force: %.1f N (select ≥ %.0f N)\\n\", required_grip, ceiling(required_grip / 10) * 10))\ncat(sprintf(\"  Weight force         %.1f N\\n\", weight_force))\ncat(sprintf(\"  Inertia force        %.1f N\\n\", inertia_force))\ncat(sprintf(\"  Combined force       %.1f N\\n\", total_force))","id":2,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"gripper-selection","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"# Given values\nmass <- 2.0            # kg\nacceleration <- 10     # m/s²\ngravity <- 9.81        # m/s²\nfriction_coef <- 0.4   # Coefficient of friction\nsafety_factor <- 2.0   # Safety factor\n\n# Calculate forces\n# Weight force (vertical)\nF_gravity <- mass * gravity\n\n# Inertia force (from acceleration)\nF_inertia <- mass * acceleration\n\n# Combined force (vector sum for worst case)\n# Worst case: acceleration horizontal while holding against gravity\nF_combined <- sqrt(F_gravity^2 + F_inertia^2)\n\n# Required friction force to hold part\n# F_friction = μ × F_normal\n# F_normal = Grip force\n# F_friction must overcome F_combined\n\n# Without safety factor:\nF_grip_min <- F_combined / friction_coef\n\n# With safety factor:\nF_grip_required <- F_grip_min * safety_factor\n\ncat(sprintf(\"Required gripper force: %g N minimum\\n\", ceiling(F_grip_required)))\ncat(sprintf(\"  Select a gripper rated for at least  %g N\\n\", ceiling(F_grip_required / 10) * 10))\ncat(sprintf(\"  Gravity force (m x g)  %.1f N\\n\", F_gravity))\ncat(sprintf(\"  Inertia force (m x a)  %.1f N\\n\", F_inertia))\ncat(sprintf(\"  Combined force (vector sum)  %.1f N\\n\", F_combined))\ncat(sprintf(\"  Grip force without safety factor  %.1f N\\n\", F_grip_min))\ncat(sprintf(\"  Grip force with safety factor  %.1f N\\n\", F_grip_required))","id":3,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"q5-answer","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
 
 </script>
 <script type="module">
@@ -3531,8 +3531,59 @@ This equals the robot's maximum capacity - marginal!</code></pre>
 <strong>Question 5</strong>: Calculate the required gripper force for a robot picking a 2 kg part with a friction coefficient of 0.4. The robot accelerates at 10 m/s². Use a safety factor of 2.0.
 </summary>
 <p><strong>Answer:</strong> (live — change the numbers to check your own version)</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card" data-qwebr-label="q5-answer" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-hand qwebr-calc-icon"></i>
+    <h4 class="anchored">Required Gripper Force</h4>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-q5-answer-mass">Part mass <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-q5-answer-mass" id="qcalc-q5-answer-mass-readout">2</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-q5-answer-mass" data-var="mass" value="2" min="0.1" max="20" step="0.1">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q5-answer-acceleration">Robot acceleration</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q5-answer-acceleration" data-var="acceleration" value="10" min="0" max="50" step="1">
+        <span class="qwebr-calc-suffix">m/s²</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q5-answer-friction-coef">Friction coefficient</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q5-answer-friction-coef" data-var="friction_coef" value="0.4" min="0.05" max="1" step="0.05">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q5-answer-safety-factor">Safety factor</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q5-answer-safety-factor" data-var="safety_factor" value="2" min="1" max="5" step="0.5">
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-q5-answer-gravity">Gravity</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-q5-answer-gravity" data-var="gravity" value="9.81" min="1" max="20" step="0.01">
+        <span class="qwebr-calc-suffix">m/s²</span>
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this card
+</summary>
 <div id="qwebr-insertion-location-3"></div>
 <noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
 </details>
 <details>
 <summary>
