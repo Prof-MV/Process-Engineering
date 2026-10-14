@@ -987,3 +987,80 @@ details.tryit-solution.tryit-locked > summary::after {
 .qwebr-calc-rerun:hover {
   background-color: #eef1f4;
 }
+
+
+/*--- Box-and-arrow process flows (flow_diagram() in R/helpers.R) ------------ */
+.flow-diagram {
+  margin: 1.5em 0;
+}
+.flow-heading {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.15em;
+}
+.flow-subheading {
+  text-align: center;
+  color: #5d6d7e;
+  margin-bottom: 0.8em;
+}
+.flow-row {
+  display: grid;
+  grid-template-columns: repeat(var(--flow-cols, 5), minmax(0, 1fr));
+  gap: 1.6em 1.4em;
+  align-items: stretch;
+}
+.flow-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.flow-box {
+  flex: 1;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.7em 0.5em;
+  text-align: center;
+  line-height: 1.25;
+}
+.flow-title {
+  font-weight: 700;
+}
+.flow-detail {
+  margin-top: 0.35em;
+  font-size: 0.9em;
+}
+.flow-note {
+  margin-top: 0.4em;
+  font-size: 0.85em;
+  text-align: center;
+  color: #444;
+}
+/* arrow in the gap to the right of every box except the last in a row */
+.flow-step:not(.flow-last)::after {
+  content: "\2192";
+  position: absolute;
+  right: -1.25em;
+  top: 0.9em;
+  width: 1.1em;
+  text-align: center;
+  font-weight: 700;
+  color: #2c3e50;
+}
+.flow-feedback {
+  margin-top: 1em;
+  padding: 0.35em 0.8em;
+  border: 2px dashed #7f8c8d;
+  border-radius: 6px;
+  text-align: center;
+  font-style: italic;
+  color: #5d6d7e;
+}
+@media (max-width: 700px) {
+  .flow-row { grid-template-columns: 1fr; }
+  .flow-step:not(.flow-last)::after {
+    content: "\2193";
+    right: auto; left: 50%; top: auto; bottom: -1.45em;
+    margin-left: -0.55em;
+  }
+  .flow-step.flow-last:not(:last-child)::after { content: none; }
+}

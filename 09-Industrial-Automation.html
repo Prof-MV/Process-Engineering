@@ -2519,15 +2519,7 @@ globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
 <section id="the-plc-scan-cycle" class="level3" data-number="20.4.3">
 <h3 data-number="20.4.3" class="anchored" data-anchor-id="the-plc-scan-cycle"><span class="header-section-number">20.4.3</span> The PLC Scan Cycle</h3>
 <p>PLCs operate in a continuous scan cycle:</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="09-Industrial-Automation_files/figure-html/plc-scan-cycle-1.png" class="img-fluid figure-img" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
+<div class="flow-diagram"><div class="flow-heading">PLC Scan Cycle</div><div class="flow-subheading">Continuous loop executing at predictable intervals</div><div class="flow-row" style="--flow-cols:4"><div class="flow-step"><div class="flow-box" style="background:#3498DB"><div class="flow-title">1. Read Inputs</div><div class="flow-detail">Read all input module states into the input image table</div></div><div class="flow-note">~1 ms</div></div><div class="flow-step"><div class="flow-box" style="background:#27AE60"><div class="flow-title">2. Execute Program</div><div class="flow-detail">Execute ladder logic / program using input image data</div></div><div class="flow-note">~5-20 ms</div></div><div class="flow-step"><div class="flow-box" style="background:#E74C3C"><div class="flow-title">3. Update Outputs</div><div class="flow-detail">Write output image table values to physical outputs</div></div><div class="flow-note">~1 ms</div></div><div class="flow-step flow-last"><div class="flow-box" style="background:#F39C12"><div class="flow-title">4. Housekeeping</div><div class="flow-detail">Communications, diagnostics, self-testing</div></div><div class="flow-note">~1 ms</div></div></div><div class="flow-feedback">↩ The cycle repeats continuously (about 10-50 ms in total)</div></div>
 <p>Try it — change the scan time components below.</p>
 <script src="js/qwebr-calculator.js"></script>
 
@@ -2935,15 +2927,7 @@ Show the worked solution
 <section id="variable-frequency-drives-vfds" class="level3" data-number="20.6.2">
 <h3 data-number="20.6.2" class="anchored" data-anchor-id="variable-frequency-drives-vfds"><span class="header-section-number">20.6.2</span> Variable Frequency Drives (VFDs)</h3>
 <p>A <strong>Variable Frequency Drive (VFD)</strong> controls AC motor speed by varying the frequency and voltage of the power supplied to the motor.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="09-Industrial-Automation_files/figure-html/vfd-diagram-1.png" class="img-fluid figure-img" width="1152"></p>
-</figure>
-</div>
-</div>
-</div>
+<div class="flow-diagram"><div class="flow-heading">Variable Frequency Drive (VFD) Block Diagram</div><div class="flow-subheading">Converts fixed frequency AC to variable frequency AC for motor speed control</div><div class="flow-row" style="--flow-cols:5"><div class="flow-step"><div class="flow-box" style="background:#E74C3C"><div class="flow-title">AC Input</div><div class="flow-detail">60 Hz, fixed frequency</div></div></div><div class="flow-step"><div class="flow-box" style="background:#3498DB"><div class="flow-title">Rectifier</div><div class="flow-detail">AC → DC</div></div></div><div class="flow-step"><div class="flow-box" style="background:#F39C12"><div class="flow-title">DC Bus</div><div class="flow-detail">Filter &amp; capacitors</div></div></div><div class="flow-step"><div class="flow-box" style="background:#27AE60"><div class="flow-title">Inverter</div><div class="flow-detail">DC → AC (PWM)</div></div></div><div class="flow-step flow-last"><div class="flow-box" style="background:#9B59B6"><div class="flow-title">AC Motor</div><div class="flow-detail">Variable speed</div></div></div></div><div class="flow-feedback">Control input: speed reference and start/stop commands set the output frequency</div></div>
 <p>Try it — change the motor parameters or drag the frequency slider below.</p>
 <script src="js/qwebr-calculator.js"></script>
 
@@ -3055,15 +3039,7 @@ Show the live R code behind this calculator
 </section>
 <section id="servo-systems" class="level3" data-number="20.6.4">
 <h3 data-number="20.6.4" class="anchored" data-anchor-id="servo-systems"><span class="header-section-number">20.6.4</span> Servo Systems</h3>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="09-Industrial-Automation_files/figure-html/servo-system-1.png" class="img-fluid figure-img" width="1152"></p>
-</figure>
-</div>
-</div>
-</div>
+<div class="flow-diagram"><div class="flow-heading">Servo System: Closed-Loop Motion Control</div><div class="flow-subheading">Precise positioning through continuous feedback</div><div class="flow-row" style="--flow-cols:5"><div class="flow-step"><div class="flow-box" style="background:#34495e"><div class="flow-title">Motion Controller</div></div></div><div class="flow-step"><div class="flow-box" style="background:#3498DB"><div class="flow-title">Servo Drive</div></div></div><div class="flow-step"><div class="flow-box" style="background:#27AE60"><div class="flow-title">Servo Motor</div></div></div><div class="flow-step"><div class="flow-box" style="background:#E74C3C"><div class="flow-title">Encoder</div></div></div><div class="flow-step flow-last"><div class="flow-box" style="background:#95a5a6"><div class="flow-title">Load</div></div></div></div><div class="flow-feedback">↩ Position / velocity feedback from the encoder returns to the servo drive</div></div>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover caption-top table-sm small">
