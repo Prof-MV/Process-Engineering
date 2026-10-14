@@ -206,7 +206,8 @@ motor_prompts <- data.frame(
   )
 )
 
-kable(motor_prompts, col.names = c("Quality Level", "Prompt", "Expected AI Response"), format = "html", escape = FALSE,
+if (!knitr::is_html_output()) motor_prompts[] <- lapply(motor_prompts, function(x) if (is.character(x)) gsub("<br>", " ", x, fixed = TRUE) else x)
+kable(motor_prompts, col.names = c("Quality Level", "Prompt", "Expected AI Response"), format = if (knitr::is_html_output()) "html" else "latex", escape = !knitr::is_html_output(),
       caption = "Motor Selection Prompt Comparison") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
@@ -236,7 +237,8 @@ plc_prompts <- data.frame(
   )
 )
 
-kable(plc_prompts, col.names = c("Quality Level", "Prompt", "Why This Works (or Doesn't)"), format = "html", escape = FALSE,
+if (!knitr::is_html_output()) plc_prompts[] <- lapply(plc_prompts, function(x) if (is.character(x)) gsub("<br>", " ", x, fixed = TRUE) else x)
+kable(plc_prompts, col.names = c("Quality Level", "Prompt", "Why This Works (or Doesn't)"), format = if (knitr::is_html_output()) "html" else "latex", escape = !knitr::is_html_output(),
       caption = "PLC Troubleshooting Prompt Comparison") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
@@ -266,7 +268,8 @@ safety_prompts <- data.frame(
   )
 )
 
-kable(safety_prompts, col.names = c("Quality Level", "Prompt", "Risk Assessment"), format = "html", escape = FALSE,
+if (!knitr::is_html_output()) safety_prompts[] <- lapply(safety_prompts, function(x) if (is.character(x)) gsub("<br>", " ", x, fixed = TRUE) else x)
+kable(safety_prompts, col.names = c("Quality Level", "Prompt", "Risk Assessment"), format = if (knitr::is_html_output()) "html" else "latex", escape = !knitr::is_html_output(),
       caption = "Safety Analysis Prompt Comparison - Critical Application") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL,
