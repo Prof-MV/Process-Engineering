@@ -980,43 +980,17 @@ ggplot(pf_data, aes(x = x, y = y)) +
 
 ### The Kaizen Process
 
-```{r kaizen-process, echo=FALSE, fig.align="center", fig.cap="Focused Improvement Process", fig.width=10, fig.height=5}
-ggplot() +
-  # Steps
-  annotate("rect", xmin = 0, xmax = 1.8, ymin = 1, ymax = 2.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 0.9, y = 2.1, label = "1. SELECT", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 0.9, y = 1.5, label = "Identify\nbiggest loss", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 2, xmax = 3.8, ymin = 1, ymax = 2.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 2.9, y = 2.1, label = "2. ANALYZE", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 2.9, y = 1.5, label = "Root cause\nanalysis", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 4, xmax = 5.8, ymin = 1, ymax = 2.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 4.9, y = 2.1, label = "3. DEVELOP", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 4.9, y = 1.5, label = "Counter-\nmeasures", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 6, xmax = 7.8, ymin = 1, ymax = 2.5, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 6.9, y = 2.1, label = "4. IMPLEMENT", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 6.9, y = 1.5, label = "Execute\nplan", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 8, xmax = 9.8, ymin = 1, ymax = 2.5, fill = "#9B59B6", color = "black") +
-  annotate("text", x = 8.9, y = 2.1, label = "5. SUSTAIN", fontface = "bold", color = "white", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 8.9, y = 1.5, label = "Standardize\n& share", color = "white", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
-
-  # Arrows
-  annotate("segment", x = 1.8, xend = 2, y = 1.75, yend = 1.75,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 3.8, xend = 4, y = 1.75, yend = 1.75,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 5.8, xend = 6, y = 1.75, yend = 1.75,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 7.8, xend = 8, y = 1.75, yend = 1.75,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-
-  theme_void() +
-  labs(title = "Focused Improvement (Kobetsu Kaizen) Process") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
-  ylim(0.5, 3)
+```{r kaizen-process, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. SELECT", detail = "Identify biggest loss", color = "#3498DB"),
+    list(title = "2. ANALYZE", detail = "Root cause analysis", color = "#27AE60"),
+    list(title = "3. DEVELOP", detail = "Countermeasures", color = "#F39C12"),
+    list(title = "4. IMPLEMENT", detail = "Execute plan", color = "#E74C3C"),
+    list(title = "5. SUSTAIN", detail = "Standardize & share", color = "#9B59B6")
+  ),
+  title = "Focused Improvement (Kobetsu Kaizen) Process"
+)
 ```
 
 #### Understanding Kaizen
@@ -1166,31 +1140,15 @@ Effective loss elimination requires systematic tools that help teams identify pr
 
 **The SMED Process:**
 
-```{r smed-steps2, echo=FALSE, fig.align="center", fig.cap="SMED Methodology", fig.width=10, fig.height=4}
-ggplot() +
-  # Step boxes
-  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = 1, ymax = 2.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 1.5, y = 2.1, label = "Step 1", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
-  annotate("text", x = 1.5, y = 1.5, label = "Separate\nInternal & External", color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 3, xmax = 5, ymin = 1, ymax = 2.5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 4, y = 2.1, label = "Step 2", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
-  annotate("text", x = 4, y = 1.5, label = "Convert\nInternal to External", color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 5.5, xmax = 7.5, ymin = 1, ymax = 2.5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 6.5, y = 2.1, label = "Step 3", fontface = "bold", color = "white", size = 4 * diagram_text_scale) +
-  annotate("text", x = 6.5, y = 1.5, label = "Streamline\nAll Elements", color = "white", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  # Arrows
-  annotate("segment", x = 2.5, xend = 3, y = 1.75, yend = 1.75,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 5, xend = 5.5, y = 1.75, yend = 1.75,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-
-  theme_void() +
-  labs(title = "SMED: Reducing Changeover Time") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
-  ylim(0.5, 3)
+```{r smed-steps2, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "Step 1", detail = "Separate\nInternal & External", color = "#3498DB"),
+    list(title = "Step 2", detail = "Convert\nInternal to External", color = "#27AE60"),
+    list(title = "Step 3", detail = "Streamline\nAll Elements", color = "#F39C12")
+  ),
+  title = "SMED: Reducing Changeover Time"
+)
 ```
 
 **Key Concepts:**

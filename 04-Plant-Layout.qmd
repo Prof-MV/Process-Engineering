@@ -216,26 +216,20 @@ process_chars %>%
 
 In a **product layout**, equipment and workstations are arranged in a line according to the sequence of operations needed to produce the product. Every unit follows the same path.
 
-```{r product-layout-diagram, echo=FALSE, fig.align="center", fig.cap="Product Layout - Assembly Line", fig.width=10, fig.height=4}
-stations <- data.frame(
-  name = c("Station 1\nFrame", "Station 2\nEngine", "Station 3\nBody",
-           "Station 4\nInterior", "Station 5\nWheels", "Station 6\nQuality"),
-  x = c(1, 2, 3, 4, 5, 6),
-  y = rep(1, 6)
+```{r product-layout-diagram, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "Station 1", detail = "Frame", color = "#3498DB"),
+    list(title = "Station 2", detail = "Engine", color = "#3498DB"),
+    list(title = "Station 3", detail = "Body", color = "#3498DB"),
+    list(title = "Station 4", detail = "Interior", color = "#3498DB"),
+    list(title = "Station 5", detail = "Wheels", color = "#3498DB"),
+    list(title = "Station 6", detail = "Quality", color = "#3498DB")
+  ),
+  title = "Product Layout: Automotive Assembly Line",
+  subtitle = "All products follow the same sequential path",
+  per_row = 6
 )
-
-ggplot(stations, aes(x = x, y = y)) +
-  geom_tile(fill = "#3498DB", width = 0.7, height = 0.5, color = "black") +
-  geom_text(aes(label = name), color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
-  geom_segment(aes(x = x + 0.4, xend = x + 0.6, y = y, yend = y),
-               data = stations[1:5,],
-               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1.5) +
-  labs(title = "Product Layout: Automotive Assembly Line",
-       subtitle = "All products follow the same sequential path") +
-  theme_void() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
-  xlim(0.3, 6.7)
 ```
 
 ### Characteristics of Product Layouts

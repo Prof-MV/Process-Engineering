@@ -1669,47 +1669,17 @@ cap_interp %>%
 
 ### The Response Process
 
-```{r response-process, echo=FALSE, fig.align="center", fig.cap="Responding to Out-of-Control Conditions", fig.width=10, fig.height=6}
-ggplot() +
-  # Step boxes
-  annotate("rect", xmin = 0, xmax = 2, ymin = 4, ymax = 5, fill = "#E74C3C", color = "black") +
-  annotate("text", x = 1, y = 4.5, label = "1. STOP\nMark the point", color = "white",
-           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 4, ymax = 5, fill = "#F39C12", color = "black") +
-  annotate("text", x = 3.5, y = 4.5, label = "2. INVESTIGATE\nFind the cause", color = "white",
-           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 5, xmax = 7, ymin = 4, ymax = 5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 6, y = 4.5, label = "3. CORRECT\nEliminate cause", color = "white",
-           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  annotate("rect", xmin = 7.5, xmax = 9.5, ymin = 4, ymax = 5, fill = "#27AE60", color = "black") +
-  annotate("text", x = 8.5, y = 4.5, label = "4. DOCUMENT\nRecord actions", color = "white",
-           fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
-
-  # Arrows
-  annotate("segment", x = 2, xend = 2.5, y = 4.5, yend = 4.5,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 4.5, xend = 5, y = 4.5, yend = 4.5,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 7, xend = 7.5, y = 4.5, yend = 4.5,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-
-  # Details below
-  annotate("text", x = 1, y = 3.5, label = "• Circle the point\n• Note the time\n• Quarantine product",
-           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
-  annotate("text", x = 3.5, y = 3.5, label = "• Check 5 Ms\n• Review recent changes\n• Ask operators",
-           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
-  annotate("text", x = 6, y = 3.5, label = "• Fix the problem\n• Verify correction\n• Restart process",
-           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
-  annotate("text", x = 8.5, y = 3.5, label = "• Update log\n• File in PFMEA\n• Share lessons",
-           size = 2.5 * diagram_text_scale, lineheight = 0.9) +
-
-  theme_void() +
-  labs(title = "Out-of-Control Response Procedure") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
-  ylim(2.5, 5.5)
+```{r response-process, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. STOP", detail = "Mark the point", note = "• Circle the point\n• Note the time\n• Quarantine product", color = "#E74C3C"),
+    list(title = "2. INVESTIGATE", detail = "Find the cause", note = "• Check 5 Ms\n• Review recent changes\n• Ask operators", color = "#F39C12"),
+    list(title = "3. CORRECT", detail = "Eliminate cause", note = "• Fix the problem\n• Verify correction\n• Restart process", color = "#3498DB"),
+    list(title = "4. DOCUMENT", detail = "Record actions", note = "• Update log\n• File in PFMEA\n• Share lessons", color = "#27AE60")
+  ),
+  title = "Out-of-Control Response Procedure",
+  per_row = 4
+)
 ```
 
 ### Investigation Checklist (5 Ms + E)

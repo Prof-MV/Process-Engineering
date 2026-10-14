@@ -399,40 +399,18 @@ ggplot(core_tools, aes(x = x, y = 1)) +
 
 **APQP** is a structured framework for developing products that ensures customer requirements are met through careful planning and defined milestones.
 
-```{r apqp-phases, echo=FALSE, fig.width=13, fig.height=5.5}
-diagram_text_scale <- 1.0  # fit labels to their shapes
-apqp_phases <- data.frame(
-  phase = c("1", "2", "3", "4", "5"),
-  name = c("Plan &\nDefine", "Product\nDesign", "Process\nDesign",
-           "Product &\nProcess\nValidation", "Feedback &\nCorrective\nAction"),
-  activities = c("Voice of customer\nBenchmarking\nProduct assumptions",
-                 "Design FMEA\nDVP&R\nPrototype build",
-                 "Process flow\nProcess FMEA\nControl plan",
-                 "Production trial run\nMSA & SPC studies\nPPAP submission",
-                 "Reduced variation\nCustomer satisfaction\nLessons learned"),
-  x = 1:5
+```{r apqp-phases, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Plan & Define", detail = "Voice of customer\nBenchmarking\nProduct assumptions", color = "#3498DB"),
+    list(title = "2. Product Design", detail = "Design FMEA\nDVP&R\nPrototype build", color = "#3498DB"),
+    list(title = "3. Process Design", detail = "Process flow\nProcess FMEA\nControl plan", color = "#3498DB"),
+    list(title = "4. Product & Process Validation", detail = "Production trial run\nMSA & SPC studies\nPPAP submission", color = "#3498DB"),
+    list(title = "5. Feedback & Corrective Action", detail = "Reduced variation\nCustomer satisfaction\nLessons learned", color = "#3498DB")
+  ),
+  title = "APQP Five Phases",
+  subtitle = "Structured product development from concept to launch"
 )
-
-ggplot(apqp_phases, aes(x = x, y = 1)) +
-  geom_polygon(data = data.frame(x = c(0.5, 5.5, 5.5, 0.5), y = c(0.3, 0.3, 1.7, 1.7)),
-               aes(x = x, y = y), fill = "#ecf0f1", color = NA) +
-  geom_segment(aes(x = x, xend = x, y = 0.5, yend = 1.5),
-               color = "#bdc3c7", linetype = "dashed") +
-  geom_point(size = 22, color = "#3498db") +
-  geom_text(aes(label = phase), color = "white", fontface = "bold", size = 10 * diagram_text_scale) +
-  geom_text(aes(label = name, y = 2.3), fontface = "bold", size = 5.2 * diagram_text_scale, lineheight = 0.85) +
-  geom_text(aes(label = activities, y = -0.2), size = 4.2 * diagram_text_scale, lineheight = 0.85, color = "gray30") +
-  annotate("segment", x = 0.6, xend = 5.4, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.3, "cm"), ends = "last"),
-           linewidth = 1.2, color = "#2c3e50") +
-  coord_cartesian(xlim = c(0, 6), ylim = c(-1.2, 3.3)) +
-  labs(title = "APQP Five Phases",
-       subtitle = "Structured product development from concept to launch") +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
-  )
 ```
 
 ::: {.example-box}
@@ -943,43 +921,21 @@ kable(mandatory, caption = "Documented Information Required by ISO 9001:2015") %
 
 ### The Audit Process
 
-```{r audit-process, echo=FALSE, fig.width=13, fig.height=6.5}
-diagram_text_scale <- 1.0  # fit labels to their shapes
-audit_steps <- data.frame(
-  step = 1:7,
-  name = c("Planning", "Preparation", "Opening Meeting",
-           "Audit Execution", "Closing Meeting", "Reporting", "Follow-up"),
-  description = c(
-    "Schedule audits; assign auditors",
-    "Review documents; prepare checklist",
-    "Explain purpose, scope, methods",
-    "Collect evidence; interview; observe",
-    "Present findings; discuss",
-    "Issue audit report",
-    "Verify corrective actions"
+```{r audit-process, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Planning", detail = "Schedule audits; assign auditors", color = "#3498DB"),
+    list(title = "2. Preparation", detail = "Review documents; prepare checklist", color = "#3498DB"),
+    list(title = "3. Opening Meeting", detail = "Explain purpose, scope, methods", color = "#3498DB"),
+    list(title = "4. Audit Execution", detail = "Collect evidence; interview; observe", color = "#3498DB"),
+    list(title = "5. Closing Meeting", detail = "Present findings; discuss", color = "#3498DB"),
+    list(title = "6. Reporting", detail = "Issue audit report", color = "#3498DB"),
+    list(title = "7. Follow-up", detail = "Verify corrective actions", color = "#3498DB")
   ),
-  x = 1:7
+  title = "Internal Audit Process Flow",
+  subtitle = "Systematic approach to evaluating QMS effectiveness",
+  per_row = 4
 )
-
-audit_steps$description <- vapply(strwrap(audit_steps$description, 13, simplify = FALSE), paste, character(1), collapse = "\n")
-
-ggplot(audit_steps, aes(x = x, y = 1)) +
-  geom_point(size = 20, color = "#3498db") +
-  geom_text(aes(label = step), color = "white", fontface = "bold", size = 8 * diagram_text_scale) +
-  geom_text(aes(label = name, y = 0.4), size = 4.8 * diagram_text_scale, fontface = "bold", angle = 45, hjust = 1) +
-  geom_text(aes(label = description, y = 1.85), size = 4.2 * diagram_text_scale, lineheight = 0.9) +
-  geom_segment(aes(x = x + 0.35, xend = x + 0.65, y = 1, yend = 1),
-               data = audit_steps[1:6,],
-               arrow = arrow(length = unit(0.3, "cm")), color = "gray50", linewidth = 1) +
-  scale_x_continuous(limits = c(0.3, 7.7)) +
-  scale_y_continuous(limits = c(-0.7, 2.9)) +
-  labs(title = "Internal Audit Process Flow",
-       subtitle = "Systematic approach to evaluating QMS effectiveness") +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
-  )
 ```
 
 ### Audit Checklist Example
@@ -1115,57 +1071,22 @@ kable(auditor_skills, caption = "Internal Auditor Competency Requirements") %>%
 
 ### The CAPA Process
 
-```{r capa-process, echo=FALSE, fig.width=12, fig.height=8}
-diagram_text_scale <- 0.78  # fit labels to their shapes
-capa_steps <- data.frame(
-  step = 1:8,
-  name = c("Identification", "Evaluation", "Investigation",
-           "Root Cause", "Action Plan", "Implementation",
-           "Verification", "Closure"),
-  description = c(
-    "Identify the nonconformity\nor potential issue",
-    "Assess significance;\ncontainment if needed",
-    "Gather data and\nevidence",
-    "Determine root cause(s)\nusing RCA tools",
-    "Define corrective/\npreventive actions",
-    "Execute action plan;\nassign responsibility",
-    "Verify actions completed\nand effective",
-    "Document and close;\nshare lessons learned"
+```{r capa-process, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Identification", detail = "Identify the nonconformity or potential issue", color = "#27AE60"),
+    list(title = "2. Evaluation", detail = "Assess significance; containment if needed", color = "#2AAB6B"),
+    list(title = "3. Investigation", detail = "Gather data and evidence", color = "#2FA77A"),
+    list(title = "4. Root Cause", detail = "Determine root cause(s) using RCA tools", color = "#34A38A"),
+    list(title = "5. Action Plan", detail = "Define corrective / preventive actions", color = "#329FA0"),
+    list(title = "6. Implementation", detail = "Execute action plan; assign responsibility", color = "#3199B8"),
+    list(title = "7. Verification", detail = "Verify actions completed and effective", color = "#3296CB"),
+    list(title = "8. Closure", detail = "Document and close; share lessons learned", color = "#3498DB")
   ),
-  y = c(4, 4, 4, 4, 2, 2, 2, 2),
-  x = c(1, 2, 3, 4, 4, 3, 2, 1)
+  title = "CAPA Process Flow",
+  subtitle = "Eight-step process for effective corrective and preventive action",
+  per_row = 4
 )
-
-ggplot(capa_steps, aes(x = x, y = y)) +
-  geom_tile(aes(fill = step), width = 0.8, height = 1.7, color = "white", linewidth = 1) +
-  geom_text(aes(label = paste0(step, ". ", name)), fontface = "bold",
-            size = 5 * diagram_text_scale, color = "white", vjust = -0.5) +
-  geom_text(aes(label = description), size = 5 * diagram_text_scale, color = "white",
-            vjust = 1, lineheight = 0.85) +
-  # Arrows showing flow
-  annotate("segment", x = 1.42, xend = 1.58, y = 4, yend = 4,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 2.42, xend = 2.58, y = 4, yend = 4,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 3.42, xend = 3.58, y = 4, yend = 4,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 4, xend = 4, y = 3.1, yend = 2.9,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 3.58, xend = 3.42, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 2.58, xend = 2.42, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  annotate("segment", x = 1.58, xend = 1.42, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 1) +
-  scale_fill_gradient(low = "#27ae60", high = "#3498db", guide = "none") +
-  coord_cartesian(xlim = c(0.3, 4.7), ylim = c(0.8, 5.2)) +
-  labs(title = "CAPA Process Flow",
-       subtitle = "Eight-step process for effective corrective and preventive action") +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
-  )
 ```
 
 #### Step 1: Identification

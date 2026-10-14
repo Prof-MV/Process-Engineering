@@ -333,3 +333,56 @@ qwebr_calc_card <- function(label, title, icon = "gears", inputs = list(), table
 # "Try it yourself" exercises (tryit_number(), tryit_grid(), tryit_sort()).
 options(tryit.course = "ENGR3027")
 source("R/tryit.R")
+
+
+#' Box-and-arrow process flow drawn as HTML/CSS (not as an image)
+#'
+#' Text uses the page's own font size, wraps by itself and follows the
+#' theme, so it stays readable at any column width. Use it for linear
+#' flows; keep ggplot for charts and spatial layouts. Call from a chunk with
+#' `results = "asis"`. In non-HTML output (PDF) it prints a numbered list.
+#'
+#' @param steps A list of lists, each with `title`, optional `detail`
+#'   (shown inside the box), `note` (shown below the box, e.g. bullets or
+#'   a function description) and `color` (hex).
+#' @param title,subtitle Optional heading lines above the flow.
+#' @param feedback Optional text for a return-loop bar under the flow.
+#' @param per_row Boxes per row on a wide screen (default: all in one row).
+#' @export
+flow_diagram <- function(steps, title = NULL, subtitle = NULL,
+                         feedback = NULL, per_row = NULL) {
+  esc <- function(x) htmltools::htmlEscape(x)
+  br <- function(x) gsub("\n", "<br>", esc(x), fixed = TRUE)
+  if (!knitr::is_html_output(excludes = "epub")) {
+    lines <- vapply(seq_along(steps), function(i) {
+      s <- steps[[i]]
+      paste0(i, ". **", gsub("\n", " ", s$title), "**",
+             if (!is.null(s$detail)) paste0(" -- ", gsub("\n", "; ", s$detail)),
+             if (!is.null(s$note)) paste0(" (", gsub("\n", "; ", s$note), ")"))
+    }, character(1))
+    out <- c(if (!is.null(title)) paste0("**", title, "**\n"), lines,
+             if (!is.null(feedback)) paste0("\n*", feedback, "*"))
+    return(knitr::asis_output(paste(out, collapse = "\n")))
+  }
+  n <- length(steps)
+  cols <- if (is.null(per_row)) n else per_row
+  items <- vapply(seq_along(steps), function(i) {
+    s <- steps[[i]]
+    col <- if (is.null(s$color)) "#3498DB" else s$color
+    last_in_row <- (i %% cols == 0) || i == n
+    sprintf(
+      '<div class="flow-step%s"><div class="flow-box" style="background:%s"><div class="flow-title">%s</div>%s</div>%s</div>',
+      if (last_in_row) " flow-last" else "", col, br(s$title),
+      if (!is.null(s$detail)) sprintf('<div class="flow-detail">%s</div>', br(s$detail)) else "",
+      if (!is.null(s$note)) sprintf('<div class="flow-note">%s</div>', br(s$note)) else "")
+  }, character(1))
+  html <- paste0(
+    '<div class="flow-diagram">',
+    if (!is.null(title)) sprintf('<div class="flow-heading">%s</div>', esc(title)) else "",
+    if (!is.null(subtitle)) sprintf('<div class="flow-subheading">%s</div>', esc(subtitle)) else "",
+    sprintf('<div class="flow-row" style="--flow-cols:%d">', cols),
+    paste(items, collapse = ""), '</div>',
+    if (!is.null(feedback)) sprintf('<div class="flow-feedback">&#8617; %s</div>', esc(feedback)) else "",
+    '</div>')
+  knitr::asis_output(html)
+}

@@ -419,43 +419,18 @@ tryit_sort(
 
 The research shows that effectively working with AI follows a consistent four-step process. Master these steps to maximize the value of AI collaboration.
 
-```{r four-steps, echo=FALSE, fig.width=14, fig.height=6.5}
-diagram_text_scale <- 1.25  # fit labels to their shapes
-steps_data <- data.frame(
-  Step = c("1. DEFINE\nthe Task", "2. PROMPT\nwith Context", "3. ITERATE\nand Refine", "4. VALIDATE\nand Apply"),
-  Description = c(
-    "Break complex problems\ninto AI-manageable tasks.\nIdentify what you need\nand what AI can help with.",
-    "Write structured prompts\nusing the seven rules.\nInclude role, context,\nconstraints, and deliverables.",
-    "Review AI output critically.\nAsk follow-up questions.\nRefine through multiple\nconversation turns.",
-    "Verify accuracy against\nstandards and expertise.\nApply human judgment.\nIntegrate into final work."
+```{r four-steps, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. DEFINE the Task", detail = "Break complex problems into AI-manageable tasks. Identify what you need and what AI can help with.", note = "→ Task decomposition", color = "#e74c3c"),
+    list(title = "2. PROMPT with Context", detail = "Write structured prompts using the seven rules. Include role, context, constraints, and deliverables.", note = "→ Prompt engineering", color = "#3498db"),
+    list(title = "3. ITERATE and Refine", detail = "Review AI output critically. Ask follow-up questions. Refine through multiple conversation turns.", note = "→ Multi-turn dialogue", color = "#27ae60"),
+    list(title = "4. VALIDATE and Apply", detail = "Verify accuracy against standards and expertise. Apply human judgment. Integrate into final work.", note = "→ Critical evaluation", color = "#9b59b6")
   ),
-  Key_Action = c(
-    "Task decomposition",
-    "Prompt engineering",
-    "Multi-turn dialogue",
-    "Critical evaluation"
-  ),
-  x = c(1, 2, 3, 4),
-  y = c(1, 1, 1, 1)
+  title = "The Four Steps of Effective AI Collaboration",
+  subtitle = "A systematic approach to getting maximum value from AI tools",
+  per_row = 4
 )
-
-ggplot(steps_data, aes(x = x, y = y)) +
-  geom_tile(aes(fill = Step), width = 0.95, height = 0.9, color = "white", linewidth = 3) +
-  geom_text(aes(label = Step), fontface = "bold", vjust = -1.6, size = 5 * 1.2 * diagram_text_scale, color = "white") +
-  geom_text(aes(label = Description), vjust = 0.7, size = 4 * diagram_text_scale, color = "white", lineheight = 0.95) +
-  geom_text(aes(y = 0.6, label = paste0("→ ", Key_Action)), size = 3.5 * diagram_text_scale, color = "yellow", fontface = "italic") +
-  # Add arrows between steps
-  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#9b59b6"), guide = "none") +
-  scale_x_continuous(limits = c(0.4, 4.6)) +
-  labs(
-    title = "The Four Steps of Effective AI Collaboration",
-    subtitle = "A systematic approach to getting maximum value from AI tools"
-  ) +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 14 * chart_text_scale)
-  )
 ```
 
 ### Step 1: Define the Task
@@ -830,47 +805,20 @@ Complex engineering problems are rarely solved in a single prompt. The iterative
 
 ### The Iteration Cycle
 
-```{r iteration-cycle, echo=FALSE, fig.width=12, fig.height=5.5}
-diagram_text_scale <- 1.2
-cycle_data <- data.frame(
-  Step = c("1. Initial\nPrompt", "2. Review\nResponse", "3. Identify\nGaps",
-           "4. Refine &\nExpand", "5. Validate\nResults", "6. Synthesize\nFinal Output"),
-  Description = c(
-    "Start with your\nbest attempt at\na complete prompt",
-    "Read critically:\nWhat's useful?\nWhat's wrong?",
-    "Note missing info,\nerrors, or areas\nneeding depth",
-    "Ask follow-up\nquestions to fill\ngaps and correct",
-    "Cross-check with\nstandards, calculations,\nand expertise",
-    "Combine iterations\ninto final\ndeliverable"
+```{r iteration-cycle, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Initial Prompt", detail = "Start with your best attempt at a complete prompt", color = "#3498DB"),
+    list(title = "2. Review Response", detail = "Read critically: What's useful? What's wrong?", color = "#27AE60"),
+    list(title = "3. Identify Gaps", detail = "Note missing info, errors, or areas needing depth", color = "#F39C12"),
+    list(title = "4. Refine & Expand", detail = "Ask follow-up questions to fill gaps and correct", color = "#E74C3C"),
+    list(title = "5. Validate Results", detail = "Cross-check with standards, calculations, and expertise", color = "#9B59B6"),
+    list(title = "6. Synthesize Final Output", detail = "Combine iterations into final deliverable", color = "#1ABC9C")
   ),
-  x = c(1, 2, 3, 4, 5, 6),
-  y = c(1, 1, 1, 1, 1, 1)
+  title = "The Iterative AI Collaboration Cycle",
+  subtitle = "Professional engineers rarely get perfect results from a single prompt",
+  per_row = 3
 )
-
-ggplot(cycle_data, aes(x = x, y = y)) +
-  geom_tile(aes(fill = Step), width = 0.9, height = 0.8, color = "white", linewidth = 2) +
-  geom_text(aes(label = Step), fontface = "bold", vjust = -1, size = 3.2 * diagram_text_scale, color = "white") +
-  geom_text(aes(label = Description), vjust = 1.5, size = 2.8 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  # Add arrows between steps
-  annotate("segment", x = 1.5, xend = 1.9, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", linewidth = 1) +
-  annotate("segment", x = 2.5, xend = 2.9, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", linewidth = 1) +
-  annotate("segment", x = 3.5, xend = 3.9, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", linewidth = 1) +
-  annotate("segment", x = 4.5, xend = 4.9, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", linewidth = 1) +
-  annotate("segment", x = 5.5, xend = 5.9, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.2, "cm")), color = "#2c3e50", linewidth = 1) +
-  scale_fill_manual(values = c("#3498db", "#27ae60", "#f39c12", "#e74c3c", "#9b59b6", "#1abc9c"),
-                    guide = "none") +
-  labs(title = "The Iterative AI Collaboration Cycle",
-       subtitle = "Professional engineers rarely get perfect results from a single prompt") +
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
-  )
 ```
 
 ### Worked Example: Designing a Conveyor Control System

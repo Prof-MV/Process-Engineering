@@ -453,50 +453,17 @@ scope_elements %>%
 
 Create a detailed process flow diagram and identify the function of each step.
 
-```{r step2-process-map, echo=FALSE, fig.align="center", fig.cap="Example: Injection Molding Process Flow", fig.width=10, fig.height=4}
-ggplot() +
-  # Process steps
-  annotate("rect", xmin = 0, xmax = 1.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 0.75, y = 1, label = "1. Load\nMaterial", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-
-  annotate("rect", xmin = 2, xmax = 3.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 2.75, y = 1, label = "2. Heat &\nPlasticize", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-
-  annotate("rect", xmin = 4, xmax = 5.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 4.75, y = 1, label = "3. Inject\ninto Mold", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-
-  annotate("rect", xmin = 6, xmax = 7.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 6.75, y = 1, label = "4. Cool &\nSolidify", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-
-  annotate("rect", xmin = 8, xmax = 9.5, ymin = 0.5, ymax = 1.5, fill = "#3498DB", color = "black") +
-  annotate("text", x = 8.75, y = 1, label = "5. Eject\nPart", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-
-  # Arrows
-  annotate("segment", x = 1.5, xend = 2, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 3.5, xend = 4, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 5.5, xend = 6, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-  annotate("segment", x = 7.5, xend = 8, y = 1, yend = 1,
-           arrow = arrow(length = unit(0.15, "cm")), linewidth = 1) +
-
-  # Functions below
-  annotate("text", x = 0.75, y = 0.2, label = "Function: Supply\ncorrect material",
-           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
-  annotate("text", x = 2.75, y = 0.2, label = "Function: Melt\nto spec temp",
-           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
-  annotate("text", x = 4.75, y = 0.2, label = "Function: Fill\nmold completely",
-           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
-  annotate("text", x = 6.75, y = 0.2, label = "Function: Solidify\nwithout defects",
-           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
-  annotate("text", x = 8.75, y = 0.2, label = "Function: Remove\nwithout damage",
-           size = 2.5 * diagram_text_scale, fontface = "italic", lineheight = 0.9) +
-
-  theme_void() +
-  labs(title = "Process Flow Diagram with Functions") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
-  ylim(-0.3, 2)
+```{r step2-process-map, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Load Material", note = "Function: Supply correct material", color = "#3498DB"),
+    list(title = "2. Heat & Plasticize", note = "Function: Melt to spec temp", color = "#3498DB"),
+    list(title = "3. Inject into Mold", note = "Function: Fill mold completely", color = "#3498DB"),
+    list(title = "4. Cool & Solidify", note = "Function: Solidify without defects", color = "#3498DB"),
+    list(title = "5. Eject Part", note = "Function: Remove without damage", color = "#3498DB")
+  ),
+  title = "Process Flow Diagram with Functions"
+)
 ```
 
 ### Step 3: Identifying Potential Failure Modes
