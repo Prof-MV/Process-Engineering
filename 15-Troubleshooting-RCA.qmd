@@ -714,8 +714,8 @@ kable(symbols, caption = "Fault Tree Analysis Symbols") %>%
 
 ### FTA Example: Pump Fails to Deliver Flow
 
-```{r fta-example, echo=FALSE, fig.width=14, fig.height=10}
-diagram_text_scale <- 1.2
+```{r fta-example, echo=FALSE, fig.width=11, fig.height=7.5}
+diagram_text_scale <- 1.3
 # Create FTA diagram nodes
 fta_nodes <- data.frame(
   id = 1:13,
@@ -724,17 +724,17 @@ fta_nodes <- data.frame(
     "No power\nto pump",
     "Mechanical\nfailure",
     "No fluid\navailable",
-    "Main breaker\ntripped",
+    "Breaker\ntripped",
     "Motor\nfailure",
     "Impeller\nfailure",
     "Shaft\nseized",
     "Tank\nempty",
-    "Inlet valve\nclosed",
-    "Suction line\nblocked",
+    "Inlet\nclosed",
+    "Suction\nblocked",
     "Impeller\nworn",
     "Impeller\nbroken"
   ),
-  x = c(7, 3, 7, 11, 3, 5.5, 7, 8.5, 10, 11, 12, 6.5, 7.5),
+  x = c(7, 3, 7, 11.5, 3, 5, 7, 9, 10.2, 11.7, 13.2, 6.3, 7.7),
   y = c(10, 7, 7, 7, 4, 4, 4, 4, 4, 4, 4, 1, 1),
   type = c("intermediate", "intermediate", "intermediate", "intermediate",
            "basic", "basic", "intermediate", "basic",
@@ -752,21 +752,21 @@ ggplot() +
   # Draw connecting lines
   geom_segment(aes(x = 7, y = 9.3, xend = 3, yend = 7.7), color = "gray30") +
   geom_segment(aes(x = 7, y = 9.3, xend = 7, yend = 7.7), color = "gray30") +
-  geom_segment(aes(x = 7, y = 9.3, xend = 11, yend = 7.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 9.3, xend = 11.5, yend = 7.7), color = "gray30") +
   geom_segment(aes(x = 3, y = 6.3, xend = 3, yend = 4.7), color = "gray30") +
-  geom_segment(aes(x = 7, y = 6.3, xend = 5.5, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 6.3, xend = 5, yend = 4.7), color = "gray30") +
   geom_segment(aes(x = 7, y = 6.3, xend = 7, yend = 4.7), color = "gray30") +
-  geom_segment(aes(x = 7, y = 6.3, xend = 8.5, yend = 4.7), color = "gray30") +
-  geom_segment(aes(x = 11, y = 6.3, xend = 10, yend = 4.7), color = "gray30") +
-  geom_segment(aes(x = 11, y = 6.3, xend = 11, yend = 4.7), color = "gray30") +
-  geom_segment(aes(x = 11, y = 6.3, xend = 12, yend = 4.7), color = "gray30") +
-  geom_segment(aes(x = 7, y = 3.3, xend = 6.5, yend = 1.7), color = "gray30") +
-  geom_segment(aes(x = 7, y = 3.3, xend = 7.5, yend = 1.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 6.3, xend = 9, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 11.5, y = 6.3, xend = 10.2, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 11.5, y = 6.3, xend = 11.7, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 11.5, y = 6.3, xend = 13.2, yend = 4.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 3.3, xend = 6.3, yend = 1.7), color = "gray30") +
+  geom_segment(aes(x = 7, y = 3.3, xend = 7.7, yend = 1.7), color = "gray30") +
   # OR gates (simplified as triangles)
-  geom_point(aes(x = c(7, 3, 7, 11, 7), y = c(9, 6, 6, 6, 3)),
+  geom_point(aes(x = c(7, 3, 7, 11.5, 7), y = c(9, 6, 6, 6, 3)),
              shape = 25, size = 8, fill = "yellow", color = "black") +
-  annotate("text", x = c(7, 3, 7, 11, 7), y = c(9, 6, 6, 6, 3),
-           label = "OR", size = 2.6 * diagram_text_scale, fontface = "bold") +
+  annotate("text", x = c(7, 3, 7, 11.5, 7), y = c(9, 6, 6, 6, 3),
+           label = "OR", size = 2.8 * diagram_text_scale, fontface = "bold") +
   # Intermediate events (rectangles)
   geom_tile(data = fta_nodes[fta_nodes$type == "intermediate",],
             aes(x = x, y = y), width = 1.9, height = 1.2,
@@ -776,22 +776,22 @@ ggplot() +
             color = "white", size = 3.2 * diagram_text_scale, fontface = "bold") +
   # Basic events (circles)
   geom_point(data = fta_nodes[fta_nodes$type == "basic",],
-             aes(x = x, y = y), size = 22, color = "black", fill = "#27ae60", shape = 21) +
+             aes(x = x, y = y), size = 27, color = "black", fill = "#27ae60", shape = 21) +
   geom_text(data = fta_nodes[fta_nodes$type == "basic",],
             aes(x = x, y = y, label = label),
-            color = "white", size = 2.8 * diagram_text_scale) +
+            color = "white", size = 2.9 * diagram_text_scale, lineheight = 0.85) +
   # Top event styling
   geom_tile(aes(x = 7, y = 10), width = 2.5, height = 1.3,
             fill = "#e74c3c", color = "black", linewidth = 1.5) +
   geom_text(aes(x = 7, y = 10, label = "Pump fails to\ndeliver flow"),
             color = "white", size = 3.5 * diagram_text_scale, fontface = "bold") +
   scale_y_continuous(limits = c(0, 11)) +
-  scale_x_continuous(limits = c(0, 14)) +
+  scale_x_continuous(limits = c(1, 14.5)) +
   labs(title = "Fault Tree Analysis: Pump Fails to Deliver Flow",
        subtitle = "OR gates mean any single path can cause the top event") +
   theme_void() +
   theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5))
+        plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale))
 ```
 
 ### Calculating Probability with FTA
