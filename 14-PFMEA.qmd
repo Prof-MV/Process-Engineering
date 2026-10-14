@@ -44,29 +44,16 @@ By the end of this chapter, you will be able to:
 
 **Process Failure Mode and Effects Analysis (PFMEA)** is a systematic, proactive method for evaluating a manufacturing or business process to identify where and how it might fail, and to assess the relative impact of different failures. The goal is to identify and prioritize actions that will prevent defects before they occur.
 
-```{r pfmea-definition, echo=FALSE, fig.align="center", fig.cap="PFMEA: A Proactive Quality Tool", fig.width=10, fig.height=5}
-ggplot() +
-  # Traditional approach
-  annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 2, y = 2.5, label = "REACTIVE APPROACH", fontface = "bold",
-           size = 4 * diagram_text_scale, color = "white") +
-  annotate("text", x = 2, y = 1.5, label = "Detect → Fix → Repeat\n\nFind defects after\nthey occur",
-           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  # PFMEA approach
-  annotate("rect", xmin = 5, xmax = 9, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
-  annotate("text", x = 7, y = 2.5, label = "PFMEA APPROACH", fontface = "bold",
-           size = 4 * diagram_text_scale, color = "white") +
-  annotate("text", x = 7, y = 1.5, label = "Predict → Prevent → Verify\n\nAnticipate failures\nbefore they occur",
-           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  # Arrow
-  annotate("segment", x = 4.2, xend = 4.8, y = 1.5, yend = 1.5,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 2, color = "#2C3E50") +
-  annotate("text", x = 4.5, y = 2.2, label = "Shift from", size = 3 * diagram_text_scale) +
-  theme_void() +
-  labs(title = "The PFMEA Mindset: Prevention Over Detection",
-       subtitle = "Moving from finding defects to preventing them") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
+```{r pfmea-definition, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "REACTIVE APPROACH", detail = "Detect → Fix → Repeat\n\nFind defects after they occur", color = "#E74C3C"),
+    list(title = "PFMEA APPROACH", detail = "Predict → Prevent → Verify\n\nAnticipate failures before they occur", color = "#27AE60")
+  ),
+  title = "The PFMEA Mindset: Prevention Over Detection",
+  subtitle = "Moving from finding defects to preventing them",
+  per_row = 2
+)
 ```
 
 ### Brief History of FMEA

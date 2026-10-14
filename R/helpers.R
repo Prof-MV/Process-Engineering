@@ -347,10 +347,11 @@ source("R/tryit.R")
 #'   a function description) and `color` (hex).
 #' @param title,subtitle Optional heading lines above the flow.
 #' @param feedback Optional text for a return-loop bar under the flow.
+#' @param footer Optional plain note under the flow (no return arrow).
 #' @param per_row Boxes per row on a wide screen (default: all in one row).
 #' @export
 flow_diagram <- function(steps, title = NULL, subtitle = NULL,
-                         feedback = NULL, per_row = NULL) {
+                         feedback = NULL, per_row = NULL, footer = NULL) {
   esc <- function(x) htmltools::htmlEscape(x)
   br <- function(x) gsub("\n", "<br>", esc(x), fixed = TRUE)
   if (!knitr::is_html_output(excludes = "epub")) {
@@ -383,6 +384,7 @@ flow_diagram <- function(steps, title = NULL, subtitle = NULL,
     sprintf('<div class="flow-row" style="--flow-cols:%d">', cols),
     paste(items, collapse = ""), '</div>',
     if (!is.null(feedback)) sprintf('<div class="flow-feedback">&#8617; %s</div>', esc(feedback)) else "",
+    if (!is.null(footer)) sprintf('<div class="flow-feedback">%s</div>', esc(footer)) else "",
     '</div>')
   knitr::asis_output(html)
 }

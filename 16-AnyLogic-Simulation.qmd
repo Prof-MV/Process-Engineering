@@ -140,51 +140,18 @@ In DES, entities (products, orders, customers) flow through a series of processe
 - Service processes and queuing systems
 - Call centers and order processing
 
-```{r fig-des-flow, echo=FALSE, fig.cap="Discrete-event simulation flow diagram", fig.align='center', fig.width=10, fig.height=4}
-diagram_text_scale <- 1.22  # fit labels to their shapes
-# Create a simple process flow visualization
-library(ggplot2)
-
-# Define process steps
-steps <- data.frame(
-  x = c(1, 3, 5, 7, 9),
-  y = rep(0, 5),
-  label = c("Source", "Station 1", "Queue", "Station 2", "Sink"),
-  type = c("source", "process", "queue", "process", "sink")
+```{r fig-des-flow, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "Source", color = "#3498DB"),
+    list(title = "Station 1", color = "#E74C3C"),
+    list(title = "Queue", color = "#F39C12"),
+    list(title = "Station 2", color = "#E74C3C"),
+    list(title = "Sink", color = "#2ECC71")
+  ),
+  title = "Discrete-Event Simulation: Entities Flow Through Processes",
+  subtitle = "Entities (products) flow through the system"
 )
-
-arrows <- data.frame(
-  x = c(1.55, 3.55, 5.55, 7.55),
-  xend = c(2.45, 4.45, 6.45, 8.45),
-  y = rep(0, 4),
-  yend = rep(0, 4)
-)
-
-# Create entities flowing through
-entities <- data.frame(
-  x = c(2, 4, 6, 8),
-  y = rep(0, 4),
-  entity = c("A", "B", "C", "D")
-)
-
-ggplot() +
-  # Draw process boxes
-  geom_rect(data = steps, aes(xmin = x - 0.5, xmax = x + 0.5, ymin = -0.3, ymax = 0.3),
-            fill = c("#3498DB", "#E74C3C", "#F39C12", "#E74C3C", "#2ECC71"),
-            color = "black", linewidth = 1) +
-  geom_text(data = steps, aes(x = x, y = 0, label = label), color = "white", fontface = "bold", size = 3 * diagram_text_scale) +
-  # Draw arrows
-  geom_segment(data = arrows, aes(x = x, xend = xend, y = y, yend = yend),
-               arrow = arrow(length = unit(0.3, "cm")), linewidth = 1.5, color = "gray40") +
-  # Draw entities
-  geom_point(data = entities, aes(x = x, y = y + 0.5), size = 6, color = "#9B59B6") +
-  geom_text(data = entities, aes(x = x, y = y + 0.5, label = entity), color = "white", fontface = "bold") +
-  annotate("text", x = 5, y = 0.9, label = "Entities (products) flow through the system",
-           size = 4 * diagram_text_scale, fontface = "italic") +
-  coord_cartesian(xlim = c(0, 10), ylim = c(-0.5, 1.2)) +
-  theme_void() +
-  labs(title = "Discrete-Event Simulation: Entities Flow Through Processes") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale))
 ```
 
 ### Agent-Based Modeling (ABM)

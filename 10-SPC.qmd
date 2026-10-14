@@ -48,28 +48,16 @@ By the end of this chapter, you will be able to:
 
 **Statistical Process Control (SPC)** is a method of quality control that uses statistical methods to monitor and control a process. It helps ensure that the process operates at its full potential to produce conforming product.
 
-```{r spc-concept, echo=FALSE, fig.align="center", fig.cap="The SPC Philosophy: Prevention Through Monitoring", fig.width=10, fig.height=5}
-ggplot() +
-  # Without SPC
-  annotate("rect", xmin = 0, xmax = 4, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 2, y = 2.5, label = "WITHOUT SPC", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
-  annotate("text", x = 2, y = 1.5,
-           label = "• Inspect after production\n• Find defects too late\n• React to problems\n• High scrap/rework costs",
-           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  # With SPC
-  annotate("rect", xmin = 5, xmax = 9, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
-  annotate("text", x = 7, y = 2.5, label = "WITH SPC", fontface = "bold", size = 4 * diagram_text_scale, color = "white") +
-  annotate("text", x = 7, y = 1.5,
-           label = "• Monitor during production\n• Detect shifts early\n• Prevent defects\n• Lower costs, higher quality",
-           size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  # Arrow
-  annotate("segment", x = 4.2, xend = 4.8, y = 1.5, yend = 1.5,
-           arrow = arrow(length = unit(0.3, "cm")), linewidth = 2, color = "#2C3E50") +
-  theme_void() +
-  labs(title = "The Shift from Inspection to Prevention",
-       subtitle = "SPC enables real-time process monitoring and early intervention") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
-        plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale))
+```{r spc-concept, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "WITHOUT SPC", detail = "• Inspect after production\n• Find defects too late\n• React to problems\n• High scrap/rework costs", color = "#E74C3C"),
+    list(title = "WITH SPC", detail = "• Monitor during production\n• Detect shifts early\n• Prevent defects\n• Lower costs, higher quality", color = "#27AE60")
+  ),
+  title = "The Shift from Inspection to Prevention",
+  subtitle = "SPC enables real-time process monitoring and early intervention",
+  per_row = 2
+)
 ```
 
 ### Brief History of SPC

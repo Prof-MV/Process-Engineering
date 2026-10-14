@@ -645,31 +645,20 @@ tryit_sort(
 
 ### The Seven Steps of Autonomous Maintenance
 
-```{r am-seven-steps, echo=FALSE, fig.align="center", fig.cap="Seven Steps of Autonomous Maintenance", fig.width=10, fig.height=7}
-diagram_text_scale <- 1.05
-steps <- data.frame(
-  step = 1:7,
-  name = c("Initial Cleaning", "Eliminate Sources", "Standards", "General Inspection",
-           "Autonomous Inspection", "Organization", "Full AM"),
-  description = c("Clean to inspect", "Prevent contamination", "Maintain conditions",
-                  "Train & inspect", "Self-directed", "Standardize workplace", "Continuous improvement"),
-  y = c(7, 6, 5, 4, 3, 2, 1)
+```{r am-seven-steps, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Initial Cleaning", note = "Clean to inspect", color = "#E74C3C"),
+    list(title = "2. Eliminate Sources", note = "Prevent contamination", color = "#E74C3C"),
+    list(title = "3. Standards", note = "Maintain conditions", color = "#E74C3C"),
+    list(title = "4. General Inspection", note = "Train & inspect", color = "#E74C3C"),
+    list(title = "5. Autonomous Inspection", note = "Self-directed", color = "#E74C3C"),
+    list(title = "6. Organization", note = "Standardize workplace", color = "#E74C3C"),
+    list(title = "7. Full AM", note = "Continuous improvement", color = "#E74C3C")
+  ),
+  title = "Seven Steps of Autonomous Maintenance",
+  per_row = 4
 )
-
-ggplot(steps, aes(x = 1, y = y)) +
-  geom_tile(width = 2, height = 0.8, fill = "#E74C3C", color = "white", linewidth = 2) +
-  geom_text(aes(x = 0.2, label = step), fontface = "bold", color = "white", size = 5.5 * diagram_text_scale) +
-  geom_text(aes(x = 1.2, label = name), fontface = "bold", color = "white", size = 4.5 * diagram_text_scale) +
-  geom_text(aes(x = 2.8, label = description), hjust = 0, color = "#2C3E50", size = 4.5 * diagram_text_scale) +
-  # Arrow between boxes and descriptions
-  annotate("segment", x = 2.55, xend = 2.4, y = 0.5, yend = 7.5,
-           arrow = arrow(length = unit(0.3, "cm"), ends = "first"), color = "#27AE60", linewidth = 2) +
-  annotate("text", x = 2.4, y = 4, label = "Progress", angle = 270, fontface = "bold",
-           color = "#27AE60", size = 4 * diagram_text_scale) +
-  theme_void() +
-  labs(title = "Seven Steps of Autonomous Maintenance") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale)) +
-  xlim(-0.5, 5.5)
 ```
 
 ```{r am-steps-detail, echo=FALSE}
@@ -783,37 +772,17 @@ checklist %>%
 
 ### Types of Maintenance
 
-```{r maintenance-types, echo=FALSE, fig.align="center", fig.cap="Types of Maintenance Activities", fig.width=10, fig.height=6}
-diagram_text_scale <- 1.0
-ggplot() +
-  # Reactive
-  annotate("rect", xmin = 0, xmax = 2.3, ymin = 0, ymax = 3, fill = "#E74C3C", alpha = 0.8) +
-  annotate("text", x = 1.15, y = 2.5, label = "REACTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
-  annotate("text", x = 1.15, y = 1.5, label = "Breakdown\nMaintenance\n\nFix when broken",
-           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
-  # Preventive
-  annotate("rect", xmin = 2.6, xmax = 4.9, ymin = 0, ymax = 3, fill = "#F39C12", alpha = 0.8) +
-  annotate("text", x = 3.75, y = 2.5, label = "PREVENTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
-  annotate("text", x = 3.75, y = 1.5, label = "Time-Based\nMaintenance\n\nScheduled intervals",
-           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
-  # Predictive
-  annotate("rect", xmin = 5.2, xmax = 7.5, ymin = 0, ymax = 3, fill = "#3498DB", alpha = 0.8) +
-  annotate("text", x = 6.35, y = 2.5, label = "PREDICTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
-  annotate("text", x = 6.35, y = 1.5, label = "Condition-Based\nMaintenance\n\nMonitor & predict",
-           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
-  # Proactive
-  annotate("rect", xmin = 7.8, xmax = 10.1, ymin = 0, ymax = 3, fill = "#27AE60", alpha = 0.8) +
-  annotate("text", x = 8.95, y = 2.5, label = "PROACTIVE", fontface = "bold", color = "white", size = 5 * diagram_text_scale) +
-  annotate("text", x = 8.95, y = 1.5, label = "Root Cause\nElimination\n\nPrevent recurrence",
-           color = "white", size = 4 * diagram_text_scale, lineheight = 0.9) +
-  # Arrow
-  annotate("segment", x = 0.5, xend = 9.5, y = -0.5, yend = -0.5,
-           arrow = arrow(length = unit(0.3, "cm")), color = "#2C3E50", linewidth = 1.5) +
-  annotate("text", x = 5, y = -0.8, label = "Increasing Maturity →", fontface = "bold") +
-  theme_void() +
-  labs(title = "Evolution of Maintenance Strategy") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16 * chart_text_scale)) +
-  ylim(-1.2, 3.5)
+```{r maintenance-types, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "REACTIVE", detail = "Breakdown Maintenance\nFix when broken", color = "#E74C3C"),
+    list(title = "PREVENTIVE", detail = "Time-Based Maintenance\nScheduled intervals", color = "#F39C12"),
+    list(title = "PREDICTIVE", detail = "Condition-Based Maintenance\nMonitor & predict", color = "#3498DB"),
+    list(title = "PROACTIVE", detail = "Root Cause Elimination\nPrevent recurrence", color = "#27AE60")
+  ),
+  title = "Evolution of Maintenance Strategy",
+  footer = "Increasing maturity"
+)
 ```
 
 ```{r maintenance-comparison, echo=FALSE}
