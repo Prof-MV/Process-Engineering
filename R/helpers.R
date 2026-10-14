@@ -35,6 +35,9 @@ diagram_text_scale <- 1.5
 knitr::opts_chunk$set(reset_diagram_scale = TRUE)
 knitr::opts_hooks$set(reset_diagram_scale = function(options) {
   assign("diagram_text_scale", .diagram_text_scale_default, envir = globalenv())
+  # library(kableExtra) re-exports knitr::kable and masks the wrapper below, so
+  # put the wrapper back in the global environment before every chunk.
+  assign("kable", kable, envir = globalenv())
   options
 })
 
@@ -387,4 +390,39 @@ flow_diagram <- function(steps, title = NULL, subtitle = NULL,
     if (!is.null(footer)) sprintf('<div class="flow-feedback">%s</div>', esc(footer)) else "",
     '</div>')
   knitr::asis_output(html)
+}
+
+
+#' kable() wrapper that renders **bold** markers in table cells
+#'
+#' knitr::kable() does not interpret markdown inside HTML table cells, so
+#' cells written as "**Name**" showed literal asterisks. In HTML output this
+#' converts `**text**` to bold; everything else in the table is escaped as
+#' usual. Other output formats and tables without markers are untouched.
+#' @export
+kable <- function(x, ..., escape = NULL) {
+  args <- list(...)
+  fmt <- args$format
+  html <- identical(fmt, "html") ||
+    (is.null(fmt) && knitr::is_html_output(excludes = "epub"))
+  has_marker <- function(v) is.character(v) && any(grepl("**", v, fixed = TRUE), na.rm = TRUE)
+  if (html && is.data.frame(x) && any(vapply(x, has_marker, logical(1)))) {
+    want_escape <- is.null(escape) || isTRUE(escape)
+    x[] <- lapply(x, function(v) {
+      if (!is.character(v)) return(v)
+      if (want_escape) {
+        v <- gsub("&", "&amp;", v, fixed = TRUE)
+        v <- gsub("<", "&lt;", v, fixed = TRUE)
+        v <- gsub(">", "&gt;", v, fixed = TRUE)
+      }
+      gsub("\\*\\*(.+?)\\*\\*", "<b>\\1</b>", v)
+    })
+    if (is.null(args$format)) args$format <- "html"  # pipe tables ignore escape
+    return(do.call(knitr::kable, c(list(x), args, list(escape = FALSE))))
+  }
+  if (is.null(escape)) {
+    do.call(knitr::kable, c(list(x), args))
+  } else {
+    do.call(knitr::kable, c(list(x), args, list(escape = escape)))
+  }
 }
