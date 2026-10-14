@@ -853,8 +853,9 @@ Figure @fig-ml-maintenance-cost-03 shows why every plant manager wants predictiv
 
 The most important concept in maintenance theory:
 
-```{r fig-ml-pf-curve-03, echo=FALSE, message=FALSE, fig.cap="The P-F curve: a stylized view of how a machine component's condition degrades from normal operation to functional failure. The P-F interval — the time between when failure becomes detectable (P) and when function is lost (F) — is the maintenance engineer's decision window. Different sensor types detect failure at different positions along the curve.", fig.align='center', fig.height=4.5}
+```{r fig-ml-pf-curve-03, echo=FALSE, message=FALSE, fig.cap="The P-F curve: a stylized view of how a machine component's condition degrades from normal operation to functional failure. The P-F interval — the time between when failure becomes detectable (P) and when function is lost (F) — is the maintenance engineer's decision window. Different sensor types detect failure at different positions along the curve.", fig.align='center', fig.height=5.5}
 library(ggplot2)
+diagram_text_scale <- 1.15
 
 # Simulate a degradation trajectory
 t     <- seq(0, 100, length.out = 500)
@@ -875,7 +876,7 @@ cond_F <- 100 - 3 * exp(0.04 * t_F)
 sensor_labels <- data.frame(
   t_detect = c(55,  70,  80,  87,  91),
   label    = c("Vibration", "Temperature", "Motor\ncurrent", "Audible\nnoise", "Visual\nsigns"),
-  y        = c(35,  22,  16,  10,  4)
+  y        = c(42,  31,  22,  13,  5)
 )
 
 ggplot(df_pf, aes(x = time, y = condition)) +
@@ -888,18 +889,19 @@ ggplot(df_pf, aes(x = time, y = condition)) +
   annotate("text", x = (t_P + t_F) / 2, y = -9,
            label = "P-F Interval\n(decision window)",
            colour = "#2e7d32", size = 3.2 * diagram_text_scale, fontface = "bold", hjust = 0.5) +
-  annotate("text", x = t_P - 1, y = cond_P + 4,
+  annotate("text", x = t_P + 1, y = 90,
            label = "P: First\ndetectable sign",
-           colour = "#f57f17", size = 3 * diagram_text_scale, hjust = 1) +
-  annotate("text", x = t_F - 1, y = cond_F + 14,
+           colour = "#f57f17", size = 3.2 * diagram_text_scale, hjust = 0) +
+  annotate("text", x = t_F + 1, y = 55,
            label = "F: Functional\nfailure",
-           colour = "#c62828", size = 3 * diagram_text_scale, hjust = 1) +
+           colour = "#c62828", size = 3.2 * diagram_text_scale, hjust = 0) +
   geom_point(data = sensor_labels,
              aes(x = t_detect, y = y), colour = "#7b1fa2",
              size = 3, shape = 18) +
   geom_text(data = sensor_labels,
             aes(x = t_detect - 1.5, y = y, label = label), hjust = 1,
-            colour = "#7b1fa2", size = 2.5 * diagram_text_scale) +
+            colour = "#7b1fa2", size = 3 * diagram_text_scale) +
+  coord_cartesian(xlim = c(0, 115)) +
   scale_y_continuous(limits = c(-15, 100),
                      breaks  = seq(0, 100, 20)) +
   labs(title    = "The P-F Curve",

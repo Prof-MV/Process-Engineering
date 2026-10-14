@@ -237,7 +237,7 @@ objectives %>%
 PFMEA is most effective when conducted by a **cross-functional team**. No single person has all the knowledge needed to identify every potential failure.
 
 ```{r pfmea-team, echo=FALSE, fig.align="center", fig.cap="PFMEA Cross-Functional Team", fig.width=10, fig.height=6}
-diagram_text_scale <- 1.16  # fit labels to their shapes
+diagram_text_scale <- 1.4  # fit labels to their shapes
 team <- data.frame(
   role = c("Process\nEngineer", "Quality\nEngineer", "Production\nSupervisor",
            "Maintenance\nTech", "Design\nEngineer", "Supplier\nRep"),
@@ -255,9 +255,9 @@ ggplot(team, aes(x = x, y = y)) +
   geom_text(aes(label = contribution), color = "white", size = 2.5 * diagram_text_scale,
             vjust = 1.5, lineheight = 0.8) +
   # Facilitator in center
-  annotate("point", x = 2, y = 3.05, size = 28, color = "#E74C3C") +
+  annotate("point", x = 2, y = 3.05, size = 36, color = "#E74C3C") +
   annotate("text", x = 2, y = 3.05, label = "PFMEA\nFacilitator",
-           color = "white", fontface = "bold", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
+           color = "white", fontface = "bold", size = 3 * diagram_text_scale, lineheight = 0.9) +
   theme_void() +
   labs(title = "PFMEA Team Composition",
        subtitle = "Each member brings unique knowledge and perspective") +
@@ -640,7 +640,7 @@ severity %>%
 For each failure mode, identify all possible causes: **"Why might this failure occur?"**
 
 ```{r step6-causes, echo=FALSE, fig.align="center", fig.cap="Fishbone Diagram: Causes of Short Shot", fig.width=10, fig.height=6}
-diagram_text_scale <- 1.22  # fit labels to their shapes
+diagram_text_scale <- 1.4  # fit labels to their shapes
 ggplot() +
   # Main arrow (spine)
   annotate("segment", x = 0, xend = 9, y = 3, yend = 3, linewidth = 2, color = "#2C3E50") +
@@ -1332,36 +1332,39 @@ food_pfmea %>%
 PFMEA doesn't exist in isolation — it connects to other quality tools and systems.
 
 ```{r integration-diagram, echo=FALSE, fig.align="center", fig.cap="PFMEA Integration with Quality Tools", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.95  # fit labels to their shapes
+diagram_text_scale <- 1.2  # fit labels to their shapes
+# Arrow between two circle centres, stopped at the circle edges
+link <- function(x1, y1, x2, y2, t1 = 0.17, t2 = 0.2) {
+  annotate("segment",
+           x = x1 + t1 * (x2 - x1), y = y1 + t1 * (y2 - y1),
+           xend = x2 - t2 * (x2 - x1), yend = y2 - t2 * (y2 - y1),
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), linewidth = 0.9)
+}
 ggplot() +
   # Central PFMEA
   annotate("point", x = 5, y = 3, size = 36, color = "#E74C3C") +
   annotate("text", x = 5, y = 3, label = "PFMEA", fontface = "bold", size = 5 * diagram_text_scale, color = "white") +
 
-  # Connected tools
-  # Process Flow
+  # Inputs flow IN to the PFMEA, outputs flow OUT of it
   annotate("point", x = 2, y = 5, size = 28, color = "#3498DB") +
-  annotate("text", x = 2, y = 5, label = "Process\nFlow", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  annotate("segment", x = 2.8, xend = 4.2, y = 4.5, yend = 3.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 3.9, y = 4.4, label = "Input", size = 2.5 * diagram_text_scale, color = "#3498DB") +
+  annotate("text", x = 2, y = 5, label = "Process\nFlow", size = 3.6 * diagram_text_scale, color = "white", lineheight = 0.9, fontface = "bold") +
+  link(2, 5, 5, 3) +
+  annotate("text", x = 3.1, y = 4.9, label = "Input", size = 3.4 * diagram_text_scale, color = "#2874A6", fontface = "bold") +
 
-  # Control Plan
-  annotate("point", x = 8, y = 5, size = 28, color = "#27AE60") +
-  annotate("text", x = 8, y = 5, label = "Control\nPlan", size = 3 * diagram_text_scale, color = "white", lineheight = 0.9) +
-  annotate("segment", x = 5.8, xend = 7.2, y = 3.5, yend = 4.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 6.0, y = 4.5, label = "Output", size = 2.5 * diagram_text_scale, color = "#27AE60") +
-
-  # SPC
-  annotate("point", x = 8, y = 1, size = 28, color = "#F39C12") +
-  annotate("text", x = 8, y = 1, label = "SPC", size = 3 * diagram_text_scale, color = "white") +
-  annotate("segment", x = 5.8, xend = 7.2, y = 2.5, yend = 1.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 6.0, y = 1.5, label = "Monitoring", size = 2.5 * diagram_text_scale, color = "#F39C12") +
-
-  # DFMEA
   annotate("point", x = 2, y = 1, size = 28, color = "#9B59B6") +
-  annotate("text", x = 2, y = 1, label = "DFMEA", size = 3 * diagram_text_scale, color = "white") +
-  annotate("segment", x = 2.8, xend = 4.2, y = 1.5, yend = 2.5, arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("text", x = 4.0, y = 1.8, label = "Link", size = 2.5 * diagram_text_scale, color = "#9B59B6") +
+  annotate("text", x = 2, y = 1, label = "DFMEA", size = 3.6 * diagram_text_scale, color = "white", fontface = "bold") +
+  link(2, 1, 5, 3) +
+  annotate("text", x = 3.3, y = 1.15, label = "Link", size = 3.4 * diagram_text_scale, color = "#7D3C98", fontface = "bold") +
+
+  annotate("point", x = 8, y = 5, size = 28, color = "#27AE60") +
+  annotate("text", x = 8, y = 5, label = "Control\nPlan", size = 3.6 * diagram_text_scale, color = "white", lineheight = 0.9, fontface = "bold") +
+  link(5, 3, 8, 5, 0.2, 0.17) +
+  annotate("text", x = 5.9, y = 4.5, label = "Output", size = 3.4 * diagram_text_scale, color = "#1E8449", fontface = "bold") +
+
+  annotate("point", x = 8, y = 1, size = 28, color = "#F39C12") +
+  annotate("text", x = 8, y = 1, label = "SPC", size = 3.6 * diagram_text_scale, color = "white", fontface = "bold") +
+  link(5, 3, 8, 1, 0.2, 0.17) +
+  annotate("text", x = 6.1, y = 1.35, label = "Monitoring", size = 3.4 * diagram_text_scale, color = "#B9770E", fontface = "bold") +
 
   theme_void() +
   labs(title = "PFMEA Integration with Quality System") +

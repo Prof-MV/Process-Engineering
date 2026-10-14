@@ -108,51 +108,58 @@ ggplot(layout_viz, aes(x = Volume, y = Variety, label = Layout)) +
 In a **process layout**, similar resources (machines, equipment, workers with similar skills) are grouped together. Work flows between departments based on the specific requirements of each job.
 
 ```{r process-layout-diagram, echo=FALSE, fig.align="center", fig.cap="Example Process Layout - Machine Shop", fig.width=9, fig.height=6}
-diagram_text_scale <- 1.16  # fit labels to their shapes
-# Create a simple process layout visualization
+diagram_text_scale <- 1.1  # fit labels to their shapes
 library(ggplot2)
 
 departments <- data.frame(
   name = c("Receiving", "Lathes", "Milling", "Drilling", "Grinding", "Assembly", "Painting", "Shipping"),
-  x = c(1, 2, 4, 2, 4, 3, 5, 6),
+  x = c(1, 2, 4, 2, 4, 3, 5, 6) * 1.4,
   y = c(3, 4, 4, 2, 2, 3, 3, 3),
   color = c("#95A5A6", "#3498DB", "#3498DB", "#3498DB", "#3498DB", "#2ECC71", "#9B59B6", "#95A5A6")
 )
 
-# Flow paths for different products
-flow_A <- data.frame(
-  x = c(1, 2, 4, 4, 3, 5, 6),
-  y = c(3, 4, 4, 2, 3, 3, 3),
-  product = "Product A"
-)
+# Turn a visiting sequence into arrows that start and stop at the box edges,
+# shifted sideways so the two products do not lie on top of each other
+route <- function(x, y, product, shift) {
+  x <- x * 1.4                       # same horizontal spread as the boxes
+  n <- length(x)
+  dx <- x[-1] - x[-n]; dy <- y[-1] - y[-n]
+  len <- sqrt(dx^2 + dy^2)
+  ux <- dx / len; uy <- dy / len
+  # distance from a box centre to its edge along the direction of travel
+  # (boxes are 0.8 wide and 0.6 high), plus a small gap
+  trim <- pmin(0.4 / pmax(abs(ux), 1e-6), 0.3 / pmax(abs(uy), 1e-6)) + 0.05
+  data.frame(
+    x    = x[-n] + ux * trim - uy * shift,
+    y    = y[-n] + uy * trim + ux * shift,
+    xend = x[-1] - ux * trim - uy * shift,
+    yend = y[-1] - uy * trim + ux * shift,
+    product = product
+  )
+}
 
-flow_B <- data.frame(
-  x = c(1, 2, 2, 4, 3, 6),
-  y = c(3, 4, 2, 2, 3, 3),
-  product = "Product B"
-)
+flow_A <- route(c(1, 2, 4, 4, 3, 5, 6), c(3, 4, 4, 2, 3, 3, 3), "Product A", 0.15)
+flow_B <- route(c(1, 2, 2, 4, 3, 6), c(3, 4, 2, 2, 3, 3), "Product B", -0.2)
 
 ggplot() +
-  # Department boxes
   geom_tile(data = departments, aes(x = x, y = y, fill = color),
             width = 0.8, height = 0.6, alpha = 0.8, color = "black") +
-  geom_label(data = departments, aes(x = x, y = y, label = name),
-            fontface = "bold", size = 3.5 * diagram_text_scale, fill = "white", alpha = 0.75, label.size = 0) +
-  # Flow paths
-  geom_path(data = flow_A, aes(x = x, y = y + 0.05),
-            color = "#E74C3C", linewidth = 1.2, arrow = arrow(length = unit(0.2, "cm")),
-            linetype = "solid") +
-  geom_path(data = flow_B, aes(x = x, y = y - 0.05),
-            color = "#F39C12", linewidth = 1.2, arrow = arrow(length = unit(0.2, "cm")),
-            linetype = "dashed") +
+  geom_text(data = departments, aes(x = x, y = y, label = name),
+            fontface = "bold", size = 3.5 * diagram_text_scale) +
+  geom_segment(data = flow_A, aes(x = x, y = y, xend = xend, yend = yend),
+               color = "#E74C3C", linewidth = 1.2,
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed")) +
+  geom_segment(data = flow_B, aes(x = x, y = y, xend = xend, yend = yend),
+               color = "#F39C12", linewidth = 1.2, linetype = "dashed",
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed")) +
   scale_fill_identity() +
   labs(title = "Process Layout: Machine Shop Example",
        subtitle = "Different products follow different paths through the facility") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
         plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
-  annotate("text", x = 6.4, y = 4.2, hjust = 1, label = "Product A (solid)", color = "#E74C3C", fontface = "bold", size = 3.5 * diagram_text_scale) +
-  annotate("text", x = 6.4, y = 3.9, hjust = 1, label = "Product B (dashed)", color = "#F39C12", fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 8.4, y = 4.35, hjust = 1, label = "Product A (solid)", color = "#E74C3C", fontface = "bold", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 8.4, y = 4.05, hjust = 1, label = "Product B (dashed)", color = "#F39C12", fontface = "bold", size = 3.5 * diagram_text_scale) +
   coord_fixed(ratio = 1)
 ```
 
@@ -434,7 +441,7 @@ Where:
 ### Interactive Example: Comparing Two Layouts
 
 ```{r layout-comparison, echo=FALSE, fig.align="center", fig.width=10, fig.height=5, fig.cap="Comparing Two Process Layout Alternatives"}
-diagram_text_scale <- 1.05
+diagram_text_scale <- 1.15
 # Layout A
 layout_A <- data.frame(
   dept = c("Receiving", "Machining", "Assembly", "Painting", "Shipping"),
@@ -843,33 +850,33 @@ decisions <- data.frame(
             "High variety\nor high volume?",
             "PROCESS\nLAYOUT",
             "PRODUCT\nLAYOUT",
-            "Consider\nHYBRID/CELLULAR"),
-  x = c(1, 2.5, 2.5, 4, 4, 5.5, 4),
+            "Consider\nHYBRID /\nCELLULAR"),
+  x = c(1, 3.4, 3.4, 5.8, 5.8, 8.2, 5.8),
   y = c(2, 2, 0.8, 2, 0.8, 2, 3.2),
   fill = c("#95A5A6", "#F39C12", "#E74C3C", "#F39C12", "#3498DB", "#2ECC71", "#9B59B6")
 )
 
 ggplot(decisions, aes(x = x, y = y)) +
-  geom_tile(aes(fill = fill), width = 1.3, height = 0.7, color = "black") +
-  geom_text(aes(label = label), size = 2.8 * diagram_text_scale, fontface = "bold") +
+  geom_tile(aes(fill = fill), width = 1.5, height = 0.7, color = "black") +
+  geom_text(aes(label = label), size = 2.9 * diagram_text_scale, fontface = "bold") +
   # Arrows
-  annotate("segment", x = 1.65, xend = 1.85, y = 2, yend = 2,
+  annotate("segment", x = 1.8, xend = 2.6, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("segment", x = 2.5, xend = 2.5, y = 1.65, yend = 1.15,
+  annotate("segment", x = 3.4, xend = 3.4, y = 1.65, yend = 1.2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 2.7, y = 1.4, label = "No", size = 3 * diagram_text_scale) +
-  annotate("segment", x = 3.15, xend = 3.35, y = 2, yend = 2,
+  annotate("text", x = 3.5, y = 1.43, label = "No", hjust = 0, size = 3.5 * diagram_text_scale) +
+  annotate("segment", x = 4.2, xend = 5.0, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 3.25, y = 2.15, label = "Yes", size = 3 * diagram_text_scale) +
-  annotate("segment", x = 4, xend = 4, y = 1.65, yend = 1.15,
+  annotate("text", x = 4.6, y = 2.2, label = "Yes", size = 3.5 * diagram_text_scale) +
+  annotate("segment", x = 5.8, xend = 5.8, y = 1.65, yend = 1.2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 4.2, y = 1.4, label = "Variety", size = 3 * diagram_text_scale) +
-  annotate("segment", x = 4.65, xend = 4.85, y = 2, yend = 2,
+  annotate("text", x = 5.9, y = 1.43, label = "Variety", hjust = 0, size = 3.5 * diagram_text_scale) +
+  annotate("segment", x = 6.6, xend = 7.4, y = 2, yend = 2,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 4.75, y = 2.15, label = "Volume", size = 3 * diagram_text_scale) +
-  annotate("segment", x = 4, xend = 4, y = 2.35, yend = 2.85,
+  annotate("text", x = 7.0, y = 2.2, label = "Volume", size = 3.5 * diagram_text_scale) +
+  annotate("segment", x = 5.8, xend = 5.8, y = 2.35, yend = 2.85,
            arrow = arrow(length = unit(0.2, "cm"))) +
-  annotate("text", x = 4.2, y = 2.6, label = "Medium", size = 3 * diagram_text_scale) +
+  annotate("text", x = 5.9, y = 2.6, label = "Medium", hjust = 0, size = 3.5 * diagram_text_scale) +
   scale_fill_identity() +
   theme_void() +
   labs(title = "Layout Selection Decision Guide") +
@@ -893,13 +900,13 @@ ggplot(decisions, aes(x = x, y = y)) +
 
 Food processing facilities have unique layout requirements due to food safety, hygiene, and regulatory compliance.
 
-```{r food-processing-layout, echo=FALSE, fig.align="center", fig.cap="Food Processing Plant Layout Example", fig.width=10, fig.height=6}
-diagram_text_scale <- 1.09  # fit labels to their shapes
+```{r food-processing-layout, echo=FALSE, fig.align="center", fig.cap="Food Processing Plant Layout Example", fig.width=11, fig.height=5.5}
+diagram_text_scale <- 1.15  # fit labels to their shapes
 # Create a food processing plant layout
 food_zones <- data.frame(
   zone = c("Receiving\n(Raw Materials)", "Cold Storage", "Preparation",
            "Processing\n(Cooking)", "Packaging", "Finished Goods\nStorage", "Shipping"),
-  x = c(1, 1, 2, 3, 4, 5, 5),
+  x = c(1, 1, 2.6, 4.2, 5.8, 7.4, 7.4),
   y = c(2.5, 1.5, 2, 2, 2, 2.5, 1.5),
   fill = c("#95A5A6", "#3498DB", "#F39C12", "#E74C3C", "#9B59B6", "#2ECC71", "#95A5A6"),
   width = c(0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95),
@@ -907,28 +914,31 @@ food_zones <- data.frame(
 )
 
 # Flow arrows
+# Each arrow runs from the edge of one zone to the edge of the next
+# (receiving and cold storage -> preparation -> processing -> packaging
+#  -> finished goods -> shipping)
 flow_data <- data.frame(
-  x = c(1, 1, 2, 3, 4, 5),
-  y = c(2.5, 1.5, 2, 2, 2, 2.5),
-  xend = c(2, 2, 3, 4, 5, 5),
-  yend = c(2, 2, 2, 2, 2.5, 1.5)
+  x    = c(1.5, 1.5, 3.15, 4.75, 6.3, 7.4),
+  y    = c(2.5, 1.5, 2.0,  2.0,  2.1, 2.2),
+  xend = c(2.1, 2.1, 3.65, 5.25, 6.9, 7.4),
+  yend = c(2.1, 1.9, 2.0,  2.0,  2.45, 1.8)
 )
 
 ggplot() +
   # Zone backgrounds - clean and dirty separation
-  annotate("rect", xmin = 0.3, xmax = 2.7, ymin = 1, ymax = 3,
+  annotate("rect", xmin = 0.3, xmax = 3.4, ymin = 1, ymax = 3,
            fill = "#FADBD8", alpha = 0.3) +
-  annotate("rect", xmin = 2.7, xmax = 5.7, ymin = 1, ymax = 3,
+  annotate("rect", xmin = 3.4, xmax = 8.2, ymin = 1, ymax = 3,
            fill = "#D5F5E3", alpha = 0.3) +
-  annotate("text", x = 1.5, y = 3.2, label = "Raw Material Zone", fontface = "bold", color = "#E74C3C", size = 4 * diagram_text_scale) +
-  annotate("text", x = 4.2, y = 3.2, label = "Clean Processing Zone", fontface = "bold", color = "#2ECC71", size = 4 * diagram_text_scale) +
+  annotate("text", x = 1.85, y = 3.2, label = "Raw Material Zone", fontface = "bold", color = "#E74C3C", size = 4 * diagram_text_scale) +
+  annotate("text", x = 5.8, y = 3.2, label = "Clean Processing Zone", fontface = "bold", color = "#2ECC71", size = 4 * diagram_text_scale) +
   # Zones
   geom_tile(data = food_zones, aes(x = x, y = y, fill = fill, width = width, height = height),
             color = "black") +
   geom_text(data = food_zones, aes(x = x, y = y, label = zone), size = 3 * diagram_text_scale, fontface = "bold") +
   # Flow
-  geom_curve(data = flow_data, aes(x = x + 0.6, y = y, xend = xend - 0.6, yend = yend),
-             arrow = arrow(length = unit(0.15, "cm")), curvature = 0.1, color = "#2C3E50") +
+  geom_segment(data = flow_data, aes(x = x, y = y, xend = xend, yend = yend),
+               arrow = arrow(length = unit(0.25, "cm")), linewidth = 1, color = "#2C3E50") +
   scale_fill_identity() +
   labs(title = "Food Processing Plant Layout",
        subtitle = "One-way flow from raw materials to finished goods prevents cross-contamination") +
@@ -981,45 +991,38 @@ food_principles %>%
 
 Aerospace facilities often use **fixed-position layouts** combined with **process layouts** for component fabrication.
 
-```{r aerospace-layout, echo=FALSE, fig.align="center", fig.cap="Aerospace Assembly Facility Layout", fig.width=10, fig.height=6}
-diagram_text_scale <- 0.84  # fit labels to their shapes
+```{r aerospace-layout, echo=FALSE, fig.align="center", fig.cap="Aerospace Assembly Facility Layout", fig.width=12, fig.height=6}
+diagram_text_scale <- 1.15  # fit labels to their shapes
 # Aerospace facility layout
 aero_areas <- data.frame(
   area = c("Component\nFabrication", "Subassembly", "Wing\nAssembly", "Fuselage\nAssembly",
            "Final\nAssembly", "Systems\nIntegration", "Testing", "Paint &\nFinishing"),
-  x = c(1, 2, 3.5, 3.5, 5, 6, 7, 8),
-  y = c(2, 2, 2.7, 1.3, 2, 2, 2, 2),
+  x = c(1, 2.35, 4.0, 4.0, 5.7, 7.05, 8.4, 9.75),
+  y = c(2, 2, 2.75, 1.25, 2, 2, 2, 2),
   fill = c("#3498DB", "#9B59B6", "#F39C12", "#F39C12", "#E74C3C", "#2ECC71", "#1ABC9C", "#95A5A6")
 )
+head <- arrow(length = unit(0.25, "cm"), type = "closed")
 
 ggplot(aero_areas, aes(x = x, y = y)) +
-  geom_tile(aes(fill = fill), width = 0.8, height = 0.75, color = "black") +
-  geom_text(aes(label = area), size = 3 * diagram_text_scale, fontface = "bold") +
-  # Main flow arrows
-  annotate("segment", x = 1.5, xend = 1.6, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 2.5, xend = 3, y = 2.2, yend = 2.7,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 2.5, xend = 3, y = 1.8, yend = 1.3,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 4, xend = 4.5, y = 2.7, yend = 2.2,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 4, xend = 4.5, y = 1.3, yend = 1.8,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 5.5, xend = 5.6, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 6.5, xend = 6.6, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  annotate("segment", x = 7.5, xend = 7.6, y = 2, yend = 2,
-           arrow = arrow(length = unit(0.15, "cm"))) +
-  # Aircraft silhouette at final assembly
+  geom_tile(aes(fill = fill), width = 1.05, height = 0.8, color = "black") +
+  geom_text(aes(label = area), size = 3 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
+  # Fabrication -> subassembly, then the line splits into wing and fuselage
+  annotate("segment", x = 1.55, xend = 1.8, y = 2, yend = 2, arrow = head, linewidth = 0.9) +
+  annotate("segment", x = 2.9, xend = 3.4, y = 2.15, yend = 2.6, arrow = head, linewidth = 0.9) +
+  annotate("segment", x = 2.9, xend = 3.4, y = 1.85, yend = 1.4, arrow = head, linewidth = 0.9) +
+  # Wing and fuselage join at final assembly, then straight through to paint
+  annotate("segment", x = 4.6, xend = 5.1, y = 2.6, yend = 2.15, arrow = head, linewidth = 0.9) +
+  annotate("segment", x = 4.6, xend = 5.1, y = 1.4, yend = 1.85, arrow = head, linewidth = 0.9) +
+  annotate("segment", x = 6.3, xend = 6.45, y = 2, yend = 2, arrow = head, linewidth = 0.9) +
+  annotate("segment", x = 7.65, xend = 7.8, y = 2, yend = 2, arrow = head, linewidth = 0.9) +
+  annotate("segment", x = 9.0, xend = 9.15, y = 2, yend = 2, arrow = head, linewidth = 0.9) +
   scale_fill_identity() +
   labs(title = "Aerospace Manufacturing Facility Layout",
-       subtitle = "Hybrid layout: Process (fabrication) → Fixed-Position (final assembly)") +
+       subtitle = "Hybrid layout: Process (fabrication) \u2192 Fixed-Position (final assembly)") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
         plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
-  xlim(0.3, 8.7) + ylim(0.5, 3.5)
+  xlim(0.3, 10.5) + ylim(0.6, 3.4)
 ```
 
 **Aerospace Layout Characteristics:**
@@ -1055,16 +1058,16 @@ Watch how Boeing uses a moving assembly line for high-volume aircraft production
 ### Case Study 3: Automotive Supplier - Hybrid Cell Layout
 
 ```{r auto-supplier-layout, echo=FALSE, fig.align="center", fig.cap="Automotive Supplier Facility with Cellular Layout", fig.width=10, fig.height=6}
-diagram_text_scale <- 1.05
+diagram_text_scale <- 1.4
 # Automotive supplier with cells
 cells <- data.frame(
   cell = c(rep("Machining Cell 1\n(Brackets)", 3),
            rep("Machining Cell 2\n(Housings)", 3),
            rep("Assembly Cell", 4),
            "Shipping"),
-  machine = c("CNC Lathe", "CNC Mill", "Deburr",
+  machine = c("CNC\nLathe", "CNC\nMill", "Deburr",
               "VMC", "HMC", "CMM",
-              "Press Fit", "Weld", "Test", "Pack",
+              "Press\nFit", "Weld", "Test", "Pack",
               "Dock"),
   x = c(1, 2, 3, 1, 2, 3, 5, 6, 7, 8, 9),
   y = c(3, 3, 3, 1, 1, 1, 2, 2, 2, 2, 2),
@@ -1287,7 +1290,7 @@ if (LI <= 1.0) {
 ### Ergonomic Workstation Design
 
 ```{r ergonomic-zones, echo=FALSE, fig.align="center", fig.cap="Ergonomic Work Zones for Standing Operations", fig.width=8, fig.height=6}
-diagram_text_scale <- 0.88  # fit labels to their shapes
+diagram_text_scale <- 1.4  # fit labels to their shapes
 # Work zone diagram
 zones <- data.frame(
   zone = c("Primary\nWork Zone", "Secondary\nWork Zone", "Tertiary\n(Occasional)"),
@@ -1307,8 +1310,8 @@ ggplot() +
   annotate("rect", xmin = -0.8, xmax = 0.8, ymin = -0.3, ymax = 0.8,
            fill = "#2ECC71", alpha = 0.4) +
   # Worker position
-  annotate("point", x = 0, y = -0.5, size = 15, color = "#3498DB") +
-  annotate("text", x = 0, y = -0.5, label = "Worker", fontface = "bold", color = "white", size = 3.2 * diagram_text_scale) +
+  annotate("point", x = 0, y = -0.5, size = 20, color = "#3498DB") +
+  annotate("text", x = 0, y = -0.5, label = "Worker", fontface = "bold", color = "white", size = 2.5 * diagram_text_scale) +
   # Zone labels
   annotate("text", x = 0, y = 0.4, label = "Primary Zone\n(Frequent tasks)", fontface = "bold", size = 3.5 * diagram_text_scale) +
   annotate("text", x = 0, y = 1.0, label = "Secondary Zone\n(Regular tasks)", size = 3 * diagram_text_scale) +
@@ -1320,9 +1323,10 @@ ggplot() +
   labs(title = "Ergonomic Work Zones",
        subtitle = "Arrange tools and materials based on frequency of use") +
   theme_void() +
+  theme(plot.margin = margin(5, 5, 25, 5)) +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14 * chart_text_scale),
         plot.subtitle = element_text(hjust = 0.5, size = 10 * chart_text_scale)) +
-  coord_fixed()
+  coord_fixed(clip = "off")
 ```
 
 **Layout Implications:**

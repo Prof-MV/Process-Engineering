@@ -129,7 +129,7 @@ Industrial robots come in various mechanical configurations, each suited to diff
 ### Common Robot Types
 
 ```{r robot-types, echo=FALSE, fig.width=14, fig.height=10}
-diagram_text_scale <- 1.16  # fit labels to their shapes
+diagram_text_scale <- 1.4  # fit labels to their shapes
 robot_types <- data.frame(
   Type = c("Articulated\n(6-axis)", "SCARA", "Delta\n(Parallel)", "Cartesian\n(Gantry)",
            "Cylindrical", "Collaborative\n(Cobot)"),
@@ -359,7 +359,7 @@ ggplot() +
   # Annotations
   annotate("segment", x = 0, xend = 1800, y = 0, yend = 0,
            arrow = arrow(ends = "both", length = unit(0.2, "cm")), color = "black") +
-  annotate("text", x = 1000, y = -430, label = "Max Reach: 1800mm", size = 3.5 * diagram_text_scale) +
+  annotate("text", x = 1000, y = 450, label = "Max Reach: 1800mm", size = 3.5 * diagram_text_scale) +
   annotate("segment", x = 0, xend = 400, y = 300, yend = 300,
            arrow = arrow(ends = "both", length = unit(0.15, "cm")), color = "#e74c3c") +
   annotate("text", x = 250, y = 560, label = "Dead Zone\n(Min Reach: 400mm)",
@@ -367,8 +367,8 @@ ggplot() +
   # Work area example
   annotate("rect", xmin = 800, xmax = 1400, ymin = -300, ymax = 300,
            fill = "#27ae60", alpha = 0.4, color = "#27ae60") +
-  annotate("text", x = 1100, y = 0, label = "Typical\nWork Area", size = 3 * diagram_text_scale,
-           color = "#27ae60", fontface = "bold", lineheight = 0.9) +
+  annotate("text", x = 1100, y = -170, label = "Typical\nWork Area", size = 3 * diagram_text_scale,
+           color = "#145a32", fontface = "bold", lineheight = 0.9) +
   coord_fixed(xlim = c(-2200, 2200), ylim = c(-2200, 2200)) +
   labs(title = "Robot Work Envelope (Top View)",
        subtitle = "Horizontal reach shown; vertical reach forms spherical envelope",

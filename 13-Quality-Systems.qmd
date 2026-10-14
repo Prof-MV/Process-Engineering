@@ -108,51 +108,35 @@ kable(evolution, col.names = c("Era", "Approach", "Focus", "Key Figures/Standard
 
 ISO 9000 defines seven quality management principles that form the foundation of all QMS standards:
 
-```{r qm-principles, echo=FALSE, fig.width=12, fig.height=8}
-diagram_text_scale <- 1.22  # fit labels to their shapes
+```{r qm-principles, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 1.1  # fit labels to their shapes
 principles <- data.frame(
-  principle = c("Customer Focus", "Leadership", "Engagement of People",
-                "Process Approach", "Improvement", "Evidence-based\nDecision Making",
+  principle = c("Customer\nFocus", "Leadership", "Engagement\nof People",
+                "Process\nApproach", "Improvement", "Evidence-based\nDecision Making",
                 "Relationship\nManagement"),
   number = 1:7,
-  description = c(
-    "Understand and meet customer needs",
-    "Create unity of purpose and direction",
-    "Competent, empowered people at all levels",
-    "Manage activities as interconnected processes",
-    "Ongoing focus on improvement",
-    "Decisions based on data analysis",
-    "Manage relationships with interested parties"
-  ),
-  x = c(4, 1, 7, 2.5, 5.5, 2.5, 5.5),
-  y = c(4, 2.5, 2.5, 1, 1, -0.5, -0.5)
+  x = c(6, 1, 3, 5, 7, 9, 11),
+  y = c(4.2, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6)
 )
+kids <- principles[-1, ]
 
 ggplot(principles, aes(x = x, y = y)) +
+  # Customer Focus feeds every other principle; heads stop above each circle
+  geom_segment(data = kids, aes(x = 6, y = 3.6, xend = x, yend = y + 0.55),
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray45") +
   geom_point(size = 22, color = "#3498db") +
-  geom_text(aes(label = number), color = "white", size = 10 * diagram_text_scale, fontface = "bold") +
-  geom_label(aes(label = principle, y = y - 0.7), size = 5 * diagram_text_scale, fontface = "bold", lineheight = 0.9,
-             fill = "white", label.size = 0) +
-  # Customer focus at top
-  annotate("segment", x = 4, xend = 1, y = 3.0, yend = 2.8,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 7, y = 3.0, yend = 2.8,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 2.5, y = 3.0, yend = 1.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 5.5, y = 3.0, yend = 1.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 2.5, y = 3.0, yend = 0,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 4, xend = 5.5, y = 3.0, yend = 0,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  coord_cartesian(xlim = c(0, 8), ylim = c(-1.5, 5)) +
+  geom_text(aes(label = number), color = "white", size = 9 * diagram_text_scale, fontface = "bold") +
+  geom_text(data = principles[-1, ], aes(label = principle, y = y - 0.85),
+            size = 4.5 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
+  annotate("text", x = 6.6, y = 4.2, label = "Customer\nFocus", hjust = 0,
+           size = 4.5 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
+  coord_cartesian(xlim = c(0, 12), ylim = c(0, 5)) +
   labs(title = "Seven Quality Management Principles (ISO 9000:2015)",
        subtitle = "Customer Focus is the primary principle; others support it") +
   theme_void() +
   theme(
     plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5)
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
   )
 ```
 
@@ -208,56 +192,47 @@ ggplot(clauses, aes(x = 1, y = y)) +
 
 ISO 9001:2015 emphasizes the **process approach** combined with the **Plan-Do-Check-Act (PDCA)** cycle:
 
-```{r pdca-cycle, echo=FALSE, fig.width=11, fig.height=9}
-diagram_text_scale <- 1.36  # fit labels to their shapes
-# PDCA positioned clockwise: Plan (top), Do (right), Check (bottom), Act (left)
-ggplot() +
-  # Circular arrow path (clockwise)
-  geom_curve(aes(x = 5, y = 8, xend = 8, yend = 5), curvature = -0.4,
-             arrow = arrow(length = unit(0.4, "cm"), type = "closed"),
-             linewidth = 1.5, color = "#3498db") +
-  geom_curve(aes(x = 8, y = 5, xend = 5, yend = 2), curvature = -0.4,
-             arrow = arrow(length = unit(0.4, "cm"), type = "closed"),
-             linewidth = 1.5, color = "#27ae60") +
-  geom_curve(aes(x = 5, y = 2, xend = 2, yend = 5), curvature = -0.4,
-             arrow = arrow(length = unit(0.4, "cm"), type = "closed"),
-             linewidth = 1.5, color = "#f39c12") +
-  geom_curve(aes(x = 2, y = 5, xend = 5, yend = 8), curvature = -0.4,
-             arrow = arrow(length = unit(0.4, "cm"), type = "closed"),
-             linewidth = 1.5, color = "#e74c3c") +
+```{r pdca-cycle, echo=FALSE, fig.width=11, fig.height=8}
+diagram_text_scale <- 1.1  # fit labels to their shapes
+# PDCA positioned clockwise: Plan (top), Do (right), Check (bottom), Act (left).
+# Each arrow is an arc on the circle that starts and stops short of the
+# circles, so the arrow heads are visible and the direction is unambiguous.
+arc <- function(from, to, id) {
+  th <- seq(from, to, length.out = 30) * pi / 180
+  data.frame(x = 5 + 3 * cos(th), y = 5 + 3 * sin(th), id = id)
+}
+arcs <- rbind(arc(70, 20, "plan_do"), arc(-20, -70, "do_check"),
+              arc(-110, -160, "check_act"), arc(160, 110, "act_plan"))
+arc_cols <- c(plan_do = "#3498db", do_check = "#27ae60", check_act = "#f39c12", act_plan = "#e74c3c")
 
-  # PLAN (top)
+ggplot() +
+  geom_path(data = arcs, aes(x = x, y = y, group = id, color = id),
+            linewidth = 1.6, arrow = arrow(length = unit(0.4, "cm"), type = "closed")) +
+  scale_color_manual(values = arc_cols, guide = "none") +
+
   annotate("point", x = 5, y = 8, size = 28, color = "#3498db") +
-  annotate("text", x = 5, y = 8, label = "PLAN", color = "white",
-           fontface = "bold", size = 7 * diagram_text_scale) +
-  annotate("text", x = 5, y = 9.5, label = "Clause 4: Context\nClause 5: Leadership\nClause 6: Planning",
+  annotate("text", x = 5, y = 8, label = "PLAN", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 5, y = 9.6, label = "Clause 4: Context\nClause 5: Leadership\nClause 6: Planning",
            size = 4.5 * diagram_text_scale, hjust = 0.5, lineheight = 0.9) +
 
-  # DO (right)
   annotate("point", x = 8, y = 5, size = 28, color = "#27ae60") +
-  annotate("text", x = 8, y = 5, label = "DO", color = "white",
-           fontface = "bold", size = 7 * diagram_text_scale) +
-  annotate("text", x = 9.8, y = 5, label = "Clause 7: Support\nClause 8: Operation",
+  annotate("text", x = 8, y = 5, label = "DO", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 9.6, y = 5, label = "Clause 7: Support\nClause 8: Operation",
            size = 4.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
 
-  # CHECK (bottom)
   annotate("point", x = 5, y = 2, size = 28, color = "#f39c12") +
-  annotate("text", x = 5, y = 2, label = "CHECK", color = "white",
-           fontface = "bold", size = 6 * diagram_text_scale) +
-  annotate("text", x = 5, y = 0.5, label = "Clause 9: Performance Evaluation",
+  annotate("text", x = 5, y = 2, label = "CHECK", color = "white", fontface = "bold", size = 4.5 * diagram_text_scale) +
+  annotate("text", x = 5, y = 0.3, label = "Clause 9: Performance Evaluation",
            size = 4.5 * diagram_text_scale, hjust = 0.5, lineheight = 0.9) +
 
-  # ACT (left)
   annotate("point", x = 2, y = 5, size = 28, color = "#e74c3c") +
-  annotate("text", x = 2, y = 5, label = "ACT", color = "white",
-           fontface = "bold", size = 7 * diagram_text_scale) +
-  annotate("text", x = 0.2, y = 5, label = "Clause 10:\nImprovement",
+  annotate("text", x = 2, y = 5, label = "ACT", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 0.4, y = 5, label = "Clause 10:\nImprovement",
            size = 4.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
 
-  # Center label
-  annotate("text", x = 5, y = 5, label = "QMS", fontface = "bold", size = 8 * diagram_text_scale) +
+  annotate("text", x = 5, y = 5, label = "QMS", fontface = "bold", size = 7 * diagram_text_scale) +
 
-  coord_cartesian(xlim = c(-3, 13), ylim = c(-0.5, 10.5)) +
+  coord_cartesian(xlim = c(-3, 13), ylim = c(-0.5, 10.8)) +
   labs(title = "PDCA Cycle and ISO 9001:2015 Clauses",
        subtitle = "The continuous improvement cycle embedded in the standard") +
   theme_void() +
@@ -424,12 +399,12 @@ ggplot(core_tools, aes(x = x, y = 1)) +
 
 **APQP** is a structured framework for developing products that ensures customer requirements are met through careful planning and defined milestones.
 
-```{r apqp-phases, echo=FALSE, fig.width=12, fig.height=5}
-diagram_text_scale <- 0.95  # fit labels to their shapes
+```{r apqp-phases, echo=FALSE, fig.width=13, fig.height=5.5}
+diagram_text_scale <- 1.0  # fit labels to their shapes
 apqp_phases <- data.frame(
   phase = c("1", "2", "3", "4", "5"),
-  name = c("Plan & Define", "Product Design", "Process Design",
-           "Product & Process\nValidation", "Feedback &\nCorrective Action"),
+  name = c("Plan &\nDefine", "Product\nDesign", "Process\nDesign",
+           "Product &\nProcess\nValidation", "Feedback &\nCorrective\nAction"),
   activities = c("Voice of customer\nBenchmarking\nProduct assumptions",
                  "Design FMEA\nDVP&R\nPrototype build",
                  "Process flow\nProcess FMEA\nControl plan",
@@ -445,12 +420,12 @@ ggplot(apqp_phases, aes(x = x, y = 1)) +
                color = "#bdc3c7", linetype = "dashed") +
   geom_point(size = 22, color = "#3498db") +
   geom_text(aes(label = phase), color = "white", fontface = "bold", size = 10 * diagram_text_scale) +
-  geom_text(aes(label = name, y = 2.2), fontface = "bold", size = 6 * diagram_text_scale, lineheight = 0.85) +
-  geom_text(aes(label = activities, y = -0.2), size = 5 * diagram_text_scale, lineheight = 0.85, color = "gray30") +
+  geom_text(aes(label = name, y = 2.3), fontface = "bold", size = 5.2 * diagram_text_scale, lineheight = 0.85) +
+  geom_text(aes(label = activities, y = -0.2), size = 4.2 * diagram_text_scale, lineheight = 0.85, color = "gray30") +
   annotate("segment", x = 0.6, xend = 5.4, y = 1, yend = 1,
            arrow = arrow(length = unit(0.3, "cm"), ends = "last"),
            linewidth = 1.2, color = "#2c3e50") +
-  coord_cartesian(xlim = c(0, 6), ylim = c(-1.2, 3)) +
+  coord_cartesian(xlim = c(0, 6), ylim = c(-1.2, 3.3)) +
   labs(title = "APQP Five Phases",
        subtitle = "Structured product development from concept to launch") +
   theme_void() +
@@ -968,8 +943,8 @@ kable(mandatory, caption = "Documented Information Required by ISO 9001:2015") %
 
 ### The Audit Process
 
-```{r audit-process, echo=FALSE, fig.width=12, fig.height=6}
-diagram_text_scale <- 1.22  # fit labels to their shapes
+```{r audit-process, echo=FALSE, fig.width=13, fig.height=6.5}
+diagram_text_scale <- 1.0  # fit labels to their shapes
 audit_steps <- data.frame(
   step = 1:7,
   name = c("Planning", "Preparation", "Opening Meeting",
@@ -986,18 +961,18 @@ audit_steps <- data.frame(
   x = 1:7
 )
 
-audit_steps$description <- vapply(strwrap(audit_steps$description, 18, simplify = FALSE), paste, character(1), collapse = "\n")
+audit_steps$description <- vapply(strwrap(audit_steps$description, 13, simplify = FALSE), paste, character(1), collapse = "\n")
 
 ggplot(audit_steps, aes(x = x, y = 1)) +
   geom_point(size = 20, color = "#3498db") +
   geom_text(aes(label = step), color = "white", fontface = "bold", size = 8 * diagram_text_scale) +
-  geom_text(aes(label = name, y = 0.4), size = 5 * diagram_text_scale, fontface = "bold", angle = 45, hjust = 1) +
-  geom_text(aes(label = description, y = 1.6), size = 5 * diagram_text_scale, lineheight = 0.9) +
+  geom_text(aes(label = name, y = 0.4), size = 4.8 * diagram_text_scale, fontface = "bold", angle = 45, hjust = 1) +
+  geom_text(aes(label = description, y = 1.85), size = 4.2 * diagram_text_scale, lineheight = 0.9) +
   geom_segment(aes(x = x + 0.35, xend = x + 0.65, y = 1, yend = 1),
                data = audit_steps[1:6,],
                arrow = arrow(length = unit(0.3, "cm")), color = "gray50", linewidth = 1) +
   scale_x_continuous(limits = c(0.3, 7.7)) +
-  scale_y_continuous(limits = c(-0.7, 2.5)) +
+  scale_y_continuous(limits = c(-0.7, 2.9)) +
   labs(title = "Internal Audit Process Flow",
        subtitle = "Systematic approach to evaluating QMS effectiveness") +
   theme_void() +
@@ -1860,61 +1835,56 @@ A mature QMS integrates various quality tools throughout the organization.
 
 ### Quality Tools Integration Map
 
-```{r tools-integration, echo=FALSE, fig.width=14, fig.height=9}
+```{r tools-integration, echo=FALSE, fig.width=14, fig.height=8}
+diagram_text_scale <- 1.15  # fit labels to their shapes
 tools_map <- data.frame(
-  Phase = c("Design", "Design", "Launch", "Launch", "Production", "Production", "Production", "Improvement"),
   Tool = c("DFMEA", "DFM/DFA", "PFMEA", "Control Plan", "SPC", "MSA", "Audit", "CAPA"),
   QMS_Link = c("Risk assessment (6.1)", "Design controls (8.3)", "Risk assessment (6.1)",
                "Operational control (8.1)", "Monitoring (9.1)", "Resources (7.1.5)",
                "Internal audit (9.2)", "Nonconformity (10.2)"),
-  x = c(1, 1.5, 2.5, 3, 4, 4.5, 5.5, 6.5),
-  y = c(2, 1, 2, 1, 2, 1, 2, 1.5)
+  x = c(1.15, 1.15, 2.9, 2.9, 4.3, 4.3, 5.6, 6.85),
+  y = c(2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.5)
 )
 
 ggplot(tools_map, aes(x = x, y = y)) +
-  # Phase boxes
-  annotate("rect", xmin = 0.5, xmax = 1.8, ymin = 0.3, ymax = 2.7,
+  annotate("rect", xmin = 0.4, xmax = 1.9, ymin = 0.3, ymax = 2.8,
            fill = "#3498db", alpha = 0.2, color = "#3498db") +
-  annotate("text", x = 1.15, y = 2.5, label = "DESIGN", fontface = "bold", color = "#3498db") +
-
-  annotate("rect", xmin = 2, xmax = 3.5, ymin = 0.3, ymax = 2.7,
+  annotate("text", x = 1.15, y = 2.6, label = "DESIGN", fontface = "bold", color = "#3498db", size = 4.5 * diagram_text_scale) +
+  annotate("rect", xmin = 2.3, xmax = 3.5, ymin = 0.3, ymax = 2.8,
            fill = "#27ae60", alpha = 0.2, color = "#27ae60") +
-  annotate("text", x = 2.75, y = 2.5, label = "LAUNCH", fontface = "bold", color = "#27ae60") +
-
-  annotate("rect", xmin = 3.7, xmax = 6, ymin = 0.3, ymax = 2.7,
+  annotate("text", x = 2.9, y = 2.6, label = "LAUNCH", fontface = "bold", color = "#27ae60", size = 4.5 * diagram_text_scale) +
+  annotate("rect", xmin = 3.9, xmax = 6.1, ymin = 0.3, ymax = 2.8,
            fill = "#f39c12", alpha = 0.2, color = "#f39c12") +
-  annotate("text", x = 4.85, y = 2.5, label = "PRODUCTION", fontface = "bold", color = "#f39c12") +
-
-  annotate("rect", xmin = 6.2, xmax = 7, ymin = 0.3, ymax = 2.7,
+  annotate("text", x = 5, y = 2.6, label = "PRODUCTION", fontface = "bold", color = "#f39c12", size = 4.5 * diagram_text_scale) +
+  annotate("rect", xmin = 6.4, xmax = 7.3, ymin = 0.3, ymax = 2.8,
            fill = "#9b59b6", alpha = 0.2, color = "#9b59b6") +
-  annotate("text", x = 6.6, y = 2.5, label = "IMPROVE", fontface = "bold", color = "#9b59b6") +
+  annotate("text", x = 6.85, y = 2.6, label = "IMPROVE", fontface = "bold", color = "#9b59b6", size = 4.5 * diagram_text_scale) +
 
-  # Tool boxes
-  geom_label(aes(label = Tool), fill = "white", fontface = "bold", size = 3.5 * diagram_text_scale) +
-  geom_text(aes(label = QMS_Link, y = y - 0.35), size = 2.5 * diagram_text_scale, color = "gray40") +
+  geom_label(aes(label = Tool), fill = "white", fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(label = QMS_Link, y = y - 0.3), size = 3 * diagram_text_scale, color = "gray30") +
 
-  # Flow arrows
-  annotate("segment", x = 1.8, xend = 2.3, y = 1.5, yend = 1.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 3.3, xend = 3.8, y = 1.5, yend = 1.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
-  annotate("segment", x = 5.8, xend = 6.2, y = 1.5, yend = 1.5,
-           arrow = arrow(length = unit(0.2, "cm")), color = "gray50") +
+  # Lifecycle flow: design -> launch -> production -> improve
+  annotate("segment", x = 1.9, xend = 2.3, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray35", linewidth = 1) +
+  annotate("segment", x = 3.5, xend = 3.9, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray35", linewidth = 1) +
+  annotate("segment", x = 6.1, xend = 6.4, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray35", linewidth = 1) +
 
-  # Feedback loop
-  annotate("curve", x = 6.6, xend = 1.15, y = 0.5, yend = 0.5,
-           curvature = 0.3, arrow = arrow(length = unit(0.2, "cm")),
-           color = "#e74c3c", linetype = "dashed") +
-  annotate("text", x = 4, y = 0.15, label = "Lessons Learned / Continuous Improvement",
-           color = "#e74c3c", fontface = "italic", size = 3 * diagram_text_scale) +
+  # Feedback loop runs below the boxes, from IMPROVE back to DESIGN
+  annotate("path", x = c(6.85, 6.85, 1.15, 1.15), y = c(0.3, -0.05, -0.05, 0.3),
+           color = "#e74c3c", linetype = "dashed", linewidth = 1,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed")) +
+  annotate("text", x = 4, y = -0.3, label = "Lessons Learned / Continuous Improvement",
+           color = "#e74c3c", fontface = "italic", size = 4 * diagram_text_scale) +
 
-  coord_cartesian(xlim = c(0, 7.5), ylim = c(-0.2, 3)) +
+  coord_cartesian(xlim = c(0, 7.7), ylim = c(-0.6, 3)) +
   labs(title = "Quality Tools Integration Throughout Product Lifecycle",
        subtitle = "Each tool connects to specific ISO 9001 requirements") +
   theme_void() +
   theme(
     plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5)
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
   )
 ```
 

@@ -611,8 +611,11 @@ edges <- data.frame(
 )
 
 ggplot() +
-  geom_segment(data = edges, aes(x = x + 0.15, y = y, xend = xend - 0.15, yend = yend),
-               arrow = arrow(length = unit(0.2, "cm")), color = "#2C3E50", linewidth = 1) +
+  # Trim each arrow so its head stops at the circle edge instead of inside it
+  geom_segment(data = edges,
+               aes(x = x + 0.2 * (xend - x), y = y + 0.2 * (yend - y),
+                   xend = xend - 0.2 * (xend - x), yend = yend - 0.2 * (yend - y)),
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "#2C3E50", linewidth = 1) +
   geom_point(data = nodes, aes(x = x, y = y), size = 24, color = "#3498DB") +
   geom_text(data = nodes, aes(x = x, y = y + 0.1, label = task),
             color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
@@ -1054,7 +1057,7 @@ An **FMS** is a highly automated cell consisting of CNC machines interconnected 
 ### FMS Components
 
 ```{r fms-components, echo=FALSE, fig.align="center", fig.cap="Flexible Manufacturing System Components", fig.width=11, fig.height=6}
-diagram_text_scale <- 1.09  # fit labels to their shapes
+diagram_text_scale <- 1.4  # fit labels to their shapes
 # FMS schematic
 fms_data <- data.frame(
   Component = c("CNC\nMachine 1", "CNC\nMachine 2", "CNC\nMachine 3",

@@ -869,7 +869,7 @@ pdm_tech %>%
 
 The **P-F Curve** illustrates the concept of detecting potential failure (P) before functional failure (F).
 
-```{r pf-curve, echo=FALSE, fig.align="center", fig.cap="The P-F Curve: Detecting Failure Early", fig.width=12, fig.height=7}
+```{r pf-curve, echo=FALSE, fig.align="center", fig.cap="The P-F Curve: Detecting Failure Early", fig.width=12, fig.height=8}
 diagram_text_scale <- 1.22  # fit labels to their shapes
 # Create P-F curve with gradual decline then steeper drop
 x <- seq(0, 10, 0.01)
@@ -902,26 +902,26 @@ ggplot(pf_data, aes(x = x, y = y)) +
            color = "#922B21", size = 3.5 * diagram_text_scale, lineheight = 0.9) +
   # P point
   annotate("point", x = p_x, y = pf_data$y[which.min(abs(pf_data$x - p_x))], size = 4, color = "#2C3E50") +
-  annotate("text", x = p_x, y = 110, label = "P: Point of failure detection", hjust = 0.5,
+  annotate("text", x = p_x - 0.15, y = -5, label = "P: Point of failure detection", hjust = 1,
            color = "#2C3E50", fontface = "bold", size = 3.5 * diagram_text_scale) +
   # F point
   annotate("point", x = f_x, y = pf_data$y[which.min(abs(pf_data$x - f_x))], size = 4, color = "#C0392B") +
-  annotate("text", x = f_x, y = 110, label = "F: Functional failure", hjust = 0.5,
+  annotate("text", x = f_x + 0.15, y = -5, label = "F: Functional failure", hjust = 0,
            color = "#C0392B", fontface = "bold", size = 3.5 * diagram_text_scale) +
   # Detection methods along curve (angled text)
-  annotate("text", x = 0.3, y = 100, label = "Installation", angle = 55, hjust = 0,
+  annotate("text", x = 0.3, y = 98, label = "Installation", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
-  annotate("text", x = 4.2, y = 100, label = "Ultrasound", angle = 55, hjust = 0,
+  annotate("text", x = 3.9, y = 98, label = "Ultrasound", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
-  annotate("text", x = 4.8, y = 100, label = "Vibration Analysis", angle = 55, hjust = 0,
+  annotate("text", x = 4.6, y = 98, label = "Vibration Analysis", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
-  annotate("text", x = 5.5, y = 100, label = "Oil Analysis", angle = 55, hjust = 0,
+  annotate("text", x = 5.4, y = 98, label = "Oil Analysis", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
-  annotate("text", x = 6.2, y = 100, label = "Thermography", angle = 55, hjust = 0,
+  annotate("text", x = 6.2, y = 98, label = "Thermography", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
-  annotate("text", x = 7.8, y = 100, label = "Audible Noise", angle = 55, hjust = 0,
+  annotate("text", x = 7.6, y = 98, label = "Audible Noise", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
-  annotate("text", x = 8.8, y = 100, label = "Hot to touch", angle = 55, hjust = 0,
+  annotate("text", x = 8.6, y = 98, label = "Hot to touch", angle = 90, hjust = 0,
            color = "#2C3E50", size = 3 * diagram_text_scale, fontface = "italic") +
   # Failed! label
   annotate("text", x = 9.7, y = 35, label = "Failed!", fontface = "bold",
@@ -932,7 +932,7 @@ ggplot(pf_data, aes(x = x, y = y)) +
   annotate("text", x = (p_x + f_x)/2, y = -10, label = "P to F Interval", fontface = "bold",
            color = "#2C3E50", size = 4 * diagram_text_scale) +
   # Axis settings
-  scale_y_continuous(limits = c(-15, 115), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(-15, 140), expand = c(0, 0)) +
   scale_x_continuous(limits = c(-0.5, 10.5), expand = c(0, 0)) +
   labs(x = "TIME", y = "Resistance to Failure / Asset Condition") +
   theme_minimal() +
