@@ -644,7 +644,13 @@ ggplot() +
 
 ### Line Balancing Calculation
 
-This one is live — edit the numbers and re-run it to see how the results change.
+This calculator works through the pizza line in the table and diagram above. It does the three steps from the list at the start of this section, then builds a balanced set of stations for you:
+
+1. **Cycle time** — how often a finished pizza must leave the line to hit the target output.
+2. **Theoretical minimum stations** — total task time divided by cycle time, rounded up. No line can do better than this.
+3. **Station assignment** — tasks are loaded into stations one at a time, longest eligible task first, never exceeding the cycle time and never starting a task before its predecessors are done. The result gives the actual number of stations and the line efficiency.
+
+**What to change.** *Desired output* and *Available time per hour* set the cycle time (60 pizzas/h in 3600 s gives 60 s). Edit the *task times* in the table to see how a slow task, such as the 40 s dough roll, forces idle time elsewhere. The precedence relationships are fixed. Try raising the output until a single task is longer than the cycle time; the line can no longer be balanced without splitting that task or running it on parallel stations.
 
 ```{r calc-line-balance-calc, echo=FALSE, results='asis'}
 qwebr_calc_card(
@@ -653,10 +659,16 @@ qwebr_calc_card(
   icon = "industry",
   inputs = list(
     qwebr_calc_input("desired_output", "Desired output", value = 60, min = 20, max = 120, step = 5, type = "slider", suffix = "pizzas/h"),
-    qwebr_calc_input("total_task_time", "Total task time", value = 165, min = 20, max = 400, step = 5, suffix = "s"),
-    qwebr_calc_input("available_time", "Available time per hour", value = 3600, min = 600, max = 3600, step = 600, suffix = "s"),
-    qwebr_calc_input("n_stations", "Number of stations", value = 4, min = 1, max = 8, step = 1)
-  )
+    qwebr_calc_input("available_time", "Available time per hour", value = 3600, min = 600, max = 3600, step = 600, suffix = "s")
+  ),
+  tables = list(qwebr_calc_table(
+    frame = "tasks",
+    columns = list(
+      qwebr_calc_col("Task", c("A", "B", "C", "D", "E", "F"), type = "label", label = "Task"),
+      qwebr_calc_col("Description", c("Roll dough", "Spread sauce", "Add cheese", "Add toppings", "Season", "Box pizza"), type = "label", label = "Description"),
+      qwebr_calc_col("Time_sec", c(40, 25, 20, 35, 15, 30), label = "Time (s)", min = 1, step = 5),
+      qwebr_calc_col("Predecessors", c("-", "A", "B", "B", "C,D", "E"), type = "label", label = "Predecessors")),
+    note = "Edit the task times. The precedence relationships are fixed."))
 )
 ```
 
@@ -665,38 +677,62 @@ qwebr_calc_card(
 
 ```{webr-r}
 #| label: line-balance-calc
-# Given data
-total_task_time <- 40 + 25 + 20 + 35 + 15 + 30  # seconds
-desired_output <- 60  # pizzas per hour
+# Task data
+tasks <- data.frame(
+  Task = c("A", "B", "C", "D", "E", "F"),
+  Description = c("Roll dough", "Spread sauce", "Add cheese", "Add toppings", "Season", "Box pizza"),
+  Time_sec = c(40, 25, 20, 35, 15, 30),
+  Predecessors = c("-", "A", "B", "B", "C,D", "E")
+)
+
+# Production requirements
+desired_output <- 60    # pizzas per hour
 available_time <- 3600  # seconds per hour
 
-# Step 1: Calculate Cycle Time
+# Step 1: Cycle time and total work content
 cycle_time <- available_time / desired_output
+total_task_time <- sum(tasks$Time_sec)
 
-# Step 2: Calculate Theoretical Minimum Stations
+# Step 2: Theoretical minimum stations
 TM <- total_task_time / cycle_time
 
-# Step 3: Efficiency of the line with the stations you choose
-n_stations <- 4
-efficiency <- (total_task_time / (n_stations * cycle_time)) * 100
+cat(sprintf("Cycle time  %g s per pizza\n", cycle_time))
+cat(sprintf("Total task time  %g s\n", total_task_time))
+cat(sprintf("Theoretical minimum stations  %.2f  (so at least %g)\n", TM, ceiling(TM)))
 
-cat(sprintf("Line efficiency: %.1f%% with %g stations\n", efficiency, n_stations))
-cat(sprintf("  Cycle time  %g s per pizza\n", cycle_time))
-cat(sprintf("  Theoretical minimum stations  %.2f\n", TM))
-cat(sprintf("  Minimum stations required  %g\n", ceiling(TM)))
-cat(sprintf("  Balance delay (idle time)  %.1f%%\n", 100 - efficiency))
-if (n_stations < ceiling(TM)) {
-  cat(sprintf("  Check  !!Too few stations: at least %g needed!!\n", ceiling(TM)))
+if (any(tasks$Time_sec > cycle_time)) {
+  cat("!!A single task is longer than the cycle time: split it or use parallel stations.!!\n")
+} else {
+  # Step 3: Assign tasks to stations (longest eligible task first)
+  preds <- strsplit(gsub(" ", "", tasks$Predecessors), ",")
+  preds <- lapply(preds, function(p) p[p != "-"])
+  done <- character(0)
+  station <- 0
+  cat("\nStation assignments:\n")
+  while (length(done) < nrow(tasks)) {
+    station <- station + 1
+    load <- 0
+    members <- character(0)
+    repeat {
+      ready <- which(!(tasks$Task %in% done) &
+                     sapply(preds, function(p) all(p %in% done)) &
+                     load + tasks$Time_sec <= cycle_time)
+      if (length(ready) == 0) break
+      pick <- ready[which.max(tasks$Time_sec[ready])]
+      load <- load + tasks$Time_sec[pick]
+      members <- c(members, tasks$Task[pick])
+      done <- c(done, tasks$Task[pick])
+    }
+    cat(sprintf("  Station %d: %s = %g s [idle %g s]\n",
+                station, paste(members, collapse = " + "), load, cycle_time - load))
+  }
+
+  # Step 4: Efficiency
+  efficiency <- total_task_time / (station * cycle_time) * 100
+  cat(sprintf("\nStations used  %d\n", station))
+  cat(sprintf("Line efficiency  %.1f%%\n", efficiency))
+  cat(sprintf("Balance delay (idle time)  %.1f%%\n", 100 - efficiency))
 }
-
-# Workstation assignments (one possible solution, for the default 60 s cycle time)
-cat("Workstation assignments at the default 60 s cycle time:\n")
-cat("  Station 1: A (40s) + B (25s) = 65s > 60s ... !!EXCEEDS!!\n")
-cat("  Station 1, try again: A (40s) = 40s [Idle: 20s]\n")
-cat("  Station 2: B (25s) + D (35s) = 60s [Idle: 0s]\n")
-cat("  Station 3: C (20s) + E (15s) + F (30s) = 65s > 60s ... !!EXCEEDS!!\n")
-cat("  Station 3, revised: C (20s) + E (15s) = 35s [Idle: 25s]\n")
-cat("  Station 4: F (30s) = 30s [Idle: 30s]\n")
 ```
 
 </details>
@@ -704,20 +740,13 @@ cat("  Station 4: F (30s) = 30s [Idle: 30s]\n")
 <details>
 <summary>Try It Yourself: Can you find a better balance?</summary>
 
-**Challenge:** Can you assign tasks to only 3 stations while respecting the precedence constraints?
+**Challenge:** At 60 pizzas/h the total task time is 165 s, so the theoretical minimum is $165/60 = 2.75$, which rounds up to 3 stations. Can the line really be run with 3?
 
-**Hint:** Consider these assignments:
-- Station 1: A (40s) + ?
-- Station 2: B (25s) + ? + ?
-- Station 3: ? + ?
+**Hint:** Try to fill each station to exactly 60 s. Station 1 must start with A (40 s), and B cannot join it because 40 + 25 = 65 s.
 
-Remember: Total time per station cannot exceed 60 seconds!
+**Solution:** No. A alone takes station 1 (40 s). B and D fill station 2 (60 s). That leaves C, E and F, which total 65 s, over the cycle time, so a fourth station is needed. Precedence constraints and indivisible tasks make 4 stations the minimum, for an efficiency of $165/(4 \times 60) = 68.75\%$.
 
-**Solution:** It's actually possible with careful planning:
-- Station 1: A (40s) = 40s
-- Station 2: B (25s) + C (20s) + E (15s) = 60s (but E needs C AND D complete!)
-
-So 3 stations is NOT feasible due to precedence constraints. The minimum is 4 stations for this problem.
+Now use the calculator: raise the output to 70 pizzas/h (cycle time about 51 s) or cut the dough roll to 30 s and see how the number of stations and the efficiency respond.
 
 </details>
 
