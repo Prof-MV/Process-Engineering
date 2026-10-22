@@ -750,6 +750,157 @@ Now use the calculator: raise the output to 70 pizzas/h (cycle time about 51 s) 
 
 </details>
 
+### Extending the Example: The Big-Game-Night Rush
+
+The pizzeria runs the line above on a normal night: 4 stations, 4 workers, one pizza every 60 s, so **60 pizzas/h**. On Super Bowl night, Halloween and New Year's Eve the orders pile up at well over 100 pizzas/h. Management has two ways to react, and the question is which one pays.
+
+**Part 1: How much more can the line make with extra people?** More workers means more stations, and more stations means each one does less, so the cycle time can drop. The limit is the longest single task. Task A (roll dough, 40 s) cannot be shared between people, so no cycle shorter than 40 s is possible however many people are added:
+
+$$\text{Maximum capacity with the line as it is} = \frac{3600}{t_{\max}} = \frac{3600}{40} = 90 \text{ pizzas/h}$$
+
+The card below rebalances the line for the number of workers you pick. It looks for the shortest cycle time at which the same station-assignment rule used above fits the tasks into that many stations.
+
+```{r calc-peak-people, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "peak-people",
+  title = "Part 1: Capacity vs. Number of Workers",
+  icon = "users",
+  inputs = list(
+    qwebr_calc_input("workers", "Workers (one per station)", value = 4, min = 3, max = 7, step = 1, type = "slider", suffix = "people")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
+```{webr-r}
+#| label: peak-people
+times <- c(A = 40, B = 25, C = 20, D = 35, E = 15, F = 30)
+preds <- list(A = character(0), B = "A", C = "B", D = "B", E = c("C", "D"), F = "E")
+workers <- 4
+
+# Load tasks into stations (longest eligible task first) for a given cycle time
+assign_stations <- function(times, cycle) {
+  done <- character(0); loads <- numeric(0); members <- character(0)
+  while (length(done) < length(times)) {
+    load <- 0; group <- character(0)
+    repeat {
+      ready <- names(times)[!(names(times) %in% done) &
+                            sapply(preds[names(times)], function(p) all(p %in% done)) &
+                            load + times <= cycle]
+      if (length(ready) == 0) break
+      pick <- ready[which.max(times[ready])]
+      load <- load + times[pick]; group <- c(group, pick); done <- c(done, pick)
+    }
+    loads <- c(loads, load); members <- c(members, paste(group, collapse = "+"))
+  }
+  list(loads = loads, members = members)
+}
+
+# Shortest cycle time (whole seconds) that fits into the available workers
+cycle <- max(times)
+while (length(assign_stations(times, cycle)$loads) > workers) cycle <- cycle + 1
+plan <- assign_stations(times, cycle)
+
+cat(sprintf("Workers available      %d\n", workers))
+cat(sprintf("Shortest cycle time    %g s\n", cycle))
+cat(sprintf("Capacity               %.1f pizzas/h\n", 3600 / cycle))
+cat(sprintf("Stations used          %d\n", length(plan$loads)))
+cat(sprintf("Efficiency             %.1f%%\n", sum(times) / (length(plan$loads) * cycle) * 100))
+cat("\nStations:\n")
+for (i in seq_along(plan$loads))
+  cat(sprintf("  Station %d: %s = %g s\n", i, plan$members[i], plan$loads[i]))
+if (workers > length(plan$loads))
+  cat("\n!!Extra workers have nothing to do: task A (40 s) is the bottleneck.!!\n")
+```
+
+</details>
+
+Step the slider from 4 to 7 workers. With the line as it is, capacity grows from 60 pizzas/h (the balance used earlier) to 80 pizzas/h when the 4 workers are rebalanced. A fifth worker lifts it to 90 pizzas/h. A sixth and seventh add nothing at all, because station A still takes 40 s.
+
+**Part 2: Duplicate station A.** To go past 90 pizzas/h, the bottleneck itself must be attacked. Putting a second dough station next to the first (a second roller and a second worker) lets two people roll dough in parallel, so a pizza leaves station A every $40/2 = 20$ s. The next-longest task, D (add toppings, 35 s), now sets the limit:
+
+$$\text{Capacity with A doubled} = \frac{3600}{35} \approx 103 \text{ pizzas/h}$$
+
+That costs one more worker (6 in total) and one more piece of equipment. Is a gain of about 13 pizzas/h over Option 1 worth that on the few nights a year when it matters? The cost-benefit card compares the two options for a single rush night and for a year. Only the nights when demand exceeds capacity count as a benefit, so set the *peak demand* to what customers would really order.
+
+```{r calc-peak-costbenefit, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "peak-costbenefit",
+  title = "Part 2: Is Duplicating Station A Worth It?",
+  icon = "dollar-sign",
+  inputs = list(
+    qwebr_calc_input("peak_demand", "Peak demand", value = 110, min = 60, max = 150, step = 5, type = "slider", suffix = "pizzas/h"),
+    qwebr_calc_input("margin", "Contribution margin per pizza", value = 4.5, min = 1, max = 10, step = 0.5, suffix = "$"),
+    qwebr_calc_input("rush_hours", "Hours per rush night", value = 6, min = 2, max = 10, step = 1, suffix = "h"),
+    qwebr_calc_input("rush_nights", "Rush nights per year", value = 20, min = 1, max = 60, step = 1, suffix = "nights"),
+    qwebr_calc_input("wage", "Loaded wage per worker", value = 20, min = 12, max = 40, step = 1, suffix = "$/h"),
+    qwebr_calc_input("equip_cost", "Second dough station (equipment)", value = 12000, min = 2000, max = 30000, step = 1000, suffix = "$"),
+    qwebr_calc_input("equip_life", "Equipment life", value = 5, min = 2, max = 10, step = 1, suffix = "years")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this card</summary>
+
+```{webr-r}
+#| label: peak-costbenefit
+peak_demand <- 110; margin <- 4.5; rush_hours <- 6; rush_nights <- 20
+wage <- 20; equip_cost <- 12000; equip_life <- 5
+
+# Capacities from Part 1 and Part 2
+base_cap <- 3600 / 60    # normal night: 4 workers, 60 s cycle
+opt1_cap <- 3600 / 40    # Option 1: 5 workers, rebalanced, cycle limited by A
+opt2_cap <- 3600 / 35    # Option 2: A doubled (6 workers), cycle limited by D
+
+sold <- function(cap) min(cap, peak_demand)
+night <- function(cap, workers_extra, equip_per_night) {
+  gain <- (sold(cap) - sold(base_cap)) * margin * rush_hours
+  cost <- workers_extra * wage * rush_hours + equip_per_night
+  c(gain = gain, cost = cost, net = gain - cost)
+}
+
+equip_per_night <- equip_cost / equip_life / rush_nights
+o1 <- night(opt1_cap, 1, 0)
+o2 <- night(opt2_cap, 2, equip_per_night)
+
+cat(sprintf("%-26s %12s %12s\n", "", "Option 1", "Option 2"))
+cat(sprintf("%-26s %12s %12s\n", "", "5 workers", "A doubled, 6"))
+cat(sprintf("%-26s %12.1f %12.1f\n", "Capacity (pizzas/h)", opt1_cap, opt2_cap))
+cat(sprintf("%-26s %12.1f %12.1f\n", "Pizzas sold per hour", sold(opt1_cap), sold(opt2_cap)))
+cat(sprintf("%-26s %12.0f %12.0f\n", "Extra margin per night ($)", o1["gain"], o2["gain"]))
+cat(sprintf("%-26s %12.0f %12.0f\n", "Extra cost per night ($)", o1["cost"], o2["cost"]))
+cat(sprintf("%-26s %12.0f %12.0f\n", "Net per night ($)", o1["net"], o2["net"]))
+cat(sprintf("%-26s %12.0f %12.0f\n", "Net per year ($)", o1["net"] * rush_nights, o2["net"] * rush_nights))
+
+d_net <- (o2["net"] - o1["net"]) * rush_nights
+cat(sprintf("\nDuplicating A beats Option 1 by %.0f $/year\n", d_net))
+d_margin <- (sold(opt2_cap) - sold(opt1_cap)) * margin * rush_hours
+if (d_margin > wage * rush_hours) {
+  cat(sprintf("Break-even: about %.0f rush nights per year\n",
+              equip_cost / equip_life / (d_margin - wage * rush_hours)))
+} else {
+  cat("!!The extra pizzas do not cover even the extra worker: the second station never pays.!!\n")
+}
+```
+
+</details>
+
+<details>
+<summary>Try It Yourself: When does the second dough station pay?</summary>
+
+**Challenge:** With the default numbers, find the number of rush nights per year below which Option 1 (five workers, no new equipment) is the better choice. Then set *peak demand* to 90 pizzas/h and see what happens to the answer.
+
+**Hint:** The extra margin of Option 2 over Option 1 is $(103 - 90) \times \$4.50 \times 6\ \text{h} \approx \$350$ per night. Subtract the extra worker ($\$120$ per night). The equipment costs $\$12{,}000 / 5 = \$2{,}400$ per year, to be recovered from what is left.
+
+**Solution:** Each rush night leaves about $\$350 - \$120 = \$230$ after the extra worker. Covering $\$2{,}400$ a year needs $2400/230 \approx 10.4$, so **at least 11 rush nights per year**. With 20 nights the second station earns roughly $\$2{,}200$ a year more than Option 1. If peak demand is only 90 pizzas/h, Option 1 already meets all of it, the extra capacity of Option 2 is never sold, and duplicating A never pays.
+
+**Think about it:** The cost-benefit result depends on the margin, the number of rush nights and the demand, not only on the line. What other options could be cheaper than a permanent second station (renting a roller for the day, pre-rolling dough earlier, a pre-made crust on rush nights)?
+
+</details>
+
 ------------------------------------------------------------------------
 
 ## Warehouse Layout Design
