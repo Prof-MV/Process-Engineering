@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-95863af46656191e6a2cf1560d98dcd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f2948d131a78982d1dc884087c2e9838.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -2314,6 +2314,11 @@ Tip
 <td>Use an LLM to generate Python code you understand well enough to debug</td>
 <td>Lab Week 1 Exercise 4</td>
 </tr>
+<tr class="even">
+<td>1.6</td>
+<td>Distinguish chat, projects, tool use, agents and multi-agent systems, and choose the right level of autonomy and permissions for a task</td>
+<td>Self-check Q6</td>
+</tr>
 </tbody>
 </table>
 <hr>
@@ -2497,7 +2502,23 @@ Figure&nbsp;10.1: The AI landscape is a nested hierarchy. Each inner layer is a 
 </section>
 <section id="ml-w1-how-llm" class="level3" data-number="10.2.3">
 <h3 data-number="10.2.3" class="anchored" data-anchor-id="ml-w1-how-llm"><span class="header-section-number">10.2.3</span> How LLMs Actually Work — Enough to Use Them Well</h3>
-<p>You do not need to know the mathematics. You do need a mental model of what happens when you type into a chat box.</p>
+<p>You do not need to know the mathematics. You do need a mental model of what happens when you type into a chat box. Start with this short, visual explanation of how a large language model turns your prompt into an answer.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/LPZh9BOjkQs" title="Large Language Models Explained Briefly (3Blue1Brown)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Going deeper:</strong> 3Blue1Brown’s <em>Deep Learning</em> series explains the mathematics of neural networks with excellent animations. Start with <a href="https://www.youtube.com/watch?v=aircAruvnKk&amp;list=PLZHQObOWTQDN52m7Y21ePrTbvXkPaWVSg">Chapter 1: But what is a neural network?</a> and continue through the playlist if you want to know what is inside the model. It is optional for this course.</p>
+</div>
+</div>
 <section id="ml-w1-tokens" class="level4" data-number="10.2.3.1">
 <h4 data-number="10.2.3.1" class="anchored" data-anchor-id="ml-w1-tokens"><span class="header-section-number">10.2.3.1</span> Tokens</h4>
 <p>LLMs do not see words — they see <strong>tokens</strong>, pieces of words. The word “manufacturing” might be one token or two (“manu” + “facturing”), depending on the model’s tokenizer.</p>
@@ -2506,17 +2527,90 @@ Figure&nbsp;10.1: The AI landscape is a nested hierarchy. Each inner layer is a 
 </section>
 <section id="ml-w1-context" class="level4" data-number="10.2.3.2">
 <h4 data-number="10.2.3.2" class="anchored" data-anchor-id="ml-w1-context"><span class="header-section-number">10.2.3.2</span> Context Windows</h4>
-<p>The <strong>context window</strong> is how much text the model can “see” at once — your entire conversation, including previous messages and its own previous outputs. Modern models have generous windows (hundreds of thousands of tokens, or roughly 500 pages), but free-tier offerings often have smaller limits.</p>
-<p>When you paste a 50-page document and ask for a summary, all 50 pages go into the context window. If the document exceeds the window, the oldest content gets silently dropped in some implementations. This is why <strong>focused prompts produce better results than document dumps</strong>.</p>
+<p>The <strong>context window</strong> is how much text the model can “see” at once — your entire conversation, including previous messages and its own previous outputs. Current models have large windows (hundreds of thousands of tokens, and up to a million or more in some products, roughly 500 pages and up), but free-tier offerings often have smaller limits.</p>
+<p>When you paste a 50-page document and ask for a summary, all 50 pages go into the context window. If the document exceeds the window, the oldest content gets dropped or compressed in some tools. Even when everything fits, quality tends to fall as the window fills with irrelevant material, because the model has more to sort through and can lose track of details buried in the middle. This is why <strong>focused prompts produce better results than document dumps</strong>, and why a growing field called <strong>context engineering</strong> (choosing exactly what the model sees) matters as much as the wording of the prompt.</p>
+<p>Two tools help you manage this. <strong>Retrieval</strong> lets the tool search your documents and pull only the relevant passages into the window. <strong>Projects</strong> (below) keep your standing instructions and reference files available to every chat without re-pasting them.</p>
 </section>
 <section id="ml-w1-cutoff" class="level4" data-number="10.2.3.3">
 <h4 data-number="10.2.3.3" class="anchored" data-anchor-id="ml-w1-cutoff"><span class="header-section-number">10.2.3.3</span> Training Cutoff and Outdated Knowledge</h4>
 <p>The model was trained on data up to a specific date — its <strong>training cutoff</strong>. After that date it knows nothing. If you ask about a software version released last month, an event from yesterday, or a standard revised last quarter, the model either says it does not know (good) or fabricates something plausible (bad).</p>
-<p>Some tools integrate web search to extend the model’s knowledge to real time. Free tiers may or may not include this. Always check.</p>
+<p>Most current tools can search the web or your own documents to extend the model’s knowledge beyond its cutoff. Check whether search is switched on, and whether the answer cites what it found. Answers that quote a source you can open are far easier to verify than answers from memory.</p>
 </section>
 <section id="ml-w1-sampling" class="level4" data-number="10.2.3.4">
 <h4 data-number="10.2.3.4" class="anchored" data-anchor-id="ml-w1-sampling"><span class="header-section-number">10.2.3.4</span> Sampling and Why Answers Vary</h4>
 <p>LLMs do not deterministically pick the single most-likely next token. They sample from a probability distribution, introducing randomness. Ask the same question twice and you can get different answers — sometimes very different ones. For engineering work: <strong>do not treat one LLM answer as definitive.</strong> Ask the same question two or three different ways and look for consistency.</p>
+</section>
+<section id="ml-w1-reasoning" class="level4" data-number="10.2.3.5">
+<h4 data-number="10.2.3.5" class="anchored" data-anchor-id="ml-w1-reasoning"><span class="header-section-number">10.2.3.5</span> Reasoning Models</h4>
+<p>Many current models can spend extra effort <strong>thinking before they answer</strong>: they generate a long, hidden or summarized chain of intermediate steps, check themselves, and only then write the reply. These <em>reasoning</em> (or “extended thinking”) modes are noticeably better at multi-step calculations, planning, debugging and logic puzzles. The trade-offs are slower responses, higher cost, and a false sense of security. A reasoning model still predicts text, can still hallucinate, and can still reach a wrong answer through steps that look convincing. Use the thinking mode for hard multi-step problems, use the fast mode for drafting and simple questions, and verify the result either way.</p>
+</section>
+<section id="ml-w1-agents" class="level4" data-number="10.2.3.6">
+<h4 data-number="10.2.3.6" class="anchored" data-anchor-id="ml-w1-agents"><span class="header-section-number">10.2.3.6</span> From Chatbot to Agent</h4>
+<p>The model described above is only the core of what you use today. Most current products wrap it in layers that change how you work with it. Each layer adds capability, and each adds a new way to go wrong.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Level</th>
+<th style="text-align: left;">What it is</th>
+<th style="text-align: left;">Engineering example</th>
+<th style="text-align: left;">Main new risk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1. Chat</strong></td>
+<td style="text-align: left;">You type, the model replies. It knows only what is in the conversation</td>
+<td style="text-align: left;">Explain what a thermal overload relay does</td>
+<td style="text-align: left;">Hallucination, no access to your documents</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2. Projects</strong></td>
+<td style="text-align: left;">A saved workspace with standing instructions (your role, units, standards, format) and reference files that every chat in it starts with</td>
+<td style="text-align: left;">One project per product line, holding the customer specification and your PFMEA template</td>
+<td style="text-align: left;">Stale or confidential files left in the project</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3. Tools and connectors</strong></td>
+<td style="text-align: left;">The model can search, run code, read your files or query company systems (often through the <strong>Model Context Protocol, MCP</strong>, a common plug-in standard)</td>
+<td style="text-align: left;">Check a Cpk calculation by running it instead of guessing</td>
+<td style="text-align: left;">It can now <em>act</em>, not just talk</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4. Agents</strong></td>
+<td style="text-align: left;">The model works in a loop: plan, call a tool, read the result, decide the next step, until the goal is met</td>
+<td style="text-align: left;">“Reconcile this BOM against the drawing and list every mismatch”</td>
+<td style="text-align: left;">Mistakes compound over many steps unnoticed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5. Multi-agent systems (“swarms”)</strong></td>
+<td style="text-align: left;">An orchestrator splits a large job and hands the parts to sub-agents, each with its own fresh context, often running in parallel. A reviewer agent can check the others</td>
+<td style="text-align: left;">Survey 40 work instructions against a revised safety standard</td>
+<td style="text-align: left;">Cost, and more places for errors to hide</td>
+</tr>
+</tbody>
+</table>
+<p>An <strong>agent</strong> is therefore a language model plus tools plus a loop. The same model that hallucinated a standard number in a chat can, as an agent, look the standard up, read it and quote it. That is a real improvement, and it is also why agents are used for tasks like writing and running the Python code in this course.</p>
+<p><strong>Best practices for working with agents and projects:</strong></p>
+<ul>
+<li><strong>State the goal and the definition of done.</strong> “Every mismatch listed with its drawing and BOM line number” beats “check the BOM”.</li>
+<li><strong>Put standing rules in project instructions</strong>, not in every prompt: units, applicable standards, naming conventions, what the agent must never do.</li>
+<li><strong>Plan first, then execute.</strong> Ask for the plan and approve it before the agent changes anything. It is cheap to correct a plan and expensive to correct a finished job.</li>
+<li><strong>Grant the least permission that works.</strong> Start read-only. Require your approval before it writes files, sends messages or touches any PLC, ERP or live production system. Never let an agent modify safety-rated logic.</li>
+<li><strong>Make it verify its own work.</strong> Ask for calculations to be run in code, tests to be written and run, and every claim tied to a source document. Then have a <em>separate</em> reviewer (a second agent or a fresh chat) check the result, because a model is a poor judge of its own output.</li>
+<li><strong>Treat everything the agent reads as untrusted.</strong> Text inside a web page, PDF or email can contain hidden instructions that an agent may follow (<strong>prompt injection</strong>). Do not let an agent that reads outside material also hold access to confidential files or send data out.</li>
+<li><strong>Use multiple agents only when the job is large and parallel.</strong> For one focused task a single agent is cheaper, faster and easier to check.</li>
+<li><strong>Keep a human accountable.</strong> Review the agent’s log of what it did, not just its final answer, and sign off as you would for a junior engineer’s work.</li>
+</ul>
+<div class="callout-discussion">
+<p><strong>Group Discussion — pick the setup.</strong> For each task choose chat, project, single agent or multi-agent, and justify your choice: (1) explaining what a thermal overload relay does; (2) drafting weekly supplier-quality reports in your company’s template; (3) checking 40 work instructions for conflicts with a revised safety standard; (4) changing the ladder logic on a running guarding interlock.</p>
+<p><em>Suggested answers:</em> (1) chat; (2) project, because the template and rules repeat; (3) multi-agent, because the job is large and parallel, with a human reviewing every conflict it flags; (4) no AI acting alone. AI may help you review the logic, but a qualified person makes and validates the change.</p>
+</div>
 <hr>
 </section>
 </section>
@@ -2547,13 +2641,13 @@ Warning
 <li>Describing features of commercial software that the software does not have</li>
 </ul>
 <p>You will deliberately trigger a hallucination in Lab Week 1, Exercise 3. That exercise is designed to create a lasting memory — after you have personally caught an LLM confidently lying, you will never paste an LLM citation into a technical memo without checking.</p>
-<p><strong>Defence:</strong> Verify anything that matters. If the model cites a standard, look it up. If it gives a number, find the source. Use the model to <em>draft</em>, then <em>verify</em> — never to do final research.</p>
+<p><strong>Defence:</strong> Verify anything that matters. If the model cites a standard, look it up. If it gives a number, find the source. Use the model to <em>draft</em>, then <em>verify</em> — never to do final research. Two things reduce hallucination without removing it: <strong>grounding</strong> (give the model the actual document and instruct it to answer only from that document and quote the passage it used) and <strong>search tools</strong> that return real, openable sources. Hallucinations also appear in agents, where a confident but wrong intermediate step can be built upon by every step after it.</p>
 </section>
 <section id="ml-w1-math" class="level4" data-number="10.2.4.2">
 <h4 data-number="10.2.4.2" class="anchored" data-anchor-id="ml-w1-math"><span class="header-section-number">10.2.4.2</span> Math Errors</h4>
 <p>LLMs are language models, not calculators. They learn to produce text that <em>looks like</em> arithmetic — but they do not compute internally. Simple sums often come out right; multi-step calculations frequently do not.</p>
 <p>If you ask an LLM to compute Cpk given a mean, sigma, USL, and LSL, you may get the right answer, the wrong answer, or a wrong answer with a correct-looking setup. <strong>Do not trust LLM arithmetic on safety-critical decisions.</strong> Use the LLM to set up the formula; do the calculation yourself or with a verified script.</p>
-<p>Some models can call an external Python interpreter to handle math reliably. If your tool offers this capability, use it.</p>
+<p>Most current tools can run code (look for “code execution”, “analysis” or an agent with a Python tool). Ask for it explicitly: “calculate this by running Python and show me the code”. Then check that the code implements the right formula and units, because running correct arithmetic on the wrong formula is still wrong.</p>
 </section>
 <section id="ml-w1-sycophancy" class="level4" data-number="10.2.4.3">
 <h4 data-number="10.2.4.3" class="anchored" data-anchor-id="ml-w1-sycophancy"><span class="header-section-number">10.2.4.3</span> Sycophancy</h4>
@@ -2656,6 +2750,10 @@ Warning
 <td style="text-align: left;">Engineering work with real customer or defense data</td>
 <td style="text-align: left;">Use only your employer’s approved enterprise LLM (Claude Team/Enterprise, ChatGPT Enterprise, Microsoft Copilot for Business), or a locally-hosted model (Ollama, LM Studio)</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Letting an agent or connector read your files, email or plant systems</td>
+<td style="text-align: left;">Use only approved connectors, give read-only access to the specific folder it needs, and keep production, PLC and customer systems out of reach. Anything an agent can read, it can be tricked into sending elsewhere</td>
+</tr>
 </tbody>
 </table>
 <hr>
@@ -2705,7 +2803,7 @@ Warning
 </tr>
 </tbody>
 </table>
-<p>Not every prompt needs all five elements, but missing more than two usually produces noticeably worse output. Compare these:</p>
+<p>Not every prompt needs all five elements, but missing more than two usually produces noticeably worse output. (R-C-T-C-F is a checklist for a single message. For standing instructions in a project or an agent, the same five elements apply, but you write them once.) Compare these:</p>
 <div class="question">
 <p><strong>Bad prompt:</strong> “explain SPC”</p>
 </div>
@@ -2721,15 +2819,27 @@ Warning
 <section id="ml-w1-good-patterns" class="level4" data-number="10.2.6.1">
 <h4 data-number="10.2.6.1" class="anchored" data-anchor-id="ml-w1-good-patterns"><span class="header-section-number">10.2.6.1</span> Patterns That Work in Engineering</h4>
 <ul>
-<li><strong>“Show your reasoning before the answer.”</strong> Forces the model to think step-by-step, which reduces errors on multi-part problems.</li>
+<li><strong>“Show your reasoning before the answer.”</strong> Forces the model to think step-by-step, which reduces errors on multi-part problems. Reasoning models do this internally, so on those you can drop the instruction, but still ask them to list their assumptions.</li>
+<li><strong>“Make a plan first and wait for my approval.”</strong> The most useful instruction for agents and any multi-step job.</li>
+<li><strong>“Check your answer by running the calculation in code.”</strong> Turns an LLM guess into a reproducible calculation.</li>
 <li><strong>“What might be wrong with this approach?”</strong> Provides a critical second opinion on your own thinking. Avoids sycophancy.</li>
 <li><strong>“Generate three different versions.”</strong> Options beat a single answer on open-ended problems.</li>
 <li><strong>“What questions should I have asked but didn’t?”</strong> Surfaces gaps in your problem framing.</li>
 <li><strong>“Cite your sources, and if you don’t have a source, say so.”</strong> Partial defence against hallucinations. Not foolproof, but it forces the model to flag uncertainty.</li>
 </ul>
 </section>
-<section id="ml-w1-bad-patterns" class="level4" data-number="10.2.6.2">
-<h4 data-number="10.2.6.2" class="anchored" data-anchor-id="ml-w1-bad-patterns"><span class="header-section-number">10.2.6.2</span> Patterns That Do Not Work</h4>
+<section id="ml-w1-context-eng" class="level4" data-number="10.2.6.2">
+<h4 data-number="10.2.6.2" class="anchored" data-anchor-id="ml-w1-context-eng"><span class="header-section-number">10.2.6.2</span> Beyond the Single Prompt: Context Engineering</h4>
+<p>R-C-T-C-F structures <em>one</em> message. With projects and agents, what matters more is the <strong>whole context</strong> the model works from. Four habits cover most of it:</p>
+<ol type="1">
+<li><strong>Standing context goes in the project.</strong> Role, units, standards, templates and formats belong in project instructions and reference files, so each message can be short.</li>
+<li><strong>Give the right documents, not all of them.</strong> Attach the relevant specification and drawing, not the whole shared drive. Irrelevant material dilutes the answer.</li>
+<li><strong>Show an example of the output you want.</strong> One good sample report or table is worth a paragraph of description.</li>
+<li><strong>Start fresh when the topic changes.</strong> A long conversation full of old tangents is polluted context. Open a new chat, and carry over only a short summary.</li>
+</ol>
+</section>
+<section id="ml-w1-bad-patterns" class="level4" data-number="10.2.6.3">
+<h4 data-number="10.2.6.3" class="anchored" data-anchor-id="ml-w1-bad-patterns"><span class="header-section-number">10.2.6.3</span> Patterns That Do Not Work</h4>
 <ul>
 <li>Yes/no questions on judgment calls — you get hedged, useless answers</li>
 <li>Pasting massive documents without a focus question — output will be generic</li>
@@ -2741,8 +2851,8 @@ Warning
 </div>
 <hr>
 </section>
-<section id="try-it-yourself-take-a-prompt-apart" class="level4" data-number="10.2.6.3">
-<h4 data-number="10.2.6.3" class="anchored" data-anchor-id="try-it-yourself-take-a-prompt-apart"><span class="header-section-number">10.2.6.3</span> Try it yourself: take a prompt apart</h4>
+<section id="try-it-yourself-take-a-prompt-apart" class="level4" data-number="10.2.6.4">
+<h4 data-number="10.2.6.4" class="anchored" data-anchor-id="try-it-yourself-take-a-prompt-apart"><span class="header-section-number">10.2.6.4</span> Try it yourself: take a prompt apart</h4>
 <p>The seven sentences below make up one R-C-T-C-F prompt. Decide which element each sentence is.</p>
 <script src="js/tryit.js"></script>
 <div class="tryit" id="tryit-rctcf-sort" data-tryit="sort">
@@ -2759,6 +2869,7 @@ Warning
 <li>Your supervisor pastes a customer’s machined-part drawing into the free tier of ChatGPT to “ask what the tolerances mean.” What three problems do you raise with them, ranked by severity?</li>
 <li>What is the difference between an LLM making a math error and an LLM hallucinating? Give an engineering example of each.</li>
 <li>Rewrite this prompt using R-C-T-C-F: <em>“summarize this report for the boss.”</em></li>
+<li>Your supervisor wants an AI agent to read all 300 open maintenance work orders and close the ones it judges duplicates. Which of the best practices in the agents section apply, and what permission would you give it on day one?</li>
 </ol>
 </section>
 <section id="ml-w1-reading" class="level3" data-number="10.2.8">
@@ -2767,7 +2878,10 @@ Warning
 <li>Google Cloud. <em>AI vs.&nbsp;machine learning.</em> <a href="https://cloud.google.com/learn/artificial-intelligence-vs-machine-learning" class="uri">https://cloud.google.com/learn/artificial-intelligence-vs-machine-learning</a></li>
 <li>MIT Sloan. <em>Machine learning, explained.</em> <a href="https://mitsloan.mit.edu/ideas-made-to-matter/machine-learning-explained" class="uri">https://mitsloan.mit.edu/ideas-made-to-matter/machine-learning-explained</a></li>
 <li>Google Developers. <em>Machine Learning Crash Course</em> (free, online). <a href="https://developers.google.com/machine-learning/crash-course" class="uri">https://developers.google.com/machine-learning/crash-course</a></li>
-<li>3Blue1Brown. <em>Neural Networks</em> video series (start with the first video). <a href="https://www.3blue1brown.com/topics/neural-networks" class="uri">https://www.3blue1brown.com/topics/neural-networks</a></li>
+<li>3Blue1Brown. <em>Large Language Models explained briefly.</em> <a href="https://www.youtube.com/watch?v=LPZh9BOjkQs" class="uri">https://www.youtube.com/watch?v=LPZh9BOjkQs</a></li>
+<li>3Blue1Brown. <em>Deep Learning</em> series (start with Chapter 1: <em>But what is a neural network?</em>). <a href="https://www.youtube.com/watch?v=aircAruvnKk&amp;list=PLZHQObOWTQDN52m7Y21ePrTbvXkPaWVSg" class="uri">https://www.youtube.com/watch?v=aircAruvnKk&amp;list=PLZHQObOWTQDN52m7Y21ePrTbvXkPaWVSg</a></li>
+<li>Anthropic. <em>Building effective agents.</em> <a href="https://www.anthropic.com/engineering/building-effective-agents" class="uri">https://www.anthropic.com/engineering/building-effective-agents</a></li>
+<li>OWASP. <em>Top 10 for Large Language Model Applications</em> (includes prompt injection). <a href="https://genai.owasp.org/llm-top-10/" class="uri">https://genai.owasp.org/llm-top-10/</a></li>
 <li>Hugging Face. <em>LLM Course, Chapter 1</em> (free, online). <a href="https://huggingface.co/learn/llm-course/chapter1/1" class="uri">https://huggingface.co/learn/llm-course/chapter1/1</a></li>
 <li>OpenAI. <em>Tokenizer</em> (interactive demo). <a href="https://platform.openai.com/tokenizer" class="uri">https://platform.openai.com/tokenizer</a></li>
 <li>Anthropic. <em>Prompt Engineering Overview.</em> <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" class="uri">https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview</a></li>
@@ -3615,18 +3729,206 @@ Figure&nbsp;10.7: Correct engine-wise train/validation split. Entire engine hist
 <section id="ml-w3-rf" class="level3" data-number="10.4.6">
 <h3 data-number="10.4.6" class="anchored" data-anchor-id="ml-w3-rf"><span class="header-section-number">10.4.6</span> Random Forest — Intuition and Why It Works</h3>
 <p>Many algorithms can solve the RUL regression problem. Your capstone uses <strong>Random Forest</strong> because it is the strongest first-try algorithm for tabular industrial data — robust, fast, requires almost no tuning, and provides interpretable feature importance rankings.</p>
+<p>The idea in one sentence: instead of trusting one expert, ask a committee of 100 experts who each studied a <em>different random selection</em> of past engines, and average their answers. The sections below build up to that picture in four steps: what one tree is, where the randomness comes from, how the forest learns, and how it is used.</p>
 <section id="ml-w3-tree" class="level4" data-number="10.4.6.1">
 <h4 data-number="10.4.6.1" class="anchored" data-anchor-id="ml-w3-tree"><span class="header-section-number">10.4.6.1</span> Step 1: A Single Decision Tree</h4>
-<p>A <strong>decision tree</strong> is a flowchart of yes/no questions about your features, with a prediction at each leaf node. The questions and their split thresholds are <em>learned from the data</em> — the algorithm picks the questions that best separate training rows by their RUL values.</p>
-<p><strong>Strengths of a single tree:</strong> - Trivially interpretable — you can read the exact rules - Handles mixed numeric and categorical inputs without normalization - Fast to train and predict</p>
-<p><strong>Critical weakness:</strong> - A deep tree memorizes training data and generalizes poorly to new engines. It learns the noise, not the signal.</p>
+<p>A <strong>decision tree</strong> is a flowchart of yes/no questions about your features, with a prediction at each end point (a <strong>leaf</strong>). To predict, you start at the top and answer each question for your engine until you reach a leaf. The number in that leaf is the prediction.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ml-rf-tree-03" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml-rf-tree-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="21-Machine-Learning_files/figure-html/fig-ml-rf-tree-03-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rf-tree-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.8: A small decision tree for remaining useful life. A new engine starts at the top, answers each question about its sensor readings, and ends at a leaf holding the prediction. The thresholds here are illustrative.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>How does the tree learn its questions?</strong> They are <em>learned from the data</em>, not written by an engineer. At the top, the algorithm tries every feature and every possible threshold (“Sensor 11 &lt; 47.6?”, “Sensor 11 &lt; 47.7?”, “Sensor 4 &lt; 1395?”, …). For each candidate it splits the training rows into two groups and measures how similar the RUL values are <em>within</em> each group. The candidate that makes the two groups most uniform (the largest drop in variance) wins. The algorithm then repeats the same search separately inside each group, and keeps going until a stopping rule is met (maximum depth, minimum rows per leaf). Each leaf predicts the <strong>average RUL of the training rows that ended up in it</strong>.</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/_L39rN6gz7Y" title="Decision and Classification Trees, Clearly Explained (StatQuest)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<p><strong>Strengths of a single tree:</strong></p>
+<ul>
+<li>Trivially interpretable — you can read the exact rules</li>
+<li>Handles mixed numeric and categorical inputs without normalization</li>
+<li>Fast to train and predict</li>
+</ul>
+<p><strong>Critical weakness:</strong> a tree allowed to grow deep keeps splitting until every leaf holds one or two training rows. It then reproduces the training data perfectly, <em>including the measurement noise</em>, and generalizes poorly to new engines. Figure <a href="#fig-ml-rf-overfit-04" class="quarto-xref">Figure&nbsp;<span>10.9</span></a> shows the problem on a simple one-sensor example.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ml-rf-overfit-04" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml-rf-overfit-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="21-Machine-Learning_files/figure-html/fig-ml-rf-overfit-04-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rf-overfit-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.9: One tree fitted to 70 noisy training rows. The shallow tree is too simple and misses the trend. The fully grown tree chases every noisy point, so its predictions for new engines would jump around for no physical reason.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="ml-w3-ensemble" class="level4" data-number="10.4.6.2">
-<h4 data-number="10.4.6.2" class="anchored" data-anchor-id="ml-w3-ensemble"><span class="header-section-number">10.4.6.2</span> Step 2: Many Trees, Averaged</h4>
-<p>Random Forest’s key idea: build many trees, each slightly different, and average their predictions.</p>
-<p>Two sources of randomness make each tree unique: 1. <strong>Row bagging:</strong> each tree is trained on a random subset of rows, sampled with replacement 2. <strong>Feature subsets:</strong> at each split point, each tree considers only a random subset of features</p>
-<p>Because each tree has a different random view of the data, they make different mistakes. When you average their predictions, the individual errors partially cancel out. The ensemble is far more accurate than any single tree and much less prone to overfitting.</p>
-<p>This technique — averaging many slightly-wrong models — is called an <strong>ensemble method</strong>. You will see ensembles everywhere in industrial ML.</p>
+<section id="ml-w3-random" class="level4" data-number="10.4.6.2">
+<h4 data-number="10.4.6.2" class="anchored" data-anchor-id="ml-w3-random"><span class="header-section-number">10.4.6.2</span> Step 2: Where Does the “Random” Come From?</h4>
+<p>The fix is to grow many deep trees and make sure they are <strong>different from each other</strong>. If all 100 trees were identical, averaging them would change nothing. Random Forest forces the trees to differ with two deliberate injections of chance:</p>
+<p><strong>Source 1 — random rows (bootstrap sampling).</strong> Each tree is trained on its own <em>bootstrap sample</em>: draw rows at random from the training set, <strong>with replacement</strong>, until you have as many rows as the original. Some rows are picked twice or three times; others are not picked at all. On average about 37% of the rows (the fraction <span class="math inline">\((1 - 1/n)^n \to e^{-1} \approx 0.37\)</span>) are left out of any one tree. Those left-out rows are called its <strong>out-of-bag</strong> rows.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ml-rf-bootstrap-05" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml-rf-bootstrap-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="21-Machine-Learning_files/figure-html/fig-ml-rf-bootstrap-05-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rf-bootstrap-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.10: Bootstrap sampling with 10 training rows. Each tree draws 10 rows with replacement, so every tree trains on a different, partly repeated set of rows, and a few rows are left out entirely.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Source 2 — random features at every split.</strong> When a tree searches for the best question at a node, it is not allowed to look at all features. It is shown a <strong>random subset</strong> of them (for regression, classically about one third of the features) and must choose the best split among only those. The next node gets a <em>different</em> random subset.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ml-rf-features-06" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml-rf-features-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="21-Machine-Learning_files/figure-html/fig-ml-rf-features-06-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rf-features-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.11: Feature subsampling with 6 features, 2 offered at each split. The best split is chosen only from the offered features, so a dominant sensor cannot win the root of every tree.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Why bother with the second source? Without it, one very strong sensor (say Sensor 11) would be the best root question in <em>every</em> tree, and all 100 trees would look alike. Hiding it from some splits forces other sensors to be used, so the trees disagree in useful ways.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Randomness is only in training.</strong> The random draws happen once, while the forest is being built. After that the forest is a fixed set of trees: give it the same input twice and you get the same output. The random number generator behind the draws is controlled by a <em>seed</em> (<code>random_state=42</code> in scikit-learn). Fix the seed and you get the same forest every time; change it and you get a slightly different forest with nearly the same accuracy. If a small seed change swings your RMSE a lot, your validation set is too small or your model is unstable.</p>
+</div>
+</div>
+</section>
+<section id="ml-w3-learns" class="level4" data-number="10.4.6.3">
+<h4 data-number="10.4.6.3" class="anchored" data-anchor-id="ml-w3-learns"><span class="header-section-number">10.4.6.3</span> Step 3: How the Forest Learns</h4>
+<p>“Training” a Random Forest is just repeating the tree-growing recipe from Step 1 many times, each with its own random draws:</p>
+<ol type="1">
+<li>Decide the number of trees (for example <code>n_estimators = 100</code>).</li>
+<li>For each tree: draw a bootstrap sample of the rows (Source 1).</li>
+<li>Grow the tree on that sample. At every node, draw a fresh random subset of features (Source 2), find the best split among them, and split.</li>
+<li>Keep splitting deep (little or no pruning) until the leaves are small, then store the tree.</li>
+<li>Move on to the next tree. Nothing carries over between trees.</li>
+</ol>
+<p>There are no weights to adjust, no repeated passes over the data and no error being fed back from one tree to the next. Each tree is <strong>independent</strong>, which has two practical consequences: the trees can be trained in parallel on all CPU cores (<code>n_jobs=-1</code>), and adding more trees can only make the average more stable, not worse. (Methods like gradient boosting, in contrast, build trees one after another, each correcting the last.)</p>
+<p>Each individual tree is deliberately <strong>over-fitted and noisy</strong>: low bias but high variance. The ensemble works because the trees’ errors are different. One tree is too high on some engine, another too low, and when you average 100 of them those errors largely cancel while the shared signal stays.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ml-rf-average-07" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml-rf-average-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="21-Machine-Learning_files/figure-html/fig-ml-rf-average-07-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rf-average-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.12: Eight individual trees (blue) are jagged and disagree with each other, but the average of 100 trees (red) follows the true degradation trend (green dashed) much more closely than any one of them.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/J4Wdy0Wc_xQ" title="Random Forests, Part 1: Building, Using and Evaluating (StatQuest)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>The out-of-bag trap on engine data.</strong> The left-out rows give a free validation score (the <em>out-of-bag score</em>), with no separate test set needed. But it has the same flaw as the row-wise split described above: rows from the <em>same engine</em> are spread across the bag and the out-of-bag set, so the forest has effectively seen the engine it is being tested on. For C-MAPSS, validate by holding out whole engines instead.</p>
+</div>
+</div>
+</section>
+<section id="ml-w3-use" class="level4" data-number="10.4.6.4">
+<h4 data-number="10.4.6.4" class="anchored" data-anchor-id="ml-w3-use"><span class="header-section-number">10.4.6.4</span> Step 4: How the Forest Is Used</h4>
+<p>Once trained, using the forest (called <strong>inference</strong> or <strong>prediction</strong>) takes four steps:</p>
+<ol type="1">
+<li>Compute the same features for the new engine that you used in training (sensor values, rolling means, rolling standard deviations), as one row.</li>
+<li>Send that row down <strong>every</strong> tree. Each tree answers its own questions and lands in a leaf.</li>
+<li>Each tree reports the average RUL stored in its leaf.</li>
+<li>The forest’s prediction is the <strong>average of all the trees’ predictions</strong>. (For a yes/no classification problem, the trees vote and the majority wins.)</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ml-rf-predict-08" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ml-rf-predict-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="21-Machine-Learning_files/figure-html/fig-ml-rf-predict-08-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rf-predict-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.13: One new engine passed through 30 trees. Each dot is one tree’s own prediction. The forest reports the average (red line). The spread of the dots is a rough measure of how much the trees disagree, and so of how confident the forest is.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Three things follow from this:</p>
+<ul>
+<li><strong>Prediction is fast.</strong> 100 trees of depth 10 are only about a thousand yes/no comparisons, so a prediction takes milliseconds. Training is the slow part, and you only do it once (and again when the model drifts, Week 5).</li>
+<li><strong>The trees double as an uncertainty signal.</strong> If the 100 trees all say 60 ± 3 cycles, treat the result as reliable. If they range from 20 to 120, the forest is telling you it does not know. This spread is worth showing to the maintenance planner.</li>
+<li><strong>Feature importance comes free.</strong> Each split in each tree reduced the variance by some amount. Add up that reduction for every split that used a given sensor, average across the trees, and you get the importance ranking you will plot in Week 4.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;"><strong>Training (once, slow)</strong></th>
+<th style="text-align: left;"><strong>Prediction (every time, fast)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Input</td>
+<td style="text-align: left;">Many rows with known RUL</td>
+<td style="text-align: left;">One row of features, RUL unknown</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">What happens</td>
+<td style="text-align: left;">Each tree: bootstrap rows, random features at each split, grow deep</td>
+<td style="text-align: left;">Row goes down every tree to a leaf</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Randomness</td>
+<td style="text-align: left;">Yes (seeded)</td>
+<td style="text-align: left;">None</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Output</td>
+<td style="text-align: left;">A stored set of trees</td>
+<td style="text-align: left;">The average of the trees’ leaf values</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Why Random Forest is the default first-try for tabular plant data:</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -3666,6 +3968,19 @@ Figure&nbsp;10.7: Correct engine-wise train/validation split. Entire engine hist
 </tr>
 </tbody>
 </table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>One limitation to remember:</strong> a forest can only predict values it has seen in its leaves, so it cannot extrapolate. If a new engine degrades further than any engine in the training data, the forest will predict roughly the lowest RUL it saw, not a lower one. Check that your operating conditions fall inside the range of the training data.</p>
+</div>
+</div>
 <hr>
 </section>
 </section>
@@ -3673,7 +3988,12 @@ Figure&nbsp;10.7: Correct engine-wise train/validation split. Entire engine hist
 <h3 data-number="10.4.7" class="anchored" data-anchor-id="ml-w3-evaluation"><span class="header-section-number">10.4.7</span> Evaluation — Measuring Whether a Model Is Useful</h3>
 <section id="ml-w3-metrics" class="level4" data-number="10.4.7.1">
 <h4 data-number="10.4.7.1" class="anchored" data-anchor-id="ml-w3-metrics"><span class="header-section-number">10.4.7.1</span> RMSE and MAE</h4>
-<p>For regression, two standard metrics:</p>
+<p>For regression (predicting a number such as RUL), two standard metrics measure how far the predictions <span class="math inline">\(\hat{y}_i\)</span> are from the true values <span class="math inline">\(y_i\)</span> over <span class="math inline">\(n\)</span> test rows:</p>
+<ul>
+<li><strong>MAE — Mean Absolute Error.</strong> Take the error of each prediction, drop its sign (absolute value), then take the mean.</li>
+<li><strong>RMSE — Root Mean Squared Error.</strong> Square each error, take the mean of the squares, then take the square root to return to the original units.</li>
+</ul>
+<p>Read the formulas right to left: the error is <span class="math inline">\(\hat{y}_i - y_i\)</span>, then either the absolute value or the square is applied, then the average, and (for RMSE) the root.</p>
 <p><span id="eq-ml-mae"><span class="math display">\[
 \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |\hat{y}_i - y_i|
 \tag{10.5}\]</span></span></p>
@@ -3788,6 +4108,8 @@ Show the live R code behind this calculator
 <section id="ml-w3-reading" class="level3" data-number="10.4.10">
 <h3 data-number="10.4.10" class="anchored" data-anchor-id="ml-w3-reading"><span class="header-section-number">10.4.10</span> Further Reading — Week 3</h3>
 <ul>
+<li>StatQuest. <em>Random Forests, Part 1</em> and <em>Part 2: Missing data and clustering.</em> <a href="https://www.youtube.com/watch?v=J4Wdy0Wc_xQ" class="uri">https://www.youtube.com/watch?v=J4Wdy0Wc_xQ</a></li>
+<li>IBM Technology. <em>What is Random Forest?</em> (short overview). <a href="https://www.youtube.com/watch?v=gkXX4h3qYm4" class="uri">https://www.youtube.com/watch?v=gkXX4h3qYm4</a></li>
 <li>A. Saxena, K. Goebel, D. Simon, and N. Eklund, “Damage Propagation Modeling for Aircraft Engine Run-to-Failure Simulation,” <em>Proc. PHM08</em>, Denver CO, October 2008. (The original C-MAPSS paper.)</li>
 <li>NASA Prognostics Data Repository. <a href="https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/" class="uri">https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/</a></li>
 <li>scikit-learn. <em>Ensemble methods: Random Forests.</em> <a href="https://scikit-learn.org/stable/modules/ensemble.html#random-forests" class="uri">https://scikit-learn.org/stable/modules/ensemble.html#random-forests</a></li>
@@ -3864,7 +4186,7 @@ Show the live R code behind this calculator
 <img src="21-Machine-Learning_files/figure-html/fig-ml-rolling-features-04-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-rolling-features-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10.8: Effect of a rolling mean (window = 5) on a simulated degrading sensor signal. The rolling mean (orange) smooths cycle-to-cycle measurement noise while preserving the underlying degradation trend — exactly what the model needs to see.
+Figure&nbsp;10.14: Effect of a rolling mean (window = 5) on a simulated degrading sensor signal. The rolling mean (orange) smooths cycle-to-cycle measurement noise while preserving the underlying degradation trend — exactly what the model needs to see.
 </figcaption>
 </figure>
 </div>
@@ -4265,7 +4587,7 @@ Figure&nbsp;10.8: Effect of a rolling mean (window = 5) on a simulated degrading
 <img src="21-Machine-Learning_files/figure-html/fig-ml-model-drift-05-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ml-model-drift-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10.9: Simulated model performance degradation over time in production. Three mechanisms contribute: input drift (sensors recalibrated or replaced), concept drift (machine wear patterns changed after a major repair), and data quality drift (sensor failures increasing over time). Without monitoring and periodic retraining, a model that worked well at launch quietly degrades.
+Figure&nbsp;10.15: Simulated model performance degradation over time in production. Three mechanisms contribute: input drift (sensors recalibrated or replaced), concept drift (machine wear patterns changed after a major repair), and data quality drift (sensor failures increasing over time). Without monitoring and periodic retraining, a model that worked well at launch quietly degrades.
 </figcaption>
 </figure>
 </div>
@@ -4495,7 +4817,7 @@ Warning
 <ol type="1">
 <li><p><strong>Foundation models for industrial time-series:</strong> equivalent to GPT-4 but trained on sensor data rather than text — a single pre-trained model fine-tuned on your specific plant data rather than trained from scratch. Early examples (Amazon Chronos, Google TimesFM) are already available.</p></li>
 <li><p><strong>Simulation-accelerated training:</strong> ML models trained primarily on physics-based simulation rather than historical operational data — solving the “I don’t have enough run-to-failure data” problem for new equipment. NASA C-MAPSS is an early example of this approach.</p></li>
-<li><p><strong>Agentic AI for engineering workflows:</strong> LLM-based systems that can take multi-step actions (search a manual, query a database, generate a work order, route it to the right technician) rather than just responding to a single question. These are beginning to appear in enterprise ERP and MES platforms.</p></li>
+<li><p><strong>Agentic AI for engineering workflows:</strong> LLM-based agents (Week 1) that take multi-step actions (search a manual, query a database, generate a work order, route it to the right technician) rather than just responding to a single question. Coding agents are already in routine use, which is how you wrote your Python in this course, and agent features are being added to enterprise ERP and MES platforms. Multi-agent systems and standard connectors (MCP) make it easy to link them to plant data. The engineering questions are the same ones you have studied: what is the agent allowed to do, who reviews its work, how do you test it, and who is accountable when it is wrong. Expect a licensed engineer’s judgment to be asked for at exactly those points.</p></li>
 <li><p><strong>AI governance and certification requirements:</strong> as AI systems make more consequential decisions, regulatory frameworks are evolving (EU AI Act, NIST AI RMF, ISO 42001). Engineers with both the technical skills and the regulatory literacy to certify AI systems for safety-critical applications will be in high demand.</p></li>
 </ol>
 </section>
