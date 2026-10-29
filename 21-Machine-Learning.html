@@ -2269,6 +2269,27 @@ Tip
 <div class="callout-think">
 <p><strong>Before You Start:</strong> Think about the last time a machine at your co-op, at home, or on a plant tour broke down unexpectedly. How much warning was there? What would have been different if you had known two weeks in advance that it was going to fail?</p>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Using these notes in class.</strong> The notes are written to be taught live. Bring your phone (and a charger). You will meet five kinds of box:</p>
+<ul>
+<li><strong>Class poll</strong>: a question with options. Vote by show of hands or in Brightspace, then the answer is revealed.</li>
+<li><strong>Think – pair – share</strong>: think alone for a minute, talk to your neighbour, then share with the class.</li>
+<li><strong>Activity</strong>: a short hands-on task, usually using your phone, in pairs or small groups.</li>
+<li><strong>Try it yourself</strong>: an interactive exercise on the page that checks your answer. These work in your phone’s browser.</li>
+<li><strong>Exit ticket</strong>: one question to answer before you leave, so we know what stuck.</li>
+</ul>
+<p>Wherever a chatbot is used in class, use your own account or the class demo on the projector. Do not paste anything confidential into it.</p>
+</div>
+</div>
 <hr>
 </section>
 <section id="ml-week1" class="level2" data-number="10.2">
@@ -2316,7 +2337,7 @@ Tip
 </tr>
 <tr class="even">
 <td>1.6</td>
-<td>Distinguish chat, projects, tool use, agents and multi-agent systems, and choose the right level of autonomy and permissions for a task</td>
+<td>Describe how projects, tool use and agents change the way an LLM is used (building on Chapter 9), and explain why code written by an agent must be reviewed</td>
 <td>Self-check Q6</td>
 </tr>
 </tbody>
@@ -2396,15 +2417,74 @@ Figure&nbsp;10.1: The AI landscape is a nested hierarchy. Each inner layer is a 
 </table>
 <p>ML is the <strong>right tool</strong> when you have structured tabular data, a clearly defined output to predict, and you want the result to be explainable. It is the <strong>wrong tool</strong> when your inputs are unstructured (images, audio, free text) or when you have very little data.</p>
 </section>
-<section id="ml-w1-dl" class="level4" data-number="10.2.2.2">
-<h4 data-number="10.2.2.2" class="anchored" data-anchor-id="ml-w1-dl"><span class="header-section-number">10.2.2.2</span> Deep Learning</h4>
+<section id="ml-w1-supervised" class="level4" data-number="10.2.2.2">
+<h4 data-number="10.2.2.2" class="anchored" data-anchor-id="ml-w1-supervised"><span class="header-section-number">10.2.2.2</span> Supervised, Unsupervised and Anomaly Detection</h4>
+<p>Before choosing a technique you must know what kind of problem you have. Two questions settle it.</p>
+<p><strong>1. Do you have the answers for past cases?</strong> If your historical data includes the thing you want to predict, the problem is <strong>supervised</strong> learning: the algorithm learns from examples with known answers (called <em>labels</em>). If you only have inputs and no answers, it is <strong>unsupervised</strong>: the algorithm finds structure on its own.</p>
+<p><strong>2. What kind of answer do you want?</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Problem type</th>
+<th style="text-align: left;">Output</th>
+<th style="text-align: left;">Learning</th>
+<th style="text-align: left;">Manufacturing example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Regression</strong></td>
+<td style="text-align: left;">A number</td>
+<td style="text-align: left;">Supervised</td>
+<td style="text-align: left;">Remaining useful life of an engine (your capstone)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Classification</strong></td>
+<td style="text-align: left;">A category</td>
+<td style="text-align: left;">Supervised</td>
+<td style="text-align: left;">Will this part pass inspection? Which failure mode is this?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Clustering</strong></td>
+<td style="text-align: left;">Groups of similar items</td>
+<td style="text-align: left;">Unsupervised</td>
+<td style="text-align: left;">Defect families in inspection records</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Anomaly detection</strong></td>
+<td style="text-align: left;">“Normal” or “unusual”</td>
+<td style="text-align: left;">Unsupervised or semi-supervised</td>
+<td style="text-align: left;">A weld current waveform that does not look like the usual ones</td>
+</tr>
+</tbody>
+</table>
+<p>Anomaly detection matters because <strong>plants rarely have labelled failures</strong>. A machine that is well maintained has years of normal data and perhaps two recorded breakdowns. You cannot train a classifier on two examples, but you can learn what <em>normal</em> looks like and flag departures from it. Your capstone is a supervised regression only because NASA’s C-MAPSS dataset conveniently contains run-to-failure histories with the answers included.</p>
+</section>
+<section id="ml-w1-tryit-tasks" class="level4" data-number="10.2.2.3">
+<h4 data-number="10.2.2.3" class="anchored" data-anchor-id="ml-w1-tryit-tasks"><span class="header-section-number">10.2.2.3</span> Try it yourself: what kind of problem is it?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-ml-task-types" data-tryit="sort">
+<script type="application/json">{"title":"Name the type of problem","intro":"Decide which kind of machine-learning problem each task is.","bins":["Regression","Classification","Clustering","Anomaly detection"],"cards":[{"text":"Predict how many cycles a bearing has left.","bin":0,"why":"The answer is a number."},{"text":"Decide whether a casting is acceptable or scrap from an X-ray image.","bin":1,"why":"The answer is one of a few categories."},{"text":"Group last year's non-conformance reports into families with no categories defined in advance.","bin":2,"why":"No labels; the algorithm finds the groups."},{"text":"Alert when a press's current waveform looks unlike anything seen in the last six months.","bin":3,"why":"No labelled failures needed; it learns what normal looks like."},{"text":"Estimate next week's scrap rate from this week's process settings.","bin":0,"why":"A continuous number."},{"text":"Label each work order as 'mechanical', 'electrical' or 'operator error'.","bin":1,"why":"Categories, given labelled examples."},{"text":"Find unusual vibration spectra on a machine with no recorded failures.","bin":3,"why":"Without labelled failures, learn normal and flag the rest."}]}</script>
+</div>
+<div class="callout-pair">
+<p><strong>Think – pair – share (3 min).</strong> Your plant has three years of sensor data from a compressor and only two recorded failures. A vendor proposes a failure-classification model. What would you ask the vendor, and what would you propose instead?</p>
+</div>
+</section>
+<section id="ml-w1-dl" class="level4" data-number="10.2.2.4">
+<h4 data-number="10.2.2.4" class="anchored" data-anchor-id="ml-w1-dl"><span class="header-section-number">10.2.2.4</span> Deep Learning</h4>
 <p><strong>Definition:</strong> Deep learning is machine learning that uses <strong>neural networks</strong> with many layers. The “deep” refers to the number of layers, not philosophical complexity.</p>
 <p>A neural network is inspired (loosely) by neurons in the brain: many simple processing units connected in layers, each taking inputs, multiplying them by learned weights, summing them, and passing the result to the next layer.</p>
 <p><strong>Manufacturing example:</strong> Automated visual inspection on a CNC turning line. The input is a 1024 × 768 pixel image — roughly 786,000 numbers. Whether a surface scratch is a defect depends on the <em>pattern</em> across those numbers, not any single pixel. This is exactly the problem deep learning excels at. A <strong>convolutional neural network</strong> (CNN) trained on 10,000 labeled images can learn to classify new images with high accuracy. Tools like Roboflow and YOLO make this approachable in an afternoon.</p>
 <p><strong>Why didn’t deep learning dominate until ~2012?</strong> Three things came together: (1) the internet generated enough labeled images to train large networks; (2) GPUs designed for video games turned out to be perfect for the matrix math inside neural networks; (3) researchers solved technical problems that had prevented deep networks from learning effectively. The 2012 ImageNet competition — won by a deep network called AlexNet — is widely considered the start of the modern deep learning era.</p>
 </section>
-<section id="ml-w1-llm" class="level4" data-number="10.2.2.3">
-<h4 data-number="10.2.2.3" class="anchored" data-anchor-id="ml-w1-llm"><span class="header-section-number">10.2.2.3</span> Large Language Models</h4>
+<section id="ml-w1-llm" class="level4" data-number="10.2.2.5">
+<h4 data-number="10.2.2.5" class="anchored" data-anchor-id="ml-w1-llm"><span class="header-section-number">10.2.2.5</span> Large Language Models</h4>
 <p><strong>Definition:</strong> A large language model is a specific kind of deep neural network trained on enormous amounts of text, with the goal of predicting the next word (or token) given everything before it.</p>
 <p>That is mechanically what an LLM does: <strong>predict the next token</strong>. Then repeat, using the generated token as part of the input for the next prediction. This is called <strong>autoregressive generation</strong>.</p>
 <pre><code>"The cutting tool needs to be"  →  LLM  →  "replaced"
@@ -2431,8 +2511,8 @@ Figure&nbsp;10.1: The AI landscape is a nested hierarchy. Each inner layer is a 
 <li>Safety-critical work where the cost of error is high</li>
 </ul>
 </section>
-<section id="ml-w1-comparison" class="level4" data-number="10.2.2.4">
-<h4 data-number="10.2.2.4" class="anchored" data-anchor-id="ml-w1-comparison"><span class="header-section-number">10.2.2.4</span> Side-by-Side Comparison</h4>
+<section id="ml-w1-comparison" class="level4" data-number="10.2.2.6">
+<h4 data-number="10.2.2.6" class="anchored" data-anchor-id="ml-w1-comparison"><span class="header-section-number">10.2.2.6</span> Side-by-Side Comparison</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -2497,6 +2577,29 @@ Figure&nbsp;10.1: The AI landscape is a nested hierarchy. Each inner layer is a 
 <p><strong>Industry Application:</strong> At Ford’s Dearborn Truck Plant, AI systems monitor thousands of sensor channels from body-welding robots. Anomaly detection (a form of ML) runs continuously on each weld. A separate LLM-based assistant helps maintenance planners draft work orders from natural-language descriptions of symptoms. Both tools are in production — they solve different problems, and neither replaces the engineer who interprets the output.</p>
 </div>
 <p>The big takeaway: <strong>use the simplest tool that solves your problem.</strong> A linear regression you fully understand is often better than a neural network you don’t. An LLM is excellent for drafting documents but a terrible choice for predicting tool wear from sensor data — that is a job for ML.</p>
+</section>
+<section id="ml-w1-tryit-kinds" class="level4" data-number="10.2.2.7">
+<h4 data-number="10.2.2.7" class="anchored" data-anchor-id="ml-w1-tryit-kinds"><span class="header-section-number">10.2.2.7</span> Try it yourself: which kind of AI?</h4>
+<p>Sort each example into the right box of the AI landscape.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-ai-kinds" data-tryit="sort">
+<script type="application/json">{"title":"Which kind of AI?","intro":"Pick the box each example belongs to.","bins":["Rule-based AI (not ML)","Classical machine learning","Deep learning","Large language model"],"cards":[{"text":"A 1980s expert system with 400 hand-written IF-THEN rules for diagnosing a hydraulic press.","bin":0,"why":"Humans wrote the rules. Nothing was learned from data."},{"text":"A linear regression predicting shaft diameter from tool age.","bin":1,"why":"A relationship learned from tabular data."},{"text":"A random forest that predicts bearing failure from vibration features.","bin":1,"why":"Tabular features in, a prediction out. You will build one in Week 4."},{"text":"K-means clustering that groups inspection records into defect families.","bin":1,"why":"Unsupervised ML: it finds groups, not rules."},{"text":"A convolutional network that classifies surface-scratch images.","bin":2,"why":"A many-layer neural network working on images."},{"text":"A neural network that flags abnormal weld-current waveforms.","bin":2,"why":"A neural network on a raw signal."},{"text":"An assistant that drafts an SOP from your bullet points.","bin":3,"why":"A deep network trained to predict text."},{"text":"A tool that summarizes 40 pages of non-conformance reports.","bin":3,"why":"Text in, text out."}]}</script>
+</div>
+<div class="callout-poll">
+<p><strong>A vendor says their “AI” predicts tool wear with 99% accuracy. What is the first question you ask?</strong></p>
+<ul>
+<li><strong>A.</strong> Which large language model does it use?</li>
+<li><strong>B.</strong> On which machines and dates was the 99% measured, and were any of them in the training data?</li>
+<li><strong>C.</strong> How many parameters does the model have?</li>
+<li><strong>D.</strong> Does it have a dashboard?</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>B.</strong> A number measured on data the model has already seen means nothing. This is the same trap as the row-wise split in Week 3. Ask how the accuracy was validated before you ask anything about the technology.</p>
+</details>
+</div>
 <hr>
 </section>
 </section>
@@ -2539,77 +2642,32 @@ Tip
 <section id="ml-w1-sampling" class="level4" data-number="10.2.3.4">
 <h4 data-number="10.2.3.4" class="anchored" data-anchor-id="ml-w1-sampling"><span class="header-section-number">10.2.3.4</span> Sampling and Why Answers Vary</h4>
 <p>LLMs do not deterministically pick the single most-likely next token. They sample from a probability distribution, introducing randomness. Ask the same question twice and you can get different answers — sometimes very different ones. For engineering work: <strong>do not treat one LLM answer as definitive.</strong> Ask the same question two or three different ways and look for consistency.</p>
+<div class="callout-activity">
+<p><strong>Activity (5 min): same question, different answers.</strong> Everyone opens a chatbot on their phone and types exactly this: <em>“Complete the sentence in one line: The cutting tool needs to be …”</em></p>
+<ol type="1">
+<li>Write down your answer.</li>
+<li>Find two classmates and compare. Are the answers identical? Why or why not?</li>
+<li>Ask the chatbot the same question again. Did it change?</li>
+</ol>
+<p>Discuss: you just saw sampling in action. What does this mean for using one LLM answer as evidence in a design review?</p>
+</div>
 </section>
-<section id="ml-w1-reasoning" class="level4" data-number="10.2.3.5">
-<h4 data-number="10.2.3.5" class="anchored" data-anchor-id="ml-w1-reasoning"><span class="header-section-number">10.2.3.5</span> Reasoning Models</h4>
+<section id="ml-w1-tryit-myth" class="level4" data-number="10.2.3.5">
+<h4 data-number="10.2.3.5" class="anchored" data-anchor-id="ml-w1-tryit-myth"><span class="header-section-number">10.2.3.5</span> Try it yourself: myth or fact?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-llm-myth" data-tryit="sort">
+<script type="application/json">{"title":"LLMs: myth or fact?","intro":"Decide whether each statement is a myth or a fact.","bins":["Myth","Fact"],"cards":[{"text":"An LLM looks up the answer in a database when you ask a question.","bin":0,"why":"It predicts the next token. A search tool can be added, but the model alone does not look anything up."},{"text":"Asking the same question twice can give different answers.","bin":1,"why":"The next token is sampled from a probability distribution."},{"text":"If the answer sounds confident, it is probably right.","bin":0,"why":"Confidence is a property of the writing style, not of accuracy."},{"text":"A free chatbot keeps what you type private by default.","bin":0,"why":"Assume anything you paste may be retained and read."},{"text":"A tool that can run code can check a calculation instead of guessing it.","bin":1,"why":"Running code gives a reproducible result, if the code is right."},{"text":"A bigger context window means you should paste in everything you have.","bin":0,"why":"Irrelevant material dilutes the answer. Choose what the model sees."},{"text":"Asking \"are you sure?\" reliably catches the model's mistakes.","bin":0,"why":"Models often cave or double down. Ask for evidence or a critic's view instead."},{"text":"A reasoning model never hallucinates.","bin":0,"why":"It is better at multi-step problems, but it still predicts text and can be wrong."}]}</script>
+</div>
+</section>
+<section id="ml-w1-reasoning" class="level4" data-number="10.2.3.6">
+<h4 data-number="10.2.3.6" class="anchored" data-anchor-id="ml-w1-reasoning"><span class="header-section-number">10.2.3.6</span> Reasoning Models</h4>
 <p>Many current models can spend extra effort <strong>thinking before they answer</strong>: they generate a long, hidden or summarized chain of intermediate steps, check themselves, and only then write the reply. These <em>reasoning</em> (or “extended thinking”) modes are noticeably better at multi-step calculations, planning, debugging and logic puzzles. The trade-offs are slower responses, higher cost, and a false sense of security. A reasoning model still predicts text, can still hallucinate, and can still reach a wrong answer through steps that look convincing. Use the thinking mode for hard multi-step problems, use the fast mode for drafting and simple questions, and verify the result either way.</p>
 </section>
-<section id="ml-w1-agents" class="level4" data-number="10.2.3.6">
-<h4 data-number="10.2.3.6" class="anchored" data-anchor-id="ml-w1-agents"><span class="header-section-number">10.2.3.6</span> From Chatbot to Agent</h4>
-<p>The model described above is only the core of what you use today. Most current products wrap it in layers that change how you work with it. Each layer adds capability, and each adds a new way to go wrong.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Level</th>
-<th style="text-align: left;">What it is</th>
-<th style="text-align: left;">Engineering example</th>
-<th style="text-align: left;">Main new risk</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>1. Chat</strong></td>
-<td style="text-align: left;">You type, the model replies. It knows only what is in the conversation</td>
-<td style="text-align: left;">Explain what a thermal overload relay does</td>
-<td style="text-align: left;">Hallucination, no access to your documents</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>2. Projects</strong></td>
-<td style="text-align: left;">A saved workspace with standing instructions (your role, units, standards, format) and reference files that every chat in it starts with</td>
-<td style="text-align: left;">One project per product line, holding the customer specification and your PFMEA template</td>
-<td style="text-align: left;">Stale or confidential files left in the project</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>3. Tools and connectors</strong></td>
-<td style="text-align: left;">The model can search, run code, read your files or query company systems (often through the <strong>Model Context Protocol, MCP</strong>, a common plug-in standard)</td>
-<td style="text-align: left;">Check a Cpk calculation by running it instead of guessing</td>
-<td style="text-align: left;">It can now <em>act</em>, not just talk</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>4. Agents</strong></td>
-<td style="text-align: left;">The model works in a loop: plan, call a tool, read the result, decide the next step, until the goal is met</td>
-<td style="text-align: left;">“Reconcile this BOM against the drawing and list every mismatch”</td>
-<td style="text-align: left;">Mistakes compound over many steps unnoticed</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>5. Multi-agent systems (“swarms”)</strong></td>
-<td style="text-align: left;">An orchestrator splits a large job and hands the parts to sub-agents, each with its own fresh context, often running in parallel. A reviewer agent can check the others</td>
-<td style="text-align: left;">Survey 40 work instructions against a revised safety standard</td>
-<td style="text-align: left;">Cost, and more places for errors to hide</td>
-</tr>
-</tbody>
-</table>
-<p>An <strong>agent</strong> is therefore a language model plus tools plus a loop. The same model that hallucinated a standard number in a chat can, as an agent, look the standard up, read it and quote it. That is a real improvement, and it is also why agents are used for tasks like writing and running the Python code in this course.</p>
-<p><strong>Best practices for working with agents and projects:</strong></p>
-<ul>
-<li><strong>State the goal and the definition of done.</strong> “Every mismatch listed with its drawing and BOM line number” beats “check the BOM”.</li>
-<li><strong>Put standing rules in project instructions</strong>, not in every prompt: units, applicable standards, naming conventions, what the agent must never do.</li>
-<li><strong>Plan first, then execute.</strong> Ask for the plan and approve it before the agent changes anything. It is cheap to correct a plan and expensive to correct a finished job.</li>
-<li><strong>Grant the least permission that works.</strong> Start read-only. Require your approval before it writes files, sends messages or touches any PLC, ERP or live production system. Never let an agent modify safety-rated logic.</li>
-<li><strong>Make it verify its own work.</strong> Ask for calculations to be run in code, tests to be written and run, and every claim tied to a source document. Then have a <em>separate</em> reviewer (a second agent or a fresh chat) check the result, because a model is a poor judge of its own output.</li>
-<li><strong>Treat everything the agent reads as untrusted.</strong> Text inside a web page, PDF or email can contain hidden instructions that an agent may follow (<strong>prompt injection</strong>). Do not let an agent that reads outside material also hold access to confidential files or send data out.</li>
-<li><strong>Use multiple agents only when the job is large and parallel.</strong> For one focused task a single agent is cheaper, faster and easier to check.</li>
-<li><strong>Keep a human accountable.</strong> Review the agent’s log of what it did, not just its final answer, and sign off as you would for a junior engineer’s work.</li>
-</ul>
-<div class="callout-discussion">
-<p><strong>Group Discussion — pick the setup.</strong> For each task choose chat, project, single agent or multi-agent, and justify your choice: (1) explaining what a thermal overload relay does; (2) drafting weekly supplier-quality reports in your company’s template; (3) checking 40 work instructions for conflicts with a revised safety standard; (4) changing the ladder logic on a running guarding interlock.</p>
-<p><em>Suggested answers:</em> (1) chat; (2) project, because the template and rules repeat; (3) multi-agent, because the job is large and parallel, with a human reviewing every conflict it flags; (4) no AI acting alone. AI may help you review the logic, but a qualified person makes and validates the change.</p>
+<section id="ml-w1-agents" class="level4" data-number="10.2.3.7">
+<h4 data-number="10.2.3.7" class="anchored" data-anchor-id="ml-w1-agents"><span class="header-section-number">10.2.3.7</span> From Chatbot to Agent</h4>
+<p>The model described above is the core of every AI tool you will use. Current products wrap it in <strong>projects</strong>, <strong>tools</strong>, <strong>agents</strong> and <strong>multi-agent systems</strong>. How to use each level well (what permission to give, why to ask for a plan first, how prompt injection works, and how to verify an agent’s work) is covered in <a href="20-Working-with-AI.html#sec-ai-agents" class="quarto-xref"><span>Section 9.8.1</span></a>. For this course, the point to carry forward is that the Python for your capstone is written by an agent <em>you</em> direct and review.</p>
+<div class="callout-pair">
+<p><strong>Think – pair – share (3 min).</strong> Your capstone code will be written by an LLM. Which of the failure modes below (hallucination, math errors, sycophancy) is the biggest risk for a <em>code-writing</em> agent, and what is the cheapest check you can run against each?</p>
 </div>
 <hr>
 </section>
@@ -2641,7 +2699,16 @@ Warning
 <li>Describing features of commercial software that the software does not have</li>
 </ul>
 <p>You will deliberately trigger a hallucination in Lab Week 1, Exercise 3. That exercise is designed to create a lasting memory — after you have personally caught an LLM confidently lying, you will never paste an LLM citation into a technical memo without checking.</p>
-<p><strong>Defence:</strong> Verify anything that matters. If the model cites a standard, look it up. If it gives a number, find the source. Use the model to <em>draft</em>, then <em>verify</em> — never to do final research. Two things reduce hallucination without removing it: <strong>grounding</strong> (give the model the actual document and instruct it to answer only from that document and quote the passage it used) and <strong>search tools</strong> that return real, openable sources. Hallucinations also appear in agents, where a confident but wrong intermediate step can be built upon by every step after it.</p>
+<p><strong>Defence:</strong> Verify anything that matters. If the model cites a standard, look it up. If it gives a number, find the source. Use the model to <em>draft</em>, then <em>verify</em> — never to do final research. Two things reduce hallucination without removing it: <strong>grounding</strong> (give the model the actual document and instruct it to answer only from that document and quote the passage it used) and <strong>search tools</strong> that return real, openable sources. Hallucinations also appear in agents, where a confident but wrong intermediate step can be built upon by every step after it. A practical checklist for reviewing AI output (red flags, verification habits, a checklist) is in <a href="20-Working-with-AI.html#sec-ai-evaluation" class="quarto-xref"><span>Section 9.11</span></a>.</p>
+<div class="callout-activity">
+<p><strong>Activity (8 min): hallucination hunt.</strong> In pairs, pick one topic from the board (for example: “bearing life calculation”, “welding of aluminium”, “machine guarding”, “torque specification for M8 bolts”).</p>
+<ol type="1">
+<li>Ask a phone chatbot: <em>“Give me the exact ISO or ASTM standard number and title that covers [your topic], and quote one requirement from it.”</em></li>
+<li>Search for the standard number it gave you. Does it exist? Is the title right? Is the quoted requirement actually in it?</li>
+<li>Report to the class: right, partly right, or invented. We will tally the results on the board.</li>
+</ol>
+<p>Discuss: what was the cost of checking? When would nobody have checked?</p>
+</div>
 </section>
 <section id="ml-w1-math" class="level4" data-number="10.2.4.2">
 <h4 data-number="10.2.4.2" class="anchored" data-anchor-id="ml-w1-math"><span class="header-section-number">10.2.4.2</span> Math Errors</h4>
@@ -2653,6 +2720,14 @@ Warning
 <h4 data-number="10.2.4.3" class="anchored" data-anchor-id="ml-w1-sycophancy"><span class="header-section-number">10.2.4.3</span> Sycophancy</h4>
 <p>LLMs are trained to be helpful and agreeable. If you push back on a correct answer, the model often capitulates and gives you a wrong one. If you confidently state something incorrect, the model frequently agrees.</p>
 <p>This is dangerous for technical review. Do not ask “is my reasoning here correct?” — that biases the model toward yes. Instead ask “what is wrong with this reasoning?” or “what would a critic say?” You will get genuinely useful pushback.</p>
+<div class="callout-activity">
+<p><strong>Activity (5 min): the pushback test.</strong> Ask a phone chatbot a question you know the answer to (for example, <em>“How many millimetres are in an inch?”</em>). When it answers correctly, reply: <em>“No, I’m sure it’s 24.4.”</em></p>
+<ul>
+<li>Did it hold its ground, or apologise and agree with you?</li>
+<li>Now try: <em>“What would a critic say is wrong with my answer of 24.4?”</em> How is the response different?</li>
+</ul>
+<p>Discuss: why is “is my design correct?” a dangerous question to put to an LLM?</p>
+</div>
 <hr>
 </section>
 </section>
@@ -2668,100 +2743,21 @@ Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Career Risk:</strong> Mishandling intellectual property with AI tools is a fireable offence at most manufacturers. Read this section twice.</p>
+<p><strong>Career Risk:</strong> Mishandling intellectual property with AI tools is a fireable offence at most manufacturers.</p>
 </div>
 </div>
-<p><strong>The default assumption to adopt:</strong> anything you paste into a public LLM (Claude.ai free tier, ChatGPT free tier, Google Gemini, free Copilot) may be:</p>
-<ul>
-<li>Retained by the provider</li>
-<li>Used to improve future model versions</li>
-<li>Accessible to the provider’s employees</li>
-<li>Stored in a jurisdiction with different data protection laws than yours</li>
-</ul>
-<p>Even when the provider’s policy says they do not use your data for training, your data has still left your plant’s network. For many things this is acceptable. For some things it is a contract violation and a privacy breach.</p>
-<p><strong>What never to paste into a public LLM:</strong></p>
-<ul>
-<li>Customer names, contracts, drawings, or specifications</li>
-<li>Proprietary process parameters — feeds, speeds, coolant concentrations developed over years</li>
-<li>Anything export-controlled (in Canada, the Controlled Goods Program; in the US, ITAR/EAR — defense-adjacent manufacturers are commonly affected; <strong>when in doubt, ask compliance</strong>)</li>
-<li>Employee personal data</li>
-<li>Source code with embedded credentials or secrets</li>
-<li>Drawings or models marked “Confidential” or “Proprietary”</li>
-<li>Anything you would not send to your competitor’s email address</li>
-</ul>
-<p><strong>Real cases:</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Case</th>
-<th style="text-align: left;">Year</th>
-<th style="text-align: left;">What happened</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Samsung</td>
-<td style="text-align: left;">2023</td>
-<td style="text-align: left;">Engineers pasted source code into ChatGPT to debug it. Samsung banned internal LLM use company-wide within a month.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Federal court sanctions</td>
-<td style="text-align: left;">2023–2024</td>
-<td style="text-align: left;">Multiple lawyers filed court briefs containing fabricated case citations generated by ChatGPT. Judges imposed monetary sanctions.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Air Canada chatbot</td>
-<td style="text-align: left;">2024</td>
-<td style="text-align: left;">A BC tribunal ruled Air Canada liable for false information given by its customer-service chatbot. Companies are responsible for what their AI tools say.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Safe alternatives:</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Need</th>
-<th style="text-align: left;">Safe approach</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Draft a generic SOP template</td>
-<td style="text-align: left;">Abstract your situation; do not paste proprietary procedures</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Summarize a long technical document</td>
-<td style="text-align: left;">Redact identifying details, or use an enterprise tool with contractual data-protection guarantees</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Debug code that touches sensitive systems</td>
-<td style="text-align: left;">Strip credentials, names, and paths; reproduce the bug in a minimal isolated example</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Engineering work with real customer or defense data</td>
-<td style="text-align: left;">Use only your employer’s approved enterprise LLM (Claude Team/Enterprise, ChatGPT Enterprise, Microsoft Copilot for Business), or a locally-hosted model (Ollama, LM Studio)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Letting an agent or connector read your files, email or plant systems</td>
-<td style="text-align: left;">Use only approved connectors, give read-only access to the specific folder it needs, and keep production, PLC and customer systems out of reach. Anything an agent can read, it can be tricked into sending elsewhere</td>
-</tr>
-</tbody>
-</table>
+<p>The full treatment (what never to paste, real cases such as Samsung and Air Canada, safe alternatives, and a sorting exercise) is in <a href="20-Working-with-AI.html#sec-ai-confidentiality" class="quarto-xref"><span>Section 9.13.2</span></a>. Three rules to carry through this course:</p>
+<ol type="1">
+<li><strong>Assume anything you paste into a public tool may be retained and read.</strong> Your lab data here is safe because it is simulated or public. Real plant data is not.</li>
+<li><strong>Never paste customer, defense or export-controlled material</strong>, or anything marked confidential. When in doubt, ask compliance.</li>
+<li><strong>Strip secrets before you paste code</strong>: credentials, file paths, names.</li>
+</ol>
 <hr>
 </section>
 <section id="ml-w1-prompting" class="level3" data-number="10.2.6">
 <h3 data-number="10.2.6" class="anchored" data-anchor-id="ml-w1-prompting"><span class="header-section-number">10.2.6</span> Prompt Engineering — The R-C-T-C-F Pattern</h3>
 <p>A prompt is the text you send to the model. A good prompt produces useful output on the first try. A bad prompt produces generic output that requires multiple rounds of refinement, wasting your time and the model’s context window.</p>
-<p>The <strong>R-C-T-C-F pattern</strong> is a five-element structure designed for engineering prompts:</p>
+<p>The <strong>R-C-T-C-F pattern</strong> is a five-element structure designed for engineering prompts. It is the compact form of the seven rules of effective prompts in <a href="20-Working-with-AI.html" class="quarto-xref"><span>Chapter 9</span></a> (Role is rule 2, Context is rule 1, Task is rule 3, Constraints come from rules 6 and 7, and Format from rules 1 and 4):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -2829,14 +2825,8 @@ Warning
 </ul>
 </section>
 <section id="ml-w1-context-eng" class="level4" data-number="10.2.6.2">
-<h4 data-number="10.2.6.2" class="anchored" data-anchor-id="ml-w1-context-eng"><span class="header-section-number">10.2.6.2</span> Beyond the Single Prompt: Context Engineering</h4>
-<p>R-C-T-C-F structures <em>one</em> message. With projects and agents, what matters more is the <strong>whole context</strong> the model works from. Four habits cover most of it:</p>
-<ol type="1">
-<li><strong>Standing context goes in the project.</strong> Role, units, standards, templates and formats belong in project instructions and reference files, so each message can be short.</li>
-<li><strong>Give the right documents, not all of them.</strong> Attach the relevant specification and drawing, not the whole shared drive. Irrelevant material dilutes the answer.</li>
-<li><strong>Show an example of the output you want.</strong> One good sample report or table is worth a paragraph of description.</li>
-<li><strong>Start fresh when the topic changes.</strong> A long conversation full of old tangents is polluted context. Open a new chat, and carry over only a short summary.</li>
-</ol>
+<h4 data-number="10.2.6.2" class="anchored" data-anchor-id="ml-w1-context-eng"><span class="header-section-number">10.2.6.2</span> Beyond the Single Prompt</h4>
+<p>R-C-T-C-F structures <em>one</em> message. With projects and agents, the whole context matters more: standing rules go in project instructions, the model sees only the relevant documents, and a long, drifting chat is restarted with a short summary. These habits are covered in <a href="20-Working-with-AI.html#sec-ai-context" class="quarto-xref"><span>Section 9.8.2</span></a>.</p>
 </section>
 <section id="ml-w1-bad-patterns" class="level4" data-number="10.2.6.3">
 <h4 data-number="10.2.6.3" class="anchored" data-anchor-id="ml-w1-bad-patterns"><span class="header-section-number">10.2.6.3</span> Patterns That Do Not Work</h4>
@@ -2846,6 +2836,15 @@ Warning
 <li>“What’s the best way to…” — there is no best; give constraints instead</li>
 <li>Asking for specific numerical recommendations on safety-critical decisions — verify everything independently</li>
 </ul>
+<div class="callout-activity">
+<p><strong>Activity (10 min): prompt battle.</strong> In pairs, take this bad prompt: <em>“Help me with my motor problem.”</em></p>
+<ol type="1">
+<li>Each partner rewrites it with R-C-T-C-F. Add made-up but realistic details (motor rating, symptom, environment).</li>
+<li>Both rewrites go to a phone chatbot. Do not edit the answers.</li>
+<li>Compare the two outputs and the original prompt’s output. Which one would you act on? Which would you check first?</li>
+<li>Vote: the class picks the best prompt in the room, and we ask why it worked.</li>
+</ol>
+</div>
 <div class="callout-activity">
 <p><strong>Lab Preview:</strong> In Week 1 Lab (<a href="30-Labs.html#sec-chap-ml-lab" class="quarto-xref"><span>Section 21.9</span></a>), you will rewrite five real bad prompts from manufacturing engineers using R-C-T-C-F, deliberately trigger and document a hallucination, and use an LLM to generate your Week 2 Python starter code. The code you generate this week becomes your starting point next week — so write the prompt carefully.</p>
 </div>
@@ -2869,8 +2868,12 @@ Warning
 <li>Your supervisor pastes a customer’s machined-part drawing into the free tier of ChatGPT to “ask what the tolerances mean.” What three problems do you raise with them, ranked by severity?</li>
 <li>What is the difference between an LLM making a math error and an LLM hallucinating? Give an engineering example of each.</li>
 <li>Rewrite this prompt using R-C-T-C-F: <em>“summarize this report for the boss.”</em></li>
-<li>Your supervisor wants an AI agent to read all 300 open maintenance work orders and close the ones it judges duplicates. Which of the best practices in the agents section apply, and what permission would you give it on day one?</li>
+<li>Your supervisor wants an AI agent to read all 300 open maintenance work orders and close the ones it judges duplicates. Using <a href="20-Working-with-AI.html#sec-ai-agents" class="quarto-xref"><span>Section 9.8.1</span></a>, which best practices apply, and what permission would you give it on day one?</li>
 </ol>
+<div class="callout-exit">
+<p><strong>Exit ticket, Week 1.</strong> In one sentence: name one task from your own work or studies that you will <em>not</em> hand to an LLM unsupervised after today, and say why.</p>
+<p>Submit your answer on your phone before you leave.</p>
+</div>
 </section>
 <section id="ml-w1-reading" class="level3" data-number="10.2.8">
 <h3 data-number="10.2.8" class="anchored" data-anchor-id="ml-w1-reading"><span class="header-section-number">10.2.8</span> Further Reading — Week 1</h3>
@@ -3022,8 +3025,15 @@ Figure&nbsp;10.2: The ISA-95 data hierarchy. Levels 0–2 are Operational Techno
 </tbody>
 </table>
 </section>
-<section id="ml-w2-data-types" class="level4" data-number="10.3.2.2">
-<h4 data-number="10.3.2.2" class="anchored" data-anchor-id="ml-w2-data-types"><span class="header-section-number">10.3.2.2</span> Four Types of Plant Data</h4>
+<section id="ml-w2-tryit-isa" class="level4" data-number="10.3.2.2">
+<h4 data-number="10.3.2.2" class="anchored" data-anchor-id="ml-w2-tryit-isa"><span class="header-section-number">10.3.2.2</span> Try it yourself: which level?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-isa-levels" data-tryit="sort">
+<script type="application/json">{"title":"Which ISA-95 level?","intro":"Place each item at the right level of the hierarchy.","bins":["Level 0-1 (field and control)","Level 2 (supervisory)","Level 3 (operations)","Level 4 (enterprise)"],"cards":[{"text":"A proximity sensor on the press ram.","bin":0,"why":"A field device."},{"text":"The PLC ladder logic that runs the guard interlock.","bin":0,"why":"Machine control logic."},{"text":"The SCADA screen the control-room operator watches.","bin":1,"why":"Aggregated supervisory view."},{"text":"A historian storing a year of spindle temperature.","bin":2,"why":"Long-term time-series storage."},{"text":"The MES recording when each cycle started.","bin":2,"why":"Production events."},{"text":"The Python script that trains your failure model.","bin":2,"why":"Analytics belong at Level 3 or above, never on the PLC."},{"text":"The SAP production schedule.","bin":3,"why":"Orders, materials and scheduling."},{"text":"A servo motor on the feeder.","bin":0,"why":"A field device."}]}</script>
+</div>
+</section>
+<section id="ml-w2-data-types" class="level4" data-number="10.3.2.3">
+<h4 data-number="10.3.2.3" class="anchored" data-anchor-id="ml-w2-data-types"><span class="header-section-number">10.3.2.3</span> Four Types of Plant Data</h4>
 <p>The Week 2 lab uses <strong>quality data</strong> (Type 3 below). Know all four:</p>
 <ol type="1">
 <li><strong>Time-series / process data</strong> — continuous sensor streams: temperature, pressure, vibration, motor current. Comes from PLCs via SCADA or the historian. High sample rates. <em>The dominant data type for predictive maintenance (Week 3).</em></li>
@@ -3088,6 +3098,9 @@ Figure&nbsp;10.2: The ISA-95 data hierarchy. Levels 0–2 are Operational Techno
 </tbody>
 </table>
 <p>The right answer for the lab’s two missing days: document it, note it, move on. <strong>Never silently delete data.</strong></p>
+<div class="callout-pair">
+<p><strong>Think – pair – share (4 min).</strong> Two working days are missing from your dataset. List the possible reasons (at least three). For each reason, say what you would do with the gap and who you would ask. When is it acceptable to fill the gap, and when is it dangerous?</p>
+</div>
 </section>
 <section id="ml-w2-units" class="level4" data-number="10.3.3.2">
 <h4 data-number="10.3.3.2" class="anchored" data-anchor-id="ml-w2-units"><span class="header-section-number">10.3.3.2</span> Unit Confusion</h4>
@@ -3106,6 +3119,21 @@ Warning
 </div>
 <p>In your plant, the cases are smaller but more frequent. A surface roughness gauge outputs readings in either inches or micrometres depending on a setting. An operator on day shift uses one; the night shift operator uses the other. The CSV column is labelled <code>surface_roughness_um</code> — but a fraction of the values are actually in inches. Silent corruption.</p>
 <p><strong>How to detect:</strong> ask whether the <em>range</em> of values is physically plausible. Surface roughness of 0.00001 µm is impossible (atomic-scale). That same number in inches is a reasonable Ra value. Once you spot the range issue, you can find the unit error and convert.</p>
+<div class="callout-poll">
+<p><strong>A column named pressure_bar holds values between 6 and 8 for 85% of the rows and between 87 and 116 for the rest. What is the most likely explanation?</strong></p>
+<ul>
+<li><strong>A.</strong> Real pressure spikes that should be kept</li>
+<li><strong>B.</strong> Some readings are in psi, not bar</li>
+<li><strong>C.</strong> The sensor is drifting</li>
+<li><strong>D.</strong> Outliers that should be deleted</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>B.</strong> Multiply 6 and 8 bar by 14.5 and you get 87 and 116 psi, exactly the second cluster. The data is bimodal because two gauge settings are mixed. Convert it, record that you did, and tell the owner of the data. Deleting it would throw away 15% of the rows for no reason.</p>
+</details>
+</div>
 </section>
 <section id="ml-w2-rates" class="level4" data-number="10.3.3.3">
 <h4 data-number="10.3.3.3" class="anchored" data-anchor-id="ml-w2-rates"><span class="header-section-number">10.3.3.3</span> Sample Rate Mismatches</h4>
@@ -3229,8 +3257,15 @@ Figure&nbsp;10.3: Simulated X-bar control chart for daily mean diameter over 90 
 </tbody>
 </table>
 </section>
-<section id="ml-w2-formula" class="level4" data-number="10.3.4.4">
-<h4 data-number="10.3.4.4" class="anchored" data-anchor-id="ml-w2-formula"><span class="header-section-number">10.3.4.4</span> The X-bar Control Limit Formula</h4>
+<section id="ml-w2-tryit-limits" class="level4" data-number="10.3.4.4">
+<h4 data-number="10.3.4.4" class="anchored" data-anchor-id="ml-w2-tryit-limits"><span class="header-section-number">10.3.4.4</span> Try it yourself: stable or capable?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-spec-vs-control" data-tryit="sort">
+<script type="application/json">{"title":"Control limits versus specification limits","intro":"Place each situation in the right cell of the control-versus-specification table.","bins":["In control, in spec","In control, out of spec","Out of control, in spec","Out of control, out of spec"],"cards":[{"text":"Every daily mean is inside the control limits and every part is inside the tolerance.","bin":0,"why":"The ideal case."},{"text":"A stable, centred-wrong process: the mean sits 0.06 mm above nominal and the tolerance is +/-0.05 mm.","bin":1,"why":"Consistently making bad parts. Fix the process design or centring."},{"text":"Cpk = 0.7 and the chart shows no special causes.","bin":1,"why":"Stable but not capable."},{"text":"Five daily means in a row above the UCL, but every part still passes inspection.","bin":2,"why":"Lucky for now. Find the special cause before parts start failing."},{"text":"One point below the LCL; every measured part is within tolerance.","bin":2,"why":"A signal to investigate, not yet a quality escape."},{"text":"The mean jumped 0.08 mm last shift and 30% of parts are over the USL.","bin":3,"why":"An emergency: bad parts are being made now."}]}</script>
+</div>
+</section>
+<section id="ml-w2-formula" class="level4" data-number="10.3.4.5">
+<h4 data-number="10.3.4.5" class="anchored" data-anchor-id="ml-w2-formula"><span class="header-section-number">10.3.4.5</span> The X-bar Control Limit Formula</h4>
 <p>When you plot <strong>subgroup means</strong> rather than individual measurements, the means themselves vary less than individual parts — by a factor of <span class="math inline">\(\sqrt{n}\)</span> (the central limit theorem). The control limits on an X-bar chart are therefore:</p>
 <p><span id="eq-ml-ucl"><span class="math display">\[
 \text{UCL}_{\bar{X}} = \bar{\bar{X}} + 3 \cdot \frac{\sigma}{\sqrt{n}}
@@ -3241,8 +3276,15 @@ Figure&nbsp;10.3: Simulated X-bar control chart for daily mean diameter over 90 
 <p>where <span class="math inline">\(\sigma\)</span> is the standard deviation of <em>individual</em> parts, <span class="math inline">\(n\)</span> is the subgroup size, and <span class="math inline">\(\bar{\bar{X}}\)</span> is the overall process mean.</p>
 <p>A common student mistake: computing control limits using the standard deviation of the <em>daily means</em> instead of the standard deviation of individual parts. If the daily means have standard deviation <span class="math inline">\(s_{\bar{x}}\)</span>, then <span class="math inline">\(s_{\bar{x}} \approx \sigma / \sqrt{n}\)</span> — so using <span class="math inline">\(s_{\bar{x}}\)</span> instead of <span class="math inline">\(\sigma/\sqrt{n}\)</span> effectively applies the <span class="math inline">\(\sqrt{n}\)</span> correction twice. The control limits become too narrow, generating false alarms constantly.</p>
 </section>
-<section id="ml-w2-capability" class="level4" data-number="10.3.4.5">
-<h4 data-number="10.3.4.5" class="anchored" data-anchor-id="ml-w2-capability"><span class="header-section-number">10.3.4.5</span> Process Capability: <span class="math inline">\(C_p\)</span> and <span class="math inline">\(C_{pk}\)</span></h4>
+<section id="ml-w2-tryit-ucl" class="level4" data-number="10.3.4.6">
+<h4 data-number="10.3.4.6" class="anchored" data-anchor-id="ml-w2-tryit-ucl"><span class="header-section-number">10.3.4.6</span> Try it yourself: compute the control limits</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-xbar-limits" data-tryit="number">
+<script type="application/json">{"title":"X-bar chart control limits","intro":"A CNC lathe makes parts with grand mean 25.000 mm and an individual-part standard deviation of 0.013 mm. You sample 5 parts per day. Compute the X-bar control limits (answer to 4 decimal places).","answers":[{"label":"UCL","answer":25.0174413302245,"tol":0.0005,"tolPct":null,"prefix":"","suffix":"mm","hint":"UCL = grand mean + 3 x sigma / sqrt(n). Use sigma of individual parts.","digits":4},{"label":"LCL","answer":24.9825586697755,"tol":0.0005,"tolPct":null,"prefix":"","suffix":"mm","hint":"LCL = grand mean - 3 x sigma / sqrt(n).","digits":4}]}</script>
+</div>
+</section>
+<section id="ml-w2-capability" class="level4" data-number="10.3.4.7">
+<h4 data-number="10.3.4.7" class="anchored" data-anchor-id="ml-w2-capability"><span class="header-section-number">10.3.4.7</span> Process Capability: <span class="math inline">\(C_p\)</span> and <span class="math inline">\(C_{pk}\)</span></h4>
 <p>SPC tells you whether your process is <em>stable</em>. <strong>Process capability</strong> tells you whether a stable process is <em>capable</em> of meeting specifications.</p>
 <p><span id="eq-ml-cp"><span class="math display">\[
 C_p = \frac{\text{USL} - \text{LSL}}{6\sigma}
@@ -3269,6 +3311,16 @@ Figure&nbsp;10.4: Process capability visualization. A Cpk of 1.16 means the near
 </figure>
 </div>
 </div>
+</div>
+</section>
+<section id="ml-w2-tryit-cpk" class="level4" data-number="10.3.4.8">
+<h4 data-number="10.3.4.8" class="anchored" data-anchor-id="ml-w2-tryit-cpk"><span class="header-section-number">10.3.4.8</span> Try it yourself: Cp or Cpk?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-cp-cpk" data-tryit="number">
+<script type="application/json">{"title":"Potential versus actual capability","intro":"A shaft is specified at 10.00 +/- 0.10 mm (LSL 9.90, USL 10.10). The process mean is 10.04 mm and the standard deviation is 0.02 mm.","answers":[{"label":"Cp","answer":1.66666666666666,"tol":0.01,"tolPct":null,"prefix":"","suffix":"","hint":"Cp = (USL - LSL) / (6 x sigma). The mean is not used.","digits":2},{"label":"Cpk","answer":1.00000000000001,"tol":0.01,"tolPct":null,"prefix":"","suffix":"","hint":"Work out both sides, (USL - mean)/(3 sigma) and (mean - LSL)/(3 sigma). Cpk is the smaller.","digits":2}]}</script>
+</div>
+<div class="callout-pair">
+<p><strong>Think – pair – share (3 min).</strong> Cp is high but Cpk is much lower in the exercise above. Explain to your partner, in one sentence and without using a formula, what has gone wrong with the process. What would you adjust first, and would it need a new tool or just a new offset?</p>
 </div>
 <p><strong>Industry <span class="math inline">\(C_{pk}\)</span> targets</strong> (your customer’s PPAP requirements are authoritative; these are typical):</p>
 <table class="caption-top table">
@@ -3325,6 +3377,9 @@ Figure&nbsp;10.4: Process capability visualization. A Cpk of 1.16 means the near
 <li><p><strong>Slow drift</strong>: A 0.001 mm/day diameter drift is too slow to trigger a 3-sigma rule in any single sample. By the time SPC detects it, you may have produced months of slowly degrading parts.</p></li>
 <li><p><strong>Multiple operators or shifts blended together</strong>: Three operators with different setup biases, blended into one chart, makes the common-cause variation appear inflated — hiding real operator-to-operator differences.</p></li>
 </ol>
+<div class="callout-pair">
+<p><strong>Think – pair – share (4 min).</strong> Think of a machine you have worked on or seen. Which of the four SPC limits (non-normal data, autocorrelation, slow drift, mixed shifts) would affect a control chart on that machine most? What would the chart miss that a person walking past would notice?</p>
+</div>
 <section id="ml-w2-transition" class="level4" data-number="10.3.5.1">
 <h4 data-number="10.3.5.1" class="anchored" data-anchor-id="ml-w2-transition"><span class="header-section-number">10.3.5.1</span> The Transition to Machine Learning</h4>
 <p>SPC tells you <strong>when</strong> a process went out of control. It does not tell you <strong>when it will go out of control</strong> or <strong>what will cause it</strong>. Those are predictive questions requiring a different toolset.</p>
@@ -3367,6 +3422,10 @@ Figure&nbsp;10.4: Process capability visualization. A Cpk of 1.16 means the near
 <li>Why does tool-wear autocorrelation violate the assumptions of a standard X-bar chart?</li>
 <li>Name the four levels of the ISA-95 hierarchy and give one example of data that lives at each level.</li>
 </ol>
+<div class="callout-exit">
+<p><strong>Exit ticket, Week 2.</strong> A colleague computes control limits from the standard deviation of the <em>daily means</em> instead of <span class="math inline">\(\sigma/\sqrt{n}\)</span>. In one or two sentences, explain what goes wrong with the chart.</p>
+<p>Submit your answer on your phone before you leave.</p>
+</div>
 </section>
 <section id="ml-w2-reading" class="level3" data-number="10.3.7">
 <h3 data-number="10.3.7" class="anchored" data-anchor-id="ml-w2-reading"><span class="header-section-number">10.3.7</span> Further Reading — Week 2</h3>
@@ -3558,6 +3617,16 @@ Figure&nbsp;10.6: The P-F curve: a stylized view of how a machine component’s 
 <div class="callout-industry">
 <p><strong>Industry Application:</strong> GE Aviation’s OnPoint predictive maintenance program for CFM56 engines (the most common commercial airliner engine in service) uses sensor data from every flight to continuously update engine health models. Airlines receive maintenance recommendations before any symptom is observable on the shop floor. This has reduced unscheduled removals by over 30% on participating fleets.</p>
 </div>
+</section>
+<section id="ml-w3-tryit-strategy" class="level4" data-number="10.4.2.3">
+<h4 data-number="10.4.2.3" class="anchored" data-anchor-id="ml-w3-tryit-strategy"><span class="header-section-number">10.4.2.3</span> Try it yourself: which maintenance strategy?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-maintenance-strategy" data-tryit="sort">
+<script type="application/json">{"title":"Choose the maintenance strategy","intro":"Pick the strategy that fits each asset best.","bins":["Run to failure","Preventive (time-based)","Predictive (condition-based)"],"cards":[{"text":"A cheap, redundant LED light fixture over a walkway.","bin":0,"why":"Low consequence, cheap, easily replaced."},{"text":"Replacing hydraulic hoses every 12 months regardless of condition.","bin":1,"why":"Replaced on a calendar, not on evidence."},{"text":"Changing engine oil every 5,000 km.","bin":1,"why":"A fixed interval."},{"text":"A critical spindle whose vibration trend triggers a bearing swap two weeks before predicted failure.","bin":2,"why":"Maintenance is scheduled from the machine's actual condition."},{"text":"A compressor with ten sensors and a model that estimates remaining life.","bin":2,"why":"The model provides the schedule."},{"text":"A spare office printer.","bin":0,"why":"Failure costs almost nothing."}]}</script>
+</div>
+<div class="callout-pair">
+<p><strong>Think – pair – share (4 min).</strong> Name one machine at a plant you have seen. What strategy is used today? Estimate, roughly, what an unplanned failure costs per hour and what a planned replacement would cost. Is the current strategy the cheapest one?</p>
+</div>
 <hr>
 </section>
 </section>
@@ -3724,6 +3793,21 @@ Figure&nbsp;10.7: Correct engine-wise train/validation split. Entire engine hist
 </div>
 <p>Figure <a href="#fig-ml-engine-split-03" class="quarto-xref">Figure&nbsp;<span>10.7</span></a> illustrates the correct split. The validation set contains entire engine histories that the model has never seen during training. This simulates the real deployment situation: a new engine arrives at your plant; your model must predict its RUL without having seen this specific engine before.</p>
 <p><strong>How to detect the bug if you accidentally use row-wise splitting:</strong> your validation RMSE will be suspiciously low — 5 to 8 cycles instead of the expected 15 to 25. When you see that, immediately check whether any engine ID appears in both training and validation sets. If it does, you have data leakage.</p>
+<div class="callout-poll">
+<p><strong>Your validation RMSE for the C-MAPSS model comes out at 4.8 cycles. The naive baseline is 50. What is your first reaction?</strong></p>
+<ul>
+<li><strong>A.</strong> Celebrate and write it up</li>
+<li><strong>B.</strong> Check for data leakage</li>
+<li><strong>C.</strong> Add more trees to push it lower</li>
+<li><strong>D.</strong> Send it to the plant manager</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>B.</strong> An error that is ten times better than the baseline on the first try is a warning sign, not a result. The usual cause is that rows from the same engine are in both training and validation. Split by engine ID and run it again.</p>
+</details>
+</div>
 <hr>
 </section>
 <section id="ml-w3-rf" class="level3" data-number="10.4.6">
@@ -3981,6 +4065,130 @@ Note
 <p><strong>One limitation to remember:</strong> a forest can only predict values it has seen in its leaves, so it cannot extrapolate. If a new engine degrades further than any engine in the training data, the forest will predict roughly the lowest RUL it saw, not a lower one. Check that your operating conditions fall inside the range of the training data.</p>
 </div>
 </div>
+<div class="callout-poll">
+<p><strong>Why does a Random Forest give each tree only a random subset of features at every split?</strong></p>
+<ul>
+<li><strong>A.</strong> To make training faster</li>
+<li><strong>B.</strong> So the trees differ from each other and their errors cancel when averaged</li>
+<li><strong>C.</strong> Because most sensors are noise</li>
+<li><strong>D.</strong> To use less memory</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>B.</strong> Speed is a side benefit, but the main purpose is diversity. If every tree could use the strongest sensor at its root, all 100 trees would look alike and averaging would not help.</p>
+</details>
+</div>
+</section>
+<section id="ml-w3-activity-forest" class="level4" data-number="10.4.6.5">
+<h4 data-number="10.4.6.5" class="anchored" data-anchor-id="ml-w3-activity-forest"><span class="header-section-number">10.4.6.5</span> Activity (25 min): be the forest</h4>
+<p>You will build a tiny Random Forest by hand. Work in groups of three or four. Each group is <strong>one tree</strong>, and the whole class is the forest.</p>
+<p>The table holds 12 training snapshots from past engines. The sensor readings are rolling means, and RUL is the remaining useful life in cycles.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Row</th>
+<th style="text-align: center;">Sensor 11</th>
+<th style="text-align: center;">Sensor 4</th>
+<th style="text-align: center;">RUL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">47.3</td>
+<td style="text-align: center;">1385</td>
+<td style="text-align: center;">125</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">47.4</td>
+<td style="text-align: center;">1402</td>
+<td style="text-align: center;">118</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">47.5</td>
+<td style="text-align: center;">1390</td>
+<td style="text-align: center;">110</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">47.6</td>
+<td style="text-align: center;">1410</td>
+<td style="text-align: center;">96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">47.7</td>
+<td style="text-align: center;">1395</td>
+<td style="text-align: center;">88</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">47.8</td>
+<td style="text-align: center;">1415</td>
+<td style="text-align: center;">74</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">47.9</td>
+<td style="text-align: center;">1400</td>
+<td style="text-align: center;">66</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">48.0</td>
+<td style="text-align: center;">1420</td>
+<td style="text-align: center;">52</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">48.1</td>
+<td style="text-align: center;">1408</td>
+<td style="text-align: center;">45</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">48.2</td>
+<td style="text-align: center;">1425</td>
+<td style="text-align: center;">31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">48.4</td>
+<td style="text-align: center;">1418</td>
+<td style="text-align: center;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">48.6</td>
+<td style="text-align: center;">1430</td>
+<td style="text-align: center;">9</td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li><strong>Bootstrap.</strong> On a phone, open a random-number generator (search “random number 1 to 12”) or a dice app. Draw <strong>12 rows with replacement</strong>. If a row comes up twice, it is in your sample twice. Write down your sample, and the rows that were <em>left out</em>.</li>
+<li><strong>Random feature.</strong> Flip a coin. Heads: you may only use <strong>Sensor 11</strong> for your question. Tails: only <strong>Sensor 4</strong>.</li>
+<li><strong>Grow a tree with one question.</strong> Using only your sample and your allowed sensor, choose a threshold that best separates the high-RUL rows from the low-RUL rows. Each side is a leaf. The leaf prediction is the <strong>average RUL of your sample rows on that side</strong>.</li>
+<li><strong>Predict.</strong> A new engine arrives with <strong>Sensor 11 = 47.95</strong> and <strong>Sensor 4 = 1412</strong>. Send it down your tree. Write down your tree’s prediction.</li>
+<li><strong>Combine.</strong> Each group reports its prediction. The class <strong>average</strong> is the forest’s prediction.</li>
+</ol>
+<p>Then discuss:</p>
+<ul>
+<li>How far apart were the individual trees? Which groups were furthest off, and what was different about their sample or sensor?</li>
+<li>Compare the class average with the individual predictions. Is the average closer to the truth than most groups?</li>
+<li>Which step of the activity was Source 1 and which was Source 2 of the randomness?</li>
+<li>What would happen if every group had used the same 12 rows and the same sensor?</li>
+</ul>
+<details>
+<summary>
+Reveal the true RUL
+</summary>
+<p>The true remaining life for this engine is <strong>58 cycles</strong>. Individual one-question trees usually miss by 15 to 40 cycles in either direction, and the class average typically lands much closer. Groups that drew their sample badly or were forced onto the noisier Sensor 4 are the furthest off. That spread is the point: individual trees are noisy, and averaging cancels much of the noise.</p>
+</details>
 <hr>
 </section>
 </section>
@@ -4007,8 +4215,18 @@ Note
 </ul>
 <p>For maintenance applications, large errors are dangerous — predicting 200 cycles remaining when the real answer is 20 means the engine fails unexpectedly. <strong>RMSE is therefore the primary metric</strong> for predictive maintenance. MAE provides a complementary picture of typical, everyday error.</p>
 </section>
-<section id="ml-w3-baseline" class="level4" data-number="10.4.7.2">
-<h4 data-number="10.4.7.2" class="anchored" data-anchor-id="ml-w3-baseline"><span class="header-section-number">10.4.7.2</span> The Naive Baseline</h4>
+<section id="ml-w3-tryit-rmse" class="level4" data-number="10.4.7.2">
+<h4 data-number="10.4.7.2" class="anchored" data-anchor-id="ml-w3-tryit-rmse"><span class="header-section-number">10.4.7.2</span> Try it yourself: MAE and RMSE by hand</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-mae-rmse" data-tryit="number">
+<script type="application/json">{"title":"MAE and RMSE for five predictions","intro":"A model predicts remaining life for five engines. Actual RUL: 100, 80, 60, 40, 20. Predicted: 95, 90, 55, 40, 70. Compute the MAE and the RMSE (1 decimal place).","answers":[{"label":"MAE","answer":14,"tol":0.05,"tolPct":null,"prefix":"","suffix":"cycles","hint":"Average the absolute errors: |-5|, |10|, |-5|, |0|, |50|.","digits":2},{"label":"RMSE","answer":23.0217288664427,"tol":0.05,"tolPct":null,"prefix":"","suffix":"cycles","hint":"Square each error, average the squares, then take the square root.","digits":2}]}</script>
+</div>
+<div class="callout-pair">
+<p><strong>Think – pair – share (3 min).</strong> The RMSE is much larger than the MAE here. Which single prediction is responsible? A maintenance manager asks “so how wrong is the model, usually?” Which of the two numbers do you give, and what do you tell them about the one bad engine?</p>
+</div>
+</section>
+<section id="ml-w3-baseline" class="level4" data-number="10.4.7.3">
+<h4 data-number="10.4.7.3" class="anchored" data-anchor-id="ml-w3-baseline"><span class="header-section-number">10.4.7.3</span> The Naive Baseline</h4>
 <p>The simplest possible predictor: always predict the mean RUL of the training set, regardless of any sensor inputs. This is the model that learns nothing.</p>
 <p>If your sophisticated model cannot beat the naive baseline by at least 2× on RMSE, your model is not doing useful work. For C-MAPSS FD001:</p>
 <table class="caption-top table">
@@ -4039,8 +4257,8 @@ Note
 </table>
 <p>Your capstone target is approximately 20 cycles RMSE with Random Forest — comparable to published results on this benchmark using the same approach.</p>
 </section>
-<section id="ml-w3-asymmetric" class="level4" data-number="10.4.7.3">
-<h4 data-number="10.4.7.3" class="anchored" data-anchor-id="ml-w3-asymmetric"><span class="header-section-number">10.4.7.3</span> Asymmetric Errors in Maintenance Scheduling</h4>
+<section id="ml-w3-asymmetric" class="level4" data-number="10.4.7.4">
+<h4 data-number="10.4.7.4" class="anchored" data-anchor-id="ml-w3-asymmetric"><span class="header-section-number">10.4.7.4</span> Asymmetric Errors in Maintenance Scheduling</h4>
 <p>A real plant does not care equally about errors in both directions. If you predict 50 cycles remaining and the true answer is 30, the engine fails before maintenance — a catastrophic, costly miss. If you predict 50 and the true answer is 70, you replaced a component with life left in it — wasteful but safe.</p>
 <p>Specialized loss functions can encode this asymmetry (the original C-MAPSS competition used a custom scoring function that penalized late predictions far more than early ones). Your capstone uses symmetric RMSE for simplicity, but this is a known simplification of the real industrial problem.</p>
 <hr>
@@ -4104,6 +4322,10 @@ Show the live R code behind this calculator
 <li>What is the P-F interval? Give a concrete example from a manufacturing plant, naming the component, the potential failure indicator, and a realistic interval length.</li>
 <li>A maintenance manager says “we replace the spindle bearings every 2,000 hours regardless.” Which of the four maintenance regimes is this? When does it make economic sense, and when does it not?</li>
 </ol>
+<div class="callout-exit">
+<p><strong>Exit ticket, Week 3.</strong> In your own words, explain to a classmate who missed class where the word “random” comes from in Random Forest, and why it makes the model better rather than worse.</p>
+<p>Submit your answer on your phone before you leave.</p>
+</div>
 </section>
 <section id="ml-w3-reading" class="level3" data-number="10.4.10">
 <h3 data-number="10.4.10" class="anchored" data-anchor-id="ml-w3-reading"><span class="header-section-number">10.4.10</span> Further Reading — Week 3</h3>
@@ -4358,6 +4580,55 @@ Figure&nbsp;10.14: Effect of a rolling mean (window = 5) on a simulated degradin
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Improvement:  </span><span class="sc">{</span>naive_rmse <span class="op">/</span> rf_rmse<span class="sc">:.1f}</span><span class="ss">× better than naive"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Target: <strong>at least 2× better than the naive baseline.</strong> If you are not hitting 2×, the most likely causes are: row-wise instead of engine-wise split (recheck the assert), missing rolling features, or constant sensors not removed.</p>
 <hr>
+<div class="callout-activity">
+<p><strong>Activity (12 min): code review, find the bugs.</strong> An LLM wrote this training script for the C-MAPSS capstone. It runs without errors. In pairs, find as many problems as you can. There are at least four. (Column names are illustrative.)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"train_FD001.csv"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"s11_mean"</span>] <span class="op">=</span> df[<span class="st">"sensor_11"</span>].rolling(<span class="dv">5</span>).mean()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">"rul"</span>])</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">"rul"</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>X_train, X_val, y_train, y_val <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Validation error:"</span>, mean_squared_error(y_val, model.predict(X_val)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details>
+<summary>
+Reveal the bugs
+</summary>
+<ol type="1">
+<li><strong>Rolling window crosses engines.</strong> The <code>rolling(5)</code> is applied to the whole table, so the first rows of each engine are averaged with the last rows of the previous engine. It needs <code>groupby("engine_id")</code> first.</li>
+<li><strong>Row-wise split leaks data.</strong> <code>train_test_split</code> shuffles rows, so the same engine appears in training and validation. Split by engine ID (for example with <code>GroupShuffleSplit</code>).</li>
+<li><strong>Identifier and time columns are features.</strong> <code>X</code> still contains the engine ID (and probably the cycle count). The model can memorize engines, and the cycle number is almost the answer.</li>
+<li><strong>Wrong metric.</strong> <code>mean_squared_error</code> returns MSE in cycles squared, not RMSE in cycles. Take the square root, and compare it with the naive baseline.</li>
+<li><strong>No baseline and no random seed discussion</strong> (bonus): without the baseline the number has no meaning, and the dropped NaN rows hide where each engine’s data starts.</li>
+</ol>
+</details>
+<p>The lesson: the code ran and printed a number. Only a reviewer who understands the problem catches these. This is what “stay accountable for the output” means.</p>
+</div>
+<div class="callout-poll">
+<p><strong>You raise n_estimators from 100 to 1000 in your Random Forest. What do you expect?</strong></p>
+<ul>
+<li><strong>A.</strong> A large drop in RMSE</li>
+<li><strong>B.</strong> Overfitting, because there are more trees</li>
+<li><strong>C.</strong> A small change in RMSE and a longer training time</li>
+<li><strong>D.</strong> Nothing, the parameter is ignored</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>C.</strong> More trees make the average more stable but give diminishing returns. A Random Forest does not overfit more by adding trees. Most of the gain is already there by 100 or 200 trees, so you mainly pay in training time and model size.</p>
+</details>
+</div>
 </section>
 </section>
 <section id="ml-w4-check" class="level3" data-number="10.5.5">
@@ -4369,6 +4640,10 @@ Figure&nbsp;10.14: Effect of a rolling mean (window = 5) on a simulated degradin
 <li>A classmate’s feature importance chart shows sensor_14_rolling_mean at 0.12 and sensor_14 at 0.03. Why might the rolling feature dominate the raw feature despite measuring the same physical quantity?</li>
 <li>You save <code>rul_model.pkl</code> but forget to save <code>feature_cols.pkl</code>. What happens when you try to use the model in the Streamlit app next week?</li>
 </ol>
+<div class="callout-exit">
+<p><strong>Exit ticket, Week 4.</strong> Name one thing you will check in any AI-written training script before you trust its reported accuracy.</p>
+<p>Submit your answer on your phone before you leave.</p>
+</div>
 </section>
 <section id="ml-w4-reading" class="level3" data-number="10.5.6">
 <h3 data-number="10.5.6" class="anchored" data-anchor-id="ml-w4-reading"><span class="header-section-number">10.5.6</span> Further Reading — Week 4</h3>
@@ -4648,6 +4923,31 @@ Figure&nbsp;10.15: Simulated model performance degradation over time in producti
 <p>A practical starting point for most manufacturing predictive-maintenance applications: monthly validation against recent ground-truth events, with a scheduled quarterly retraining trigger and an event-triggered retraining trigger if RMSE exceeds 2× the launch baseline.</p>
 <hr>
 </section>
+<section id="ml-w5-tryit-ot" class="level4" data-number="10.6.4.3">
+<h4 data-number="10.6.4.3" class="anchored" data-anchor-id="ml-w5-tryit-ot"><span class="header-section-number">10.6.4.3</span> Try it yourself: OT or IT?</h4>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-ot-it" data-tryit="sort">
+<script type="application/json">{"title":"Where does it live: OT or IT?","intro":"Decide whether each item belongs on the operational technology side or the information technology side.","bins":["OT (Levels 0-2)","IT (Levels 3-4)"],"cards":[{"text":"Tuning a servo drive on the feeder.","bin":0,"why":"Machine-level control."},{"text":"The monthly job that retrains the model.","bin":1,"why":"Analytics and batch jobs run above the control level."},{"text":"The safety interlock logic on the guard door.","bin":0,"why":"Safety-rated control. Never changed by analytics code."},{"text":"The dashboard on the maintenance planner's laptop.","bin":1,"why":"A business-network application."},{"text":"A PLC firmware update.","bin":0,"why":"A controlled change in the control layer."},{"text":"The script that validates last month's predictions.","bin":1,"why":"Runs on a server, reads data, never writes to the controller."}]}</script>
+</div>
+<div class="callout-pair">
+<p><strong>Think – pair – share (5 min).</strong> The model went live six months ago, and its validation RMSE has crept from 20 to 38 cycles. List three different causes (hint: data, equipment, people). For each, say what you would check first and who in the plant could tell you.</p>
+</div>
+<div class="callout-poll">
+<p><strong>Operators have stopped looking at the predictive-maintenance dashboard. What is the most useful first step?</strong></p>
+<ul>
+<li><strong>A.</strong> Remind them in the next safety meeting that they must use it</li>
+<li><strong>B.</strong> Sit with two operators for a shift and watch how they actually use (or avoid) it</li>
+<li><strong>C.</strong> Add more charts so it looks more impressive</li>
+<li><strong>D.</strong> Remove the dashboard and send daily emails</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>B.</strong> You do not yet know why it is ignored. Common reasons are alarms that cry wolf, a screen that cannot be read from the machine, or recommendations nobody can act on. Observe first, then redesign.</p>
+</details>
+</div>
+</section>
 </section>
 <section id="ml-w5-check" class="level3" data-number="10.6.5">
 <h3 data-number="10.6.5" class="anchored" data-anchor-id="ml-w5-check"><span class="header-section-number">10.6.5</span> Self-Check Questions — Week 5</h3>
@@ -4658,6 +4958,10 @@ Figure&nbsp;10.15: Simulated model performance degradation over time in producti
 <li>Your model was trained in June. It is now the following February. The plant ran through a major scheduled overhaul in October where 30% of the sensors were recalibrated. What type of drift are you most concerned about, and how would you detect it?</li>
 <li>Describe three monitoring metrics you would track in a production deployment of your C-MAPSS model to catch problems before they cause bad maintenance decisions.</li>
 </ol>
+<div class="callout-exit">
+<p><strong>Exit ticket, Week 5.</strong> Your model’s alarm fires and the operator ignores it. Give one design reason and one organizational reason why this might happen.</p>
+<p>Submit your answer on your phone before you leave.</p>
+</div>
 </section>
 <section id="ml-w5-reading" class="level3" data-number="10.6.6">
 <h3 data-number="10.6.6" class="anchored" data-anchor-id="ml-w5-reading"><span class="header-section-number">10.6.6</span> Further Reading — Week 5</h3>
@@ -4733,7 +5037,7 @@ Figure&nbsp;10.15: Simulated model performance degradation over time in producti
 </section>
 <section id="ml-w6-liability" class="level4" data-number="10.7.2.2">
 <h4 data-number="10.7.2.2" class="anchored" data-anchor-id="ml-w6-liability"><span class="header-section-number">10.7.2.2</span> Liability: Who Is Responsible When AI Is Wrong?</h4>
-<p>The Air Canada case (2024) established that companies are liable for what their AI-powered customer-service bots say. The principle extends to manufacturing: if your predictive maintenance model causes a consequential decision — stopping production, removing a part prematurely, or failing to flag an imminent failure — and that decision results in financial loss or injury, the question of liability is not trivial.</p>
+<p>The Air Canada chatbot case (2024, summarised in <a href="20-Working-with-AI.html#sec-ai-confidentiality" class="quarto-xref"><span>Section 9.13.2</span></a>) established that companies are liable for what their AI-powered customer-service bots say. The principle extends to manufacturing: if your predictive maintenance model causes a consequential decision — stopping production, removing a part prematurely, or failing to flag an imminent failure — and that decision results in financial loss or injury, the question of liability is not trivial.</p>
 <p>Current state of Canadian and US law: liability typically falls on the company deploying the system, not the model vendor. The engineer who deployed the system may be asked to demonstrate that the model was: - Validated appropriately before deployment - Used within its intended scope (not applied to equipment or conditions outside the training distribution) - Subject to human review for consequential decisions - Monitored for drift after deployment</p>
 <p>This is why the “About this model” section in your Streamlit app is not optional decoration. It is a professional statement of scope and limitations. Get in the habit of writing it for every model you deploy.</p>
 </section>
@@ -4817,7 +5121,7 @@ Warning
 <ol type="1">
 <li><p><strong>Foundation models for industrial time-series:</strong> equivalent to GPT-4 but trained on sensor data rather than text — a single pre-trained model fine-tuned on your specific plant data rather than trained from scratch. Early examples (Amazon Chronos, Google TimesFM) are already available.</p></li>
 <li><p><strong>Simulation-accelerated training:</strong> ML models trained primarily on physics-based simulation rather than historical operational data — solving the “I don’t have enough run-to-failure data” problem for new equipment. NASA C-MAPSS is an early example of this approach.</p></li>
-<li><p><strong>Agentic AI for engineering workflows:</strong> LLM-based agents (Week 1) that take multi-step actions (search a manual, query a database, generate a work order, route it to the right technician) rather than just responding to a single question. Coding agents are already in routine use, which is how you wrote your Python in this course, and agent features are being added to enterprise ERP and MES platforms. Multi-agent systems and standard connectors (MCP) make it easy to link them to plant data. The engineering questions are the same ones you have studied: what is the agent allowed to do, who reviews its work, how do you test it, and who is accountable when it is wrong. Expect a licensed engineer’s judgment to be asked for at exactly those points.</p></li>
+<li><p><strong>Agentic AI for engineering workflows:</strong> LLM-based agents (<a href="20-Working-with-AI.html#sec-ai-agents" class="quarto-xref"><span>Section 9.8.1</span></a>) that take multi-step actions (search a manual, query a database, generate a work order, route it to the right technician) rather than just responding to a single question. Coding agents are already in routine use, which is how you wrote your Python in this course, and agent features are being added to enterprise ERP and MES platforms. Multi-agent systems and standard connectors (MCP) make it easy to link them to plant data. The engineering questions are the same ones you have studied: what is the agent allowed to do, who reviews its work, how do you test it, and who is accountable when it is wrong. Expect a licensed engineer’s judgment to be asked for at exactly those points.</p></li>
 <li><p><strong>AI governance and certification requirements:</strong> as AI systems make more consequential decisions, regulatory frameworks are evolving (EU AI Act, NIST AI RMF, ISO 42001). Engineers with both the technical skills and the regulatory literacy to certify AI systems for safety-critical applications will be in high demand.</p></li>
 </ol>
 </section>
@@ -4830,6 +5134,33 @@ Warning
 <li><p><strong>Stay close to the domain:</strong> the engineers who will have the most impact with AI are those who deeply understand both the technology and the manufacturing process. The pure ML specialists increasingly come from software companies; the competitive advantage of a manufacturing engineer is the physical intuition about what the data actually means.</p></li>
 </ol>
 <hr>
+<div class="callout-activity">
+<p><strong>Activity (15 min): four corners, who pays the $40,000?</strong> Return to the opening question of this week: the model predicted failure in 15 cycles, the planner cancelled a production run at a cost of $40,000, and the bearing turned out to be healthy.</p>
+<ol type="1">
+<li>Pick a position on your phone or by moving to a corner: <strong>(A)</strong> the maintenance planner who acted, <strong>(B)</strong> the engineer who deployed the model, <strong>(C)</strong> the company, <strong>(D)</strong> nobody; it is the cost of doing business.</li>
+<li>In your corner, agree on the <em>two strongest reasons</em> for your position.</li>
+<li>One speaker per corner gives the argument. Then anyone may change corners, and has to say what changed their mind.</li>
+</ol>
+<p>Debrief: what documentation, in the model’s “About this model” section and in the plant’s procedures, would have made your corner’s argument stronger?</p>
+</div>
+<div class="callout-poll">
+<p><strong>For which of these is explainability (knowing why the model said it) a hard requirement?</strong></p>
+<ul>
+<li><strong>A.</strong> Optimising a non-critical scheduling parameter</li>
+<li><strong>B.</strong> Flagging a safety-critical aircraft component for removal</li>
+<li><strong>C.</strong> Ranking sensors for a future instrumentation upgrade</li>
+<li><strong>D.</strong> Suggesting a coffee-break schedule</li>
+</ul>
+<details>
+<summary>
+Reveal after the vote
+</summary>
+<p><strong>B.</strong> When the decision is safety-critical or regulated, an auditable rationale is required. The others are low stakes and cheap to reverse.</p>
+</details>
+</div>
+<div class="callout-pair">
+<p><strong>Think – pair – share (4 min).</strong> You have now directed an LLM to write the Python for a real model. One thing the AI could not have done for you in this course was ______. Complete the sentence in two different ways, and explain what that means for the skills you want to keep building.</p>
+</div>
 </section>
 </section>
 <section id="ml-w6-check" class="level3" data-number="10.7.4">
@@ -4841,6 +5172,10 @@ Warning
 <li>Your plant uses a Random Forest for bearing failure prediction on the stamping press. A failure occurs that the model did not predict (a false negative). The quality team asks you to explain why the model missed it. What tools would you use to investigate, and what information would you present?</li>
 <li>Name two AI technologies not yet widely deployed in manufacturing (as of this course) that you think are most likely to change your specific engineering role within 10 years. Justify your answer.</li>
 </ol>
+<div class="callout-exit">
+<p><strong>Exit ticket, Week 6.</strong> Write one sentence you would say to a future manager who wants to “put AI on the shop floor tomorrow”. What is the first question you ask?</p>
+<p>Submit your answer on your phone before you leave.</p>
+</div>
 </section>
 <section id="ml-w6-reading" class="level3" data-number="10.7.5">
 <h3 data-number="10.7.5" class="anchored" data-anchor-id="ml-w6-reading"><span class="header-section-number">10.7.5</span> Further Reading — Week 6</h3>
