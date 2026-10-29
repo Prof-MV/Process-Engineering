@@ -2273,14 +2273,15 @@ ggplot(df_drift, aes(x = month, y = rmse)) +
   geom_line(colour = "#1565c0", linewidth = 1) +
   geom_point(colour = "#1565c0", size = 2) +
   geom_vline(xintercept = 12, colour = "#e65100", linetype = "dotted", linewidth = 1) +
-  annotate("text", x = 12.3, y = 39, label = "Major overhaul\n(new sensors installed)",
-           colour = "#e65100", size = 3 * diagram_text_scale, hjust = 0) +
-  annotate("text", x = 24.5, y = 21.5, label = "Launch RMSE", colour = "#2e7d32",
-           size = 3 * diagram_text_scale, hjust = 1) +
-  annotate("text", x = 24.5, y = 36.3, label = "Retraining threshold", colour = "#c62828",
-           size = 3 * diagram_text_scale, hjust = 1) +
+  annotate("text", x = 11.7, y = 40, label = "Major overhaul\n(new sensors installed)",
+           colour = "#e65100", size = 3 * diagram_text_scale, hjust = 1) +
+  annotate("text", x = 24.5, y = 21, label = "Launch RMSE", colour = "#2e7d32",
+           size = 3 * diagram_text_scale, hjust = 1, vjust = 0) +
+  annotate("text", x = 24.5, y = 34.4, label = "Retraining threshold", colour = "#c62828",
+           size = 3 * diagram_text_scale, hjust = 1, vjust = 1) +
   scale_x_continuous(breaks = seq(1, 24, by = 3),
                      labels = paste0("M", seq(1, 24, by = 3))) +
+  coord_cartesian(ylim = c(16, 44), clip = "off") +
   labs(title    = "Model Performance Drift in Production",
        subtitle = "Validation RMSE over 24 months. No retraining performed.",
        x = "Month in production", y = "Validation RMSE (cycles)") +
