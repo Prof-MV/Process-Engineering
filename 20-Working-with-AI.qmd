@@ -1,4 +1,4 @@
-# Working Effectively with AI
+# Working Effectively with AI {#sec-chap-ai}
 ```{r setup-16, include=FALSE}
 # include the helpers.R file for pdf output of youtube on pdfs as a clickable link
 source("R/helpers.R")
@@ -18,13 +18,27 @@ After completing this chapter, you will be able to:
 2. Apply the four steps of effective AI use: Define, Prompt, Iterate, Validate
 3. Apply prompt engineering principles to get better AI responses
 4. Distinguish between poor, adequate, and excellent prompts
-5. Select appropriate AI tools for different tasks (chat interfaces, NotebookLM, Claude Code, browser extensions)
+5. Select appropriate AI tools for different tasks (chat interfaces and projects, NotebookLM, coding agents, browser extensions)
 6. Use iterative AI collaboration to solve complex engineering problems
 7. Critically evaluate AI-generated content for accuracy and safety
 8. Identify tasks suited for AI assistance versus human expertise
 9. Apply ethical considerations when using AI in engineering contexts
+10. Distinguish chat, projects, tool use, agents and multi-agent systems, and set the right permissions and review for each
+11. Protect confidential information, and document and disclose your use of AI
 
 ---
+
+::: {.callout-tip}
+**Using these notes in class.** This chapter is written to be taught live. Bring your phone (and a charger). You will meet five kinds of box:
+
+- **Class poll**: a question with options. Vote by show of hands or in Brightspace, then the answer is revealed.
+- **Think – pair – share**: think alone for a minute, talk to your neighbour, then share with the class.
+- **Activity**: a short hands-on task, usually using your phone, in pairs or small groups.
+- **Try it yourself**: an interactive exercise on the page that checks your answer. These work in your phone's browser.
+- **Exit ticket**: one question to answer before you leave, so we know what stuck.
+
+Wherever a chatbot is used in class, use your own account or the class demo on the projector. Do not paste anything confidential into it (see @sec-ai-confidentiality).
+:::
 
 ## Introduction: AI in the Modern Workplace
 
@@ -80,6 +94,26 @@ The "education paradox" reveals a fundamental truth about AI collaboration:
 **Think about it**: If you don't understand the fundamentals of motor selection, how would you know if an AI recommendation is correct or dangerously undersized?
 
 </details>
+
+::: {.callout-poll}
+**Which statement is closest to how you use AI tools today? (No right answer, show of hands.)**
+
+- **A.** I do not use them
+- **B.** I ask them questions and copy useful parts
+- **C.** I use them to write or fix code
+- **D.** I give them multi-step jobs and review the result
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**No wrong answer.** Keep your answer in mind. By the end of the chapter you will be able to say which of these you do well, which you do carelessly, and what you would change.
+
+</details>
+:::
+
+::: {.callout-pair}
+**Think – pair – share (3 min).** The education paradox says your expertise decides how much help AI gives you. Describe one topic from your program where you could judge an AI answer well, and one where you could not. What would you do about the second?
+:::
 
 ### AI Impact by Industry
 
@@ -178,6 +212,18 @@ ggplot(rules, aes(x = x, y = y)) +
     plot.subtitle = element_text(hjust = 0.5, size = 14 * chart_text_scale)
   )
 ```
+
+**How the seven rules relate to R-C-T-C-F.** In @sec-chap-ml you will use a shorter, five-letter checklist for prompts, **R-C-T-C-F** (Role, Context, Task, Constraints, Format). It is the compact form of the seven rules:
+
+| R-C-T-C-F | Comes from rule |
+|:---|:---|
+| **R**ole | 2. Use role-playing |
+| **C**ontext | 1. Be specific and structured |
+| **T**ask | 3. Break down complex tasks |
+| **C**onstraints | 6. Avoid ambiguity, 7. Add ethical guardrails |
+| **F**ormat | 1. Be specific and structured, 4. Include examples |
+
+Rule 5 (request reasoning) is a *technique* you add to any prompt rather than a part of its structure.
 
 ---
 
@@ -416,6 +462,36 @@ tryit_sort(
 ```
 
 
+### Try it yourself: what is wrong with this prompt? {#ai-tryit-prompt-flaws}
+
+```{r tryit-prompt-flaws, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "prompt-flaws",
+  title = "Name the main flaw in each prompt",
+  bins = c("Missing context", "Ambiguous wording", "No constraints or guardrails", "No output format"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "\"Why does my motor keep tripping?\"",
+  "Missing context", "No motor rating, load, supply or symptom. The AI can only guess.",
+  "\"Make the conveyor faster and better.\"",
+  "Ambiguous wording", "Faster by how much? \"Better\" in what way?",
+  "\"Design a guard for the press brake.\"",
+  "No constraints or guardrails", "No standard, no hazard analysis, no safety requirement stated.",
+  "\"Summarize this 30-page maintenance manual.\"",
+  "No output format", "Length, structure and audience are all left to chance.",
+  "\"Size a pump for my plant.\"",
+  "Missing context", "No flow, head, fluid or temperature.",
+  "\"Give me a good PFMEA.\"",
+  "Ambiguous wording", "A good one for which process, at what level of detail?",
+  "\"Recommend a drive for this fan and be quick.\"",
+  "No constraints or guardrails", "No supply voltage, standards or budget, and \"quick\" invites guessing.",
+  "\"Explain the Cpk calculation to the new operators.\"",
+  "No output format", "A one-page handout? A script? The AI cannot tell."
+  ),
+  intro = "Pick the biggest problem with each prompt."
+)
+```
+
 ---
 
 ## The Four Steps of Effective AI Use
@@ -447,6 +523,10 @@ Before engaging with AI, clearly define what you need:
 
 > **Key Insight**: The better you understand the problem, the better AI can help. Vague understanding leads to vague prompts and useless responses.
 
+::: {.callout-pair}
+**Think – pair – share (3 min).** A supervisor says, "Make our packaging line faster." Before touching any AI tool, write down three questions you need answered to define the task. Which of them could you answer yourself, and which need data or people?
+:::
+
 ### Step 2: Prompt with Context
 
 Apply the seven rules of effective prompting:
@@ -459,6 +539,11 @@ Apply the seven rules of effective prompting:
 6. Define the output format
 7. Include relevant standards
 
+Two additions for current tools:
+
+- **State what "done" looks like.** "A table of every mismatch with drawing and BOM line numbers" gives the AI a target and gives you a way to check it.
+- **Put standing context in a project.** Role, units, standards and templates that you would otherwise repeat in every prompt belong in project instructions (see @sec-ai-agents).
+
 ### Step 3: Iterate and Refine
 
 Rarely is the first response perfect. Plan for 3-6 turns of conversation:
@@ -467,6 +552,7 @@ Rarely is the first response perfect. Plan for 3-6 turns of conversation:
 - Ask targeted follow-up questions
 - Request expansions on specific areas
 - Challenge assumptions and ask for alternatives
+- Start a fresh conversation when the topic changes or the thread drifts, and carry over a short summary (see @sec-ai-context)
 
 ### Step 4: Validate and Apply
 
@@ -476,6 +562,8 @@ AI output is a **starting point**, not a final answer:
 - Cross-check against standards and codes
 - Apply your engineering judgment
 - Document what came from AI assistance
+- Ask the AI to run the calculation in code and show the code, then check that the formula and units are right
+- Get a second opinion: a fresh chat or another tool asked to *find the errors*, not to confirm the answer
 - Take responsibility for the final work product
 
 <details>
@@ -496,20 +584,7 @@ AI output is a **starting point**, not a final answer:
 
 </details>
 
-<details>
-<summary>Discussion: When should you NOT use AI?</summary>
-
-AI is not appropriate when:
-
-1. **Physical inspection is required**: AI cannot see, touch, or measure actual equipment
-2. **Real-time safety decisions**: Lockout/tagout procedures, emergency response
-3. **Legal certification**: Stamping drawings, signing off on safety assessments
-4. **Novel situations**: First-of-a-kind designs with no training data
-5. **Classified/proprietary work**: Confidential designs should not be uploaded
-
-**Rule of thumb**: If a human expert would need to be physically present, AI cannot substitute.
-
-</details>
+When AI is the wrong tool altogether is covered in *When NOT to Use AI* later in this chapter.
 
 ### Try it yourself: order the four steps
 
@@ -529,6 +604,12 @@ tryit_order(
 )
 ```
 
+::: {.callout-exit}
+**Exit ticket, prompting and the four steps.** Rewrite this prompt so it follows at least four of the seven rules: *"Help me pick a sensor for my machine."* Write the improved version.
+
+Submit your answer on your phone before you leave.
+:::
+
 ---
 
 ## AI Tools and Their Use Cases
@@ -540,12 +621,12 @@ diagram_text_scale <- 1.4
 tools_data <- data.frame(
   Tool = c("Chat Interfaces\n(Claude.ai, ChatGPT,\nGemini)",
            "NotebookLM\n(Google)",
-           "Claude Code\n(CLI Tool)",
+           "Coding Agents\n(Claude Code, etc.)",
            "Browser Extensions\n(Claude, etc.)"),
   Best_For = c(
-    "General Q&A\nDrafting documents\nExplaining concepts\nBrainstorming",
+    "Q&A and drafting\nProjects and files\nSearch, code, images\nBrainstorming",
     "Research synthesis\nSource-grounded answers\nPodcast generation\nMulti-document analysis",
-    "Code development\nFile operations\nProject automation\nTechnical implementation",
+    "Multi-step tasks\nFile operations\nRuns code and tests\nTechnical implementation",
     "Web page analysis\nQuick questions\nContent summarization\nIn-context assistance"
   ),
   Strengths = c(
@@ -575,6 +656,62 @@ ggplot(tools_data, aes(x = x, y = y)) +
     plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
   )
 ```
+
+### From Chatbot to Agent: Five Levels of AI Tools {#sec-ai-agents}
+
+The language model is only the core of what you use today. Most current products wrap it in layers that change how you work with it. Each layer adds capability, and each adds a new way to go wrong.
+
+| Level | What it is | Engineering example | Main new risk |
+|:---|:---|:---|:---|
+| **1. Chat** | You type, the model replies. It knows only what is in the conversation | Explain what a thermal overload relay does | Hallucination, no access to your documents |
+| **2. Projects** | A saved workspace with standing instructions (your role, units, standards, format) and reference files that every chat in it starts with | One project per product line, holding the customer specification and your PFMEA template | Stale or confidential files left in the project |
+| **3. Tools and connectors** | The model can search, run code, read your files or query company systems (often through the **Model Context Protocol, MCP**, a common plug-in standard) | Check a Cpk calculation by running it instead of guessing | It can now *act*, not just talk |
+| **4. Agents** | The model works in a loop: plan, call a tool, read the result, decide the next step, until the goal is met | "Reconcile this BOM against the drawing and list every mismatch" | Mistakes compound over many steps unnoticed |
+| **5. Multi-agent systems ("swarms")** | An orchestrator splits a large job and hands the parts to sub-agents, each with its own fresh context, often running in parallel. A reviewer agent can check the others | Survey 40 work instructions against a revised safety standard | Cost, and more places for errors to hide |
+
+An **agent** is therefore a language model plus tools plus a loop. The same model that hallucinated a standard number in a chat can, as an agent, look the standard up, read it and quote it. That is a real improvement, and it is also why agents are used for tasks like writing and running the Python code in this course.
+
+**Best practices for working with agents and projects:**
+
+- **State the goal and the definition of done.** "Every mismatch listed with its drawing and BOM line number" beats "check the BOM".
+- **Put standing rules in project instructions**, not in every prompt: units, applicable standards, naming conventions, what the agent must never do.
+- **Plan first, then execute.** Ask for the plan and approve it before the agent changes anything. It is cheap to correct a plan and expensive to correct a finished job.
+- **Grant the least permission that works.** Start read-only. Require your approval before it writes files, sends messages or touches any PLC, ERP or live production system. Never let an agent modify safety-rated logic.
+- **Make it verify its own work.** Ask for calculations to be run in code, tests to be written and run, and every claim tied to a source document. Then have a *separate* reviewer (a second agent or a fresh chat) check the result, because a model is a poor judge of its own output.
+- **Treat everything the agent reads as untrusted.** Text inside a web page, PDF or email can contain hidden instructions that an agent may follow (**prompt injection**). Do not let an agent that reads outside material also hold access to confidential files or send data out.
+- **Use multiple agents only when the job is large and parallel.** For one focused task a single agent is cheaper, faster and easier to check.
+- **Keep a human accountable.** Review the agent's log of what it did, not just its final answer, and sign off as you would for a junior engineer's work.
+
+::: {.callout-discussion}
+**Group Discussion — pick the setup.** For each task choose chat, project, single agent or multi-agent, and justify your choice: (1) explaining what a thermal overload relay does; (2) drafting weekly supplier-quality reports in your company's template; (3) checking 40 work instructions for conflicts with a revised safety standard; (4) changing the ladder logic on a running guarding interlock.
+
+*Suggested answers:* (1) chat; (2) project, because the template and rules repeat; (3) multi-agent, because the job is large and parallel, with a human reviewing every conflict it flags; (4) no AI acting alone. AI may help you review the logic, but a qualified person makes and validates the change.
+:::
+
+::: {.callout-poll}
+**Your supervisor asks you to set up an AI agent to tidy the maintenance work-order backlog. What access do you give it on day one?**
+
+- **A.** Read-only access to a copy of the work-order export
+- **B.** Read and write access to the live CMMS
+- **C.** Full access to the CMMS, email and MES so it can "close the loop"
+- **D.** Write access to the PLC so it can stop machines with open orders
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**A.** Start read-only, on a copy, and review the plan and a sample of its output. Widen access one step at a time as trust is earned. Option D is never acceptable. Option C also removes the barrier that stops a prompt-injected agent from leaking data.
+
+</details>
+:::
+
+### Managing Context: Context Engineering {#sec-ai-context}
+
+The seven rules structure *one* message. With projects and agents, what matters more is the **whole context** the model works from. Four habits cover most of it:
+
+1. **Standing context goes in the project.** Role, units, standards, templates and formats belong in project instructions and reference files, so each message can be short.
+2. **Give the right documents, not all of them.** Attach the relevant specification and drawing, not the whole shared drive. Irrelevant material dilutes the answer.
+3. **Show an example of the output you want.** One good sample report or table is worth a paragraph of description.
+4. **Start fresh when the topic changes.** A long conversation full of old tangents is polluted context. Open a new chat, and carry over only a short summary.
 
 ### Chat Interfaces (Claude.ai, ChatGPT, Gemini)
 
@@ -622,6 +759,10 @@ kable(chat_uses, col.names = c("Use Case", "Description", "Example Prompt"),
 - Use the "regenerate" feature to see alternative responses
 - Upload images of diagrams, schematics, or equipment for visual analysis
 - Copy important responses to notes (conversations can be lost)
+- Use **projects** for recurring work, so standing instructions and reference files travel with every chat
+- Switch on **web search** for anything current, and ask for sources you can open
+- Use the **thinking** mode for multi-step problems and the fast mode for drafting and simple questions
+- Ask for calculations to be **run in code** and shown, instead of worked out in prose
 
 ### NotebookLM (Google)
 
@@ -667,9 +808,9 @@ kable(notebooklm_data, col.names = c("Feature", "Description", "Engineering Appl
 
 > **When to Use NotebookLM**: When you need answers grounded in specific documents rather than general AI knowledge. Ideal for standards compliance, equipment documentation, and research synthesis.
 
-### Claude Code (Command Line Tool)
+### Coding Agents (Claude Code and Similar)
 
-Claude Code is a **terminal-based AI assistant** that can read, write, and execute code in your actual project environment.
+Claude Code is a **terminal-based AI assistant** that can read, write, and execute code in your actual project environment. It is an example of an *agent* (see above): it plans, edits files, runs commands and checks the results in a loop, asking for your permission along the way.
 
 ```{r claude-code-table, echo=FALSE}
 claude_code_data <- data.frame(
@@ -759,6 +900,27 @@ kable(extension_uses, col.names = c("Use Case", "How It Helps", "Example"),
 - For complex problems, move to a full chat interface
 - Be cautious with confidential information on web pages
 - Extensions work best for reading comprehension tasks
+- Browser *agents* that click and type for you can be steered by hidden text on a web page (prompt injection). Do not let them act inside logged-in company systems
+
+### Working with Images, Files and Data {#ai-multimodal}
+
+Current chat tools accept more than text. Three uses matter in engineering:
+
+- **Photos and screenshots**: equipment nameplates, wiring diagrams, HMI alarm screens, a damaged part. The AI can read the label, describe the picture and suggest what to check.
+- **Documents**: datasheets, manuals and specifications as PDFs. Ask it to answer *from the document* and to quote the passage, so you can find it.
+- **Data files**: a CSV or spreadsheet of production or sensor data. The best tools write and run code on the file, so the numbers come from a calculation and not from the model's memory.
+
+**The risks are specific.** Misread digits on a blurry nameplate (an 8 read as a 3), a number that is plausible but not on the page, and units that are dropped. Always compare the AI's reading against the original, and never upload customer drawings or plant data to a public tool (@sec-ai-confidentiality).
+
+::: {.callout-activity}
+**Activity (6 min): nameplate check.** Take a photo of the label on your phone charger or laptop power adapter.
+
+1. Upload it to a chatbot with the prompt: *"Read this label. List input voltage, output voltage, current and power, with units."*
+2. Check every value against the label itself. How many did it get right?
+3. Ask: *"What is the maximum power this device can deliver, and how did you work it out?"* Did it show its arithmetic? Is the arithmetic right?
+
+Report to the class: any misreads, dropped units, or confident wrong answers?
+:::
 
 ### Choosing the Right Tool
 
@@ -771,7 +933,8 @@ decision_data <- data.frame(
     "Quick question about a webpage",
     "Drafting technical documentation",
     "Analyzing production data",
-    "Learning new standards"
+    "Learning new standards",
+    "Checking dozens of documents against a revised standard"
   ),
   Best_Tool = c(
     "Chat Interface",
@@ -780,7 +943,8 @@ decision_data <- data.frame(
     "Browser Extension",
     "Chat Interface",
     "Claude Code",
-    "NotebookLM (with audio)"
+    "NotebookLM (with audio)",
+    "Agent or multi-agent system, with human review"
   ),
   Why = c(
     "Flexible conversation, can explore related topics",
@@ -789,7 +953,8 @@ decision_data <- data.frame(
     "No context switching, immediate assistance",
     "Good at structured document generation",
     "Can write and execute analysis scripts",
-    "Audio overviews for passive learning"
+    "Audio overviews for passive learning",
+    "Large, repetitive, parallel work; a person reviews what it flags"
   )
 )
 
@@ -799,6 +964,28 @@ kable(decision_data, col.names = c("Situation", "Best Tool", "Why"),
   column_spec(1, width = if (knitr::is_html_output()) "35%" else NULL) %>%
   column_spec(2, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL, color = "#2980b9")
 ```
+
+::: {.callout-poll}
+**You need verified answers about ISO 13849-1 that you can quote with page references. Which setup is best?**
+
+- **A.** A general chat from the model's memory
+- **B.** NotebookLM (or a project) with the standard uploaded, asking for quoted passages
+- **C.** A browser extension on a random web page about safety
+- **D.** An agent with full access to your email and drives
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** Answers grounded in the actual document, with quotes you can check, beat answers from memory. A is where invented clause numbers come from. C depends on the page, and D grants far more access than the task needs.
+
+</details>
+:::
+
+::: {.callout-exit}
+**Exit ticket, tools.** Pick one task from a job you have had or might have. Which of the five levels (chat, project, tools, agent, multi-agent) would you use, and what permission would you give it?
+
+Submit your answer on your phone before you leave.
+:::
 
 ---
 
@@ -823,6 +1010,22 @@ flow_diagram(
   per_row = 3
 )
 ```
+
+::: {.callout-poll}
+**In turn 6 of a long chat, the AI starts contradicting a design constraint you gave in turn 2. What is the best move?**
+
+- **A.** Repeat the constraint in capital letters and keep going
+- **B.** Start a new chat with a short summary of decisions and constraints, or move the rules into a project
+- **C.** Tell the AI it is wrong and ask it to apologise
+- **D.** Accept the new answer because it is the most recent
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** A long thread fills the context window with old tangents, and details get lost. Restating the essentials in a fresh conversation (or in project instructions) restores focus. Shouting does not help, and the most recent answer is not the most correct one.
+
+</details>
+:::
 
 ### Worked Example: Designing a Conveyor Control System
 
@@ -890,6 +1093,16 @@ Review your complete design and:
 **Compare your results**: Did the iterative approach give you a more complete design than your initial prompt would have?
 
 </details>
+
+::: {.callout-activity}
+**Activity (12 min): four-turn relay.** In pairs, run the four-turn temperature-monitoring exercise above on a phone chatbot. **Swap the typist every turn.** Rules:
+
+1. Before each turn, the partner who is *not* typing writes down what the answer must contain.
+2. After each answer, hold it against that list, and say what is still missing.
+3. After turn 4, compare the final design with the first answer. Count the requirements that only appeared because of iteration.
+
+Then share: which turn changed the design most, and what did you have to *know* to ask for it?
+:::
 
 ---
 
@@ -974,7 +1187,7 @@ kable(advanced, col.names = c("Topic", "Iteration Hint", "Expected Turns"),
 
 ---
 
-## Critical Evaluation of AI Outputs
+## Critical Evaluation of AI Outputs {#sec-ai-evaluation}
 
 AI can produce confident-sounding responses that are completely wrong. Engineers must develop critical evaluation skills.
 
@@ -1044,6 +1257,35 @@ kable(verification, col.names = c("Category", "Verification Item", "Verified"),
   pack_rows("Practical Implementation", 9, 10)
 ```
 
+### Verification in the Age of Agents {#ai-verification-agents}
+
+When an agent does ten steps before it answers, checking only the final answer is not enough. Add four habits:
+
+1. **Read the log.** Agents show what they searched, which files they changed and which commands they ran. Skim it for steps you did not expect.
+2. **Require evidence.** Every number gets a source (a page, a file and line, a calculation you can rerun). No source, no trust.
+3. **Test, do not trust.** Where the agent wrote code or a calculation, run it on a case where you already know the answer.
+4. **Use a separate reviewer.** A fresh chat (or a different tool) asked to find the errors is more useful than asking the original to double-check itself. Models tend to defend their own work.
+
+A reviewer is still software. For anything safety-related, the reviewer is a qualified person.
+
+::: {.callout-activity}
+**Activity (8 min): red-flag hunt.** Here is an AI answer to *"Size a motor for a 15 m conveyor carrying 500 kg/h."* In pairs, mark every red flag you can find.
+
+> "The conveyor needs a 3 motor, and this will definitely work. You can use a standard NEC 2014 enclosure. Connect it to the 120 VAC panel you mentioned. Use appropriate sensors for the jam detection. No further safety features are needed because the belt moves slowly."
+
+<details>
+<summary>Reveal the flags</summary>
+
+1. **"3 motor"**: 3 what (hp, kW)? A number without units.
+2. **"Definitely work"**: overconfident language with no calculation shown.
+3. **"NEC 2014"**: outdated standard reference (and is NEC even the right code for your site?).
+4. **"120 VAC panel you mentioned"**: you said 24 VDC. It ignored a stated constraint.
+5. **"Appropriate sensors"**: generic, with no type, range or model.
+6. **"No further safety features"**: no E-stop, guarding or lockout discussion at all.
+
+</details>
+:::
+
 ---
 
 ## When NOT to Use AI
@@ -1095,21 +1337,37 @@ kable(limitations, col.names = c("Limitation", "Description", "Example"),
   column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL, color = "#e74c3c")
 ```
 
-<details>
-<summary>Quick Check: AI or Human?</summary>
+### Try it yourself: AI or human? {#ai-tryit-human}
 
-For each task below, decide whether AI assistance is appropriate, limited, or inappropriate:
+```{r tryit-ai-or-human, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "ai-or-human",
+  title = "AI, limited AI, or human only?",
+  bins = c("Appropriate with verification", "Limited: AI suggests, a human decides", "Human only"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "Drafting a maintenance procedure for a conveyor system.",
+  "Appropriate with verification", "A first draft is fine if a qualified person reviews it.",
+  "Deciding whether to shut down a production line during a safety incident.",
+  "Human only", "A real-time safety decision.",
+  "Generating a bill of materials from a design specification.",
+  "Appropriate with verification", "Routine and checkable against the specification.",
+  "Certifying a machine guarding design for compliance.",
+  "Human only", "Requires a licensed engineer's sign-off.",
+  "Troubleshooting a motor that \"sounds funny\".",
+  "Limited: AI suggests, a human decides", "AI can list causes, but a person must inspect the machine.",
+  "Explaining the difference between ISO 13849 and IEC 62443.",
+  "Appropriate with verification", "Explanation of concepts, checked against the standards.",
+  "Changing the safety-rated logic on a running interlock.",
+  "Human only", "Safety-rated logic is changed and validated by qualified people.",
+  "Choosing a replacement supplier for a critical part.",
+  "Limited: AI suggests, a human decides", "AI can compare options. The judgment, costs and risks are yours."
+  ),
+  intro = "Decide how much of each task may be given to AI."
+)
+```
 
-1. **Drafting a maintenance procedure for a conveyor system** → *Appropriate with verification*
-2. **Deciding whether to shut down a production line during a safety incident** → *Human only*
-3. **Generating a bill of materials from a design specification** → *Appropriate with verification*
-4. **Certifying a machine guarding design for compliance** → *Human only (requires P.Eng.)*
-5. **Troubleshooting a motor that "sounds funny"** → *Limited - AI can suggest causes, human must inspect*
-6. **Explaining the difference between ISO 13849 and IEC 62443** → *Appropriate*
-
-**Key insight**: AI excels at information synthesis and drafting, but physical observation, legal certification, and real-time safety decisions require human expertise.
-
-</details>
+**Key insight**: AI excels at information synthesis and drafting. Physical observation, legal certification and real-time safety decisions require human expertise.
 
 ---
 
@@ -1119,15 +1377,128 @@ Using AI in engineering work carries professional and ethical responsibilities.
 
 ### Key Principles
 
-1. **Transparency**: Disclose AI assistance where required by professional standards or employer policy
+1. **Transparency**: Disclose AI assistance where required by professional standards or employer policy (see @sec-ai-disclosure)
 
 2. **Verification**: Never submit AI-generated work as final without verification by qualified personnel
 
 3. **Accountability**: You remain responsible for work product regardless of AI assistance
 
-4. **Confidentiality**: Do not input proprietary designs, client data, or trade secrets into public AI systems
+4. **Confidentiality**: Do not input proprietary designs, client data, or trade secrets into public AI systems (see @sec-ai-confidentiality)
 
 5. **Competence**: AI assistance does not substitute for required qualifications or experience
+
+### Confidentiality and Intellectual Property {#sec-ai-confidentiality}
+
+::: {.callout-warning}
+**Career Risk:** Mishandling intellectual property with AI tools is a fireable offence at most manufacturers. Read this section twice. Agents and connectors raise the stakes, because they can read and send more than you type.
+:::
+
+**The default assumption to adopt:** anything you paste into a public LLM (Claude.ai free tier, ChatGPT free tier, Google Gemini, free Copilot) may be:
+
+- Retained by the provider
+- Used to improve future model versions
+- Accessible to the provider's employees
+- Stored in a jurisdiction with different data protection laws than yours
+
+Even when the provider's policy says they do not use your data for training, your data has still left your plant's network. For many things this is acceptable. For some things it is a contract violation and a privacy breach.
+
+**What never to paste into a public LLM:**
+
+- Customer names, contracts, drawings, or specifications
+- Proprietary process parameters — feeds, speeds, coolant concentrations developed over years
+- Anything export-controlled (in Canada, the Controlled Goods Program; in the US, ITAR/EAR — defense-adjacent manufacturers are commonly affected; **when in doubt, ask compliance**)
+- Employee personal data
+- Source code with embedded credentials or secrets
+- Drawings or models marked "Confidential" or "Proprietary"
+- Anything you would not send to your competitor's email address
+
+**Real cases:**
+
+| Case | Year | What happened |
+|:---|:---|:---|
+| Samsung | 2023 | Engineers pasted source code into ChatGPT to debug it. Samsung banned internal LLM use company-wide within a month. |
+| Federal court sanctions | 2023–2024 | Multiple lawyers filed court briefs containing fabricated case citations generated by ChatGPT. Judges imposed monetary sanctions. |
+| Air Canada chatbot | 2024 | A BC tribunal ruled Air Canada liable for false information given by its customer-service chatbot. Companies are responsible for what their AI tools say. |
+
+**Safe alternatives:**
+
+| Need | Safe approach |
+|:---|:---|
+| Draft a generic SOP template | Abstract your situation; do not paste proprietary procedures |
+| Summarize a long technical document | Redact identifying details, or use an enterprise tool with contractual data-protection guarantees |
+| Debug code that touches sensitive systems | Strip credentials, names, and paths; reproduce the bug in a minimal isolated example |
+| Engineering work with real customer or defense data | Use only your employer's approved enterprise LLM (Claude Team/Enterprise, ChatGPT Enterprise, Microsoft Copilot for Business), or a locally-hosted model (Ollama, LM Studio) |
+| Letting an agent or connector read your files, email or plant systems | Use only approved connectors, give read-only access to the specific folder it needs, and keep production, PLC and customer systems out of reach. Anything an agent can read, it can be tricked into sending elsewhere |
+
+#### Try it yourself: can I paste it? {#ai-tryit-paste}
+
+```{r tryit-paste-it, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "paste-it",
+  title = "Can I paste it into a public chatbot?",
+  bins = c("Paste freely", "Redact first", "Never paste"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "\"Explain the difference between Cp and Cpk.\"",
+  "Paste freely", "A generic question with no company information.",
+  "\"Draft a template for a lockout/tagout SOP.\"",
+  "Paste freely", "A generic template request.",
+  "Your plant's feeds, speeds and coolant concentration for the transmission shaft.",
+  "Never paste", "Proprietary process knowledge developed over years.",
+  "A drawing marked CONFIDENTIAL from an automotive customer.",
+  "Never paste", "A contract and confidentiality breach.",
+  "A defence contractor's part drawing.",
+  "Never paste", "Likely export-controlled. Ask compliance.",
+  "A Python error message that includes file paths and a database password.",
+  "Redact first", "Strip the credentials and paths, then paste.",
+  "Last month's scrap rates with part numbers and customer names.",
+  "Redact first", "Remove the identifiers, or use an approved enterprise tool.",
+  "A downtime log with technicians' names.",
+  "Redact first", "Employee personal data must be removed."
+  ),
+  intro = "Decide how each item may be used with a free, public chatbot."
+)
+```
+
+::: {.callout-pair}
+**Think – pair – share (3 min).** Your supervisor pastes a customer drawing into a free chatbot "just to ask what the tolerances mean", and says everyone does it. You are the newest engineer on the team. What exactly do you say, to whom, and in what order?
+:::
+
+### Documenting and Disclosing Your AI Use {#sec-ai-disclosure}
+
+Professionals keep records of how work was produced, and AI is now part of that record. Two audiences need it: the person who checks your work, and you, six months later, when someone asks how a number was derived.
+
+**In this course**, AI use is decided assessment by assessment: *required*, *permitted with disclosure*, or *not permitted* (see "Use of generative AI" at the front of this book). Where it is permitted you must be able to explain every line you submit, and where disclosure is required you add a one-line note naming the tool and what you used it for. An assessment that is not listed is *not permitted*; ask first.
+
+**In industry**, follow your employer's policy, and keep a simple AI use log for any work that feeds a design, a safety document or a customer deliverable:
+
+| Date | Tool and mode | Task | What I gave it | What I changed or rejected | How I verified |
+|:---|:---|:---|:---|:---|:---|
+| 2026-03-02 | Chat, thinking mode | Draft PFMEA rows for press cell | Process steps only, no drawings | Removed 3 invented failure modes, fixed severity ratings | Reviewed with the team lead against the process flow |
+
+**An example disclosure:** *"I used a chatbot to suggest the structure of this report and to check my Cpk calculation. All figures, data and conclusions are my own, and I verified the calculation by hand."*
+
+**Ownership and liability.** The legal position on who owns AI-generated text and images is still unsettled and differs by country. The practical rule is simple: the engineer who signs the work is responsible for it, whatever tool produced the first draft.
+
+::: {.callout-poll}
+**A lab where AI is "permitted with disclosure": you used a chatbot to draft your reflection paragraph and then edited it. What do you do?**
+
+- **A.** Nothing, you edited it
+- **B.** Add a one-line note naming the tool and use, and be ready to explain every sentence
+- **C.** Remove all trace of the chatbot
+- **D.** Ask the chatbot to rewrite it so that it does not sound like AI
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** Disclosure is a one-line note, and responsibility never transfers: you must be able to explain every sentence. Hiding or disguising AI use is the one choice that turns a permitted use into an integrity problem.
+
+</details>
+:::
+
+::: {.callout-pair}
+**Think – pair – share (4 min).** A teammate used AI to draft the PFMEA for a new cell and the team lead signed it without knowing. A year later a failure mode is missing. Who is responsible, what record would have helped, and what should the team's rule be from now on?
+:::
 
 ### Industry-Specific Considerations
 
@@ -1209,11 +1580,23 @@ You are tasked with designing an automated inspection station for a food packagi
    - What would you do differently next time?
    - What human expertise was essential?
 
+5. **Extension (10 minutes, optional): repeat with a project or agent**
+   - Put your standing rules (units, standards, platform, safety requirements) in project instructions, or give them to an agent
+   - Ask for a **plan first**, approve it, then ask for the design
+   - Compare with your first attempt: was it more complete, or only longer? What did you have to check more carefully?
+
 ### Deliverables
 - Initial prompt (graded on structure and completeness)
 - Iteration log showing refinement process
 - Critical evaluation notes
 - Reflection on lessons learned
+- (Optional) Short comparison of the chat result and the project or agent result
+
+::: {.callout-exit}
+**Exit ticket, chapter wrap-up.** Name one habit from this chapter that you will change in how you use AI, and one situation in which you will *not* use it.
+
+Submit your answer on your phone before you leave.
+:::
 
 ---
 
@@ -1257,13 +1640,19 @@ ggplot(summary_data, aes(x = x, y = y)) +
 
 3. **Prompt Engineering is a Skill**: Like technical writing, crafting effective prompts requires practice and follows learnable principles.
 
-4. **Choose the Right Tool**: Different AI tools serve different purposes. Chat interfaces for exploration, NotebookLM for source-grounded research, Claude Code for development, and browser extensions for quick assistance.
+4. **Choose the Right Tool**: Different AI tools serve different purposes. Chat interfaces for exploration, NotebookLM for source-grounded research, coding agents for development, and browser extensions for quick assistance (with projects and agents for larger jobs, with limited permissions).
 
 5. **Iteration is Normal**: Professional engineers should expect 3-6 turns of AI conversation for complex problems.
 
 6. **Critical Evaluation is Essential**: AI produces confident-sounding outputs that may be wrong. Verify everything.
 
 7. **Human Judgment Remains Central**: AI augments but does not replace engineering expertise, especially for safety-critical decisions.
+
+8. **Agents Need Boundaries**: Give an agent the least permission that works, ask for a plan first, make it verify its work, and treat everything it reads as untrusted.
+
+9. **Protect Confidential Information**: Know what must never be pasted into a public tool, and prefer approved enterprise tools.
+
+10. **Document Your AI Use**: Keep a record, disclose it where required, and remember that you are responsible for the result.
 
 ---
 
@@ -1293,11 +1682,21 @@ ggplot(summary_data, aes(x = x, y = y)) +
 
 12. How does NotebookLM differ from general chat interfaces like ChatGPT or Claude.ai? When would this difference matter?
 
+13. Explain the difference between a chat, a project, an agent and a multi-agent system. Give an engineering task suited to each, and the permission you would grant.
+
+14. What is prompt injection, and why does it make an agent that reads outside documents riskier?
+
+15. List four things that must never be pasted into a public AI tool, and give a safe alternative for each.
+
+16. Write a one-line disclosure for work in which you used an AI tool to draft a report. What must you be able to do for every line you submit?
+
 ---
 
 ## References and Further Reading
 
-- [Anthropic Economic Index Report (2026)]([https://www.anthropic.com/research/anthropic-economic-index-january-2026-report) - AI usage patterns in professional work
+- [Anthropic Economic Index Report (2026)](https://www.anthropic.com/research/anthropic-economic-index-january-2026-report) - AI usage patterns in professional work
+- Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) - how agents and multi-agent workflows are built and when to use them
+- OWASP, [Top 10 for Large Language Model Applications](https://genai.owasp.org/llm-top-10/) - including prompt injection
 - ISO 12100 - Safety of machinery, General principles for design
 - IEC 62443 - Industrial communication networks, Network and system security
 - Professional Engineers Ontario - [Use of Artificial Intelligence guidelines](https://www.peo.on.ca/sites/default/files/2025-11/EGBC_Use_of_Artificial_Intelligence_in_Professional_Work.pdf)
@@ -1329,3 +1728,21 @@ ggplot(summary_data, aes(x = x, y = y)) +
 **Browser Extension**: AI tools integrated into web browsers for instant assistance without switching applications; useful for webpage analysis and quick queries.
 
 **Source-Grounded AI**: AI systems that base responses on specific provided documents rather than general training data, reducing hallucination risk.
+
+**Project**: A saved AI workspace with standing instructions and reference files that every chat inside it starts from.
+
+**Tool Use / Connector**: A capability given to an AI model (search, run code, read files, query a system), often through the Model Context Protocol (MCP).
+
+**Agent**: A language model with tools and a loop: it plans, acts, observes the result and repeats until the goal is met.
+
+**Multi-Agent System ("Swarm")**: An orchestrator that splits a large job among several agents, each with its own context, often in parallel, sometimes with a reviewer agent.
+
+**Reasoning Model**: A model that spends extra effort thinking through a problem before answering. Better at multi-step problems, slower and costlier, and still fallible.
+
+**Context Engineering**: Choosing what a model sees (documents, instructions, examples) so that its context window holds what matters and nothing else.
+
+**Prompt Injection**: Hidden or embedded text in a document, web page or email that tries to steer an AI agent that reads it.
+
+**Grounding**: Answering from supplied documents, with quotes, instead of from the model's memory.
+
+**AI Use Log**: A short record of what AI was used for, what was provided, what was changed and how the result was verified.

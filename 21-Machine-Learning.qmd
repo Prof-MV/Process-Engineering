@@ -46,6 +46,18 @@ The companion lab handout (@sec-chap-ml-lab) provides the step-by-step exercises
 **Before You Start:** Think about the last time a machine at your co-op, at home, or on a plant tour broke down unexpectedly. How much warning was there? What would have been different if you had known two weeks in advance that it was going to fail?
 :::
 
+::: {.callout-tip}
+**Using these notes in class.** The notes are written to be taught live. Bring your phone (and a charger). You will meet five kinds of box:
+
+- **Class poll**: a question with options. Vote by show of hands or in Brightspace, then the answer is revealed.
+- **Think – pair – share**: think alone for a minute, talk to your neighbour, then share with the class.
+- **Activity**: a short hands-on task, usually using your phone, in pairs or small groups.
+- **Try it yourself**: an interactive exercise on the page that checks your answer. These work in your phone's browser.
+- **Exit ticket**: one question to answer before you leave, so we know what stuck.
+
+Wherever a chatbot is used in class, use your own account or the class demo on the projector. Do not paste anything confidential into it.
+:::
+
 ***
 
 ## Week 1 — AI Foundations for Manufacturing Engineers {#ml-week1}
@@ -59,7 +71,7 @@ The companion lab handout (@sec-chap-ml-lab) provides the step-by-step exercises
 | 1.3 | Determine what plant data is safe to paste into a public LLM and what is not | Self-check Q3 |
 | 1.4 | Write a structured prompt using the R-C-T-C-F pattern that produces useful engineering output | Lab Week 1 Exercise 1 |
 | 1.5 | Use an LLM to generate Python code you understand well enough to debug | Lab Week 1 Exercise 4 |
-| 1.6 | Distinguish chat, projects, tool use, agents and multi-agent systems, and choose the right level of autonomy and permissions for a task | Self-check Q6 |
+| 1.6 | Describe how projects, tool use and agents change the way an LLM is used (building on Chapter 9), and explain why code written by an agent must be reviewed | Self-check Q6 |
 
 ***
 
@@ -119,6 +131,55 @@ Give it a new tool age, it predicts the diameter. The algorithm *learned* the sl
 | **Support Vector Machines** | Classification with clear boundaries | Pass/fail from multiple measurement features |
 
 ML is the **right tool** when you have structured tabular data, a clearly defined output to predict, and you want the result to be explainable. It is the **wrong tool** when your inputs are unstructured (images, audio, free text) or when you have very little data.
+
+#### Supervised, Unsupervised and Anomaly Detection {#ml-w1-supervised}
+
+Before choosing a technique you must know what kind of problem you have. Two questions settle it.
+
+**1. Do you have the answers for past cases?** If your historical data includes the thing you want to predict, the problem is **supervised** learning: the algorithm learns from examples with known answers (called *labels*). If you only have inputs and no answers, it is **unsupervised**: the algorithm finds structure on its own.
+
+**2. What kind of answer do you want?**
+
+| Problem type | Output | Learning | Manufacturing example |
+|:---|:---|:---|:---|
+| **Regression** | A number | Supervised | Remaining useful life of an engine (your capstone) |
+| **Classification** | A category | Supervised | Will this part pass inspection? Which failure mode is this? |
+| **Clustering** | Groups of similar items | Unsupervised | Defect families in inspection records |
+| **Anomaly detection** | "Normal" or "unusual" | Unsupervised or semi-supervised | A weld current waveform that does not look like the usual ones |
+
+Anomaly detection matters because **plants rarely have labelled failures**. A machine that is well maintained has years of normal data and perhaps two recorded breakdowns. You cannot train a classifier on two examples, but you can learn what *normal* looks like and flag departures from it. Your capstone is a supervised regression only because NASA's C-MAPSS dataset conveniently contains run-to-failure histories with the answers included.
+
+#### Try it yourself: what kind of problem is it? {#ml-w1-tryit-tasks}
+
+```{r tryit-ml-task-types, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "ml-task-types",
+  title = "Name the type of problem",
+  bins = c("Regression", "Classification", "Clustering", "Anomaly detection"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "Predict how many cycles a bearing has left.",
+  "Regression", "The answer is a number.",
+  "Decide whether a casting is acceptable or scrap from an X-ray image.",
+  "Classification", "The answer is one of a few categories.",
+  "Group last year's non-conformance reports into families with no categories defined in advance.",
+  "Clustering", "No labels; the algorithm finds the groups.",
+  "Alert when a press's current waveform looks unlike anything seen in the last six months.",
+  "Anomaly detection", "No labelled failures needed; it learns what normal looks like.",
+  "Estimate next week's scrap rate from this week's process settings.",
+  "Regression", "A continuous number.",
+  "Label each work order as 'mechanical', 'electrical' or 'operator error'.",
+  "Classification", "Categories, given labelled examples.",
+  "Find unusual vibration spectra on a machine with no recorded failures.",
+  "Anomaly detection", "Without labelled failures, learn normal and flag the rest."
+  ),
+  intro = "Decide which kind of machine-learning problem each task is."
+)
+```
+
+::: {.callout-pair}
+**Think – pair – share (3 min).** Your plant has three years of sensor data from a compressor and only two recorded failures. A vendor proposes a failure-classification model. What would you ask the vendor, and what would you propose instead?
+:::
 
 #### Deep Learning {#ml-w1-dl}
 
@@ -181,6 +242,54 @@ The model has no plan, no goal, no understanding — just "what token probably c
 
 The big takeaway: **use the simplest tool that solves your problem.** A linear regression you fully understand is often better than a neural network you don't. An LLM is excellent for drafting documents but a terrible choice for predicting tool wear from sensor data — that is a job for ML.
 
+#### Try it yourself: which kind of AI? {#ml-w1-tryit-kinds}
+
+Sort each example into the right box of the AI landscape.
+
+```{r tryit-ai-kinds, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "ai-kinds",
+  title = "Which kind of AI?",
+  bins = c("Rule-based AI (not ML)", "Classical machine learning", "Deep learning", "Large language model"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A 1980s expert system with 400 hand-written IF-THEN rules for diagnosing a hydraulic press.",
+  "Rule-based AI (not ML)", "Humans wrote the rules. Nothing was learned from data.",
+  "A linear regression predicting shaft diameter from tool age.",
+  "Classical machine learning", "A relationship learned from tabular data.",
+  "A random forest that predicts bearing failure from vibration features.",
+  "Classical machine learning", "Tabular features in, a prediction out. You will build one in Week 4.",
+  "K-means clustering that groups inspection records into defect families.",
+  "Classical machine learning", "Unsupervised ML: it finds groups, not rules.",
+  "A convolutional network that classifies surface-scratch images.",
+  "Deep learning", "A many-layer neural network working on images.",
+  "A neural network that flags abnormal weld-current waveforms.",
+  "Deep learning", "A neural network on a raw signal.",
+  "An assistant that drafts an SOP from your bullet points.",
+  "Large language model", "A deep network trained to predict text.",
+  "A tool that summarizes 40 pages of non-conformance reports.",
+  "Large language model", "Text in, text out."
+  ),
+  intro = "Pick the box each example belongs to."
+)
+```
+
+::: {.callout-poll}
+**A vendor says their "AI" predicts tool wear with 99% accuracy. What is the first question you ask?**
+
+- **A.** Which large language model does it use?
+- **B.** On which machines and dates was the 99% measured, and were any of them in the training data?
+- **C.** How many parameters does the model have?
+- **D.** Does it have a dashboard?
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** A number measured on data the model has already seen means nothing. This is the same trap as the row-wise split in Week 3. Ask how the accuracy was validated before you ask anything about the technology.
+
+</details>
+:::
+
 ***
 
 ### How LLMs Actually Work — Enough to Use Them Well {#ml-w1-how-llm}
@@ -221,39 +330,56 @@ Most current tools can search the web or your own documents to extend the model'
 
 LLMs do not deterministically pick the single most-likely next token. They sample from a probability distribution, introducing randomness. Ask the same question twice and you can get different answers — sometimes very different ones. For engineering work: **do not treat one LLM answer as definitive.** Ask the same question two or three different ways and look for consistency.
 
+::: {.callout-activity}
+**Activity (5 min): same question, different answers.** Everyone opens a chatbot on their phone and types exactly this: *"Complete the sentence in one line: The cutting tool needs to be ..."*
+
+1. Write down your answer.
+2. Find two classmates and compare. Are the answers identical? Why or why not?
+3. Ask the chatbot the same question again. Did it change?
+
+Discuss: you just saw sampling in action. What does this mean for using one LLM answer as evidence in a design review?
+:::
+
+#### Try it yourself: myth or fact? {#ml-w1-tryit-myth}
+
+```{r tryit-llm-myth, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "llm-myth",
+  title = "LLMs: myth or fact?",
+  bins = c("Myth", "Fact"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "An LLM looks up the answer in a database when you ask a question.",
+  "Myth", "It predicts the next token. A search tool can be added, but the model alone does not look anything up.",
+  "Asking the same question twice can give different answers.",
+  "Fact", "The next token is sampled from a probability distribution.",
+  "If the answer sounds confident, it is probably right.",
+  "Myth", "Confidence is a property of the writing style, not of accuracy.",
+  "A free chatbot keeps what you type private by default.",
+  "Myth", "Assume anything you paste may be retained and read.",
+  "A tool that can run code can check a calculation instead of guessing it.",
+  "Fact", "Running code gives a reproducible result, if the code is right.",
+  "A bigger context window means you should paste in everything you have.",
+  "Myth", "Irrelevant material dilutes the answer. Choose what the model sees.",
+  "Asking \"are you sure?\" reliably catches the model's mistakes.",
+  "Myth", "Models often cave or double down. Ask for evidence or a critic's view instead.",
+  "A reasoning model never hallucinates.",
+  "Myth", "It is better at multi-step problems, but it still predicts text and can be wrong."
+  ),
+  intro = "Decide whether each statement is a myth or a fact."
+)
+```
+
 #### Reasoning Models {#ml-w1-reasoning}
 
 Many current models can spend extra effort **thinking before they answer**: they generate a long, hidden or summarized chain of intermediate steps, check themselves, and only then write the reply. These *reasoning* (or "extended thinking") modes are noticeably better at multi-step calculations, planning, debugging and logic puzzles. The trade-offs are slower responses, higher cost, and a false sense of security. A reasoning model still predicts text, can still hallucinate, and can still reach a wrong answer through steps that look convincing. Use the thinking mode for hard multi-step problems, use the fast mode for drafting and simple questions, and verify the result either way.
 
 #### From Chatbot to Agent {#ml-w1-agents}
 
-The model described above is only the core of what you use today. Most current products wrap it in layers that change how you work with it. Each layer adds capability, and each adds a new way to go wrong.
+The model described above is the core of every AI tool you will use. Current products wrap it in **projects**, **tools**, **agents** and **multi-agent systems**. How to use each level well (what permission to give, why to ask for a plan first, how prompt injection works, and how to verify an agent's work) is covered in @sec-ai-agents. For this course, the point to carry forward is that the Python for your capstone is written by an agent *you* direct and review.
 
-| Level | What it is | Engineering example | Main new risk |
-|:---|:---|:---|:---|
-| **1. Chat** | You type, the model replies. It knows only what is in the conversation | Explain what a thermal overload relay does | Hallucination, no access to your documents |
-| **2. Projects** | A saved workspace with standing instructions (your role, units, standards, format) and reference files that every chat in it starts with | One project per product line, holding the customer specification and your PFMEA template | Stale or confidential files left in the project |
-| **3. Tools and connectors** | The model can search, run code, read your files or query company systems (often through the **Model Context Protocol, MCP**, a common plug-in standard) | Check a Cpk calculation by running it instead of guessing | It can now *act*, not just talk |
-| **4. Agents** | The model works in a loop: plan, call a tool, read the result, decide the next step, until the goal is met | "Reconcile this BOM against the drawing and list every mismatch" | Mistakes compound over many steps unnoticed |
-| **5. Multi-agent systems ("swarms")** | An orchestrator splits a large job and hands the parts to sub-agents, each with its own fresh context, often running in parallel. A reviewer agent can check the others | Survey 40 work instructions against a revised safety standard | Cost, and more places for errors to hide |
-
-An **agent** is therefore a language model plus tools plus a loop. The same model that hallucinated a standard number in a chat can, as an agent, look the standard up, read it and quote it. That is a real improvement, and it is also why agents are used for tasks like writing and running the Python code in this course.
-
-**Best practices for working with agents and projects:**
-
-- **State the goal and the definition of done.** "Every mismatch listed with its drawing and BOM line number" beats "check the BOM".
-- **Put standing rules in project instructions**, not in every prompt: units, applicable standards, naming conventions, what the agent must never do.
-- **Plan first, then execute.** Ask for the plan and approve it before the agent changes anything. It is cheap to correct a plan and expensive to correct a finished job.
-- **Grant the least permission that works.** Start read-only. Require your approval before it writes files, sends messages or touches any PLC, ERP or live production system. Never let an agent modify safety-rated logic.
-- **Make it verify its own work.** Ask for calculations to be run in code, tests to be written and run, and every claim tied to a source document. Then have a *separate* reviewer (a second agent or a fresh chat) check the result, because a model is a poor judge of its own output.
-- **Treat everything the agent reads as untrusted.** Text inside a web page, PDF or email can contain hidden instructions that an agent may follow (**prompt injection**). Do not let an agent that reads outside material also hold access to confidential files or send data out.
-- **Use multiple agents only when the job is large and parallel.** For one focused task a single agent is cheaper, faster and easier to check.
-- **Keep a human accountable.** Review the agent's log of what it did, not just its final answer, and sign off as you would for a junior engineer's work.
-
-::: {.callout-discussion}
-**Group Discussion — pick the setup.** For each task choose chat, project, single agent or multi-agent, and justify your choice: (1) explaining what a thermal overload relay does; (2) drafting weekly supplier-quality reports in your company's template; (3) checking 40 work instructions for conflicts with a revised safety standard; (4) changing the ladder logic on a running guarding interlock.
-
-*Suggested answers:* (1) chat; (2) project, because the template and rules repeat; (3) multi-agent, because the job is large and parallel, with a human reviewing every conflict it flags; (4) no AI acting alone. AI may help you review the logic, but a qualified person makes and validates the change.
+::: {.callout-pair}
+**Think – pair – share (3 min).** Your capstone code will be written by an LLM. Which of the failure modes below (hallucination, math errors, sycophancy) is the biggest risk for a *code-writing* agent, and what is the cheapest check you can run against each?
 :::
 
 ***
@@ -279,7 +405,17 @@ The model predicts plausible-sounding text. When asked about something niche or 
 
 You will deliberately trigger a hallucination in Lab Week 1, Exercise 3. That exercise is designed to create a lasting memory — after you have personally caught an LLM confidently lying, you will never paste an LLM citation into a technical memo without checking.
 
-**Defence:** Verify anything that matters. If the model cites a standard, look it up. If it gives a number, find the source. Use the model to *draft*, then *verify* — never to do final research. Two things reduce hallucination without removing it: **grounding** (give the model the actual document and instruct it to answer only from that document and quote the passage it used) and **search tools** that return real, openable sources. Hallucinations also appear in agents, where a confident but wrong intermediate step can be built upon by every step after it.
+**Defence:** Verify anything that matters. If the model cites a standard, look it up. If it gives a number, find the source. Use the model to *draft*, then *verify* — never to do final research. Two things reduce hallucination without removing it: **grounding** (give the model the actual document and instruct it to answer only from that document and quote the passage it used) and **search tools** that return real, openable sources. Hallucinations also appear in agents, where a confident but wrong intermediate step can be built upon by every step after it. A practical checklist for reviewing AI output (red flags, verification habits, a checklist) is in @sec-ai-evaluation.
+
+::: {.callout-activity}
+**Activity (8 min): hallucination hunt.** In pairs, pick one topic from the board (for example: "bearing life calculation", "welding of aluminium", "machine guarding", "torque specification for M8 bolts").
+
+1. Ask a phone chatbot: *"Give me the exact ISO or ASTM standard number and title that covers [your topic], and quote one requirement from it."*
+2. Search for the standard number it gave you. Does it exist? Is the title right? Is the quoted requirement actually in it?
+3. Report to the class: right, partly right, or invented. We will tally the results on the board.
+
+Discuss: what was the cost of checking? When would nobody have checked?
+:::
 
 #### Math Errors {#ml-w1-math}
 
@@ -295,50 +431,28 @@ LLMs are trained to be helpful and agreeable. If you push back on a correct answ
 
 This is dangerous for technical review. Do not ask "is my reasoning here correct?" — that biases the model toward yes. Instead ask "what is wrong with this reasoning?" or "what would a critic say?" You will get genuinely useful pushback.
 
+::: {.callout-activity}
+**Activity (5 min): the pushback test.** Ask a phone chatbot a question you know the answer to (for example, *"How many millimetres are in an inch?"*). When it answers correctly, reply: *"No, I'm sure it's 24.4."*
+
+- Did it hold its ground, or apologise and agree with you?
+- Now try: *"What would a critic say is wrong with my answer of 24.4?"* How is the response different?
+
+Discuss: why is "is my design correct?" a dangerous question to put to an LLM?
+:::
+
 ***
 
 ### Intellectual Property Risk in Industrial Settings {#ml-w1-ip}
 
 ::: {.callout-warning}
-**Career Risk:** Mishandling intellectual property with AI tools is a fireable offence at most manufacturers. Read this section twice.
+**Career Risk:** Mishandling intellectual property with AI tools is a fireable offence at most manufacturers.
 :::
 
-**The default assumption to adopt:** anything you paste into a public LLM (Claude.ai free tier, ChatGPT free tier, Google Gemini, free Copilot) may be:
+The full treatment (what never to paste, real cases such as Samsung and Air Canada, safe alternatives, and a sorting exercise) is in @sec-ai-confidentiality. Three rules to carry through this course:
 
-- Retained by the provider
-- Used to improve future model versions
-- Accessible to the provider's employees
-- Stored in a jurisdiction with different data protection laws than yours
-
-Even when the provider's policy says they do not use your data for training, your data has still left your plant's network. For many things this is acceptable. For some things it is a contract violation and a privacy breach.
-
-**What never to paste into a public LLM:**
-
-- Customer names, contracts, drawings, or specifications
-- Proprietary process parameters — feeds, speeds, coolant concentrations developed over years
-- Anything export-controlled (in Canada, the Controlled Goods Program; in the US, ITAR/EAR — defense-adjacent manufacturers are commonly affected; **when in doubt, ask compliance**)
-- Employee personal data
-- Source code with embedded credentials or secrets
-- Drawings or models marked "Confidential" or "Proprietary"
-- Anything you would not send to your competitor's email address
-
-**Real cases:**
-
-| Case | Year | What happened |
-|:---|:---|:---|
-| Samsung | 2023 | Engineers pasted source code into ChatGPT to debug it. Samsung banned internal LLM use company-wide within a month. |
-| Federal court sanctions | 2023–2024 | Multiple lawyers filed court briefs containing fabricated case citations generated by ChatGPT. Judges imposed monetary sanctions. |
-| Air Canada chatbot | 2024 | A BC tribunal ruled Air Canada liable for false information given by its customer-service chatbot. Companies are responsible for what their AI tools say. |
-
-**Safe alternatives:**
-
-| Need | Safe approach |
-|:---|:---|
-| Draft a generic SOP template | Abstract your situation; do not paste proprietary procedures |
-| Summarize a long technical document | Redact identifying details, or use an enterprise tool with contractual data-protection guarantees |
-| Debug code that touches sensitive systems | Strip credentials, names, and paths; reproduce the bug in a minimal isolated example |
-| Engineering work with real customer or defense data | Use only your employer's approved enterprise LLM (Claude Team/Enterprise, ChatGPT Enterprise, Microsoft Copilot for Business), or a locally-hosted model (Ollama, LM Studio) |
-| Letting an agent or connector read your files, email or plant systems | Use only approved connectors, give read-only access to the specific folder it needs, and keep production, PLC and customer systems out of reach. Anything an agent can read, it can be tricked into sending elsewhere |
+1. **Assume anything you paste into a public tool may be retained and read.** Your lab data here is safe because it is simulated or public. Real plant data is not.
+2. **Never paste customer, defense or export-controlled material**, or anything marked confidential. When in doubt, ask compliance.
+3. **Strip secrets before you paste code**: credentials, file paths, names.
 
 ***
 
@@ -346,7 +460,7 @@ Even when the provider's policy says they do not use your data for training, you
 
 A prompt is the text you send to the model. A good prompt produces useful output on the first try. A bad prompt produces generic output that requires multiple rounds of refinement, wasting your time and the model's context window.
 
-The **R-C-T-C-F pattern** is a five-element structure designed for engineering prompts:
+The **R-C-T-C-F pattern** is a five-element structure designed for engineering prompts. It is the compact form of the seven rules of effective prompts in @sec-chap-ai (Role is rule 2, Context is rule 1, Task is rule 3, Constraints come from rules 6 and 7, and Format from rules 1 and 4):
 
 | Element | Meaning | Example |
 |:---|:---|:---|
@@ -384,14 +498,9 @@ Produces a focused, audience-appropriate, length-controlled explanation that the
 - **"What questions should I have asked but didn't?"** Surfaces gaps in your problem framing.
 - **"Cite your sources, and if you don't have a source, say so."** Partial defence against hallucinations. Not foolproof, but it forces the model to flag uncertainty.
 
-#### Beyond the Single Prompt: Context Engineering {#ml-w1-context-eng}
+#### Beyond the Single Prompt {#ml-w1-context-eng}
 
-R-C-T-C-F structures *one* message. With projects and agents, what matters more is the **whole context** the model works from. Four habits cover most of it:
-
-1. **Standing context goes in the project.** Role, units, standards, templates and formats belong in project instructions and reference files, so each message can be short.
-2. **Give the right documents, not all of them.** Attach the relevant specification and drawing, not the whole shared drive. Irrelevant material dilutes the answer.
-3. **Show an example of the output you want.** One good sample report or table is worth a paragraph of description.
-4. **Start fresh when the topic changes.** A long conversation full of old tangents is polluted context. Open a new chat, and carry over only a short summary.
+R-C-T-C-F structures *one* message. With projects and agents, the whole context matters more: standing rules go in project instructions, the model sees only the relevant documents, and a long, drifting chat is restarted with a short summary. These habits are covered in @sec-ai-context.
 
 #### Patterns That Do Not Work {#ml-w1-bad-patterns}
 
@@ -399,6 +508,15 @@ R-C-T-C-F structures *one* message. With projects and agents, what matters more 
 - Pasting massive documents without a focus question — output will be generic
 - "What's the best way to…" — there is no best; give constraints instead
 - Asking for specific numerical recommendations on safety-critical decisions — verify everything independently
+
+::: {.callout-activity}
+**Activity (10 min): prompt battle.** In pairs, take this bad prompt: *"Help me with my motor problem."*
+
+1. Each partner rewrites it with R-C-T-C-F. Add made-up but realistic details (motor rating, symptom, environment).
+2. Both rewrites go to a phone chatbot. Do not edit the answers.
+3. Compare the two outputs and the original prompt's output. Which one would you act on? Which would you check first?
+4. Vote: the class picks the best prompt in the room, and we ask why it worked.
+:::
 
 ::: {.callout-activity}
 **Lab Preview:** In Week 1 Lab (@sec-chap-ml-lab), you will rewrite five real bad prompts from manufacturing engineers using R-C-T-C-F, deliberately trigger and document a hallucination, and use an LLM to generate your Week 2 Python starter code. The code you generate this week becomes your starting point next week — so write the prompt carefully.
@@ -445,7 +563,13 @@ Work through these in your own words before the Week 2 lecture. If you find your
 3. Your supervisor pastes a customer's machined-part drawing into the free tier of ChatGPT to "ask what the tolerances mean." What three problems do you raise with them, ranked by severity?
 4. What is the difference between an LLM making a math error and an LLM hallucinating? Give an engineering example of each.
 5. Rewrite this prompt using R-C-T-C-F: *"summarize this report for the boss."*
-6. Your supervisor wants an AI agent to read all 300 open maintenance work orders and close the ones it judges duplicates. Which of the best practices in the agents section apply, and what permission would you give it on day one?
+6. Your supervisor wants an AI agent to read all 300 open maintenance work orders and close the ones it judges duplicates. Using @sec-ai-agents, which best practices apply, and what permission would you give it on day one?
+
+::: {.callout-exit}
+**Exit ticket, Week 1.** In one sentence: name one task from your own work or studies that you will *not* hand to an LLM unsupervised after today, and say why.
+
+Submit your answer on your phone before you leave.
+:::
 
 ### Further Reading — Week 1 {#ml-w1-reading}
 
@@ -532,6 +656,36 @@ This is the **ISA-95 hierarchy** (Figure @fig-ml-isa95-02). Different rules appl
 | **CMMS** | Computerized Maintenance Management System | Work orders, downtime reasons, parts replaced | Per event |
 | **ERP** | Enterprise Resource Planning (SAP, Oracle) | Orders, materials, finance, scheduling | Per transaction |
 
+#### Try it yourself: which level? {#ml-w2-tryit-isa}
+
+```{r tryit-isa-levels, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "isa-levels",
+  title = "Which ISA-95 level?",
+  bins = c("Level 0-1 (field and control)", "Level 2 (supervisory)", "Level 3 (operations)", "Level 4 (enterprise)"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A proximity sensor on the press ram.",
+  "Level 0-1 (field and control)", "A field device.",
+  "The PLC ladder logic that runs the guard interlock.",
+  "Level 0-1 (field and control)", "Machine control logic.",
+  "The SCADA screen the control-room operator watches.",
+  "Level 2 (supervisory)", "Aggregated supervisory view.",
+  "A historian storing a year of spindle temperature.",
+  "Level 3 (operations)", "Long-term time-series storage.",
+  "The MES recording when each cycle started.",
+  "Level 3 (operations)", "Production events.",
+  "The Python script that trains your failure model.",
+  "Level 3 (operations)", "Analytics belong at Level 3 or above, never on the PLC.",
+  "The SAP production schedule.",
+  "Level 4 (enterprise)", "Orders, materials and scheduling.",
+  "A servo motor on the feeder.",
+  "Level 0-1 (field and control)", "A field device."
+  ),
+  intro = "Place each item at the right level of the hierarchy."
+)
+```
+
 #### Four Types of Plant Data {#ml-w2-data-types}
 
 The Week 2 lab uses **quality data** (Type 3 below). Know all four:
@@ -567,6 +721,10 @@ Sensors fail. Networks drop. Maintenance happens. People forget to log. The resu
 
 The right answer for the lab's two missing days: document it, note it, move on. **Never silently delete data.**
 
+::: {.callout-pair}
+**Think – pair – share (4 min).** Two working days are missing from your dataset. List the possible reasons (at least three). For each reason, say what you would do with the gap and who you would ask. When is it acceptable to fill the gap, and when is it dangerous?
+:::
+
 #### Unit Confusion {#ml-w2-units}
 
 ::: {.callout-warning}
@@ -576,6 +734,22 @@ The right answer for the lab's two missing days: document it, note it, move on. 
 In your plant, the cases are smaller but more frequent. A surface roughness gauge outputs readings in either inches or micrometres depending on a setting. An operator on day shift uses one; the night shift operator uses the other. The CSV column is labelled `surface_roughness_um` — but a fraction of the values are actually in inches. Silent corruption.
 
 **How to detect:** ask whether the *range* of values is physically plausible. Surface roughness of 0.00001 µm is impossible (atomic-scale). That same number in inches is a reasonable Ra value. Once you spot the range issue, you can find the unit error and convert.
+
+::: {.callout-poll}
+**A column named pressure_bar holds values between 6 and 8 for 85% of the rows and between 87 and 116 for the rest. What is the most likely explanation?**
+
+- **A.** Real pressure spikes that should be kept
+- **B.** Some readings are in psi, not bar
+- **C.** The sensor is drifting
+- **D.** Outliers that should be deleted
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** Multiply 6 and 8 bar by 14.5 and you get 87 and 116 psi, exactly the second cluster. The data is bimodal because two gauge settings are mixed. Convert it, record that you did, and tell the owner of the data. Deleting it would throw away 15% of the rows for no reason.
+
+</details>
+:::
 
 #### Sample Rate Mismatches {#ml-w2-rates}
 
@@ -702,6 +876,32 @@ A process can be **in control but out of spec** — behaving consistently, but c
 | **In statistical control** | Ideal — stable and capable | Consistent but bad — fix the process design |
 | **Out of statistical control** | Lucky for now — find the special cause before parts go OOS | Emergency — bad parts being made now |
 
+#### Try it yourself: stable or capable? {#ml-w2-tryit-limits}
+
+```{r tryit-spec-vs-control, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "spec-vs-control",
+  title = "Control limits versus specification limits",
+  bins = c("In control, in spec", "In control, out of spec", "Out of control, in spec", "Out of control, out of spec"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "Every daily mean is inside the control limits and every part is inside the tolerance.",
+  "In control, in spec", "The ideal case.",
+  "A stable, centred-wrong process: the mean sits 0.06 mm above nominal and the tolerance is +/-0.05 mm.",
+  "In control, out of spec", "Consistently making bad parts. Fix the process design or centring.",
+  "Cpk = 0.7 and the chart shows no special causes.",
+  "In control, out of spec", "Stable but not capable.",
+  "Five daily means in a row above the UCL, but every part still passes inspection.",
+  "Out of control, in spec", "Lucky for now. Find the special cause before parts start failing.",
+  "One point below the LCL; every measured part is within tolerance.",
+  "Out of control, in spec", "A signal to investigate, not yet a quality escape.",
+  "The mean jumped 0.08 mm last shift and 30% of parts are over the USL.",
+  "Out of control, out of spec", "An emergency: bad parts are being made now."
+  ),
+  intro = "Place each situation in the right cell of the control-versus-specification table."
+)
+```
+
 #### The X-bar Control Limit Formula {#ml-w2-formula}
 
 When you plot **subgroup means** rather than individual measurements, the means themselves vary less than individual parts — by a factor of $\sqrt{n}$ (the central limit theorem). The control limits on an X-bar chart are therefore:
@@ -717,6 +917,24 @@ $$ {#eq-ml-lcl}
 where $\sigma$ is the standard deviation of *individual* parts, $n$ is the subgroup size, and $\bar{\bar{X}}$ is the overall process mean.
 
 A common student mistake: computing control limits using the standard deviation of the *daily means* instead of the standard deviation of individual parts. If the daily means have standard deviation $s_{\bar{x}}$, then $s_{\bar{x}} \approx \sigma / \sqrt{n}$ — so using $s_{\bar{x}}$ instead of $\sigma/\sqrt{n}$ effectively applies the $\sqrt{n}$ correction twice. The control limits become too narrow, generating false alarms constantly.
+
+#### Try it yourself: compute the control limits {#ml-w2-tryit-ucl}
+
+```{r tryit-xbar-limits, echo=FALSE, results='asis'}
+ucl_mu <- 25.000; ucl_sigma <- 0.013; ucl_n <- 5
+tryit_number(
+  id = "xbar-limits",
+  title = "X-bar chart control limits",
+  answers = list(
+    tryit_answer("UCL", ucl_mu + 3 * ucl_sigma / sqrt(ucl_n), tol = 0.0005, suffix = "mm",
+                 hint = "UCL = grand mean + 3 x sigma / sqrt(n). Use sigma of individual parts."),
+    tryit_answer("LCL", ucl_mu - 3 * ucl_sigma / sqrt(ucl_n), tol = 0.0005, suffix = "mm",
+                 hint = "LCL = grand mean - 3 x sigma / sqrt(n).")
+  ),
+  intro = "A CNC lathe makes parts with grand mean 25.000 mm and an individual-part standard deviation of 0.013 mm. You sample 5 parts per day. Compute the X-bar control limits (answer to 4 decimal places).",
+  question = "<p>A process has grand mean 25.000 mm and an individual-part standard deviation of 0.013 mm. Subgroups of n = 5 are plotted on an X-bar chart. Give the UCL and LCL to 4 decimal places.</p>"
+)
+```
 
 #### Process Capability: $C_p$ and $C_{pk}$ {#ml-w2-capability}
 
@@ -775,6 +993,28 @@ ggplot(df_curve, aes(x, y)) +
   theme_ml
 ```
 
+#### Try it yourself: Cp or Cpk? {#ml-w2-tryit-cpk}
+
+```{r tryit-cp-cpk, echo=FALSE, results='asis'}
+cc_usl <- 10.10; cc_lsl <- 9.90; cc_mu <- 10.04; cc_sd <- 0.02
+cc_cp  <- (cc_usl - cc_lsl) / (6 * cc_sd)
+cc_cpk <- min((cc_usl - cc_mu) / (3 * cc_sd), (cc_mu - cc_lsl) / (3 * cc_sd))
+tryit_number(
+  id = "cp-cpk",
+  title = "Potential versus actual capability",
+  answers = list(
+    tryit_answer("Cp", cc_cp, tol = 0.01, hint = "Cp = (USL - LSL) / (6 x sigma). The mean is not used."),
+    tryit_answer("Cpk", cc_cpk, tol = 0.01, hint = "Work out both sides, (USL - mean)/(3 sigma) and (mean - LSL)/(3 sigma). Cpk is the smaller.")
+  ),
+  intro = "A shaft is specified at 10.00 +/- 0.10 mm (LSL 9.90, USL 10.10). The process mean is 10.04 mm and the standard deviation is 0.02 mm.",
+  question = "<p>A shaft is specified at 10.00 +/- 0.10 mm (LSL 9.90, USL 10.10). The process mean is 10.04 mm and the standard deviation is 0.02 mm. Give Cp and Cpk.</p>"
+)
+```
+
+::: {.callout-pair}
+**Think – pair – share (3 min).** Cp is high but Cpk is much lower in the exercise above. Explain to your partner, in one sentence and without using a formula, what has gone wrong with the process. What would you adjust first, and would it need a new tool or just a new offset?
+:::
+
 **Industry $C_{pk}$ targets** (your customer's PPAP requirements are authoritative; these are typical):
 
 | Industry | Typical $C_{pk}$ target | Notes |
@@ -801,6 +1041,10 @@ SPC is essential but not sufficient. Four situations expose its limits:
 
 4. **Multiple operators or shifts blended together**: Three operators with different setup biases, blended into one chart, makes the common-cause variation appear inflated — hiding real operator-to-operator differences.
 
+::: {.callout-pair}
+**Think – pair – share (4 min).** Think of a machine you have worked on or seen. Which of the four SPC limits (non-normal data, autocorrelation, slow drift, mixed shifts) would affect a control chart on that machine most? What would the chart miss that a person walking past would notice?
+:::
+
 #### The Transition to Machine Learning {#ml-w2-transition}
 
 SPC tells you **when** a process went out of control. It does not tell you **when it will go out of control** or **what will cause it**. Those are predictive questions requiring a different toolset.
@@ -821,6 +1065,12 @@ Both have a role. SPC is your safety net. ML is your early-warning system. The b
 3. A process has $C_{pk} = 0.85$. The control chart shows no out-of-control points. The plant manager declares the process "in control" and refuses your improvement project. What is the technically correct response?
 4. Why does tool-wear autocorrelation violate the assumptions of a standard X-bar chart?
 5. Name the four levels of the ISA-95 hierarchy and give one example of data that lives at each level.
+
+::: {.callout-exit}
+**Exit ticket, Week 2.** A colleague computes control limits from the standard deviation of the *daily means* instead of $\sigma/\sqrt{n}$. In one or two sentences, explain what goes wrong with the chart.
+
+Submit your answer on your phone before you leave.
+:::
 
 ### Further Reading — Week 2 {#ml-w2-reading}
 
@@ -989,6 +1239,36 @@ Predictive maintenance models exploit the **earliest** indicators (vibration, su
 **Industry Application:** GE Aviation's OnPoint predictive maintenance program for CFM56 engines (the most common commercial airliner engine in service) uses sensor data from every flight to continuously update engine health models. Airlines receive maintenance recommendations before any symptom is observable on the shop floor. This has reduced unscheduled removals by over 30% on participating fleets.
 :::
 
+#### Try it yourself: which maintenance strategy? {#ml-w3-tryit-strategy}
+
+```{r tryit-maintenance-strategy, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "maintenance-strategy",
+  title = "Choose the maintenance strategy",
+  bins = c("Run to failure", "Preventive (time-based)", "Predictive (condition-based)"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "A cheap, redundant LED light fixture over a walkway.",
+  "Run to failure", "Low consequence, cheap, easily replaced.",
+  "Replacing hydraulic hoses every 12 months regardless of condition.",
+  "Preventive (time-based)", "Replaced on a calendar, not on evidence.",
+  "Changing engine oil every 5,000 km.",
+  "Preventive (time-based)", "A fixed interval.",
+  "A critical spindle whose vibration trend triggers a bearing swap two weeks before predicted failure.",
+  "Predictive (condition-based)", "Maintenance is scheduled from the machine's actual condition.",
+  "A compressor with ten sensors and a model that estimates remaining life.",
+  "Predictive (condition-based)", "The model provides the schedule.",
+  "A spare office printer.",
+  "Run to failure", "Failure costs almost nothing."
+  ),
+  intro = "Pick the strategy that fits each asset best."
+)
+```
+
+::: {.callout-pair}
+**Think – pair – share (4 min).** Name one machine at a plant you have seen. What strategy is used today? Estimate, roughly, what an unplanned failure costs per hour and what a planned replacement would cost. Is the current strategy the cheapest one?
+:::
+
 ***
 
 ### The NASA C-MAPSS Dataset {#ml-w3-cmapss}
@@ -1115,6 +1395,22 @@ ggplot(df_engines, aes(x = col, y = -row, fill = split)) +
 Figure @fig-ml-engine-split-03 illustrates the correct split. The validation set contains entire engine histories that the model has never seen during training. This simulates the real deployment situation: a new engine arrives at your plant; your model must predict its RUL without having seen this specific engine before.
 
 **How to detect the bug if you accidentally use row-wise splitting:** your validation RMSE will be suspiciously low — 5 to 8 cycles instead of the expected 15 to 25. When you see that, immediately check whether any engine ID appears in both training and validation sets. If it does, you have data leakage.
+
+::: {.callout-poll}
+**Your validation RMSE for the C-MAPSS model comes out at 4.8 cycles. The naive baseline is 50. What is your first reaction?**
+
+- **A.** Celebrate and write it up
+- **B.** Check for data leakage
+- **C.** Add more trees to push it lower
+- **D.** Send it to the plant manager
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** An error that is ten times better than the baseline on the first try is a warning sign, not a result. The usual cause is that rows from the same engine are in both training and validation. Split by engine ID and run it again.
+
+</details>
+:::
 
 ***
 
@@ -1394,6 +1690,63 @@ Three things follow from this:
 **One limitation to remember:** a forest can only predict values it has seen in its leaves, so it cannot extrapolate. If a new engine degrades further than any engine in the training data, the forest will predict roughly the lowest RUL it saw, not a lower one. Check that your operating conditions fall inside the range of the training data.
 :::
 
+::: {.callout-poll}
+**Why does a Random Forest give each tree only a random subset of features at every split?**
+
+- **A.** To make training faster
+- **B.** So the trees differ from each other and their errors cancel when averaged
+- **C.** Because most sensors are noise
+- **D.** To use less memory
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** Speed is a side benefit, but the main purpose is diversity. If every tree could use the strongest sensor at its root, all 100 trees would look alike and averaging would not help.
+
+</details>
+:::
+
+#### Activity (25 min): be the forest {#ml-w3-activity-forest}
+
+You will build a tiny Random Forest by hand. Work in groups of three or four. Each group is **one tree**, and the whole class is the forest.
+
+The table holds 12 training snapshots from past engines. The sensor readings are rolling means, and RUL is the remaining useful life in cycles.
+
+| Row | Sensor 11 | Sensor 4 | RUL |
+|:--:|:--:|:--:|:--:|
+| 1 | 47.3 | 1385 | 125 |
+| 2 | 47.4 | 1402 | 118 |
+| 3 | 47.5 | 1390 | 110 |
+| 4 | 47.6 | 1410 | 96 |
+| 5 | 47.7 | 1395 | 88 |
+| 6 | 47.8 | 1415 | 74 |
+| 7 | 47.9 | 1400 | 66 |
+| 8 | 48.0 | 1420 | 52 |
+| 9 | 48.1 | 1408 | 45 |
+| 10 | 48.2 | 1425 | 31 |
+| 11 | 48.4 | 1418 | 20 |
+| 12 | 48.6 | 1430 | 9 |
+
+1. **Bootstrap.** On a phone, open a random-number generator (search "random number 1 to 12") or a dice app. Draw **12 rows with replacement**. If a row comes up twice, it is in your sample twice. Write down your sample, and the rows that were *left out*.
+2. **Random feature.** Flip a coin. Heads: you may only use **Sensor 11** for your question. Tails: only **Sensor 4**.
+3. **Grow a tree with one question.** Using only your sample and your allowed sensor, choose a threshold that best separates the high-RUL rows from the low-RUL rows. Each side is a leaf. The leaf prediction is the **average RUL of your sample rows on that side**.
+4. **Predict.** A new engine arrives with **Sensor 11 = 47.95** and **Sensor 4 = 1412**. Send it down your tree. Write down your tree's prediction.
+5. **Combine.** Each group reports its prediction. The class **average** is the forest's prediction.
+
+Then discuss:
+
+- How far apart were the individual trees? Which groups were furthest off, and what was different about their sample or sensor?
+- Compare the class average with the individual predictions. Is the average closer to the truth than most groups?
+- Which step of the activity was Source 1 and which was Source 2 of the randomness?
+- What would happen if every group had used the same 12 rows and the same sensor?
+
+<details>
+<summary>Reveal the true RUL</summary>
+
+The true remaining life for this engine is **58 cycles**. Individual one-question trees usually miss by 15 to 40 cycles in either direction, and the class average typically lands much closer. Groups that drew their sample badly or were forced onto the noisier Sensor 4 are the furthest off. That spread is the point: individual trees are noisy, and averaging cancels much of the noise.
+
+</details>
+
 ***
 
 ### Evaluation — Measuring Whether a Model Is Useful {#ml-w3-evaluation}
@@ -1421,6 +1774,30 @@ Both are in the same units as your target (operating cycles). The key difference
 - **RMSE** penalizes large errors disproportionately. Being off by 100 cycles contributes 100× more than being off by 10.
 
 For maintenance applications, large errors are dangerous — predicting 200 cycles remaining when the real answer is 20 means the engine fails unexpectedly. **RMSE is therefore the primary metric** for predictive maintenance. MAE provides a complementary picture of typical, everyday error.
+
+#### Try it yourself: MAE and RMSE by hand {#ml-w3-tryit-rmse}
+
+```{r tryit-mae-rmse, echo=FALSE, results='asis'}
+rm_actual <- c(100, 80, 60, 40, 20)
+rm_pred   <- c(95, 90, 55, 40, 70)
+rm_err    <- rm_pred - rm_actual
+tryit_number(
+  id = "mae-rmse",
+  title = "MAE and RMSE for five predictions",
+  answers = list(
+    tryit_answer("MAE", mean(abs(rm_err)), tol = 0.05, suffix = "cycles",
+                 hint = "Average the absolute errors: |-5|, |10|, |-5|, |0|, |50|."),
+    tryit_answer("RMSE", sqrt(mean(rm_err^2)), tol = 0.05, suffix = "cycles",
+                 hint = "Square each error, average the squares, then take the square root.")
+  ),
+  intro = "A model predicts remaining life for five engines. Actual RUL: 100, 80, 60, 40, 20. Predicted: 95, 90, 55, 40, 70. Compute the MAE and the RMSE (1 decimal place).",
+  question = "<p>A model predicts remaining useful life for five engines. Actual RUL: 100, 80, 60, 40, 20 cycles. Predicted: 95, 90, 55, 40, 70 cycles. Give the MAE and the RMSE to 1 decimal place.</p>"
+)
+```
+
+::: {.callout-pair}
+**Think – pair – share (3 min).** The RMSE is much larger than the MAE here. Which single prediction is responsible? A maintenance manager asks "so how wrong is the model, usually?" Which of the two numbers do you give, and what do you tell them about the one bad engine?
+:::
 
 #### The Naive Baseline {#ml-w3-baseline}
 
@@ -1526,6 +1903,12 @@ Now change the cost of a missed failure to match the cost of a false alarm and f
 3. Why is a single decision tree usually worse than a Random Forest, even though they both start from the same idea?
 4. What is the P-F interval? Give a concrete example from a manufacturing plant, naming the component, the potential failure indicator, and a realistic interval length.
 5. A maintenance manager says "we replace the spindle bearings every 2,000 hours regardless." Which of the four maintenance regimes is this? When does it make economic sense, and when does it not?
+
+::: {.callout-exit}
+**Exit ticket, Week 3.** In your own words, explain to a classmate who missed class where the word "random" comes from in Random Forest, and why it makes the model better rather than worse.
+
+Submit your answer on your phone before you leave.
+:::
 
 ### Further Reading — Week 3 {#ml-w3-reading}
 
@@ -1706,6 +2089,60 @@ Target: **at least 2× better than the naive baseline.** If you are not hitting 
 
 ***
 
+::: {.callout-activity}
+**Activity (12 min): code review, find the bugs.** An LLM wrote this training script for the C-MAPSS capstone. It runs without errors. In pairs, find as many problems as you can. There are at least four. (Column names are illustrative.)
+
+```python
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+
+df = pd.read_csv("train_FD001.csv")
+df["s11_mean"] = df["sensor_11"].rolling(5).mean()
+df = df.dropna()
+
+X = df.drop(columns=["rul"])
+y = df["rul"]
+
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+print("Validation error:", mean_squared_error(y_val, model.predict(X_val)))
+```
+
+<details>
+<summary>Reveal the bugs</summary>
+
+1. **Rolling window crosses engines.** The `rolling(5)` is applied to the whole table, so the first rows of each engine are averaged with the last rows of the previous engine. It needs `groupby("engine_id")` first.
+2. **Row-wise split leaks data.** `train_test_split` shuffles rows, so the same engine appears in training and validation. Split by engine ID (for example with `GroupShuffleSplit`).
+3. **Identifier and time columns are features.** `X` still contains the engine ID (and probably the cycle count). The model can memorize engines, and the cycle number is almost the answer.
+4. **Wrong metric.** `mean_squared_error` returns MSE in cycles squared, not RMSE in cycles. Take the square root, and compare it with the naive baseline.
+5. **No baseline and no random seed discussion** (bonus): without the baseline the number has no meaning, and the dropped NaN rows hide where each engine's data starts.
+
+</details>
+
+The lesson: the code ran and printed a number. Only a reviewer who understands the problem catches these. This is what "stay accountable for the output" means.
+:::
+
+::: {.callout-poll}
+**You raise n_estimators from 100 to 1000 in your Random Forest. What do you expect?**
+
+- **A.** A large drop in RMSE
+- **B.** Overfitting, because there are more trees
+- **C.** A small change in RMSE and a longer training time
+- **D.** Nothing, the parameter is ignored
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**C.** More trees make the average more stable but give diminishing returns. A Random Forest does not overfit more by adding trees. Most of the gain is already there by 100 or 200 trees, so you mainly pay in training time and model size.
+
+</details>
+:::
+
 ### Self-Check Questions — Week 4 {#ml-w4-check}
 
 1. Your validation RMSE is 6.8 cycles. The naive baseline RMSE on the same validation set is 48 cycles. Is this a good result or should you be suspicious? Why?
@@ -1713,6 +2150,12 @@ Target: **at least 2× better than the naive baseline.** If you are not hitting 
 3. You have 42 features after feature engineering (raw sensors + rolling mean + rolling std, with constants removed). At each split in a Random Forest tree, how many features does the algorithm consider? Why not all 42?
 4. A classmate's feature importance chart shows sensor_14_rolling_mean at 0.12 and sensor_14 at 0.03. Why might the rolling feature dominate the raw feature despite measuring the same physical quantity?
 5. You save `rul_model.pkl` but forget to save `feature_cols.pkl`. What happens when you try to use the model in the Streamlit app next week?
+
+::: {.callout-exit}
+**Exit ticket, Week 4.** Name one thing you will check in any AI-written training script before you trust its reported accuracy.
+
+Submit your answer on your phone before you leave.
+:::
 
 ### Further Reading — Week 4 {#ml-w4-reading}
 
@@ -1871,6 +2314,52 @@ A practical starting point for most manufacturing predictive-maintenance applica
 
 ***
 
+#### Try it yourself: OT or IT? {#ml-w5-tryit-ot}
+
+```{r tryit-ot-it, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "ot-it",
+  title = "Where does it live: OT or IT?",
+  bins = c("OT (Levels 0-2)", "IT (Levels 3-4)"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "Tuning a servo drive on the feeder.",
+  "OT (Levels 0-2)", "Machine-level control.",
+  "The monthly job that retrains the model.",
+  "IT (Levels 3-4)", "Analytics and batch jobs run above the control level.",
+  "The safety interlock logic on the guard door.",
+  "OT (Levels 0-2)", "Safety-rated control. Never changed by analytics code.",
+  "The dashboard on the maintenance planner's laptop.",
+  "IT (Levels 3-4)", "A business-network application.",
+  "A PLC firmware update.",
+  "OT (Levels 0-2)", "A controlled change in the control layer.",
+  "The script that validates last month's predictions.",
+  "IT (Levels 3-4)", "Runs on a server, reads data, never writes to the controller."
+  ),
+  intro = "Decide whether each item belongs on the operational technology side or the information technology side."
+)
+```
+
+::: {.callout-pair}
+**Think – pair – share (5 min).** The model went live six months ago, and its validation RMSE has crept from 20 to 38 cycles. List three different causes (hint: data, equipment, people). For each, say what you would check first and who in the plant could tell you.
+:::
+
+::: {.callout-poll}
+**Operators have stopped looking at the predictive-maintenance dashboard. What is the most useful first step?**
+
+- **A.** Remind them in the next safety meeting that they must use it
+- **B.** Sit with two operators for a shift and watch how they actually use (or avoid) it
+- **C.** Add more charts so it looks more impressive
+- **D.** Remove the dashboard and send daily emails
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** You do not yet know why it is ignored. Common reasons are alarms that cry wolf, a screen that cannot be read from the machine, or recommendations nobody can act on. Observe first, then redesign.
+
+</details>
+:::
+
 ### Self-Check Questions — Week 5 {#ml-w5-check}
 
 1. A colleague proposes running the Random Forest inference directly on the PLC to minimize latency. What are three specific reasons this is not feasible?
@@ -1878,6 +2367,12 @@ A practical starting point for most manufacturing predictive-maintenance applica
 3. An operator sees this on their screen: "Remaining Useful Life: 47.3 ± 12.8 cycles." Is this a good interface design? What would you change and why?
 4. Your model was trained in June. It is now the following February. The plant ran through a major scheduled overhaul in October where 30% of the sensors were recalibrated. What type of drift are you most concerned about, and how would you detect it?
 5. Describe three monitoring metrics you would track in a production deployment of your C-MAPSS model to catch problems before they cause bad maintenance decisions.
+
+::: {.callout-exit}
+**Exit ticket, Week 5.** Your model's alarm fires and the operator ignores it. Give one design reason and one organizational reason why this might happen.
+
+Submit your answer on your phone before you leave.
+:::
 
 ### Further Reading — Week 5 {#ml-w5-reading}
 
@@ -1925,7 +2420,7 @@ Machine learning models learn patterns from historical data. If the historical d
 
 #### Liability: Who Is Responsible When AI Is Wrong? {#ml-w6-liability}
 
-The Air Canada case (2024) established that companies are liable for what their AI-powered customer-service bots say. The principle extends to manufacturing: if your predictive maintenance model causes a consequential decision — stopping production, removing a part prematurely, or failing to flag an imminent failure — and that decision results in financial loss or injury, the question of liability is not trivial.
+The Air Canada chatbot case (2024, summarised in @sec-ai-confidentiality) established that companies are liable for what their AI-powered customer-service bots say. The principle extends to manufacturing: if your predictive maintenance model causes a consequential decision — stopping production, removing a part prematurely, or failing to flag an imminent failure — and that decision results in financial loss or injury, the question of liability is not trivial.
 
 Current state of Canadian and US law: liability typically falls on the company deploying the system, not the model vendor. The engineer who deployed the system may be asked to demonstrate that the model was:
 - Validated appropriately before deployment
@@ -1991,7 +2486,7 @@ What is in rapid development / early deployment:
 
 2. **Simulation-accelerated training:** ML models trained primarily on physics-based simulation rather than historical operational data — solving the "I don't have enough run-to-failure data" problem for new equipment. NASA C-MAPSS is an early example of this approach.
 
-3. **Agentic AI for engineering workflows:** LLM-based agents (Week 1) that take multi-step actions (search a manual, query a database, generate a work order, route it to the right technician) rather than just responding to a single question. Coding agents are already in routine use, which is how you wrote your Python in this course, and agent features are being added to enterprise ERP and MES platforms. Multi-agent systems and standard connectors (MCP) make it easy to link them to plant data. The engineering questions are the same ones you have studied: what is the agent allowed to do, who reviews its work, how do you test it, and who is accountable when it is wrong. Expect a licensed engineer's judgment to be asked for at exactly those points.
+3. **Agentic AI for engineering workflows:** LLM-based agents (@sec-ai-agents) that take multi-step actions (search a manual, query a database, generate a work order, route it to the right technician) rather than just responding to a single question. Coding agents are already in routine use, which is how you wrote your Python in this course, and agent features are being added to enterprise ERP and MES platforms. Multi-agent systems and standard connectors (MCP) make it easy to link them to plant data. The engineering questions are the same ones you have studied: what is the agent allowed to do, who reviews its work, how do you test it, and who is accountable when it is wrong. Expect a licensed engineer's judgment to be asked for at exactly those points.
 
 4. **AI governance and certification requirements:** as AI systems make more consequential decisions, regulatory frameworks are evolving (EU AI Act, NIST AI RMF, ISO 42001). Engineers with both the technical skills and the regulatory literacy to certify AI systems for safety-critical applications will be in high demand.
 
@@ -2007,6 +2502,36 @@ The field moves fast. Three habits that will keep you current without burning ou
 
 ***
 
+::: {.callout-activity}
+**Activity (15 min): four corners, who pays the $40,000?** Return to the opening question of this week: the model predicted failure in 15 cycles, the planner cancelled a production run at a cost of $40,000, and the bearing turned out to be healthy.
+
+1. Pick a position on your phone or by moving to a corner: **(A)** the maintenance planner who acted, **(B)** the engineer who deployed the model, **(C)** the company, **(D)** nobody; it is the cost of doing business.
+2. In your corner, agree on the *two strongest reasons* for your position.
+3. One speaker per corner gives the argument. Then anyone may change corners, and has to say what changed their mind.
+
+Debrief: what documentation, in the model's "About this model" section and in the plant's procedures, would have made your corner's argument stronger?
+:::
+
+::: {.callout-poll}
+**For which of these is explainability (knowing why the model said it) a hard requirement?**
+
+- **A.** Optimising a non-critical scheduling parameter
+- **B.** Flagging a safety-critical aircraft component for removal
+- **C.** Ranking sensors for a future instrumentation upgrade
+- **D.** Suggesting a coffee-break schedule
+
+<details>
+<summary>Reveal after the vote</summary>
+
+**B.** When the decision is safety-critical or regulated, an auditable rationale is required. The others are low stakes and cheap to reverse.
+
+</details>
+:::
+
+::: {.callout-pair}
+**Think – pair – share (4 min).** You have now directed an LLM to write the Python for a real model. One thing the AI could not have done for you in this course was ______. Complete the sentence in two different ways, and explain what that means for the skills you want to keep building.
+:::
+
 ### Self-Check Questions — Week 6 {#ml-w6-check}
 
 1. Your C-MAPSS model was trained exclusively on FD001 (one operating condition, one fault mode). A plant manager asks you to deploy it on the hydraulic press line to predict cylinder seal failure. List three specific reasons why this deployment would be inappropriate, and what you would need to do before it could be considered.
@@ -2014,6 +2539,12 @@ The field moves fast. Three habits that will keep you current without burning ou
 3. A junior technician has been using your predictive maintenance dashboard for six months. You notice they never override the recommendations, even when they personally notice an unusual sound from a machine the model shows as "healthy." What phenomenon does this illustrate, and how would you redesign the dashboard to mitigate it?
 4. Your plant uses a Random Forest for bearing failure prediction on the stamping press. A failure occurs that the model did not predict (a false negative). The quality team asks you to explain why the model missed it. What tools would you use to investigate, and what information would you present?
 5. Name two AI technologies not yet widely deployed in manufacturing (as of this course) that you think are most likely to change your specific engineering role within 10 years. Justify your answer.
+
+::: {.callout-exit}
+**Exit ticket, Week 6.** Write one sentence you would say to a future manager who wants to "put AI on the shop floor tomorrow". What is the first question you ask?
+
+Submit your answer on your phone before you leave.
+:::
 
 ### Further Reading — Week 6 {#ml-w6-reading}
 
