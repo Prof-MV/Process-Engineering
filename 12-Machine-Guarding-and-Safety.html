@@ -1,0 +1,4160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Lecture notes accompanying the course.">
+
+<title>12&nbsp; Machine Guarding and Functional Safety – Process Engineering</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./13-TPM.html" rel="next">
+<link href="./11-Machine-Learning.html" rel="prev">
+<link href="./images/favicon.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-1e97d4cee9d83aed8bf07499bfcf61c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/editor/editor.main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+<style type="text/css">
+.monaco-editor pre {
+  background-color: unset !important;
+}
+
+.qwebr-editor-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.qwebr-editor-toolbar-left-buttons, .qwebr-editor-toolbar-right-buttons {
+  display: flex;
+}
+
+.qwebr-non-interactive-loading-container.qwebr-cell-needs-evaluation, .qwebr-non-interactive-loading-container.qwebr-cell-evaluated {
+  justify-content: center;
+  display: flex;
+  background-color: rgba(250, 250, 250, 0.65);
+  border: 1px solid rgba(233, 236, 239, 0.65);
+  border-radius: 0.5rem;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.qwebr-r-project-logo {
+  color: #2767B0; /* R Project's blue color */
+}
+
+.qwebr-icon-status-spinner {
+  color: #7894c4;
+}
+
+.qwebr-icon-run-code {
+  color: #0d9c29
+}
+
+body.quarto-light .qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.quarto-dark .qwebr-output-code-stdout {
+  color: #EEE;
+}
+
+.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+body.quarto-light .qwebr-editor {
+  border: 1px solid #EEEEEE;
+}
+
+body.quarto-light .qwebr-editor-toolbar {
+  background-color: #EEEEEE;
+  padding: 0.2rem 0.5rem;
+}
+
+body.quarto-dark .qwebr-editor {
+  border: 1px solid #111;
+}
+
+body.quarto-dark .qwebr-editor-toolbar {
+  background-color: #111;
+  padding: 0.2rem 0.5rem;
+}
+
+.qwebr-button {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  padding: 0.375rem 0.75rem;
+  font-size: .9rem;
+  border-radius: 0.25rem;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+body.quarto-light .qwebr-button {
+  background-color: #EEEEEE;
+  color: #000;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-dark .qwebr-button {
+  background-color: #111;
+  color: #EEE;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-light .qwebr-button:hover {
+  color: #000;
+  background-color: #d9dce0;
+  border-color: #c8ccd0;
+}
+
+body.quarto-dark .qwebr-button:hover {
+  color: #d9dce0;
+  background-color: #323232;
+  border-color: #d9dce0;
+}
+
+.qwebr-button:disabled,.qwebr-button.disabled,fieldset:disabled .qwebr-button {
+  pointer-events: none;
+  opacity: .65
+}
+
+.qwebr-button-reset {
+  color: #696969; /*#4682b4;*/
+}
+
+.qwebr-button-copy {
+  color: #696969;
+}
+
+/* Style the code highlight lines */
+body.quarto-light .qwebr-editor-highlight-line {
+  background-color: lightblue;
+}
+
+body.quarto-dark .qwebr-editor-highlight-line {
+  background-color: darkblue;
+}
+
+/* Style the modal pop-up */
+
+/* The Modal (background) */
+.qwebr-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content */
+.qwebr-modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.qwebr-modal-content-code {
+  max-height: 50vh;
+  min-height: 5vh;
+  overflow: scroll;
+  border: 1px solid #888;
+}
+
+/* The Close Button */
+.qwebr-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.qwebr-modal-close:hover,
+.qwebr-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.qwebr-download-btn {
+  margin-top: 10px;
+  text-decoration: none !important;
+}
+
+/* Styling to download image that is created */
+
+.qwebr-canvas-image {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.qwebr-canvas-image-download-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+figure:hover .qwebr-canvas-image-download-btn {
+  display: block;
+}
+
+/* Custom styling for RevealJS Presentations*/
+
+/* Reset the style of the interactive area */
+.reveal div.qwebr-interactive-area {
+  display: block;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Provide space to entries */
+.reveal div.qwebr-output-code-area pre div {
+  margin: 1px 2px 1px 10px;
+}
+
+/* Collapse the inside code tags to avoid extra space between line outputs */
+.reveal pre div code.qwebr-output-code-stdout, .reveal pre div code.qwebr-output-code-stderr {
+  padding: 0;
+  display: contents;
+}
+
+body.reveal.quarto-light pre div code.qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.reveal.quarto-dark pre div code.qwebr-output-code-stdout {
+  color: #EEEEEE;
+}
+
+.reveal pre div code.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+
+/* Create a border around console and output (does not effect graphs) */
+body.reveal.quarto-light div.qwebr-console-area {
+  border: 1px solid #EEEEEE;
+  box-shadow: 2px 2px 10px #EEEEEE;
+}
+
+body.reveal.quarto-dark div.qwebr-console-area {
+  border: 1px solid #111;
+  box-shadow: 2px 2px 10px #111;
+}
+
+
+/* Cap output height and allow text to scroll */
+/* TODO: Is there a better way to fit contents/max it parallel to the monaco editor size? */
+.reveal div.qwebr-output-code-area pre {
+  max-height: 400px;
+  overflow: scroll;
+}
+
+iframe.qwebr-output-code-browse {
+  width: 100%;
+
+  /*
+    TODO: How to make the height automatic according to the widget size,
+    or respect the quarto code block options?
+  */
+  min-height: 500px;
+}
+
+</style>
+<script type="module">
+// Document level settings ----
+
+// Determine if we need to install R packages
+globalThis.qwebrInstallRPackagesList = [''];
+
+// Specify possible locations to search for the repository
+globalThis.qwebrPackageRepoURLS = ['https://repo.r-wasm.org/'];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qwebrSetupRPackages = !(qwebrInstallRPackagesList.indexOf("") !== -1);
+globalThis.qwebrAutoloadRPackages = true;
+
+// Display a startup message?
+globalThis.qwebrShowStartupMessage = true;
+globalThis.qwebrShowHeaderMessage = false;
+
+// Describe the webR settings that should be used
+globalThis.qwebrCustomizedWebROptions = {
+  "baseURL": "https://webr.r-wasm.org/v0.5.2/",
+  "serviceWorkerUrl": "",
+  "homedir": "/home/web_user", 
+  "channelType": "ChannelType.Automatic"
+};
+
+// Store cell data
+globalThis.qwebrCellDetails = [{"code":"# Given parameters\nK <- 2000          # Approach speed (mm/s) - fast hand approach\nT_device <- 0.020  # Light curtain response time (20 ms = 0.020 s)\nT_machine <- 0.150 # Machine stopping time (150 ms = 0.150 s)\nC <- 0             # Penetration depth for 14mm resolution\n\n# Calculate total stopping time\nT_total <- T_device + T_machine\n\n# Calculate minimum safety distance\nS <- (K * T_total) + C\n\ncat(sprintf(\"Minimum safety distance: %.0f mm (%.1f in)\\n\", S, S / 25.4))\ncat(sprintf(\"  Total stopping time  %.0f ms\\n\", T_total * 1000))","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"interactive","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"label":"safety-calc-example","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+
+</script>
+<script type="module">
+// Declare startupMessageQWebR globally
+globalThis.qwebrStartupMessage = document.createElement("p");
+
+// Verify if OffScreenCanvas is supported
+globalThis.qwebrOffScreenCanvasSupport = function() {
+  return typeof OffscreenCanvas !== 'undefined'
+}
+
+// Function to set the button text
+globalThis.qwebrSetInteractiveButtonState = function(buttonText, enableCodeButton = true) {
+  document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+    btn.innerHTML = buttonText;
+    btn.disabled = !enableCodeButton;
+  });
+}
+
+// Function to update the status message in non-interactive cells
+globalThis.qwebrUpdateStatusMessage = function(message) {
+  document.querySelectorAll(".qwebr-status-text.qwebr-cell-needs-evaluation").forEach((elem) => {
+    elem.innerText = message;
+  });
+}
+
+// Function to update the status message
+globalThis.qwebrUpdateStatusHeader = function(message) {
+  qwebrStartupMessage.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i>
+    <span>${message}</span>`;
+}
+
+// Function to return true if element is found, false if not
+globalThis.qwebrCheckHTMLElementExists = function(selector) {
+  const element = document.querySelector(selector);
+  return !!element;
+}
+
+// Function that detects whether reveal.js slides are present
+globalThis.qwebrIsRevealJS = function() {
+  // If the '.reveal .slides' selector exists, RevealJS is likely present
+  return qwebrCheckHTMLElementExists('.reveal .slides');
+}
+
+// Initialize the Quarto sidebar element
+function qwebrSetupQuartoSidebar() {
+  var newSideBarDiv = document.createElement('div');
+  newSideBarDiv.id = 'quarto-margin-sidebar';
+  newSideBarDiv.className = 'sidebar margin-sidebar';
+  newSideBarDiv.style.top = '0px';
+  newSideBarDiv.style.maxHeight = 'calc(0px + 100vh)';
+
+  return newSideBarDiv;
+}
+
+// Position the sidebar in the document
+function qwebrPlaceQuartoSidebar() {
+  // Get the reference to the element with id 'quarto-document-content'
+  var referenceNode = document.getElementById('quarto-document-content');
+
+  // Create the new div element
+  var newSideBarDiv = qwebrSetupQuartoSidebar();
+
+  // Insert the new div before the 'quarto-document-content' element
+  referenceNode.parentNode.insertBefore(newSideBarDiv, referenceNode);
+}
+
+function qwebrPlaceMessageContents(content, html_location = "title-block-header", revealjs_location = "title-slide") {
+
+  // Get references to header elements
+  const headerHTML = document.getElementById(html_location);
+  const headerRevealJS = document.getElementById(revealjs_location);
+
+  // Determine where to insert the quartoTitleMeta element
+  if (headerHTML || headerRevealJS) {
+    // Append to the existing "title-block-header" element or "title-slide" div
+    (headerHTML || headerRevealJS).appendChild(content);
+  } else {
+    // If neither headerHTML nor headerRevealJS is found, insert after "webr-monaco-editor-init" script
+    const monacoScript = document.getElementById("qwebr-monaco-editor-init");
+    const header = document.createElement("header");
+    header.setAttribute("id", "title-block-header");
+    header.appendChild(content);
+    monacoScript.after(header);
+  }
+}
+
+
+
+function qwebrOffScreenCanvasSupportWarningMessage() {
+  
+  // Verify canvas is supported.
+  if(qwebrOffScreenCanvasSupport()) return;
+
+  // Create the main container div
+  var calloutContainer = document.createElement('div');
+  calloutContainer.classList.add('callout', 'callout-style-default', 'callout-warning', 'callout-titled');
+
+  // Create the header div
+  var headerDiv = document.createElement('div');
+  headerDiv.classList.add('callout-header', 'd-flex', 'align-content-center');
+
+  // Create the icon container div
+  var iconContainer = document.createElement('div');
+  iconContainer.classList.add('callout-icon-container');
+
+  // Create the icon element
+  var iconElement = document.createElement('i');
+  iconElement.classList.add('callout-icon');
+
+  // Append the icon element to the icon container
+  iconContainer.appendChild(iconElement);
+
+  // Create the title container div
+  var titleContainer = document.createElement('div');
+  titleContainer.classList.add('callout-title-container', 'flex-fill');
+  titleContainer.innerText = 'Warning: Web Browser Does Not Support Graphing!';
+
+  // Append the icon container and title container to the header div
+  headerDiv.appendChild(iconContainer);
+  headerDiv.appendChild(titleContainer);
+
+  // Create the body container div
+  var bodyContainer = document.createElement('div');
+  bodyContainer.classList.add('callout-body-container', 'callout-body');
+
+  // Create the paragraph element for the body content
+  var paragraphElement = document.createElement('p');
+  paragraphElement.innerHTML = 'This web browser does not have support for displaying graphs through the <code>quarto-webr</code> extension since it lacks an <code>OffScreenCanvas</code>. Please upgrade your web browser to one that supports <code>OffScreenCanvas</code>.';
+
+  // Append the paragraph element to the body container
+  bodyContainer.appendChild(paragraphElement);
+
+  // Append the header div and body container to the main container div
+  calloutContainer.appendChild(headerDiv);
+  calloutContainer.appendChild(bodyContainer);
+
+  // Append the main container div to the document depending on format
+  qwebrPlaceMessageContents(calloutContainer, "title-block-header"); 
+
+}
+
+
+// Function that attaches the document status message and diagnostics
+function displayStartupMessage(showStartupMessage, showHeaderMessage) {
+  if (!showStartupMessage) {
+    return;
+  }
+
+  // Create the outermost div element for metadata
+  const quartoTitleMeta = document.createElement("div");
+  quartoTitleMeta.classList.add("quarto-title-meta");
+
+  // Create the first inner div element
+  const firstInnerDiv = document.createElement("div");
+  firstInnerDiv.setAttribute("id", "qwebr-status-message-area");
+
+  // Create the second inner div element for "WebR Status" heading and contents
+  const secondInnerDiv = document.createElement("div");
+  secondInnerDiv.setAttribute("id", "qwebr-status-message-title");
+  secondInnerDiv.classList.add("quarto-title-meta-heading");
+  secondInnerDiv.innerText = "WebR Status";
+
+  // Create another inner div for contents
+  const secondInnerDivContents = document.createElement("div");
+  secondInnerDivContents.setAttribute("id", "qwebr-status-message-body");
+  secondInnerDivContents.classList.add("quarto-title-meta-contents");
+
+  // Describe the WebR state
+  qwebrStartupMessage.innerText = "🟡 Loading...";
+  qwebrStartupMessage.setAttribute("id", "qwebr-status-message-text");
+  // Add `aria-live` to auto-announce the startup status to screen readers
+  qwebrStartupMessage.setAttribute("aria-live", "assertive");
+
+  // Append the startup message to the contents
+  secondInnerDivContents.appendChild(qwebrStartupMessage);
+
+  // Add a status indicator for COOP and COEP Headers if needed
+  if (showHeaderMessage) {
+    const crossOriginMessage = document.createElement("p");
+    crossOriginMessage.innerText = `${crossOriginIsolated ? '🟢' : '🟡'} COOP & COEP Headers`;
+    crossOriginMessage.setAttribute("id", "qwebr-coop-coep-header");
+    secondInnerDivContents.appendChild(crossOriginMessage);
+  }
+
+  // Combine the inner divs and contents
+  firstInnerDiv.appendChild(secondInnerDiv);
+  firstInnerDiv.appendChild(secondInnerDivContents);
+  quartoTitleMeta.appendChild(firstInnerDiv);
+
+  // Place message on webpage
+  qwebrPlaceMessageContents(quartoTitleMeta); 
+}
+
+function qwebrAddCommandHistoryModal() {
+  // Create the modal div
+  var modalDiv = document.createElement('div');
+  modalDiv.id = 'qwebr-history-modal';
+  modalDiv.className = 'qwebr-modal';
+
+  // Create the modal content div
+  var modalContentDiv = document.createElement('div');
+  modalContentDiv.className = 'qwebr-modal-content';
+
+  // Create the span for closing the modal
+  var closeSpan = document.createElement('span');
+  closeSpan.id = 'qwebr-command-history-close-btn';
+  closeSpan.className = 'qwebr-modal-close';
+  closeSpan.innerHTML = '&times;';
+
+  // Create the h1 element for the modal
+  var modalH1 = document.createElement('h1');
+  modalH1.textContent = 'R History Command Contents';
+
+  // Create an anchor element for downloading the Rhistory file 
+  var downloadLink = document.createElement('a');
+  downloadLink.href = '#';
+  downloadLink.id = 'qwebr-download-history-btn';
+  downloadLink.className = 'qwebr-download-btn';
+
+  // Create an 'i' element for the icon
+  var icon = document.createElement('i');
+  icon.className = 'bi bi-file-code';
+
+  // Append the icon to the anchor element
+  downloadLink.appendChild(icon);
+
+  // Add the text 'Download R History' to the anchor element
+  downloadLink.appendChild(document.createTextNode(' Download R History File'));
+
+  // Create the pre for command history contents
+  var commandContentsPre = document.createElement('pre');
+  commandContentsPre.id = 'qwebr-command-history-contents';
+  commandContentsPre.className = 'qwebr-modal-content-code';
+
+  // Append the close span, h1, and history contents pre to the modal content div
+  modalContentDiv.appendChild(closeSpan);
+  modalContentDiv.appendChild(modalH1);
+  modalContentDiv.appendChild(downloadLink);
+  modalContentDiv.appendChild(commandContentsPre);
+
+  // Append the modal content div to the modal div
+  modalDiv.appendChild(modalContentDiv);
+
+  // Append the modal div to the body
+  document.body.appendChild(modalDiv);
+}
+
+function qwebrRegisterRevealJSCommandHistoryModal() {
+  // Select the <ul> element inside the <div> with data-panel="Custom0"
+  let ulElement = document.querySelector('div[data-panel="Custom0"] > ul.slide-menu-items');
+
+  // Find the last <li> element with class slide-tool-item
+  let lastItem = ulElement.querySelector('li.slide-tool-item:last-child');
+
+  // Calculate the next data-item value
+  let nextItemValue = 0;
+  if (lastItem) {
+      nextItemValue = parseInt(lastItem.dataset.item) + 1;
+  }
+
+  // Create a new <li> element
+  let newListItem = document.createElement('li');
+  newListItem.className = 'slide-tool-item';
+  newListItem.dataset.item = nextItemValue.toString(); // Set the next available data-item value
+
+  // Create the <a> element inside the <li>
+  let newLink = document.createElement('a');
+  newLink.href = '#';
+  newLink.id = 'qwebrRHistoryButton'; // Set the ID for the new link
+  
+  // Create the <kbd> element inside the <a>
+  let newKbd = document.createElement('kbd');
+  newKbd.textContent = ' '; // Set to empty as we are not registering a keyboard shortcut
+
+  // Create text node for the link text
+  let newText = document.createTextNode(' View R History');
+
+  // Append <kbd> and text node to <a>
+  newLink.appendChild(newKbd);
+  newLink.appendChild(newText);
+
+  // Append <a> to <li>
+  newListItem.appendChild(newLink);
+
+  // Append <li> to <ul>
+  ulElement.appendChild(newListItem);
+}
+
+// Handle setting up the R history modal
+function qwebrCodeLinks() {
+
+  if (qwebrIsRevealJS()) {
+    qwebrRegisterRevealJSCommandHistoryModal();
+    return;
+  }
+
+  // Create the container div
+  var containerDiv = document.createElement('div');
+  containerDiv.className = 'quarto-code-links';
+
+  // Create the h2 element
+  var h2 = document.createElement('h2');
+  h2.textContent = 'webR Code Links';
+
+  // Create the ul element
+  var ul = document.createElement('ul');
+
+  // Create the li element
+  var li = document.createElement('li');
+
+  // Create the a_history_btn element
+  var a_history_btn = document.createElement('a');
+  a_history_btn.href = 'javascript:void(0)';
+  a_history_btn.setAttribute('id', 'qwebrRHistoryButton');
+
+  // Create the i_history_btn element
+  var i_history_btn = document.createElement('i');
+  i_history_btn.className = 'bi bi-file-code';
+
+  // Create the text node for the link text
+  var text_history_btn = document.createTextNode('View R History');
+
+  // Append the icon element and link text to the a element
+  a_history_btn.appendChild(i_history_btn);
+  a_history_btn.appendChild(text_history_btn);
+
+  // Append the a element to the li element
+  li.appendChild(a_history_btn);
+
+  // Append the li element to the ul element
+  ul.appendChild(li);
+
+  // Append the h2 and ul elements to the container div
+  containerDiv.appendChild(h2);
+  containerDiv.appendChild(ul);
+
+  // Append the container div to the element with the ID 'quarto-margin-sidebar'
+  var sidebar = document.getElementById('quarto-margin-sidebar');
+    
+  // If the sidebar element is not found, create it
+  if(!sidebar) {
+    qwebrPlaceQuartoSidebar();
+  }
+  
+  // Re-select the sidebar element (if it was just created)
+  sidebar = document.getElementById('quarto-margin-sidebar');   
+
+
+  // If the sidebar element exists, append the container div to it
+  if(sidebar) {
+    // Append the container div to the sidebar
+    sidebar.appendChild(containerDiv);
+    // Force the sidebar to be clickable by removing the 'zindex-bottom' class
+    // added in pre-release: https://github.com/quarto-dev/quarto-cli/commit/f0c53a1ffcaa1de4eccbf07803b096898248adcc
+    sidebar.className = 'sidebar margin-sidebar';
+  } else {
+    // Get a debugger ...
+    console.warn('Element with ID "quarto-margin-sidebar" not found.');
+  }
+}
+
+// Call the function to append the code links for qwebR into the right sidebar
+qwebrCodeLinks();
+
+// Add the command history modal
+qwebrAddCommandHistoryModal();
+
+displayStartupMessage(qwebrShowStartupMessage, qwebrShowHeaderMessage);
+qwebrOffScreenCanvasSupportWarningMessage();
+</script>
+<script type="module">
+// Define a global storage and retrieval solution ----
+
+// Store commands executed in R
+globalThis.qwebrRCommandHistory = [];
+
+// Function to retrieve the command history
+globalThis.qwebrFormatRHistory = function() {
+   return qwebrRCommandHistory.join("\n\n");
+}
+
+// Retrieve HTML Elements ----
+
+// Get the command modal
+const command_history_modal = document.getElementById("qwebr-history-modal");
+
+// Get the button that opens the command modal
+const command_history_btn = document.getElementById("qwebrRHistoryButton");
+
+// Get the <span> element that closes the command modal
+const command_history_close_span = document.getElementById("qwebr-command-history-close-btn");
+
+// Get the download button for r history information
+const command_history_download_btn = document.getElementById("qwebr-download-history-btn");
+
+// Plug in command history into modal/download button ----
+
+// Function to populate the modal with command history
+function populateCommandHistoryModal() {
+    document.getElementById("qwebr-command-history-contents").innerHTML = qwebrFormatRHistory() || "No commands have been executed yet.";
+}
+
+// Function to format the current date and time to
+// a string with the format YYYY-MM-DD-HH-MM-SS
+function formatDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+}
+
+
+// Function to convert document title with datetime to a safe filename
+function safeFileName() {
+    // Get the current page title
+    let pageTitle = document.title;
+
+    // Combine the current page title with the current date and time
+    let pageNameWithDateTime = `Rhistory-${pageTitle}-${formatDateTime()}`;
+
+    // Replace unsafe characters with safe alternatives
+    let safeFilename = pageNameWithDateTime.replace(/[\\/:\*\?! "<>\|]/g, '-');
+
+    return safeFilename;
+}
+
+
+// Function to download list contents as text file
+function downloadRHistory() {
+    // Get the current page title + datetime and use it as the filename
+    const filename = `${safeFileName()}.R`;
+
+    // Get the text contents of the R History list
+    const text = qwebrFormatRHistory();
+
+    // Create a new Blob object with the text contents
+    const blob = new Blob([text], { type: 'text/plain' });
+  
+    // Create a new anchor element for the download
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+
+    // Append the anchor to the body, click it, and remove it
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Register event handlers ----
+
+// When the user clicks the View R History button, open the command modal
+command_history_btn.onclick = function() {
+    populateCommandHistoryModal();
+    command_history_modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the command modal
+command_history_close_span.onclick = function() {
+    command_history_modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the command modal, close it
+window.onclick = function(event) {
+    if (event.target == command_history_modal) {
+        command_history_modal.style.display = "none";
+    }
+}
+
+// Add an onclick event listener to the download button so that
+// the user can download the R history as a text file
+command_history_download_btn.onclick = function() {
+    downloadRHistory();
+};
+</script>
+<script type="module">
+// Supported Evaluation Types for Context
+globalThis.EvalTypes = Object.freeze({
+  Interactive: 'interactive',
+  Setup: 'setup',
+  Output: 'output',
+});
+
+// Function that obtains the font size for a given element 
+globalThis.qwebrCurrentFontSizeOnElement = function(element, cssProperty = 'font-size') {
+
+  const currentFontSize = parseFloat(
+    window
+    .getComputedStyle(element)
+    .getPropertyValue(cssProperty)
+  );
+  
+  return currentFontSize;
+}
+
+// Function to determine font scaling
+globalThis.qwebrScaledFontSize = function(div, qwebrOptions) {
+  // Determine if we should compute font-size using RevealJS's `--r-main-font-size` 
+  // or if we can directly use the document's `font-size`.
+  const cssProperty = document.body.classList.contains('reveal') ? 
+    "--r-main-font-size" : "font-size";
+  
+  // Get the current font size on the div element
+  const elementFontSize = qwebrCurrentFontSizeOnElement(div, cssProperty);
+
+  // Determine the scaled font size value
+  const scaledFontSize = ((qwebrOptions['editor-font-scale'] ?? 1) * elementFontSize) ?? 17.5;
+
+  return scaledFontSize;
+}
+
+
+// Function that dispatches the creation request
+globalThis.qwebrCreateHTMLElement = function (
+  cellData
+) {
+
+  // Extract key components
+  const evalType = cellData.options.context;
+  const qwebrCounter = cellData.id;
+
+  // We make an assumption that insertion points are defined by the Lua filter as:
+  // qwebr-insertion-location-{qwebrCounter} 
+  const elementLocator = document.getElementById(`qwebr-insertion-location-${qwebrCounter}`);
+
+  // Figure out the routine to use to insert the element.
+  let qwebrElement;
+  switch ( evalType ) {
+    case EvalTypes.Interactive:
+      qwebrElement = qwebrCreateInteractiveElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Output: 
+      qwebrElement = qwebrCreateNonInteractiveOutputElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Setup: 
+      qwebrElement = qwebrCreateNonInteractiveSetupElement(qwebrCounter, cellData.options);
+      break;
+    default: 
+      qwebrElement = document.createElement('div');
+      qwebrElement.textContent = 'Error creating `quarto-webr` element';
+  }
+
+  // Insert the dynamically generated object at the document location.
+  elementLocator.appendChild(qwebrElement);
+};
+
+// Function that setups the interactive element creation
+globalThis.qwebrCreateInteractiveElement = function (qwebrCounter, qwebrOptions) {
+
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-interactive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-interactive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create toolbar div
+  var toolbarDiv = document.createElement('div');
+  toolbarDiv.className = 'qwebr-editor-toolbar';
+  toolbarDiv.id = 'qwebr-editor-toolbar-' + qwebrCounter;
+
+  // Create a div to hold the left buttons
+  var leftButtonsDiv = document.createElement('div');
+  leftButtonsDiv.className = 'qwebr-editor-toolbar-left-buttons';
+
+  // Create a div to hold the right buttons
+  var rightButtonsDiv = document.createElement('div');
+  rightButtonsDiv.className = 'qwebr-editor-toolbar-right-buttons';
+
+  // Create Run Code button
+  var runCodeButton = document.createElement('button');
+  runCodeButton.className = 'btn btn-default qwebr-button qwebr-button-run';
+  runCodeButton.disabled = true;
+  runCodeButton.type = 'button';
+  runCodeButton.id = 'qwebr-button-run-' + qwebrCounter;
+  runCodeButton.textContent = '🟡 Loading webR...';
+  runCodeButton.title = `Run code (Shift + Enter)`;
+
+  // Append buttons to the leftButtonsDiv
+  leftButtonsDiv.appendChild(runCodeButton);
+
+  // Create Reset button
+  var resetButton = document.createElement('button');
+  resetButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-reset';
+  resetButton.type = 'button';
+  resetButton.id = 'qwebr-button-reset-' + qwebrCounter;
+  resetButton.title = 'Start over';
+  resetButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i>';
+
+  // Create Copy button
+  var copyButton = document.createElement('button');
+  copyButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-copy';
+  copyButton.type = 'button';
+  copyButton.id = 'qwebr-button-copy-' + qwebrCounter;
+  copyButton.title = 'Copy code';
+  copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+
+  // Append buttons to the rightButtonsDiv
+  rightButtonsDiv.appendChild(resetButton);
+  rightButtonsDiv.appendChild(copyButton);
+
+  // Create console area div
+  var consoleAreaDiv = document.createElement('div');
+  consoleAreaDiv.id = 'qwebr-console-area-' + qwebrCounter;
+  consoleAreaDiv.className = 'qwebr-console-area';
+
+  // Create editor div
+  var editorDiv = document.createElement('div');
+  editorDiv.id = 'qwebr-editor-' + qwebrCounter;
+  editorDiv.className = 'qwebr-editor';
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append buttons to the toolbar
+  toolbarDiv.appendChild(leftButtonsDiv);
+  toolbarDiv.appendChild(rightButtonsDiv);
+
+  // Append all elements to the main div
+  mainDiv.appendChild(toolbarDiv);
+  consoleAreaDiv.appendChild(editorDiv);
+  consoleAreaDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(consoleAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+}
+
+// Function that adds output structure for non-interactive output
+globalThis.qwebrCreateNonInteractiveOutputElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-noninteractive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-noninteractive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+  
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+  
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append all elements to the main div
+  mainDiv.appendChild(statusContainer);
+  mainDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+};
+
+// Function that adds a stub in the page to indicate a setup cell was used.
+globalThis.qwebrCreateNonInteractiveSetupElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = `qwebr-noninteractive-setup-area-${qwebrCounter}`;
+  mainDiv.className = `qwebr-noninteractive-setup-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Append status onto the main div
+  mainDiv.appendChild(statusContainer);
+
+  return mainDiv;
+}
+
+
+// Function to create loading container with specified ID
+globalThis.createLoadingContainer = function(qwebrCounter) {
+
+  // Create a status container
+  const container = document.createElement('div');
+  container.id = `qwebr-non-interactive-loading-container-${qwebrCounter}`;
+  container.className = 'qwebr-non-interactive-loading-container qwebr-cell-needs-evaluation';
+
+  // Create an R project logo to indicate its a code space
+  const rProjectIcon = document.createElement('i');
+  rProjectIcon.className = 'fa-brands fa-r-project fa-3x qwebr-r-project-logo';
+
+  // Setup a loading icon from font awesome
+  const spinnerIcon = document.createElement('i');
+  spinnerIcon.className = 'fa-solid fa-spinner fa-spin fa-1x qwebr-icon-status-spinner';
+
+  // Add a section for status text
+  const statusText = document.createElement('p');
+  statusText.id = `qwebr-status-text-${qwebrCounter}`;
+  statusText.className = `qwebr-status-text qwebr-cell-needs-evaluation`;
+  statusText.innerText = 'Loading webR...';
+
+  // Incorporate an inner container
+  const innerContainer = document.createElement('div');
+
+  // Append elements to the inner container
+  innerContainer.appendChild(spinnerIcon);
+  innerContainer.appendChild(statusText);
+
+  // Append elements to the main container
+  container.appendChild(rProjectIcon);
+  container.appendChild(innerContainer);
+
+  return container;
+}
+</script>
+<script type="module">
+// Function to install a single package
+async function qwebrInstallRPackage(packageName) {
+  await mainWebR.evalRVoid(`webr::install('${packageName}');`);
+}
+
+// Function to load a single package
+async function qwebrLoadRPackage(packageName) {
+  await mainWebR.evalRVoid(`require('${packageName}', quietly = TRUE)`);
+}
+
+// Generic function to process R packages
+async function qwebrProcessRPackagesWithStatus(packages, processType, displayStatusMessageUpdate = true) {
+  // Switch between contexts
+  const messagePrefix = processType === 'install' ? 'Installing' : 'Loading';
+
+  // Modify button state
+  qwebrSetInteractiveButtonState(`🟡 ${messagePrefix} package ...`, false);
+
+  // Iterate over packages
+  for (let i = 0; i < packages.length; i++) {
+    const activePackage = packages[i];
+    const formattedMessage = `${messagePrefix} package ${i + 1} out of ${packages.length}: ${activePackage}`;
+
+    // Display the update in header
+    if (displayStatusMessageUpdate) {
+      qwebrUpdateStatusHeader(formattedMessage);
+    }
+
+    // Display the update in non-active areas
+    qwebrUpdateStatusMessage(formattedMessage);
+
+    // Run package installation
+    if (processType === 'install') {
+      await qwebrInstallRPackage(activePackage);
+    } else {
+      await qwebrLoadRPackage(activePackage);
+    }
+  }
+
+  // Clean slate
+  if (processType === 'load') {
+    await mainWebR.flush();
+  }
+}
+
+// Start a timer
+const initializeWebRTimerStart = performance.now();
+
+// Encase with a dynamic import statement
+globalThis.qwebrInstance = import(qwebrCustomizedWebROptions.baseURL + "webr.mjs").then(
+  async ({ WebR, ChannelType }) => {
+    // Populate WebR options with defaults or new values based on `webr` meta
+    globalThis.mainWebR = new WebR(qwebrCustomizedWebROptions);
+
+    // Initialization WebR
+    await mainWebR.init();
+
+    // Setup a shelter
+    globalThis.mainWebRCodeShelter = await new mainWebR.Shelter();
+
+    // Setup a pager to allow processing help documentation
+    await mainWebR.evalRVoid('webr::pager_install()');
+
+    // Setup a viewer to allow processing htmlwidgets.
+    // This might not be available in old webr version
+    await mainWebR.evalRVoid('try({ webr::viewer_install() })');
+
+    // Override the existing install.packages() to use webr::install()
+    await mainWebR.evalRVoid('webr::shim_install()');
+
+    // Specify the repositories to pull from
+    // Note: webR does not use the `repos` option, but instead uses `webr_pkg_repos`
+    // inside of `install()`. However, other R functions still pull from `repos`.
+    await mainWebR.evalRVoid(`
+      options(
+        webr_pkg_repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')}),
+        repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')})
+      )
+    `);
+
+    // Check to see if any packages need to be installed
+    if (qwebrSetupRPackages) {
+      // Obtain only a unique list of packages
+      const uniqueRPackageList = Array.from(new Set(qwebrInstallRPackagesList));
+
+      // Install R packages one at a time (either silently or with a status update)
+      await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'install', qwebrShowStartupMessage);
+
+      if (qwebrAutoloadRPackages) {
+        // Load R packages one at a time (either silently or with a status update)
+        await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'load', qwebrShowStartupMessage);
+      }
+    }
+  }
+);
+
+// Stop timer
+const initializeWebRTimerEnd = performance.now();
+
+</script>
+<script type="module">
+// Function to verify a given JavaScript Object is empty
+globalThis.qwebrIsObjectEmpty = function (arr) {
+    return Object.keys(arr).length === 0;
+}
+
+// Global version of the Escape HTML function that converts HTML
+// characters to their HTML entities.
+globalThis.qwebrEscapeHTMLCharacters = function(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+};
+
+// Passthrough results
+globalThis.qwebrIdentity = function(x) {
+    return x;
+};
+
+// Append a comment
+globalThis.qwebrPrefixComment = function(x, comment) {
+    return `${comment}${x}`;
+};
+
+// Function to store the code in the history
+globalThis.qwebrLogCodeToHistory = function(codeToRun, options) {
+    qwebrRCommandHistory.push(
+        `# Ran code in ${options.label} at ${new Date().toLocaleString()} ----\n${codeToRun}`
+    );
+};
+
+// Function to attach a download button onto the canvas
+// allowing the user to download the image.
+function qwebrImageCanvasDownloadButton(canvas, canvasContainer) {
+
+    // Create the download button
+    const downloadButton = document.createElement('button');
+    downloadButton.className = 'qwebr-canvas-image-download-btn';
+    downloadButton.textContent = 'Download Image';
+    canvasContainer.appendChild(downloadButton);
+
+    // Trigger a download of the image when the button is clicked
+    downloadButton.addEventListener('click', function() {
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'qwebr-canvas-image.png';
+        link.click();
+    });
+}
+
+
+// Function to parse the pager results
+globalThis.qwebrParseTypePager = async function (msg) {
+
+    // Split out the event data
+    const { path, title, deleteFile } = msg.data;
+
+    // Process the pager data by reading the information from disk
+    const paged_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        // Remove excessive backspace characters until none remain
+        while(content.match(/.[\b]/)){
+            content = content.replace(/.[\b]/g, '');
+        }
+
+        // Returned cleaned data
+        return content;
+    });
+
+    // Unlink file if needed
+    if (deleteFile) {
+        await mainWebR.FS.unlink(path);
+    }
+
+    // Return extracted data with spaces
+    return paged_data;
+};
+
+
+// Function to parse the browse results
+globalThis.qwebrParseTypeBrowse = async function (msg) {
+
+    // msg.type === "browse"
+    const path = msg.data.url;
+
+    // Process the browse data by reading the information from disk
+    const browse_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        return content;
+    });
+
+    // Return extracted data as-is
+    return browse_data;
+};
+
+// Function to run the code using webR and parse the output
+globalThis.qwebrComputeEngine = async function(
+    codeToRun,
+    elements,
+    options) {
+
+    // Call into the R compute engine that persists within the document scope.
+    // To be prepared for all scenarios, the following happens:
+    // 1. We setup a canvas device to write to by making a namespace call into the {webr} package
+    // 2. We use values inside of the options array to set the figure size.
+    // 3. We capture the output stream information (STDOUT and STERR)
+    // 4. We disable the current device's image creation.
+    // 5. Piece-wise parse the results into the different output areas
+
+    // Create a pager variable for help/file contents
+    let pager = [];
+
+    // Handle how output is processed
+    let showMarkup = options.results === "markup" && options.output !== "asis";
+    let processOutput;
+
+    if (showMarkup) {
+        processOutput = qwebrEscapeHTMLCharacters;
+    } else {
+        processOutput = qwebrIdentity;
+    }
+
+    // ----
+    // Convert from Inches to Pixels by using DPI (dots per inch)
+    // for bitmap devices (dpi * inches = pixels)
+    let fig_width = options["fig-width"] * options["dpi"];
+    let fig_height = options["fig-height"] * options["dpi"];
+
+    // Initialize webR
+    await mainWebR.init();
+
+    // Configure capture output
+    let captureOutputOptions = {
+        withAutoprint: true,
+        captureStreams: true,
+        captureConditions: false,
+        // env: webR.objs.emptyEnv, // maintain a global environment for webR v0.2.0
+    };
+
+    // Determine if the browser supports OffScreen
+    if (qwebrOffScreenCanvasSupport()) {
+        // Mirror default options of webr::canvas()
+        // with changes to figure height and width.
+        captureOutputOptions.captureGraphics = {
+            width: fig_width,
+            height: fig_height,
+            bg: "white", // default: transparent
+            pointsize: 12,
+            capture: true
+        };
+    }  else {
+        // Disable generating graphics
+        captureOutputOptions.captureGraphics = false;
+    }
+
+    // Store the code to run in history
+    qwebrLogCodeToHistory(codeToRun, options);
+
+    // Setup a webR canvas by making a namespace call into the {webr} package
+    // Evaluate the R code
+    // Remove the active canvas silently
+    const result = await mainWebRCodeShelter.captureR(
+        `${codeToRun}`,
+        captureOutputOptions
+    );
+
+    // -----
+
+    // Start attempting to parse the result data
+    processResultOutput:try {
+
+        // Avoid running through output processing
+        if (options.results === "hide" || options.output === "false") {
+            break processResultOutput;
+        }
+
+        // Merge output streams of STDOUT and STDErr (messages and errors are combined.)
+        // Require both `warning` and `message` to be true to display `STDErr`.
+        const out = result.output
+        .filter(
+            evt => evt.type === "stdout" ||
+            ( evt.type === "stderr" && (options.warning === "true" && options.message === "true"))
+        )
+        .map((evt, index) => {
+            const className = `qwebr-output-code-${evt.type}`;
+            const outputResult = qwebrPrefixComment(processOutput(evt.data), options.comment);
+            return `<code id="${className}-editor-${elements.id}-result-${index + 1}" class="${className}">${outputResult}</code>`;
+        })
+        .join("\n");
+
+
+        // Clean the state
+        // We're now able to process pager events.
+        // As a result, we cannot maintain a true 1-to-1 output order
+        // without individually feeding each line
+        const msgs = await mainWebR.flush();
+
+        // Use `map` to process the filtered "pager" events asynchronously
+        const pager = [];
+        const browse = [];
+
+        await Promise.all(
+            msgs.map(
+                async (msg) => {
+
+                    const msgType = msg.type || "unknown";
+
+                    switch(msgType) {
+                        case 'pager':
+                            const pager_data = await qwebrParseTypePager(msg);
+                            pager.push(pager_data);
+                            break;
+                        case 'browse':
+                            const browse_data = await qwebrParseTypeBrowse(msg);
+                            browse.push(browse_data);
+                            break;
+                    }
+                    return;
+                }
+            )
+        );
+
+        // Nullify the output area of content
+        elements.outputCodeDiv.innerHTML = "";
+        elements.outputGraphDiv.innerHTML = "";
+
+        // Design an output object for messages
+        const pre = document.createElement("pre");
+        if (/\S/.test(out)) {
+            // Display results as HTML elements to retain output styling
+            const div = document.createElement("div");
+            div.innerHTML = out;
+
+            // Calculate a scaled font-size value
+            const scaledFontSize = qwebrScaledFontSize(
+                elements.outputCodeDiv, options);
+
+            // Override output code cell size
+            pre.style.fontSize = `${scaledFontSize}px`;
+            pre.appendChild(div);
+        } else {
+            // If nothing is present, hide the element.
+            pre.style.visibility = "hidden";
+        }
+
+        elements.outputCodeDiv.appendChild(pre);
+
+        // Determine if we have graphs to display
+        if (result.images.length > 0) {
+
+            // Create figure element
+            const figureElement = document.createElement("figure");
+            figureElement.className = "qwebr-canvas-image";
+
+            // Place each rendered graphic onto a canvas element
+            result.images.forEach((img) => {
+
+                // Construct canvas for object
+                const canvas = document.createElement("canvas");
+
+                // Add an image download button
+                qwebrImageCanvasDownloadButton(canvas, figureElement);
+
+                // Set canvas size to image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // Apply output truncations
+                canvas.style.width = options["out-width"] ? options["out-width"] : `${fig_width}px`;
+                if (options["out-height"]) {
+                    canvas.style.height = options["out-height"];
+                }
+
+                // Apply styling
+                canvas.style.display = "block";
+                canvas.style.margin = "auto";
+
+                // Draw image onto Canvas
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                // Append canvas to figure output area
+                figureElement.appendChild(canvas);
+
+            });
+
+            if (options['fig-cap']) {
+                // Create figcaption element
+                const figcaptionElement = document.createElement('figcaption');
+                figcaptionElement.innerText = options['fig-cap'];
+                // Append figcaption to figure
+                figureElement.appendChild(figcaptionElement);
+            }
+
+            elements.outputGraphDiv.appendChild(figureElement);
+
+        }
+
+        // Display the pager data
+        if (pager.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            pager.forEach((paged_data, index) => {
+                const pre_pager = document.createElement("pre");
+                pre_pager.innerText = paged_data;
+                pre_pager.classList.add("qwebr-output-code-pager");
+                pre_pager.setAttribute("id", `qwebr-output-code-pager-editor-${elements.id}-result-${index + 1}`);
+                elements.outputCodeDiv.appendChild(pre_pager);
+            });
+        }
+
+        // Display the browse data
+        if (browse.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            browse.forEach((browse_data, index) => {
+                const iframe_browse = document.createElement('iframe');
+                iframe_browse.classList.add("qwebr-output-code-browse");
+                iframe_browse.setAttribute("id", `qwebr-output-code-browse-editor-${elements.id}-result-${index + 1}`);
+                iframe_browse.style.width = "100%";
+                iframe_browse.style.minHeight = "500px";
+                elements.outputCodeDiv.appendChild(iframe_browse);
+
+                iframe_browse.contentWindow.document.open();
+                iframe_browse.contentWindow.document.write(browse_data);
+                iframe_browse.contentWindow.document.close();
+            });
+        }
+    } finally {
+        // Clean up the remaining code
+        mainWebRCodeShelter.purge();
+    }
+};
+
+// Function to execute the code (accepts code as an argument)
+globalThis.qwebrExecuteCode = async function (
+    codeToRun,
+    id,
+    options = {}) {
+
+    // If options are not passed, we fall back on the bare minimum to handle the computation
+    if (qwebrIsObjectEmpty(options)) {
+        options = {
+            "context": "interactive",
+            "fig-width": 7, "fig-height": 5,
+            "out-width": "700px", "out-height": "",
+            "dpi": 72,
+            "results": "markup",
+            "warning": "true", "message": "true",
+        };
+    }
+
+    // Next, we access the compute areas values
+    const elements = {
+        runButton: document.getElementById(`qwebr-button-run-${id}`),
+        outputCodeDiv: document.getElementById(`qwebr-output-code-area-${id}`),
+        outputGraphDiv: document.getElementById(`qwebr-output-graph-area-${id}`),
+        id: id,
+    }
+
+    // Disallowing execution of other code cells
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = true;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Emphasize the active code cell
+        elements.runButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i> <span>Run Code</span>';
+    }
+
+    // Evaluate the code and parse the output into the document
+    await qwebrComputeEngine(codeToRun, elements, options);
+
+    // Switch to allowing execution of code
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = false;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Revert to the initial code cell state
+        elements.runButton.innerHTML = '<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>';
+    }
+}
+
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-Types-of-Manufacturing.html">Process Engineering I</a></li><li class="breadcrumb-item"><a href="./12-Machine-Guarding-and-Safety.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Site">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Process Engineering</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/Prof-MV/Process-Engineering" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Process Engineering I</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      </div>
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-Types-of-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Types of Manufacturing Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Process-and-Design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Process and Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-Industrial-Robotics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Industrial Robotics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Ergnomics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ergonomics in Automated Manufacturing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Metallurgy-Fundamentals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Introduction to Metallurgy: Structure and Heat Treatment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Materials-Testing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Materials Testing: Tensile, Hardness, Impact, and Metallography</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Plant-Layout.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Plant Layout and Facility Design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Process Control (SPC)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-Working-with-AI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Working Effectively with AI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-Machine-Learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-Machine-Guarding-and-Safety.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-TPM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-PFMEA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Process Failure Mode and Effects Analysis (PFMEA)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-Lean-Manufacturing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Lean Manufacturing</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Process Engineering II</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      </div>
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-Quality-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Quality Management Systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17-Advanced-MSA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Advanced Measurement Systems Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18-Advanced-SPC.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Advanced Statistical Process Control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./19-AnyLogic-Simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Simulation Modeling with AnyLogic</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-Integrated-Manufacturing-Systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Integrated Manufacturing Systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21-Troubleshooting-RCA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Troubleshooting and Root Cause Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./22-Industrial-Automation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Industrial Automation Fundamentals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./23-Labs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Labs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives"><span class="header-section-number">12.1</span> Learning Objectives</a></li>
+  <li><a href="#introduction-the-safety-hierarchy" id="toc-introduction-the-safety-hierarchy" class="nav-link" data-scroll-target="#introduction-the-safety-hierarchy"><span class="header-section-number">12.2</span> Introduction: The Safety Hierarchy</a>
+  <ul class="collapse">
+  <li><a href="#try-it-yourself-rank-the-controls" id="toc-try-it-yourself-rank-the-controls" class="nav-link" data-scroll-target="#try-it-yourself-rank-the-controls"><span class="header-section-number">12.2.1</span> Try it yourself: rank the controls</a></li>
+  </ul></li>
+  <li><a href="#physical-guarding-and-interlocks" id="toc-physical-guarding-and-interlocks" class="nav-link" data-scroll-target="#physical-guarding-and-interlocks"><span class="header-section-number">12.3</span> Physical Guarding and Interlocks</a>
+  <ul class="collapse">
+  <li><a href="#fixed-guards" id="toc-fixed-guards" class="nav-link" data-scroll-target="#fixed-guards"><span class="header-section-number">12.3.1</span> Fixed Guards</a></li>
+  <li><a href="#interlocked-guards" id="toc-interlocked-guards" class="nav-link" data-scroll-target="#interlocked-guards"><span class="header-section-number">12.3.2</span> Interlocked Guards</a></li>
+  <li><a href="#stop-categories" id="toc-stop-categories" class="nav-link" data-scroll-target="#stop-categories"><span class="header-section-number">12.3.3</span> Stop Categories</a></li>
+  <li><a href="#trapped-key-systems-lock-outtag-out" id="toc-trapped-key-systems-lock-outtag-out" class="nav-link" data-scroll-target="#trapped-key-systems-lock-outtag-out"><span class="header-section-number">12.3.4</span> Trapped Key Systems (Lock-Out/Tag-Out)</a></li>
+  </ul></li>
+  <li><a href="#presence-sensing-devices" id="toc-presence-sensing-devices" class="nav-link" data-scroll-target="#presence-sensing-devices"><span class="header-section-number">12.4</span> Presence-Sensing Devices</a>
+  <ul class="collapse">
+  <li><a href="#light-curtains" id="toc-light-curtains" class="nav-link" data-scroll-target="#light-curtains"><span class="header-section-number">12.4.1</span> Light Curtains</a></li>
+  <li><a href="#laser-area-scanners" id="toc-laser-area-scanners" class="nav-link" data-scroll-target="#laser-area-scanners"><span class="header-section-number">12.4.2</span> Laser Area Scanners</a></li>
+  <li><a href="#pressure-sensitive-safety-mats" id="toc-pressure-sensitive-safety-mats" class="nav-link" data-scroll-target="#pressure-sensitive-safety-mats"><span class="header-section-number">12.4.3</span> Pressure-Sensitive Safety Mats</a></li>
+  </ul></li>
+  <li><a href="#control-actuated-safety-devices" id="toc-control-actuated-safety-devices" class="nav-link" data-scroll-target="#control-actuated-safety-devices"><span class="header-section-number">12.5</span> Control-Actuated Safety Devices</a>
+  <ul class="collapse">
+  <li><a href="#two-hand-controls" id="toc-two-hand-controls" class="nav-link" data-scroll-target="#two-hand-controls"><span class="header-section-number">12.5.1</span> Two-Hand Controls</a></li>
+  <li><a href="#enabledeadman-switches" id="toc-enabledeadman-switches" class="nav-link" data-scroll-target="#enabledeadman-switches"><span class="header-section-number">12.5.2</span> Enable/Deadman Switches</a></li>
+  </ul></li>
+  <li><a href="#try-it-yourself-choose-the-safeguard" id="toc-try-it-yourself-choose-the-safeguard" class="nav-link" data-scroll-target="#try-it-yourself-choose-the-safeguard"><span class="header-section-number">12.6</span> Try it yourself: choose the safeguard</a></li>
+  <li><a href="#collaborative-robotics-cobots" id="toc-collaborative-robotics-cobots" class="nav-link" data-scroll-target="#collaborative-robotics-cobots"><span class="header-section-number">12.7</span> Collaborative Robotics (Cobots)</a>
+  <ul class="collapse">
+  <li><a href="#collaborative-operation-methods" id="toc-collaborative-operation-methods" class="nav-link" data-scroll-target="#collaborative-operation-methods"><span class="header-section-number">12.7.1</span> Collaborative Operation Methods</a></li>
+  <li><a href="#power-and-force-limiting-pfl" id="toc-power-and-force-limiting-pfl" class="nav-link" data-scroll-target="#power-and-force-limiting-pfl"><span class="header-section-number">12.7.2</span> Power and Force Limiting (PFL)</a></li>
+  </ul></li>
+  <li><a href="#safety-distance-calculation" id="toc-safety-distance-calculation" class="nav-link" data-scroll-target="#safety-distance-calculation"><span class="header-section-number">12.8</span> Safety Distance Calculation</a>
+  <ul class="collapse">
+  <li><a href="#the-safety-distance-formula" id="toc-the-safety-distance-formula" class="nav-link" data-scroll-target="#the-safety-distance-formula"><span class="header-section-number">12.8.1</span> The Safety Distance Formula</a></li>
+  <li><a href="#standard-values-for-k" id="toc-standard-values-for-k" class="nav-link" data-scroll-target="#standard-values-for-k"><span class="header-section-number">12.8.2</span> Standard Values for K</a></li>
+  <li><a href="#penetration-depth-c" id="toc-penetration-depth-c" class="nav-link" data-scroll-target="#penetration-depth-c"><span class="header-section-number">12.8.3</span> Penetration Depth (C)</a></li>
+  <li><a href="#example-calculation" id="toc-example-calculation" class="nav-link" data-scroll-target="#example-calculation"><span class="header-section-number">12.8.4</span> Example Calculation</a></li>
+  </ul></li>
+  <li><a href="#emergency-stop-e-stop-systems" id="toc-emergency-stop-e-stop-systems" class="nav-link" data-scroll-target="#emergency-stop-e-stop-systems"><span class="header-section-number">12.9</span> Emergency Stop (E-Stop) Systems</a>
+  <ul class="collapse">
+  <li><a href="#e-stop-pull-cords" id="toc-e-stop-pull-cords" class="nav-link" data-scroll-target="#e-stop-pull-cords"><span class="header-section-number">12.9.1</span> E-Stop Pull Cords</a></li>
+  </ul></li>
+  <li><a href="#functional-safety-standards" id="toc-functional-safety-standards" class="nav-link" data-scroll-target="#functional-safety-standards"><span class="header-section-number">12.10</span> Functional Safety Standards</a>
+  <ul class="collapse">
+  <li><a href="#safety-integrity-levels-sil---iec-62061" id="toc-safety-integrity-levels-sil---iec-62061" class="nav-link" data-scroll-target="#safety-integrity-levels-sil---iec-62061"><span class="header-section-number">12.10.1</span> Safety Integrity Levels (SIL) - IEC 62061</a></li>
+  <li><a href="#performance-levels-pl---iso-13849-1" id="toc-performance-levels-pl---iso-13849-1" class="nav-link" data-scroll-target="#performance-levels-pl---iso-13849-1"><span class="header-section-number">12.10.2</span> Performance Levels (PL) - ISO 13849-1</a></li>
+  </ul></li>
+  <li><a href="#risk-assessment-process" id="toc-risk-assessment-process" class="nav-link" data-scroll-target="#risk-assessment-process"><span class="header-section-number">12.11</span> Risk Assessment Process</a>
+  <ul class="collapse">
+  <li><a href="#risk-estimation" id="toc-risk-estimation" class="nav-link" data-scroll-target="#risk-estimation"><span class="header-section-number">12.11.1</span> Risk Estimation</a></li>
+  <li><a href="#try-it-yourself-find-the-required-performance-level" id="toc-try-it-yourself-find-the-required-performance-level" class="nav-link" data-scroll-target="#try-it-yourself-find-the-required-performance-level"><span class="header-section-number">12.11.2</span> Try it yourself: find the required performance level</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">12.12</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">12.13</span> Review Questions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">12.14</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/12-Machine-Guarding-and-Safety.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/loader.js"></script>
+<script type="module" id="qwebr-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs'
+    }
+  });
+</script>
+<script type="module">
+// Function to update Monaco Editors when body class changes
+function updateMonacoEditorsOnBodyClassChange() {
+    // Select the body element
+    const body = document.querySelector('body');
+
+    // Options for the observer (which mutations to observe)
+    const observerOptions = {
+        attributes: true,  // Observe changes to attributes
+        attributeFilter: ['class'] // Only observe changes to the 'class' attribute
+    };
+
+    // Callback function to execute when mutations are observed
+    const bodyClassChangeCallback = function(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                // Class attribute has changed
+                // Update all Monaco Editors on the page
+                updateMonacoEditorTheme();
+            }
+        }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(bodyClassChangeCallback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(body, observerOptions);
+}
+
+// Function to update all instances of Monaco Editors on the page
+function updateMonacoEditorTheme() {
+    // Determine what VS Theme to use
+    const vsThemeToUse = document.body.classList.contains("quarto-dark") ? 'vs-dark' : 'vs' ;
+
+    // Iterate through all initialized Monaco Editors
+    qwebrEditorInstances.forEach( function(editorInstance) { 
+        editorInstance.updateOptions({ theme: vsThemeToUse }); 
+    });
+}
+
+// Call the function to start observing changes to body class
+updateMonacoEditorsOnBodyClassChange();
+</script>
+<script type="module">
+// Global array to store Monaco Editor instances
+globalThis.qwebrEditorInstances = [];
+
+function isValidCodeLineNumbers(stringCodeLineNumbers) {
+  // Regular expression to match valid input strings
+  const regex = /^(\d+(-\d+)?)(,\d+(-\d+)?)*$/;
+  return regex.test(stringCodeLineNumbers);
+}
+
+// Function that builds and registers a Monaco Editor instance    
+globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
+
+  const initialCode = cellData.code;
+  const qwebrCounter = cellData.id;
+  const qwebrOptions = cellData.options;
+
+  // Retrieve the previously created document elements
+  let runButton = document.getElementById(`qwebr-button-run-${qwebrCounter}`);
+  let resetButton = document.getElementById(`qwebr-button-reset-${qwebrCounter}`);
+  let copyButton = document.getElementById(`qwebr-button-copy-${qwebrCounter}`);
+  let editorDiv = document.getElementById(`qwebr-editor-${qwebrCounter}`);
+
+  // Load the Monaco Editor and create an instance
+  let editor;
+  require(['vs/editor/editor.main'], function () {
+    editor = monaco.editor.create(editorDiv, {
+      value: initialCode,
+      language: 'r',
+      theme: 'vs-light',
+      automaticLayout: true,           // Works wonderfully with RevealJS
+      scrollBeyondLastLine: false,
+      minimap: {
+        enabled: false
+      },
+      fontSize: qwebrScaledFontSize(editorDiv, qwebrOptions),         
+      renderLineHighlight: "none",      // Disable current line highlighting
+      hideCursorInOverviewRuler: true,  // Remove cursor indictor in right hand side scroll bar
+      readOnly: qwebrOptions['read-only'] ?? false,
+      quickSuggestions: qwebrOptions['editor-quick-suggestions'] ?? false,
+      wordWrap: (qwebrOptions['editor-word-wrap'] == 'true' ? "on" : "off")
+    });
+
+    // Store the official counter ID to be used in keyboard shortcuts
+    editor.__qwebrCounter = qwebrCounter;
+
+    // Store the official div container ID
+    editor.__qwebrEditorId = `qwebr-editor-${qwebrCounter}`;
+
+    // Store the initial code value and options
+    editor.__qwebrinitialCode = initialCode;
+    editor.__qwebrOptions = qwebrOptions;
+
+    // Set at the model level the preferred end of line (EOL) character to LF.
+    // This prevent `\r\n` from being given to the webR engine if the user is on Windows.
+    // See details in: https://github.com/coatless/quarto-webr/issues/94
+    // Associated error text: 
+    // Error: <text>:1:7 unexpected input
+
+    // Retrieve the underlying model
+    const model = editor.getModel();
+    // Set EOL for the model
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+    
+    // Dynamically modify the height of the editor window if new lines are added.
+    let ignoreEvent = false;
+    const updateHeight = () => {
+      // Increment editor height by 2 to prevent vertical scroll bar from appearing
+      const contentHeight = editor.getContentHeight() + 2;
+
+      // Retrieve editor-max-height option
+      const maxEditorHeight = qwebrOptions['editor-max-height'];
+
+      // If editor-max-height is missing, allow infinite growth. Otherwise, threshold.
+      const editorHeight = !maxEditorHeight ?  contentHeight : Math.min(contentHeight, maxEditorHeight);
+
+      // We're avoiding a width change
+      //editorDiv.style.width = `${width}px`;
+      editorDiv.style.height = `${editorHeight}px`;
+      try {
+        ignoreEvent = true;
+
+        // The key to resizing is this call
+        editor.layout();
+      } finally {
+        ignoreEvent = false;
+      }
+    };
+
+    // Function to generate decorations to highlight lines
+    // in the editor based on input string.
+    function decoratorHighlightLines(codeLineNumbers) {
+      // Store the lines to be lighlight
+      let linesToHighlight = [];
+      
+      // Parse the codeLineNumbers string to get the line numbers to highlight
+      // First, split the string by commas
+      codeLineNumbers.split(',').forEach(part => {
+        // Check if we have a range of lines
+        if (part.includes('-')) {
+            // Handle range of lines (e.g., "6-8")
+            const [start, end] = part.split('-').map(Number);
+            for (let i = start; i <= end; i++) {
+                linesToHighlight.push(i);
+            }
+        } else {
+            // Handle single line (e.g., "7")
+            linesToHighlight.push(Number(part));
+        }
+      });
+  
+      // Create monaco decorations for the lines to highlight
+      const decorations = linesToHighlight.map(lineNumber => ({
+          range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+          options: {
+              isWholeLine: true,
+              className: 'qwebr-editor-highlight-line'
+          }
+      }));
+  
+      // Return decorations to be applied to the editor
+      return decorations;
+    }
+
+    // Ensure that the editor-code-line-numbers option is set and valid
+    // then apply styling
+    if (qwebrOptions['editor-code-line-numbers']) {
+      // Remove all whitespace from the string
+      const codeLineNumbers = qwebrOptions['editor-code-line-numbers'].replace(/\s/g,'');
+      // Check if the string is valid for line numbers, e.g., "1,3-5,7"
+      if (isValidCodeLineNumbers(codeLineNumbers)) {
+        // Apply the decorations to the editor
+        editor.createDecorationsCollection(decoratorHighlightLines(codeLineNumbers));
+      } else {
+        // Warn the user that the input is invalid
+        console.warn(`Invalid "editor-code-line-numbers" value in code cell ${qwebrOptions['label']}: ${codeLineNumbers}`);
+      }
+    }
+
+    // Helper function to check if selected text is empty
+    function isEmptyCodeText(selectedCodeText) {
+      return (selectedCodeText === null || selectedCodeText === undefined || selectedCodeText === "");
+    }
+
+    // Registry of keyboard shortcuts that should be re-added to each editor window
+    // when focus changes.
+    const addWebRKeyboardShortCutCommands = () => {
+      // Add a keydown event listener for Shift+Enter to run all code in cell
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
+
+        // Retrieve all text inside the editor
+        qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+      });
+
+      // Add a keydown event listener for CMD/Ctrl+Enter to run selected code
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+
+        // Get the selected text from the editor
+        const selectedText = editor.getModel().getValueInRange(editor.getSelection());
+        // Check if no code is selected
+        if (isEmptyCodeText(selectedText)) {
+          // Obtain the current cursor position
+          let currentPosition = editor.getPosition();
+          // Retrieve the current line content
+          let currentLine = editor.getModel().getLineContent(currentPosition.lineNumber);
+
+          // Propose a new position to move the cursor to
+          let newPosition = new monaco.Position(currentPosition.lineNumber + 1, 1);
+
+          // Check if the new position is beyond the last line of the editor
+          if (newPosition.lineNumber > editor.getModel().getLineCount()) {
+            // Add a new line at the end of the editor
+            editor.executeEdits("addNewLine", [{
+            range: new monaco.Range(newPosition.lineNumber, 1, newPosition.lineNumber, 1),
+            text: "\n", 
+            forceMoveMarkers: true,
+            }]);
+          }
+          
+          // Run the entire line of code.
+          qwebrExecuteCode(currentLine, editor.__qwebrCounter, editor.__qwebrOptions);
+
+          // Move cursor to new position
+          editor.setPosition(newPosition);
+        } else {
+          // Code to run when Ctrl+Enter is pressed with selected code
+          qwebrExecuteCode(selectedText, editor.__qwebrCounter, editor.__qwebrOptions);
+        }
+      });
+    }
+
+    // Register an on focus event handler for when a code cell is selected to update
+    // what keyboard shortcut commands should work.
+    // This is a workaround to fix a regression that happened with multiple
+    // editor windows since Monaco 0.32.0 
+    // https://github.com/microsoft/monaco-editor/issues/2947
+    editor.onDidFocusEditorText(addWebRKeyboardShortCutCommands);
+
+    // Register an on change event for when new code is added to the editor window
+    editor.onDidContentSizeChange(updateHeight);
+
+    // Manually re-update height to account for the content we inserted into the call
+    updateHeight();
+
+    // Store the editor instance in the global dictionary
+    qwebrEditorInstances[editor.__qwebrCounter] = editor;
+
+  });
+
+  // Add a click event listener to the run button
+  runButton.onclick = function () {
+    qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+  };
+
+  // Add a click event listener to the reset button
+  copyButton.onclick = function () {
+    // Retrieve current code data
+    const data = editor.getValue();
+    
+    // Write code data onto the clipboard.
+    navigator.clipboard.writeText(data || "");
+  };
+  
+  // Add a click event listener to the copy button
+  resetButton.onclick = function () {
+    editor.setValue(editor.__qwebrinitialCode);
+  };
+  
+}
+</script>
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-Types-of-Manufacturing.html">Process Engineering I</a></li><li class="breadcrumb-item"><a href="./12-Machine-Guarding-and-Safety.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Machine Guarding and Functional Safety</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="learning-objectives" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">12.1</span> Learning Objectives</h2>
+<p>By the end of this chapter, you will be able to:</p>
+<ul>
+<li>Apply the Hierarchy of Controls to manufacturing safety design</li>
+<li>Identify and specify appropriate physical guarding and interlock systems</li>
+<li>Select and position presence-sensing devices (light curtains, area scanners)</li>
+<li>Calculate safety distances for protective device placement</li>
+<li>Understand collaborative robot safety requirements</li>
+<li>Design emergency stop systems according to standards</li>
+<li>Differentiate between safety integrity levels (SIL) and performance levels (PL)</li>
+</ul>
+<blockquote class="blockquote">
+<p>“Safety isn’t expensive, it’s priceless.” — Anonymous</p>
+</blockquote>
+<hr>
+</section>
+<section id="introduction-the-safety-hierarchy" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="introduction-the-safety-hierarchy"><span class="header-section-number">12.2</span> Introduction: The Safety Hierarchy</h2>
+<p>In process engineering, safety is not merely a feature added at the end of a project; it is a <strong>fundamental design constraint</strong>. Before deploying safety devices, the engineer must apply the <strong>Hierarchy of Controls</strong> — a systematic approach to eliminating or reducing workplace hazards.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/hierarchy-controls-viz-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>The Hierarchy of Controls (Most to Least Effective)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Hierarchy of Controls: Detailed Breakdown</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 1) !important;">Priority</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 1) !important;">Control Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 1) !important;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 1) !important;">Example</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(39, 174, 96, 1) !important;">Effectiveness</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 1) !important; width: 5em; font-weight: bold;">1</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;"><strong>Elimination</strong></td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Physically remove the hazard entirely</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Eliminate pinch point by redesigning mechanism</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Most Effective</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(213, 245, 227, 1) !important; width: 5em; font-weight: bold;">2</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;"><strong>Substitution</strong></td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Replace with something less hazardous</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Use lower voltage (24V DC instead of 120V AC)</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Very Effective</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(214, 234, 248, 1) !important; width: 5em; font-weight: bold;">3</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 1) !important;"><strong>Engineering Controls</strong></td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 1) !important;">Isolate people from the hazard through design</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 1) !important;">Install machine guarding, light curtains, interlocks</td>
+<td style="text-align: left; background-color: rgba(214, 234, 248, 1) !important;">Effective</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(254, 249, 231, 1) !important; width: 5em; font-weight: bold;">4</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;"><strong>Administrative Controls</strong></td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;">Change the way people work</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;">Safety procedures, training, warning signs, lock-out/tag-out</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;">Less Effective</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important; width: 5em; font-weight: bold;">5</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;"><strong>PPE</strong></td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Protect the worker with equipment</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Safety glasses, gloves, steel-toe boots, hearing protection</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Least Effective</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Why not just rely on PPE?
+</summary>
+<p><strong>PPE (Personal Protective Equipment)</strong> is the least effective control because:</p>
+<ol type="1">
+<li><strong>It doesn’t eliminate the hazard</strong> — the danger still exists</li>
+<li><strong>It depends on human compliance</strong> — workers may forget or choose not to wear it</li>
+<li><strong>It can fail</strong> — equipment degrades, doesn’t fit properly, or is damaged</li>
+<li><strong>It’s the last line of defense</strong> — if PPE fails, the worker is exposed</li>
+</ol>
+<p><strong>Key Principle:</strong> The more we can design out hazards through engineering controls, the less we depend on human behavior to keep people safe.</p>
+<blockquote class="blockquote">
+<p>“If you have to post a warning sign, you’ve already failed at design.”</p>
+</blockquote>
+</details>
+<section id="try-it-yourself-rank-the-controls" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="try-it-yourself-rank-the-controls"><span class="header-section-number">12.2.1</span> Try it yourself: rank the controls</h3>
+<p>The Hierarchy of Controls ranks the ways of dealing with a hazard. Put the five levels in order, most effective first.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-hierarchy-order" data-tryit="order">
+<script type="application/json">{"title":"Hierarchy of Controls, most to least effective","intro":"Move each level up or down. The most effective control goes at the top.","steps":["Elimination","Substitution","Engineering Controls","Administrative Controls","PPE"]}</script>
+</div>
+<hr>
+</section>
+</section>
+<section id="physical-guarding-and-interlocks" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="physical-guarding-and-interlocks"><span class="header-section-number">12.3</span> Physical Guarding and Interlocks</h2>
+<p>Physical barriers are the most intuitive form of protection. They create a “hard” separation between the operator and moving parts, ensuring that humans cannot enter the danger zone during machine operation.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/guarding-types-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Types of Physical Guarding</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="fixed-guards" class="level3" data-number="12.3.1">
+<h3 data-number="12.3.1" class="anchored" data-anchor-id="fixed-guards"><span class="header-section-number">12.3.1</span> Fixed Guards</h3>
+<p><strong>Fixed guards</strong> are permanent barriers that require tools to remove. They are the simplest and most reliable form of protection.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Fixed Guards: Key Characteristics</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 1) !important;">Characteristic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 1) !important;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Construction</td>
+<td style="text-align: left;">Wire mesh, polycarbonate sheets, or solid metal panels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Removal</td>
+<td style="text-align: left;">Requires tools (screws, bolts) to remove</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Best Application</td>
+<td style="text-align: left;">Areas that need infrequent access for maintenance only</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Advantages</td>
+<td style="text-align: left;">Simple, reliable, low cost, no moving parts to fail</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Disadvantages</td>
+<td style="text-align: left;">Impedes visibility, slows maintenance, can be removed and not replaced</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="interlocked-guards" class="level3" data-number="12.3.2">
+<h3 data-number="12.3.2" class="anchored" data-anchor-id="interlocked-guards"><span class="header-section-number">12.3.2</span> Interlocked Guards</h3>
+<p><strong>Interlocked guards</strong> are access points equipped with sensors. When the guard is opened, the safety controller initiates a stop.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/interlock-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Interlocked Guard Operation Principle</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="stop-categories" class="level3" data-number="12.3.3">
+<h3 data-number="12.3.3" class="anchored" data-anchor-id="stop-categories"><span class="header-section-number">12.3.3</span> Stop Categories</h3>
+<p>When an interlock is triggered, the machine must stop. The <strong>stop category</strong> determines how this happens:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Machine Stop Categories (IEC 60204-1)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Category</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Method</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Application</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;"><strong>Category 0</strong></td>
+<td style="text-align: left;">Uncontrolled Stop</td>
+<td style="text-align: left;">Immediate removal of power to actuators</td>
+<td style="text-align: left;">Emergency stops, dangerous machines</td>
+<td style="text-align: left;">Press brake E-stop</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 8em; font-weight: bold;"><strong>Category 1</strong></td>
+<td style="text-align: left;">Controlled Stop</td>
+<td style="text-align: left;">Controlled deceleration, then power removed</td>
+<td style="text-align: left;">High-inertia machines, robots</td>
+<td style="text-align: left;">Industrial robot guard open</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 8em; font-weight: bold;"><strong>Category 2</strong></td>
+<td style="text-align: left;">Controlled Stop</td>
+<td style="text-align: left;">Controlled stop with power maintained</td>
+<td style="text-align: left;">Process that cannot be interrupted abruptly</td>
+<td style="text-align: left;">CNC spindle during tool change</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="trapped-key-systems-lock-outtag-out" class="level3" data-number="12.3.4">
+<h3 data-number="12.3.4" class="anchored" data-anchor-id="trapped-key-systems-lock-outtag-out"><span class="header-section-number">12.3.4</span> Trapped Key Systems (Lock-Out/Tag-Out)</h3>
+<p><strong>Trapped key systems</strong> use a mechanical sequence to ensure that a machine cannot be energized unless all access keys are returned to the control panel.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/loto-sequence-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Trapped Key System Sequence</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Case Study: The Fatal Bypass
+</summary>
+<p><strong>Incident:</strong> A maintenance worker was killed when a robot arm unexpectedly activated while he was inside a robotic cell.</p>
+<p><strong>What Happened:</strong> - The guard interlock had been bypassed with a “defeat device” (a magnet taped to fool the sensor) - Workers had bypassed the interlock because it slowed down troubleshooting - The bypass had been in place for months without management knowledge</p>
+<p><strong>Root Causes:</strong> 1. Interlock caused inconvenience during frequent troubleshooting 2. No monitoring system to detect bypasses 3. Culture that tolerated “workarounds”</p>
+<p><strong>Lessons Learned:</strong> - Design interlocks that don’t impede normal operations - Use tamper-evident or tamper-resistant devices - Regular safety audits to detect bypasses - Zero-tolerance policy for defeating safety devices</p>
+<blockquote class="blockquote">
+<p><strong>Never bypass a safety device, even temporarily.</strong></p>
+</blockquote>
+</details>
+<hr>
+</section>
+</section>
+<section id="presence-sensing-devices" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="presence-sensing-devices"><span class="header-section-number">12.4</span> Presence-Sensing Devices</h2>
+<p>Presence-sensing devices allow for a <strong>“fence-less” environment</strong>, improving visibility and ergonomics while maintaining high safety levels. They detect when a person enters a hazardous zone and trigger a machine stop.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/presence-sensing-overview-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Types of Presence-Sensing Devices</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="light-curtains" class="level3" data-number="12.4.1">
+<h3 data-number="12.4.1" class="anchored" data-anchor-id="light-curtains"><span class="header-section-number">12.4.1</span> Light Curtains</h3>
+<p><strong>Light curtains</strong> use a transmitter and receiver to create an array of infrared beams. If any beam is broken, the safety circuit is interrupted.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/light-curtain-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Light Curtain Operating Principle</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Light Curtain Specifications by Application</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 1) !important;">Parameter</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 1) !important;">Finger Detection (14mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 1) !important;">Hand Detection (30mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(243, 156, 18, 1) !important;">Body Detection (40mm+)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Resolution</td>
+<td style="text-align: left;">14mm beam spacing</td>
+<td style="text-align: left;">30mm beam spacing</td>
+<td style="text-align: left;">40mm+ beam spacing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Height</td>
+<td style="text-align: left;">150-1800mm</td>
+<td style="text-align: left;">300-1800mm</td>
+<td style="text-align: left;">900-2000mm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Range</td>
+<td style="text-align: left;">0.5-20m</td>
+<td style="text-align: left;">0.5-20m</td>
+<td style="text-align: left;">0.5-30m</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Response Time</td>
+<td style="text-align: left;">5-15ms</td>
+<td style="text-align: left;">10-20ms</td>
+<td style="text-align: left;">15-30ms</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Application</td>
+<td style="text-align: left;">Point of operation guarding</td>
+<td style="text-align: left;">Perimeter guarding</td>
+<td style="text-align: left;">Area access detection</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="laser-area-scanners" class="level3" data-number="12.4.2">
+<h3 data-number="12.4.2" class="anchored" data-anchor-id="laser-area-scanners"><span class="header-section-number">12.4.2</span> Laser Area Scanners</h3>
+<p><strong>Laser area scanners</strong> use LiDAR technology to monitor a 2D plane. They are highly flexible and allow for programmable zones.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/area-scanner-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Laser Area Scanner Zones</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Light Curtains vs. Area Scanners</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Feature</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Light Curtains</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Area Scanners</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Detection Type</td>
+<td style="text-align: left;">Vertical/Linear Barrier</td>
+<td style="text-align: left;">Horizontal/Area Coverage</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Flexibility</td>
+<td style="text-align: left;">Fixed installation</td>
+<td style="text-align: left;">Programmable zones</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Zone Configuration</td>
+<td style="text-align: left;">Single detection plane</td>
+<td style="text-align: left;">Multiple warning + safety zones</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Cost</td>
+<td style="text-align: left;">Generally lower ($1,000-5,000)</td>
+<td style="text-align: left;">Higher ($3,000-10,000)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Best Use Case</td>
+<td style="text-align: left;">Clear entry/exit points, press brakes</td>
+<td style="text-align: left;">Large open floors, AGV paths, flexible cells</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Environmental Limits</td>
+<td style="text-align: left;">Dust/debris can cause false trips</td>
+<td style="text-align: left;">More tolerant of dust, outdoor rated available</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="pressure-sensitive-safety-mats" class="level3" data-number="12.4.3">
+<h3 data-number="12.4.3" class="anchored" data-anchor-id="pressure-sensitive-safety-mats"><span class="header-section-number">12.4.3</span> Pressure-Sensitive Safety Mats</h3>
+<p><strong>Pressure-sensitive mats</strong> detect the presence of a person standing on them. They are used primarily in legacy systems or specific zones where optical sensors may be obscured.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/pressure-mat-diagram-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Pressure-Sensitive Safety Mat Construction</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+When to Use Pressure Mats vs.&nbsp;Optical Sensors
+</summary>
+<p><strong>Use Pressure Mats When:</strong> - Environment has heavy dust, smoke, or steam (blinds optical sensors) - Detection area is well-defined and doesn’t change - Workers need to stand in a specific location - Budget is limited</p>
+<p><strong>Use Optical Sensors When:</strong> - Flexibility in zone configuration is needed - Environment is relatively clean - Detection area is large or needs to change - Higher integrity level is required</p>
+<p><strong>Hybrid Approach:</strong> Many modern systems use both — area scanners for perimeter protection and pressure mats for specific danger zones near the machine.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="control-actuated-safety-devices" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="control-actuated-safety-devices"><span class="header-section-number">12.5</span> Control-Actuated Safety Devices</h2>
+<p>These devices ensure that the operator’s body—specifically their hands—is in a predetermined <strong>safe location</strong> before the machine can cycle.</p>
+<section id="two-hand-controls" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="two-hand-controls"><span class="header-section-number">12.5.1</span> Two-Hand Controls</h3>
+<p><strong>Two-hand controls</strong> are common in pressing or stamping operations. To initiate a cycle, the operator must press two buttons simultaneously.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/two-hand-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Two-Hand Control System</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Anti-Tie-Down Requirement:</strong> Modern systems require both buttons to be pressed within <strong>0.5 seconds</strong> of each other. This prevents operators from taping one button down to work with one hand.</p>
+</blockquote>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Two-Hand Control Requirements</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Requirement</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Standard Value</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Synchronous activation</td>
+<td style="text-align: left;">Within 0.5 seconds</td>
+<td style="text-align: left;">Prevents one-hand operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Continuous pressure</td>
+<td style="text-align: left;">Must be held throughout cycle</td>
+<td style="text-align: left;">Ensures hands stay on controls</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Release before restart</td>
+<td style="text-align: left;">Both must be released before next cycle</td>
+<td style="text-align: left;">Prevents automatic cycling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Button spacing</td>
+<td style="text-align: left;">Minimum 260mm (10 inches) apart</td>
+<td style="text-align: left;">Cannot press both with one hand/arm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Guards around buttons</td>
+<td style="text-align: left;">Prevent accidental activation</td>
+<td style="text-align: left;">Prevents hip, elbow, or object activation</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="enabledeadman-switches" class="level3" data-number="12.5.2">
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="enabledeadman-switches"><span class="header-section-number">12.5.2</span> Enable/Deadman Switches</h3>
+<p><strong>Enable switches</strong> (also called deadman switches) are used during <strong>Teach Mode</strong> for robotics. The operator must hold a three-position trigger in the <strong>middle</strong> position.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/enable-switch-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Three-Position Enable Switch Operation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Why Three Positions?
+</summary>
+<p>The three-position design accounts for <strong>two natural human reactions</strong> to danger:</p>
+<ol type="1">
+<li><strong>Panic (Release):</strong> When frightened, people often release what they’re holding — robot stops.</li>
+<li><strong>Startle (Squeeze):</strong> When startled, people often grip tighter — robot stops.</li>
+</ol>
+<p>Only a deliberate, controlled <strong>middle hold</strong> allows the robot to move. This is fundamental to safe teach pendant operation.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="try-it-yourself-choose-the-safeguard" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="try-it-yourself-choose-the-safeguard"><span class="header-section-number">12.6</span> Try it yourself: choose the safeguard</h2>
+<p>Eight machine situations. Decide which safeguard from the last three sections fits each one best. Ask how often someone needs access, and whether the hazard can be stopped quickly.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-safeguard-sort" data-tryit="sort">
+<script type="application/json">{"title":"Which safeguard?","intro":"Pick the safeguard that fits each situation best.","bins":["Fixed guard","Interlocked guard","Light curtain","Two-hand control"],"cards":[{"text":"A belt-and-pulley drive that is only opened for maintenance twice a year.","bin":0,"why":"No routine access is needed, so a guard that takes a tool to remove is the simplest and most reliable choice."},{"text":"The rotating coupling between a motor and a gearbox.","bin":0,"why":"Nobody needs to reach it during operation."},{"text":"A CNC lathe door that the operator opens every cycle to change the part.","bin":1,"why":"Frequent access: opening the door must stop the hazard."},{"text":"An injection molding machine gate that is opened to clear a stuck part.","bin":1,"why":"Access is needed during production, so the gate is tied into the safety circuit."},{"text":"A robot cell with a wide opening where pallets are loaded by forklift.","bin":2,"why":"The opening must stay clear for material flow, so presence sensing replaces a physical barrier."},{"text":"A press brake where the operator hand-feeds sheet into the die area all shift.","bin":2,"why":"Constant access to the point of operation, with a machine that can stop quickly."},{"text":"A small manual press where the operator loads a part and then starts the stroke.","bin":3,"why":"Both hands must be on the buttons, and so out of the die, to start the stroke."},{"text":"A riveting station started by one operator whose hands must be clear of the tooling.","bin":3,"why":"It protects the one person operating it by keeping both hands occupied."}]}</script>
+</div>
+<hr>
+</section>
+<section id="collaborative-robotics-cobots" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="collaborative-robotics-cobots"><span class="header-section-number">12.7</span> Collaborative Robotics (Cobots)</h2>
+<p><strong>Collaborative robots (cobots)</strong> represent a shift from “separation” to “collaboration.” They rely on sophisticated internal sensors rather than external cages, allowing humans and robots to work in the same space.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/cobot-comparison-guarding-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Traditional Robot vs.&nbsp;Collaborative Robot</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="collaborative-operation-methods" class="level3" data-number="12.7.1">
+<h3 data-number="12.7.1" class="anchored" data-anchor-id="collaborative-operation-methods"><span class="header-section-number">12.7.1</span> Collaborative Operation Methods</h3>
+<p>ISO 10218 and ISO/TS 15066 define <strong>four methods</strong> for safe collaborative operation:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Four Methods of Collaborative Robot Operation</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 1) !important;">Method</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 1) !important;">How It Works</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 1) !important;">Sensors Used</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(46, 204, 113, 1) !important;">Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;"><strong>Safety-Rated Monitored Stop</strong></td>
+<td style="text-align: left;">Robot stops when human enters workspace, resumes when clear</td>
+<td style="text-align: left;">Area scanners, light curtains</td>
+<td style="text-align: left;">Large robot needing occasional access</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;"><strong>Hand Guiding</strong></td>
+<td style="text-align: left;">Operator physically guides robot through motions</td>
+<td style="text-align: left;">Force/torque sensors in joints</td>
+<td style="text-align: left;">Teaching, positioning</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;"><strong>Speed and Separation Monitoring</strong></td>
+<td style="text-align: left;">Robot slows or stops based on human proximity</td>
+<td style="text-align: left;">Area scanners, radar, cameras</td>
+<td style="text-align: left;">Shared workspace with varying proximity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;"><strong>Power and Force Limiting</strong></td>
+<td style="text-align: left;">Robot limits force/power to safe levels on contact</td>
+<td style="text-align: left;">Joint torque sensors</td>
+<td style="text-align: left;">Direct contact applications</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="power-and-force-limiting-pfl" class="level3" data-number="12.7.2">
+<h3 data-number="12.7.2" class="anchored" data-anchor-id="power-and-force-limiting-pfl"><span class="header-section-number">12.7.2</span> Power and Force Limiting (PFL)</h3>
+<p>The most common cobot safety method is <strong>Power and Force Limiting</strong>. The robot detects a change in torque in its joints. If it bumps into a human, it stops before a regulated amount of force is exceeded.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>ISO/TS 15066 Biomechanical Limits (Quasi-static contact)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Body Region</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Maximum Pressure (N/cm²)</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Maximum Force (N)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Risk Level</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important; width: 12em; font-weight: bold;">Skull/Forehead</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important;">130</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important;">130</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Critical</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important; width: 12em; font-weight: bold;">Face</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important;">65</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important;">65</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Critical</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important; width: 12em; font-weight: bold;">Neck</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important;">145</td>
+<td style="text-align: right; background-color: rgba(250, 219, 216, 1) !important;">150</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Critical</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Back/Shoulders</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Chest</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 12em; font-weight: bold;">Abdomen</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 12em; font-weight: bold;">Hand/Fingers</td>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: left;">Lower</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<details>
+<summary>
+Discussion: Are Cobots Always Safe?
+</summary>
+<p><strong>Common Misconception:</strong> “Cobots are safe, so we don’t need to do a risk assessment.”</p>
+<p><strong>Reality:</strong> Cobots are <em>potentially</em> safe, but a <strong>risk assessment is always required</strong>.</p>
+<p><strong>Factors that can make a cobot unsafe:</strong></p>
+<ol type="1">
+<li><strong>End-of-arm tooling</strong> — A soft gripper is different from a sharp blade</li>
+<li><strong>Workpiece</strong> — Carrying a heavy or sharp object increases risk</li>
+<li><strong>Speed</strong> — Even force-limited robots can cause injury at high speed</li>
+<li><strong>Application</strong> — Some tasks bring humans closer to hazards</li>
+<li><strong>Environment</strong> — Slippery floors, confined spaces, etc.</li>
+</ol>
+<blockquote class="blockquote">
+<p><strong>Every collaborative application requires a documented risk assessment per ISO 12100.</strong></p>
+</blockquote>
+</details>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/u48fm391FGk" title="Collaborative Robot Safety Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+  </iframe>
+</div>
+<hr>
+</section>
+</section>
+<section id="safety-distance-calculation" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="safety-distance-calculation"><span class="header-section-number">12.8</span> Safety Distance Calculation</h2>
+<p>A safety device cannot be placed arbitrarily. It must be far enough away that the machine comes to a <strong>complete halt</strong> before the human can reach the hazard.</p>
+<section id="the-safety-distance-formula" class="level3" data-number="12.8.1">
+<h3 data-number="12.8.1" class="anchored" data-anchor-id="the-safety-distance-formula"><span class="header-section-number">12.8.1</span> The Safety Distance Formula</h3>
+<p>The minimum safety distance <span class="math inline">\(S\)</span> is calculated as:</p>
+<p><span class="math display">\[S = (K \times T) + C\]</span></p>
+<p>Where:</p>
+<ul>
+<li><strong><span class="math inline">\(K\)</span></strong>: The hand/body approach speed (standardized values)</li>
+<li><strong><span class="math inline">\(T\)</span></strong>: The total stopping time of the system (device response + machine stop time)</li>
+<li><strong><span class="math inline">\(C\)</span></strong>: The “penetration depth” (how far a hand can reach through before being detected)</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/safety-distance-viz-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Safety Distance Components</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="standard-values-for-k" class="level3" data-number="12.8.2">
+<h3 data-number="12.8.2" class="anchored" data-anchor-id="standard-values-for-k"><span class="header-section-number">12.8.2</span> Standard Values for K</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Standard Approach Speed Values (ISO 13855)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 1) !important;">Approach Type</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 1) !important;">K Value (mm/s)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(52, 152, 219, 1) !important;">When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">Hand/Arm Approach (fast)</td>
+<td style="text-align: left;">2000</td>
+<td style="text-align: left;">Close approach to point of operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">Hand/Arm Approach (normal)</td>
+<td style="text-align: left;">1600</td>
+<td style="text-align: left;">General approach to machines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em; font-weight: bold;">Walking Approach</td>
+<td style="text-align: left;">1600</td>
+<td style="text-align: left;">Area access detection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em; font-weight: bold;">Standing Reach</td>
+<td style="text-align: left;">0 (static)</td>
+<td style="text-align: left;">Worker already in position</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="penetration-depth-c" class="level3" data-number="12.8.3">
+<h3 data-number="12.8.3" class="anchored" data-anchor-id="penetration-depth-c"><span class="header-section-number">12.8.3</span> Penetration Depth (C)</h3>
+<p>The penetration depth depends on the <strong>resolution</strong> of the sensing device:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Penetration Depth Values Based on Resolution</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Resolution (mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">C Value (mm)</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(155, 89, 182, 1) !important;">Detection Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">≤14</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Finger detection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;14 to ≤20</td>
+<td style="text-align: left;">80</td>
+<td style="text-align: left;">Finger/Hand</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt;20 to ≤30</td>
+<td style="text-align: left;">130</td>
+<td style="text-align: left;">Hand detection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">&gt;30 to ≤40</td>
+<td style="text-align: left;">240</td>
+<td style="text-align: left;">Hand/Arm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt;40</td>
+<td style="text-align: left;">850</td>
+<td style="text-align: left;">Body detection</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="example-calculation" class="level3" data-number="12.8.4">
+<h3 data-number="12.8.4" class="anchored" data-anchor-id="example-calculation"><span class="header-section-number">12.8.4</span> Example Calculation</h3>
+<p>Your turn — change the approach speed, response time, or resolution below.</p>
+<script src="js/qwebr-calculator.js"></script>
+
+<div class="qwebr-calc-card qwebr-calc-task" data-qwebr-label="safety-calc-example" data-fig-width="1200" data-fig-height="700">
+  <div class="qwebr-calc-header">
+    <i class="fa-solid fa-shield-halved qwebr-calc-icon"></i>
+    <h4 class="anchored">Minimum Safety Distance Calculator</h4>
+    <span class="qwebr-calc-badge">Class task</span>
+  </div>
+  <div class="qwebr-calc-inputs">
+    <div class="qwebr-calc-row">
+      <label for="qcalc-safety-calc-example-K">Approach speed</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-safety-calc-example-K" data-var="K" value="2000" min="500" max="4000" step="100">
+        <span class="qwebr-calc-suffix">mm/s</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-safety-calc-example-T-device">Device response time</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-safety-calc-example-T-device" data-var="T_device" value="0.02" min="0.005" max="0.2" step="0.005">
+        <span class="qwebr-calc-suffix">sec</span>
+      </div>
+    </div>
+
+    <div class="qwebr-calc-row qwebr-calc-row-slider">
+      <label for="qcalc-safety-calc-example-T-machine">Machine stopping time <span class="qwebr-calc-slider-readout" data-readout-for="qcalc-safety-calc-example-T-machine" id="qcalc-safety-calc-example-T-machine-readout" data-prefix="" data-suffix="sec">0.15 sec</span></label>
+      <input type="range" class="qwebr-calc-slider" id="qcalc-safety-calc-example-T-machine" data-var="T_machine" value="0.15" min="0.02" max="0.5" step="0.01">
+    </div>
+
+    <div class="qwebr-calc-row">
+      <label for="qcalc-safety-calc-example-C">Penetration depth</label>
+      <div class="qwebr-calc-field">
+        <input type="number" id="qcalc-safety-calc-example-C" data-var="C" value="0" min="0" max="40" step="1">
+        <span class="qwebr-calc-suffix">mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="qwebr-calc-results"></div>
+  <div class="qwebr-calc-goal" data-goal-test="S <= 250 &amp;&amp; K >= 2000 &amp;&amp; T_device >= 0.020">
+    <span><span class="qwebr-calc-goal-label">Challenge:</span> The light curtain can be mounted no more than 250 mm from the hazard. Keeping K = 2000 mm/s and the 20 ms device, find a machine stopping time that makes this safe.</span>
+    <span class="qwebr-calc-goal-status" role="status" aria-live="polite"></span>
+  </div>
+  <div class="qwebr-calc-graph"></div>
+</div>
+<details class="qwebr-calc-source">
+<summary>
+Show the live R code behind this calculator
+</summary>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</details>
+<details>
+<summary>
+Practice Problem: Calculate Safety Distance
+</summary>
+<p><strong>Given:</strong> - Light curtain resolution: 30mm (hand detection) - Light curtain response time: 15ms - Machine stopping time: 200ms - Application: Operator hand approach</p>
+<p><strong>Calculate the minimum safety distance.</strong></p>
+<p><strong>Solution:</strong></p>
+<pre><code>K = 1600 mm/s (normal hand approach)
+T = 0.015 + 0.200 = 0.215 seconds
+C = 130 mm (for 30mm resolution)
+
+S = (K × T) + C
+S = (1600 × 0.215) + 130
+S = 344 + 130
+S = 474 mm (approximately 18.7 inches)</code></pre>
+<p>The light curtain must be installed at least <strong>474mm</strong> from the nearest hazard point.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="emergency-stop-e-stop-systems" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="emergency-stop-e-stop-systems"><span class="header-section-number">12.9</span> Emergency Stop (E-Stop) Systems</h2>
+<p>The <strong>Emergency Stop</strong> is the “last resort” — it is not a safety device but a <strong>complementary protective measure</strong>. It must be available to stop the machine when all other measures have failed.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/estop-design-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>E-Stop Design Requirements</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>E-Stop Requirements per IEC 60204-1</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Requirement</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(231, 76, 60, 1) !important;">Standard</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Color</td>
+<td style="text-align: left;">Red (RAL 3000 or equivalent)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Shape</td>
+<td style="text-align: left;">Mushroom head (palm or fist operated)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Background</td>
+<td style="text-align: left;">Yellow (high contrast)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Operation</td>
+<td style="text-align: left;">Self-latching (stays activated when pressed)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Reset</td>
+<td style="text-align: left;">Manual reset required (twist, pull, or key)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Accessibility</td>
+<td style="text-align: left;">Within easy reach of all operators</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 10em; font-weight: bold;">Wiring</td>
+<td style="text-align: left;">Normally closed contacts (fail-safe)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 10em; font-weight: bold;">Function</td>
+<td style="text-align: left;">Category 0 or Category 1 stop</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="e-stop-pull-cords" class="level3" data-number="12.9.1">
+<h3 data-number="12.9.1" class="anchored" data-anchor-id="e-stop-pull-cords"><span class="header-section-number">12.9.1</span> E-Stop Pull Cords</h3>
+<p>For long conveyors or machines where an operator cannot quickly reach a fixed button, <strong>pull cords</strong> provide continuous E-Stop coverage.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/pull-cord-diagram-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>E-Stop Pull Cord System</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Common E-Stop Mistakes
+</summary>
+<p><strong>Mistake 1: Using E-Stop for normal stopping</strong> - E-Stops are for emergencies only - Normal stops should use a separate control - Frequent E-Stop use causes wear and desensitizes operators</p>
+<p><strong>Mistake 2: E-Stop that doesn’t stop everything</strong> - All hazardous motion must stop - Auxiliary equipment (conveyors, feeders) often forgotten - Review entire system, not just the primary machine</p>
+<p><strong>Mistake 3: Automatic restart after E-Stop reset</strong> - Machine must NOT automatically restart when E-Stop is released - Separate “Start” action required - This prevents unexpected motion after reset</p>
+<p><strong>Mistake 4: Hidden or blocked E-Stops</strong> - E-Stops must be visible and accessible - Guard placement sometimes blocks access - Regular audits needed to ensure accessibility</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="functional-safety-standards" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="functional-safety-standards"><span class="header-section-number">12.10</span> Functional Safety Standards</h2>
+<p>Modern safety systems must meet specific <strong>performance levels</strong> to ensure reliability. Two main frameworks exist:</p>
+<section id="safety-integrity-levels-sil---iec-62061" class="level3" data-number="12.10.1">
+<h3 data-number="12.10.1" class="anchored" data-anchor-id="safety-integrity-levels-sil---iec-62061"><span class="header-section-number">12.10.1</span> Safety Integrity Levels (SIL) - IEC 62061</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Safety Integrity Levels (PFH = Probability of Dangerous Failure per Hour)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 1) !important;">SIL Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 1) !important;">PFH Range</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 1) !important;">Approximate Meaning</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(142, 68, 173, 1) !important;">Typical Application</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important; font-weight: bold;">SIL 1</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">≥10⁻⁶ to &lt;10⁻⁵</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Dangerous failure less than once per 11 years</td>
+<td style="text-align: left; background-color: rgba(213, 245, 227, 1) !important;">Low-risk tasks</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important; font-weight: bold;">SIL 2</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;">≥10⁻⁷ to &lt;10⁻⁶</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;">Dangerous failure less than once per 114 years</td>
+<td style="text-align: left; background-color: rgba(254, 249, 231, 1) !important;">Most industrial machinery</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important; font-weight: bold;">SIL 3</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">≥10⁻⁸ to &lt;10⁻⁷</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">Dangerous failure less than once per 1,140 years</td>
+<td style="text-align: left; background-color: rgba(250, 219, 216, 1) !important;">High-risk processes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="performance-levels-pl---iso-13849-1" class="level3" data-number="12.10.2">
+<h3 data-number="12.10.2" class="anchored" data-anchor-id="performance-levels-pl---iso-13849-1"><span class="header-section-number">12.10.2</span> Performance Levels (PL) - ISO 13849-1</h3>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Performance Levels per ISO 13849-1</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 1) !important;">Performance Level</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 1) !important;">PFH Range</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 1) !important;">Risk Reduction</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(22, 160, 133, 1) !important;">Equivalent SIL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">PL a</td>
+<td style="text-align: left;">≥10⁻⁵ to &lt;10⁻⁴</td>
+<td style="text-align: left;">Lowest</td>
+<td style="text-align: left;">&lt; SIL 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">PL b</td>
+<td style="text-align: left;">≥3×10⁻⁶ to &lt;10⁻⁵</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">SIL 1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">PL c</td>
+<td style="text-align: left;">≥10⁻⁶ to &lt;3×10⁻⁶</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">SIL 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">PL d</td>
+<td style="text-align: left;">≥10⁻⁷ to &lt;10⁻⁶</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">SIL 2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">PL e</td>
+<td style="text-align: left;">≥10⁻⁸ to &lt;10⁻⁷</td>
+<td style="text-align: left;">Highest</td>
+<td style="text-align: left;">SIL 3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/sil-pl-relationship-1.png" class="img-fluid figure-img" width="768"></p>
+<figcaption>Relationship Between SIL and PL</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<details>
+<summary>
+Which Standard to Use: SIL or PL?
+</summary>
+<p><strong>Use ISO 13849-1 (Performance Levels) when:</strong> - Designing safety functions for standard machinery - Using off-the-shelf safety components - Simpler systems with well-defined safety functions</p>
+<p><strong>Use IEC 62061 (SIL) when:</strong> - Complex programmable systems (safety PLCs) - Process industries - When customer or regulation specifies SIL</p>
+<p><strong>Note:</strong> Many modern systems use both standards, as they are harmonized and can be used together. The choice often depends on industry practice and customer requirements.</p>
+</details>
+<hr>
+</section>
+</section>
+<section id="risk-assessment-process" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="risk-assessment-process"><span class="header-section-number">12.11</span> Risk Assessment Process</h2>
+<p>Before selecting any safety device, a <strong>risk assessment</strong> must be performed. This is required by ISO 12100.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/risk-assessment-process-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Risk Assessment Process (ISO 12100)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="risk-estimation" class="level3" data-number="12.11.1">
+<h3 data-number="12.11.1" class="anchored" data-anchor-id="risk-estimation"><span class="header-section-number">12.11.1</span> Risk Estimation</h3>
+<p>Risk is typically estimated using three factors:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="12-Machine-Guarding-and-Safety_files/figure-html/risk-matrix-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Risk Estimation Matrix</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="try-it-yourself-find-the-required-performance-level" class="level3" data-number="12.11.2">
+<h3 data-number="12.11.2" class="anchored" data-anchor-id="try-it-yourself-find-the-required-performance-level"><span class="header-section-number">12.11.2</span> Try it yourself: find the required performance level</h3>
+<p>Risk estimation leads to a number you can design to. ISO 13849-1 turns three judgements about a hazard into a <strong>required performance level (PLr)</strong> for the safety function that guards it:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">Lower</th>
+<th style="text-align: left;">Higher</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>S</strong> — how severe is the injury?</td>
+<td style="text-align: left;">S1: slight, normally reversible</td>
+<td style="text-align: left;">S2: serious, normally irreversible, or death</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>F</strong> — how often or how long is someone exposed?</td>
+<td style="text-align: left;">F1: seldom, or for a short time</td>
+<td style="text-align: left;">F2: frequent, or for a long time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>P</strong> — can the person avoid the harm?</td>
+<td style="text-align: left;">P1: possible under specific conditions</td>
+<td style="text-align: left;">P2: scarcely possible</td>
+</tr>
+</tbody>
+</table>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">S</th>
+<th style="text-align: center;">F</th>
+<th style="text-align: center;">P</th>
+<th style="text-align: center;">PLr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">S1</td>
+<td style="text-align: center;">F1</td>
+<td style="text-align: center;">P1</td>
+<td style="text-align: center;"><strong>a</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">S1</td>
+<td style="text-align: center;">F1</td>
+<td style="text-align: center;">P2</td>
+<td style="text-align: center;"><strong>b</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">S1</td>
+<td style="text-align: center;">F2</td>
+<td style="text-align: center;">P1</td>
+<td style="text-align: center;"><strong>b</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">S1</td>
+<td style="text-align: center;">F2</td>
+<td style="text-align: center;">P2</td>
+<td style="text-align: center;"><strong>c</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">S2</td>
+<td style="text-align: center;">F1</td>
+<td style="text-align: center;">P1</td>
+<td style="text-align: center;"><strong>c</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">S2</td>
+<td style="text-align: center;">F1</td>
+<td style="text-align: center;">P2</td>
+<td style="text-align: center;"><strong>d</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">S2</td>
+<td style="text-align: center;">F2</td>
+<td style="text-align: center;">P1</td>
+<td style="text-align: center;"><strong>d</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">S2</td>
+<td style="text-align: center;">F2</td>
+<td style="text-align: center;">P2</td>
+<td style="text-align: center;"><strong>e</strong></td>
+</tr>
+</tbody>
+</table>
+<p>For each hazard below, decide S, F and P from the description, then read off the PLr.</p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-plr-sort" data-tryit="sort">
+<script type="application/json">{"title":"What performance level is required?","intro":"Decide S, F and P for each hazard, then pick the required performance level.","bins":["PL a","PL b","PL c","PL d","PL e"],"cards":[{"text":"A slow transfer conveyor can pinch a hand and leave a bruise. Someone reaches near it about once a week, and it moves slowly enough to pull away from.","bin":0,"why":"S1 (reversible), F1 (seldom), P1 (avoidable)."},{"text":"A heated platen can cause a minor burn. The operator works beside it all shift, and it is clearly marked and easy to keep clear of.","bin":1,"why":"S1 (reversible), F2 (continuous exposure), P1 (avoidable)."},{"text":"A trimming blade can cause small cuts. The operator handles parts at it all shift, and the blade is hidden behind the part, so contact cannot be anticipated.","bin":2,"why":"S1 (reversible), F2 (continuous exposure), P2 (scarcely avoidable)."},{"text":"A robot can crush a person against the fence. A technician enters about once a month for teaching, with the robot at reduced speed and an enabling switch in hand.","bin":2,"why":"S2 (irreversible), F1 (seldom), P1 (reduced speed makes escape possible)."},{"text":"A hydraulic press can amputate a hand. The die area is entered twice a week for a die change, and the ram closes too fast to react to.","bin":3,"why":"S2 (irreversible), F1 (seldom), P2 (scarcely avoidable)."},{"text":"A slow forming press can crush a hand. The operator loads it by hand every cycle, and the ram closes slowly enough for a trained operator to withdraw.","bin":3,"why":"S2 (irreversible), F2 (every cycle), P1 (avoidable)."},{"text":"A mechanical power press can amputate a hand. It is hand-fed every cycle, and the stroke takes a fraction of a second.","bin":4,"why":"S2 (irreversible), F2 (every cycle), P2 (scarcely avoidable)."}]}</script>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2" data-number="12.12">
+<h2 data-number="12.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">12.12</span> Summary</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-bordered caption-top table-sm small">
+<caption>Machine Guarding and Safety: Key Concepts Summary</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 1) !important;">Topic</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 1) !important;">Key Points</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; color: white !important; background-color: rgba(44, 62, 80, 1) !important;">Critical Remember</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 15em;"><strong>Hierarchy of Controls</strong></td>
+<td style="text-align: left;">Elimination &gt; Substitution &gt; Engineering &gt; Administrative &gt; PPE</td>
+<td style="text-align: left;">Always start at the top of the hierarchy</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;"><strong>Physical Guarding</strong></td>
+<td style="text-align: left;">Fixed guards, interlocked gates, trapped key systems</td>
+<td style="text-align: left;">Stop category (0, 1, 2) determines how machine stops</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em;"><strong>Presence Sensing</strong></td>
+<td style="text-align: left;">Light curtains, area scanners, pressure mats</td>
+<td style="text-align: left;">Resolution determines detection capability</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;"><strong>Control-Actuated Devices</strong></td>
+<td style="text-align: left;">Two-hand controls, enable/deadman switches</td>
+<td style="text-align: left;">Anti-tie-down prevents one-hand bypass</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em;"><strong>Collaborative Robots</strong></td>
+<td style="text-align: left;">PFL, speed/separation monitoring, hand guiding</td>
+<td style="text-align: left;">Risk assessment required for every cobot application</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;"><strong>Safety Distance</strong></td>
+<td style="text-align: left;">S = (K × T) + C formula for device placement</td>
+<td style="text-align: left;">Include device response AND machine stop time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 15em;"><strong>E-Stop Systems</strong></td>
+<td style="text-align: left;">Red mushroom on yellow, self-latching, manual reset</td>
+<td style="text-align: left;">E-Stop is last resort, not normal operation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 15em;"><strong>Functional Safety</strong></td>
+<td style="text-align: left;">SIL (IEC 62061) and PL (ISO 13849-1) standards</td>
+<td style="text-align: left;">Required performance level from risk assessment</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="12.13">
+<h2 data-number="12.13" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">12.13</span> Review Questions</h2>
+<details>
+<summary>
+Question 1: What are the five levels of the Hierarchy of Controls, and why is PPE the least effective?
+</summary>
+<p>The five levels are (from most to least effective):</p>
+<ol type="1">
+<li><strong>Elimination</strong> — Physically remove the hazard</li>
+<li><strong>Substitution</strong> — Replace with something less hazardous</li>
+<li><strong>Engineering Controls</strong> — Isolate people from the hazard</li>
+<li><strong>Administrative Controls</strong> — Change how people work</li>
+<li><strong>PPE</strong> — Protect the worker with equipment</li>
+</ol>
+<p><strong>PPE is least effective because:</strong> - The hazard still exists - It depends on human compliance - Equipment can fail or be worn incorrectly - It’s the last line of defense</p>
+</details>
+<p><strong>Question 2: A light curtain has a response time of 12ms and resolution of 14mm. The machine takes 180ms to stop. Calculate the minimum safety distance for hand approach.</strong></p>
+<script src="js/tryit.js"></script>
+<div class="tryit" id="tryit-review-q2" data-tryit="number">
+<script type="application/json">{"title":"Question 2: minimum safety distance","intro":"Use K = 2000 mm/s (hand approach) and C = 0 mm (14 mm resolution).","answers":[{"label":"Total stopping time T","answer":0.192,"tol":0.0005,"tolPct":null,"prefix":"","suffix":"s","hint":"Add the device response time and the machine stopping time, in seconds.","digits":3},{"label":"Minimum safety distance S","answer":384,"tol":1,"tolPct":null,"prefix":"","suffix":"mm","hint":"S = (K x T) + C","digits":0}]}</script>
+</div>
+<details class="tryit-solution">
+<summary>
+Show the worked solution
+</summary>
+<p><strong>Given:</strong> - K = 2000 mm/s (hand approach, use higher value for safety) - T = 0.012 + 0.180 = 0.192 seconds - C = 0 mm (14mm resolution)</p>
+<p><strong>Calculation:</strong> <span class="math display">\[S = (K \times T) + C\]</span> <span class="math display">\[S = (2000 \times 0.192) + 0\]</span> <span class="math display">\[S = 384 \text{ mm}\]</span></p>
+<p>The light curtain must be installed at least <strong>384mm</strong> (approximately 15 inches) from the hazard.</p>
+</details>
+<details>
+<summary>
+Question 3: Explain why a three-position enable switch stops the robot in both position 1 (released) and position 3 (fully pressed).
+</summary>
+<p>The three-position design accounts for two natural human reactions to danger:</p>
+<p><strong>Position 1 (Released):</strong> - When frightened, people often release what they’re holding (panic response) - Robot stops immediately</p>
+<p><strong>Position 3 (Fully Pressed):</strong> - When startled, people often grip tighter (startle response) - Robot stops immediately</p>
+<p><strong>Position 2 (Middle):</strong> - Only a deliberate, controlled hold allows operation - Requires conscious effort to maintain - This ensures the operator is alert and in control</p>
+</details>
+<details>
+<summary>
+Question 4: What are the four methods of collaborative robot operation according to ISO 10218?
+</summary>
+<ol type="1">
+<li><strong>Safety-Rated Monitored Stop</strong>
+<ul>
+<li>Robot stops when human enters workspace</li>
+<li>Resumes when human leaves</li>
+<li>Uses area scanners or light curtains</li>
+</ul></li>
+<li><strong>Hand Guiding</strong>
+<ul>
+<li>Operator physically guides robot</li>
+<li>Force/torque sensors enable safe teaching</li>
+</ul></li>
+<li><strong>Speed and Separation Monitoring</strong>
+<ul>
+<li>Robot speed varies based on human proximity</li>
+<li>Uses external sensors to track human position</li>
+</ul></li>
+<li><strong>Power and Force Limiting (PFL)</strong>
+<ul>
+<li>Robot limits contact force to safe levels</li>
+<li>Built-in joint torque sensors</li>
+<li>Most common cobot method</li>
+</ul></li>
+</ol>
+</details>
+<details>
+<summary>
+Question 5: What are the requirements for an E-Stop button according to IEC 60204-1?
+</summary>
+<p><strong>Physical Requirements:</strong> - <strong>Color:</strong> Red - <strong>Shape:</strong> Mushroom head (palm or fist operated) - <strong>Background:</strong> Yellow (high contrast)</p>
+<p><strong>Functional Requirements:</strong> - <strong>Self-latching:</strong> Stays activated when pressed - <strong>Manual reset:</strong> Requires deliberate action to release - <strong>Accessibility:</strong> Within easy reach of all operators - <strong>Wiring:</strong> Normally closed contacts (fail-safe) - <strong>Function:</strong> Category 0 or Category 1 stop - <strong>No automatic restart:</strong> Separate start action required after reset</p>
+</details>
+<hr>
+</section>
+<section id="references" class="level2" data-number="12.14">
+<h2 data-number="12.14" class="anchored" data-anchor-id="references"><span class="header-section-number">12.14</span> References</h2>
+<ul>
+<li>ISO 12100:2010 — Safety of machinery — General principles for design — Risk assessment and risk reduction</li>
+<li>ISO 13849-1:2015 — Safety of machinery — Safety-related parts of control systems</li>
+<li>ISO 13855:2010 — Safety of machinery — Positioning of safeguards with respect to approach speeds</li>
+<li>ISO 10218-1/2:2011 — Robots and robotic devices — Safety requirements for industrial robots</li>
+<li>ISO/TS 15066:2016 — Robots and robotic devices — Collaborative robots</li>
+<li>IEC 60204-1:2016 — Safety of machinery — Electrical equipment of machines</li>
+<li>IEC 62061:2021 — Safety of machinery — Functional safety of safety-related control systems</li>
+<li>OSHA 29 CFR 1910.212 — General requirements for all machines</li>
+<li>ANSI/RIA TR R15.306 — Task-based risk assessment methodology</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/prof-mv\.github\.io\/Process-Engineering\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
+  <div class="nav-page nav-page-previous">
+      <a href="./11-Machine-Learning.html" class="pagination-link" aria-label="AI Tools for Manufacturing Engineering">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">AI Tools for Manufacturing Engineering</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./13-TPM.html" class="pagination-link" aria-label="Total Productive Maintenance (TPM)">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Total Productive Maintenance (TPM)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Prof-MV/Process-Engineering/edit/main/12-Machine-Guarding-and-Safety.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Prof-MV/Process-Engineering/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="module">
+// Handle cell initialization initialization
+qwebrCellDetails.map(
+  (entry) => {
+    // Handle the creation of the element
+    qwebrCreateHTMLElement(entry);
+    // In the event of interactive, initialize the monaco editor
+    if (entry.options.context == EvalTypes.Interactive) {
+      qwebrCreateMonacoEditorInstance(entry);
+    }
+  }
+);
+
+// Identify non-interactive cells (in order)
+const filteredEntries = qwebrCellDetails.filter(entry => {
+  const contextOption = entry.options && entry.options.context;
+  return ['output', 'setup'].includes(contextOption) || (contextOption == "interactive" && entry.options && entry.options.autorun === 'true');
+});
+
+// Condition non-interactive cells to only be run after webR finishes its initialization.
+qwebrInstance.then(
+  async () => {
+    const nHiddenCells = filteredEntries.length;
+    var currentHiddenCell = 0;
+
+
+    // Modify button state
+    qwebrSetInteractiveButtonState(`🟡 Running hidden code cells ...`, false);
+
+    // Begin processing non-interactive sections
+    // Due to the iteration policy, we must use a for() loop.
+    // Otherwise, we would need to switch to using reduce with an empty
+    // starting promise
+    for (const entry of filteredEntries) {
+
+      // Determine cell being examined
+      currentHiddenCell = currentHiddenCell + 1;
+      const formattedMessage = `Evaluating hidden cell ${currentHiddenCell} out of ${nHiddenCells}`;
+
+      // Update the document status header
+      if (qwebrShowStartupMessage) {
+        qwebrUpdateStatusHeader(formattedMessage);
+      }
+
+      // Display the update in non-active areas
+      qwebrUpdateStatusMessage(formattedMessage);
+
+      // Extract details on the active cell
+      const evalType = entry.options.context;
+      const cellCode = entry.code;
+      const qwebrCounter = entry.id;
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        activeContainer.classList.remove('qwebr-cell-needs-evaluation');
+        activeContainer.classList.add('qwebr-cell-evaluated');
+
+        // Update status on the code cell
+        const activeStatus = document.getElementById(`qwebr-status-text-${qwebrCounter}`);
+        activeStatus.innerText = " Evaluating hidden code cell...";
+        activeStatus.classList.remove('qwebr-cell-needs-evaluation');
+        activeStatus.classList.add('qwebr-cell-evaluated');
+      }
+
+      switch (evalType) {
+        case 'interactive':
+          // TODO: Make this more standardized.
+          // At the moment, we're overriding the interactive status update by pretending its
+          // output-like. 
+          const tempOptions = entry.options;
+          tempOptions["context"] = "output"
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, tempOptions);
+          break;
+        case 'output':
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, entry.options);
+          break;
+        case 'setup':
+          const activeDiv = document.getElementById(`qwebr-noninteractive-setup-area-${qwebrCounter}`);
+
+          // Store code in history
+          qwebrLogCodeToHistory(cellCode, entry.options);
+
+          // Run the code in a non-interactive state with all output thrown away
+          await mainWebR.evalRVoid(`${cellCode}`);
+          break;
+        default: 
+          break; 
+      }
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        // Disable visibility
+        activeContainer.style.visibility = 'hidden';
+        activeContainer.style.display = 'none';
+      }
+    }
+  }
+).then(
+  () => {
+    // Release document status as ready
+
+    if (qwebrShowStartupMessage) {
+      qwebrStartupMessage.innerText = "🟢 Ready!"
+    }
+  
+    qwebrSetInteractiveButtonState(
+      `<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>`, 
+      true
+    );  
+  }
+);
+</script>
+
+
+
+
+</body></html>
