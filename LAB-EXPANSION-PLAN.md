@@ -26,7 +26,7 @@ do not relitigate them.
 
 ## 2. Why this work exists
 
-`30-Labs.qmd` defines **10 labs**; the FOL grade book budgets **12 slots**. Most
+`23-Labs.qmd` defines **10 labs**; the FOL grade book budgets **12 slots**. Most
 of the second half of the book has no lab at all — Ch 5 (Lean), Ch 10 (SPC),
 Ch 11 (MSA), Ch 12 (TPM/OEE), Ch 15 (RCA) are lecture-only. The instructor
 wants roughly three more weeks of labs.
@@ -162,13 +162,13 @@ Reorder `_quarto.yml`'s `chapters:` list to:
 
 ```
 index.qmd, 01-Types-of-Manufacturing.qmd, 02-Process-and-Design.qmd,
-08-Industrial-Robotics.qmd, 07-Ergnomics.qmd, 11-MSA.qmd,
-17-Metallurgy-Fundamentals.qmd, 18-Materials-Testing.qmd, 04-Plant-Layout.qmd,
-20-Working-with-AI.qmd, 21-Machine-Learning.qmd, 10-SPC.qmd, 12-TPM.qmd,
-06-Machine-Guarding-and-Safety.qmd, 13-Quality-Systems.qmd, 14-PFMEA.qmd,
-16-AnyLogic-Simulation.qmd, 03-Integrated-Manufacturing-Systems.qmd,
-05-Lean-Manufacturing.qmd, 15-Troubleshooting-RCA.qmd,
-09-Industrial-Automation.qmd, 30-Labs.qmd
+03-Industrial-Robotics.qmd, 04-Ergnomics.qmd, 05-MSA.qmd,
+06-Metallurgy-Fundamentals.qmd, 07-Materials-Testing.qmd, 08-Plant-Layout.qmd,
+09-Working-with-AI.qmd, 10-Machine-Learning.qmd, 15-SPC.qmd, 12-TPM.qmd,
+11-Machine-Guarding-and-Safety.qmd, 16-Quality-Systems.qmd, 13-PFMEA.qmd,
+17-AnyLogic-Simulation.qmd, 18-Integrated-Manufacturing-Systems.qmd,
+14-Lean-Manufacturing.qmd, 19-Troubleshooting-RCA.qmd,
+20-Industrial-Automation.qmd, 23-Labs.qmd
 ```
 
 **Do NOT rename the files.** Quarto cross-references are label-based
@@ -176,7 +176,7 @@ index.qmd, 01-Types-of-Manufacturing.qmd, 02-Process-and-Design.qmd,
 file; renaming churns git history for no functional gain. Add a comment at the
 top of `_quarto.yml` saying the numeric filename prefixes are historical and no
 longer indicate order — otherwise the next maintainer will "fix" it.
-(`07-Ergnomics.qmd` is misspelled in the repo. Leave it.)
+(`04-Ergnomics.qmd` is misspelled in the repo. Leave it.)
 
 ---
 
@@ -184,7 +184,7 @@ longer indicate order — otherwise the next maintainer will "fix" it.
 
 ### The eight-part lab skeleton
 
-Every lab in `30-Labs.qmd` uses this. The `###` headings intentionally
+Every lab in `23-Labs.qmd` uses this. The `###` headings intentionally
 duplicate the div banner text because PDF/EPUB do not render the CSS
 `::before` labels (documented at `style.css:96–97`). Every lab ends with `---`.
 
@@ -266,13 +266,13 @@ cells make transmission **shaft blanks**, AISI 4140, **Ø 25.000 ± 0.050 mm**.
 A kit = 1 shaft + 2 tapered roller bearings + 1 retaining ring + 1 lip seal +
 1 dowel pin + 1 desiccant sachet, in a moulded tray in a labelled carton.
 **Target 250 kits/day on one 8-hour shift.** Plant manager **Sophie Tran**.
-Full case study at `30-Labs.qmd:206` (`{#sec-precitech-case}`).
+Full case study at `23-Labs.qmd:206` (`{#sec-precitech-case}`).
 
 ---
 
 ## 7. Work items
 
-### 7.1 `30-Labs.qmd` — renumber
+### 7.1 `23-Labs.qmd` — renumber
 
 ~50 cross-references. **Ch 21 contains no lab-number references** (verified by
 grep), so the blast radius is this file plus `index.qmd`.
@@ -286,14 +286,14 @@ grep), so the blast radius is this file plus `index.qmd`.
 - Rewrite the master map in the `callout-important` at lines 39–71 to the §4
   table.
 
-### 7.2 `30-Labs.qmd` — add stable anchors
+### 7.2 `23-Labs.qmd` — add stable anchors
 
 Give **every** lab heading an explicit `{#sec-lab-<slug>}` ID. This fixes the
-fragile auto-generated link at `30-Labs.qmd:201`
+fragile auto-generated link at `23-Labs.qmd:201`
 (`#lab-3-manufacturing-facility-design-simulation-anylogic`), which breaks the
 moment a title changes, and makes future renumbering safe.
 
-### 7.3 `30-Labs.qmd` — write the four new labs
+### 7.3 `23-Labs.qmd` — write the four new labs
 
 #### Lab 4 (week 4) — Lean: VSM, Takt and Pull
 
@@ -324,7 +324,7 @@ seeded true value; students read the scale and type the value. This produces
 *genuine human reading error* against *known ground truth*, so bias, linearity,
 repeatability and reproducibility are all computable — something a physical
 Gauge R&R cannot do. It has zero third-party dependency, which directly
-addresses the risk Lab 1's own instructor notes flag at `30-Labs.qmd:181`
+addresses the risk Lab 1's own instructor notes flag at `23-Labs.qmd:181`
 ("third-party sites … the single point of failure").
 
 > **Two implementation constraints.**
@@ -339,7 +339,7 @@ addresses the risk Lab 1's own instructor notes flag at `30-Labs.qmd:181`
 2. *(35 min, 2 marks)* Each operator reads all 10 parts × 3 trials, blind, in
    randomised order → 90 readings.
 3. *(20 min, 3 marks)* Range-method Gauge R&R: EV, AV, GRR, PV, TV, %GRR, ndc.
-   **Reuse the method already coded in `11-MSA.qmd`** — cells `range-method`
+   **Reuse the method already coded in `05-MSA.qmd`** — cells `range-method`
    and `bias-calculation` (line 291).
 4. *(15 min, 1 mark)* Bias and linearity against known true values.
 5. *(25 min, 3 marks)* X-bar/R chart and Cpk on a seeded 25-subgroup dataset vs
@@ -371,7 +371,7 @@ Teams of 2–3. Sheets, draw.io, Google Colab. Data: **AI4I 2020** from UCI
    sections tying feature importances back to the fishbone.
 
 **10 marks.** This lab is also the fix for the dangling cross-reference at
-`30-Labs.qmd:1398`, which promises "stretch goals" in Ch 21 that do not exist.
+`23-Labs.qmd:1398`, which promises "stretch goals" in Ch 21 that do not exist.
 Rewrite that paragraph to point at Lab 13 and list the genuinely optional
 extras (XGBoost, SHAP, FD002 generalisation, prediction intervals).
 
@@ -399,7 +399,7 @@ take-home precedent.
 
 **10 marks.**
 
-### 7.4 `30-Labs.qmd` — fill the three `TODO` rubrics
+### 7.4 `23-Labs.qmd` — fill the three `TODO` rubrics
 
 Three rubrics are literal `TODO` placeholders. Each table below keeps the mark
 split the chapter already suggests and adds the criterion detail needed to mark
@@ -495,7 +495,7 @@ documented per-assessment policy *is* that prior consent. Replace with:
 | Pop quizzes, midterm, final | **Not permitted** | Closed-book, in-person |
 
 Also add a **one-line AI status to each lab's `.lab-overview`** in
-`30-Labs.qmd`, so a student reading a single lab sees it without going back to
+`23-Labs.qmd`, so a student reading a single lab sees it without going back to
 `index.qmd`. Mirror the table into the instructor handbook.
 
 ### 7.7 `R/make_lab_data.R` (new)
@@ -536,7 +536,7 @@ Contents, in order:
 5. **AI-use policy table** — mirrored from §7.6.
 6. **Per-lab prep matrix** — room, software, accounts, data files, printing,
    for all 14 labs. Extends the existing `.lab-shop` matrix at
-   `30-Labs.qmd:~1420` rather than replacing it.
+   `23-Labs.qmd:~1420` rather than replacing it.
 7. **Data generation** — how to run `Rscript R/make_lab_data.R`, what it emits,
    which FOL folder each file goes in.
 8. **Answer keys** — Lab 6 true caliper values and expected %GRR/ndc/Cpk;
@@ -603,7 +603,7 @@ chart's 3 % + 3 %. Only the lab count and per-lab weight change.*
 > not completing prelab material before class, not being prepared with required
 > materials, not cleaning your station, or unprofessional conduct.
 
-### 7.11 `30-Labs.qmd` — extend Teacher preparation
+### 7.11 `23-Labs.qmd` — extend Teacher preparation
 
 Rows for Labs 4, 6, 13, 14 in the per-lab matrix; add draw.io / AnyLogic Cloud
 / RoboDK for Web / UCI AI4I to the firewall-check list; note that **Lab 6 needs
@@ -613,7 +613,7 @@ no external service at all**; point at the new handbook.
 
 ## 8. Files touched
 
-**Modified:** `30-Labs.qmd` (primary), `index.qmd`, `_quarto.yml`
+**Modified:** `23-Labs.qmd` (primary), `index.qmd`, `_quarto.yml`
 
 **New:** `R/make_lab_data.R`, `instructor/_quarto.yml`,
 `instructor/instructor-guide.qmd`
@@ -629,7 +629,7 @@ cell)
 1. `quarto render` — no unresolved cross-reference warnings. Watch
    `@sec-chap-ml`, `@eq-ml-cpk` and the new `{#sec-lab-*}` anchors, and confirm
    the reordered chapter list produces the intended sidebar order.
-2. Open `docs/30-Labs.html`:
+2. Open `docs/23-Labs.html`:
    - All 14 labs render with the correct coloured banners.
    - **Lab 6's webR cells load and run.** Confirm `draw_caliper()` renders a
      readable vernier scale in the browser, that the setup-cell-first
@@ -642,7 +642,7 @@ cell)
    `quarto render` at the root does **not** pull it into the book.
 5. `Rscript R/make_lab_data.R` emits both CSVs; re-run and confirm output is
    identical (seeding works) so answer keys stay valid.
-6. `rg "Lab (1[0-9]|[1-9])" 30-Labs.qmd index.qmd` — read every hit against §4.
+6. `rg "Lab (1[0-9]|[1-9])" 23-Labs.qmd index.qmd` — read every hit against §4.
 7. `rg "%" index.qmd` — every hit must be policy text (e.g. the 25 % late
    penalty), **not** a grade weight.
 8. Every lab has an AI status in both `index.qmd`'s table and its own
@@ -659,6 +659,6 @@ cell)
 - Do not rename chapter files (§5).
 - Do not add ggplot2 or any package to the Lab 6 webR cells (§7.3).
 - Do not commit lab data files — the repo stages them on FOL (§7.7).
-- Do not put answer keys in `30-Labs.qmd`; they go in `instructor/` (§7.8).
+- Do not put answer keys in `23-Labs.qmd`; they go in `instructor/` (§7.8).
 - Do not reintroduce grade weights into the book (§7.5).
 - Do not edit `style.css` — every class needed already exists (§6).

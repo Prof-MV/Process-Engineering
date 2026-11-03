@@ -92,7 +92,7 @@ The goal is to:
 
 Decisions already made with the user:
 - Keep all three output formats: HTML (Quarto book, replaces gitbook), PDF, EPUB.
-- Keep the numbering gap between chapter 16 (`16-AnyLogic-Simulation`) and
+- Keep the numbering gap between chapter 16 (`17-AnyLogic-Simulation`) and
   chapter 20 (`20-Teaching-with-AI`) — files 17–19 are reserved for future
   chapters, not renumbered now. Note: Quarto numbers chapters by their
   position in the `_quarto.yml` chapter list, not by filename prefix, so the
@@ -121,7 +121,7 @@ it now.
   committing rendered output in the new repo at all (let CI regenerate on
   every push); saves ~30+ MB versus the current repo.
 - `.RData`, `.Rhistory`, `.Rproj.user/` — local R state, gitignore only.
-- One pre-existing broken cross-reference in `16-AnyLogic-Simulation.Rmd`:
+- One pre-existing broken cross-reference in `17-AnyLogic-Simulation.Rmd`:
   `\@ref(fig-amr-simulation)` is missing the required colon
   (`fig:amr-simulation`) — fix while converting that chapter's refs anyway.
 
@@ -199,7 +199,7 @@ it now.
 - **Phase 3: done.** All 17 chapter files renamed `NN-Name.Rmd` →
   `NN-Name.qmd` via `git mv` (content untouched — Quarto's knitr engine
   already handled `.Rmd` identically, confirmed in Phases 1–2). Converted
-  the two bookdown `\@ref()` cross-references in `16-AnyLogic-Simulation.qmd`
+  the two bookdown `\@ref()` cross-references in `17-AnyLogic-Simulation.qmd`
   to native Quarto crossref syntax: the takt-time equation moved from a
   LaTeX `equation` environment with `(\#eq:takt-17)` to
   `$$ ... $$ {#eq-takt-time}`, referenced as `@eq-takt-time`; the AMR figure
@@ -266,7 +266,7 @@ it now.
   `fig.cap=`, `kableExtra`, `ggplot2` chunks all work unchanged under Quarto's
   knitr engine).
 - Convert the two `\@ref()` bookdown cross-references in
-  `16-AnyLogic-Simulation.qmd` to Quarto's native `@fig-label`/`@eq-label`
+  `17-AnyLogic-Simulation.qmd` to Quarto's native `@fig-label`/`@eq-label`
   crossref syntax (rename the referenced chunk labels to match), fixing the
   broken one noted above.
 - Spot-render each converted chapter (`quarto render <file>.qmd`) before

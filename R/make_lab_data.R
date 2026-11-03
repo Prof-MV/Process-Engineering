@@ -82,7 +82,7 @@ cat("Wrote ", file.path(out_dir, "vsm_station_data.csv"), "\n", sep = "")
 # Virtual Caliper — Virtual caliper reference values + indicative Gauge R&R + seeded Cpk
 #
 # The caliper and the SPC data are generated INSIDE the webR cells in
-# 30-Labs.qmd; this block reproduces that seeding so the instructor has the
+# 23-Labs.qmd; this block reproduces that seeding so the instructor has the
 # ground truth for marking. It also simulates one plausible measurement run so
 # %GRR and ndc can be quoted to an order of magnitude — actual student numbers
 # depend on their reading error.

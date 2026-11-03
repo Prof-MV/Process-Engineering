@@ -1,0 +1,2346 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
+# Quality Management Systems
+```{r setup-14, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
+```
+---------------------
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Define quality management systems and explain their purpose in manufacturing
+2. Describe the structure and requirements of ISO 9001:2015
+3. Identify industry-specific quality standards (IATF 16949, AS9100, ISO 22000)
+4. Explain the documentation hierarchy and control requirements
+5. Conduct internal audits using systematic methodologies
+6. Implement effective corrective and preventive action (CAPA) processes
+7. Understand management review and continuous improvement requirements
+8. Integrate quality tools (SPC, PFMEA, MSA) within a QMS framework
+
+---
+
+## Introduction to Quality Management Systems
+
+A **Quality Management System (QMS)** is a formalized system that documents processes, procedures, and responsibilities for achieving quality policies and objectives. It coordinates and directs an organization's activities to meet customer and regulatory requirements while continuously improving effectiveness.
+
+### Why Implement a QMS?
+
+```{r qms-benefits, echo=FALSE, fig.width=12, fig.height=7}
+diagram_text_scale <- 1.5  # fit labels to their shapes
+benefits <- data.frame(
+  Category = c("Customer", "Operational", "Financial", "Strategic", "Regulatory", "Cultural"),
+  Benefit = c("Customer Satisfaction", "Process Consistency", "Cost Reduction",
+              "Market Access", "Compliance", "Employee Engagement"),
+  Description = c(
+    "Meet customer requirements consistently; reduce complaints",
+    "Standardized processes; reduced variation; repeatable results",
+    "Less scrap, rework, warranty; improved efficiency",
+    "Required for many contracts; competitive advantage",
+    "Meet regulatory requirements; reduce liability",
+    "Clear expectations; empowerment; pride in quality"
+  ),
+  Impact = c(90, 85, 80, 88, 75, 70)
+)
+
+benefits$Description <- vapply(strwrap(benefits$Description, 28, simplify = FALSE), paste, character(1), collapse = "\n")
+
+ggplot(benefits, aes(x = reorder(Category, Impact), y = Impact, fill = Category)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = paste0(Benefit, "\n", Description)),
+            hjust = 0, size = 3 * diagram_text_scale, lineheight = 0.9, nudge_y = 2) +
+  coord_flip() +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60",
+                               "#f39c12", "#9b59b6", "#1abc9c"), guide = "none") +
+  scale_y_continuous(limits = c(0, 200), expand = c(0, 0)) +
+  labs(title = "Benefits of Implementing a Quality Management System",
+       subtitle = "Key drivers for QMS adoption",
+       x = "", y = "Relative Impact Score") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    axis.text.y = element_text(size = 11 * chart_text_scale, face = "bold")
+  )
+```
+
+### The Evolution of Quality Management
+
+```{r quality-evolution, echo=FALSE}
+evolution <- data.frame(
+  Era = c("Pre-1900s", "1900-1940s", "1940-1960s", "1960-1980s", "1980-2000s", "2000s-Present"),
+  Approach = c("Craftsmanship", "Inspection", "Statistical Quality Control",
+               "Quality Assurance", "Total Quality Management", "Integrated Management"),
+  Focus = c(
+    "Individual skill; master craftsmen",
+    "Sort good from bad; end-of-line inspection",
+    "Control charts; sampling; Shewhart, Deming",
+    "Prevention; systems approach; documented procedures",
+    "Company-wide quality; customer focus; continuous improvement",
+    "Risk-based thinking; integration with business strategy; digital quality"
+  ),
+  Key_Figure = c("Guilds", "Taylor", "Shewhart, Deming", "Juran, Feigenbaum",
+                 "Crosby, ISO 9000", "ISO 9001:2015, Industry 4.0")
+)
+
+kable(evolution, col.names = c("Era", "Approach", "Focus", "Key Figures/Standards"),
+      caption = "Evolution of Quality Management") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "12%" else NULL) %>%
+  row_spec(6, background = "#d5f5e3")
+```
+
+### Quality Management Principles
+
+ISO 9000 defines seven quality management principles that form the foundation of all QMS standards:
+
+```{r qm-principles, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 1.1  # fit labels to their shapes
+principles <- data.frame(
+  principle = c("Customer\nFocus", "Leadership", "Engagement\nof People",
+                "Process\nApproach", "Improvement", "Evidence-based\nDecision Making",
+                "Relationship\nManagement"),
+  number = 1:7,
+  x = c(6, 1, 3, 5, 7, 9, 11),
+  y = c(4.2, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6)
+)
+kids <- principles[-1, ]
+
+ggplot(principles, aes(x = x, y = y)) +
+  # Customer Focus feeds every other principle; heads stop above each circle
+  geom_segment(data = kids, aes(x = 6, y = 3.6, xend = x, yend = y + 0.55),
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray45") +
+  geom_point(size = 22, color = "#3498db") +
+  geom_text(aes(label = number), color = "white", size = 9 * diagram_text_scale, fontface = "bold") +
+  geom_text(data = principles[-1, ], aes(label = principle, y = y - 0.85),
+            size = 4.5 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
+  annotate("text", x = 6.6, y = 4.2, label = "Customer\nFocus", hjust = 0,
+           size = 4.5 * diagram_text_scale, fontface = "bold", lineheight = 0.9) +
+  coord_cartesian(xlim = c(0, 12), ylim = c(0, 5)) +
+  labs(title = "Seven Quality Management Principles (ISO 9000:2015)",
+       subtitle = "Customer Focus is the primary principle; others support it") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
+  )
+```
+
+---
+
+## ISO 9001:2015 Structure
+
+**ISO 9001:2015** is the international standard for quality management systems. It uses the High-Level Structure (HLS) common to all ISO management system standards.
+
+### The Ten Clauses
+
+```{r iso-clauses, echo=FALSE, fig.width=12, fig.height=9}
+diagram_text_scale <- 1.16  # fit labels to their shapes
+clauses <- data.frame(
+  clause = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+  title = c("Scope", "Normative References", "Terms and Definitions",
+            "Context of the Organization", "Leadership", "Planning",
+            "Support", "Operation", "Performance Evaluation", "Improvement"),
+  description = c(
+    "Defines applicability of the standard",
+    "References to ISO 9000:2015",
+    "Definitions used in the standard",
+    "Understanding the organization and its context",
+    "Top management commitment and policy",
+    "Actions to address risks and opportunities",
+    "Resources, competence, awareness, communication",
+    "Operational planning and control",
+    "Monitoring, measurement, analysis, evaluation",
+    "Nonconformity, corrective action, continual improvement"
+  ),
+  type = c("Intro", "Intro", "Intro", "Core", "Core", "Core",
+           "Core", "Core", "Core", "Core"),
+  y = c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+)
+
+ggplot(clauses, aes(x = 1, y = y)) +
+  geom_tile(aes(fill = type), width = 4, height = 0.8, color = "white", linewidth = 1) +
+  geom_text(aes(x = -0.3, label = clause), fontface = "bold", size = 7 * diagram_text_scale, color = "#2c3e50") +
+  geom_text(aes(x = 0.3, label = title), fontface = "bold", size = 5.5 * diagram_text_scale, hjust = 0, color = "white") +
+  geom_text(aes(x = 2.8, label = description), size = 4.8 * diagram_text_scale, hjust = 1, color = "white") +
+  scale_fill_manual(values = c("Intro" = "#95a5a6", "Core" = "#3498db"), guide = "none") +
+  coord_cartesian(xlim = c(-1, 3.5)) +
+  labs(title = "ISO 9001:2015 Structure - The Ten Clauses",
+       subtitle = "Clauses 4-10 contain the auditable requirements") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### The Process Approach and PDCA
+
+ISO 9001:2015 emphasizes the **process approach** combined with the **Plan-Do-Check-Act (PDCA)** cycle:
+
+```{r pdca-cycle, echo=FALSE, fig.width=11, fig.height=8}
+diagram_text_scale <- 1.1  # fit labels to their shapes
+# PDCA positioned clockwise: Plan (top), Do (right), Check (bottom), Act (left).
+# Each arrow is an arc on the circle that starts and stops short of the
+# circles, so the arrow heads are visible and the direction is unambiguous.
+arc <- function(from, to, id) {
+  th <- seq(from, to, length.out = 30) * pi / 180
+  data.frame(x = 5 + 3 * cos(th), y = 5 + 3 * sin(th), id = id)
+}
+arcs <- rbind(arc(70, 20, "plan_do"), arc(-20, -70, "do_check"),
+              arc(-110, -160, "check_act"), arc(160, 110, "act_plan"))
+arc_cols <- c(plan_do = "#3498db", do_check = "#27ae60", check_act = "#f39c12", act_plan = "#e74c3c")
+
+ggplot() +
+  geom_path(data = arcs, aes(x = x, y = y, group = id, color = id),
+            linewidth = 1.6, arrow = arrow(length = unit(0.4, "cm"), type = "closed")) +
+  scale_color_manual(values = arc_cols, guide = "none") +
+
+  annotate("point", x = 5, y = 8, size = 28, color = "#3498db") +
+  annotate("text", x = 5, y = 8, label = "PLAN", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 5, y = 9.6, label = "Clause 4: Context\nClause 5: Leadership\nClause 6: Planning",
+           size = 4.5 * diagram_text_scale, hjust = 0.5, lineheight = 0.9) +
+
+  annotate("point", x = 8, y = 5, size = 28, color = "#27ae60") +
+  annotate("text", x = 8, y = 5, label = "DO", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 9.6, y = 5, label = "Clause 7: Support\nClause 8: Operation",
+           size = 4.5 * diagram_text_scale, hjust = 0, lineheight = 0.9) +
+
+  annotate("point", x = 5, y = 2, size = 28, color = "#f39c12") +
+  annotate("text", x = 5, y = 2, label = "CHECK", color = "white", fontface = "bold", size = 4.5 * diagram_text_scale) +
+  annotate("text", x = 5, y = 0.3, label = "Clause 9: Performance Evaluation",
+           size = 4.5 * diagram_text_scale, hjust = 0.5, lineheight = 0.9) +
+
+  annotate("point", x = 2, y = 5, size = 28, color = "#e74c3c") +
+  annotate("text", x = 2, y = 5, label = "ACT", color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+  annotate("text", x = 0.4, y = 5, label = "Clause 10:\nImprovement",
+           size = 4.5 * diagram_text_scale, hjust = 1, lineheight = 0.9) +
+
+  annotate("text", x = 5, y = 5, label = "QMS", fontface = "bold", size = 7 * diagram_text_scale) +
+
+  coord_cartesian(xlim = c(-3, 13), ylim = c(-0.5, 10.8)) +
+  labs(title = "PDCA Cycle and ISO 9001:2015 Clauses",
+       subtitle = "The continuous improvement cycle embedded in the standard") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(size = 12 * chart_text_scale, hjust = 0.5)
+  )
+```
+
+### Risk-Based Thinking
+
+ISO 9001:2015 introduced **risk-based thinking** throughout the QMS:
+
+```{r risk-based, echo=FALSE}
+risk_table <- data.frame(
+  Clause = c("4.1", "4.2", "6.1", "8.1", "9.1", "10.2"),
+  Requirement = c(
+    "Context of the Organization",
+    "Interested Parties",
+    "Actions to Address Risks and Opportunities",
+    "Operational Planning and Control",
+    "Monitoring and Measurement",
+    "Nonconformity and Corrective Action"
+  ),
+  Risk_Application = c(
+    "Identify internal/external issues that could affect QMS outcomes",
+    "Understand needs/expectations that could impact quality",
+    "Plan actions to address risks and opportunities; integrate into processes",
+    "Control processes considering risks identified in planning",
+    "Monitor effectiveness of actions taken to address risks",
+    "Analyze nonconformities; update risks/opportunities as needed"
+  )
+)
+
+kable(risk_table, caption = "Risk-Based Thinking in ISO 9001:2015") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL) %>%
+  column_spec(2, width = if (knitr::is_html_output()) "25%" else NULL)
+```
+
+<details><summary>**Understanding Risk-Based Thinking**</summary>
+
+**Risk-based thinking** doesn't require formal risk management (like FMEA for every process), but rather:
+
+1. **Consider risks** when designing and implementing the QMS
+2. **Preventive action** is built into the system, not a separate activity
+3. **Proportional response** - more rigorous controls for higher-risk processes
+4. **Opportunities** are also considered (not just negative risks)
+
+**Example:** A food manufacturer identifies "allergen cross-contamination" as a significant risk. Risk-based thinking leads them to:
+- Dedicated production lines for allergen-containing products
+- Enhanced cleaning verification procedures
+- Staff training on allergen awareness
+- Increased inspection frequency after changeovers
+
+The extent of controls is proportional to the risk level.
+</details>
+
+---
+
+## Industry-Specific Quality Standards
+
+Different industries have developed standards that build upon ISO 9001 with additional sector-specific requirements.
+
+### Comparison of Major Standards
+
+```{r standards-comparison, echo=FALSE, fig.width=12, fig.height=7}
+diagram_text_scale <- 1.16  # fit labels to their shapes
+standards <- data.frame(
+  Standard = c("ISO 9001:2015", "IATF 16949:2016", "AS9100D", "ISO 22000:2018"),
+  Industry = c("General", "Automotive", "Aerospace/Defense", "Food Safety"),
+  Base = c("Standalone", "ISO 9001 + Automotive", "ISO 9001 + Aerospace", "ISO 9001 + HACCP"),
+  x = c(1, 2, 3, 4),
+  y = c(1, 1, 1, 1)
+)
+
+standards$Base <- vapply(strwrap(standards$Base, 14, simplify = FALSE), paste, character(1), collapse = "\n")
+
+ggplot(standards, aes(x = x, y = y)) +
+  geom_tile(aes(fill = Standard), width = 0.9, height = 1.5, color = "white", linewidth = 2) +
+  geom_text(aes(label = Standard), fontface = "bold", size = 4 * diagram_text_scale, color = "white", vjust = -1) +
+  geom_text(aes(label = Industry), size = 5.5 * diagram_text_scale, color = "white") +
+  geom_text(aes(label = Base), size = 4.8 * diagram_text_scale, color = "white", vjust = 2, lineheight = 0.9) +
+  scale_fill_manual(values = c("#3498db", "#e74c3c", "#2c3e50", "#27ae60"), guide = "none") +
+  labs(title = "Major Quality Management System Standards",
+       subtitle = "Industry-specific standards build upon ISO 9001") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### IATF 16949:2016 (Automotive)
+
+**IATF 16949** is the automotive quality standard, required by most major OEMs (Ford, GM, Toyota, VW, etc.).
+
+```{r iatf-additions, echo=FALSE}
+iatf_requirements <- data.frame(
+  Area = c("Product Safety", "APQP/PPAP", "Control Plans", "MSA", "SPC",
+           "Supplier Quality", "Warranty Management", "Manufacturing Feasibility"),
+  ISO_9001 = c("Implied", "Not specified", "Not specified", "General requirement",
+               "General requirement", "Basic purchasing", "Complaint handling", "Review of requirements"),
+  IATF_16949 = c(
+    "Explicit requirements for product safety processes",
+    "APQP phases required; PPAP submission mandatory",
+    "Control plans required for all parts; specific format",
+    "MSA studies required per AIAG MSA manual",
+    "SPC for all special characteristics",
+    "Supplier development; second-party audits; IATF certification flow-down",
+    "NTF analysis; warranty data analysis; field return analysis",
+    "Documented manufacturing feasibility review"
+  )
+)
+
+kable(iatf_requirements, col.names = c("Requirement Area", "ISO 9001", "IATF 16949 Addition"),
+      caption = "IATF 16949 Additional Requirements Beyond ISO 9001") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
+  column_spec(2, background = "#fadbd8") %>%
+  column_spec(3, background = "#d5f5e3")
+```
+
+### Automotive Core Tools
+
+IATF 16949 requires the use of **five core tools**:
+
+```{r core-tools, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 0.78  # fit labels to their shapes
+core_tools <- data.frame(
+  tool = c("APQP", "PPAP", "FMEA", "MSA", "SPC"),
+  name = c("Advanced Product\nQuality Planning",
+           "Production Part\nApproval Process",
+           "Failure Mode &\nEffects Analysis",
+           "Measurement\nSystems Analysis",
+           "Statistical\nProcess Control"),
+  purpose = c("Plan and define quality program",
+              "Demonstrate production capability",
+              "Identify and mitigate risks",
+              "Ensure measurement validity",
+              "Monitor and control processes"),
+  x = 1:5
+)
+
+core_tools$purpose <- vapply(strwrap(core_tools$purpose, 15, simplify = FALSE), paste, character(1), collapse = "\n")
+
+ggplot(core_tools, aes(x = x, y = 1)) +
+  geom_tile(aes(fill = tool), width = 0.85, height = 1.5, color = "white", linewidth = 1.5) +
+  geom_text(aes(label = tool), fontface = "bold", size = 8 * diagram_text_scale, color = "white", vjust = -1) +
+  geom_text(aes(label = name), size = 6 * diagram_text_scale, color = "white", lineheight = 0.9) +
+  geom_text(aes(label = purpose, y = 0.6), size = 5 * diagram_text_scale, color = "white", lineheight = 0.9) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12", "#9b59b6"),
+                    guide = "none") +
+  labs(title = "AIAG Automotive Core Tools",
+       subtitle = "Five essential tools required by IATF 16949") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
+  )
+```
+
+#### APQP: Advanced Product Quality Planning
+
+**APQP** is a structured framework for developing products that ensures customer requirements are met through careful planning and defined milestones.
+
+```{r apqp-phases, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Plan & Define", detail = "Voice of customer\nBenchmarking\nProduct assumptions", color = "#3498DB"),
+    list(title = "2. Product Design", detail = "Design FMEA\nDVP&R\nPrototype build", color = "#3498DB"),
+    list(title = "3. Process Design", detail = "Process flow\nProcess FMEA\nControl plan", color = "#3498DB"),
+    list(title = "4. Product & Process Validation", detail = "Production trial run\nMSA & SPC studies\nPPAP submission", color = "#3498DB"),
+    list(title = "5. Feedback & Corrective Action", detail = "Reduced variation\nCustomer satisfaction\nLessons learned", color = "#3498DB")
+  ),
+  title = "APQP Five Phases",
+  subtitle = "Structured product development from concept to launch"
+)
+```
+
+::: {.example-box}
+**Example: New Brake Caliper Development**
+
+A Tier 1 supplier developing a new brake caliper for an OEM would follow APQP:
+
+- **Phase 1**: Gather customer requirements (stopping distance, weight limits, environmental conditions), benchmark competitor products
+- **Phase 2**: Design the caliper, create Design FMEA (what if piston seal fails?), build prototypes for testing
+- **Phase 3**: Design manufacturing process, create Process FMEA, develop control plan for machining and assembly
+- **Phase 4**: Run production trial, validate Cpk > 1.67 for critical dimensions, submit PPAP package
+- **Phase 5**: Monitor warranty returns, implement kaizen improvements, document lessons for next program
+:::
+
+#### PPAP: Production Part Approval Process
+
+**PPAP** provides evidence that the supplier understands customer requirements and can consistently produce conforming parts during actual production runs.
+
+```{r ppap-elements, echo=FALSE}
+ppap_elements <- data.frame(
+  Element = c("1. Design Records", "2. Engineering Change Documents",
+              "3. Customer Engineering Approval", "4. Design FMEA",
+              "5. Process Flow Diagram", "6. Process FMEA",
+              "7. Control Plan", "8. MSA Studies",
+              "9. Dimensional Results", "10. Material/Performance Test Results",
+              "11. Initial Process Studies (SPC)", "12. Qualified Lab Documentation",
+              "13. Appearance Approval Report", "14. Sample Production Parts",
+              "15. Master Sample", "16. Checking Aids",
+              "17. Customer-Specific Requirements", "18. Part Submission Warrant (PSW)"),
+  Description = c(
+    "Part drawings, CAD files, specifications",
+    "Documentation of any design changes since original approval",
+    "Evidence of customer sign-off on design",
+    "Risk analysis of product design failure modes",
+    "Visual representation of manufacturing steps",
+    "Risk analysis of process failure modes",
+    "Document describing controls for each process step",
+    "Gage R&R studies proving measurement system adequacy",
+    "Actual measurements vs. specifications for all dimensions",
+    "Test results for material properties and performance requirements",
+    "Cpk/Ppk studies demonstrating process capability",
+    "Scope and accreditation of testing laboratories",
+    "Required for parts with color, grain, or surface requirements",
+    "Parts from production run for customer evaluation",
+    "Retained reference sample for future comparison",
+    "Fixtures, gages, or templates used to inspect parts",
+    "OEM-specific requirements (Ford, GM, Toyota, etc.)",
+    "Summary document with supplier certification"
+  )
+)
+
+kable(ppap_elements, caption = "PPAP 18 Elements Required for Submission") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "30%" else NULL)
+```
+
+**PPAP Submission Levels:**
+
+| Level | Requirements | When Used |
+|:------|:-------------|:----------|
+| 1 | PSW only | Low-risk parts, trusted suppliers |
+| 2 | PSW + samples + limited data | Standard submission |
+| 3 | PSW + samples + complete data | Default level; new parts/suppliers |
+| 4 | PSW + other per customer direction | Customer-specified requirements |
+| 5 | PSW + samples + complete data at supplier site | Full documentation review on-site |
+
+::: {.example-box}
+**Example: Fuel Injector PPAP Submission**
+
+A supplier submitting PPAP for a new fuel injector would include:
+
+- **Dimensional results**: 100% inspection of 300 parts showing all 47 dimensions in spec
+- **MSA study**: Gage R&R < 10% for critical spray angle measurement
+- **Process capability**: Cpk = 1.89 for nozzle hole diameter (spec requires Cpk ≥ 1.67)
+- **Material certs**: Steel chemistry and hardness test results
+- **Performance tests**: Flow rate, spray pattern, durability (1 million cycles)
+- **PSW**: Signed warrant certifying all requirements met
+:::
+
+#### FMEA: Failure Mode and Effects Analysis
+
+**FMEA** is a systematic method for identifying potential failures, their causes, and effects, then prioritizing actions to reduce risk. Two types are used in automotive:
+
+- **Design FMEA (DFMEA)**: Analyzes potential failures in product design
+- **Process FMEA (PFMEA)**: Analyzes potential failures in manufacturing processes
+
+```{r fmea-structure, echo=FALSE}
+fmea_example <- data.frame(
+  Column = c("Process Step", "Potential Failure Mode", "Potential Effect(s)",
+             "Severity (S)", "Potential Cause(s)", "Occurrence (O)",
+             "Current Controls", "Detection (D)", "RPN", "Recommended Actions"),
+  Description = c(
+    "The operation being analyzed",
+    "How the process could fail to meet requirements",
+    "Impact on customer if failure occurs",
+    "1-10 rating of effect seriousness (10 = safety/regulatory)",
+    "Root cause of the failure mode",
+    "1-10 rating of cause likelihood (10 = very frequent)",
+    "Existing prevention or detection controls",
+    "1-10 rating of detection ability (10 = cannot detect)",
+    "S × O × D = Risk Priority Number",
+    "Actions to reduce S, O, or D"
+  ),
+  Example = c(
+    "Torque fastener to 25 Nm",
+    "Under-torque / Over-torque",
+    "Joint loosens in service; wheel detaches",
+    "10 (safety critical)",
+    "Worn tool, wrong program, operator error",
+    "4 (occasional occurrence)",
+    "Torque monitoring, error-proofing",
+    "3 (high detection capability)",
+    "10 × 4 × 3 = 120",
+    "Add DC torque tool with automatic reject"
+  )
+)
+
+kable(fmea_example, caption = "Process FMEA Structure and Example") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "30%" else NULL)
+```
+
+**Action Priority Based on RPN:**
+
+```{r rpn-priority, echo=FALSE, fig.width=10, fig.height=3}
+diagram_text_scale <- 0.84  # fit labels to their shapes
+rpn_data <- data.frame(
+  range = c("1-50", "51-100", "101-200", "201-1000"),
+  priority = c("Low", "Medium", "High", "Critical"),
+  action = c("Monitor", "Schedule improvement", "Priority action required", "Immediate action required"),
+  color = c("#27ae60", "#f1c40f", "#e67e22", "#e74c3c"),
+  x = 1:4
+)
+
+rpn_data$action <- vapply(strwrap(rpn_data$action, 13, simplify = FALSE), paste, character(1), collapse = "\n")
+
+ggplot(rpn_data, aes(x = x, y = 1)) +
+  geom_tile(aes(fill = color), width = 0.9, height = 1) +
+  scale_fill_identity() +
+  geom_text(aes(y = 1.32, label = paste0("RPN: ", range)), fontface = "bold",
+            color = "white", size = 6 * diagram_text_scale) +
+  geom_text(aes(y = 1.08, label = priority), color = "white", size = 8 * diagram_text_scale, fontface = "bold") +
+  geom_text(aes(y = 0.75, label = action), color = "white", size = 4.5 * diagram_text_scale, lineheight = 0.9) +
+  coord_cartesian(ylim = c(0.2, 1.8)) +
+  labs(title = "RPN-Based Action Priority") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5))
+```
+
+::: {.example-box}
+**Example: Engine Block Machining PFMEA**
+
+| Step | Failure Mode | Effect | S | Cause | O | Control | D | RPN | Action |
+|:-----|:-------------|:-------|:--|:------|:--|:--------|:--|:----|:-------|
+| Bore cylinder | Oversize bore | Piston slap, oil consumption | 7 | Tool wear | 5 | SPC chart, tool life monitor | 4 | 140 | Add in-process bore gage |
+| Hone surface | Insufficient crosshatch | Poor ring seal, oil burning | 8 | Wrong hone stones | 3 | Visual inspection | 6 | 144 | Add surface roughness measurement |
+| Wash block | Residual chips | Engine seizure | 9 | Blocked nozzle | 4 | Cleanliness spec check | 5 | 180 | Add particle counter, automated flush verification |
+:::
+
+#### MSA: Measurement Systems Analysis
+
+**MSA** ensures that measurement systems provide reliable data for decision-making. Poor measurement systems can cause good parts to be rejected (false rejects) or bad parts to be accepted (false accepts).
+
+```{r msa-components, echo=FALSE, fig.width=12, fig.height=5}
+diagram_text_scale <- 1.22  # fit labels to their shapes
+msa_data <- data.frame(
+  component = c("Bias", "Linearity", "Stability", "Repeatability", "Reproducibility"),
+  definition = c("Difference between\nmeasured and true value",
+                 "Bias change across\nmeasurement range",
+                 "Bias change\nover time",
+                 "Variation when same\noperator re-measures",
+                 "Variation between\ndifferent operators"),
+  icon = c("→|←", "／", "～", "○○○", "👤👤👤"),
+  x = 1:5,
+  y = rep(1, 5)
+)
+
+ggplot(msa_data, aes(x = x, y = y)) +
+  geom_tile(fill = "#3498db", width = 0.85, height = 1.4, color = "white", linewidth = 2) +
+  geom_text(aes(label = component), color = "white", fontface = "bold", size = 7 * diagram_text_scale, vjust = -0.5) +
+  geom_text(aes(label = definition), color = "white", size = 5 * diagram_text_scale, vjust = 1.2, lineheight = 0.85) +
+  labs(title = "Five Components of Measurement System Variation",
+       subtitle = "All must be assessed for a complete MSA study") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
+  )
+```
+
+**Gage R&R Study Acceptance Criteria:**
+
+| %GRR | Interpretation | Action |
+|:-----|:---------------|:-------|
+| < 10% | Excellent | Acceptable for all applications |
+| 10-30% | Acceptable | May be acceptable depending on application, cost of gage, cost of repairs |
+| > 30% | Unacceptable | Measurement system must be improved; cannot make reliable decisions |
+
+**Number of Distinct Categories (ndc):** Should be ≥ 5 to adequately discriminate between parts.
+
+::: {.example-box}
+**Example: Gage R&R Study for Shaft Diameter**
+
+A supplier conducts a Gage R&R study for a micrometer used to measure shaft diameter (spec: 25.00 ± 0.05 mm):
+
+**Study Setup:**
+- 3 operators measure 10 parts, 3 times each = 90 measurements
+- Parts selected to represent the range of production variation
+
+**Results:**
+| Source | Variance | % Contribution |
+|:-------|:---------|:---------------|
+| Part-to-Part | 0.000156 | 87.2% |
+| Repeatability | 0.000018 | 10.1% |
+| Reproducibility | 0.000005 | 2.7% |
+| **Total Gage R&R** | **0.000023** | **12.8%** |
+
+**Conclusion:** %GRR = 12.8% is acceptable (between 10-30%). ndc = 7 (≥5 required). The measurement system is adequate for this application.
+:::
+
+#### SPC: Statistical Process Control
+
+**SPC** uses control charts to monitor process stability and capability, distinguishing between common cause variation (inherent to the process) and special cause variation (assignable causes requiring investigation).
+
+```{r spc-chart-example, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 1.22  # fit labels to their shapes
+set.seed(42)
+n <- 30
+subgroup_size <- 5
+
+# Generate simulated data with one out-of-control point
+xbar_data <- data.frame(
+  subgroup = 1:n,
+  xbar = c(rnorm(15, mean = 50, sd = 0.3),
+           51.2,  # Out of control point
+           rnorm(14, mean = 50, sd = 0.3))
+)
+
+ucl <- 50 + 3 * 0.3 / sqrt(subgroup_size)
+lcl <- 50 - 3 * 0.3 / sqrt(subgroup_size)
+cl <- 50
+
+xbar_data$status <- ifelse(xbar_data$xbar > ucl | xbar_data$xbar < lcl, "Out of Control", "In Control")
+
+ggplot(xbar_data, aes(x = subgroup, y = xbar)) +
+  geom_hline(yintercept = ucl, color = "#e74c3c", linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = lcl, color = "#e74c3c", linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = cl, color = "#27ae60", linewidth = 1) +
+  geom_line(color = "#3498db", linewidth = 0.8) +
+  geom_point(aes(color = status), size = 4) +
+  scale_color_manual(values = c("In Control" = "#3498db", "Out of Control" = "#e74c3c")) +
+  annotate("text", x = 31, y = ucl, label = paste0("UCL = ", round(ucl, 2)), hjust = 0, vjust = -0.5, size = 5 * diagram_text_scale) +
+  annotate("text", x = 31, y = lcl, label = paste0("LCL = ", round(lcl, 2)), hjust = 0, vjust = -0.5, size = 5 * diagram_text_scale) +
+  annotate("text", x = 31, y = cl, label = paste0("CL = ", cl), hjust = 0, vjust = -0.5, size = 5 * diagram_text_scale) +
+  annotate("text", x = 17.5, y = 51.1, hjust = 0, label = "Special cause!\nInvestigate", color = "#e74c3c",
+           fontface = "bold", size = 6 * diagram_text_scale) +
+  scale_x_continuous(breaks = seq(0, 30, 5), limits = c(0, 35)) +
+  labs(title = "X-bar Control Chart Example",
+       subtitle = "Monitoring process mean with subgroups of n=5",
+       x = "Subgroup Number", y = "Subgroup Mean (mm)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale),
+    plot.subtitle = element_text(size = 12 * chart_text_scale),
+    axis.title = element_text(size = 12 * chart_text_scale),
+    axis.text = element_text(size = 11 * chart_text_scale),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 11 * chart_text_scale)
+  )
+```
+
+**Common Control Chart Types:**
+
+| Chart | Data Type | Monitors | When to Use |
+|:------|:----------|:---------|:------------|
+| X-bar & R | Variable, subgroups | Mean and range | Most common; subgroups of 2-10 |
+| X-bar & S | Variable, subgroups | Mean and std dev | Subgroups > 10 |
+| I-MR | Variable, individuals | Individual values and moving range | Slow processes, destructive testing |
+| p-chart | Attribute | Proportion defective | Variable sample sizes |
+| np-chart | Attribute | Number defective | Fixed sample sizes |
+| c-chart | Attribute | Count of defects | Fixed opportunity area |
+| u-chart | Attribute | Defects per unit | Variable opportunity area |
+
+**Process Capability Indices:**
+
+$$C_p = \frac{USL - LSL}{6\sigma}$$
+$$C_{pk} = \min\left(\frac{USL - \bar{x}}{3\sigma}, \frac{\bar{x} - LSL}{3\sigma}\right)$$
+
+| Cpk Value | Interpretation | PPM Defective |
+|:----------|:---------------|:--------------|
+| < 1.00 | Not capable | > 2,700 |
+| 1.00 - 1.33 | Marginally capable | 64 - 2,700 |
+| 1.33 - 1.67 | Capable | 0.6 - 64 |
+| ≥ 1.67 | Highly capable (IATF requirement) | < 0.6 |
+
+::: {.example-box}
+**Example: SPC for Injection Molded Connector**
+
+A supplier monitors critical dimensions on an injection molded electrical connector:
+
+**Process Setup:**
+- Critical dimension: Pin spacing = 2.54 ± 0.08 mm
+- Sample 5 parts every 30 minutes
+- X-bar and R charts maintained at the press
+
+**Results over one shift:**
+- Process mean (X-double-bar) = 2.539 mm
+- Average range (R-bar) = 0.024 mm
+- Estimated σ = R-bar / d2 = 0.024 / 2.326 = 0.0103 mm
+
+**Capability:**
+- Cp = (2.62 - 2.46) / (6 × 0.0103) = 2.59
+- Cpk = min[(2.62 - 2.539)/(3 × 0.0103), (2.539 - 2.46)/(3 × 0.0103)] = min[2.62, 2.56] = **2.56**
+
+**Conclusion:** Cpk = 2.56 exceeds IATF requirement of 1.67. Process is highly capable.
+:::
+
+### AS9100D (Aerospace/Defense)
+
+**AS9100D** adds aerospace-specific requirements to ISO 9001:
+
+```{r as9100-additions, echo=FALSE}
+as9100_req <- data.frame(
+  Area = c("Configuration Management", "First Article Inspection",
+           "Counterfeit Parts Prevention", "Special Processes",
+           "Product Safety", "Risk Management", "Human Factors"),
+  Requirement = c(
+    "Control product configuration throughout lifecycle; change management",
+    "FAI per AS9102; documented verification of first production parts",
+    "Controls to prevent counterfeit parts entering supply chain",
+    "NADCAP accreditation for special processes (welding, heat treat, NDT)",
+    "Product safety requirements; reporting of unsafe conditions",
+    "Explicit risk management process (often using AS/NZS 4360 or similar)",
+    "Consideration of human factors in process design"
+  )
+)
+
+kable(as9100_req, caption = "AS9100D Key Additional Requirements") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "25%" else NULL)
+```
+
+### ISO 22000:2018 (Food Safety)
+
+**ISO 22000** integrates quality management with **HACCP** (Hazard Analysis Critical Control Points):
+
+```{r iso22000-structure, echo=FALSE}
+iso22000_elements <- data.frame(
+  Element = c("Prerequisite Programs (PRPs)", "Operational PRPs (OPRPs)",
+              "HACCP Plan", "Traceability", "Emergency Preparedness",
+              "Validation and Verification"),
+  Description = c(
+    "Basic hygiene conditions: cleaning, pest control, personnel hygiene, facility design",
+    "PRPs essential to control specific identified hazards",
+    "Critical Control Points (CCPs) for significant hazards; critical limits; monitoring",
+    "One-step-back, one-step-forward traceability; recall procedures",
+    "Procedures for food safety emergencies; recall/withdrawal",
+    "Validate control measures; verify HACCP plan effectiveness"
+  ),
+  Example = c(
+    "Sanitation schedule, hand washing stations, pest control contract",
+    "Metal detector for physical hazard control",
+    "Pasteurization temperature ≥72°C for 15 seconds",
+    "Lot coding, supplier records, distribution records",
+    "Product recall procedure, mock recall exercises",
+    "Challenge studies, environmental monitoring, internal audits"
+  )
+)
+
+kable(iso22000_elements, caption = "ISO 22000 Food Safety Management Elements") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "22%" else NULL)
+```
+
+---
+
+## Documentation Requirements
+
+A QMS requires documented information to ensure consistency, provide evidence, and enable improvement.
+
+### Documentation Hierarchy
+
+```{r doc-hierarchy, echo=FALSE, fig.width=12, fig.height=9}
+diagram_text_scale <- 0.78  # fit labels to their shapes
+ggplot() +
+  # Level 1 - Policy
+  annotate("polygon", x = c(5, 3, 7), y = c(7, 5.5, 5.5),
+           fill = "#e74c3c", color = "black") +
+  annotate("text", x = 5, y = 6.2, label = "Level 1\nQuality Policy\n& Objectives",
+           color = "white", fontface = "bold", size = 6 * diagram_text_scale, lineheight = 0.9) +
+
+  # Level 2 - Manual/Procedures
+  annotate("polygon", x = c(5, 2, 8), y = c(5.3, 3.5, 3.5),
+           fill = "#f39c12", color = "black") +
+  annotate("text", x = 5, y = 4.3, label = "Level 2\nQuality Manual &\nProcedures",
+           color = "white", fontface = "bold", size = 5 * diagram_text_scale, lineheight = 0.9) +
+
+  # Level 3 - Work Instructions
+  annotate("polygon", x = c(5, 1, 9), y = c(3.3, 1.5, 1.5),
+           fill = "#3498db", color = "black") +
+  annotate("text", x = 5, y = 2.3, label = "Level 3\nWork Instructions,\nSOPs, Specifications",
+           color = "white", fontface = "bold", size = 5 * diagram_text_scale, lineheight = 0.9) +
+
+  # Level 4 - Records
+  annotate("rect", xmin = 0.5, xmax = 9.5, ymin = 0.3, ymax = 1.3,
+           fill = "#27ae60", color = "black") +
+  annotate("text", x = 5, y = 0.8, label = "Level 4: Records & Forms (evidence that we did it)",
+           color = "white", fontface = "bold", size = 5 * diagram_text_scale) +
+
+  # Examples on the right
+  annotate("text", x = 9.8, y = 6.2, label = "• Quality Policy statement\n• Quality objectives",
+           hjust = 0, size = 5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 9.8, y = 4.3, label = "• Document control procedure\n• Corrective action procedure\n• Internal audit procedure",
+           hjust = 0, size = 5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 9.8, y = 2.3, label = "• Setup instructions\n• Inspection checklists\n• Calibration procedures",
+           hjust = 0, size = 5 * diagram_text_scale, lineheight = 0.9) +
+  annotate("text", x = 9.8, y = 0.8, label = "• Inspection records\n• Training records\n• Audit reports",
+           hjust = 0, size = 5 * diagram_text_scale) +
+
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, 7.5)) +
+  labs(title = "Quality Documentation Hierarchy",
+       subtitle = "From policy (strategic) to records (evidence)") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
+  )
+```
+
+### Document Control Requirements
+
+```{r doc-control, echo=FALSE}
+doc_control <- data.frame(
+  Requirement = c("Approval", "Review & Update", "Identification",
+                  "Availability", "Protection", "Obsolete Control",
+                  "External Documents", "Record Retention"),
+  Description = c(
+    "Documents reviewed and approved for adequacy before issue",
+    "Reviewed, updated as necessary, and re-approved",
+    "Identified with title, date, revision, author",
+    "Relevant versions available at points of use",
+    "Protected from loss, damage, unauthorized changes",
+    "Obsolete documents identified and prevented from unintended use",
+    "External documents identified and distribution controlled",
+    "Records retained for specified periods; protected; retrievable"
+  ),
+  Implementation = c(
+    "Approval signatures or electronic workflow",
+    "Periodic review schedule; change request process",
+    "Document numbering system; revision control",
+    "Controlled copies at workstations; electronic access",
+    "Backup systems; access controls; original storage",
+    "Stamp 'OBSOLETE'; remove from use; archive",
+    "List of external documents; master copy control",
+    "Retention matrix; secure storage; indexing"
+  )
+)
+
+kable(doc_control, caption = "Document Control Requirements (ISO 9001 Clause 7.5)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
+```
+
+### Documented Information Required by ISO 9001:2015
+
+```{r mandatory-docs, echo=FALSE}
+mandatory <- data.frame(
+  Type = c(rep("Documents (shall be maintained)", 7),
+           rep("Records (shall be retained)", 10)),
+  Clause = c("4.3", "5.2", "6.2", "7.1.5", "7.2", "8.1", "8.5.1",
+             "7.1.5.1", "7.2", "8.2.3.2", "8.3.3", "8.3.4", "8.3.5", "8.3.6",
+             "8.5.2", "8.6", "9.1.1"),
+  Requirement = c(
+    "Scope of the QMS",
+    "Quality policy",
+    "Quality objectives",
+    "Monitoring and measuring resources (calibration)",
+    "Evidence of competence",
+    "Evidence of conformity to processes",
+    "Controlled conditions for production",
+    "Calibration/verification results",
+    "Training records",
+    "Results of review of requirements",
+    "Design and development inputs",
+    "Design and development controls",
+    "Design and development outputs",
+    "Design and development changes",
+    "Traceability requirements",
+    "Release of products/services",
+    "Results of monitoring and measurement"
+  )
+)
+
+kable(mandatory, caption = "Documented Information Required by ISO 9001:2015") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "25%" else NULL) %>%
+  pack_rows("Documents (shall be maintained)", 1, 7, background = "#ebf5fb") %>%
+  pack_rows("Records (shall be retained)", 8, 17, background = "#eafaf1")
+```
+
+---
+
+## Internal Auditing
+
+**Internal audits** are systematic, independent evaluations of the QMS to determine if it conforms to requirements and is effectively implemented.
+
+### The Audit Process
+
+```{r audit-process, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Planning", detail = "Schedule audits; assign auditors", color = "#3498DB"),
+    list(title = "2. Preparation", detail = "Review documents; prepare checklist", color = "#3498DB"),
+    list(title = "3. Opening Meeting", detail = "Explain purpose, scope, methods", color = "#3498DB"),
+    list(title = "4. Audit Execution", detail = "Collect evidence; interview; observe", color = "#3498DB"),
+    list(title = "5. Closing Meeting", detail = "Present findings; discuss", color = "#3498DB"),
+    list(title = "6. Reporting", detail = "Issue audit report", color = "#3498DB"),
+    list(title = "7. Follow-up", detail = "Verify corrective actions", color = "#3498DB")
+  ),
+  title = "Internal Audit Process Flow",
+  subtitle = "Systematic approach to evaluating QMS effectiveness",
+  per_row = 4
+)
+```
+
+### Audit Checklist Example
+
+```{r audit-checklist, echo=FALSE}
+checklist <- data.frame(
+  Clause = c("7.1.5", "7.1.5", "7.1.5", "7.1.5", "7.1.5.2"),
+  Requirement = c(
+    "Monitoring and measuring resources suitable for the type of activities",
+    "Resources maintained to ensure continued fitness for purpose",
+    "Documented information on fitness for purpose retained",
+    "Measuring equipment identified to determine status",
+    "Measurement traceability when required"
+  ),
+  Question = c(
+    "How do you determine what measuring equipment is needed?",
+    "What maintenance is performed on measuring equipment?",
+    "Can you show me calibration records for this micrometer?",
+    "How can I tell if this gauge is currently calibrated?",
+    "What standards are these gauges calibrated against?"
+  ),
+  Evidence = c("Gauge selection procedure", "PM records", "Calibration certificate",
+               "Calibration stickers/tags", "Traceability certificates")
+)
+
+kable(checklist, caption = "Sample Audit Checklist: Clause 7.1.5 Monitoring and Measuring Resources") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "8%" else NULL)
+```
+
+### Types of Audit Findings
+
+```{r finding-types, echo=FALSE}
+findings <- data.frame(
+  Type = c("Major Nonconformity", "Minor Nonconformity", "Observation",
+           "Opportunity for Improvement"),
+  Definition = c(
+    "Absence or total breakdown of a system; significant risk to product/customer",
+    "Single lapse or isolated incident; system exists but not fully effective",
+    "Weakness that could lead to nonconformity if not addressed",
+    "Suggestion for enhancement; not a nonconformity"
+  ),
+  Example = c(
+    "No calibration program exists; all gauges are uncontrolled",
+    "3 of 50 gauges found past due for calibration",
+    "Calibration procedure doesn't specify what to do if gauge fails",
+    "Consider using electronic calibration records for faster retrieval"
+  ),
+  Action_Required = c(
+    "Immediate corrective action; root cause analysis; may affect certification",
+    "Corrective action required; typically 30-90 days",
+    "No formal corrective action; monitor situation",
+    "Consider for improvement; no requirement"
+  )
+)
+
+kable(findings, col.names = c("Finding Type", "Definition", "Example", "Action Required"),
+      caption = "Types of Audit Findings") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
+  row_spec(1, background = "#f8d7da") %>%
+  row_spec(2, background = "#fff3cd") %>%
+  row_spec(3, background = "#d1ecf1") %>%
+  row_spec(4, background = "#d4edda")
+```
+
+#### Try it yourself: grade the finding
+
+You are closing out an internal audit. Grade each of these findings.
+
+```{r tryit-finding-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "finding-sort",
+  title = "How serious is the finding?",
+  bins = c("Major Nonconformity", "Minor Nonconformity", "Opportunity for Improvement"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "There is no calibration system at all; none of the gauges on the floor has a record.",
+  "Major Nonconformity", "A required process is absent, so the system cannot assure product quality.",
+  "Nonconforming product was shipped to the customer because the final inspection step was skipped for a week.",
+  "Major Nonconformity", "A breakdown of a control that let bad product reach the customer.",
+  "No internal audits have been carried out for two years.",
+  "Major Nonconformity", "A complete failure to meet a requirement of the standard.",
+  "One of forty training records sampled is missing a signature.",
+  "Minor Nonconformity", "An isolated lapse in a system that otherwise works.",
+  "One torque wrench out of thirty is a week past its calibration due date.",
+  "Minor Nonconformity", "A single lapse; the calibration system itself is in place and effective.",
+  "An obsolete revision of one work instruction is found at a single station.",
+  "Minor Nonconformity", "A document-control slip that is not systemic.",
+  "The requirement is met, but the paper checklist could be replaced by a tablet form to save time.",
+  "Opportunity for Improvement", "Nothing is nonconforming; this is a suggestion.",
+  "Gauges are stored correctly, but a shadow board would make a missing one easier to spot.",
+  "Opportunity for Improvement", "Conforming today, with a better practice available."
+  ),
+  intro = "Grade each audit finding."
+)
+```
+
+### Auditor Competence
+
+```{r auditor-competence, echo=FALSE}
+auditor_skills <- data.frame(
+  Competency = c("Knowledge of Standards", "Audit Techniques", "Industry Knowledge",
+                 "Communication Skills", "Objectivity", "Professional Judgment"),
+  Description = c(
+    "Understanding of ISO 9001 and applicable industry standards",
+    "Planning, interviewing, evidence collection, reporting",
+    "Understanding of processes, products, and industry practices",
+    "Active listening, clear questioning, professional writing",
+    "Independence from area being audited; impartial",
+    "Ability to evaluate significance of findings"
+  ),
+  How_Developed = c(
+    "Training courses; self-study; certification (CQA, Lead Auditor)",
+    "Auditor training; shadowing experienced auditors",
+    "Work experience; process knowledge; technical training",
+    "Practice; feedback; soft skills training",
+    "Audit program design; rotation of assignments",
+    "Experience; mentoring; calibration with other auditors"
+  )
+)
+
+kable(auditor_skills, caption = "Internal Auditor Competency Requirements") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
+```
+
+---
+
+## Corrective and Preventive Action (CAPA)
+
+**Corrective action** eliminates the cause of a detected nonconformity to prevent recurrence. **Preventive action** eliminates the cause of a potential nonconformity to prevent occurrence.
+
+### The CAPA Process
+
+```{r capa-process, echo=FALSE, results="asis"}
+flow_diagram(
+  steps = list(
+    list(title = "1. Identification", detail = "Identify the nonconformity or potential issue", color = "#27AE60"),
+    list(title = "2. Evaluation", detail = "Assess significance; containment if needed", color = "#2AAB6B"),
+    list(title = "3. Investigation", detail = "Gather data and evidence", color = "#2FA77A"),
+    list(title = "4. Root Cause", detail = "Determine root cause(s) using RCA tools", color = "#34A38A"),
+    list(title = "5. Action Plan", detail = "Define corrective / preventive actions", color = "#329FA0"),
+    list(title = "6. Implementation", detail = "Execute action plan; assign responsibility", color = "#3199B8"),
+    list(title = "7. Verification", detail = "Verify actions completed and effective", color = "#3296CB"),
+    list(title = "8. Closure", detail = "Document and close; share lessons learned", color = "#3498DB")
+  ),
+  title = "CAPA Process Flow",
+  subtitle = "Eight-step process for effective corrective and preventive action",
+  per_row = 4
+)
+```
+
+#### Step 1: Identification
+
+The CAPA process begins when a nonconformity or potential problem is identified. Sources include:
+
+```{r capa-sources, echo=FALSE}
+capa_sources <- data.frame(
+  Source = c("Customer Complaints", "Internal Audits", "Process Monitoring",
+             "Inspection/Testing", "Supplier Issues", "Employee Reports",
+             "Management Review", "External Audits"),
+  Description = c(
+    "Product returns, warranty claims, customer feedback",
+    "Nonconformities found during scheduled internal audits",
+    "SPC out-of-control conditions, trend analysis",
+    "Failed inspections, test failures, rejected lots",
+    "Incoming inspection failures, supplier audit findings",
+    "Near-misses, safety concerns, improvement suggestions",
+    "Issues identified during management review meetings",
+    "Findings from certification body or customer audits"
+  ),
+  Priority = c("High", "Medium", "Medium", "High", "Medium", "Low-Medium", "Medium", "High")
+)
+
+kable(capa_sources, caption = "Common CAPA Initiation Sources") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL) %>%
+  column_spec(3, width = if (knitr::is_html_output()) "12%" else NULL)
+```
+
+#### Step 2: Evaluation
+
+Evaluate the significance of the issue to determine the appropriate response level:
+
+**Evaluation Criteria:**
+
+| Factor | Questions to Consider |
+|:-------|:----------------------|
+| **Safety** | Could this harm people or the environment? |
+| **Customer Impact** | How many customers affected? Severity of impact? |
+| **Regulatory** | Does this violate regulations or standards? |
+| **Financial** | What is the cost of the problem? Potential liability? |
+| **Frequency** | Is this a one-time event or recurring pattern? |
+| **Detection** | How was it found? Could others exist undetected? |
+
+**Containment Actions** - Immediate actions to limit the impact while the investigation proceeds:
+
+- Quarantine suspect product
+- Sort and inspect inventory
+- Notify affected customers
+- Implement temporary controls
+- Stop shipments if necessary
+
+::: {.example-box}
+**Example: Evaluation of Dimensional Nonconformity**
+
+A batch of machined shafts is found with diameter 0.02 mm oversize:
+
+- **Safety**: Low - not a safety-critical dimension
+- **Customer Impact**: Medium - may cause assembly issues
+- **Regulatory**: None
+- **Financial**: 500 parts × $15/part = $7,500 potential scrap
+- **Containment**: Quarantine batch, 100% inspection of last 3 lots, notify customer
+
+**Decision**: Proceed with formal CAPA (cost exceeds $5,000 threshold)
+:::
+
+#### Step 3: Investigation
+
+Gather all relevant data and evidence to understand what happened:
+
+**Investigation Activities:**
+
+- **Review documentation**: Work instructions, control plans, inspection records
+- **Examine physical evidence**: Failed parts, raw materials, tooling
+- **Interview personnel**: Operators, inspectors, supervisors
+- **Analyze data**: SPC charts, measurement data, process parameters
+- **Timeline reconstruction**: When did the problem start? What changed?
+
+```{r investigation-data, echo=FALSE}
+investigation <- data.frame(
+  Data_Type = c("Process Data", "Material Data", "Equipment Data",
+                "Personnel Data", "Environmental Data"),
+  Examples = c(
+    "Temperatures, pressures, speeds, feeds, cycle times",
+    "Lot numbers, certificates, incoming inspection results",
+    "Maintenance records, calibration status, tool wear",
+    "Training records, shift assignments, experience level",
+    "Temperature, humidity, contamination levels"
+  ),
+  Collection_Method = c(
+    "Data historians, SPC software, log sheets",
+    "Traceability system, supplier records",
+    "CMMS, calibration database",
+    "HR system, training matrix",
+    "Environmental monitoring system"
+  )
+)
+
+kable(investigation, col.names = c("Data Type", "Examples", "Collection Method"),
+      caption = "Data Collection for CAPA Investigation") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
+```
+
+#### Step 4: Root Cause Analysis
+
+Determine the fundamental cause(s) of the problem using structured analysis tools:
+
+```{r rca-tools, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 1.22  # fit labels to their shapes
+rca_tools <- data.frame(
+  tool = c("5 Whys", "Fishbone\n(Ishikawa)", "Fault Tree\nAnalysis", "Is/Is Not\nAnalysis", "Pareto\nAnalysis"),
+  best_for = c("Simple problems;\nquick analysis",
+               "Brainstorming;\nteam analysis",
+               "Complex systems;\nsafety issues",
+               "Narrowing focus;\ndefining scope",
+               "Prioritizing;\nmultiple causes"),
+  approach = c("Ask 'Why?' 5 times\nto drill down",
+               "Categorize causes:\n6Ms framework",
+               "Top-down logic\ndiagram",
+               "Compare what is\nvs. what isn't",
+               "80/20 rule:\nfocus on vital few"),
+  x = 1:5
+)
+
+ggplot(rca_tools, aes(x = x, y = 1)) +
+  geom_tile(fill = "#9b59b6", width = 0.9, height = 1.6, color = "white", linewidth = 2) +
+  geom_text(aes(label = tool), color = "white", fontface = "bold", size = 6 * diagram_text_scale, vjust = -0.6, lineheight = 0.85) +
+  geom_text(aes(label = best_for), color = "white", size = 5 * diagram_text_scale, vjust = 0.8, lineheight = 0.85) +
+  labs(title = "Root Cause Analysis Tools",
+       subtitle = "Select the appropriate tool based on problem complexity") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12 * chart_text_scale)
+  )
+```
+
+**The 5 Whys Example:**
+
+| Level | Question | Answer |
+|:------|:---------|:-------|
+| Problem | Shaft diameter is oversize | - |
+| Why 1? | Why is the diameter oversize? | Tool is worn |
+| Why 2? | Why is the tool worn? | Tool wasn't changed at scheduled interval |
+| Why 3? | Why wasn't it changed? | Operator didn't know it was due |
+| Why 4? | Why didn't operator know? | Tool life counter was reset incorrectly |
+| Why 5? | Why was it reset incorrectly? | No verification step in setup procedure |
+| **Root Cause** | **Setup procedure lacks tool counter verification step** | |
+
+**The 6M Categories (Fishbone Diagram):**
+
+- **Man** (People): Training, skills, fatigue, attention
+- **Machine**: Equipment condition, capability, maintenance
+- **Material**: Raw material quality, specifications, storage
+- **Method**: Procedures, work instructions, standards
+- **Measurement**: Gages, calibration, measurement technique
+- **Mother Nature** (Environment): Temperature, humidity, contamination
+
+#### Step 5: Action Plan
+
+Define specific corrective and/or preventive actions to address the root cause:
+
+```{r action-types, echo=FALSE}
+action_types <- data.frame(
+  Action_Type = c("Correction", "Corrective Action", "Preventive Action"),
+  Definition = c(
+    "Fix the immediate problem (symptom treatment)",
+    "Eliminate the root cause to prevent recurrence",
+    "Eliminate potential causes before problems occur"
+  ),
+  Example = c(
+    "Rework or scrap the nonconforming parts",
+    "Revise setup procedure to include tool counter verification",
+    "Add tool counter verification to ALL machine setup procedures"
+  ),
+  Timeframe = c("Immediate", "30-90 days typical", "Ongoing improvement")
+)
+
+kable(action_types, caption = "Types of CAPA Actions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
+```
+
+**SMART Action Planning:**
+
+- **S**pecific: Clearly defined action (not vague)
+- **M**easurable: Can verify completion and effectiveness
+- **A**ssignable: Single owner responsible
+- **R**ealistic: Achievable with available resources
+- **T**ime-bound: Due date specified
+
+::: {.example-box}
+**Example: SMART Corrective Action**
+
+**Poor**: "Improve the setup procedure"
+
+**SMART**: "Quality Engineer (J. Smith) will revise Work Instruction WI-2345 to add Step 4.7: 'Verify tool life counter matches Tool Setup Sheet before starting production. Record counter reading on Setup Checklist Form F-102.' Revision to be completed by April 15, training completed by April 22."
+:::
+
+#### Step 6: Implementation
+
+Execute the action plan with clear ownership and tracking:
+
+**Implementation Requirements:**
+
+- Assign responsible person for each action
+- Provide necessary resources (time, budget, authority)
+- Communicate changes to affected personnel
+- Update documentation (procedures, work instructions, forms)
+- Train personnel on new requirements
+- Implement changes in a controlled manner
+
+**Change Control Considerations:**
+
+| Change Type | Approval Required | Documentation |
+|:------------|:------------------|:--------------|
+| Document revision | Document owner, Quality | Revision history, training records |
+| Process change | Process owner, Engineering, Quality | Change request, validation if needed |
+| Equipment change | Maintenance, Engineering, Quality | Equipment qualification, capability study |
+| Product change | Engineering, Quality, Customer (if required) | ECN, customer approval, PPAP if applicable |
+
+#### Step 7: Verification
+
+Verify that actions were completed AND effective:
+
+**Completion Verification:**
+- Was the action actually implemented?
+- Is documentation updated and approved?
+- Are personnel trained?
+- Is the change being followed?
+
+**Effectiveness Verification:**
+- Has the problem stopped recurring?
+- Do metrics show improvement?
+- Are there any unintended consequences?
+
+```{r verification-methods, echo=FALSE}
+verification <- data.frame(
+  Method = c("Monitoring Period", "Statistical Analysis", "Audit Verification",
+             "Customer Feedback", "Process Capability"),
+  Description = c(
+    "Track for recurrence over defined period (e.g., 90 days, 3 production runs)",
+    "Compare defect rates before/after; statistical significance testing",
+    "Include in next internal audit; verify implementation",
+    "Monitor complaints related to this issue",
+    "Cpk study to confirm process improvement"
+  ),
+  When_to_Use = c(
+    "All CAPAs - minimum requirement",
+    "When baseline data exists",
+    "Process/documentation changes",
+    "Customer-reported issues",
+    "Manufacturing process changes"
+  )
+)
+
+kable(verification, caption = "CAPA Effectiveness Verification Methods") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
+```
+
+#### Step 8: Closure
+
+Complete documentation and share lessons learned:
+
+**Closure Requirements:**
+
+- All actions verified complete
+- Effectiveness confirmed (no recurrence)
+- Documentation updated and approved
+- CAPA record completed with all evidence
+- Management approval for closure
+
+**Lessons Learned:**
+
+- What was the root cause?
+- Could this happen elsewhere? (Horizontal deployment)
+- Should procedures/training be updated system-wide?
+- Are there similar products/processes at risk?
+- What can we do to prevent similar issues?
+
+::: {.example-box}
+**Example: Horizontal Deployment**
+
+The shaft diameter CAPA revealed that setup procedures lacked tool counter verification.
+
+**Horizontal deployment**: Quality reviewed ALL 47 CNC machine setup procedures and found 12 others with the same gap. All procedures were revised, and the finding was shared at the monthly quality meeting as a lesson learned.
+:::
+
+### CAPA Effectiveness Criteria
+
+This worked example is fixed as a reference — read through it once, then try the *editable* example further on in this chapter for yourself.
+
+```{r capa-effectiveness, echo=TRUE}
+# CAPA Effectiveness Tracking
+set.seed(42)
+
+# Simulate CAPA data for a year
+months <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+capa_data <- data.frame(
+  Month = factor(months, levels = months),
+  Total_CAPAs = c(12, 15, 18, 14, 11, 13, 10, 9, 8, 7, 9, 6),
+  Closed_On_Time = c(8, 10, 12, 11, 9, 11, 9, 8, 7, 6, 8, 5),
+  Effective = c(7, 9, 10, 10, 8, 10, 8, 8, 7, 6, 8, 5),
+  Recurrence = c(2, 1, 3, 1, 0, 1, 0, 0, 1, 0, 0, 0)
+)
+
+# Calculate metrics
+capa_data$On_Time_Rate <- round(capa_data$Closed_On_Time / capa_data$Total_CAPAs * 100, 1)
+capa_data$Effectiveness_Rate <- round(capa_data$Effective / capa_data$Closed_On_Time * 100, 1)
+
+cat("CAPA Performance Metrics Summary:\n")
+cat("─────────────────────────────────\n")
+cat("Total CAPAs initiated:", sum(capa_data$Total_CAPAs), "\n")
+cat("Closed on time:", sum(capa_data$Closed_On_Time), "(",
+    round(sum(capa_data$Closed_On_Time)/sum(capa_data$Total_CAPAs)*100, 1), "%)\n")
+cat("Verified effective:", sum(capa_data$Effective), "(",
+    round(sum(capa_data$Effective)/sum(capa_data$Closed_On_Time)*100, 1), "%)\n")
+cat("Recurrences:", sum(capa_data$Recurrence), "\n")
+```
+
+```{r capa-chart, echo=FALSE, fig.width=11, fig.height=6}
+capa_long <- capa_data %>%
+  select(Month, Total_CAPAs, Closed_On_Time, Effective) %>%
+  pivot_longer(cols = -Month, names_to = "Metric", values_to = "Count")
+
+ggplot(capa_long, aes(x = Month, y = Count, fill = Metric)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  geom_line(data = capa_data, aes(x = Month, y = Recurrence * 5, group = 1),
+            color = "red", linewidth = 1.2, inherit.aes = FALSE) +
+  geom_point(data = capa_data, aes(x = Month, y = Recurrence * 5),
+             color = "red", size = 4, inherit.aes = FALSE) +
+  scale_fill_manual(values = c("#e74c3c", "#f39c12", "#27ae60"),
+                    labels = c("Closed On Time", "Verified Effective", "Total CAPAs")) +
+  scale_y_continuous(sec.axis = sec_axis(~./5, name = "Recurrences")) +
+  labs(title = "CAPA Performance Tracking",
+       subtitle = "Monthly CAPA metrics with recurrence trend (red line)",
+       x = "", y = "Number of CAPAs", fill = "") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 18 * chart_text_scale),
+    plot.subtitle = element_text(size = 12 * chart_text_scale),
+    axis.title = element_text(size = 12 * chart_text_scale),
+    axis.text = element_text(size = 11 * chart_text_scale),
+    legend.position = "bottom",
+    legend.text = element_text(size = 11 * chart_text_scale)
+  )
+```
+
+---
+
+## Management Review
+
+**Management review** is a formal evaluation of the QMS by top management to ensure its continuing suitability, adequacy, and effectiveness.
+
+### Management Review Inputs
+
+```{r mgmt-review-inputs, echo=FALSE}
+review_inputs <- data.frame(
+  Input = c("Previous Review Actions", "Changes in Issues/Context",
+            "Quality Performance", "Resource Adequacy",
+            "Risk/Opportunity Actions", "Improvement Opportunities"),
+  Details = c(
+    "Status of actions from previous management reviews",
+    "Changes in external/internal issues; interested party requirements",
+    "Customer satisfaction; quality objectives achievement; process performance; nonconformities; audits; supplier performance",
+    "Adequacy of resources for QMS maintenance and improvement",
+    "Effectiveness of actions taken to address risks and opportunities",
+    "Opportunities for improvement identified from various sources"
+  ),
+  Data_Sources = c(
+    "Previous meeting minutes; action log",
+    "SWOT analysis; customer feedback; regulatory changes",
+    "KPI dashboards; audit reports; CAPA data; customer complaints",
+    "Budget status; staffing levels; equipment condition",
+    "Risk register updates; opportunity tracking",
+    "Employee suggestions; benchmarking; industry developments"
+  )
+)
+
+kable(review_inputs, col.names = c("Required Input", "Details to Review", "Typical Data Sources"),
+      caption = "Management Review Inputs (ISO 9001 Clause 9.3.2)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
+```
+
+### Management Review Outputs
+
+```{r mgmt-review-outputs, echo=FALSE}
+review_outputs <- data.frame(
+  Output = c("Improvement Decisions", "QMS Changes", "Resource Needs"),
+  Requirement = c(
+    "Decisions and actions related to improvement opportunities",
+    "Any need for changes to the QMS",
+    "Any resource needs"
+  ),
+  Examples = c(
+    "Launch kaizen project for top 3 customer complaints; implement new quality training program",
+    "Revise control plan based on PFMEA update; modify inspection frequency",
+    "Hire additional quality technician; purchase new CMM; upgrade software"
+  )
+)
+
+kable(review_outputs, col.names = c("Required Output", "ISO Requirement", "Examples"),
+      caption = "Management Review Outputs (ISO 9001 Clause 9.3.3)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "20%" else NULL)
+```
+
+### Sample Management Review Dashboard
+
+```{r mgmt-dashboard, echo=FALSE, fig.width=12, fig.height=10}
+# Create a sample management review dashboard
+par(mfrow = c(2, 2))
+
+# Data for dashboard
+set.seed(123)
+
+# Quality Objectives
+objectives <- data.frame(
+  Objective = c("Customer\nComplaints", "On-Time\nDelivery", "First Pass\nYield", "Scrap\nRate"),
+  Target = c(5, 98, 95, 2),
+  Actual = c(3, 97.5, 96.2, 1.8),
+  x = 1:4
+)
+
+p1 <- ggplot(objectives, aes(x = x)) +
+  geom_bar(aes(y = Target), stat = "identity", fill = "gray80", width = 0.4, position = position_nudge(x = -0.2)) +
+  geom_bar(aes(y = Actual), stat = "identity", fill = "#27ae60", width = 0.4, position = position_nudge(x = 0.2)) +
+  scale_x_continuous(breaks = 1:4, labels = objectives$Objective) +
+  labs(title = "Quality Objectives: Target vs Actual", x = "", y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale))
+
+# Customer Satisfaction Trend
+satisfaction <- data.frame(
+  Quarter = c("Q1", "Q2", "Q3", "Q4"),
+  Score = c(4.2, 4.3, 4.5, 4.6)
+)
+
+p2 <- ggplot(satisfaction, aes(x = Quarter, y = Score, group = 1)) +
+  geom_line(color = "#3498db", linewidth = 1.5) +
+  geom_point(color = "#3498db", size = 5) +
+  geom_hline(yintercept = 4.0, linetype = "dashed", color = "red") +
+  annotate("text", x = 4.2, y = 4.0, label = "Target", color = "red", size = 5 * diagram_text_scale) +
+  scale_y_continuous(limits = c(3.5, 5)) +
+  labs(title = "Customer Satisfaction Trend", x = "", y = "Score (1-5)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
+
+# Audit Findings
+audit_data <- data.frame(
+  Type = c("Major NC", "Minor NC", "Observations", "OFIs"),
+  Count = c(0, 3, 5, 8)
+)
+
+p3 <- ggplot(audit_data, aes(x = Type, y = Count, fill = Type)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = Count), vjust = -0.5, size = 6 * diagram_text_scale) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  scale_fill_manual(values = c("Major NC" = "#e74c3c", "Minor NC" = "#f39c12",
+                               "Observations" = "#3498db", "OFIs" = "#27ae60"),
+                    guide = "none") +
+  labs(title = "Internal Audit Findings (YTD)", x = "", y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+        axis.title = element_text(size = 11 * chart_text_scale),
+        axis.text = element_text(size = 10 * chart_text_scale))
+
+# CAPA Status
+capa_status <- data.frame(
+  Status = c("Open", "In Progress", "Verification", "Closed"),
+  Count = c(5, 12, 8, 45)
+)
+
+p4 <- ggplot(capa_status, aes(x = "", y = Count, fill = Status)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  geom_text(aes(label = paste0(Count, "\n(", round(Count/sum(Count)*100), "%)")),
+            position = position_stack(vjust = 0.5), color = "white", size = 3 * diagram_text_scale) +
+  scale_fill_manual(values = c("#e74c3c", "#f39c12", "#3498db", "#27ae60")) +
+  labs(title = "CAPA Status Distribution", fill = "") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 11 * chart_text_scale, hjust = 0.5))
+
+gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2,
+                        top = grid::textGrob("Management Review Dashboard",
+                                             gp = grid::gpar(fontface = "bold", fontsize = 14)))
+```
+
+---
+
+## Continuous Improvement
+
+**Continuous improvement** is a fundamental principle of quality management - the ongoing effort to improve products, services, and processes.
+
+### Improvement Methodologies
+
+```{r improvement-methods, echo=FALSE}
+methods <- data.frame(
+  Methodology = c("PDCA", "DMAIC", "Kaizen", "A3 Problem Solving", "8D"),
+  Origin = c("Deming/Shewhart", "Six Sigma", "Toyota/Lean", "Toyota", "Ford"),
+  Best_For = c(
+    "General improvement cycle; process changes",
+    "Data-driven problem solving; reducing variation",
+    "Small, incremental improvements; team-based",
+    "Visual problem solving; root cause analysis",
+    "Customer complaints; complex problems"
+  ),
+  Steps = c(
+    "Plan-Do-Check-Act",
+    "Define-Measure-Analyze-Improve-Control",
+    "Identify waste → Improve → Standardize",
+    "Background → Goals → Analysis → Countermeasures → Follow-up",
+    "D0-D8 (Team, Problem, Containment, Root Cause, Actions, Verify, Prevent, Close)"
+  )
+)
+
+kable(methods, caption = "Continuous Improvement Methodologies") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
+```
+
+### Key Performance Indicators (KPIs)
+
+```{r kpi-examples, echo=FALSE}
+kpis <- data.frame(
+  Category = c(rep("Quality", 4), rep("Delivery", 3), rep("Cost", 3), rep("Safety", 2)),
+  KPI = c("First Pass Yield (FPY)", "Customer Complaints (PPM)", "Internal Reject Rate", "Cost of Quality",
+          "On-Time Delivery (OTD)", "Lead Time", "Order Fulfillment Rate",
+          "Scrap Rate", "Rework Cost", "Warranty Cost",
+          "Recordable Incident Rate", "Near Miss Reports"),
+  Formula = c(
+    "(Good units first time / Total units) × 100%",
+    "(Complaints / Units shipped) × 1,000,000",
+    "(Rejected units / Total inspected) × 100%",
+    "Prevention + Appraisal + Internal Failure + External Failure",
+    "(Orders delivered on time / Total orders) × 100%",
+    "Order date to delivery date",
+    "(Complete orders shipped / Total orders) × 100%",
+    "(Scrap value / Total production value) × 100%",
+    "Labor + Material for rework",
+    "Warranty claims cost / Revenue",
+    "(Recordable incidents × 200,000) / Hours worked",
+    "Count of near miss reports"
+  ),
+  Target = c("≥98%", "<100", "<1%", "<3% of sales",
+             "≥98%", "Industry benchmark", "≥99%",
+             "<2%", "Minimize", "<0.5% of sales",
+             "<1.0", "Encourage reporting")
+)
+
+kable(kpis, caption = "Common Quality Management KPIs") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "10%" else NULL) %>%
+  pack_rows("Quality Metrics", 1, 4, background = "#ebf5fb") %>%
+  pack_rows("Delivery Metrics", 5, 7, background = "#eafaf1") %>%
+  pack_rows("Cost Metrics", 8, 10, background = "#fef9e7") %>%
+  pack_rows("Safety Metrics", 11, 12, background = "#fdedec")
+```
+
+### Cost of Quality (COQ)
+
+```{r coq-analysis, echo=TRUE}
+# Cost of Quality Analysis
+coq_data <- data.frame(
+  Category = c("Prevention", "Appraisal", "Internal Failure", "External Failure"),
+  Description = c("Quality planning, training, process control",
+                  "Inspection, testing, audits, calibration",
+                  "Scrap, rework, reinspection, downtime",
+                  "Warranty, returns, complaints, recalls"),
+  Cost = c(50000, 75000, 120000, 180000)
+)
+
+total_coq <- sum(coq_data$Cost)
+revenue <- 10000000  # $10M revenue
+
+coq_data$Percent_of_COQ <- round(coq_data$Cost / total_coq * 100, 1)
+coq_data$Percent_of_Revenue <- round(coq_data$Cost / revenue * 100, 2)
+
+cat("Cost of Quality Analysis:\n")
+cat("─────────────────────────────\n")
+print(coq_data[, c("Category", "Cost", "Percent_of_COQ")])
+cat("─────────────────────────────\n")
+cat("Total Cost of Quality: $", format(total_coq, big.mark = " ", scientific = FALSE), "\n")
+cat("COQ as % of Revenue:", round(total_coq/revenue*100, 1), "%\n\n")
+
+# Analysis
+conformance <- coq_data$Cost[1] + coq_data$Cost[2]
+nonconformance <- coq_data$Cost[3] + coq_data$Cost[4]
+
+cat("Conformance Costs (Prevention + Appraisal): $", format(conformance, big.mark = " ", scientific = FALSE),
+    "(", round(conformance/total_coq*100, 1), "%)\n")
+cat("Nonconformance Costs (Failures): $", format(nonconformance, big.mark = " ", scientific = FALSE),
+    "(", round(nonconformance/total_coq*100, 1), "%)\n")
+cat("\nRecommendation: Increase prevention spending to reduce failure costs\n")
+```
+
+```{r coq-chart, echo=FALSE, fig.width=10, fig.height=6}
+coq_data$Category <- factor(coq_data$Category,
+                            levels = c("Prevention", "Appraisal", "Internal Failure", "External Failure"))
+
+ggplot(coq_data, aes(x = Category, y = Cost/1000, fill = Category)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = paste0("$", Cost/1000, "K\n(", Percent_of_COQ, "%)")),
+            vjust = -0.2, size = 3.5 * diagram_text_scale) +
+  scale_fill_manual(values = c("#27ae60", "#3498db", "#f39c12", "#e74c3c"), guide = "none") +
+  scale_y_continuous(limits = c(0, 220), labels = scales::dollar_format(suffix = "K", big.mark = " ")) +
+  annotate("rect", xmin = 0.5, xmax = 2.5, ymin = -10, ymax = -5, fill = "#27ae60", alpha = 0.3) +
+  annotate("text", x = 1.5, y = -7.5, label = "Conformance Costs", size = 3 * diagram_text_scale) +
+  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = -10, ymax = -5, fill = "#e74c3c", alpha = 0.3) +
+  annotate("text", x = 3.5, y = -7.5, label = "Nonconformance Costs", size = 3 * diagram_text_scale) +
+  labs(title = "Cost of Quality Analysis",
+       subtitle = paste0("Total COQ: $", format(total_coq, big.mark = " ", scientific = FALSE),
+                        " (", round(total_coq/revenue*100, 1), "% of revenue)"),
+       x = "", y = "Cost") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    axis.text.x = element_text(size = 11 * chart_text_scale)
+  )
+```
+
+### Try it yourself: classify the cost
+
+Eight lines from a plant's accounts. Decide which Cost of Quality category each belongs in.
+
+```{r tryit-coq-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "coq-sort",
+  title = "Which Cost of Quality category?",
+  bins = c("Prevention", "Appraisal", "Internal Failure", "External Failure"),
+  cards = tibble::tribble(
+  ~text, ~bin, ~why,
+  "SPC training for 20 operators.",
+  "Prevention", "Spent to stop defects from being made in the first place.",
+  "Engineering time spent on the PFMEA for a new product.",
+  "Prevention", "Quality planning before production.",
+  "Calibration of the CMM and the shop-floor gauges.",
+  "Appraisal", "The cost of being able to measure and check.",
+  "Wages of the final inspectors.",
+  "Appraisal", "Inspection finds defects; it does not prevent them.",
+  "Castings scrapped for porosity found at machining.",
+  "Internal Failure", "A defect found before the product left the plant.",
+  "Overtime to rework a lot that failed final test.",
+  "Internal Failure", "Rework is a failure cost, caught internally.",
+  "Warranty claims on gearboxes that failed in the field.",
+  "External Failure", "The defect reached the customer.",
+  "Premium freight and a sorting crew sent to a customer's plant after a bad shipment.",
+  "External Failure", "Costs incurred after delivery, usually the most expensive kind."
+  ),
+  intro = "Pick the Cost of Quality category for each line."
+)
+```
+
+---
+
+## Integration with Quality Tools
+
+A mature QMS integrates various quality tools throughout the organization.
+
+### Quality Tools Integration Map
+
+```{r tools-integration, echo=FALSE, fig.width=14, fig.height=8}
+diagram_text_scale <- 1.15  # fit labels to their shapes
+tools_map <- data.frame(
+  Tool = c("DFMEA", "DFM/DFA", "PFMEA", "Control Plan", "SPC", "MSA", "Audit", "CAPA"),
+  QMS_Link = c("Risk assessment (6.1)", "Design controls (8.3)", "Risk assessment (6.1)",
+               "Operational control (8.1)", "Monitoring (9.1)", "Resources (7.1.5)",
+               "Internal audit (9.2)", "Nonconformity (10.2)"),
+  x = c(1.15, 1.15, 2.9, 2.9, 4.3, 4.3, 5.6, 6.85),
+  y = c(2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.5)
+)
+
+ggplot(tools_map, aes(x = x, y = y)) +
+  annotate("rect", xmin = 0.4, xmax = 1.9, ymin = 0.3, ymax = 2.8,
+           fill = "#3498db", alpha = 0.2, color = "#3498db") +
+  annotate("text", x = 1.15, y = 2.6, label = "DESIGN", fontface = "bold", color = "#3498db", size = 4.5 * diagram_text_scale) +
+  annotate("rect", xmin = 2.3, xmax = 3.5, ymin = 0.3, ymax = 2.8,
+           fill = "#27ae60", alpha = 0.2, color = "#27ae60") +
+  annotate("text", x = 2.9, y = 2.6, label = "LAUNCH", fontface = "bold", color = "#27ae60", size = 4.5 * diagram_text_scale) +
+  annotate("rect", xmin = 3.9, xmax = 6.1, ymin = 0.3, ymax = 2.8,
+           fill = "#f39c12", alpha = 0.2, color = "#f39c12") +
+  annotate("text", x = 5, y = 2.6, label = "PRODUCTION", fontface = "bold", color = "#f39c12", size = 4.5 * diagram_text_scale) +
+  annotate("rect", xmin = 6.4, xmax = 7.3, ymin = 0.3, ymax = 2.8,
+           fill = "#9b59b6", alpha = 0.2, color = "#9b59b6") +
+  annotate("text", x = 6.85, y = 2.6, label = "IMPROVE", fontface = "bold", color = "#9b59b6", size = 4.5 * diagram_text_scale) +
+
+  geom_label(aes(label = Tool), fill = "white", fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(label = QMS_Link, y = y - 0.3), size = 3 * diagram_text_scale, color = "gray30") +
+
+  # Lifecycle flow: design -> launch -> production -> improve
+  annotate("segment", x = 1.9, xend = 2.3, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray35", linewidth = 1) +
+  annotate("segment", x = 3.5, xend = 3.9, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray35", linewidth = 1) +
+  annotate("segment", x = 6.1, xend = 6.4, y = 1.5, yend = 1.5,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"), color = "gray35", linewidth = 1) +
+
+  # Feedback loop runs below the boxes, from IMPROVE back to DESIGN
+  annotate("path", x = c(6.85, 6.85, 1.15, 1.15), y = c(0.3, -0.05, -0.05, 0.3),
+           color = "#e74c3c", linetype = "dashed", linewidth = 1,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed")) +
+  annotate("text", x = 4, y = -0.3, label = "Lessons Learned / Continuous Improvement",
+           color = "#e74c3c", fontface = "italic", size = 4 * diagram_text_scale) +
+
+  coord_cartesian(xlim = c(0, 7.7), ylim = c(-0.6, 3)) +
+  labs(title = "Quality Tools Integration Throughout Product Lifecycle",
+       subtitle = "Each tool connects to specific ISO 9001 requirements") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 11 * chart_text_scale)
+  )
+```
+
+### Linking Tools to QMS Requirements
+
+```{r tools-qms-link, echo=FALSE}
+tool_links <- data.frame(
+  Tool = c("PFMEA", "Control Plan", "SPC", "MSA", "Internal Audit", "CAPA", "Management Review"),
+  ISO_Clause = c("6.1, 8.1", "8.1, 8.5.1", "9.1.1", "7.1.5", "9.2", "10.2", "9.3"),
+  Purpose = c(
+    "Identify and mitigate process risks before production",
+    "Define controls for special characteristics",
+    "Monitor process performance; detect special causes",
+    "Ensure measurement system is adequate",
+    "Verify QMS conformance and effectiveness",
+    "Eliminate causes of nonconformities",
+    "Evaluate QMS suitability and effectiveness"
+  ),
+  Output_Used_By = c(
+    "Control Plan, Work Instructions",
+    "Work Instructions, SPC requirements",
+    "CAPA triggers, Management Review",
+    "SPC validity, Control Plan",
+    "CAPA triggers, Management Review",
+    "Process improvements, Lessons learned",
+    "Strategic decisions, Resource allocation"
+  )
+)
+
+kable(tool_links, col.names = c("Quality Tool", "ISO 9001 Clause", "Purpose", "Output Feeds Into"),
+      caption = "Quality Tools and QMS Integration") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "15%" else NULL)
+```
+
+---
+
+## Certification Process
+
+Organizations can seek **third-party certification** to demonstrate QMS conformance to customers and stakeholders.
+
+### The Certification Journey
+
+```{r certification-process, echo=FALSE, fig.width=12, fig.height=6}
+diagram_text_scale <- 1.77  # fit labels to their shapes
+cert_steps <- data.frame(
+  step = 1:8,
+  name = c("Gap Analysis", "Implementation", "Internal Audit",
+           "Management Review", "Registrar Selection", "Stage 1 Audit",
+           "Stage 2 Audit", "Certification"),
+  duration = c("1-2 months", "3-9 months", "1 month", "Ongoing",
+               "1 month", "1 day", "2-4 days", "3 years"),
+  x = 1:8
+)
+
+ggplot(cert_steps, aes(x = x, y = 1)) +
+  annotate("segment", x = 1, xend = 8, y = 1, yend = 1, color = "gray70", linewidth = 2) +
+  geom_point(size = 12, color = "#3498db") +
+  geom_text(aes(label = step), color = "white", fontface = "bold", size = 4 * diagram_text_scale) +
+  geom_text(aes(label = name, y = 1.4), size = 3 * diagram_text_scale, fontface = "bold", angle = 45, hjust = 0) +
+  geom_text(aes(label = duration, y = 0.6), size = 2.5 * diagram_text_scale, color = "gray50") +
+  scale_y_continuous(limits = c(0.3, 2.2)) +
+  scale_x_continuous(limits = c(0.5, 9.6)) +
+  labs(title = "Path to ISO 9001 Certification",
+       subtitle = "Typical timeline: 6-18 months depending on organization readiness") +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale, hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+### Certification Audit Types
+
+```{r audit-types, echo=FALSE}
+audit_types <- data.frame(
+  Audit = c("Stage 1 (Documentation)", "Stage 2 (Certification)",
+            "Surveillance", "Recertification"),
+  Purpose = c(
+    "Review QMS documentation; verify readiness for Stage 2",
+    "Evaluate implementation and effectiveness of QMS",
+    "Verify continued conformance (annual)",
+    "Full re-audit at end of 3-year cycle"
+  ),
+  Focus = c(
+    "Quality manual, procedures, scope, internal audits, management review",
+    "All clauses; process effectiveness; records; interviews",
+    "Selected processes; previous findings; changes",
+    "Complete review similar to Stage 2"
+  ),
+  Typical_Duration = c(
+    "0.5-1 day (remote or on-site)",
+    "2-5 days depending on size",
+    "1-2 days annually",
+    "2-4 days"
+  )
+)
+
+kable(audit_types, col.names = c("Audit Type", "Purpose", "Focus Areas", "Duration"),
+      caption = "Third-Party Certification Audit Types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL)
+```
+
+---
+
+## Video Resources
+
+### ISO 9001:2015 Overview
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/O5T4H8K_rwQ" title="ISO 9001:2015 Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Internal Auditing Best Practices
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/deRqslBeMrE" title="Internal Auditing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+## Summary
+
+A Quality Management System provides the framework for consistently meeting customer requirements and improving organizational performance:
+
+1. **ISO 9001:2015** provides the foundational requirements using risk-based thinking and PDCA
+2. **Industry standards** (IATF 16949, AS9100, ISO 22000) add sector-specific requirements
+3. **Documentation** establishes the hierarchy from policy to procedures to records
+4. **Internal audits** verify conformance and identify improvement opportunities
+5. **CAPA** eliminates root causes of nonconformities and prevents recurrence
+6. **Management review** ensures QMS suitability and drives strategic improvement
+7. **Continuous improvement** is embedded through KPIs, COQ analysis, and improvement methodologies
+8. **Quality tools** (PFMEA, SPC, MSA) integrate throughout the product lifecycle
+
+> "Quality is not an act, it is a habit." — Aristotle
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: Explain the seven quality management principles and how they relate to each other.</summary>
+
+**Answer:**
+
+The seven quality management principles form an interconnected foundation:
+
+1. **Customer Focus** (Central principle)
+   - Understanding and meeting customer needs is the primary purpose
+   - All other principles support this goal
+
+2. **Leadership**
+   - Leaders establish unity of purpose and direction
+   - Create conditions for people to achieve quality objectives
+   - Enables all other principles
+
+3. **Engagement of People**
+   - Competent, empowered people at all levels
+   - Essential for effective processes and customer focus
+
+4. **Process Approach**
+   - Activities managed as interrelated processes
+   - Enables consistent, predictable results
+
+5. **Improvement**
+   - Ongoing focus on enhancing performance
+   - Essential for maintaining customer satisfaction
+
+6. **Evidence-based Decision Making**
+   - Decisions based on analysis of data
+   - Reduces uncertainty; improves decision quality
+
+7. **Relationship Management**
+   - Managing relationships with interested parties (suppliers, partners)
+   - Optimizes their impact on performance
+
+**Relationships:**
+- Customer Focus drives the need for all others
+- Leadership enables and supports all principles
+- Engagement of People is essential for Process Approach and Improvement
+- Evidence-based Decision Making supports Improvement
+- Relationship Management extends quality beyond the organization
+</details>
+
+<details><summary>**Question 2**: Compare ISO 9001, IATF 16949, and AS9100. When would each be required?</summary>
+
+**Answer:**
+
+| Standard | Base | Industry | Additional Focus |
+|----------|------|----------|------------------|
+| **ISO 9001:2015** | Standalone | General | Quality fundamentals |
+| **IATF 16949:2016** | ISO 9001 + automotive | Automotive | PPAP, APQP, Core Tools |
+| **AS9100D** | ISO 9001 + aerospace | Aerospace/Defense | Configuration mgmt, FAI, counterfeit prevention |
+
+**When Required:**
+
+**ISO 9001:**
+- Any organization wanting to demonstrate quality capability
+- Customer or contract requirement for QMS certification
+- Basis for all other standards
+- Suitable for service, manufacturing, any industry
+
+**IATF 16949:**
+- Suppliers to automotive OEMs (Ford, GM, Toyota, VW, etc.)
+- Required for production parts/materials
+- Required throughout automotive supply chain
+- Includes Customer-Specific Requirements (CSRs)
+
+**AS9100:**
+- Suppliers to aerospace/defense contractors
+- Boeing, Airbus, Lockheed Martin, military programs
+- Required for flight-critical components
+- OASIS database registration required
+
+**Key Differences:**
+- IATF 16949: Emphasizes PPAP, APQP, manufacturing process control
+- AS9100: Emphasizes traceability, configuration control, first article inspection
+- Both build on ISO 9001 with sector-specific additions
+</details>
+
+<details><summary>**Question 3**: Describe the documentation hierarchy in a QMS. Give an example of each level.</summary>
+
+**Answer:**
+
+**Level 1: Quality Policy and Objectives**
+- Strategic direction for quality
+- Signed by top management
+- Communicated to all employees
+- *Example:* "ABC Company is committed to delivering defect-free products that meet customer requirements through continuous improvement of our processes and people."
+
+**Level 2: Quality Manual and Procedures**
+- Describes WHAT is done and WHO is responsible
+- System-level documents
+- *Example:* Document Control Procedure (QP-001)
+  - Purpose: Control creation, approval, distribution of documents
+  - Scope: All QMS documents
+  - Responsibilities: Document Control Coordinator, Department Managers
+  - Process flow for document changes
+
+**Level 3: Work Instructions and Specifications**
+- Describes HOW tasks are performed
+- Detailed step-by-step instructions
+- *Example:* Work Instruction for CNC Lathe Setup (WI-MAC-015)
+  - Step 1: Verify program number matches work order
+  - Step 2: Install correct tooling per setup sheet
+  - Step 3: Set tool offsets using touch-off procedure
+  - Step 4: Run first piece and verify dimensions
+
+**Level 4: Records and Forms**
+- Evidence that activities were performed
+- Completed forms, inspection results, logs
+- *Example:* First Article Inspection Report (FM-QC-008)
+  - Part number, revision, date
+  - Dimensional measurements vs. specifications
+  - Inspector signature
+  - Disposition (Accept/Reject)
+</details>
+
+<details><summary>**Question 4**: What are the key elements of an effective internal audit program?</summary>
+
+**Answer:**
+
+**1. Audit Program Planning**
+- Annual audit schedule covering all QMS processes
+- Risk-based frequency (higher risk = more frequent)
+- Documented audit program procedure
+- Resource allocation (trained auditors, time)
+
+**2. Auditor Competence**
+- Trained in audit techniques
+- Knowledge of standards (ISO 9001, industry-specific)
+- Understanding of processes being audited
+- Independence from area being audited
+
+**3. Audit Preparation**
+- Review of relevant documents (procedures, previous audits)
+- Prepared checklist linked to requirements
+- Notification to auditee
+- Defined scope and objectives
+
+**4. Audit Execution**
+- Opening meeting (purpose, scope, schedule)
+- Evidence collection (documents, records, interviews, observation)
+- Objective evaluation against criteria
+- Note taking and evidence documentation
+
+**5. Reporting**
+- Clear finding statements (nonconformities, observations)
+- Reference to requirement violated
+- Objective evidence cited
+- Closing meeting to present findings
+
+**6. Follow-up**
+- Corrective action requests issued
+- Root cause analysis required
+- Verification of corrective action implementation
+- Verification of effectiveness
+
+**7. Continuous Improvement of Audit Program**
+- Evaluate audit program effectiveness
+- Update based on organizational changes
+- Calibrate auditors periodically
+- Incorporate lessons learned
+</details>
+
+<details><summary>**Question 5**: Explain the difference between corrective action and preventive action. Provide an example of each.</summary>
+
+**Answer:**
+
+**Corrective Action:**
+- Eliminates the cause of a *detected* nonconformity
+- Reactive - responds to something that has already happened
+- Goal: Prevent recurrence of the specific problem
+
+*Example:*
+- **Nonconformity:** Customer received shipment with wrong part numbers (3 incidents in past month)
+- **Root Cause:** Shipping labels printed from outdated part number list
+- **Corrective Action:**
+  1. Update master part number list
+  2. Link shipping system directly to ERP for current data
+  3. Add verification step comparing label to packing list
+- **Verification:** No recurrence after 3 months
+
+**Preventive Action:**
+- Eliminates the cause of a *potential* nonconformity
+- Proactive - addresses something that hasn't happened yet
+- Goal: Prevent occurrence before it happens
+
+*Example:*
+- **Potential Nonconformity:** New CNC machine may produce out-of-spec parts due to operator unfamiliarity
+- **Risk Identified Through:** PFMEA analysis during new equipment installation
+- **Preventive Action:**
+  1. Develop comprehensive training program before machine goes live
+  2. Create detailed setup procedures with photos
+  3. Implement first-article inspection for first 30 days
+  4. Assign experienced mentor to new operators
+- **Verification:** Track first-pass yield during initial production period
+
+**Key Difference:**
+- Corrective = Fix what went wrong
+- Preventive = Stop what might go wrong
+
+**Note:** ISO 9001:2015 doesn't explicitly require "preventive action" as a separate process. Instead, risk-based thinking throughout the QMS serves the preventive function.
+</details>
+
+<details><summary>**Question 6**: Calculate and analyze the Cost of Quality for the following data. What recommendations would you make?</summary>
+
+| Category | Cost |
+|----------|------|
+| Quality planning | $35,000 |
+| Training | $25,000 |
+| Incoming inspection | $40,000 |
+| In-process inspection | $55,000 |
+| Final inspection | $30,000 |
+| Scrap | $85,000 |
+| Rework | $65,000 |
+| Warranty claims | $120,000 |
+| Customer returns | $45,000 |
+
+Annual revenue: $8,000,000
+
+**Answer:**
+
+```{r q6-answer, echo=TRUE, fig.align="center", fig.width=8, fig.height=5}
+# Cost of Quality Analysis
+prevention <- 35000 + 25000  # Planning + Training
+appraisal <- 40000 + 55000 + 30000  # Inspections
+internal_failure <- 85000 + 65000  # Scrap + Rework
+external_failure <- 120000 + 45000  # Warranty + Returns
+
+total_coq <- prevention + appraisal + internal_failure + external_failure
+revenue <- 8000000
+
+conformance <- prevention + appraisal
+nonconformance <- internal_failure + external_failure
+
+money <- function(x) format(x, big.mark = " ", scientific = FALSE)
+
+cat(sprintf("Total cost of quality: $%s (%.1f%% of revenue)\n", money(total_coq), total_coq / revenue * 100))
+cat(sprintf("  Prevention  $%s (%.1f%%)\n", money(prevention), prevention / total_coq * 100))
+cat(sprintf("  Appraisal  $%s (%.1f%%)\n", money(appraisal), appraisal / total_coq * 100))
+cat(sprintf("  Internal failure  $%s (%.1f%%)\n", money(internal_failure), internal_failure / total_coq * 100))
+cat(sprintf("  External failure  $%s (%.1f%%)\n", money(external_failure), external_failure / total_coq * 100))
+cat(sprintf("  Conformance costs  $%s (%.1f%%)\n", money(conformance), conformance / total_coq * 100))
+cat(sprintf("  Nonconformance costs  $%s (%.1f%%)\n", money(nonconformance), nonconformance / total_coq * 100))
+
+par(mar = c(5, 5, 3, 1))
+barplot(c(prevention, appraisal, internal_failure, external_failure) / 1000,
+        names.arg = c("Prevention", "Appraisal", "Internal\nfailure", "External\nfailure"),
+        col = c("#27AE60", "#2980B9", "#E67E22", "#C0392B"),
+        ylab = "Cost ($ thousand)", main = "Cost of quality by category")
+```
+
+**Analysis:**
+- COQ at 6.25% of revenue is HIGH (target <3%)
+- External failure costs are the largest category (33%)
+- Nonconformance costs (63%) greatly exceed conformance (37%)
+- Prevention is only 12% of COQ - very low
+
+**Recommendations:**
+1. **Increase Prevention Investment:**
+   - Implement SPC on critical processes to reduce defects
+   - Enhance operator training on quality standards
+   - Apply PFMEA to identify and control failure modes
+
+2. **Reduce External Failures:**
+   - Analyze warranty data for root causes
+   - Improve final inspection effectiveness
+   - Implement containment for known issues
+
+3. **Optimize Appraisal:**
+   - Use SPC to reduce inspection where processes are capable
+   - Implement risk-based inspection (more for critical, less for proven)
+
+4. **Target COQ Reduction:**
+   - Short-term: Reduce external failures by 50% ($82,500 savings)
+   - Medium-term: Reduce internal failures by 30% ($45,000 savings)
+   - Long-term: Achieve COQ <3% of revenue ($240,000)
+</details>
+
+<details><summary>**Question 7**: What is risk-based thinking in ISO 9001:2015? How is it different from formal risk management?</summary>
+
+**Answer:**
+
+**Risk-Based Thinking in ISO 9001:2015:**
+
+Risk-based thinking is a way of considering risks and opportunities when designing, implementing, and operating the QMS. It:
+
+- Applies throughout the standard (not a separate clause)
+- Is proportional to potential impact on conformity
+- Makes preventive action part of routine planning
+- Considers both risks (negative) and opportunities (positive)
+
+**Where Risk-Based Thinking Applies:**
+
+| Clause | Application |
+|--------|-------------|
+| 4.1 Context | Identify external/internal issues affecting QMS |
+| 4.2 Interested Parties | Understand requirements that could impact quality |
+| 6.1 Planning | Plan actions to address risks and opportunities |
+| 8.1 Operations | Consider risks in operational planning |
+| 9.1 Performance | Monitor effectiveness of risk actions |
+| 10.2 Corrective Action | Update risks/opportunities based on nonconformities |
+
+**How It Differs from Formal Risk Management:**
+
+| Aspect | Risk-Based Thinking | Formal Risk Management |
+|--------|---------------------|------------------------|
+| Requirement | Implicit throughout ISO 9001 | Explicit (ISO 31000) |
+| Documentation | No formal risk register required | Documented risk register |
+| Methodology | No specific method required | Defined methodology (FMEA, etc.) |
+| Quantification | Not required | Often quantitative |
+| Scope | QMS processes | Enterprise-wide |
+
+**Practical Implementation:**
+
+Organizations should:
+1. Consider risks when designing processes
+2. Build controls proportional to risk level
+3. Monitor and review effectiveness
+4. Update as context changes
+
+ISO 9001 does NOT require:
+- Formal risk management process
+- Risk register
+- Specific risk assessment methodology
+- Documented risk assessments (unless organization decides to)
+
+However, many organizations do use tools like PFMEA to fulfill risk-based thinking requirements, especially in automotive (IATF 16949 requires it).
+</details>
+
+<details><summary>**Question 8**: Describe what management review is and what should be included in the inputs and outputs.</summary>
+
+**Answer:**
+
+**What is Management Review?**
+
+Management review is a formal, periodic evaluation of the QMS by top management to:
+- Ensure continuing suitability (appropriate for the organization)
+- Ensure adequacy (sufficient to meet requirements)
+- Ensure effectiveness (achieving intended results)
+- Ensure alignment with strategic direction
+- Identify improvement opportunities
+
+**Frequency:** At least annually; many organizations conduct quarterly reviews
+
+**Required Inputs (ISO 9001 Clause 9.3.2):**
+
+| Input | What to Review |
+|-------|----------------|
+| Status of previous actions | Actions from prior reviews - completed? effective? |
+| Changes in external/internal issues | Market changes, regulations, technology, organizational changes |
+| QMS performance and effectiveness | Customer satisfaction, quality objectives, process performance, nonconformities, audit results, supplier performance |
+| Resource adequacy | People, infrastructure, environment, knowledge |
+| Effectiveness of risk actions | Did actions address risks/opportunities? |
+| Improvement opportunities | Suggestions, benchmarking, new technologies |
+
+**Required Outputs (ISO 9001 Clause 9.3.3):**
+
+| Output | Examples |
+|--------|----------|
+| Improvement decisions | Launch specific improvement projects, address recurring issues |
+| QMS changes | Revise quality objectives, update processes, modify documentation |
+| Resource needs | Budget approvals, hiring, equipment purchases, training |
+
+**Best Practices:**
+- Use a standard agenda aligned with required inputs
+- Prepare data in advance (dashboards, trend charts)
+- Document decisions and action items with owners and due dates
+- Follow up on action completion
+- Keep minutes as quality records
+
+**Evidence Required:**
+- Meeting minutes or management review report
+- Attendance record (top management participation)
+- Action items with status tracking
+- Data/reports presented
+</details>
+
+---
+
+## References
+
+1. ISO 9001:2015. *Quality Management Systems - Requirements*. International Organization for Standardization.
+
+2. ISO 9000:2015. *Quality Management Systems - Fundamentals and Vocabulary*. International Organization for Standardization.
+
+3. IATF 16949:2016. *Quality Management System Requirements for Automotive Production and Relevant Service Parts Organizations*. International Automotive Task Force.
+
+4. AS9100D:2016. *Quality Management Systems - Requirements for Aviation, Space and Defense Organizations*. SAE International.
+
+5. ISO 22000:2018. *Food Safety Management Systems - Requirements for Any Organization in the Food Chain*. International Organization for Standardization.
+
+6. ISO 19011:2018. *Guidelines for Auditing Management Systems*. International Organization for Standardization.
+
+7. Hoyle, D. (2017). *ISO 9000 Quality Systems Handbook* (7th ed.). Routledge.
+
+8. AIAG. (2010). *Advanced Product Quality Planning and Control Plan (APQP)* (2nd ed.). Automotive Industry Action Group.
+
+9. ASQ. (2019). *The Certified Quality Auditor Handbook* (4th ed.). ASQ Quality Press.
+
+10. Juran, J.M., & De Feo, J.A. (2010). *Juran's Quality Handbook* (6th ed.). McGraw-Hill.

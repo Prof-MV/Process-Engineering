@@ -1,0 +1,909 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
+# Advanced Statistical Process Control
+
+```{r setup-18, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
+```
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Explain the difference between Phase I (setting up a chart) and Phase II (monitoring), and form rational subgroups
+2. Construct and interpret X-bar/S charts, and say when S is the better choice than R
+3. Construct and interpret np and u charts, including u charts with unequal sample sizes
+4. Calculate and compare Cp/Cpk with Pp/Ppk and read the gap between them
+5. Estimate capability for non-normal data with the percentile method, and judge how much a Cpk from a small sample can be trusted
+6. Construct CUSUM and EWMA charts to detect small, sustained shifts, and compare charts by average run length
+7. Choose a chart for short-run production and for autocorrelated data
+
+---
+
+## Beyond the Basic Charts
+
+The introductory SPC chapter gave you the working set: X-bar/R and I-MR for measurements, p and c for counts, the Western Electric rules, and Cp/Cpk. Those charts run most of the factory floor. They also carry assumptions that real processes break regularly:
+
+| Assumption behind the basic charts | When it fails | What this chapter adds |
+|-------------------------------------|---------------|------------------------|
+| Subgroups contain only common-cause variation | Parts from two machines, cavities or shifts are mixed in one subgroup | Rational subgrouping |
+| A range is a good enough spread estimate | Subgroups of 10 or more | X-bar/S chart |
+| One defect rate and one sample size | Counts per lot, lots of different size | np and u charts |
+| The process is stable, so Cpk describes it | Tool wear and drift make the long-term spread larger than the short-term | Pp/Ppk and the gap |
+| Data are normal | Runout, flatness, surface roughness, contamination counts | Percentile capability |
+| A big shift is the thing to catch | A 0.5 to 1.0 sigma drift is costly but never crosses a 3-sigma limit | CUSUM and EWMA |
+| Many parts of one kind are made | Job shops make 50 parts of ten different kinds | Short-run charts |
+
+**Industry connection:** an automotive Tier 1 supplier submitting a PPAP needs to state Ppk for the initial run (stability not yet proven) and Cpk for ongoing production. A defence or aerospace supplier machining small lots of many part numbers uses short-run charts. A food plant filling bags uses X-bar/S on checkweigher data. A pharmaceutical or precision-casting line uses EWMA or CUSUM to catch slow drift before a limit is reached.
+
+---
+
+## Setting Up Charts Properly
+
+### Phase I and Phase II
+
+A control chart is used in two quite different ways:
+
+| | Phase I: set up | Phase II: monitor |
+|---|---|---|
+| **Question** | Is the process stable, and what are its natural limits? | Has the process changed? |
+| **Data** | 20 to 25 subgroups collected for the purpose | New subgroups as they are produced |
+| **Limits** | *Trial limits* computed from the same data they are plotted against | Fixed limits carried forward from Phase I |
+| **When a point is out** | Find the assignable cause. If it is found and fixed, remove those points and recompute | Signal: investigate and act |
+| **Danger** | Removing points only because they are out, without a cause, makes the process look better than it is | Recomputing limits every shift hides drift |
+
+Never recompute the limits in Phase II unless there is a documented, deliberate change to the process. A chart whose limits chase the data cannot signal a shift.
+
+### Rational Subgrouping
+
+The control limits of an X-bar chart come from the variation *within* subgroups. The chart can therefore detect only differences *between* subgroups. A **rational subgroup** is chosen so that the variation within it is only the common-cause variation, and any special cause shows up between subgroups. Consecutive parts from one machine, one cavity and one setup are the usual choice.
+
+The two charts below use the same two machines. The only difference is how the subgroups are formed.
+
+```{r rational-subgroups, echo=TRUE, fig.cap="The same two machines charted with mixed subgroups and with one machine per subgroup", fig.align='center', fig.width=10, fig.height=6}
+# Two machines feed one line: A runs at 50.0 mm, B at 51.0 mm, same scatter
+set.seed(2024)
+n_sub <- 20; n <- 4; A2 <- 0.729
+make_parts <- function(mean_mm, k) rnorm(k, mean_mm, 0.25)
+
+# (1) Mixed: each subgroup takes two parts from A and two from B
+mixed <- t(replicate(n_sub, c(make_parts(50, 2), make_parts(51, 2))))
+# (2) Rational: each subgroup is four consecutive parts from ONE machine (A, B, A, B ...)
+by_machine <- t(sapply(1:n_sub, function(i) make_parts(ifelse(i %% 2 == 1, 50, 51), n)))
+
+xbar_chart <- function(m, label) {
+  xb <- rowMeans(m)
+  r  <- apply(m, 1, function(v) max(v) - min(v))
+  cl <- mean(xb)
+  data.frame(design = label, subgroup = seq_len(nrow(m)), xbar = xb,
+             cl = cl, ucl = cl + A2 * mean(r), lcl = cl - A2 * mean(r))
+}
+charts <- rbind(xbar_chart(mixed, "Mixed subgroups (2 from A, 2 from B)"),
+                xbar_chart(by_machine, "One machine per subgroup"))
+charts$signal <- charts$xbar > charts$ucl | charts$xbar < charts$lcl
+
+cat("=== Effect of subgroup design ===\n\n")
+for (d in unique(charts$design)) {
+  s <- charts[charts$design == d, ]
+  cat(sprintf("%-38s limits %.2f to %.2f mm (width %.2f), %d of %d points out\n",
+              d, s$lcl[1], s$ucl[1], s$ucl[1] - s$lcl[1], sum(s$signal), nrow(s)))
+}
+
+ggplot(charts, aes(x = subgroup, y = xbar)) +
+  geom_line(aes(y = ucl), color = "#C0392B", linetype = "dashed") +
+  geom_line(aes(y = lcl), color = "#C0392B", linetype = "dashed") +
+  geom_line(aes(y = cl), color = "#27AE60") +
+  geom_line(color = "grey50") +
+  geom_point(aes(color = signal), size = 3) +
+  scale_color_manual(values = c("FALSE" = "steelblue", "TRUE" = "#C0392B"), guide = "none") +
+  facet_wrap(~design, ncol = 1) +
+  labs(title = "Subgroup Design Decides What the Chart Can See",
+       x = "Subgroup", y = "X-bar (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale),
+        strip.text = element_text(face = "bold", size = 10 * chart_text_scale))
+```
+
+With mixed subgroups the machine difference sits *inside* every subgroup. The range is inflated, the limits are wide, and the X-bar chart looks calm: the chart has hidden a one-millimetre difference between two machines. With one machine per subgroup the within-subgroup variation is the true short-term scatter, the limits are tight, and nearly every point now signals. The process has not changed. The chart has finally been asked a question it can answer.
+
+<details>
+<summary>Discussion: a 4-cavity mould fills four parts per shot. Is "the four parts of one shot" a rational subgroup?</summary>
+
+**Usually not for an X-bar chart.** The four cavities differ systematically (flow length, cooling), so the range of a shot mostly measures cavity-to-cavity difference. The limits widen and cavity problems stay hidden.
+
+**Better options:** chart each cavity separately (the subgroup is consecutive shots from one cavity), or chart the shot average on an I-MR chart and monitor the cavity differences on a separate chart. Which one you choose depends on whether cavity differences are something the process can control or a fixed feature of the tool.
+
+</details>
+
+---
+
+## Charts for Variables
+
+### X-bar/S Chart
+
+The range is quick to calculate, but it uses only the two extreme readings. In a subgroup of 10 or more, the standard deviation $s$ uses all of them and estimates the spread better. The rule of thumb is **X-bar/R for $n \le 9$, X-bar/S for $n \ge 10$**, and also whenever the calculation is done by software anyway.
+
+$$
+\begin{aligned}
+\text{X-bar chart:} \quad & UCL, LCL = \bar{\bar{x}} \pm A_3\,\bar{s} \\
+\text{S chart:} \quad & UCL = B_4\,\bar{s}, \quad LCL = B_3\,\bar{s} \\
+\text{Estimate of } \sigma: \quad & \hat{\sigma} = \bar{s}/c_4
+\end{aligned}
+$$
+
+```{r xbar-s-constants, echo=FALSE}
+s_constants <- tibble(
+  `n` = 2:10,
+  `c4` = c(0.7979, 0.8862, 0.9213, 0.9400, 0.9515, 0.9594, 0.9650, 0.9693, 0.9727),
+  `A3` = c(2.659, 1.954, 1.628, 1.427, 1.287, 1.182, 1.099, 1.032, 0.975),
+  `B3` = c(0, 0, 0, 0, 0.030, 0.118, 0.185, 0.239, 0.284),
+  `B4` = c(3.267, 2.568, 2.266, 2.089, 1.970, 1.882, 1.815, 1.761, 1.716)
+)
+
+s_constants %>%
+  kable(caption = "Control Chart Constants for X-bar/S Charts") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "bordered"),
+                full_width = FALSE, position = "center") %>%
+  row_spec(0, bold = TRUE, background = "#3498DB", color = "white") %>%
+  row_spec(9, background = "#D5F5E3")  # Highlight n = 10 row
+```
+
+Example: a filling line checks 10 bags every 30 minutes (target 500 g).
+
+```{r xbar-s-example, echo=TRUE, fig.cap="X-bar/S chart of bag fill weight, 25 subgroups of 10", fig.align='center', fig.width=10, fig.height=7}
+set.seed(77)
+n <- 10; k <- 25
+A3 <- 0.975; B3 <- 0.284; B4 <- 1.716; c4 <- 0.9727   # constants for n = 10
+
+weights <- matrix(rnorm(n * k, mean = 500, sd = 3.5), nrow = k)
+weights[22:25, ] <- weights[22:25, ] + 4    # fill head drifts upward in the last four subgroups
+
+xbar <- rowMeans(weights)
+s    <- apply(weights, 1, sd)
+xbarbar <- mean(xbar); sbar <- mean(s)
+
+limits <- list(x_ucl = xbarbar + A3 * sbar, x_lcl = xbarbar - A3 * sbar,
+               s_ucl = B4 * sbar, s_lcl = B3 * sbar)
+
+cat("=== X-bar/S chart, bag fill weight (g) ===\n\n")
+cat(sprintf("Grand mean  %.2f g,  average s  %.2f g,  estimated sigma  %.2f g\n", xbarbar, sbar, sbar / c4))
+cat(sprintf("X-bar chart  LCL %.2f   CL %.2f   UCL %.2f\n", limits$x_lcl, xbarbar, limits$x_ucl))
+cat(sprintf("S chart      LCL %.2f   CL %.2f   UCL %.2f\n", limits$s_lcl, sbar, limits$s_ucl))
+cat("Subgroups beyond the X-bar limits:", which(xbar > limits$x_ucl | xbar < limits$x_lcl), "\n")
+
+charts <- rbind(
+  data.frame(chart = "X-bar chart (g)", i = 1:k, y = xbar, cl = xbarbar, ucl = limits$x_ucl, lcl = limits$x_lcl),
+  data.frame(chart = "S chart (g)", i = 1:k, y = s, cl = sbar, ucl = limits$s_ucl, lcl = limits$s_lcl))
+charts$out <- charts$y > charts$ucl | charts$y < charts$lcl
+
+ggplot(charts, aes(x = i, y = y)) +
+  geom_hline(aes(yintercept = ucl), color = "#C0392B", linetype = "dashed") +
+  geom_hline(aes(yintercept = lcl), color = "#C0392B", linetype = "dashed") +
+  geom_hline(aes(yintercept = cl), color = "#27AE60") +
+  geom_line(color = "grey50") +
+  geom_point(aes(color = out), size = 3) +
+  scale_color_manual(values = c("FALSE" = "steelblue", "TRUE" = "#C0392B"), guide = "none") +
+  facet_wrap(~chart, ncol = 1, scales = "free_y") +
+  labs(title = "X-bar/S Chart: Fill Head Drift in the Last Four Subgroups", x = "Subgroup", y = NULL) +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale),
+        strip.text = element_text(face = "bold", size = 10 * chart_text_scale))
+```
+
+Your turn : change the subgroup size and see how much the X-bar limits tighten. This is the price of a larger sample.
+
+```{r calc-xbar-s-limits, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "xbar-s-limits",
+  mode = "task",
+  title = "X-bar/S Chart Limits",
+  icon = "chart-line",
+  inputs = list(
+    qwebr_calc_input("grand_mean", "Grand mean", value = 500, min = 0, max = 1000, step = 0.5, suffix = "g"),
+    qwebr_calc_input("s_bar", "Average subgroup standard deviation", value = 3.5, min = 0.5, max = 10, step = 0.1, suffix = "g"),
+    qwebr_calc_input("n", "Subgroup size", value = 3, min = 2, max = 10, step = 1, type = "slider")
+  ),
+  goal = "Get the X-bar chart limits no wider than 8.4 g (UCL minus LCL) without changing the average s. What subgroup size does it take, and what does each extra part cost you?",
+  goal_test = "xbar_width <= 8.4 && abs(s_bar - 3.5) < 1e-9"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
+
+```{webr-r}
+#| label: xbar-s-limits
+grand_mean <- 500
+s_bar <- 3.5
+n <- 3
+
+# Constants for n = 2, 3, ..., 10
+c4_tab <- c(0.7979, 0.8862, 0.9213, 0.9400, 0.9515, 0.9594, 0.9650, 0.9693, 0.9727)
+A3_tab <- c(2.659, 1.954, 1.628, 1.427, 1.287, 1.182, 1.099, 1.032, 0.975)
+B3_tab <- c(0, 0, 0, 0, 0.030, 0.118, 0.185, 0.239, 0.284)
+B4_tab <- c(3.267, 2.568, 2.266, 2.089, 1.970, 1.882, 1.815, 1.761, 1.716)
+
+A3 <- A3_tab[n - 1]
+x_ucl <- grand_mean + A3 * s_bar
+x_lcl <- grand_mean - A3 * s_bar
+s_ucl <- B4_tab[n - 1] * s_bar
+s_lcl <- B3_tab[n - 1] * s_bar
+xbar_width <- x_ucl - x_lcl
+
+cat(sprintf("X-bar chart width: %.2f g (%.1f to %.1f)\n", xbar_width, x_lcl, x_ucl))
+cat(sprintf("  Constant A3  %.3f\n", A3))
+cat(sprintf("  S chart LCL  %.2f g\n", s_lcl))
+cat(sprintf("  S chart UCL  %.2f g\n", s_ucl))
+cat(sprintf("  Estimated sigma  %.2f g\n", s_bar / c4_tab[n - 1]))
+
+par(mar = c(5, 5, 3, 1))
+plot(2:10, 2 * A3_tab * s_bar, type = "b", pch = 19, xlab = "Subgroup size n",
+     ylab = "X-bar chart width (g)", main = "Wider subgroups, tighter limits")
+points(n, xbar_width, pch = 19, cex = 2.2, col = "#C0392B")
+```
+
+</details>
+
+The limits narrow quickly at first (from $n = 2$ to $n = 5$ the width nearly halves) and slowly after $n = 6$. That is why subgroups of 4 or 5 are the common choice, and a larger subgroup is only worth the extra measuring effort when the chart needs to catch a small shift.
+
+---
+
+## Attribute Charts for Counts
+
+The p chart and c chart in the introductory chapter cover the two most common cases. Two companions complete the set.
+
+| Chart | Plots | Sample size | Centre line and limits |
+|-------|-------|-------------|-------------------------|
+| **np** | Number of defective units | Constant, $n$ | $n\bar{p} \pm 3\sqrt{n\bar{p}(1-\bar{p})}$ |
+| **u** | Defects per unit | Varies from sample to sample, $n_i$ | $\bar{u} \pm 3\sqrt{\bar{u}/n_i}$, with $\bar{u} = \sum c_i / \sum n_i$ |
+
+The np chart is the p chart in disguise, plotted as a count instead of a fraction: it is preferred on the shop floor because operators prefer to plot "7 bad pieces" than "0.047". The u chart is the c chart for the case where the **area of opportunity changes**: boards per lot, metres of weld per shift, square metres of paint per day. Its limits widen and narrow with the sample size, just like the p chart's.
+
+```{r u-chart-example, echo=TRUE, fig.cap="u chart of solder defects per board, with lot sizes between 30 and 60 boards", fig.align='center', fig.width=10, fig.height=5}
+set.seed(11)
+lots <- 20
+boards  <- sample(30:60, lots, replace = TRUE)          # boards inspected per lot
+defects <- rpois(lots, lambda = 1.8 * boards)            # in-control rate: 1.8 defects per board
+defects[15] <- rpois(1, lambda = 3.6 * boards[15])       # lot 15: a bad solder-paste batch
+
+u     <- defects / boards
+u_bar <- sum(defects) / sum(boards)
+ucl   <- u_bar + 3 * sqrt(u_bar / boards)
+lcl   <- pmax(0, u_bar - 3 * sqrt(u_bar / boards))
+u_data <- data.frame(lot = 1:lots, boards, u, ucl, lcl, out = u > ucl | u < lcl)
+
+cat(sprintf("u-bar = %.3f defects per board\n", u_bar))
+cat("Lots outside the limits:", u_data$lot[u_data$out], "\n")
+cat(sprintf("Limit width ranges from +/- %.2f (60 boards) to +/- %.2f (30 boards)\n",
+            3 * sqrt(u_bar / 60), 3 * sqrt(u_bar / 30)))
+
+ggplot(u_data, aes(x = lot, y = u)) +
+  geom_line(aes(y = ucl), color = "#C0392B", linetype = "dashed") +
+  geom_line(aes(y = lcl), color = "#C0392B", linetype = "dashed") +
+  geom_hline(yintercept = u_bar, color = "#27AE60") +
+  geom_line(color = "grey50") +
+  geom_point(aes(color = out), size = 3) +
+  scale_color_manual(values = c("FALSE" = "steelblue", "TRUE" = "#C0392B"), guide = "none") +
+  labs(title = "u Chart: Defects per Board with Unequal Lot Sizes",
+       x = "Lot", y = "Defects per board") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale))
+```
+
+### Try it yourself: an np chart
+
+A stamping cell checks 150 brackets every shift for a burr. Over the last 25 shifts, the average fraction defective was $\bar{p} = 0.04$.
+
+```{r tryit-np-chart, echo=FALSE, results='asis'}
+np1 <- list(n = 150, pbar = 0.04)
+np1$cl  <- np1$n * np1$pbar
+np1$sd  <- sqrt(np1$n * np1$pbar * (1 - np1$pbar))
+np1$ucl <- np1$cl + 3 * np1$sd
+np1$lcl <- max(0, np1$cl - 3 * np1$sd)
+
+tryit_number(
+  id = "np-chart-limits",
+  title = "np chart: burrs on stamped brackets",
+  answers = list(
+    tryit_answer("Centre line, n x p-bar", np1$cl, tol = 0.05, digits = 2,
+                 hint = "Sample size times the average fraction defective."),
+    tryit_answer("UCL", np1$ucl, tol = 0.1, digits = 1,
+                 hint = "Centre line plus 3 x the square root of n x p-bar x (1 - p-bar)."),
+    tryit_answer("LCL (enter 0 if the formula gives a negative number)", np1$lcl, tol = 0.1, digits = 1,
+                 hint = "A count cannot be negative, so a negative result becomes 0.")
+  ),
+  question = "<p>A stamping cell checks 150 brackets every shift for a burr. Over the last 25 shifts the average fraction defective was 0.04. For an np chart the centre line is n p-bar, and the limits are n p-bar plus or minus 3 times the square root of n p-bar (1 - p-bar). If the lower limit is negative, report 0. Calculate the centre line, the upper control limit and the lower control limit (counts of defective brackets).</p>"
+)
+
+# Graded twin with different numbers: exported to Brightspace, not shown on the page
+np2 <- list(n = 200, pbar = 0.06)
+np2$cl <- np2$n * np2$pbar; np2$sd <- sqrt(np2$n * np2$pbar * (1 - np2$pbar))
+tryit_number(
+  id = "np-chart-limits-twin",
+  title = "np chart: leaking fittings",
+  show = FALSE,
+  answers = list(
+    tryit_answer("Centre line", np2$cl, tol = 0.05, digits = 2),
+    tryit_answer("UCL", np2$cl + 3 * np2$sd, tol = 0.1, digits = 1),
+    tryit_answer("LCL", max(0, np2$cl - 3 * np2$sd), tol = 0.1, digits = 1)
+  ),
+  question = "<p>A test stand checks 200 hydraulic fittings every shift for leaks. Over the last 25 shifts the average fraction defective was 0.06. For an np chart the centre line is n p-bar, and the limits are n p-bar plus or minus 3 times the square root of n p-bar (1 - p-bar). If the lower limit is negative, report 0. Calculate the centre line, the upper control limit and the lower control limit (counts of leaking fittings).</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r np-solution, echo=FALSE, results='asis'}
+cat(sprintf("- Centre line: $n\\bar{p} = 150 \\times 0.04 =$ **%.1f**\n", np1$cl))
+cat(sprintf("- Spread: $\\sqrt{%.1f \\times (1 - 0.04)} =$ %.3f\n", np1$cl, np1$sd))
+cat(sprintf("- UCL $= %.1f + 3 \\times %.3f =$ **%.1f**\n", np1$cl, np1$sd, np1$ucl))
+cat(sprintf("- LCL $= %.1f - 3 \\times %.3f = %.1f$, which is negative, so **LCL = 0**\n\n", np1$cl, np1$sd, np1$cl - 3 * np1$sd))
+cat(sprintf("A shift with %d or more defective brackets signals. With an average of %.0f per shift, the chart can only detect a rise, never a fall, which is why the zero lower limit matters.\n",
+            ceiling(np1$ucl), np1$cl))
+```
+
+</details>
+
+---
+
+## Process Capability in Depth
+
+### Within-Subgroup and Overall Spread: Cp/Cpk and Pp/Ppk
+
+Every capability index divides a specification width by a spread. The four indices differ only in which spread they use:
+
+| Index | Spread used | Estimated from | Describes |
+|-------|-------------|----------------|-----------|
+| **Cp, Cpk** | $\hat{\sigma}_{within}$, the short-term spread | $\bar{R}/d_2$ or $\bar{s}/c_4$ | What the process could do if it were centred and stable |
+| **Pp, Ppk** | $\hat{\sigma}_{overall}$, the long-term spread | The standard deviation $s$ of **all** the data | What the process actually delivered, drift and all |
+
+If the process is stable, the two spreads agree and the indices match. If the process drifts between subgroups (tool wear, temperature, material lots), the overall spread grows while the within-subgroup spread stays small. The **gap between Cpk and Ppk is therefore a measure of how unstable the process is**.
+
+```{r cpk-ppk-gap, echo=TRUE}
+# 25 subgroups of 5 shaft diameters (mm); tool wear moves the process mean upward
+set.seed(314)
+LSL <- 24.85; USL <- 25.15
+d2 <- 2.326    # n = 5
+
+drift   <- seq(24.99, 25.05, length.out = 25)
+shafts  <- t(sapply(drift, function(m) rnorm(5, mean = m, sd = 0.020)))
+
+x_all <- as.vector(shafts)
+r_bar <- mean(apply(shafts, 1, function(v) max(v) - min(v)))
+
+sigma_within  <- r_bar / d2
+sigma_overall <- sd(x_all)
+mu <- mean(x_all)
+
+Cp  <- (USL - LSL) / (6 * sigma_within)
+Cpk <- min(USL - mu, mu - LSL) / (3 * sigma_within)
+Pp  <- (USL - LSL) / (6 * sigma_overall)
+Ppk <- min(USL - mu, mu - LSL) / (3 * sigma_overall)
+
+cat("=== Capability versus performance ===\n\n")
+cat(sprintf("Mean %.4f mm,  sigma within %.4f mm,  sigma overall %.4f mm\n\n", mu, sigma_within, sigma_overall))
+cat(sprintf("Cp  = %.2f    Pp  = %.2f\n", Cp, Pp))
+cat(sprintf("Cpk = %.2f    Ppk = %.2f\n\n", Cpk, Ppk))
+cat(sprintf("Ppk is %.0f%% below Cpk: %s\n", (1 - Ppk / Cpk) * 100,
+            ifelse(Ppk / Cpk < 0.85, "the process is drifting between subgroups", "the process is close to stable")))
+```
+
+<details>
+<summary>Question: When should I quote Cpk and when Ppk?</summary>
+
+**Cp/Cpk (process capability):**
+
+- Uses within-subgroup variation ($\sigma$ estimated from $\bar{R}/d_2$)
+- Represents the *potential* capability if the process is in control
+- Use for ongoing monitoring, once the process is shown to be stable
+- Requires the process to be in statistical control
+
+**Pp/Ppk (process performance):**
+
+- Uses the overall standard deviation $s$ of all the data
+- Represents the *actual* performance, including all variation
+- Use for the initial run (a PPAP submission asks for it) or when stability is unknown
+- Includes both common-cause and special-cause variation
+
+**Rule of thumb:**
+
+- If Pp is close to Cp and Ppk is close to Cpk, the process is stable
+- If Pp is much smaller than Cp, or Ppk much smaller than Cpk, the process has between-subgroup variation (drift, shifts, mixed sources)
+
+</details>
+
+Your turn : the process below has a short-term spread of 0.020 mm but an overall spread of 0.035 mm, and it runs slightly off-centre.
+
+```{r calc-cpk-ppk, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "cpk-ppk-calc",
+  mode = "task",
+  title = "Cpk Versus Ppk",
+  icon = "bullseye",
+  inputs = list(
+    qwebr_calc_input("LSL", "Lower spec limit", value = 24.85, min = 24.5, max = 25, step = 0.01, suffix = "mm"),
+    qwebr_calc_input("USL", "Upper spec limit", value = 25.15, min = 25, max = 25.5, step = 0.01, suffix = "mm"),
+    qwebr_calc_input("process_mean", "Process mean", value = 25.04, min = 24.85, max = 25.15, step = 0.005, type = "slider", suffix = "mm"),
+    qwebr_calc_input("sigma_within", "Sigma within (short-term)", value = 0.020, min = 0.005, max = 0.06, step = 0.001, suffix = "mm"),
+    qwebr_calc_input("sigma_overall", "Sigma overall (long-term)", value = 0.035, min = 0.005, max = 0.1, step = 0.001, suffix = "mm")
+  ),
+  goal = "Lift Ppk to 1.33 without moving the specification limits. Which is cheaper to change here: the process mean or the overall spread?",
+  goal_test = "Ppk >= 1.33 && abs(USL - 25.15) < 1e-9 && abs(LSL - 24.85) < 1e-9"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
+
+```{webr-r}
+#| label: cpk-ppk-calc
+LSL <- 24.85
+USL <- 25.15
+process_mean <- 25.04
+sigma_within <- 0.020
+sigma_overall <- 0.035
+
+nearest <- min(USL - process_mean, process_mean - LSL)
+Cp  <- (USL - LSL) / (6 * sigma_within)
+Cpk <- nearest / (3 * sigma_within)
+Pp  <- (USL - LSL) / (6 * sigma_overall)
+Ppk <- nearest / (3 * sigma_overall)
+
+cat(sprintf("Ppk: %.2f (%s)\n", Ppk, ifelse(Ppk >= 1.33, "capable", "!!below 1.33!!")))
+cat(sprintf("  Cpk  %.2f\n", Cpk))
+cat(sprintf("  Pp  %.2f\n", Pp))
+cat(sprintf("  Cp  %.2f\n", Cp))
+cat(sprintf("  Distance to nearest limit  %.3f mm\n", nearest))
+
+par(mar = c(5, 5, 3, 1))
+barplot(c(Cp, Cpk, Pp, Ppk), names.arg = c("Cp", "Cpk", "Pp", "Ppk"),
+        col = c("#2E86C1", "#2E86C1", "#F39C12", "#F39C12"), ylab = "Index",
+        ylim = c(0, max(2, Cp, Pp) * 1.1), main = "Short-term (blue) vs long-term (orange)")
+abline(h = 1.33, lty = 2, lwd = 2, col = "#C0392B")
+```
+
+</details>
+
+### Capability When the Data Are Not Normal
+
+All four indices turn a spread into a defect rate through the normal curve. Many measured characteristics are not normal. Runout, flatness, surface roughness, concentricity and the count of particles all have a hard lower limit at zero and a long tail on the high side. Using the normal formula on such data usually **flatters** the process, because the tail it ignores is exactly where the parts fail.
+
+The **percentile method** replaces $\pm 3\sigma$ around the mean with the actual 0.135% and 99.865% points of the data:
+
+$$P_{pk} = \min\left(\frac{USL - \tilde{x}}{P_{99.865} - \tilde{x}}, \; \frac{\tilde{x} - LSL}{\tilde{x} - P_{0.135}}\right)$$
+
+where $\tilde{x}$ is the median. For a one-sided characteristic such as runout, only the upper term applies.
+
+```{r nonnormal-capability, echo=TRUE, fig.cap="Shaft runout is skewed: the normal formula and the percentile method disagree", fig.align='center', fig.width=10, fig.height=5}
+# Total indicated runout (mm), upper limit only: USL = 0.100 mm
+set.seed(808)
+USL <- 0.100
+runout <- rlnorm(400, meanlog = log(0.040), sdlog = 0.40)
+
+mu <- mean(runout); s <- sd(runout); med <- median(runout)
+Ppk_normal <- (USL - mu) / (3 * s)
+
+p99865 <- quantile(runout, 0.99865, names = FALSE)
+Ppk_pct <- (USL - med) / (p99865 - med)
+
+cat("=== Runout capability (USL = 0.100 mm) ===\n\n")
+cat(sprintf("Mean %.4f, median %.4f, standard deviation %.4f mm\n", mu, med, s))
+cat(sprintf("Ppk assuming normal data:   %.2f   (predicts %.2f%% over the limit)\n",
+            Ppk_normal, 100 * (1 - pnorm((USL - mu) / s))))
+cat(sprintf("Ppk by percentile method:   %.2f\n", Ppk_pct))
+cat(sprintf("Parts actually over the limit: %.2f%%\n", 100 * mean(runout > USL)))
+
+ggplot(data.frame(runout), aes(x = runout)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "steelblue", alpha = 0.7, color = "white") +
+  stat_function(fun = dnorm, args = list(mean = mu, sd = s), color = "#E67E22", linewidth = 1.2) +
+  geom_vline(xintercept = USL, color = "#C0392B", linetype = "dashed", linewidth = 1) +
+  annotate("text", x = USL, y = Inf, label = "USL", hjust = -0.2, vjust = 1.6,
+           color = "#C0392B", fontface = "bold", size = 4 * diagram_text_scale) +
+  labs(title = "Skewed Data Fooled by a Normal Curve",
+       subtitle = "Orange line: the normal curve with the same mean and standard deviation",
+       x = "Runout (mm)", y = "Density") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale))
+```
+
+The orange curve spills below zero and under-predicts the tail on the high side, so the normal-based Ppk looks acceptable while a visible share of parts exceed the limit. Software offers a transformation (Box-Cox, Johnson) or a fitted distribution (Weibull, lognormal) as alternatives; the percentile method is the one you can calculate by hand and explain to a customer.
+
+### How Much Can You Trust a Cpk?
+
+A Cpk is an estimate from a sample, so it has an uncertainty of its own. An approximate 95% confidence interval is
+
+$$\hat{C}_{pk} \pm 1.96\sqrt{\frac{1}{9n} + \frac{\hat{C}_{pk}^2}{2(n-1)}}$$
+
+```{r cpk-confidence, echo=TRUE}
+cpk_hat <- 1.33
+sample_sizes <- c(30, 50, 100, 200, 500)
+half_width <- 1.96 * sqrt(1 / (9 * sample_sizes) + cpk_hat^2 / (2 * (sample_sizes - 1)))
+
+ci <- data.frame(`Sample size` = sample_sizes,
+                 `Lower bound` = round(cpk_hat - half_width, 2),
+                 `Upper bound` = round(cpk_hat + half_width, 2),
+                 check.names = FALSE)
+ci %>%
+  kable(caption = "95% confidence interval for an observed Cpk of 1.33") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+An observed Cpk of 1.33 from 30 parts is consistent with a true Cpk anywhere from about 1.0 to 1.7. That is why customers specify the sample size of a capability study (typically 100 or more), and sometimes ask for a *lower confidence bound* of 1.33 rather than a point estimate of it.
+
+---
+
+## Detecting Small Shifts: CUSUM and EWMA
+
+A Shewhart chart judges each point on its own. A process that has moved by one half or one standard deviation produces points that are mostly inside the limits, and the Western Electric run rules take a long time to confirm it. Two charts solve this by **remembering the past**.
+
+**CUSUM (cumulative sum).** Add up the deviations from target, ignoring any that are within a slack of $k$:
+
+$$C_i^+ = \max\left(0,\; x_i - (\mu_0 + k) + C_{i-1}^+\right) \qquad C_i^- = \max\left(0,\; (\mu_0 - k) - x_i + C_{i-1}^-\right)$$
+
+The chart signals when either sum passes the decision interval $h$. Common choices are $k = 0.5\sigma$ and $h = 4\sigma$ or $5\sigma$.
+
+**EWMA (exponentially weighted moving average).** Each plotted point blends the new reading with the previous plotted value:
+
+$$z_i = \lambda x_i + (1 - \lambda) z_{i-1}, \qquad z_0 = \mu_0 \qquad\qquad UCL, LCL = \mu_0 \pm L\sigma\sqrt{\frac{\lambda}{2 - \lambda}\left[1 - (1-\lambda)^{2i}\right]}$$
+
+The weight $\lambda$ sets the memory: a small $\lambda$ (0.05 to 0.2) averages over a long history and catches small shifts; $\lambda = 1$ is a Shewhart chart. Typical settings are $\lambda = 0.2$ and $L = 2.7$ to $3$.
+
+```{r cusum-ewma, echo=TRUE, fig.cap="The same 40 readings on an individuals chart, a CUSUM and an EWMA; the mean shifts by 1 sigma after reading 20", fig.align='center', fig.width=10, fig.height=8}
+set.seed(1)
+mu0 <- 10; sigma <- 1; n_obs <- 40; shift_at <- 21; shift <- 1
+x <- rnorm(n_obs, mu0, sigma)
+x[shift_at:n_obs] <- x[shift_at:n_obs] + shift     # a 1-sigma shift starts at reading 21
+
+# Individuals chart: +/- 3 sigma
+i_sig <- which(abs(x - mu0) > 3 * sigma)
+
+# CUSUM with k = 0.5 sigma and h = 4 sigma
+k <- 0.5 * sigma; h <- 4 * sigma
+c_up <- c_dn <- numeric(n_obs); up <- dn <- 0
+for (i in seq_len(n_obs)) {
+  up <- max(0, up + x[i] - (mu0 + k))
+  dn <- max(0, dn + (mu0 - k) - x[i])
+  c_up[i] <- up; c_dn[i] <- dn
+}
+c_sig <- which(c_up > h | c_dn > h)
+
+# EWMA with lambda = 0.2 and L = 2.7
+lambda <- 0.2; L <- 2.7
+z <- numeric(n_obs); prev <- mu0
+for (i in seq_len(n_obs)) { prev <- lambda * x[i] + (1 - lambda) * prev; z[i] <- prev }
+ew_w  <- L * sigma * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * seq_len(n_obs))))
+e_sig <- which(abs(z - mu0) > ew_w)
+
+first <- function(s) if (length(s)) s[1] else NA
+cat("=== First signal (the shift starts at reading 21) ===\n\n")
+cat("Individuals chart: ", ifelse(is.na(first(i_sig)), "no signal", paste("reading", first(i_sig))), "\n")
+cat("CUSUM:             ", ifelse(is.na(first(c_sig)), "no signal", paste("reading", first(c_sig))), "\n")
+cat("EWMA:              ", ifelse(is.na(first(e_sig)), "no signal", paste("reading", first(e_sig))), "\n")
+
+panels <- rbind(
+  data.frame(chart = "Individuals chart", i = 1:n_obs, y = x, lo = mu0 - 3 * sigma, hi = mu0 + 3 * sigma, cl = mu0),
+  data.frame(chart = "CUSUM (upper sum above 0, lower sum below 0)", i = 1:n_obs, y = c_up - c_dn, lo = -h, hi = h, cl = 0),
+  data.frame(chart = "EWMA (lambda = 0.2, L = 2.7)", i = 1:n_obs, y = z, lo = mu0 - ew_w, hi = mu0 + ew_w, cl = mu0))
+panels$chart <- factor(panels$chart, levels = unique(panels$chart))
+panels$out <- panels$y > panels$hi | panels$y < panels$lo
+
+ggplot(panels, aes(x = i, y = y)) +
+  geom_vline(xintercept = shift_at - 0.5, color = "grey40", linetype = "dotted", linewidth = 1) +
+  geom_line(aes(y = hi), color = "#C0392B", linetype = "dashed") +
+  geom_line(aes(y = lo), color = "#C0392B", linetype = "dashed") +
+  geom_hline(aes(yintercept = cl), color = "#27AE60") +
+  geom_line(color = "grey50") +
+  geom_point(aes(color = out), size = 2.5) +
+  scale_color_manual(values = c("FALSE" = "steelblue", "TRUE" = "#C0392B"), guide = "none") +
+  facet_wrap(~chart, ncol = 1, scales = "free_y") +
+  labs(title = "A 1-Sigma Shift: Only the Memory Charts Notice",
+       subtitle = "Dotted line: where the shift starts",
+       x = "Reading", y = NULL) +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale),
+        strip.text = element_text(face = "bold", size = 10 * chart_text_scale))
+```
+
+The individuals chart sees nothing: every shifted reading is still well inside the 3-sigma limits. The CUSUM and EWMA both react within a few readings of the shift, because each new reading above target adds to the evidence instead of being judged alone.
+
+### Average Run Length
+
+Charts are compared by their **average run length (ARL)**: the average number of points plotted before the chart signals. We want a long ARL when the process is on target (few false alarms) and a short ARL after a shift. A 3-sigma Shewhart chart has an in-control ARL of about 370. For the same false-alarm rate, the memory charts are much faster at small shifts.
+
+| Shift size | Shewhart (3 sigma) | CUSUM ($k$ = 0.5, $h$ = 4) | EWMA ($\lambda$ = 0.2, $L$ = 2.7) |
+|-----------|-------------------|-----------------------------|-----------------------------------|
+| 0.5 sigma | about 150 | about 28 | about 28 |
+| 1.0 sigma | about 42 | about 8 | about 8 |
+| 2.0 sigma | about 6 | about 3 | about 3 |
+| 3.0 sigma | about 2 | about 2 | about 2 |
+
+For large shifts all three charts perform about the same, and a Shewhart chart is simpler to run and to explain. The usual practice is to run an X-bar or I chart alongside a CUSUM or EWMA, so that large and small shifts are both covered.
+
+Your turn : the simulation below estimates the ARL for a 0.5-sigma shift from 1000 simulated runs, for the three charts. It uses the same random numbers for every chart, so the differences are the charts and not luck.
+
+```{r calc-arl-sim, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "arl-sim",
+  mode = "task",
+  title = "Detection Speed: Shewhart, CUSUM and EWMA",
+  icon = "stopwatch",
+  inputs = list(
+    qwebr_calc_input("shift", "Shift in the mean (in sigma)", value = 0.5, min = 0.25, max = 3, step = 0.25, suffix = "sigma"),
+    qwebr_calc_input("lambda", "EWMA weight lambda", value = 0.5, min = 0.05, max = 1, step = 0.05, type = "slider"),
+    qwebr_calc_input("L", "EWMA limit width L", value = 2.7, min = 1.5, max = 3.5, step = 0.1, suffix = "sigma"),
+    qwebr_calc_input("seed", "Run number", value = 1, min = 1, max = 999, step = 1)
+  ),
+  rerun = "seed",
+  goal = "Make the EWMA find a 0.5-sigma shift in 30 readings or fewer on average, while keeping L at 2.6 or more so false alarms stay rare. Which direction does lambda have to move?",
+  goal_test = "EWMA_arl <= 30 && L >= 2.6 && abs(shift - 0.5) < 1e-9"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
+
+```{webr-r}
+#| label: arl-sim
+shift <- 0.5
+lambda <- 0.5
+L <- 2.7
+seed <- 1
+
+set.seed(seed)
+runs <- 1000
+max_n <- 500
+ewma <- rep(0, runs); cu_up <- rep(0, runs); cu_dn <- rep(0, runs)
+rl_shewhart <- rl_cusum <- rl_ewma <- rep(max_n, runs)
+found_s <- found_c <- found_e <- rep(FALSE, runs)
+
+for (t in 1:max_n) {
+  x <- rnorm(runs, mean = shift, sd = 1)          # shifted process, in units of sigma
+  ewma  <- lambda * x + (1 - lambda) * ewma
+  cu_up <- pmax(0, cu_up + x - 0.5)
+  cu_dn <- pmax(0, cu_dn - x - 0.5)
+  width <- L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * t)))
+  hit_s <- !found_s & abs(x) > 3
+  hit_c <- !found_c & (cu_up > 4 | cu_dn > 4)
+  hit_e <- !found_e & abs(ewma) > width
+  rl_shewhart[hit_s] <- t; rl_cusum[hit_c] <- t; rl_ewma[hit_e] <- t
+  found_s <- found_s | hit_s; found_c <- found_c | hit_c; found_e <- found_e | hit_e
+}
+
+Shewhart_arl <- mean(rl_shewhart)
+CUSUM_arl <- mean(rl_cusum)
+EWMA_arl <- mean(rl_ewma)
+
+cat(sprintf("EWMA average run length: %.1f readings\n", EWMA_arl))
+cat(sprintf("  CUSUM  %.1f readings\n", CUSUM_arl))
+cat(sprintf("  Shewhart (3 sigma)  %.1f readings\n", Shewhart_arl))
+cat(sprintf("  Shift  %g sigma, %d simulated runs\n", shift, runs))
+
+par(mar = c(5, 5, 3, 1))
+barplot(c(Shewhart_arl, CUSUM_arl, EWMA_arl), names.arg = c("Shewhart", "CUSUM", "EWMA"),
+        col = c("#95A5A6", "#2E86C1", "#F39C12"), ylab = "Average run length (readings)",
+        main = "Readings until the chart signals")
+```
+
+</details>
+
+Keep one thing in mind: shrinking $L$ makes every EWMA faster, but it also makes it signal on a process that has not moved. The comparison is only fair at a fixed false-alarm rate, which is what the goal above enforces by keeping $L$ at 2.6 or more.
+
+### Try it yourself: a CUSUM by hand
+
+A filling process targets 10.0 g with $\sigma = 1$. Use $k = 0.5$ (so the slack is 0.5) and the decision interval $h = 4$. The table shows eight readings. Fill in the upper CUSUM $C^+$ for each, then find the reading at which the chart first signals.
+
+```{r tryit-cusum, echo=FALSE, results='asis'}
+cs <- data.frame(Reading = as.character(1:8),
+                 x = c(10.4, 9.8, 10.9, 11.2, 10.6, 11.4, 11.1, 12.0))
+cs_target <- 10; cs_k <- 0.5; cs_h <- 4
+cs_cplus <- numeric(8); prev <- 0
+for (i in 1:8) { prev <- max(0, prev + cs$x[i] - (cs_target + cs_k)); cs_cplus[i] <- prev }
+cs$`C+` <- cs_cplus
+cs_signal <- which(cs_cplus > cs_h)[1]
+
+tryit_grid(
+  id = "cusum-by-hand",
+  title = "Upper CUSUM, reading by reading",
+  data = cs,
+  blank = "C+",
+  tol = c(`C+` = 0.05),
+  hints = c(`C+` = "C+ = max(0, previous C+ + x - (target + k)). Start from 0 before reading 1."),
+  answers = list(tryit_answer("First reading at which C+ exceeds h = 4", cs_signal, tol = 0, digits = 0,
+                              hint = "Look down the C+ column for the first value greater than 4.")),
+  intro = "Target 10.0, k = 0.5, h = 4. Fill in C+ for each reading, then the reading number of the first signal.",
+  question = "<p>A filling process has a target of 10.0 g and sigma = 1. An upper CUSUM uses C+ = max(0, previous C+ + x - (target + k)) with k = 0.5, starting from 0, and signals when C+ exceeds h = 4. Eight readings are 10.4, 9.8, 10.9, 11.2, 10.6, 11.4, 11.1 and 12.0. Calculate C+ for each reading and give the number of the first reading at which the chart signals.</p>"
+)
+
+# Graded twin with different numbers: exported to Brightspace, not shown on the page
+cs2 <- data.frame(Reading = as.character(1:8), x = c(20.3, 20.9, 19.8, 21.2, 21.5, 20.8, 21.6, 21.9))
+cs2_c <- numeric(8); prev <- 0
+for (i in 1:8) { prev <- max(0, prev + cs2$x[i] - (20 + 0.5)); cs2_c[i] <- prev }
+cs2$`C+` <- cs2_c
+tryit_grid(
+  id = "cusum-by-hand-twin",
+  title = "Upper CUSUM, bore diameter",
+  data = cs2, blank = "C+", tol = c(`C+` = 0.05), show = FALSE,
+  answers = list(tryit_answer("First reading at which C+ exceeds h = 4", which(cs2_c > 4)[1], tol = 0, digits = 0)),
+  question = "<p>A boring process has a target of 20.0 mm and sigma = 1. An upper CUSUM uses C+ = max(0, previous C+ + x - (target + k)) with k = 0.5, starting from 0, and signals when C+ exceeds h = 4. Eight readings are 20.3, 20.9, 19.8, 21.2, 21.5, 20.8, 21.6 and 21.9. Calculate C+ for each reading and give the number of the first reading at which the chart signals.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r cusum-solution, echo=FALSE, results='asis'}
+cs_show <- data.frame(Reading = cs$Reading, x = cs$x, `x - 10.5` = round(cs$x - 10.5, 1), `C+` = round(cs$`C+`, 1), check.names = FALSE)
+print(kable(cs_show, caption = "Upper CUSUM, target 10.0, k = 0.5") %>% kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE))
+cat(sprintf("\nThe sum stays at 0 while the readings sit near target, then grows by the excess over 10.5 on each high reading. It first exceeds h = 4 at **reading %d** (C+ = %.1f). A Shewhart chart with 3-sigma limits at 13.0 would not have signalled yet: the highest reading is 12.0.\n",
+            cs_signal, cs_cplus[cs_signal]))
+```
+
+</details>
+
+---
+
+## Special Situations
+
+### Short-Run Production
+
+A job shop machines 50 pieces of one part number, then changes over to another. Each part number has its own mean and its own spread, so there are never enough points on one chart to set limits. The solution is to plot a **standardised** value that makes all part numbers comparable:
+
+- **Deviation from nominal** (a "DNOM" chart): plot $x - \text{nominal}$. It works when all part numbers have a similar spread.
+- **Z chart:** plot $(x - \text{target}) / \sigma_{part}$, with limits at $\pm 3$. It also removes differences in spread, but needs a believable $\sigma$ for each part number.
+
+Whichever is used, the chart is plotted continuously across changeovers, so a trend or shift shows up even though the part number has changed.
+
+### Autocorrelated Data
+
+Control limits assume that successive readings are independent. A furnace temperature, a bath concentration or the level of a tank changes slowly, so each reading looks like the one before it. A Shewhart chart on such data signals far too often. Options:
+
+- Sample less often, until the readings are independent.
+- Chart the *residuals* of a time-series model rather than the readings.
+- Use an EWMA of the data with limits adjusted for the autocorrelation, or a "moving centre line" chart.
+
+Check by plotting $x_i$ against $x_{i-1}$: a visible slope means the independence assumption is broken.
+
+### Over-Adjustment
+
+Deming's funnel experiment from the introductory chapter has a second lesson here: if a CUSUM or EWMA chart is allowed to trigger an adjustment *every time* it moves, the adjustments themselves add variation. A memory chart should signal an investigation first. Automatic compensation belongs to the process controller, not the operator chart.
+
+---
+
+## Choosing the Chart
+
+| Question | Chart |
+|----------|-------|
+| Subgroups of 10 or more measurements | X-bar/S |
+| Constant sample size, counting defective units | np |
+| Varying number of units, counting defects per unit | u |
+| Small drift matters (under about 1.5 sigma) | CUSUM or EWMA |
+| Many part numbers, short runs | Z or DNOM chart |
+| Initial run, stability unknown | Report Pp/Ppk and a chart together |
+
+### Try it yourself: which chart fits?
+
+```{r tryit-adv-chart-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "adv-chart-chooser",
+  title = "Which chart for each situation?",
+  bins = c("X-bar / S", "np chart", "u chart", "CUSUM or EWMA", "Z or DNOM chart"),
+  cards = tibble::tribble(
+    ~text, ~bin, ~why,
+    "A fill station weighs 12 packs every 15 minutes, and the supervisor wants to see standard deviation as well as the average.",
+    "X-bar / S", "Large subgroups: the standard deviation uses all 12 readings, not only the extremes.",
+    "Every shift, 200 sealed pouches are tested for leaks, and the count of leakers is plotted.",
+    "np chart", "Constant sample size and a count of defective units.",
+    "A paint line inspects a different number of car doors each day and counts the paint flaws found.",
+    "u chart", "Defects per unit with a changing number of units inspected.",
+    "A heat-treat furnace drifts by a few tenths of a degree per week and nobody wants to wait for a 3-sigma point.",
+    "CUSUM or EWMA", "A small, sustained shift is exactly what a memory chart is for.",
+    "A CNC cell runs 30 different brackets in lots of 25, each with its own nominal.",
+    "Z or DNOM chart", "A short run of many part numbers: standardise so one chart can follow all of them.",
+    "A bottling plant takes 15 bottles from each batch of caps and wants a chart as sensitive as possible to a loose capping head.",
+    "X-bar / S", "Subgroup size of 15 is above the range of the X-bar/R constants.",
+    "A solder-paste printer's output is judged by a drift of 0.5 sigma in deposit volume that is costly if it persists.",
+    "CUSUM or EWMA", "Small shift with real cost: sensitivity beats simplicity.",
+    "The number of defective connectors in each lot of 500 is recorded.",
+    "np chart", "Fixed lot size and defective units counted."
+  ),
+  intro = NULL,
+  question = NULL
+)
+```
+
+---
+
+## Summary
+
+1. **Phase I sets the limits, Phase II uses them.** Do not recompute limits to follow the data, and do not delete a point without an assignable cause.
+2. **Subgrouping is a design decision.** Mixed sources inside a subgroup hide the very differences the chart should find.
+3. **Use S for large subgroups, np and u for counts.** The u chart handles unequal sample sizes; its limits move with the sample.
+4. **Cpk is potential, Ppk is performance.** A large gap between them says the process is not stable.
+5. **Normal formulas flatter skewed data.** Check the shape, use the percentile method, and state the sample size behind any capability figure.
+6. **CUSUM and EWMA catch small shifts.** Keep a Shewhart chart for large ones and compare charts by ARL.
+7. **Short-run and autocorrelated processes need adapted charts**, not forced onto the standard ones.
+
+> "A control chart that nobody understands will eventually be ignored, and one that is over-tuned will be distrusted. Use the simplest chart that sees the problem you have."
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: A process has Cpk = 1.60 and Ppk = 0.95. What does the gap tell you, and what would you check first?</summary>
+
+**Answer:**
+
+The short-term spread is small (Cpk is excellent) but the long-term performance is poor. The difference between $\sigma_{within}$ and $\sigma_{overall}$ is **between-subgroup variation**: something is changing the process from subgroup to subgroup.
+
+**Check first:**
+
+1. Plot the X-bar chart: is there a trend (tool wear) or a step (new material lot, new shift)?
+2. Look at the data by machine, cavity, shift and material lot: a mixture of sources produces the same pattern.
+3. Look at the subgrouping: if the subgroup is too short, slow drift is hidden inside it.
+
+Fix the cause of the shift before spending money on a tighter machine: the machine is already capable, but the process is not stable.
+</details>
+
+<details><summary>**Question 2**: Why does a chart on subgroups that each contain one part from each of two machines look "better" than a chart with one machine per subgroup, and which one should you trust?</summary>
+
+**Answer:**
+
+With mixed subgroups the machine difference sits inside every subgroup. The within-subgroup range is inflated, so the limits are wide enough to hide the difference, and the X-bar chart looks calm. With one machine per subgroup the range reflects only the short-term scatter, the limits are tight, and the machine difference appears as a pattern between subgroups.
+
+Trust the second chart. The first one looks better only because it is unable to ask the right question.
+</details>
+
+<details><summary>**Question 3**: Give two situations where you would add an EWMA or CUSUM to an X-bar chart, and one where the X-bar chart alone is enough.</summary>
+
+**Answer:**
+
+**Add a memory chart:** tool wear that moves the dimension by a fraction of a sigma per day; a slow drift in a bath concentration or a furnace; any process where a half-sigma shift costs real money (rework, scrap, warranty).
+
+**X-bar alone is enough:** a process where the failure modes are abrupt (a broken tool, a wrong setup, a missing component) and large. A Shewhart chart catches a shift of 2 sigma or more within a few subgroups and is easier to run and explain to operators.
+</details>
+
+<details><summary>**Question 4**: A capability study of 30 parts gives Cpk = 1.45. The customer requires 1.33. Is the requirement met?</summary>
+
+**Answer:**
+
+The point estimate is above 1.33, but with only 30 parts the 95% confidence interval for Cpk is roughly 1.45 $\pm$ 0.40, so the true value could be near 1.05. Unless the customer specifies a point estimate, the evidence is **not conclusive**. Collect a larger sample (100 or more parts) and check that the process was stable while the sample was taken, then report the lower confidence bound.
+</details>
+
+---
+
+## References
+
+1. Montgomery, D.C. (2019). *Introduction to Statistical Quality Control* (8th ed.). Wiley.
+
+2. Wheeler, D.J. (2000). *Understanding Variation: The Key to Managing Chaos* (2nd ed.). SPC Press.
+
+3. Wheeler, D.J., & Chambers, D.S. (1992). *Understanding Statistical Process Control* (2nd ed.). SPC Press.
+
+4. AIAG. (2005). *Statistical Process Control (SPC) Reference Manual* (2nd ed.). Automotive Industry Action Group.
+
+5. Lucas, J.M., & Saccucci, M.S. (1990). Exponentially weighted moving average control schemes: properties and enhancements. *Technometrics*, 32(1), 1-12.
+
+6. Kotz, S., & Johnson, N.L. (1993). *Process Capability Indices*. Chapman & Hall.
+
+7. ISO 22514-2:2017. *Statistical methods in process management - Capability and performance - Part 2: Process capability and performance of time-dependent process models*.

@@ -4,7 +4,7 @@
 Run:  python R/gen_lab_quizzes.py   (from the repo root, or anywhere)
 
 Writes one file per lab to  quizzes/<lab-slug>_quiz.csv  (e.g. quizzes/logic-rocksi_quiz.csv).
-Labs are identified by name, not number (see 30-Labs.qmd).
+Labs are identified by name, not number (see 23-Labs.qmd).
 `quizzes/` is gitignored (like R/make_lab_data.R's output) -- the CSVs are staged
 on FOL, not committed; this script is the source of record for them.
 

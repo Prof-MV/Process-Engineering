@@ -773,23 +773,24 @@ The **Risk Priority Number (RPN)** combines all three ratings:
 
 $$\text{RPN} = \text{Severity (S)} \times \text{Occurrence (O)} \times \text{Detection (D)}$$
 
-Live cell — try different Severity, Occurrence, and Detection ratings.
+Teaching demo — try different Severity, Occurrence, and Detection ratings.
 
 ```{r calc-rpn-calculation, echo=FALSE, results='asis'}
 qwebr_calc_card(
   label = "rpn-calculation",
+  mode = "demo",
   title = "RPN Ranking",
   icon = "triangle-exclamation",
   inputs = list(
-    qwebr_calc_input("S1", "Short shot: Severity", value = 7, min = 1, max = 10, step = 1),
-    qwebr_calc_input("O1", "Short shot: Occurrence", value = 5, min = 1, max = 10, step = 1),
-    qwebr_calc_input("D1", "Short shot: Detection", value = 6, min = 1, max = 10, step = 1),
-    qwebr_calc_input("S2", "Flash: Severity", value = 4, min = 1, max = 10, step = 1),
-    qwebr_calc_input("O2", "Flash: Occurrence", value = 6, min = 1, max = 10, step = 1),
-    qwebr_calc_input("D2", "Flash: Detection", value = 3, min = 1, max = 10, step = 1),
-    qwebr_calc_input("S3", "Contamination: Severity", value = 9, min = 1, max = 10, step = 1),
-    qwebr_calc_input("O3", "Contamination: Occurrence", value = 3, min = 1, max = 10, step = 1),
-    qwebr_calc_input("D3", "Contamination: Detection", value = 7, min = 1, max = 10, step = 1)
+    qwebr_calc_input("S1", "Short shot: Severity", value = 7, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("O1", "Short shot: Occurrence", value = 5, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("D1", "Short shot: Detection", value = 6, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("S2", "Flash: Severity", value = 4, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("O2", "Flash: Occurrence", value = 6, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("D2", "Flash: Detection", value = 3, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("S3", "Contamination: Severity", value = 9, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("O3", "Contamination: Occurrence", value = 3, min = 1, max = 10, step = 1, type = "slider"),
+    qwebr_calc_input("D3", "Contamination: Detection", value = 7, min = 1, max = 10, step = 1, type = "slider")
   )
 )
 ```
@@ -836,7 +837,7 @@ for (k in seq_along(ranking)) {
 }
 
 par(mar = c(5, 5, 3, 1))
-barplot(rpn, names.arg = modes, col = ifelse(rpn > 200, "#C0392B", "#2980B9"),
+barplot(rpn, names.arg = modes, col = ifelse(rpn > 200, "#C0392B", "#2980B9"), ylim = c(0, 1000),
         ylab = "RPN", main = "RPN by failure mode (red = above 200)")
 ```
 
@@ -1093,11 +1094,12 @@ pfmea_example %>%
   column_spec(10, bold = TRUE)
 ```
 
-Try it — change the baseline or improved S/O/D ratings below.
+Your turn — change the baseline or improved S/O/D ratings below.
 
 ```{r calc-rpn-improvement, echo=FALSE, results='asis'}
 qwebr_calc_card(
   label = "rpn-improvement",
+  mode = "task",
   title = "RPN Improvement Calculator",
   icon = "arrow-trend-down",
   inputs = list(
@@ -1442,11 +1444,12 @@ Based on the PFMEA, the team implemented:
 2. **Fixture monitoring:** Temperature compensation and wear tracking (O: 4 → 2)
 3. **Enhanced fixture design:** Carbide wear surfaces (O: 4 → 2)
 
-Try it — change the before/after ratings below.
+Your turn — change the before/after ratings below.
 
 ```{r calc-case-study-improvement, echo=FALSE, results='asis'}
 qwebr_calc_card(
   label = "case-study-improvement",
+  mode = "task",
   title = "Before/After RPN Calculator",
   icon = "arrow-trend-down",
   inputs = list(

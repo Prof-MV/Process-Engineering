@@ -12,7 +12,7 @@ Branch `labs/expand-to-14` → merged to `master` at `006a2f5`; webR fix at
 
 | Area | File(s) | Change |
 |---|---|---|
-| Lab chapter | `30-Labs.qmd` | 14 labs (lab # = week #). New: **Lab 4** Lean VSM, **Lab 6** SPC & Gauge R&R virtual caliper, **Lab 13** TPM/OEE + RCA + AI4I 2020, **Lab 14** RoboDK take-home. ML labs renumbered 5–10 → 7–12. Every lab heading has a `{#sec-lab-*}` anchor. Three `TODO` rubrics filled (Labs 5, 7, 8). Per-lab AI-use line in every `.lab-overview`. Teacher-prep matrix extended to 14. |
+| Lab chapter | `23-Labs.qmd` | 14 labs (lab # = week #). New: **Lab 4** Lean VSM, **Lab 6** SPC & Gauge R&R virtual caliper, **Lab 13** TPM/OEE + RCA + AI4I 2020, **Lab 14** RoboDK take-home. ML labs renumbered 5–10 → 7–12. Every lab heading has a `{#sec-lab-*}` anchor. Three `TODO` rubrics filled (Labs 5, 7, 8). Per-lab AI-use line in every `.lab-overview`. Teacher-prep matrix extended to 14. |
 | Front matter | `index.qmd` | Grade-weight table deleted (FOL is source of truth); `## Course schedule {-}` added; blanket AI ban replaced with a per-assessment generative-AI policy table; "labs 1–5 before week 7" → "1–6"; "mandatory labs 1 though 10" → "1 through 12". |
 | Chapter order | `_quarto.yml` | Chapters reordered to the teaching sequence so each lab's prerequisite chapter is taught first. **Files were NOT renamed** — the numeric filename prefixes are now historical; there is a comment in `_quarto.yml` saying so. Cross-refs are label-based so this is safe. |
 | Lab data | `R/make_lab_data.R` (new) | One seeded generator. Writes `lab_data/vsm_station_data.csv` (Lab 4) and `lab_data/precitech_shift_log.csv` (Lab 13); prints the Lab 4 / 6 / 13 / 14 answer keys. `lab_data/` is gitignored — stage the CSVs on FOL, never commit. |
@@ -39,7 +39,7 @@ approved, delete grade breakdown, per-assessment AI policy) are all in
   can serve the previous copy for several more minutes; `?cb=123` busts the
   browser but not always the edge. Check `curl -sI <url>` — `age: 0` and a
   `last-modified` after the deploy time mean it has propagated. `git show
-  origin/gh-pages:30-Labs.html` is the ground truth.
+  origin/gh-pages:23-Labs.html` is the ground truth.
 
 Watch a run: `gh run list --workflow=publish.yml` / `gh run watch <id> --exit-status`.
 
@@ -67,11 +67,11 @@ webr:
 ---
 ```
 
-`30-Labs.qmd` originally had only `toc-depth: 2` (it never used webR before), so
+`23-Labs.qmd` originally had only `toc-depth: 2` (it never used webR before), so
 the ```` ```{webr-r} ```` blocks fell through as plain fenced code and no webR
 runtime was injected.
 
-**Fix (`96e5966`):** added that same block to `30-Labs.qmd`'s front matter,
+**Fix (`96e5966`):** added that same block to `23-Labs.qmd`'s front matter,
 keeping `toc-depth: 2`.
 
 **If you add webR cells to any other lecture-only chapter, do the same.**
@@ -79,9 +79,9 @@ keeping `toc-depth: 2`.
 **Verify a build has live webR** (local `docs/` or `git show origin/gh-pages:`):
 
 ```bash
-grep -oE "qwebr-editor|qwebr-button-run|qwebr-monaco-editor-init" docs/30-Labs.html | sort | uniq -c
+grep -oE "qwebr-editor|qwebr-button-run|qwebr-monaco-editor-init" docs/23-Labs.html | sort | uniq -c
 # expect ~18 qwebr-editor, ~7 qwebr-button-run, 2 monaco-editor-init
-grep -c 'class="sourceCode webr' docs/30-Labs.html      # expect 0 (0 = not leaking as static)
+grep -c 'class="sourceCode webr' docs/23-Labs.html      # expect 0 (0 = not leaking as static)
 ```
 
 The qwebr JS is inlined into the HTML (that is why the page is ~270 KB and has
@@ -92,7 +92,7 @@ no local `src=` to qwebr files); only the Monaco editor loads from
 
 ## 4. Lab 6 virtual caliper — how it works
 
-All inside `30-Labs.qmd`, five `{webr-r}` cells, **base R graphics only** (no
+All inside `23-Labs.qmd`, five `{webr-r}` cells, **base R graphics only** (no
 ggplot2 — slow/fragile in webR). Cells share one page-global environment and
 `autorun: true` runs them top-to-bottom on load, so `lab6-setup` (which defines
 everything) always runs first.
@@ -154,14 +154,14 @@ book cover via a path that only resolves from the repo root); uses a tiny inline
 
 ```bash
 quarto render                                   # full book: exit 0, no unresolved xrefs
-grep -oE 'id="sec-lab-[a-z0-9-]+"' docs/30-Labs.html | sort -u   # 14 anchors
-grep -oE "qwebr-editor|qwebr-button-run" docs/30-Labs.html | sort | uniq -c
+grep -oE 'id="sec-lab-[a-z0-9-]+"' docs/23-Labs.html | sort -u   # 14 anchors
+grep -oE "qwebr-editor|qwebr-button-run" docs/23-Labs.html | sort | uniq -c
 Rscript R/make_lab_data.R                        # both CSVs + keys, re-run identical
 quarto render instructor                         # instructor-guide.pdf
 ```
 
 Sidebar order in the built book (confirmed): index → 01 → 02 → 08 → 04 → 16 →
-03 → 05 → 07 → 06 → 10 → 11 → 20 → 21 → 12 → 15 → 09 → 13 → 14 → 30-Labs.
+03 → 05 → 07 → 06 → 10 → 11 → 20 → 21 → 12 → 15 → 09 → 13 → 14 → 23-Labs.
 
 Warnings in the render log that are **pre-existing and unrelated**: `tab:*` "Raw
 LaTeX table found with non-tbl label" in several lecture chapters; `改善`

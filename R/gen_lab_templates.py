@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Generate the FOL document templates the Labs chapter (30-Labs.qmd) refers to.
+"""Generate the FOL document templates the Labs chapter (23-Labs.qmd) refers to.
 
 Run:  python R/gen_lab_templates.py   (from the repo root, or anywhere)
 

@@ -1,0 +1,1311 @@
+---
+engine: knitr
+filters:
+  - webr
+webr:
+  show-startup-message: true
+  cell-options:
+    autorun: true
+---
+
+# Advanced Measurement Systems Analysis
+
+```{r setup-17, include=FALSE}
+# include the helpers.R file for pdf output of youtube on pdfs as a clickable link
+source("R/helpers.R")
+# include the required packages to make sure the page can be built.
+source("R/required_packages.R")
+# jQuery is needed by kableExtra's kePrint.js (tooltips/popovers) but Quarto's
+# Bootstrap 5 theme doesn't ship it by default.
+inject_jquery()
+```
+
+## Learning Objectives
+
+After completing this chapter, you will be able to:
+
+1. Conduct a full crossed Gauge R&R study with the ANOVA method and extract the variance components, %GRR and ndc
+2. Explain why ANOVA finds problems (operator-by-part interaction) that the Range method cannot
+3. Run a Type 1 gauge study and judge a gauge with the capability indices $C_g$ and $C_{gk}$
+4. Choose between crossed, nested and Type 1 designs for a given measurement problem
+5. Evaluate an attribute measurement system with kappa, effectiveness, miss rate and false-alarm rate
+6. Build a measurement uncertainty budget and use it to compute the test uncertainty ratio and a guard-banded acceptance limit
+7. Quantify how measurement error distorts control charts and capability indices
+
+---
+
+## From Screening to a Full Study
+
+In the introductory MSA chapter you measured the pieces of a measurement system (bias, linearity, stability, repeatability and reproducibility) and ran a Gauge R&R with the **Range method**. That method is quick, and it is the right tool for a first look at a gauge in the lab. It is not the tool a customer expects to see in a PPAP submission or a defence quality plan, and it breaks down in five situations:
+
+| Situation | Why the Range method is not enough | What this chapter uses |
+|-----------|------------------------------------|------------------------|
+| A customer or auditor wants the study "per AIAG MSA 4th edition" | The Range method is a screening tool and tends to overstate the Gauge R&R | ANOVA Gauge R&R |
+| One operator seems to measure only certain parts differently | The Range method cannot see a part-by-operator interaction | ANOVA with the interaction term |
+| A new gauge arrives and has not been used by anyone yet | There are no operators to compare, only the gauge | Type 1 study ($C_g$, $C_{gk}$) |
+| The inspection is pass/fail, or the test destroys the part | There is no continuous reading to take a range of, or no second measurement of the same part | Attribute agreement, nested Gauge R&R |
+| A calibration lab or defence contract wants a stated "plus or minus" on a reading | %GRR says nothing about the size of the error in the measurement units | Uncertainty budget |
+
+**Industry connection:** in automotive supply the ANOVA Gauge R&R and the attribute study are standard PPAP evidence, and the Type 1 study is the usual first check on a new gauge (VDA 5 and many OEM specific requirements). In defence and aerospace work the uncertainty budget is what the calibration certificate and the measurement procedure must state. In food processing the same ideas apply to checkweighers, metal detectors and seal-integrity checks.
+
+---
+
+## Full Gauge R&R with ANOVA
+
+### ANOVA Method (Full Study)
+
+**ANOVA** (Analysis of Variance) is a statistical technique that partitions the total observed variation in a dataset into distinct components, each attributable to a specific source. In the context of Gauge R&R, ANOVA separates the total measurement variation into contributions from:
+
+- **Parts** (the actual differences between items being measured)
+- **Operators** (systematic differences between people taking measurements)
+- **Part × Operator interaction** (whether certain operators measure certain parts differently)
+- **Repeatability** (random error when the same operator measures the same part multiple times)
+
+#### Why Use ANOVA for Gauge R&R?
+
+The fundamental question in any measurement system analysis is: *"How much of the variation I observe comes from my measurement system versus the actual differences between parts?"* ANOVA answers this question by statistically decomposing variance—it calculates how much each source contributes to what we observe.
+
+Consider the alternative: if we simply looked at the spread of all measurements, we wouldn't know whether a wide spread indicates highly variable parts (good—our gauge can detect differences) or a poor measurement system (bad—we're adding noise). ANOVA untangles these effects mathematically.
+
+#### Why ANOVA is the Preferred Method
+
+While the Range Method provides a quick estimate, ANOVA offers several critical advantages for Gauge R&R studies:
+
+| Aspect | Range Method | ANOVA Method |
+|--------|--------------|--------------|
+| **Interaction effects** | Cannot detect | Identifies Part × Operator interactions |
+| **Statistical rigor** | Approximation using range-based estimates | Exact variance component estimation |
+| **Hypothesis testing** | Not available | Provides F-tests and p-values for each source |
+| **Accuracy** | Tends to overestimate GRR | More precise variance estimates |
+| **Information richness** | Basic EV/AV breakdown | Full decomposition with confidence intervals |
+| **Industry acceptance** | Screening only | Required for formal MSA studies (AIAG) |
+
+The ability to detect **interaction effects** is particularly important. If Operator A consistently measures Part 3 higher than Operator B does (but they agree on other parts), this indicates a training issue or technique difference that the Range Method would miss entirely. ANOVA flags this interaction, enabling targeted corrective action.
+
+#### How ANOVA Works in Gauge R&R
+
+ANOVA uses the **F-statistic** to test whether variation between groups (e.g., between operators) is significantly larger than variation within groups (repeatability). The mathematical basis is:
+
+$$F = \frac{\text{Mean Square Between Groups}}{\text{Mean Square Within Groups}} = \frac{MS_{factor}}{MS_{error}}$$
+
+A large F-value indicates that the factor (Part, Operator, or their interaction) contributes meaningfully to the observed variation. The p-value tells us the probability of seeing such an F-value if the factor had no real effect.
+
+From the ANOVA table's Mean Squares, we extract **variance components** ($\sigma^2$) for each source, then combine them to calculate the standard metrics: %EV (repeatability), %AV (reproducibility), %GRR, and the number of distinct categories (ndc).
+
+```{r anova-method, echo=TRUE}
+# Full Gauge R&R using ANOVA method
+# 10 parts, 3 operators, 3 trials
+
+set.seed(42)
+
+# Generate realistic GRR data
+n_parts <- 10
+n_operators <- 3
+n_trials <- 3
+
+# Part true values (most of the variation)
+part_effects <- rnorm(n_parts, 0, 0.05)
+
+# Operator effects (some variation)
+operator_effects <- c(-0.008, 0.003, 0.005)
+
+# Create dataset
+grr_data <- expand.grid(
+  Part = 1:n_parts,
+  Operator = paste0("Op", 1:n_operators),
+  Trial = 1:n_trials
+)
+
+# Add measurements
+grr_data$Measurement <- 10 +
+  part_effects[grr_data$Part] +
+  operator_effects[as.numeric(factor(grr_data$Operator))] +
+  rnorm(nrow(grr_data), 0, 0.006)  # Repeatability error
+
+# Convert to factors
+grr_data$Part <- factor(grr_data$Part)
+grr_data$Operator <- factor(grr_data$Operator)
+
+# Fit ANOVA model
+anova_model <- aov(Measurement ~ Part + Operator + Part:Operator, data = grr_data)
+
+# Extract variance components
+anova_table <- anova(anova_model)
+print(anova_table)
+```
+
+```{r anova-variance-components, echo=TRUE}
+# Extract Mean Squares from ANOVA
+MS_part <- anova_table["Part", "Mean Sq"]
+MS_operator <- anova_table["Operator", "Mean Sq"]
+MS_interaction <- anova_table["Part:Operator", "Mean Sq"]
+MS_error <- anova_table["Residuals", "Mean Sq"]
+
+# Calculate variance components
+n_p <- 10  # number of parts
+n_o <- 3   # number of operators
+n_r <- 3   # number of trials
+
+# Repeatability variance
+var_repeatability <- MS_error
+
+# Interaction variance
+var_interaction <- max(0, (MS_interaction - MS_error) / n_r)
+
+# Operator variance
+var_operator <- max(0, (MS_operator - MS_interaction) / (n_p * n_r))
+
+# Part variance
+var_part <- max(0, (MS_part - MS_interaction) / (n_o * n_r))
+
+# Reproducibility = Operator + Interaction
+var_reproducibility <- var_operator + var_interaction
+
+# Total Gauge R&R
+var_GRR <- var_repeatability + var_reproducibility
+
+# Total variation
+var_total <- var_part + var_GRR
+
+# Convert to standard deviations
+sigma_repeatability <- sqrt(var_repeatability)
+sigma_reproducibility <- sqrt(var_reproducibility)
+sigma_GRR <- sqrt(var_GRR)
+sigma_part <- sqrt(var_part)
+sigma_total <- sqrt(var_total)
+
+# Calculate study variation (5.15 sigma for 99% of distribution)
+SV_repeatability <- 5.15 * sigma_repeatability
+SV_reproducibility <- 5.15 * sigma_reproducibility
+SV_GRR <- 5.15 * sigma_GRR
+SV_part <- 5.15 * sigma_part
+SV_total <- 5.15 * sigma_total
+
+cat("\n=== ANOVA Gauge R&R Results ===\n\n")
+cat("Variance Components:\n")
+cat("  Repeatability:", round(var_repeatability, 8), "\n")
+cat("  Reproducibility:", round(var_reproducibility, 8), "\n")
+cat("  Part-to-Part:", round(var_part, 8), "\n")
+cat("  Total:", round(var_total, 8), "\n")
+
+cat("\nStudy Variation (5.15σ):\n")
+cat("  Repeatability:", round(SV_repeatability, 5), "\n")
+cat("  Reproducibility:", round(SV_reproducibility, 5), "\n")
+cat("  Gauge R&R:", round(SV_GRR, 5), "\n")
+cat("  Part-to-Part:", round(SV_part, 5), "\n")
+cat("  Total:", round(SV_total, 5), "\n")
+```
+
+### Calculating %GRR and Acceptance Criteria
+
+```{r grr-acceptance, echo=TRUE}
+# Calculate %GRR using both methods
+tolerance <- 0.30  # Total tolerance
+
+# Method 1: % of Tolerance (%GRR_Tolerance)
+pct_GRR_tol <- (SV_GRR / tolerance) * 100
+
+# Method 2: % of Total Variation (%GRR_TV)
+pct_GRR_tv <- (sigma_GRR / sigma_total) * 100
+
+# Number of Distinct Categories (ndc)
+ndc <- 1.41 * (sigma_part / sigma_GRR)
+
+cat("=== Gauge R&R Acceptance Criteria ===\n\n")
+cat("%GRR (of Tolerance):", round(pct_GRR_tol, 1), "%\n")
+cat("%GRR (of Total Variation):", round(pct_GRR_tv, 1), "%\n")
+cat("Number of Distinct Categories (ndc):", round(ndc, 1), "\n\n")
+
+# Acceptance criteria
+cat("AIAG Acceptance Guidelines:\n")
+cat("─────────────────────────────────────\n")
+if(pct_GRR_tol < 10) {
+  cat("%GRR < 10%: ACCEPTABLE - Measurement system is acceptable\n")
+} else if(pct_GRR_tol < 30) {
+  cat("%GRR 10-30%: MARGINAL - May be acceptable based on application\n")
+} else {
+  cat("%GRR > 30%: UNACCEPTABLE - Measurement system needs improvement\n")
+}
+
+if(ndc >= 5) {
+  cat("ndc ≥ 5: ACCEPTABLE - Adequate discrimination\n")
+} else if(ndc >= 2) {
+  cat("ndc 2-4: MARGINAL - Limited discrimination ability\n")
+} else {
+  cat("ndc < 2: UNACCEPTABLE - Cannot distinguish between parts\n")
+}
+```
+
+### Visual Analysis of Gauge R&R
+
+```{r grr-visuals, echo=FALSE, fig.width=12, fig.height=10}
+# Create comprehensive GRR visualization
+par(mfrow = c(2, 2))
+
+# Plot 1: Components of Variation
+components <- c(pct_GRR_tv,
+                (sigma_repeatability/sigma_total)*100,
+                (sigma_reproducibility/sigma_total)*100,
+                (sigma_part/sigma_total)*100)
+names(components) <- c("Gauge R&R", "Repeat", "Reprod", "Part-to-Part")
+
+grr_components <- data.frame(
+  Component = factor(c("Gauge R&R", "Repeatability", "Reproducibility", "Part-to-Part"),
+                     levels = c("Gauge R&R", "Repeatability", "Reproducibility", "Part-to-Part")),
+  Percent = c(pct_GRR_tv,
+              (sigma_repeatability/sigma_total)*100,
+              (sigma_reproducibility/sigma_total)*100,
+              (sigma_part/sigma_total)*100)
+)
+
+p1 <- ggplot(grr_components, aes(x = Component, y = Percent, fill = Component)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_hline(yintercept = 30, linetype = "dashed", color = "red") +
+  geom_text(aes(label = paste0(round(Percent, 1), "%")), vjust = -0.5) +
+  scale_fill_manual(values = c("#e74c3c", "#3498db", "#27ae60", "#f39c12"), guide = "none") +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(title = "Components of Variation", y = "% of Total Variation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(face = "bold"))
+
+# Plot 2: Measurement by Part
+p2 <- ggplot(grr_data, aes(x = Part, y = Measurement, color = Operator)) +
+  geom_point(position = position_dodge(width = 0.5), size = 2) +
+  stat_summary(fun = mean, geom = "line", aes(group = Operator),
+               position = position_dodge(width = 0.5)) +
+  labs(title = "Measurement by Part", y = "Measurement") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Plot 3: Measurement by Operator
+p3 <- ggplot(grr_data, aes(x = Operator, y = Measurement)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  labs(title = "Measurement by Operator", y = "Measurement") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+
+# Plot 4: Part × Operator Interaction
+interaction_data <- grr_data %>%
+  group_by(Part, Operator) %>%
+  summarize(Mean = mean(Measurement), .groups = "drop")
+
+p4 <- ggplot(interaction_data, aes(x = Part, y = Mean, color = Operator, group = Operator)) +
+  geom_point(size = 3) +
+  geom_line() +
+  labs(title = "Part × Operator Interaction", y = "Mean Measurement") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"),
+        legend.position = "bottom")
+
+# Combine plots
+gridExtra::grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+---
+
+## Crossed, Nested and Destructive Studies
+
+The ANOVA study above is a **crossed** design: every operator measures every part, several times. That only works when a part survives the measurement. Many of the tests that matter most do not leave a part to re-measure:
+
+- a tensile test pulls the coupon apart,
+- a weld peel or burst test destroys the joint,
+- a food-safety plate count uses up the sample,
+- a hardness indent on a thin section cannot be repeated on the same spot.
+
+In these cases the study has to assume that parts from the same batch are close enough to be treated as "the same part". The batch is then **nested** inside the operator: each operator tests their own set of samples from a homogeneous batch, and nothing is shared across operators.
+
+| Design | Who measures what | Needs | Separates | Typical use |
+|--------|-------------------|-------|-----------|-------------|
+| **Crossed** | Every operator measures every part, several times | A part that can be re-measured | Repeatability, reproducibility, part-by-operator interaction | Calipers, micrometers, CMM, gauges |
+| **Nested** | Each operator measures their own parts, once each | Batches that are as uniform as possible | Repeatability, reproducibility (no interaction) | Tensile, burst, peel, microbiology |
+| **Type 1** | One operator, one master, one gauge | A master of known value | Bias and repeatability only | Qualifying a new gauge |
+
+The analysis is the same ANOVA idea with a different model: the variation *within* a batch is repeatability, the variation *between* operator averages is reproducibility, and anything that is left over from batch-to-batch differences is mixed into the repeatability. That is why a nested study usually **overstates** the measurement error, and why the batch should be as uniform as you can make it.
+
+<details>
+<summary>Discussion: your team must qualify a destructive peel test on a sealed food pouch. What would you do to make the nested study fair?</summary>
+
+**Good practice:**
+
+- Take all samples from one production run and from consecutive pouches, so the seal quality is as similar as possible.
+- Give each operator a randomised set of pouches, not the first ten off the line.
+- Use the same test fixture, peel speed and conditioning time for every operator.
+- Compare the result with the process: if the pouches in one run already differ by about as much as the measurement error, the study cannot separate the two. Say so in the report instead of quoting a number that looks more precise than it is.
+
+</details>
+
+---
+
+## Type 1 Gauge Study: $C_g$ and $C_{gk}$
+
+A Gauge R&R needs operators, parts and a lot of time. Before any of that, a quicker question is worth asking: *is the gauge itself good enough for this tolerance?* The **Type 1 study** answers it with one master part (a gauge block or a certified setting master) and one gauge. The gauge measures the master about 25 to 50 times, by the same operator under the same conditions, and the readings are compared with the master's known value.
+
+Two indices come out of it, built the same way as the process capability indices you met in SPC:
+
+$$C_g = \frac{0.2\,T}{6\,s_g} \qquad\qquad C_{gk} = \frac{0.1\,T - \left|\bar{x} - x_{ref}\right|}{3\,s_g}$$
+
+where $T$ is the tolerance width (USL $-$ LSL), $s_g$ is the standard deviation of the repeated readings, $\bar{x}$ is their average and $x_{ref}$ is the master's reference value. The gauge is accepted when both are at least **1.33**.
+
+Read the formulas the way you read $C_p$ and $C_{pk}$:
+
+- $C_g$ asks only about **spread**. The gauge is allowed to use 20% of the tolerance ($0.2\,T$) for its own $6\,s_g$ scatter.
+- $C_{gk}$ asks about spread **and bias together**. The average has to sit close enough to the reference that $3\,s_g$ still fits inside $\pm 0.1\,T$.
+- A big gap between $C_g$ and $C_{gk}$ means the gauge is precise but biased. That is cured by adjusting or recalibrating the gauge, not by buying a better one.
+
+```{r type1-example, echo=TRUE, fig.cap="Type 1 study: 25 readings of a 25.000 mm master against the +/-0.1T band", fig.align='center', fig.width=10, fig.height=5}
+# Type 1 study: 25 readings of a 25.000 mm master, part tolerance 0.30 mm (+/-0.15)
+set.seed(1717)
+x_ref     <- 25.000
+tolerance <- 0.30
+readings  <- rnorm(25, mean = 25.008, sd = 0.006)
+
+x_bar <- mean(readings)
+s_g   <- sd(readings)
+bias  <- x_bar - x_ref
+
+Cg  <- 0.2 * tolerance / (6 * s_g)
+Cgk <- (0.1 * tolerance - abs(bias)) / (3 * s_g)
+
+cat("=== Type 1 Gauge Study ===\n\n")
+cat(sprintf("Average reading:      %.4f mm\n", x_bar))
+cat(sprintf("Bias:                 %.4f mm\n", bias))
+cat(sprintf("Repeatability (s_g):  %.4f mm\n\n", s_g))
+cat(sprintf("Cg  = %.2f   (spread only)\n", Cg))
+cat(sprintf("Cgk = %.2f   (spread and bias)\n\n", Cgk))
+cat(ifelse(Cgk >= 1.33, "Gauge is capable for this tolerance\n",
+           "Gauge is NOT capable: Cgk is below 1.33\n"))
+
+type1 <- data.frame(n = 1:25, reading = readings)
+ggplot(type1, aes(x = n, y = reading)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = x_ref - 0.1 * tolerance,
+           ymax = x_ref + 0.1 * tolerance, fill = "#D4EDDA", alpha = 0.6) +
+  geom_hline(yintercept = x_ref, color = "#27AE60", linewidth = 1) +
+  geom_hline(yintercept = x_bar, color = "#C0392B", linewidth = 1, linetype = "dashed") +
+  geom_point(color = "steelblue", size = 3) +
+  annotate("text", x = 26, y = x_ref - 0.1 * tolerance, label = "-0.1 T", hjust = 0,
+           size = 4 * diagram_text_scale) +
+  annotate("text", x = 26, y = x_ref + 0.1 * tolerance, label = "+0.1 T", hjust = 0,
+           size = 4 * diagram_text_scale) +
+  annotate("text", x = 26, y = x_ref - 0.002, label = "Reference", hjust = 0,
+           color = "#27AE60", fontface = "bold", size = 4 * diagram_text_scale) +
+  annotate("text", x = 26, y = x_bar + 0.002, label = "Average", hjust = 0,
+           color = "#C0392B", fontface = "bold", size = 4 * diagram_text_scale) +
+  scale_x_continuous(limits = c(0, 31)) +
+  coord_cartesian(ylim = x_ref + c(-0.035, 0.035)) +
+  labs(title = "Type 1 Study: Precise but Biased",
+       subtitle = "The green band is the +/-0.1 T zone the gauge may use",
+       x = "Reading number", y = "Reading (mm)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale))
+```
+
+The scatter is small, so $C_g$ is comfortable, but the whole cloud sits above the reference and $C_{gk}$ falls below 1.33. This is a gauge that needs adjusting, not replacing.
+
+Your turn : the gauge below is both biased and noisy. Change the average and the spread of the readings and watch which index moves.
+
+```{r calc-type1-gauge, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "type1-gauge",
+  mode = "task",
+  title = "Type 1 Gauge Study",
+  icon = "ruler",
+  inputs = list(
+    qwebr_calc_input("reference_value", "Master reference value", value = 25, min = 24.9, max = 25.1, step = 0.001, suffix = "mm"),
+    qwebr_calc_input("tolerance", "Part tolerance width (USL - LSL)", value = 0.30, min = 0.05, max = 1, step = 0.01, suffix = "mm"),
+    qwebr_calc_input("mean_reading", "Average of the readings", value = 25.012, min = 24.9, max = 25.1, step = 0.001, suffix = "mm"),
+    qwebr_calc_input("s_g", "Standard deviation of the readings", value = 0.012, min = 0.001, max = 0.05, step = 0.001, type = "slider", suffix = "mm")
+  ),
+  goal = "Make the gauge capable (both Cg and Cgk at least 1.33) without touching the 0.30 mm tolerance. Which input do you have to change, and by how much?",
+  goal_test = "Cg >= 1.33 && Cgk >= 1.33 && abs(tolerance - 0.30) < 1e-9"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
+
+```{webr-r}
+#| label: type1-gauge
+reference_value <- 25.000
+tolerance <- 0.30
+mean_reading <- 25.012
+s_g <- 0.012
+
+bias <- mean_reading - reference_value
+Cg  <- 0.2 * tolerance / (6 * s_g)
+Cgk <- (0.1 * tolerance - abs(bias)) / (3 * s_g)
+
+cat(sprintf("Cgk: %.2f (%s)\n", Cgk, ifelse(Cgk >= 1.33, "capable", "!!not capable!!")))
+cat(sprintf("  Cg  %.2f\n", Cg))
+cat(sprintf("  Bias  %.4f mm\n", bias))
+cat(sprintf("  Spread allowed for Cg = 1.33  %.4f mm\n", 0.2 * tolerance / (6 * 1.33)))
+cat("  Target  Cg and Cgk at least 1.33\n")
+
+par(mar = c(5, 5, 3, 1))
+bp <- barplot(c(Cg, Cgk), names.arg = c("Cg", "Cgk"), col = c("#2E86C1", "#F39C12"),
+              ylim = c(0, max(2, Cg, Cgk) * 1.1), ylab = "Index", main = "Gauge capability")
+abline(h = 1.33, lty = 2, lwd = 2, col = "#C0392B")
+```
+
+</details>
+
+Notice that moving the average back onto the reference raises $C_{gk}$ only up to the value of $C_g$ (with zero bias the two are equal). To go beyond that, the spread has to come down.
+
+### Try it yourself: a Type 1 study on a new gauge
+
+A bore gauge is checked against a 10.000 mm ring master before it goes on the line. The part tolerance is 0.20 mm. Twenty readings gave an average of 10.006 mm and a standard deviation of 0.004 mm.
+
+```{r tryit-type1, echo=FALSE, results='asis'}
+t1 <- list(ref = 10.000, T = 0.20, xbar = 10.006, s = 0.004)
+t1$bias <- t1$xbar - t1$ref
+t1$Cg   <- 0.2 * t1$T / (6 * t1$s)
+t1$Cgk  <- (0.1 * t1$T - abs(t1$bias)) / (3 * t1$s)
+
+tryit_number(
+  id = "type1-bore-gauge",
+  title = "Type 1 study: bore gauge",
+  answers = list(
+    tryit_answer("Bias (xbar - reference)", t1$bias, tol = 0.0005, suffix = "mm",
+                 hint = "Average reading minus the master value."),
+    tryit_answer("Cg", t1$Cg, tol = 0.02,
+                 hint = "Cg = 0.2 x T / (6 x s). Spread only, so the bias is not used."),
+    tryit_answer("Cgk", t1$Cgk, tol = 0.02,
+                 hint = "Subtract the size of the bias from 0.1 x T before dividing by 3 x s.")
+  ),
+  question = "<p>A bore gauge is checked against a 10.000 mm ring master. The part tolerance width is 0.20 mm. Twenty readings give an average of 10.006 mm and a standard deviation of 0.004 mm. Use Cg = 0.2 T / (6 s) and Cgk = (0.1 T - |average - reference|) / (3 s), where T is the tolerance width and s the standard deviation of the readings. Calculate the bias (mm), Cg and Cgk.</p>"
+)
+
+# Graded twin with different numbers: exported to Brightspace, not shown on the page
+t1b <- list(ref = 50.000, T = 0.50, xbar = 50.015, s = 0.012)
+tryit_number(
+  id = "type1-bore-gauge-twin",
+  title = "Type 1 study: height gauge",
+  show = FALSE,
+  answers = list(
+    tryit_answer("Bias", t1b$xbar - t1b$ref, tol = 0.0005),
+    tryit_answer("Cg", 0.2 * t1b$T / (6 * t1b$s), tol = 0.02),
+    tryit_answer("Cgk", (0.1 * t1b$T - abs(t1b$xbar - t1b$ref)) / (3 * t1b$s), tol = 0.02)
+  ),
+  question = "<p>A height gauge is checked against a 50.000 mm gauge block. The part tolerance width is 0.50 mm. Twenty-five readings give an average of 50.015 mm and a standard deviation of 0.012 mm. Use Cg = 0.2 T / (6 s) and Cgk = (0.1 T - |average - reference|) / (3 s), where T is the tolerance width and s the standard deviation of the readings. Calculate the bias (mm), Cg and Cgk.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r type1-solution, echo=FALSE, results='asis'}
+cat(sprintf("- Bias = %.3f - %.3f = **%.3f mm**\n", t1$xbar, t1$ref, t1$bias))
+cat(sprintf("- $C_g = 0.2 \\times %.2f / (6 \\times %.3f) =$ **%.2f**\n", t1$T, t1$s, t1$Cg))
+cat(sprintf("- $C_{gk} = (0.1 \\times %.2f - %.3f) / (3 \\times %.3f) =$ **%.2f**\n\n", t1$T, abs(t1$bias), t1$s, t1$Cgk))
+cat(sprintf("Both indices are %s 1.33, so the gauge **%s** for this tolerance. The gap between $C_g$ and $C_{gk}$ comes from the %.3f mm bias, so the first corrective action is to re-zero the gauge on the master.\n",
+            ifelse(t1$Cgk >= 1.33, "above", "not both above"),
+            ifelse(t1$Cgk >= 1.33, "is capable", "is not yet capable"), abs(t1$bias)))
+```
+
+</details>
+
+---
+
+## Attribute Measurement Systems
+
+For pass/fail or categorical measurements (visual inspection, go/no-go gauges), we use **Attribute MSA** or **Attribute Agreement Analysis**.
+
+### Kappa Statistic
+
+When evaluating attribute measurement systems (pass/fail, accept/reject, visual inspection), you might think that **percent agreement** would be sufficient—if two inspectors agree 90% of the time, isn't that good enough? The problem is that some agreement happens purely by chance, and percent agreement doesn't account for this.
+
+#### Why Percent Agreement Can Be Misleading
+
+Consider a visual inspection where 95% of parts are good. If an inspector simply guesses "Accept" for every part (without even looking), they would be "correct" 95% of the time. Two such inspectors would agree 90.5% of the time by pure chance:
+
+$$P_e = P(\text{both say Accept}) + P(\text{both say Reject}) = 0.95^2 + 0.05^2 = 0.905$$
+
+This is why we need **Cohen's Kappa** ($\kappa$)—it measures agreement *beyond what we'd expect from chance alone*.
+
+#### The Kappa Formula
+
+$$\kappa = \frac{P_o - P_e}{1 - P_e}$$
+
+Where:
+
+- $P_o$ = Observed proportion of agreement (how often they actually agree)
+- $P_e$ = Expected proportion of agreement by chance (how often they'd agree if guessing randomly based on their individual tendencies)
+- $1 - P_e$ = Maximum possible agreement beyond chance
+
+**Interpreting the formula:** The numerator ($P_o - P_e$) represents *actual agreement minus chance agreement*—the "real" agreement attributable to consistent measurement. The denominator ($1 - P_e$) normalizes this to a 0–1 scale by dividing by the maximum possible improvement over chance.
+
+| Kappa Value | Meaning |
+|-------------|---------|
+| $\kappa = 1$ | Perfect agreement (everyone agrees, and not by chance) |
+| $\kappa = 0$ | Agreement equals chance—no better than random guessing |
+| $\kappa < 0$ | Agreement is *worse* than chance (systematic disagreement) |
+
+#### When to Use Kappa
+
+Use Kappa when evaluating:
+
+- **Inspector vs. Reference**: Does the operator match the known correct answer? (Most important for MSA)
+- **Inspector vs. Inspector**: Do two operators classify the same parts the same way?
+- **Inspector vs. Self (Repeatability)**: Does the same operator give the same answer when re-inspecting the same part?
+
+For a robust attribute MSA, you should calculate Kappa for all three comparisons. High agreement with other operators but low agreement with the reference standard indicates *consistent but incorrect* inspection—a training problem.
+
+```{r kappa-interpretation, echo=FALSE}
+kappa_table <- data.frame(
+  Kappa = c("< 0", "0.00 - 0.20", "0.21 - 0.40", "0.41 - 0.60",
+            "0.61 - 0.80", "0.81 - 1.00"),
+  Interpretation = c("Less than chance agreement", "Slight agreement",
+                     "Fair agreement", "Moderate agreement",
+                     "Substantial agreement", "Almost perfect agreement"),
+  Action = c("Major issues - do not use", "Major improvement needed",
+             "Significant improvement needed", "Some improvement needed",
+             "Acceptable for most applications", "Excellent - acceptable")
+)
+
+kable(kappa_table, caption = "Kappa Statistic Interpretation Guide") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "18%" else NULL) %>%
+  row_spec(5:6, background = "#d4edda") %>%
+  row_spec(3:4, background = "#fff3cd") %>%
+  row_spec(1:2, background = "#f8d7da")
+```
+
+### Attribute Agreement Study Example
+
+```{r attribute-msa, echo=TRUE}
+# Attribute Agreement Analysis
+# 3 operators inspect 30 samples, 2 trials each
+# Reference standard (known good/bad) available
+
+set.seed(123)
+n_samples <- 30
+n_operators <- 3
+n_trials <- 2
+
+# Reference classification (10 bad, 20 good)
+reference <- c(rep("Reject", 10), rep("Accept", 20))
+
+# Simulate operator decisions (some disagreement)
+simulate_decision <- function(ref, accuracy) {
+  sapply(ref, function(r) {
+    if(runif(1) < accuracy) r else ifelse(r == "Accept", "Reject", "Accept")
+  })
+}
+
+# Operators with different accuracy levels
+op1_t1 <- simulate_decision(reference, 0.92)
+op1_t2 <- simulate_decision(reference, 0.92)
+op2_t1 <- simulate_decision(reference, 0.88)
+op2_t2 <- simulate_decision(reference, 0.88)
+op3_t1 <- simulate_decision(reference, 0.95)
+op3_t2 <- simulate_decision(reference, 0.95)
+
+# Calculate agreement metrics
+
+# 1. Within-operator agreement (repeatability)
+within_op1 <- mean(op1_t1 == op1_t2)
+within_op2 <- mean(op2_t1 == op2_t2)
+within_op3 <- mean(op3_t1 == op3_t2)
+
+# 2. Each operator vs. reference
+op1_vs_ref <- mean(op1_t1 == reference & op1_t2 == reference)
+op2_vs_ref <- mean(op2_t1 == reference & op2_t2 == reference)
+op3_vs_ref <- mean(op3_t1 == reference & op3_t2 == reference)
+
+# 3. All operators agree (both trials)
+all_agree_t1 <- mean(op1_t1 == op2_t1 & op2_t1 == op3_t1)
+all_agree_both <- mean(op1_t1 == op1_t2 & op1_t1 == op2_t1 & op2_t1 == op2_t2 &
+                        op2_t1 == op3_t1 & op3_t1 == op3_t2)
+
+cat("=== Attribute Agreement Analysis ===\n\n")
+cat("Within-Operator Agreement (Repeatability):\n")
+cat("  Operator 1:", round(within_op1 * 100, 1), "%\n")
+cat("  Operator 2:", round(within_op2 * 100, 1), "%\n")
+cat("  Operator 3:", round(within_op3 * 100, 1), "%\n\n")
+
+cat("Each Operator vs. Reference (both trials correct):\n")
+cat("  Operator 1:", round(op1_vs_ref * 100, 1), "%\n")
+cat("  Operator 2:", round(op2_vs_ref * 100, 1), "%\n")
+cat("  Operator 3:", round(op3_vs_ref * 100, 1), "%\n\n")
+
+cat("All Operators Agreement:\n")
+cat("  All agree (one trial):", round(all_agree_t1 * 100, 1), "%\n")
+cat("  All agree (both trials):", round(all_agree_both * 100, 1), "%\n")
+```
+
+### Calculating Kappa
+
+```{r kappa-calculation, echo=TRUE}
+# Calculate Kappa for Operator 1 vs Reference
+# Create confusion matrix for trial 1
+actual <- factor(reference, levels = c("Accept", "Reject"))
+predicted <- factor(op1_t1, levels = c("Accept", "Reject"))
+
+confusion <- table(Predicted = predicted, Actual = actual)
+print(confusion)
+
+# Calculate proportions
+n <- sum(confusion)
+p_o <- sum(diag(confusion)) / n  # Observed agreement
+
+# Expected agreement by chance
+p_accept <- sum(confusion[1,]) / n * sum(confusion[,1]) / n
+p_reject <- sum(confusion[2,]) / n * sum(confusion[,2]) / n
+p_e <- p_accept + p_reject
+
+# Kappa
+kappa <- (p_o - p_e) / (1 - p_e)
+
+cat("\nKappa Calculation (Operator 1 vs Reference):\n")
+cat("Observed agreement (Po):", round(p_o, 3), "\n")
+cat("Expected agreement (Pe):", round(p_e, 3), "\n")
+cat("Kappa:", round(kappa, 3), "\n")
+
+# Interpretation
+if(kappa >= 0.81) {
+  cat("Interpretation: Almost perfect agreement\n")
+} else if(kappa >= 0.61) {
+  cat("Interpretation: Substantial agreement\n")
+} else if(kappa >= 0.41) {
+  cat("Interpretation: Moderate agreement\n")
+} else {
+  cat("Interpretation: Fair or less agreement - needs improvement\n")
+}
+```
+
+### Effectiveness, Miss Rate and False-Alarm Rate
+
+Kappa tells you whether inspectors agree beyond chance. A customer usually asks two plainer questions: *how often does a bad part get through?* and *how often is a good part thrown away?* The AIAG attribute study answers them with three rates, all counted against the **reference** decision of each part:
+
+$$\text{Effectiveness} = \frac{\text{correct decisions}}{\text{total opportunities}} \qquad \text{Miss rate} = \frac{\text{bad parts accepted}}{\text{opportunities on bad parts}} \qquad \text{False-alarm rate} = \frac{\text{good parts rejected}}{\text{opportunities on good parts}}$$
+
+An "opportunity" is one part judged once by one appraiser, so 20 bad parts judged by 3 appraisers in 3 trials is 180 opportunities on bad parts.
+
+| Result | Effectiveness | Miss rate | False-alarm rate |
+|--------|---------------|-----------|------------------|
+| Acceptable | 90% or more | 2% or less | 5% or less |
+| Marginal | 80% to 90% | 2% to 5% | 5% to 10% |
+| Unacceptable | below 80% | above 5% | above 10% |
+
+The two error rates carry very different costs. A **miss** ships a defect to the customer: in an airbag inflator weld or a food metal-detector check it is the failure that matters. A **false alarm** costs scrap, rework and re-inspection. A system can have a good overall effectiveness and still be unacceptable because of its miss rate, which is why all three are reported.
+
+Your turn : the vision system below checks a seal on a food pouch. Change the counts and watch the three rates.
+
+```{r calc-attribute-rates, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "attribute-rates",
+  mode = "task",
+  title = "Attribute Study: Effectiveness, Miss and False Alarm",
+  icon = "magnifying-glass",
+  inputs = list(
+    qwebr_calc_input("bad_opps", "Opportunities on bad parts", value = 60, min = 20, max = 300, step = 1),
+    qwebr_calc_input("good_opps", "Opportunities on good parts", value = 120, min = 20, max = 600, step = 1),
+    qwebr_calc_input("missed", "Bad parts accepted", value = 5, min = 0, max = 60, step = 1, type = "slider"),
+    qwebr_calc_input("false_alarms", "Good parts rejected", value = 9, min = 0, max = 120, step = 1, type = "slider")
+  ),
+  goal = "Reach the 'Acceptable' band on both error rates (miss rate 2% or less, false-alarm rate 5% or less) with the study size held at 60 bad and 120 good opportunities.",
+  goal_test = "miss_rate <= 2 && false_alarm_rate <= 5 && bad_opps == 60 && good_opps == 120"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
+
+```{webr-r}
+#| label: attribute-rates
+bad_opps <- 60
+good_opps <- 120
+missed <- 5
+false_alarms <- 9
+
+total_opps <- bad_opps + good_opps
+effectiveness <- (total_opps - missed - false_alarms) / total_opps * 100
+miss_rate <- missed / bad_opps * 100
+false_alarm_rate <- false_alarms / good_opps * 100
+
+band <- function(x, ok, marginal) ifelse(x <= ok, "acceptable", ifelse(x <= marginal, "marginal", "!!unacceptable!!"))
+
+cat(sprintf("Miss rate: %.1f%% (%s)\n", miss_rate, band(miss_rate, 2, 5)))
+cat(sprintf("  False-alarm rate  %.1f%% (%s)\n", false_alarm_rate, band(false_alarm_rate, 5, 10)))
+cat(sprintf("  Effectiveness  %.1f%% (%s)\n", effectiveness,
+            ifelse(effectiveness >= 90, "acceptable", ifelse(effectiveness >= 80, "marginal", "!!unacceptable!!"))))
+
+par(mar = c(5, 5, 3, 1))
+barplot(c(miss_rate, false_alarm_rate), names.arg = c("Miss rate", "False-alarm rate"),
+        col = c("#C0392B", "#F39C12"), ylab = "Percent of opportunities",
+        ylim = c(0, max(12, miss_rate, false_alarm_rate) * 1.1), main = "Error rates against the reference")
+abline(h = c(2, 5), lty = 2, col = c("#C0392B", "#F39C12"))
+```
+
+</details>
+
+With 60 opportunities on bad parts, one missed defect is already 1.7%, and two is 3.3%. A study this small cannot show a miss rate below 2% with any margin, which is why customers ask for larger samples when the consequence of a miss is severe.
+
+### Attribute MSA Best Practices
+
+```{r attribute-best-practices, echo=FALSE}
+attr_practices <- data.frame(
+  Practice = c("Use boundary samples", "Include clear accept/reject",
+               "Blind testing", "Multiple trials", "Reference standard",
+               "Adequate sample size"),
+  Description = c(
+    "Include samples at the accept/reject boundary where decisions are hardest",
+    "Include obvious accept and obvious reject samples as controls",
+    "Operators should not know which samples are repeated or reference",
+    "Minimum 2-3 trials per operator to assess within-operator repeatability",
+    "Must have known correct answers to assess accuracy, not just agreement",
+    "Minimum 30-50 samples recommended for statistical validity"
+  )
+)
+
+kable(attr_practices, caption = "Best Practices for Attribute MSA Studies") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = knitr::is_html_output()) %>%
+  column_spec(1, bold = TRUE, width = if (knitr::is_html_output()) "25%" else NULL)
+```
+
+---
+
+## Measurement Uncertainty
+
+%GRR compares the measurement error with the *tolerance* or the *process*. It never says how big the error is in millimetres. When a calibration lab certifies a gauge block, or a defence contract states that a dimension must be verified to a given uncertainty, the answer is an **uncertainty budget** built the way the *Guide to the Expression of Uncertainty in Measurement* (GUM) describes.
+
+### Building a Budget
+
+Every source of error becomes a **standard uncertainty**, a one-standard-deviation value in the unit of the measurement. How you get it depends on what you know about the source:
+
+| Source | Type | What you know | Standard uncertainty $u$ |
+|--------|------|---------------|--------------------------|
+| Repeatability | A (from data) | Standard deviation $s$ of repeated readings | $u = s$ (or $s/\sqrt{n}$ for the average of $n$ readings) |
+| Calibration certificate | B (from a document) | Expanded uncertainty $U$ at coverage factor $k$ | $u = U / k$ (usually $k = 2$) |
+| Resolution | B | Reading is rounded to a step $d$; any value in $\pm d/2$ is equally likely | $u = d / (2\sqrt{3})$ |
+| Temperature | B | Part and gauge may be off 20 °C by $\pm\Delta T$; expansion coefficient $\alpha$ | $u = \alpha \, L \, \Delta T / \sqrt{3}$ |
+
+The standard uncertainties are independent, so they add as **variances** (root-sum-of-squares), exactly like the standard deviations in the Gauge R&R:
+
+$$u_c = \sqrt{u_1^2 + u_2^2 + \dots + u_n^2} \qquad\qquad U = k \cdot u_c \quad (k = 2 \text{ for about } 95\% \text{ coverage})$$
+
+Two checks follow from the budget:
+
+- **Test uncertainty ratio (TUR)** $= T / (2U)$, the tolerance width divided by the width of the uncertainty band. The common rule is **4:1** or better.
+- **Guard banding.** If the uncertainty is not negligible, a reading just inside the specification limit may belong to a part that is actually outside. Tightening the acceptance limits by $U$ (acceptance zone $= LSL + U$ to $USL - U$) makes the chance of accepting a bad part small, at the price of rejecting some good ones.
+
+```{r uncertainty-budget, echo=TRUE, fig.cap="Contribution of each source to the combined uncertainty of a micrometer measurement", fig.align='center', fig.width=10, fig.height=5}
+# Uncertainty budget: 0-25 mm micrometer measuring a 25 mm shaft, tolerance 0.10 mm (+/-0.05)
+tolerance  <- 0.10
+alpha      <- 11.5e-6   # steel, per degree C
+length_mm  <- 25
+delta_T    <- 2         # +/- degrees C from 20 C
+
+budget <- data.frame(
+  Source = c("Resolution (0.001 mm)", "Calibration certificate (U = 0.002, k = 2)",
+             "Repeatability (s = 0.0015)", "Temperature (+/-2 C)"),
+  Type = c("B", "B", "A", "B"),
+  u = c(0.001 / (2 * sqrt(3)),
+        0.002 / 2,
+        0.0015,
+        alpha * length_mm * delta_T / sqrt(3))
+)
+budget$Share <- budget$u^2 / sum(budget$u^2) * 100
+
+u_c <- sqrt(sum(budget$u^2))
+U   <- 2 * u_c
+TUR <- tolerance / (2 * U)
+
+cat("=== Uncertainty Budget ===\n\n")
+print(transform(budget, u = round(u, 5), Share = round(Share, 1)), row.names = FALSE)
+cat(sprintf("\nCombined standard uncertainty u_c = %.5f mm\n", u_c))
+cat(sprintf("Expanded uncertainty U (k = 2)    = %.5f mm\n", U))
+cat(sprintf("Test uncertainty ratio T / 2U     = %.1f : 1\n", TUR))
+cat(sprintf("Acceptance zone (guard banded)    = %.3f to %.3f mm from nominal\n", -tolerance / 2 + U, tolerance / 2 - U))
+
+budget$Source <- factor(budget$Source, levels = budget$Source[order(budget$Share)])
+ggplot(budget, aes(x = Source, y = Share, fill = Type)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = paste0(round(Share), "%")), hjust = -0.15, size = 4 * diagram_text_scale) +
+  coord_flip(ylim = c(0, 100)) +
+  scale_x_discrete(labels = scales::label_wrap(28)) +
+  scale_fill_manual(values = c(A = "#2E86C1", B = "#F39C12")) +
+  labs(title = "Where the Uncertainty Comes From",
+       subtitle = "Share of the combined variance, type A (data) and type B (documents)",
+       x = NULL, y = "Share of combined variance (%)", fill = "Type") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 12 * chart_text_scale))
+```
+
+Because the contributions add as squares, the largest one dominates: here the calibration certificate and the repeatability account for almost all of the variance, and a gauge with finer resolution would barely change the answer. A budget tells you *which* source to attack before you spend money.
+
+Your turn : the budget below is for a digital caliper checking a 25 mm feature with a total tolerance of 0.20 mm.
+
+```{r calc-uncertainty-budget, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "uncertainty-calc",
+  mode = "task",
+  title = "Uncertainty Budget and TUR",
+  icon = "scale-balanced",
+  inputs = list(
+    qwebr_calc_input("tolerance", "Part tolerance width (USL - LSL)", value = 0.20, min = 0.02, max = 1, step = 0.01, suffix = "mm"),
+    qwebr_calc_input("resolution", "Gauge resolution", value = 0.01, min = 0.0005, max = 0.05, step = 0.0005, suffix = "mm"),
+    qwebr_calc_input("cal_U", "Calibration certificate U (k = 2)", value = 0.03, min = 0.001, max = 0.1, step = 0.001, suffix = "mm"),
+    qwebr_calc_input("repeat_s", "Repeatability (std. dev.)", value = 0.02, min = 0.001, max = 0.05, step = 0.001, type = "slider", suffix = "mm"),
+    qwebr_calc_input("delta_T", "Temperature offset from 20 C", value = 3, min = 0, max = 10, step = 0.5, suffix = "C")
+  ),
+  goal = "Reach a test uncertainty ratio of 4:1 or better without relaxing the 0.20 mm tolerance. Which source do you attack first?",
+  goal_test = "TUR >= 4 && abs(tolerance - 0.20) < 1e-9"
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+The card above re-runs this exact webR code every time you change an input, substituting your values for the variables at the top. Edit the code directly and press **Run Code** to experiment further.
+
+```{webr-r}
+#| label: uncertainty-calc
+tolerance <- 0.20
+resolution <- 0.01
+cal_U <- 0.03
+repeat_s <- 0.02
+delta_T <- 3
+
+length_mm <- 25
+alpha <- 11.5e-6
+
+u_res  <- resolution / (2 * sqrt(3))
+u_cal  <- cal_U / 2
+u_rep  <- repeat_s
+u_temp <- alpha * length_mm * delta_T / sqrt(3)
+u_all  <- c(u_res, u_cal, u_rep, u_temp)
+
+u_c <- sqrt(sum(u_all^2))
+U   <- 2 * u_c
+TUR <- tolerance / (2 * U)
+
+cat(sprintf("Test uncertainty ratio: %.1f : 1 (%s)\n", TUR, ifelse(TUR >= 4, "meets 4:1", "!!below 4:1!!")))
+cat(sprintf("  Combined standard uncertainty  %.4f mm\n", u_c))
+cat(sprintf("  Expanded uncertainty U (k = 2)  %.4f mm\n", U))
+cat(sprintf("  Guard-banded acceptance zone  +/- %.4f mm\n", max(tolerance / 2 - U, 0)))
+
+par(mar = c(5, 8, 3, 1))
+barplot(rev(u_all^2 / sum(u_all^2) * 100), horiz = TRUE, las = 1, cex.names = 0.8,
+        names.arg = rev(c("Resolution", "Calibration", "Repeatability", "Temperature")),
+        col = "#2E86C1", xlab = "Share of combined variance (%)", main = "Largest source")
+```
+
+</details>
+
+### Try it yourself: an uncertainty budget by hand
+
+A 0.01 mm caliper checks a feature with a total tolerance of 0.30 mm. Its calibration certificate gives U = 0.02 mm at k = 2, and the repeatability standard deviation from a short study is 0.012 mm. Ignore temperature.
+
+```{r tryit-uncertainty, echo=FALSE, results='asis'}
+ub <- list(T = 0.30, d = 0.01, Ucal = 0.02, s = 0.012)
+ub$u_res <- ub$d / (2 * sqrt(3))
+ub$u_cal <- ub$Ucal / 2
+ub$u_c   <- sqrt(ub$u_res^2 + ub$u_cal^2 + ub$s^2)
+ub$U     <- 2 * ub$u_c
+ub$TUR   <- ub$T / (2 * ub$U)
+
+tryit_number(
+  id = "uncertainty-by-hand",
+  title = "Uncertainty budget: digital caliper",
+  answers = list(
+    tryit_answer("Resolution, standard uncertainty", ub$u_res, tol = 0.0001, suffix = "mm", digits = 4,
+                 hint = "Rectangular distribution: the step divided by 2 x the square root of 3."),
+    tryit_answer("Calibration, standard uncertainty", ub$u_cal, tol = 0.0001, suffix = "mm", digits = 4,
+                 hint = "The certificate gives an expanded value. Divide by its coverage factor."),
+    tryit_answer("Combined standard uncertainty", ub$u_c, tol = 0.0002, suffix = "mm", digits = 4,
+                 hint = "Square each of the three, add, then take the square root."),
+    tryit_answer("Expanded uncertainty U (k = 2)", ub$U, tol = 0.0004, suffix = "mm", digits = 4),
+    tryit_answer("Test uncertainty ratio, T / 2U", ub$TUR, tol = 0.05, digits = 2,
+                 hint = "Tolerance width divided by twice the expanded uncertainty.")
+  ),
+  question = "<p>A digital caliper with 0.01 mm resolution checks a feature whose total tolerance width is 0.30 mm. The calibration certificate states an expanded uncertainty U = 0.02 mm at k = 2. The repeatability standard deviation from a short study is 0.012 mm. Ignore temperature. Use u(resolution) = d / (2 sqrt 3), u(calibration) = U / k, combine by root-sum-of-squares, then U = 2 u(combined) and TUR = T / (2 U). Calculate the standard uncertainty from resolution, the standard uncertainty from calibration, the combined standard uncertainty, the expanded uncertainty U and the TUR.</p>"
+)
+
+# Graded twin with different numbers: exported to Brightspace, not shown on the page
+ubb <- list(T = 0.50, d = 0.001, Ucal = 0.004, s = 0.003)
+ubb$u_c <- sqrt((ubb$d / (2 * sqrt(3)))^2 + (ubb$Ucal / 2)^2 + ubb$s^2)
+tryit_number(
+  id = "uncertainty-by-hand-twin",
+  title = "Uncertainty budget: micrometer",
+  show = FALSE,
+  answers = list(
+    tryit_answer("u(resolution)", ubb$d / (2 * sqrt(3)), tol = 0.00005, digits = 5),
+    tryit_answer("u(calibration)", ubb$Ucal / 2, tol = 0.00005, digits = 5),
+    tryit_answer("Combined standard uncertainty", ubb$u_c, tol = 0.0001, digits = 4),
+    tryit_answer("Expanded uncertainty U", 2 * ubb$u_c, tol = 0.0002, digits = 4),
+    tryit_answer("TUR", ubb$T / (2 * 2 * ubb$u_c), tol = 0.1, digits = 1)
+  ),
+  question = "<p>A micrometer with 0.001 mm resolution checks a feature whose total tolerance width is 0.50 mm. The calibration certificate states an expanded uncertainty U = 0.004 mm at k = 2. The repeatability standard deviation from a short study is 0.003 mm. Ignore temperature. Use u(resolution) = d / (2 sqrt 3), u(calibration) = U / k, combine by root-sum-of-squares, then U = 2 u(combined) and TUR = T / (2 U). Calculate the standard uncertainty from resolution, the standard uncertainty from calibration, the combined standard uncertainty, the expanded uncertainty U and the TUR.</p>"
+)
+```
+
+<details class="tryit-solution">
+<summary>Show the worked solution</summary>
+
+```{r uncertainty-solution, echo=FALSE, results='asis'}
+cat(sprintf("- Resolution: $u = 0.01 / (2\\sqrt{3}) =$ **%.4f mm**\n", ub$u_res))
+cat(sprintf("- Calibration: $u = 0.02 / 2 =$ **%.4f mm**\n", ub$u_cal))
+cat(sprintf("- Combined: $u_c = \\sqrt{%.4f^2 + %.4f^2 + %.3f^2} =$ **%.4f mm**\n", ub$u_res, ub$u_cal, ub$s, ub$u_c))
+cat(sprintf("- Expanded: $U = 2 \\times %.4f =$ **%.4f mm**\n", ub$u_c, ub$U))
+cat(sprintf("- $TUR = 0.30 / (2 \\times %.4f) =$ **%.2f : 1**\n\n", ub$U, ub$TUR))
+cat(sprintf("The ratio is %s 4:1, so the caliper %s for this tolerance. The repeatability (%.0f%% of the combined variance) is the source to attack first.\n",
+            ifelse(ub$TUR >= 4, "above", "below"),
+            ifelse(ub$TUR >= 4, "is acceptable", "is not good enough"),
+            ub$s^2 / ub$u_c^2 * 100))
+```
+
+</details>
+
+---
+
+## MSA and SPC Relationship
+
+Poor measurement systems directly impact SPC effectiveness.
+
+### Effect on Control Charts
+
+```{r msa-spc-effect, echo=FALSE, fig.width=12, fig.height=8}
+set.seed(42)
+n <- 50
+
+# True process (stable, in control)
+true_process <- rnorm(n, 100, 2)
+
+# Good measurement system (low measurement error)
+sd_good <- 0.3
+good_measurement <- true_process + rnorm(n, 0, sd_good)
+
+# Poor measurement system (high measurement error)
+sd_poor <- 5
+poor_measurement <- true_process + rnorm(n, 0, sd_poor)
+
+# %GRR as a share of total observed variation (process sigma = 2)
+grr_good <- round(100 * sd_good / sqrt(2^2 + sd_good^2))
+grr_poor <- round(100 * sd_poor / sqrt(2^2 + sd_poor^2))
+lab_good <- paste0("Good MSA (%GRR = ", grr_good, "%)")
+lab_poor <- paste0("Poor MSA (%GRR = ", grr_poor, "%)")
+
+# Control limits based on good data
+mean_good <- mean(good_measurement[1:25])
+sigma_good <- sd(good_measurement[1:25])
+UCL_good <- mean_good + 3 * sigma_good
+LCL_good <- mean_good - 3 * sigma_good
+
+mean_poor <- mean(poor_measurement[1:25])
+sigma_poor <- sd(poor_measurement[1:25])
+UCL_poor <- mean_poor + 3 * sigma_poor
+LCL_poor <- mean_poor - 3 * sigma_poor
+
+chart_data <- data.frame(
+  Sample = rep(1:n, 2),
+  Value = c(good_measurement, poor_measurement),
+  System = factor(rep(c(lab_good, lab_poor), each = n), levels = c(lab_good, lab_poor))
+)
+
+limits_data <- data.frame(
+  System = factor(c(lab_good, lab_poor), levels = c(lab_good, lab_poor)),
+  Mean = c(mean_good, mean_poor),
+  UCL = c(UCL_good, UCL_poor),
+  LCL = c(LCL_good, LCL_poor)
+)
+
+ggplot(chart_data, aes(x = Sample, y = Value)) +
+  geom_line(color = "steelblue") +
+  geom_point(color = "steelblue", size = 2) +
+  geom_hline(data = limits_data, aes(yintercept = Mean), color = "darkgreen") +
+  geom_hline(data = limits_data, aes(yintercept = UCL), color = "red", linetype = "dashed") +
+  geom_hline(data = limits_data, aes(yintercept = LCL), color = "red", linetype = "dashed") +
+  facet_wrap(~System, ncol = 1) +
+  labs(title = "Impact of Measurement System Quality on Control Charts",
+       subtitle = "Same stable process measured with different gauge quality (same y-axis scale on both charts)",
+       x = "Sample Number", y = "Measured Value") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14 * chart_text_scale),
+    strip.text = element_text(face = "bold", size = 11 * chart_text_scale)
+  )
+```
+
+### Effect on Capability Studies
+
+Teaching demo --- drag the gauge quality and the process sigma, and watch the observed Cpk fall as the measurement error grows.
+
+```{r calc-msa-capability-effect, echo=FALSE, results='asis'}
+qwebr_calc_card(
+  label = "msa-capability-effect",
+  mode = "demo",
+  title = "MSA Impact on Capability Calculator",
+  icon = "magnifying-glass-chart",
+  inputs = list(
+    qwebr_calc_input("LSL", "Lower spec limit", value = 94, min = 80, max = 100, step = 1, type = "slider"),
+    qwebr_calc_input("USL", "Upper spec limit", value = 106, min = 100, max = 120, step = 1, type = "slider"),
+    qwebr_calc_input("true_mean", "True process mean", value = 100, min = 90, max = 110, step = 0.5, type = "slider"),
+    qwebr_calc_input("true_sigma", "True process sigma", value = 2.0, min = 0.5, max = 5.0, step = 0.1, type = "slider"),
+    qwebr_calc_input("pct_grr_good", "Good gauge: %GRR", value = 10, min = 1, max = 30, step = 1, suffix = "%", type = "slider"),
+    qwebr_calc_input("pct_grr_poor", "Poor gauge: %GRR", value = 50, min = 30, max = 80, step = 1, suffix = "%", type = "slider")
+  )
+)
+```
+
+<details class="qwebr-calc-source">
+<summary>Show the live R code behind this calculator</summary>
+
+```{webr-r}
+#| label: msa-capability-effect
+# True process parameters
+true_mean <- 100
+true_sigma <- 2.0
+pct_grr_good <- 10   # %GRR of the good gauge, as a share of the tolerance
+pct_grr_poor <- 50   # %GRR of the poor gauge
+USL <- 106
+LSL <- 94
+tolerance <- USL - LSL
+
+# True capability
+true_Cpk <- min((USL - true_mean), (true_mean - LSL)) / (3 * true_sigma)
+
+# With good measurement system
+grr_good <- pct_grr_good / 100 * tolerance / 5.15
+observed_sigma_good <- sqrt(true_sigma^2 + grr_good^2)
+observed_Cpk_good <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_good)
+
+# With poor measurement system
+grr_poor <- pct_grr_poor / 100 * tolerance / 5.15
+observed_sigma_poor <- sqrt(true_sigma^2 + grr_poor^2)
+observed_Cpk_poor <- min((USL - true_mean), (true_mean - LSL)) / (3 * observed_sigma_poor)
+
+cat(sprintf("A capable process (true Cpk = %.2f) can appear incapable under poor MSA\n", true_Cpk))
+cat(sprintf("  True Cpk                 %.2f\n", true_Cpk))
+cat(sprintf("  Observed Cpk (%g%% GRR)   %.2f\n", pct_grr_good, observed_Cpk_good))
+cat(sprintf("  Observed Cpk (%g%% GRR)   %.2f\n", pct_grr_poor, observed_Cpk_poor))
+
+par(mar = c(5, 5, 3, 1))
+barplot(c(`True` = true_Cpk, `Good gauge` = observed_Cpk_good, `Poor gauge` = observed_Cpk_poor),
+        col = c("#27AE60", "#2E86C1", "#C0392B"), ylim = c(0, 5), ylab = "Cpk", main = "Capability as the gauge reports it")
+abline(h = 1.33, lty = 2, lwd = 2)
+```
+
+</details>
+
+---
+
+## Choosing the Right Study
+
+By now there are five tools in the box. Each answers a different question, and picking the wrong one produces a number that looks official but means nothing.
+
+| Question | Study |
+|----------|-------|
+| Is this new gauge good enough for the tolerance before anyone uses it? | Type 1 ($C_g$, $C_{gk}$) |
+| How much of the variation comes from the gauge and the people using it? | Crossed Gauge R&R (ANOVA) |
+| The test destroys the part. How do we qualify it? | Nested Gauge R&R |
+| Do inspectors agree with each other and with the reference on pass/fail calls? | Attribute agreement (kappa, effectiveness, miss rate) |
+| How large is the measurement error in the unit of measurement? | Uncertainty budget |
+
+### Try it yourself: which study fits?
+
+```{r tryit-msa-study-sort, echo=FALSE, results='asis'}
+tryit_sort(
+  id = "msa-study-chooser",
+  title = "Which study answers the question?",
+  bins = c("Type 1", "Crossed Gauge R&R", "Nested Gauge R&R", "Attribute agreement", "Uncertainty budget"),
+  cards = tibble::tribble(
+    ~text, ~bin, ~why,
+    "A new bore gauge arrives and quality wants to approve it against a 10.000 mm ring master before it goes on the line.",
+    "Type 1", "One gauge, one master of known value: bias and repeatability only.",
+    "Ten crankshaft journals are each measured three times by each of three operators on the same micrometer, in random order.",
+    "Crossed Gauge R&R", "Every operator measures every part, and the part survives to be measured again.",
+    "A weld peel test destroys each coupon, so every operator tests their own coupons cut from the same sheet.",
+    "Nested Gauge R&R", "The part cannot be re-measured, so samples are nested within operator.",
+    "Three inspectors accept or reject 50 sealed pouches, and the lab has already classified every pouch.",
+    "Attribute agreement", "A categorical decision compared with a reference: kappa, miss rate and false-alarm rate.",
+    "A defence customer asks for the CMM's reading of a bracket hole to be stated with a plus-or-minus value at k = 2.",
+    "Uncertainty budget", "A stated size of error in the unit of measurement, built from its sources.",
+    "A torque-wrench checker needs to be put into service and has never been used by anyone, so no operators exist to compare yet.",
+    "Type 1", "With no operator group yet, the first check is the gauge alone.",
+    "A checkweigher rejects under-filled packs, and a customer asks how often it passes a short pack.",
+    "Attribute agreement", "The pass/fail decision against a known reference gives the miss rate."
+  ),
+  intro = NULL,
+  question = NULL
+)
+```
+
+---
+
+## Summary
+
+1. **Range method is a screen, ANOVA is the study.** ANOVA gives exact variance components, tests for part-by-operator interaction and is what customers expect.
+2. **Type 1 first.** $C_g$ and $C_{gk}$ qualify a gauge alone; accept at 1.33 or better, and read a large gap between them as bias.
+3. **Pick the design to fit the part.** Crossed when parts survive, nested when they do not, Type 1 when there are no operators yet.
+4. **Attribute systems have three rates, not one.** Report effectiveness, miss rate and false-alarm rate against the reference, and weight the miss rate when escapes are costly.
+5. **An uncertainty budget adds variances.** The largest source dominates, so rank them before spending money; check the TUR (4:1 or better) and guard-band when it is not.
+6. **Measurement error distorts SPC.** It widens the control limits and lowers the apparent capability, so fix the gauge before you chase the process.
+
+> "A number without an uncertainty is only an opinion."
+
+---
+
+## Review Questions
+
+<details><summary>**Question 1**: A visual inspection has the following results: Kappa vs. reference = 0.72, within-operator agreement = 88%, between-operator agreement = 75%. Evaluate this attribute measurement system.</summary>
+
+**Answer:**
+
+**Results Interpretation:**
+
+1. **Kappa vs. Reference = 0.72**
+   - Falls in "Substantial agreement" range (0.61-0.80)
+   - Operators are correctly classifying parts most of the time
+   - Acceptable for many applications, but improvement possible
+
+2. **Within-Operator Agreement = 88%**
+   - Operators are fairly consistent with themselves
+   - 12% of the time, same operator gives different result on same part
+   - Should target >90% for critical inspections
+
+3. **Between-Operator Agreement = 75%**
+   - Operators disagree on 25% of parts
+   - This is a significant reproducibility issue
+   - Major source of inconsistency in product quality
+
+**Assessment: MARGINAL - Improvement Needed**
+
+**Recommended Actions:**
+
+1. **Standardize criteria**: Create clear visual standards with boundary samples
+   - Photos of accept/reject borderline cases
+   - Written descriptions of defect criteria
+
+2. **Training**:
+   - Calibration session with all operators and reference samples
+   - Identify operators with lower agreement for targeted training
+
+3. **Improve conditions**:
+   - Check lighting adequacy and consistency
+   - Ensure proper viewing distance and angle
+   - Reduce fatigue with appropriate break schedules
+
+4. **Consider automation**: For critical inspections, automated vision systems may provide better consistency
+
+5. **Re-study after improvements** to verify effectiveness
+</details>
+
+<details><summary>**Question 2**: Given the following ANOVA table from a Gauge R&R study, calculate the variance components and %GRR.</summary>
+
+| Source | DF | SS | MS |
+|--------|-----|------|-------|
+| Part | 9 | 0.2850 | 0.03167 |
+| Operator | 2 | 0.0025 | 0.00125 |
+| Part×Operator | 18 | 0.0090 | 0.00050 |
+| Repeatability | 60 | 0.0180 | 0.00030 |
+| Total | 89 | 0.3145 | |
+
+Study design: 10 parts, 3 operators, 3 trials
+
+**Answer:**
+
+```{r q7-answer, echo=TRUE, fig.align="center", fig.width=8, fig.height=5}
+# Given values from ANOVA table
+MS_part <- 0.03167
+MS_operator <- 0.00125
+MS_interaction <- 0.00050
+MS_error <- 0.00030
+
+n_parts <- 10
+n_operators <- 3
+n_trials <- 3
+
+# Variance components
+var_repeatability <- MS_error
+var_interaction <- max(0, (MS_interaction - MS_error) / n_trials)
+var_operator <- max(0, (MS_operator - MS_interaction) / (n_parts * n_trials))
+var_part <- max(0, (MS_part - MS_interaction) / (n_operators * n_trials))
+
+# Reproducibility = Operator + Interaction
+var_reproducibility <- var_operator + var_interaction
+
+# Total Gauge R&R
+var_GRR <- var_repeatability + var_reproducibility
+
+# Total variation
+var_total <- var_part + var_GRR
+
+# Calculate %GRR (of total variation)
+sigma_GRR <- sqrt(var_GRR)
+sigma_total <- sqrt(var_total)
+pct_GRR <- (sigma_GRR / sigma_total) * 100
+
+# ndc
+sigma_part <- sqrt(var_part)
+ndc <- 1.41 * (sigma_part / sigma_GRR)
+
+if(pct_GRR < 10) {
+  assessment <- "ACCEPTABLE (< 10%)"
+} else if(pct_GRR < 30) {
+  assessment <- "MARGINAL (10-30%)"
+} else {
+  assessment <- "UNACCEPTABLE (> 30%)"
+}
+
+cat(sprintf("%%GRR (of total variation): %.1f%%\n", pct_GRR))
+cat(sprintf("  Assessment  %s\n", assessment))
+cat(sprintf("  Number of distinct categories (ndc)  %.1f\n", ndc))
+cat(sprintf("  Var(Repeatability)  %.6f\n", var_repeatability))
+cat(sprintf("  Var(Interaction)  %.6f\n", var_interaction))
+cat(sprintf("  Var(Operator)  %.6f\n", var_operator))
+cat(sprintf("  Var(Part)  %.6f\n", var_part))
+cat(sprintf("  Var(Reproducibility)  %.6f\n", var_reproducibility))
+cat(sprintf("  Var(GRR)  %.6f\n", var_GRR))
+cat(sprintf("  Var(Total)  %.6f\n", var_total))
+```
+
+<details><summary>**Question 3**: A Type 1 study gives $C_g$ = 2.10 and $C_{gk}$ = 0.95. What is wrong with the gauge, and what do you do?</summary>
+
+**Answer:**
+
+$C_g$ is well above 1.33, so the **spread** of the gauge is small enough for the tolerance. $C_{gk}$ is below 1.33, and since $C_{gk}$ differs from $C_g$ only through the bias term, the gauge is **precise but biased**: its average sits too far from the master.
+
+**Action:** re-zero or recalibrate the gauge (or apply a documented correction), then repeat the Type 1 study. There is no need to replace the gauge.
+</details>
+
+<details><summary>**Question 4**: Why can a nested Gauge R&R overstate the measurement error compared with a crossed study?</summary>
+
+**Answer:**
+
+In a nested study each operator tests different samples, so any difference between batches or samples lands inside the apparent repeatability and reproducibility. A crossed study measures the *same* part several times, so the part-to-part difference is removed and only the measurement system remains.
+
+To keep the overstatement small, take the samples from a single homogeneous batch (consecutive items from one run), randomise the allocation to operators, and say in the report that the result is an upper bound on the measurement error.
+</details>
+
+<details><summary>**Question 5**: Compare the two ways a gauge can fail a tolerance check: a bad $C_g$ and a bad TUR. What does each tell you?</summary>
+
+**Answer:**
+
+$C_g$ and $C_{gk}$ come from repeated readings of a *master* and describe the gauge's scatter and bias against the tolerance. The TUR comes from an *uncertainty budget* and also includes the sources that repeated readings of one master do not reveal: the calibration certificate, the resolution rounding and the temperature. A gauge can pass a Type 1 study and still have a poor TUR because its calibration uncertainty is large. Qualify with both when the specification allows little room.
+</details>
+
+---
+
+## References
+
+1. AIAG. (2010). *Measurement Systems Analysis Reference Manual* (4th ed.). Automotive Industry Action Group.
+
+2. Burdick, R.K., Borror, C.M., & Montgomery, D.C. (2005). *Design and Analysis of Gauge R&R Studies*. SIAM.
+
+3. JCGM 100:2008. *Evaluation of Measurement Data - Guide to the Expression of Uncertainty in Measurement* (GUM).
+
+4. VDA. (2021). *VDA 5: Capability of Measurement Processes* (3rd ed.). Verband der Automobilindustrie.
+
+5. ISO 22514-7:2021. *Statistical Methods in Process Management - Capability and Performance - Part 7: Capability of Measurement Processes*.
+
+6. Dietrich, E., & Schulze, A. (2011). *Statistical Procedures for Machine and Process Qualification* (6th ed.). Hanser.
+
+7. Montgomery, D.C. (2019). *Introduction to Statistical Quality Control* (8th ed.). Wiley.
+
+8. ASTM E2782-17. *Standard Guide for Measurement Systems Analysis*.
