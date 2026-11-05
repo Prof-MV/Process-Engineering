@@ -3862,9 +3862,6 @@ Figure&nbsp;11.8: A small decision tree for remaining useful life. A new engine 
 </div>
 </div>
 <p><strong>How does the tree learn its questions?</strong> They are <em>learned from the data</em>, not written by an engineer. At the top, the algorithm tries every feature and every possible threshold (“Sensor 11 &lt; 47.6?”, “Sensor 11 &lt; 47.7?”, “Sensor 4 &lt; 1395?”, …). For each candidate it splits the training rows into two groups and measures how similar the RUL values are <em>within</em> each group. The candidate that makes the two groups most uniform (the largest drop in variance) wins. The algorithm then repeats the same search separately inside each group, and keeps going until a stopping rule is met (maximum depth, minimum rows per leaf). Each leaf predicts the <strong>average RUL of the training rows that ended up in it</strong>.</p>
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/v6VJ2RO66Ag" title="Random Forest Algorithm Clearly Explained! (Normalized Nerd)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
-</div>
 <p><strong>Strengths of a single tree:</strong></p>
 <ul>
 <li>Trivially interpretable — you can read the exact rules</li>
@@ -3962,7 +3959,7 @@ Figure&nbsp;11.12: Eight individual trees (blue) are jagged and disagree with ea
 </div>
 </div>
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/J4Wdy0Wc_xQ" title="Random Forests, Part 1: Building, Using and Evaluating (StatQuest)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
+<p><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/v6VJ2RO66Ag" title="Random Forest Algorithm Clearly Explained! (Normalized Nerd)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""> </iframe></p>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -5157,9 +5154,9 @@ Warning
 </ol>
 <hr>
 <div class="callout-activity">
-<p><strong>Activity (15 min): four corners, who pays the $40,000?</strong> Return to the opening question of this week: the model predicted failure in 15 cycles, the planner cancelled a production run at a cost of $40,000, and the bearing turned out to be healthy.</p>
+<p><strong>Activity (15 min): four corners, who pays the $40,000?</strong> Return to the opening question of this week: the model predicted failure in 15 cycles, the planner cancelled a production run at a cost of $40,000, and the bearing turned out to be healthy. Your plant (the <em>user company</em>) bought the model from a software vendor and the engineer deployed it. Who should bear the $40,000 loss?</p>
 <ol type="1">
-<li>Pick a position on your phone or by moving to a corner: <strong>(A)</strong> the maintenance planner who acted, <strong>(B)</strong> the engineer who deployed the model, <strong>(C)</strong> the company, <strong>(D)</strong> nobody; it is the cost of doing business.</li>
+<li>Move to the corner for your position: <strong>(A)</strong> the maintenance planner who acted on the prediction, <strong>(B)</strong> the engineer who deployed the model, <strong>(C)</strong> the model vendor company that sold the software, <strong>(D)</strong> the user company (your plant) itself; the loss is a cost of doing business with predictive models.</li>
 <li>In your corner, agree on the <em>two strongest reasons</em> for your position.</li>
 <li>One speaker per corner gives the argument. Then anyone may change corners, and has to say what changed their mind.</li>
 </ol>
