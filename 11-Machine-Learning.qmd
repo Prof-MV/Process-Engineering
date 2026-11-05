@@ -1459,10 +1459,6 @@ ggplot() +
 
 **How does the tree learn its questions?** They are *learned from the data*, not written by an engineer. At the top, the algorithm tries every feature and every possible threshold ("Sensor 11 < 47.6?", "Sensor 11 < 47.7?", "Sensor 4 < 1395?", …). For each candidate it splits the training rows into two groups and measures how similar the RUL values are *within* each group. The candidate that makes the two groups most uniform (the largest drop in variance) wins. The algorithm then repeats the same search separately inside each group, and keeps going until a stopping rule is met (maximum depth, minimum rows per leaf). Each leaf predicts the **average RUL of the training rows that ended up in it**.
 
-```{r video-decision-tree, echo=FALSE, results='asis'}
-embed_youtube("v6VJ2RO66Ag", "Random Forest Algorithm Clearly Explained! (Normalized Nerd)")
-```
-
 **Strengths of a single tree:**
 
 - Trivially interpretable — you can read the exact rules
@@ -1620,7 +1616,7 @@ ggplot() +
 ```
 
 ```{r video-random-forest, echo=FALSE, results='asis'}
-embed_youtube("J4Wdy0Wc_xQ", "Random Forests, Part 1: Building, Using and Evaluating (StatQuest)")
+embed_youtube("v6VJ2RO66Ag", "Random Forest Algorithm Clearly Explained! (Normalized Nerd)")
 ```
 
 ::: {.callout-warning}
@@ -2505,9 +2501,9 @@ The field moves fast. Three habits that will keep you current without burning ou
 ***
 
 ::: {.callout-activity}
-**Activity (15 min): four corners, who pays the $40,000?** Return to the opening question of this week: the model predicted failure in 15 cycles, the planner cancelled a production run at a cost of $40,000, and the bearing turned out to be healthy.
+**Activity (15 min): four corners, who pays the $40,000?** Return to the opening question of this week: the model predicted failure in 15 cycles, the planner cancelled a production run at a cost of $40,000, and the bearing turned out to be healthy. Your plant (the *user company*) bought the model from a software vendor and the engineer deployed it. Who should bear the $40,000 loss?
 
-1. Pick a position on your phone or by moving to a corner: **(A)** the maintenance planner who acted, **(B)** the engineer who deployed the model, **(C)** the company, **(D)** nobody; it is the cost of doing business.
+1. Move to the corner for your position: **(A)** the maintenance planner who acted on the prediction, **(B)** the engineer who deployed the model, **(C)** the model vendor company that sold the software, **(D)** the user company (your plant) itself; the loss is a cost of doing business with predictive models.
 2. In your corner, agree on the *two strongest reasons* for your position.
 3. One speaker per corner gives the argument. Then anyone may change corners, and has to say what changed their mind.
 
